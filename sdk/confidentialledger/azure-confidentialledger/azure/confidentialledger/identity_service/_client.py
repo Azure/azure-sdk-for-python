@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-class ConfidentialLedgerIdentityServiceClient(object):
+class ConfidentialLedgerIdentityServiceClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Client for communicating with the Confidential Ledger Identity Service,
     which is used for retrieving identity information about a particular Confidential
     Ledger instance.

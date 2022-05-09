@@ -7,12 +7,13 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional
+from typing import Any
+
+from msrest import Deserializer, Serializer
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import QuestionAnsweringClientConfiguration
@@ -20,14 +21,18 @@ from ._operations import QuestionAnsweringClientOperationsMixin
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    """The language service API is a suite of natural language processing (NLP) skills built with
+    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
+    detection and question answering. Further documentation can be found in :code:`<a
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -42,11 +47,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    def send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

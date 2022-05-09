@@ -113,7 +113,7 @@ def get_authentication_policy(credential):
     return authentication_policy
 
 
-class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods
+class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods,client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

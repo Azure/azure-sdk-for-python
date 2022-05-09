@@ -11,7 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
-    JSONType,
+    JSON,
 )
 from ..._operations._patch import get_token_by_key
 
@@ -26,7 +26,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         minutes_to_expire: Optional[int] = 60,
         jwt_headers: Dict[str, Any] = None,
         **kwargs: Any
-    ) -> JSONType:
+    ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
         Generate token for the client to connect Azure Web PubSub service.
         :keyword user_id: User Id.
@@ -40,7 +40,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :return: JSON object
-        :rtype: JSONType
+        :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
         Example:
             .. code-block:: python

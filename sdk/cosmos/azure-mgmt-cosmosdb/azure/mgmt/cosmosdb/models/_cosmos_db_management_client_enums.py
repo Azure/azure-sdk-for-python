@@ -94,6 +94,13 @@ class ConnectorOffer(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SMALL = "Small"
 
+class ContinuousTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to indicate type of Continuous backup tier.
+    """
+
+    CONTINUOUS7_DAYS = "Continuous7Days"
+    CONTINUOUS30_DAYS = "Continuous30Days"
+
 class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
@@ -298,6 +305,7 @@ class ServerVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     THREE2 = "3.2"
     THREE6 = "3.6"
     FOUR0 = "4.0"
+    FOUR2 = "4.2"
 
 class ServiceSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Instance type for the service.
@@ -335,6 +343,14 @@ class SpatialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LINE_STRING = "LineString"
     POLYGON = "Polygon"
     MULTI_POLYGON = "MultiPolygon"
+
+class ThroughputPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """ThroughputPolicy to apply for throughput redistribution
+    """
+
+    NONE = "none"
+    EQUAL = "equal"
+    CUSTOM = "custom"
 
 class TriggerOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operation the trigger is associated with

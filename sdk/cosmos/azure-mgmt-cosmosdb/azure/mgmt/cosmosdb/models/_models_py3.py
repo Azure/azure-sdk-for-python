@@ -46,7 +46,7 @@ class ApiProperties(msrest.serialization.Model):
     """ApiProperties.
 
     :ivar server_version: Describes the ServerVersion of an a MongoDB account. Possible values
-     include: "3.2", "3.6", "4.0".
+     include: "3.2", "3.6", "4.0", "4.2".
     :vartype server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
     """
 
@@ -62,7 +62,7 @@ class ApiProperties(msrest.serialization.Model):
     ):
         """
         :keyword server_version: Describes the ServerVersion of an a MongoDB account. Possible values
-         include: "3.2", "3.6", "4.0".
+         include: "3.2", "3.6", "4.0", "4.2".
         :paramtype server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
         """
         super(ApiProperties, self).__init__(**kwargs)
@@ -1873,6 +1873,67 @@ class Certificate(msrest.serialization.Model):
         self.pem = pem
 
 
+class ClientEncryptionIncludedPath(msrest.serialization.Model):
+    """.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar path: Required. Path that needs to be encrypted.
+    :vartype path: str
+    :ivar client_encryption_key_id: Required. The identifier of the Client Encryption Key to be
+     used to encrypt the path.
+    :vartype client_encryption_key_id: str
+    :ivar encryption_type: Required. The type of encryption to be performed. Eg - Deterministic,
+     Randomized.
+    :vartype encryption_type: str
+    :ivar encryption_algorithm: Required. The encryption algorithm which will be used. Eg -
+     AEAD_AES_256_CBC_HMAC_SHA256.
+    :vartype encryption_algorithm: str
+    """
+
+    _validation = {
+        'path': {'required': True},
+        'client_encryption_key_id': {'required': True},
+        'encryption_type': {'required': True},
+        'encryption_algorithm': {'required': True},
+    }
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'client_encryption_key_id': {'key': 'clientEncryptionKeyId', 'type': 'str'},
+        'encryption_type': {'key': 'encryptionType', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: str,
+        client_encryption_key_id: str,
+        encryption_type: str,
+        encryption_algorithm: str,
+        **kwargs
+    ):
+        """
+        :keyword path: Required. Path that needs to be encrypted.
+        :paramtype path: str
+        :keyword client_encryption_key_id: Required. The identifier of the Client Encryption Key to be
+         used to encrypt the path.
+        :paramtype client_encryption_key_id: str
+        :keyword encryption_type: Required. The type of encryption to be performed. Eg - Deterministic,
+         Randomized.
+        :paramtype encryption_type: str
+        :keyword encryption_algorithm: Required. The encryption algorithm which will be used. Eg -
+         AEAD_AES_256_CBC_HMAC_SHA256.
+        :paramtype encryption_algorithm: str
+        """
+        super(ClientEncryptionIncludedPath, self).__init__(**kwargs)
+        self.path = path
+        self.client_encryption_key_id = client_encryption_key_id
+        self.encryption_type = encryption_type
+        self.encryption_algorithm = encryption_algorithm
+
+
 class ClientEncryptionKeyCreateUpdateParameters(msrest.serialization.Model):
     """Parameters to create and update ClientEncryptionKey.
 
@@ -2096,6 +2157,48 @@ class ClientEncryptionKeysListResult(msrest.serialization.Model):
         """
         super(ClientEncryptionKeysListResult, self).__init__(**kwargs)
         self.value = None
+
+
+class ClientEncryptionPolicy(msrest.serialization.Model):
+    """Cosmos DB client encryption policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar included_paths: Required. Paths of the item that need encryption along with path-specific
+     settings.
+    :vartype included_paths: list[~azure.mgmt.cosmosdb.models.ClientEncryptionIncludedPath]
+    :ivar policy_format_version: Version of the client encryption policy definition. Please note,
+     user passed value is ignored. Default policy version is 1.
+    :vartype policy_format_version: int
+    """
+
+    _validation = {
+        'included_paths': {'required': True},
+    }
+
+    _attribute_map = {
+        'included_paths': {'key': 'includedPaths', 'type': '[ClientEncryptionIncludedPath]'},
+        'policy_format_version': {'key': 'policyFormatVersion', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        included_paths: List["ClientEncryptionIncludedPath"],
+        policy_format_version: Optional[int] = 1,
+        **kwargs
+    ):
+        """
+        :keyword included_paths: Required. Paths of the item that need encryption along with
+         path-specific settings.
+        :paramtype included_paths: list[~azure.mgmt.cosmosdb.models.ClientEncryptionIncludedPath]
+        :keyword policy_format_version: Version of the client encryption policy definition. Please
+         note, user passed value is ignored. Default policy version is 1.
+        :paramtype policy_format_version: int
+        """
+        super(ClientEncryptionPolicy, self).__init__(**kwargs)
+        self.included_paths = included_paths
+        self.policy_format_version = policy_format_version
 
 
 class ClusterKey(msrest.serialization.Model):
@@ -3068,6 +3171,8 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar continuous_mode_properties: Configuration values for continuous mode backup.
+    :vartype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
     """
 
     _validation = {
@@ -3077,21 +3182,53 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'migration_state': {'key': 'migrationState', 'type': 'BackupPolicyMigrationState'},
+        'continuous_mode_properties': {'key': 'continuousModeProperties', 'type': 'ContinuousModeProperties'},
     }
 
     def __init__(
         self,
         *,
         migration_state: Optional["BackupPolicyMigrationState"] = None,
+        continuous_mode_properties: Optional["ContinuousModeProperties"] = None,
         **kwargs
     ):
         """
         :keyword migration_state: The object representing the state of the migration between the backup
          policies.
         :paramtype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+        :keyword continuous_mode_properties: Configuration values for continuous mode backup.
+        :paramtype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
         """
         super(ContinuousModeBackupPolicy, self).__init__(migration_state=migration_state, **kwargs)
         self.type = 'Continuous'  # type: str
+        self.continuous_mode_properties = continuous_mode_properties
+
+
+class ContinuousModeProperties(msrest.serialization.Model):
+    """Configuration values for periodic mode backup.
+
+    :ivar tier: Enum to indicate type of Continuos backup mode. Possible values include:
+     "Continuous7Days", "Continuous30Days".
+    :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+    """
+
+    _attribute_map = {
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tier: Optional[Union[str, "ContinuousTier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword tier: Enum to indicate type of Continuos backup mode. Possible values include:
+         "Continuous7Days", "Continuous30Days".
+        :paramtype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+        """
+        super(ContinuousModeProperties, self).__init__(**kwargs)
+        self.tier = tier
 
 
 class CorsPolicy(msrest.serialization.Model):
@@ -4743,8 +4880,10 @@ class DataTransferJobGetResults(ARMProxyResource):
     :vartype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
     :ivar status: Job Status.
     :vartype status: str
-    :ivar percentage_complete: Percentage of completion.
-    :vartype percentage_complete: float
+    :ivar processed_count: Processed Count.
+    :vartype processed_count: long
+    :ivar total_count: Total Count.
+    :vartype total_count: long
     :ivar last_updated_utc_time: Last Updated Time (ISO-8601 format).
     :vartype last_updated_utc_time: ~datetime.datetime
     :ivar worker_count: Worker count.
@@ -4759,7 +4898,8 @@ class DataTransferJobGetResults(ARMProxyResource):
         'type': {'readonly': True},
         'job_name': {'readonly': True},
         'status': {'readonly': True},
-        'percentage_complete': {'readonly': True},
+        'processed_count': {'readonly': True},
+        'total_count': {'readonly': True},
         'last_updated_utc_time': {'readonly': True},
         'worker_count': {'minimum': 0},
         'error': {'readonly': True},
@@ -4773,7 +4913,8 @@ class DataTransferJobGetResults(ARMProxyResource):
         'source': {'key': 'properties.source', 'type': 'DataTransferDataSourceSink'},
         'destination': {'key': 'properties.destination', 'type': 'DataTransferDataSourceSink'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'percentage_complete': {'key': 'properties.percentageComplete', 'type': 'float'},
+        'processed_count': {'key': 'properties.processedCount', 'type': 'long'},
+        'total_count': {'key': 'properties.totalCount', 'type': 'long'},
         'last_updated_utc_time': {'key': 'properties.lastUpdatedUtcTime', 'type': 'iso-8601'},
         'worker_count': {'key': 'properties.workerCount', 'type': 'int'},
         'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
@@ -4800,7 +4941,8 @@ class DataTransferJobGetResults(ARMProxyResource):
         self.source = source
         self.destination = destination
         self.status = None
-        self.percentage_complete = None
+        self.processed_count = None
+        self.total_count = None
         self.last_updated_utc_time = None
         self.worker_count = worker_count
         self.error = None
@@ -4821,8 +4963,10 @@ class DataTransferJobProperties(msrest.serialization.Model):
     :vartype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
     :ivar status: Job Status.
     :vartype status: str
-    :ivar percentage_complete: Percentage of completion.
-    :vartype percentage_complete: float
+    :ivar processed_count: Processed Count.
+    :vartype processed_count: long
+    :ivar total_count: Total Count.
+    :vartype total_count: long
     :ivar last_updated_utc_time: Last Updated Time (ISO-8601 format).
     :vartype last_updated_utc_time: ~datetime.datetime
     :ivar worker_count: Worker count.
@@ -4836,7 +4980,8 @@ class DataTransferJobProperties(msrest.serialization.Model):
         'source': {'required': True},
         'destination': {'required': True},
         'status': {'readonly': True},
-        'percentage_complete': {'readonly': True},
+        'processed_count': {'readonly': True},
+        'total_count': {'readonly': True},
         'last_updated_utc_time': {'readonly': True},
         'worker_count': {'minimum': 0},
         'error': {'readonly': True},
@@ -4847,7 +4992,8 @@ class DataTransferJobProperties(msrest.serialization.Model):
         'source': {'key': 'source', 'type': 'DataTransferDataSourceSink'},
         'destination': {'key': 'destination', 'type': 'DataTransferDataSourceSink'},
         'status': {'key': 'status', 'type': 'str'},
-        'percentage_complete': {'key': 'percentageComplete', 'type': 'float'},
+        'processed_count': {'key': 'processedCount', 'type': 'long'},
+        'total_count': {'key': 'totalCount', 'type': 'long'},
         'last_updated_utc_time': {'key': 'lastUpdatedUtcTime', 'type': 'iso-8601'},
         'worker_count': {'key': 'workerCount', 'type': 'int'},
         'error': {'key': 'error', 'type': 'ErrorResponse'},
@@ -4874,7 +5020,8 @@ class DataTransferJobProperties(msrest.serialization.Model):
         self.source = source
         self.destination = destination
         self.status = None
-        self.percentage_complete = None
+        self.processed_count = None
+        self.total_count = None
         self.last_updated_utc_time = None
         self.worker_count = worker_count
         self.error = None
@@ -6602,12 +6749,15 @@ class KeyWrapMetadata(msrest.serialization.Model):
     :vartype type: str
     :ivar value: Reference / link to the KeyEncryptionKey.
     :vartype value: str
+    :ivar algorithm: Algorithm used in wrapping and unwrapping of the data encryption key.
+    :vartype algorithm: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        'algorithm': {'key': 'algorithm', 'type': 'str'},
     }
 
     def __init__(
@@ -6616,6 +6766,7 @@ class KeyWrapMetadata(msrest.serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         value: Optional[str] = None,
+        algorithm: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6625,11 +6776,14 @@ class KeyWrapMetadata(msrest.serialization.Model):
         :paramtype type: str
         :keyword value: Reference / link to the KeyEncryptionKey.
         :paramtype value: str
+        :keyword algorithm: Algorithm used in wrapping and unwrapping of the data encryption key.
+        :paramtype algorithm: str
         """
         super(KeyWrapMetadata, self).__init__(**kwargs)
         self.name = name
         self.type = type
         self.value = value
+        self.algorithm = algorithm
 
 
 class ListBackups(msrest.serialization.Model):
@@ -7170,6 +7324,31 @@ class MaterializedViewsBuilderServiceResourceProperties(ServiceResourcePropertie
         super(MaterializedViewsBuilderServiceResourceProperties, self).__init__(additional_properties=additional_properties, instance_size=instance_size, instance_count=instance_count, **kwargs)
         self.service_type = 'MaterializedViewsBuilder'  # type: str
         self.locations = None
+
+
+class MergeParameters(msrest.serialization.Model):
+    """The properties of an Azure Cosmos DB merge operations.
+
+    :ivar is_dry_run: Specifies whether the operation is a real merge operation or a simulation.
+    :vartype is_dry_run: bool
+    """
+
+    _attribute_map = {
+        'is_dry_run': {'key': 'isDryRun', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_dry_run: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword is_dry_run: Specifies whether the operation is a real merge operation or a simulation.
+        :paramtype is_dry_run: bool
+        """
+        super(MergeParameters, self).__init__(**kwargs)
+        self.is_dry_run = is_dry_run
 
 
 class Metric(msrest.serialization.Model):
@@ -9262,6 +9441,136 @@ class Permission(msrest.serialization.Model):
         self.not_data_actions = not_data_actions
 
 
+class PhysicalPartitionId(msrest.serialization.Model):
+    """PhysicalPartitionId object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Id of a physical partition.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. Id of a physical partition.
+        :paramtype id: str
+        """
+        super(PhysicalPartitionId, self).__init__(**kwargs)
+        self.id = id
+
+
+class PhysicalPartitionStorageInfo(msrest.serialization.Model):
+    """The storage of a physical partition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique identifier of the partition.
+    :vartype id: str
+    :ivar storage_in_kb: The storage in KB for the physical partition.
+    :vartype storage_in_kb: float
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'storage_in_kb': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'storage_in_kb': {'key': 'storageInKB', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PhysicalPartitionStorageInfo, self).__init__(**kwargs)
+        self.id = None
+        self.storage_in_kb = None
+
+
+class PhysicalPartitionStorageInfoCollection(msrest.serialization.Model):
+    """List of physical partitions and their properties returned by a merge operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar physical_partition_storage_info_collection: List of physical partitions and their
+     properties.
+    :vartype physical_partition_storage_info_collection:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfo]
+    """
+
+    _validation = {
+        'physical_partition_storage_info_collection': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'physical_partition_storage_info_collection': {'key': 'physicalPartitionStorageInfoCollection', 'type': '[PhysicalPartitionStorageInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PhysicalPartitionStorageInfoCollection, self).__init__(**kwargs)
+        self.physical_partition_storage_info_collection = None
+
+
+class PhysicalPartitionThroughputInfoResource(msrest.serialization.Model):
+    """PhysicalPartitionThroughputInfo object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Id of a physical partition.
+    :vartype id: str
+    :ivar throughput: Throughput of a physical partition.
+    :vartype throughput: float
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'throughput': {'key': 'throughput', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        throughput: Optional[float] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. Id of a physical partition.
+        :paramtype id: str
+        :keyword throughput: Throughput of a physical partition.
+        :paramtype throughput: float
+        """
+        super(PhysicalPartitionThroughputInfoResource, self).__init__(**kwargs)
+        self.id = id
+        self.throughput = throughput
+
+
 class Resource(msrest.serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -9637,6 +9946,136 @@ class PrivilegeResource(msrest.serialization.Model):
         self.collection = collection
 
 
+class RedistributeThroughputParameters(ARMResourceProperties):
+    """Cosmos DB redistribute throughput parameters object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags are a list of key-value pairs that describe the resource. These
+     tags can be used in viewing and grouping this resource (across resource groups). A maximum of
+     15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters
+     and value no greater than 256 characters. For example, the default experience for a template
+     type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values also
+     include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar resource: Required. The standard JSON format of a resource throughput.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.RedistributeThroughputPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RedistributeThroughputPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource: "RedistributeThroughputPropertiesResource",
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The location of the resource group to which the resource belongs.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+         These tags can be used in viewing and grouping this resource (across resource groups). A
+         maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+         characters and value no greater than 256 characters. For example, the default experience for a
+         template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+         also include "Table", "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+        :keyword resource: Required. The standard JSON format of a resource throughput.
+        :paramtype resource: ~azure.mgmt.cosmosdb.models.RedistributeThroughputPropertiesResource
+        """
+        super(RedistributeThroughputParameters, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RedistributeThroughputPropertiesResource(msrest.serialization.Model):
+    """Resource to redistribute throughput for Azure Cosmos DB resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar throughput_policy: Required. ThroughputPolicy to apply for throughput redistribution.
+     Possible values include: "none", "equal", "custom".
+    :vartype throughput_policy: str or ~azure.mgmt.cosmosdb.models.ThroughputPolicyType
+    :ivar target_physical_partition_throughput_info: Required. Array of
+     PhysicalPartitionThroughputInfoResource objects.
+    :vartype target_physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    :ivar source_physical_partition_throughput_info: Required. Array of
+     PhysicalPartitionThroughputInfoResource objects.
+    :vartype source_physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    """
+
+    _validation = {
+        'throughput_policy': {'required': True},
+        'target_physical_partition_throughput_info': {'required': True},
+        'source_physical_partition_throughput_info': {'required': True},
+    }
+
+    _attribute_map = {
+        'throughput_policy': {'key': 'throughputPolicy', 'type': 'str'},
+        'target_physical_partition_throughput_info': {'key': 'targetPhysicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+        'source_physical_partition_throughput_info': {'key': 'sourcePhysicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        throughput_policy: Union[str, "ThroughputPolicyType"],
+        target_physical_partition_throughput_info: List["PhysicalPartitionThroughputInfoResource"],
+        source_physical_partition_throughput_info: List["PhysicalPartitionThroughputInfoResource"],
+        **kwargs
+    ):
+        """
+        :keyword throughput_policy: Required. ThroughputPolicy to apply for throughput redistribution.
+         Possible values include: "none", "equal", "custom".
+        :paramtype throughput_policy: str or ~azure.mgmt.cosmosdb.models.ThroughputPolicyType
+        :keyword target_physical_partition_throughput_info: Required. Array of
+         PhysicalPartitionThroughputInfoResource objects.
+        :paramtype target_physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        :keyword source_physical_partition_throughput_info: Required. Array of
+         PhysicalPartitionThroughputInfoResource objects.
+        :paramtype source_physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        """
+        super(RedistributeThroughputPropertiesResource, self).__init__(**kwargs)
+        self.throughput_policy = throughput_policy
+        self.target_physical_partition_throughput_info = target_physical_partition_throughput_info
+        self.source_physical_partition_throughput_info = source_physical_partition_throughput_info
+
+
 class RegionForOnlineOffline(msrest.serialization.Model):
     """Cosmos DB region to online or offline.
 
@@ -9686,6 +10125,9 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
     :vartype account_name: str
     :ivar creation_time: The creation time of the restorable database account (ISO-8601 format).
     :vartype creation_time: ~datetime.datetime
+    :ivar oldest_restorable_time: The least recent time at which the database account can be
+     restored to (ISO-8601 format).
+    :vartype oldest_restorable_time: ~datetime.datetime
     :ivar deletion_time: The time at which the restorable database account has been deleted
      (ISO-8601 format).
     :vartype deletion_time: ~datetime.datetime
@@ -9712,6 +10154,7 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'account_name': {'key': 'properties.accountName', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'oldest_restorable_time': {'key': 'properties.oldestRestorableTime', 'type': 'iso-8601'},
         'deletion_time': {'key': 'properties.deletionTime', 'type': 'iso-8601'},
         'api_type': {'key': 'properties.apiType', 'type': 'str'},
         'restorable_locations': {'key': 'properties.restorableLocations', 'type': '[RestorableLocationResource]'},
@@ -9723,6 +10166,7 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         location: Optional[str] = None,
         account_name: Optional[str] = None,
         creation_time: Optional[datetime.datetime] = None,
+        oldest_restorable_time: Optional[datetime.datetime] = None,
         deletion_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -9733,6 +10177,9 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         :paramtype account_name: str
         :keyword creation_time: The creation time of the restorable database account (ISO-8601 format).
         :paramtype creation_time: ~datetime.datetime
+        :keyword oldest_restorable_time: The least recent time at which the database account can be
+         restored to (ISO-8601 format).
+        :paramtype oldest_restorable_time: ~datetime.datetime
         :keyword deletion_time: The time at which the restorable database account has been deleted
          (ISO-8601 format).
         :paramtype deletion_time: ~datetime.datetime
@@ -9744,6 +10191,7 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         self.location = location
         self.account_name = account_name
         self.creation_time = creation_time
+        self.oldest_restorable_time = oldest_restorable_time
         self.deletion_time = deletion_time
         self.api_type = None
         self.restorable_locations = None
@@ -10479,6 +10927,8 @@ class SqlContainerResource(msrest.serialization.Model):
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the container.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar client_encryption_policy: The client encryption policy for the container.
+    :vartype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
     :ivar analytical_storage_ttl: Analytical TTL.
     :vartype analytical_storage_ttl: long
     """
@@ -10494,6 +10944,7 @@ class SqlContainerResource(msrest.serialization.Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'client_encryption_policy': {'key': 'clientEncryptionPolicy', 'type': 'ClientEncryptionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
     }
 
@@ -10506,6 +10957,7 @@ class SqlContainerResource(msrest.serialization.Model):
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        client_encryption_policy: Optional["ClientEncryptionPolicy"] = None,
         analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
@@ -10525,6 +10977,8 @@ class SqlContainerResource(msrest.serialization.Model):
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the container.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword client_encryption_policy: The client encryption policy for the container.
+        :paramtype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
         :keyword analytical_storage_ttl: Analytical TTL.
         :paramtype analytical_storage_ttl: long
         """
@@ -10535,6 +10989,7 @@ class SqlContainerResource(msrest.serialization.Model):
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.client_encryption_policy = client_encryption_policy
         self.analytical_storage_ttl = analytical_storage_ttl
 
 
@@ -10560,6 +11015,8 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the container.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar client_encryption_policy: The client encryption policy for the container.
+    :vartype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
     :ivar analytical_storage_ttl: Analytical TTL.
     :vartype analytical_storage_ttl: long
     :ivar rid: A system generated property. A unique identifier.
@@ -10589,6 +11046,7 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'client_encryption_policy': {'key': 'clientEncryptionPolicy', 'type': 'ClientEncryptionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         'rid': {'key': '_rid', 'type': 'str'},
         'ts': {'key': '_ts', 'type': 'float'},
@@ -10605,6 +11063,7 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        client_encryption_policy: Optional["ClientEncryptionPolicy"] = None,
         analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
@@ -10624,22 +11083,24 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the container.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword client_encryption_policy: The client encryption policy for the container.
+        :paramtype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
         :keyword analytical_storage_ttl: Analytical TTL.
         :paramtype analytical_storage_ttl: long
         """
-        super(RestorableSqlContainerPropertiesResourceContainer, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
+        super(RestorableSqlContainerPropertiesResourceContainer, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, client_encryption_policy=client_encryption_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
         self.id = id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.client_encryption_policy = client_encryption_policy
         self.analytical_storage_ttl = analytical_storage_ttl
         self.self_property = None
         self.rid = None
         self.ts = None
         self.etag = None
-        self.self_property = None
 
 
 class RestorableSqlContainersListResult(msrest.serialization.Model):
@@ -10867,9 +11328,6 @@ class RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource, Exten
         self.users = None
         self.self_property = None
         self.id = id
-        self.colls = None
-        self.users = None
-        self.self_property = None
 
 
 class RestorableSqlDatabasesListResult(msrest.serialization.Model):
@@ -11140,6 +11598,110 @@ class RestoreParameters(msrest.serialization.Model):
         self.databases_to_restore = databases_to_restore
         self.gremlin_databases_to_restore = gremlin_databases_to_restore
         self.tables_to_restore = tables_to_restore
+
+
+class RetrieveThroughputParameters(ARMResourceProperties):
+    """Cosmos DB retrieve throughput parameters object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags are a list of key-value pairs that describe the resource. These
+     tags can be used in viewing and grouping this resource (across resource groups). A maximum of
+     15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters
+     and value no greater than 256 characters. For example, the default experience for a template
+     type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values also
+     include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar resource: Required. The standard JSON format of a resource throughput.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.RetrieveThroughputPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RetrieveThroughputPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource: "RetrieveThroughputPropertiesResource",
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The location of the resource group to which the resource belongs.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+         These tags can be used in viewing and grouping this resource (across resource groups). A
+         maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+         characters and value no greater than 256 characters. For example, the default experience for a
+         template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+         also include "Table", "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+        :keyword resource: Required. The standard JSON format of a resource throughput.
+        :paramtype resource: ~azure.mgmt.cosmosdb.models.RetrieveThroughputPropertiesResource
+        """
+        super(RetrieveThroughputParameters, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RetrieveThroughputPropertiesResource(msrest.serialization.Model):
+    """Resource to retrieve throughput information for Cosmos DB resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar physical_partition_ids: Required. Array of PhysicalPartitionId objects.
+    :vartype physical_partition_ids: list[~azure.mgmt.cosmosdb.models.PhysicalPartitionId]
+    """
+
+    _validation = {
+        'physical_partition_ids': {'required': True},
+    }
+
+    _attribute_map = {
+        'physical_partition_ids': {'key': 'physicalPartitionIds', 'type': '[PhysicalPartitionId]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        physical_partition_ids: List["PhysicalPartitionId"],
+        **kwargs
+    ):
+        """
+        :keyword physical_partition_ids: Required. Array of PhysicalPartitionId objects.
+        :paramtype physical_partition_ids: list[~azure.mgmt.cosmosdb.models.PhysicalPartitionId]
+        """
+        super(RetrieveThroughputPropertiesResource, self).__init__(**kwargs)
+        self.physical_partition_ids = physical_partition_ids
 
 
 class Role(msrest.serialization.Model):
@@ -11485,6 +12047,8 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the container.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar client_encryption_policy: The client encryption policy for the container.
+    :vartype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
     :ivar analytical_storage_ttl: Analytical TTL.
     :vartype analytical_storage_ttl: long
     :ivar rid: A system generated property. A unique identifier.
@@ -11510,6 +12074,7 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'client_encryption_policy': {'key': 'clientEncryptionPolicy', 'type': 'ClientEncryptionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         'rid': {'key': '_rid', 'type': 'str'},
         'ts': {'key': '_ts', 'type': 'float'},
@@ -11525,6 +12090,7 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        client_encryption_policy: Optional["ClientEncryptionPolicy"] = None,
         analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
@@ -11544,16 +12110,19 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the container.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword client_encryption_policy: The client encryption policy for the container.
+        :paramtype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
         :keyword analytical_storage_ttl: Analytical TTL.
         :paramtype analytical_storage_ttl: long
         """
-        super(SqlContainerGetPropertiesResource, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
+        super(SqlContainerGetPropertiesResource, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, client_encryption_policy=client_encryption_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
         self.id = id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.client_encryption_policy = client_encryption_policy
         self.analytical_storage_ttl = analytical_storage_ttl
         self.rid = None
         self.ts = None
@@ -11843,8 +12412,6 @@ class SqlDatabaseGetPropertiesResource(SqlDatabaseResource, ExtendedResourceProp
         self.colls = colls
         self.users = users
         self.id = id
-        self.colls = colls
-        self.users = users
 
 
 class SqlDatabaseGetResults(ARMResourceProperties):

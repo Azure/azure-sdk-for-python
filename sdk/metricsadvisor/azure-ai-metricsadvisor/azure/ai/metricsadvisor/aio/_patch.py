@@ -46,7 +46,7 @@ from ._client import MetricsAdvisorClient as _ClientAsync
 from .. import models
 
 
-class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods
+class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods,client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

@@ -9,6 +9,7 @@
 from typing import Any, Iterable, List
 from enum import Enum
 from collections import namedtuple
+from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2022_01_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
@@ -137,7 +138,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
-class DocumentBuildMode(str, Enum):
+class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
     For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -147,7 +148,7 @@ class DocumentBuildMode(str, Enum):
     TEMPLATE = "template"
 
 
-class FieldValueType(str, Enum):
+class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
 
     .. versionadded:: v2.1
@@ -166,7 +167,7 @@ class FieldValueType(str, Enum):
     COUNTRY_REGION = "countryRegion"
 
 
-class LengthUnit(str, Enum):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and bounding box properties.
     For images, the unit is "pixel". For PDF, the unit is "inch".
     """
@@ -175,7 +176,7 @@ class LengthUnit(str, Enum):
     INCH = "inch"
 
 
-class TrainingStatus(str, Enum):
+class TrainingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the training operation."""
 
     SUCCEEDED = "succeeded"
@@ -183,7 +184,7 @@ class TrainingStatus(str, Enum):
     FAILED = "failed"
 
 
-class CustomFormModelStatus(str, Enum):
+class CustomFormModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status indicating the model's readiness for use."""
 
     CREATING = "creating"
@@ -191,7 +192,7 @@ class CustomFormModelStatus(str, Enum):
     INVALID = "invalid"
 
 
-class FormContentType(str, Enum):
+class FormContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload.
 
     .. versionadded:: v2.1
@@ -2598,9 +2599,18 @@ class DocumentField(object):
         :return: dict
         :rtype: dict
         """
+        value = self.value
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper to_dict() method.
+        if self.value_type == "currency":
+            value = self.value.to_dict()
+        elif isinstance(self.value, dict):
+            value = {k: v.to_dict() for k, v in self.value.items()}
+        elif isinstance(self.value, list):
+            value = [v.to_dict() for v in self.value]
         return {
             "value_type": self.value_type,
-            "value": self.value,
+            "value": value,
             "content": self.content,
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
             if self.bounding_regions
@@ -2620,9 +2630,20 @@ class DocumentField(object):
         :return: DocumentField
         :rtype: DocumentField
         """
+
+        value = data.get("value", None)
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper from_dict() method.
+        if data.get("value_type", None) == "currency":
+            value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
+        elif isinstance(data.get("value"), dict):
+            value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
+        elif isinstance(data.get("value"), list):
+            value = [DocumentField.from_dict(v) for v in data.get("value")]  # type: ignore
+
         return cls(
             value_type=data.get("value_type", None),
-            value=data.get("value", None),
+            value=value,
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -2880,7 +2901,7 @@ class DocumentPage(object):
     :vartype width: float
     :ivar height: The height of the image/PDF in pixels/inches, respectively.
     :vartype height: float
-    :ivar unit: The unit used by the width, height, and boundingBox properties. For
+    :ivar unit: The unit used by the width, height, and bounding box properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
     :vartype unit: str

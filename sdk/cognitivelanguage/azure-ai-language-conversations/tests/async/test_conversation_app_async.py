@@ -14,76 +14,102 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
+    CustomConversationalTaskResult,
+    ConversationPrediction,
+    CustomConversationalTask,
     ConversationAnalysisOptions,
-    AnalyzeConversationResult,
-    ConversationPrediction
+    CustomConversationTaskParameters,
+    TextConversationItem
 )
 
 
 class ConversationAppAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_conversation_app(self, conv_account, conv_key, conv_project):
+    async def test_conversation_app(self, endpoint, key, conv_project_name, conv_deployment_name):
 
-        # prepare data
-        query = "One california maki please."
-        input = ConversationAnalysisOptions(
-            query=query,
-        )
-
-        # analyze quey
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
+        # analyze query
+        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
-            result = await client.analyze_conversations(
-                input,
-                project_name=conv_project,
-                deployment_name='production'
+            query = "Send an email to Carol about the tomorrow's demo"
+            result = await client.analyze_conversation(
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            id=1,
+                            participant_id=1,
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=conv_project_name,
+                        deployment_name=conv_deployment_name
+                    )
+                )
             )
         
-        # assert
-        assert isinstance(result, AnalyzeConversationResult)
-        assert result.query == query
-        assert isinstance(result.prediction, ConversationPrediction)
-        assert result.prediction.project_kind == 'conversation'
-        assert result.prediction.top_intent == 'Order'
-        assert len(result.prediction.entities) > 0
-        assert len(result.prediction.intents) > 0
-        assert result.prediction.intents[0].category == 'Order'
-        assert result.prediction.intents[0].confidence_score > 0
-        assert result.prediction.entities[0].category == 'OrderItem'
-        assert result.prediction.entities[0].text == 'california maki'
-        assert result.prediction.entities[0].confidence_score > 0
+            # assert - main object
+            assert not result is None
+            assert isinstance(result, CustomConversationalTaskResult)
+            # assert - prediction type
+            assert result.results.query == query
+            assert isinstance(result.results.prediction, ConversationPrediction)
+            assert result.results.prediction.project_kind == 'conversation'
+            # assert - top intent
+            assert result.results.prediction.top_intent == 'Setup'
+            assert len(result.results.prediction.intents) > 0
+            assert result.results.prediction.intents[0].category == 'Setup'
+            assert result.results.prediction.intents[0].confidence > 0
+            # assert - entities
+            assert len(result.results.prediction.entities) > 0
+            assert result.results.prediction.entities[0].category == 'Contact'
+            assert result.results.prediction.entities[0].text == 'Carol'
+            assert result.results.prediction.entities[0].confidence > 0
+ 
 
     @GlobalConversationAccountPreparer()
-    async def test_conversation_app_with_dictparams(self, conv_account, conv_key, conv_project):
-        
-        # prepare data
-        query = "One california maki please."
-        params = {
-            "query": query,
-        }
+    async def test_conversation_app_with_dict_parms(self, endpoint, key, conv_project_name, conv_deployment_name):
 
-        # analyze quey
-        client = ConversationAnalysisClient(conv_account, AzureKeyCredential(conv_key))
+        # analyze query
+        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
-            result = await client.analyze_conversations(
-                params,
-                project_name=conv_project,
-                deployment_name='production'
+            query = "Send an email to Carol about the tomorrow's demo"
+            result = await client.analyze_conversation(
+                task={
+                    "kind": "CustomConversation",
+                    "analysisInput": {
+                        "conversationItem": {
+                            "participantId": "1",
+                            "id": "1",
+                            "modality": "text",
+                            "language": "en",
+                            "text": query
+                        },
+                        "isLoggingEnabled": False
+                    },
+                    "parameters": {
+                        "projectName": conv_project_name,
+                        "deploymentName": conv_deployment_name,
+                        "verbose": True
+                    }
+                }
             )
         
-        # assert
-        assert isinstance(result, AnalyzeConversationResult)
-        assert result.query == query
-        assert isinstance(result.prediction, ConversationPrediction)
-        assert result.prediction.project_kind == 'conversation'
-        assert result.prediction.top_intent == 'Order'
-        assert len(result.prediction.entities) > 0
-        assert len(result.prediction.intents) > 0
-        assert result.prediction.intents[0].category == 'Order'
-        assert result.prediction.intents[0].confidence_score > 0
-        assert result.prediction.entities[0].category == 'OrderItem'
-        assert result.prediction.entities[0].text == 'california maki'
-        assert result.prediction.entities[0].confidence_score > 0
- 
+            # assert - main object
+            assert not result is None
+            assert isinstance(result, CustomConversationalTaskResult)
+            # assert - prediction type
+            assert result.results.query == query
+            assert isinstance(result.results.prediction, ConversationPrediction)
+            assert result.results.prediction.project_kind == 'conversation'
+            # assert - top intent
+            assert result.results.prediction.top_intent == 'Setup'
+            assert len(result.results.prediction.intents) > 0
+            assert result.results.prediction.intents[0].category == 'Setup'
+            assert result.results.prediction.intents[0].confidence > 0
+            # assert - entities
+            assert len(result.results.prediction.entities) > 0
+            assert result.results.prediction.entities[0].category == 'Contact'
+            assert result.results.prediction.entities[0].text == 'Carol'
+            assert result.results.prediction.entities[0].confidence > 0
  

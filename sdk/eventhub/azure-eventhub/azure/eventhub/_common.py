@@ -18,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
     cast,
 )
+from typing_extensions import TypedDict
 
 import six
 
@@ -60,16 +61,19 @@ from .amqp import (
 if TYPE_CHECKING:
     import datetime
 
-PrimitiveTypes = Optional[Union[
-    int,
-    float,
-    bytes,
-    bool,
-    str,
-    Dict,
-    List,
-    uuid.UUID,
-]]
+MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
+PrimitiveTypes = Optional[
+    Union[
+        int,
+        float,
+        bytes,
+        bool,
+        str,
+        Dict,
+        List,
+        uuid.UUID,
+    ]
+]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,7 +127,9 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
+        self.message = (
+            self._raw_amqp_message._message
+        )  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -182,16 +188,22 @@ class EventData(object):
         event_str += " }"
         return event_str
 
-    def __message_content__(self) -> Dict:
+    def __message_content__(self) -> MessageContent:
         if self.body_type != AmqpMessageBodyType.DATA:
-            raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
+            raise TypeError("`body_type` must be `AmqpMessageBodyType.DATA`.")
         content = bytearray()
-        for c in self.body: # type: ignore
-            content += c   # type: ignore
-        return {"content": bytes(content), "content_type": self.content_type}
+        for c in self.body:  # type: ignore
+            content += c  # type: ignore
+        content_type = cast(str, self.content_type)
+        return {"content": bytes(content), "content_type": content_type}
 
     @classmethod
-    def from_message_content(cls, content: bytes, content_type: str) -> "EventData":
+    def from_message_content(  # pylint: disable=unused-argument
+        cls,
+        content: bytes,
+        content_type: str,
+        **kwargs: Any
+    ) -> "EventData":
         """
         Creates an EventData object given content type and a content value to be set as body.
 
@@ -218,7 +230,11 @@ class EventData(object):
         event_data = cls(body="")
         event_data.message = message
         # pylint: disable=protected-access
-        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
+        event_data._raw_amqp_message = (
+            raw_amqp_message
+            if raw_amqp_message
+            else AmqpAnnotatedMessage(message=message)
+        )
         return event_data
 
     def _encode_message(self):
@@ -240,7 +256,9 @@ class EventData(object):
 
     def _to_outgoing_message(self):
         # type: () -> EventData
-        self.message = (self._raw_amqp_message._to_outgoing_amqp_message())  # pylint:disable=protected-access
+        self.message = (
+            self._raw_amqp_message._to_outgoing_amqp_message()  # pylint:disable=protected-access
+        )
         return self
 
     @property
@@ -545,7 +563,9 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
-        outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
+        outgoing_batch_data = [
+            transform_outbound_single_message(m, EventData) for m in batch_data
+        ]
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data
@@ -619,6 +639,8 @@ class EventDataBatch(object):
                 )
             )
 
-        self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
+        self.message._body_gen.append(  # pylint: disable=protected-access
+            outgoing_event_data
+        )
         self._size = size_after_add
         self._count += 1

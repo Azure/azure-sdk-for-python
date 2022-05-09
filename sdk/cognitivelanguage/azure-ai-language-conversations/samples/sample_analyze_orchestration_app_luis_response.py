@@ -17,9 +17,10 @@ USAGE:
     python sample_analyze_orchestration_app_luis_response.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
-    2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
+    1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
+    2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME     - project name for your CLU orchestration project.
+    4) AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
 def sample_analyze_orchestration_app_luis_response():
@@ -29,42 +30,56 @@ def sample_analyze_orchestration_app_luis_response():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
-
-    # get secrets
-    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
-
-    # prepare data
-    query = "book me a flight ticket to Bali",
-    input = ConversationAnalysisOptions(
-        query=query
+    from azure.ai.language.conversations.models import (
+        CustomConversationalTask,
+        ConversationAnalysisOptions,
+        CustomConversationTaskParameters,
+        TextConversationItem
     )
 
+    # get secrets
+    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
+
     # analyze query
-    client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     with client:
-        result = client.analyze_conversations(
-            input,
-            project_name=orchestration_project,
-            deployment_name='production',
-        )
+        query = "Reserve a table for 2 at the Italian restaurant"
+        result = client.analyze_conversation(
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=project_name,
+                        deployment_name=deployment_name
+                    )
+                )
+            )
 
     # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+    print("query: {}".format(result.results.query))
+    print("project kind: {}\n".format(result.results.prediction.project_kind))
 
-    print("view top intent:")
-    top_intent = result.prediction.top_intent
-    print("\ttop intent: {}".format(top_intent))
+    # top intent
+    top_intent = result.results.prediction.top_intent
+    print("top intent: {}".format(top_intent))
+    top_intent_object = result.results.prediction.intents[top_intent]
+    print("confidence score: {}".format(top_intent_object.confidence))
+    print("project kind: {}".format(top_intent_object.target_kind))
 
-    top_intent_object = result.prediction.intents[top_intent]
-    print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
+    if top_intent_object.target_kind == "luis":
+        print("\nluis response:")
+        luis_response = top_intent_object.result["prediction"]
+        print("top intent: {}".format(luis_response["topIntent"]))
+        print("\nentities:")
+        for entity in luis_response["entities"]:
+            print("\n{}".format(entity))
 
-    print("view luis response:")
-    luis_response = result.prediction.intents[top_intent].result
-    print("\tluis response: {}\n".format(luis_response))
     # [END analyze_orchestration_app_luis_response]
 
 if __name__ == '__main__':

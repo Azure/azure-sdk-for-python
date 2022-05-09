@@ -10,7 +10,6 @@ from uuid import uuid4
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
-    AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -26,6 +25,7 @@ from azure.core.pipeline.transport import (
     HttpRequest,
 )
 
+from ._authentication_async import AsyncBearerTokenChallengePolicy
 from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AsyncTablesBaseClient(AccountHostsMixin):
+class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -78,7 +78,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     def _configure_credential(self, credential):
         # type: (Any) -> None
         if hasattr(credential, "get_token"):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(  # type: ignore
+            self._credential_policy = AsyncBearerTokenChallengePolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):

@@ -1,101 +1,272 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "2105",
+        "Content-Length": "1998",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9a2d1371-5d0f-11ec-9c26-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00222\u0022}], \u0022keyPhraseExtractionTasks\u0022: [{\u0022parameters\u0022: {}, \u0022taskName\u0022: \u00221\u0022}], \u0022entityLinkingTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00223\u0022}], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00224\u0022}], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00225\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00225\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00226\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00227\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00228\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00229\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002210\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002211\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002212\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002213\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002214\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002215\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002216\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002217\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002218\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002219\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002220\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002221\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002222\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002223\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u002224\u0022, \u0022text\u0022: \u0022hello world\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "4",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "5",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "6",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "7",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "8",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "9",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "10",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "11",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "12",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "13",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "14",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "15",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "16",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "17",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "18",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "20",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "21",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "22",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "23",
+              "text": "hello world",
+              "language": "en"
+            },
+            {
+              "id": "24",
+              "text": "hello world",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "KeyPhraseExtraction",
+            "parameters": {}
+          },
+          {
+            "taskName": "2",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "3",
+            "kind": "EntityLinking",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "4",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "5",
+            "kind": "ExtractiveSummarization",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "282ce5af-8484-4782-b4ed-edede799090a",
-        "Date": "Tue, 14 Dec 2021 18:56:53 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737",
+        "apim-request-id": "2e205f2b-8504-4b50-af22-bd986dcdc57e",
+        "Content-Length": "0",
+        "Date": "Tue, 03 May 2022 00:08:16 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "834"
+        "x-envoy-upstream-service-time": "1305"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9a2d1371-5d0f-11ec-9c26-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "481c8f31-c2f7-491e-9ecb-fdf37ea35000",
+        "apim-request-id": "825e9450-77ec-49f7-9df4-28357cd33afa",
+        "Content-Length": "279",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:56:58 GMT",
+        "Date": "Tue, 03 May 2022 00:08:21 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "9"
       },
       "ResponseBody": {
-        "jobId": "a9827679-5c37-47cc-8368-7b3941f51737",
-        "lastUpdateDateTime": "2021-12-14T18:56:59Z",
-        "createdDateTime": "2021-12-14T18:56:53Z",
-        "expirationDateTime": "2021-12-15T18:56:53Z",
+        "jobId": "7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6",
+        "lastUpdateDateTime": "2022-05-03T00:08:21Z",
+        "createdDateTime": "2022-05-03T00:08:15Z",
+        "expirationDateTime": "2022-05-04T00:08:15Z",
         "status": "running",
         "errors": [],
         "tasks": {
           "completed": 0,
           "failed": 0,
           "inProgress": 6,
-          "total": 6
+          "total": 6,
+          "items": []
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9a2d1371-5d0f-11ec-9c26-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "99d19c57-749e-4c87-ad33-67b944eebd53",
+        "apim-request-id": "1c0778dc-d079-4121-b4dc-5d5daa104edd",
+        "Content-Length": "5269",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:57:04 GMT",
+        "Date": "Tue, 03 May 2022 00:08:27 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "706"
+        "x-envoy-upstream-service-time": "689"
       },
       "ResponseBody": {
-        "jobId": "a9827679-5c37-47cc-8368-7b3941f51737",
-        "lastUpdateDateTime": "2021-12-14T18:57:04Z",
-        "createdDateTime": "2021-12-14T18:56:53Z",
-        "expirationDateTime": "2021-12-15T18:56:53Z",
+        "jobId": "7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6",
+        "lastUpdateDateTime": "2022-05-03T00:08:24Z",
+        "createdDateTime": "2022-05-03T00:08:15Z",
+        "expirationDateTime": "2022-05-04T00:08:15Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 3,
+          "completed": 2,
           "failed": 0,
-          "inProgress": 3,
+          "inProgress": 4,
           "total": 6,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:56:59.8351621Z",
-              "taskName": "0",
-              "state": "succeeded",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:08:24.7977242Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -106,195 +277,234 @@
                 "documents": [
                   {
                     "id": "0",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityLinkingTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:00.6430742Z",
+              "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:23.062356Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -486,257 +696,37 @@
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
-              }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.3452344Z",
-              "taskName": "2",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 20,
-                  "validDocumentsCount": 20,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 20
-                },
-                "documents": [
-                  {
-                    "redactedText": "hello world",
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "2",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "3",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "4",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "5",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "6",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "7",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "8",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "9",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "10",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "11",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "12",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "13",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "14",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "15",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "16",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "17",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "18",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-01-15"
               }
             }
           ]
         },
-        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?$skip=20\u0026$top=5\u0026showStats=True"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-04-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9a2d1371-5d0f-11ec-9c26-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ba6aa3d8-fcf7-4525-83b4-ae276819af70",
+        "apim-request-id": "521e7a3a-603d-4155-b230-f30bf593e845",
+        "Content-Length": "17133",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:57:11 GMT",
+        "Date": "Tue, 03 May 2022 00:08:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1023"
+        "x-envoy-upstream-service-time": "1730"
       },
       "ResponseBody": {
-        "jobId": "a9827679-5c37-47cc-8368-7b3941f51737",
-        "lastUpdateDateTime": "2021-12-14T18:57:06Z",
-        "createdDateTime": "2021-12-14T18:56:53Z",
-        "expirationDateTime": "2021-12-15T18:56:53Z",
+        "jobId": "7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6",
+        "lastUpdateDateTime": "2022-05-03T00:08:31Z",
+        "createdDateTime": "2022-05-03T00:08:15Z",
+        "expirationDateTime": "2022-05-04T00:08:15Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -744,11 +734,12 @@
           "failed": 0,
           "inProgress": 1,
           "total": 6,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:56:59.8351621Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:30.275437Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -941,13 +932,12 @@
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityLinkingTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:00.6430742Z",
-              "taskName": "3",
-              "state": "succeeded",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:08:24.7977242Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -958,195 +948,234 @@
                 "documents": [
                   {
                     "id": "0",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.3452344Z",
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:31.1766106Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -1359,13 +1388,12 @@
                 "errors": [],
                 "modelVersion": "2021-01-15"
               }
-            }
-          ],
-          "keyPhraseExtractionTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:06.9859627Z",
-              "taskName": "1",
-              "state": "succeeded",
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:08:23.062356Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -1376,235 +1404,194 @@
                 "documents": [
                   {
                     "id": "0",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "sentimentAnalysisTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.874997Z",
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:29.0335488Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -2160,34 +2147,33 @@
             }
           ]
         },
-        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?$skip=20\u0026$top=5\u0026showStats=True"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-04-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9a2d1371-5d0f-11ec-9c26-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3cd03d5b-0c87-422c-861e-89990947a4d4",
+        "apim-request-id": "0fa0d274-2b03-4b98-ae7e-21bf9459d08c",
+        "Content-Length": "17133",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:57:17 GMT",
+        "Date": "Tue, 03 May 2022 00:08:40 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1436"
+        "x-envoy-upstream-service-time": "1118"
       },
       "ResponseBody": {
-        "jobId": "a9827679-5c37-47cc-8368-7b3941f51737",
-        "lastUpdateDateTime": "2021-12-14T18:57:06Z",
-        "createdDateTime": "2021-12-14T18:56:53Z",
-        "expirationDateTime": "2021-12-15T18:56:53Z",
+        "jobId": "7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6",
+        "lastUpdateDateTime": "2022-05-03T00:08:38Z",
+        "createdDateTime": "2022-05-03T00:08:15Z",
+        "expirationDateTime": "2022-05-04T00:08:15Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -2195,11 +2181,12 @@
           "failed": 0,
           "inProgress": 1,
           "total": 6,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:56:59.8351621Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:30.275437Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -2392,13 +2379,12 @@
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityLinkingTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:00.6430742Z",
-              "taskName": "3",
-              "state": "succeeded",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:08:24.7977242Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -2409,195 +2395,234 @@
                 "documents": [
                   {
                     "id": "0",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.3452344Z",
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:31.1766106Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -2810,13 +2835,12 @@
                 "errors": [],
                 "modelVersion": "2021-01-15"
               }
-            }
-          ],
-          "keyPhraseExtractionTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:06.9859627Z",
-              "taskName": "1",
-              "state": "succeeded",
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:08:23.062356Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -2827,235 +2851,194 @@
                 "documents": [
                   {
                     "id": "0",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "sentimentAnalysisTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.874997Z",
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:29.0335488Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -3611,34 +3594,33 @@
             }
           ]
         },
-        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?$skip=20\u0026$top=5\u0026showStats=True"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-04-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "9a2d1371-5d0f-11ec-9c26-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "80d0ab38-9a41-4d64-b018-34ff19221cd1",
+        "apim-request-id": "34b5e753-041f-45f1-ab8f-d1a8ea473ad4",
+        "Content-Length": "19415",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:57:24 GMT",
+        "Date": "Tue, 03 May 2022 00:08:47 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1243"
+        "x-envoy-upstream-service-time": "1532"
       },
       "ResponseBody": {
-        "jobId": "a9827679-5c37-47cc-8368-7b3941f51737",
-        "lastUpdateDateTime": "2021-12-14T18:57:19Z",
-        "createdDateTime": "2021-12-14T18:56:53Z",
-        "expirationDateTime": "2021-12-15T18:56:53Z",
+        "jobId": "7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6",
+        "lastUpdateDateTime": "2022-05-03T00:08:40Z",
+        "createdDateTime": "2022-05-03T00:08:15Z",
+        "expirationDateTime": "2022-05-04T00:08:15Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -3646,11 +3628,12 @@
           "failed": 0,
           "inProgress": 0,
           "total": 6,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:56:59.8351621Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:30.275437Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -3843,13 +3826,12 @@
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityLinkingTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:00.6430742Z",
-              "taskName": "3",
-              "state": "succeeded",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:08:24.7977242Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -3860,195 +3842,234 @@
                 "documents": [
                   {
                     "id": "0",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.3452344Z",
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:31.1766106Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -4261,13 +4282,768 @@
                 "errors": [],
                 "modelVersion": "2021-01-15"
               }
-            }
-          ],
-          "extractiveSummarizationTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:19.8383097Z",
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:08:23.062356Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 20,
+                  "validDocumentsCount": 20,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 20
+                },
+                "documents": [
+                  {
+                    "id": "0",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "6",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "7",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "8",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "9",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "10",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "11",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "12",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "13",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "14",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "15",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "16",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "17",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "18",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-05-03T00:08:29.0335488Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 20,
+                  "validDocumentsCount": 20,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 20
+                },
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "6",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "7",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "8",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "9",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "10",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "11",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "12",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "13",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "14",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "15",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "16",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "17",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "18",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.02,
+                      "neutral": 0.97,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.97,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "ExtractiveSummarizationLROResults",
               "taskName": "5",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:40.6424429Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 20,
@@ -4461,834 +5237,35 @@
                 "modelVersion": "2021-08-01"
               }
             }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:57:06.9859627Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 20,
-                  "validDocumentsCount": 20,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 20
-                },
-                "documents": [
-                  {
-                    "id": "0",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "6",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "7",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "8",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "9",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "10",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "11",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "12",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "13",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "14",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "15",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "16",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "17",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "18",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ],
-          "sentimentAnalysisTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.874997Z",
-              "taskName": "4",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 20,
-                  "validDocumentsCount": 20,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 20
-                },
-                "documents": [
-                  {
-                    "id": "0",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "6",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "7",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "8",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "9",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "10",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "11",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "12",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "13",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "14",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "15",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "16",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "17",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "18",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 11,
-                        "text": "hello world"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2020-04-01"
-              }
-            }
           ]
         },
-        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?$skip=20\u0026$top=5\u0026showStats=True"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-04-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/a9827679-5c37-47cc-8368-7b3941f51737?showStats=false\u0026$top=5\u0026$skip=20",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6?api-version=2022-04-01-preview\u0026showStats=true\u0026top=5\u0026skip=20",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "acb1d3db-5d0f-11ec-a5cd-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a2290f40-905d-436b-b417-fe0c7f56c347",
+        "apim-request-id": "e1d48808-cdcd-422c-b262-277503845138",
+        "Content-Length": "6386",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:57:24 GMT",
+        "Date": "Tue, 03 May 2022 00:08:47 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "399"
+        "x-envoy-upstream-service-time": "626"
       },
       "ResponseBody": {
-        "jobId": "a9827679-5c37-47cc-8368-7b3941f51737",
-        "lastUpdateDateTime": "2021-12-14T18:57:19Z",
-        "createdDateTime": "2021-12-14T18:56:53Z",
-        "expirationDateTime": "2021-12-15T18:56:53Z",
+        "jobId": "7794aac2-2d3b-45cc-87fa-8c4e7f1e00c6",
+        "lastUpdateDateTime": "2022-05-03T00:08:40Z",
+        "createdDateTime": "2022-05-03T00:08:15Z",
+        "expirationDateTime": "2022-05-04T00:08:15Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -5296,35 +5273,62 @@
           "failed": 0,
           "inProgress": 0,
           "total": 6,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:56:59.8351621Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:30.275437Z",
+              "status": "succeeded",
               "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 5,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 5
+                },
                 "documents": [
                   {
                     "id": "20",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "21",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "22",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "23",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "24",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   }
@@ -5332,80 +5336,140 @@
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityLinkingTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:00.6430742Z",
-              "taskName": "3",
-              "state": "succeeded",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:08:24.7977242Z",
+              "status": "succeeded",
               "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 5,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 5
+                },
                 "documents": [
                   {
                     "id": "20",
-                    "entities": [],
+                    "keyPhrases": [
+                      "hello world"
+                    ],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "warnings": []
                   },
                   {
                     "id": "21",
-                    "entities": [],
+                    "keyPhrases": [
+                      "hello world"
+                    ],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "warnings": []
                   },
                   {
                     "id": "22",
-                    "entities": [],
+                    "keyPhrases": [
+                      "hello world"
+                    ],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "warnings": []
                   },
                   {
                     "id": "23",
-                    "entities": [],
+                    "keyPhrases": [
+                      "hello world"
+                    ],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "warnings": []
                   },
                   {
                     "id": "24",
-                    "entities": [],
+                    "keyPhrases": [
+                      "hello world"
+                    ],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.3452344Z",
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:31.1766106Z",
+              "status": "succeeded",
               "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 5,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 5
+                },
                 "documents": [
                   {
                     "redactedText": "hello world",
                     "id": "20",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "redactedText": "hello world",
                     "id": "21",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "redactedText": "hello world",
                     "id": "22",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "redactedText": "hello world",
                     "id": "23",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   },
                   {
                     "redactedText": "hello world",
                     "id": "24",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "entities": [],
                     "warnings": []
                   }
@@ -5413,104 +5477,90 @@
                 "errors": [],
                 "modelVersion": "2021-01-15"
               }
-            }
-          ],
-          "extractiveSummarizationTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:19.8383097Z",
-              "taskName": "5",
-              "state": "succeeded",
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:08:23.062356Z",
+              "status": "succeeded",
               "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 5,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 5
+                },
                 "documents": [
                   {
                     "id": "20",
-                    "sentences": [],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "21",
-                    "sentences": [],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "22",
-                    "sentences": [],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "23",
-                    "sentences": [],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "24",
-                    "sentences": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
-              }
-            }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:57:06.9859627Z",
-              "taskName": "1",
-              "state": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "20",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "21",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "22",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "23",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "24",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "sentimentAnalysisTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:57:04.874997Z",
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:08:29.0335488Z",
+              "status": "succeeded",
               "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 5,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 5
+                },
                 "documents": [
                   {
                     "id": "20",
                     "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "confidenceScores": {
                       "positive": 0.02,
                       "neutral": 0.97,
@@ -5534,6 +5584,10 @@
                   {
                     "id": "21",
                     "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "confidenceScores": {
                       "positive": 0.02,
                       "neutral": 0.97,
@@ -5557,6 +5611,10 @@
                   {
                     "id": "22",
                     "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "confidenceScores": {
                       "positive": 0.02,
                       "neutral": 0.97,
@@ -5580,6 +5638,10 @@
                   {
                     "id": "23",
                     "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "confidenceScores": {
                       "positive": 0.02,
                       "neutral": 0.97,
@@ -5603,6 +5665,10 @@
                   {
                     "id": "24",
                     "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
                     "confidenceScores": {
                       "positive": 0.02,
                       "neutral": 0.97,
@@ -5626,6 +5692,69 @@
                 ],
                 "errors": [],
                 "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "ExtractiveSummarizationLROResults",
+              "taskName": "5",
+              "lastUpdateDateTime": "2022-05-03T00:08:40.6424429Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 5,
+                  "validDocumentsCount": 5,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 5
+                },
+                "documents": [
+                  {
+                    "id": "20",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "sentences": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "21",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "sentences": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "22",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "sentences": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "23",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "sentences": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "24",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "sentences": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-08-01"
               }
             }
           ]

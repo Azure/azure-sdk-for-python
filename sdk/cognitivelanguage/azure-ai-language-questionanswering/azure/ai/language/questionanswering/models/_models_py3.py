@@ -6,12 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 from ._question_answering_client_enums import *
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AnswersFromTextOptions(msrest.serialization.Model):
@@ -41,7 +45,7 @@ class AnswersFromTextOptions(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, question: str, text_documents: List["TextDocument"], language: Optional[str] = None, **kwargs
+        self, *, question: str, text_documents: List["_models.TextDocument"], language: Optional[str] = None, **kwargs
     ):
         """
         :keyword question: Required. User question to query against the given text records.
@@ -70,7 +74,7 @@ class AnswersFromTextResult(msrest.serialization.Model):
         "answers": {"key": "answers", "type": "[TextAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["TextAnswer"]] = None, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.TextAnswer"]] = None, **kwargs):
         """
         :keyword answers: Represents the answer results.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
@@ -130,10 +134,10 @@ class AnswersOptions(msrest.serialization.Model):
         top: Optional[int] = None,
         user_id: Optional[str] = None,
         confidence_threshold: Optional[float] = None,
-        answer_context: Optional["KnowledgeBaseAnswerContext"] = None,
+        answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
         ranker_kind: Optional[str] = None,
-        filters: Optional["QueryFilters"] = None,
-        short_answer_options: Optional["ShortAnswerOptions"] = None,
+        filters: Optional["_models.QueryFilters"] = None,
+        short_answer_options: Optional["_models.ShortAnswerOptions"] = None,
         include_unstructured_sources: Optional[bool] = None,
         **kwargs
     ):
@@ -236,7 +240,7 @@ class AnswersResult(msrest.serialization.Model):
         "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["KnowledgeBaseAnswer"]] = None, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None, **kwargs):
         """
         :keyword answers: Represents Answer Result list.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
@@ -283,11 +287,11 @@ class Error(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "ErrorCode"],
+        code: Union[str, "_models.ErrorCode"],
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["Error"]] = None,
-        innererror: Optional["InnerErrorModel"] = None,
+        details: Optional[List["_models.Error"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
@@ -326,7 +330,7 @@ class ErrorResponse(msrest.serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, *, error: Optional["Error"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.ai.language.questionanswering.models.Error
@@ -371,11 +375,11 @@ class InnerErrorModel(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "InnerErrorCode"],
+        code: Union[str, "_models.InnerErrorCode"],
         message: str,
         details: Optional[Dict[str, str]] = None,
         target: Optional[str] = None,
-        innererror: Optional["InnerErrorModel"] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
@@ -447,8 +451,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         qna_id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        dialog: Optional["KnowledgeBaseAnswerDialog"] = None,
-        short_answer: Optional["AnswerSpan"] = None,
+        dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
         **kwargs
     ):
         """
@@ -537,7 +541,7 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         self,
         *,
         is_context_only: Optional[bool] = None,
-        prompts: Optional[List["KnowledgeBaseAnswerPrompt"]] = None,
+        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
         **kwargs
     ):
         """
@@ -643,7 +647,7 @@ class QueryFilters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metadata_filter: Optional["MetadataFilter"] = None,
+        metadata_filter: Optional["_models.MetadataFilter"] = None,
         source_filter: Optional[List[str]] = None,
         logical_operation: Optional[str] = None,
         **kwargs
@@ -742,7 +746,7 @@ class TextAnswer(msrest.serialization.Model):
         answer: Optional[str] = None,
         confidence: Optional[float] = None,
         id: Optional[str] = None,
-        short_answer: Optional["AnswerSpan"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
         **kwargs

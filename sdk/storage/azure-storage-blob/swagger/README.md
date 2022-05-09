@@ -122,7 +122,7 @@ directive:
         if (property.includes('/{containerName}/{blob}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName") && false == param['$ref'].endsWith("#/parameters/Blob"))});
-        } 
+        }
         else if (property.includes('/{containerName}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName"))});
@@ -139,4 +139,40 @@ directive:
     $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
     $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
     delete $.properties.ObjectReplicationMetadata;
+```
+
+### Remove x-ms-parameterized-host
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
+```
+
+### Add url parameter to each operation and add url to the path
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+
+        var oldName = property;
+        // For service operations (where the path is just '/') we need to
+        // remove the '/' at the begining to avoid having an extra '/' in
+        // the final URL.
+        if (property === '/' || property.startsWith('/?'))
+        {
+            var newName = '{url}' + property.substring(1);
+        }
+        else
+        {
+            var newName = '{url}' + property;
+        }
+        $[newName] = $[oldName];
+        delete $[oldName];
+    }
 ```
