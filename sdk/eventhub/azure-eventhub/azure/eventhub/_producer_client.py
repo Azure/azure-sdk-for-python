@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from concurrent.futures import ThreadPoolExecutor
 import logging
 import threading
 import time
@@ -53,6 +54,9 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
      or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
      then publish. Default is False.
+    :keyword Union[ThreadPoolExecutor, int] buffer_concurrency: The ThreadPoolExecutor to be used for publishing events
+    or the number of workers for the ThreadPoolExecutor. Default is none and a ThreadPoolExecutor with the default number of workers
+    will be created https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
     :keyword on_success: The callback to be called once a batch has been successfully published.
      The callback takes two parameters:
         - `events`: The list of events that have been successfully published
@@ -147,6 +151,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         credential: "CredentialTypes",
         *,
         buffered_mode: Literal[True],
+        buffer_concurrency: Union[ThreadPoolExecutor, int] = None,
         on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
         on_success: Callable[[SendEventTypes, Optional[str]], None],
         max_buffer_length: int = 1500,
@@ -187,10 +192,8 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         self._buffered_producer_dispatcher = None
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
-        # the following two parameters are not part of the public api yet
-        # which could be exposed in the future if needed
-        self._executor = kwargs.get("executor")
-        self._max_worker = kwargs.get("max_worker")
+        self._executor = kwargs.get("buffer_concurrency")
+        self._max_worker = None
 
         if self._buffered_mode:
             setattr(self, "send_batch", self._buffered_send_batch)
@@ -211,6 +214,8 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
                 self._max_buffer_length = 1500
             if self._max_buffer_length <= 0:
                 raise ValueError("'max_buffer_length' must be an integer greater than 0 in buffered mode")
+            if isinstance(self._executor, int) and self._executor <= 0:
+                raise ValueError("'buffer_concurrency' must be an integer greater than 0 in buffered mode")
 
     def __enter__(self):
         return self

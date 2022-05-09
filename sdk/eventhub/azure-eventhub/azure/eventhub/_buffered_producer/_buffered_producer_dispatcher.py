@@ -5,7 +5,7 @@
 import logging
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, Optional, List, Callable, TYPE_CHECKING
+from typing import Dict, Optional, List, Callable, Union, TYPE_CHECKING
 
 from ._partition_resolver import PartitionResolver
 from ._buffered_producer import BufferedProducer
@@ -32,7 +32,7 @@ class BufferedProducerDispatcher:
             max_buffer_length: int = 1500,
             max_wait_time: float = 1,
             max_concurrent_sends: int = 1,
-            executor: Optional[ThreadPoolExecutor] = None,
+            executor: Optional[Union[ThreadPoolExecutor, int]] = None,
             max_worker: Optional[int] = None
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
@@ -48,7 +48,13 @@ class BufferedProducerDispatcher:
         self._max_buffer_length = max_buffer_length
         self._max_concurrent_sends = max_concurrent_sends
         self._existing_executor = bool(executor)
-        self._executor = executor or ThreadPoolExecutor(max_worker)
+
+        if not executor:
+            self._executor = ThreadPoolExecutor(max_worker)
+        elif isinstance(executor, ThreadPoolExecutor):
+            self._executor = executor
+        elif isinstance(executor, int):
+            self._executor = ThreadPoolExecutor(executor)
 
     def _get_partition_id(self, partition_id, partition_key):
         if partition_id:
