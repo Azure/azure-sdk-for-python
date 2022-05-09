@@ -116,6 +116,8 @@ def build_get_request(
     subscription_id: str,
     resource_group_name: str,
     resource_name: str,
+    *,
+    can_fetch_content: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-08-01"
@@ -133,6 +135,8 @@ def build_get_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if can_fetch_content is not None:
+        query_parameters['canFetchContent'] = _SERIALIZER.query("can_fetch_content", can_fetch_content, 'bool')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -377,7 +381,7 @@ class WorkbooksOperations(object):
         can_fetch_content: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterable["_models.WorkbooksListResult"]:
-        """Get all private workbooks defined within a specified subscription and category.
+        """Get all Workbooks defined within a specified subscription and category.
 
         :param category: Category of workbook to return.
         :type category: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.CategoryType
@@ -546,6 +550,7 @@ class WorkbooksOperations(object):
         self,
         resource_group_name: str,
         resource_name: str,
+        can_fetch_content: Optional[bool] = None,
         **kwargs: Any
     ) -> "_models.Workbook":
         """Get a single workbook by its resourceName.
@@ -554,6 +559,9 @@ class WorkbooksOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component resource.
         :type resource_name: str
+        :param can_fetch_content: Flag indicating whether or not to return the full content for each
+         applicable workbook. If false, only return summary content for workbooks.
+        :type can_fetch_content: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workbook, or the result of cls(response)
         :rtype: ~azure.mgmt.applicationinsights.v2021_08_01.models.Workbook
@@ -570,6 +578,7 @@ class WorkbooksOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_name=resource_name,
+            can_fetch_content=can_fetch_content,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)

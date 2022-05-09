@@ -22,7 +22,7 @@ from helpers import build_aad_response, validating_transport, mock_response, Req
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
 ALL_ENVIRONMENTS = (
-    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # App Service
+    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IDENTITY_HEADER: "..."},  # App Service
     {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
     {  # Service Fabric
         EnvironmentVariables.IDENTITY_ENDPOINT: "...",
@@ -37,6 +37,7 @@ ALL_ENVIRONMENTS = (
         EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
     },
     {},  # IMDS
+    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # Azure ML
 )
 
 
@@ -377,12 +378,8 @@ def test_cloud_shell_user_assigned_identity():
         assert token.expires_on == expires_on
 
 
-def test_prefers_app_service_2017_09_01():
-    """When the environment is configured for both App Service versions, the credential should prefer 2017-09-01
-
-    Support for 2019-08-01 was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test
-    should be removed when that support is added back.
-    """
+def test_app_service_2017_09_01():
+    """When the environment for 2019-08-01 is not configured, 2017-09-01 should be used."""
 
     access_token = "****"
     expires_on = 42
@@ -424,8 +421,6 @@ def test_prefers_app_service_2017_09_01():
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: url,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
             EnvironmentVariables.MSI_ENDPOINT: url,
             EnvironmentVariables.MSI_SECRET: secret,
         },
@@ -440,9 +435,6 @@ def test_prefers_app_service_2017_09_01():
         assert token.expires_on == expires_on
 
 
-@pytest.mark.skip(
-    "2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back."
-)
 def test_prefers_app_service_2019_08_01():
     """When the environment is configured for both App Service versions, the credential should prefer the most recent"""
 
@@ -484,22 +476,21 @@ def test_prefers_app_service_2019_08_01():
     assert token.expires_on == expires_on
 
 
-@pytest.mark.skip(
-    "2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back."
-)
 def test_app_service_2019_08_01():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
+    new_endpoint = "http://localhost:42/new-token"
     secret = "expected-secret"
+    new_secret = "new-expected-secret"
     scope = "scope"
 
     def send(request, **_):
-        assert request.url.startswith(endpoint)
+        assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
-        assert request.headers["X-IDENTITY-HEADER"] == secret
+        assert request.headers["X-IDENTITY-HEADER"] == new_secret
         assert request.headers["User-Agent"] == USER_AGENT
         assert request.query["api-version"] == "2019-08-01"
         assert request.query["resource"] == scope
@@ -514,37 +505,36 @@ def test_app_service_2019_08_01():
         )
 
     # when configuration for both API versions is present, the credential should prefer the most recent
-    for environment in [
-        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
-        {
-            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.MSI_ENDPOINT: endpoint,
-            EnvironmentVariables.MSI_SECRET: secret,
-        },
-    ]:
-        with mock.patch.dict("os.environ", environment, clear=True):
-            token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+    with mock.patch.dict(
+            MANAGED_IDENTITY_ENVIRON,
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+                EnvironmentVariables.IDENTITY_HEADER: new_secret,
+                EnvironmentVariables.MSI_ENDPOINT: endpoint,
+                EnvironmentVariables.MSI_SECRET: secret,
+            },
+            clear=True,
+    ):
+        token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
         assert token.token == access_token
         assert token.expires_on == expires_on
 
 
-@pytest.mark.skip(
-    "2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back."
-)
 def test_app_service_2019_08_01_tenant_id():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
+    new_endpoint = "http://localhost:42/new-token"
     secret = "expected-secret"
+    new_secret = "new-expected-secret"
     scope = "scope"
 
     def send(request, **_):
-        assert request.url.startswith(endpoint)
+        assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
-        assert request.headers["X-IDENTITY-HEADER"] == secret
+        assert request.headers["X-IDENTITY-HEADER"] == new_secret
         assert request.headers["User-Agent"] == USER_AGENT
         assert request.query["api-version"] == "2019-08-01"
         assert request.query["resource"] == scope
@@ -559,125 +549,23 @@ def test_app_service_2019_08_01_tenant_id():
         )
 
     # when configuration for both API versions is present, the credential should prefer the most recent
-    for environment in [
-        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
-        {
-            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.MSI_ENDPOINT: endpoint,
-            EnvironmentVariables.MSI_SECRET: secret,
-        },
-    ]:
-        with mock.patch.dict("os.environ", environment, clear=True):
-            token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
+    with mock.patch.dict(
+            MANAGED_IDENTITY_ENVIRON,
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+                EnvironmentVariables.IDENTITY_HEADER: new_secret,
+                EnvironmentVariables.MSI_ENDPOINT: endpoint,
+                EnvironmentVariables.MSI_SECRET: secret,
+            },
+            clear=True,
+    ):
+        token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
         assert token.token == access_token
         assert token.expires_on == expires_on
 
 
-def test_app_service_2017_09_01():
-    """test parsing of App Service MSI 2017-09-01's eccentric platform-dependent expires_on strings"""
-
-    access_token = "****"
-    expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
-    secret = "expected-secret"
-    scope = "scope"
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                url,
-                method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2017-09-01", "resource": scope},
-            )
-        ]
-        * 2,
-        responses=[
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
-        clear=True,
-    ):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert token == expected_token
-        assert token.expires_on == expires_on
-
-        token = ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert token == expected_token
-        assert token.expires_on == expires_on
-
-
-def test_app_service_2017_09_01_tenant_id():
-    access_token = "****"
-    expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
-    url = "http://localhost:42/token"
-    secret = "expected-secret"
-    scope = "scope"
-
-    transport = validating_transport(
-        requests=[
-            Request(
-                url,
-                method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2017-09-01", "resource": scope},
-            )
-        ]
-        * 2,
-        responses=[
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-            mock_response(
-                json_payload={
-                    "access_token": access_token,
-                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
-                    "resource": scope,
-                    "token_type": "Bearer",
-                }
-            ),
-        ],
-    )
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
-        clear=True,
-    ):
-        token = ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
-        assert token == expected_token
-        assert token.expires_on == expires_on
-
-
 def test_app_service_user_assigned_identity():
-    """App Service 2017-09-01: MSI_ENDPOINT, MSI_SECRET set"""
+    """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
     expected_token = "****"
     expires_on = 42
@@ -692,16 +580,16 @@ def test_app_service_user_assigned_identity():
             Request(
                 base_url=endpoint,
                 method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2017-09-01", "clientid": client_id, "resource": scope},
+                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2019-08-01", "client_id": client_id, "resource": scope},
             ),
             Request(
                 base_url=endpoint,
                 method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
                 required_params={
-                    "api-version": "2017-09-01",
-                    "clientid": client_id,
+                    "api-version": "2019-08-01",
+                    "client_id": client_id,
                     "resource": scope,
                     param_name: param_value,
                 },
@@ -711,7 +599,7 @@ def test_app_service_user_assigned_identity():
             mock_response(
                 json_payload={
                     "access_token": expected_token,
-                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),
+                    "expires_on": expires_on,
                     "resource": scope,
                     "token_type": "Bearer",
                 }
@@ -722,7 +610,7 @@ def test_app_service_user_assigned_identity():
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret},
+        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
         clear=True,
     ):
         token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
@@ -820,8 +708,7 @@ def test_client_id_none():
     scope = "scope"
 
     def send(request, **_):
-        assert "client_id" not in request.query  # IMDS
-        assert "clientid" not in request.query  # App Service 2017-09-01
+        assert "client_id" not in request.query
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
         return mock_response(
@@ -836,36 +723,6 @@ def test_client_id_none():
     # Cloud Shell
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
-    ):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = credential.get_token(scope)
-    assert token.token == expected_access_token
-
-
-def test_client_id_none_app_service_2017_09_01():
-    """The credential should ignore client_id=None.
-
-    App Service 2017-09-01 must be tested separately due to its eccentric expires_on format.
-    """
-
-    expected_access_token = "****"
-    scope = "scope"
-
-    def send(request, **_):
-        assert "client_id" not in request.query
-        assert "clientid" not in request.query
-        return mock_response(
-            json_payload=(
-                build_aad_response(
-                    access_token=expected_access_token, expires_on="01/01/1970 00:00:42 +00:00", resource=scope
-                )
-            )
-        )
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost", EnvironmentVariables.MSI_SECRET: "secret"},
-        clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = credential.get_token(scope)

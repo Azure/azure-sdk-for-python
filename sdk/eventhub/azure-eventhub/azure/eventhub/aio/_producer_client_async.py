@@ -7,8 +7,6 @@ import logging
 
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
@@ -18,13 +16,14 @@ from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from ._client_base_async import CredentialTypes
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBaseAsync):
+class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accepts-api-version-keyword
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -88,9 +87,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: "CredentialTypes",
         **kwargs
     ) -> None:
         super(EventHubProducerClient, self).__init__(

@@ -1,16 +1,10 @@
 # Release History
 
-## 5.8.0a4 (Unreleased)
+## 5.8.0a4 (2022-05-10)
 
 ### Features Added
 
 - Added suppport for connection using websocket and http proxy.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 5.8.0a3 (2022-03-08)
 
@@ -549,8 +543,12 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 - Further testing and minor bug fixes.
 
 
+<<<<<<< HEAD
 ## 0.2.0a2 (2018-04-02)
 
 - Updated uAQMP dependency.
 
 
+=======
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
+>>>>>>> main

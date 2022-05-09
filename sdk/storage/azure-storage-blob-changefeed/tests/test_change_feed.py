@@ -6,16 +6,19 @@
 # license information.
 # --------------------------------------------------------------------------
 import json
-from time import sleep
-
 import pytest
 from datetime import datetime, timedelta
-
 from math import ceil
+from time import sleep
 
-from azure.storage.blob.changefeed import (
-    ChangeFeedClient,
-)
+try:
+    # Hack to run ChangeFeed tests locally due to conflicting namespace and dependency with blob.
+    # To run locally, set each library folder in ChangeFeed package as "Sources Root" in PyCharm
+    # (i.e. azure, storage, blob, changefeed).
+    from changefeed import ChangeFeedClient
+except ImportError:
+    from azure.storage.blob.changefeed import ChangeFeedClient
+
 from devtools_testutils.storage import StorageTestCase
 from settings.testcase import ChangeFeedPreparer
 

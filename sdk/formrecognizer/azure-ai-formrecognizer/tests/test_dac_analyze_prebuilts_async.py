@@ -5,11 +5,13 @@
 # ------------------------------------
 
 import pytest
+import json
 import functools
 from io import BytesIO
 from devtools_testutils.aio import recorded_by_proxy_async
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError
+from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
@@ -22,6 +24,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
+
+    def teardown(self):
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -78,13 +83,13 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_auto_detect_unsupported_stream_content(self, client):
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
-                    myfile,
+                    my_file,
                 )
                 result = await poller.result()
 
@@ -103,12 +108,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-receipt",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
             result = await poller.result()
@@ -144,12 +149,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-receipt",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
             result = await poller.result()
@@ -207,6 +212,8 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             result = await poller.result()
 
         d = result.to_dict()
+        # this is simply checking that the dict is JSON serializable
+        json.dumps(d, cls=AzureJSONEncoder)
         result = AnalyzeResult.from_dict(d)
 
         assert len(result.documents) == 2
@@ -245,12 +252,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.multipage_receipt_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-receipt",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
             result = await poller.result()
@@ -351,7 +358,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert len(business_card.fields.get("Websites").value) == 1
         assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com"
 
-        # FIXME: the service isnt returning this value currently
+        # FIXME: the service isn't returning this value currently
         # assert len(business_card.fields.get("OtherPhones").value) == 1
         # assert business_card.fields.get("OtherPhones").value[0].value == "+14257793479"
 
@@ -449,12 +456,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_invoice)
 
         with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 model="prebuilt-invoice",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
 
@@ -488,6 +495,9 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document("prebuilt-invoice", invoice)
 
             result = await poller.result()
+        d = result.to_dict()
+        json.dumps(d, cls=AzureJSONEncoder)
+        result = AnalyzeResult.from_dict(d)
         assert len(result.documents) == 1
         invoice = result.documents[0]
 

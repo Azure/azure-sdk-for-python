@@ -5,8 +5,9 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 
-class AmqpMessageBodyType(str, Enum):
+class AmqpMessageBodyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA = "data"
     SEQUENCE = "sequence"
     VALUE = "value"
