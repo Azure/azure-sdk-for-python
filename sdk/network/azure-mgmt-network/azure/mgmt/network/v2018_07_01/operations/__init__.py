@@ -60,6 +60,9 @@ from ._operations import VpnConnectionsOperations
 from ._operations import ServiceEndpointPoliciesOperations
 from ._operations import ServiceEndpointPolicyDefinitionsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AzureFirewallsOperations',
     'ApplicationGatewaysOperations',
@@ -115,3 +118,5 @@ __all__ = [
     'ServiceEndpointPoliciesOperations',
     'ServiceEndpointPolicyDefinitionsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

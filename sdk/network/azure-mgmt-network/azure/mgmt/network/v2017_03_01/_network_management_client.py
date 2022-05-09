@@ -114,30 +114,78 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.application_gateways = ApplicationGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_circuits = ExpressRouteCircuitsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.express_route_service_providers = ExpressRouteServiceProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_security_groups = NetworkSecurityGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_watchers = NetworkWatchersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.packet_captures = PacketCapturesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.public_ip_addresses = PublicIPAddressesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.route_filters = RouteFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.route_filter_rules = RouteFilterRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.route_tables = RouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.bgp_service_communities = BgpServiceCommunitiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_networks = VirtualNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_peerings = VirtualNetworkPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.local_network_gateways = LocalNetworkGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.application_gateways = ApplicationGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_circuits = ExpressRouteCircuitsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.load_balancers = LoadBalancersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_groups = NetworkSecurityGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.security_rules = SecurityRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_watchers = NetworkWatchersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.packet_captures = PacketCapturesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.public_ip_addresses = PublicIPAddressesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.route_filters = RouteFiltersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.route_filter_rules = RouteFilterRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.route_tables = RouteTablesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.routes = RoutesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.bgp_service_communities = BgpServiceCommunitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_networks = VirtualNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.subnets = SubnetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.local_network_gateways = LocalNetworkGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

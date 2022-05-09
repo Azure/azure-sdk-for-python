@@ -10,19 +10,12 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from . import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Iterable, Optional
 
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
@@ -34,7 +27,7 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
+        bsl_request,  # type: _models.BastionShareableLinkListRequest
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -84,8 +77,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -102,10 +93,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         virtual_wan_name,  # type: str
-        vpn_client_params,  # type: "_models.VirtualWanVpnProfileParameters"
+        vpn_client_params,  # type: _models.VirtualWanVpnProfileParameters
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.VpnProfileResponse"]
+        # type: (...) -> LROPoller[_models.VpnProfileResponse]
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
@@ -159,8 +150,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -179,7 +168,7 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[ItemPaged["_models.BastionActiveSessionListResult"]]
+        # type: (...) -> LROPoller[ItemPaged[_models.BastionActiveSessionListResult]]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -226,8 +215,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -244,10 +231,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
+        bsl_request,  # type: _models.BastionShareableLinkListRequest
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[ItemPaged["_models.BastionShareableLinkListResult"]]
+        # type: (...) -> LROPoller[ItemPaged[_models.BastionShareableLinkListResult]]
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -296,8 +283,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -316,7 +301,7 @@ class NetworkManagementClientOperationsMixin(object):
         domain_name_label,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.DnsNameAvailabilityResult"
+        # type: (...) -> _models.DnsNameAvailabilityResult
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -395,8 +380,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -413,10 +396,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        session_ids,  # type: "_models.SessionIds"
+        session_ids,  # type: _models.SessionIds
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.BastionSessionDeleteResult"]
+        # type: (...) -> Iterable[_models.BastionSessionDeleteResult]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -458,8 +441,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -476,10 +457,10 @@ class NetworkManagementClientOperationsMixin(object):
         self,
         resource_group_name,  # type: str
         bastion_host_name,  # type: str
-        bsl_request,  # type: "_models.BastionShareableLinkListRequest"
+        bsl_request,  # type: _models.BastionShareableLinkListRequest
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.BastionShareableLinkListResult"]
+        # type: (...) -> Iterable[_models.BastionShareableLinkListResult]
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -521,8 +502,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
@@ -541,7 +520,7 @@ class NetworkManagementClientOperationsMixin(object):
         virtual_wan_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VirtualWanSecurityProviders"
+        # type: (...) -> _models.VirtualWanSecurityProviders
         """Gives the supported security providers for the virtual wan.
 
         :param resource_group_name: The resource group name.
@@ -598,8 +577,6 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2021-05-01':
-            from .v2021_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-08-01':
             from .v2021_08_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
