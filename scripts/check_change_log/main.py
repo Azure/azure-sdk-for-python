@@ -11,7 +11,6 @@ error_packages_info = {}
 def find_report_name(result):
     signal_api_pattern = 'written to'
     multi_api_pattern = 'merged_report'
-    print("result: ", result)
     for line in result:
         idx = line.find(signal_api_pattern)
         idx1 = line.find(multi_api_pattern)
@@ -32,10 +31,9 @@ def create_folder(name):
     else:
         print("folder has been created")
 
-def write_txt(foldor, text_name, text, last_version, older_version):
-    path = foldor + f"\{text_name}" + " " + last_version + "-" + older_version + r".txt"
+def write_txt(foldor, text_name, text, older_version, last_version):
+    path = foldor + f"\{text_name}" + " " + older_version + "-" + last_version + r".txt"
     with open(file=path, mode="w", encoding="utf-8") as file:
-
         file.write(text)
     print("change_log.txt create successful")
 
@@ -53,11 +51,10 @@ def create_code_report(cmd, service_name):
     for line in info.stdout:
         output_buffer.append(line.rstrip())
     info.wait()
-    info_output = "\n".join(output_buffer)
     if info.returncode:
         err_info = '\n'.join(output_buffer[-min(len(output_buffer), 7):0])
         error_packages_info[service_name] = err_info
-    return info_output.split('\n')
+    return output_buffer
 
 if __name__ == '__main__':
     # get sdk path
@@ -76,11 +73,10 @@ if __name__ == '__main__':
     for i in in_files[0:1]:
         path = Path(i)
         service_name = path.parts[-1]
-        print(service_name)
 
         # get package version in pypi
         client = PyPIClient()
-        versions = [str(v) for v in client.get_ordered_versions(f"{service_name}")]
+        versions = [str(v) for v in client.get_ordered_versions(service_name)]
         if len(versions) >= 2:
             older_version = versions[-2]
             last_version = versions[-1]
@@ -100,17 +96,17 @@ if __name__ == '__main__':
                 result = sp.getoutput(
                     fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
             except Exception as e:
-                print(e)
+                error_packages_info[service_name] = e
+                continue
             output_message = result.split("\n")
             result_text = ""
             for i in output_message[1:]:
                 result_text = result_text + str(i) + "\n"
-            print(result_text)
 
             # write a txt to save change_log
             change_log_foldor_path = str(env/"Change_Log")
             create_folder(change_log_foldor_path)
-            write_txt(change_log_foldor_path, service_name, result_text, last_version, older_version)
+            write_txt(change_log_foldor_path, service_name, result_text, older_version, last_version)
 
     if error_packages_info:
         for k, v in error_packages_info.items():

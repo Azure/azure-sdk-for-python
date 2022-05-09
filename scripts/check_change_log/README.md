@@ -1,11 +1,7 @@
 # Overview
-First, this script will use docker to perform follow-up operations. 
+This script will generate change_log from two code_reports which generate by the latest two versions of azure-mgmt-package on pypi. It can help us quickly verify whether the changes to the `change_log` tool are correct 
 
-Second, this script will help you generate two code_reports which generate by the latest two versions of azure MGMT package on pypi.
 
-And then, it will automatically use change_ log for these two code_reports.
-
-Finally, it will generate a folder in the current directory, and the results of each comparison will be stored separately in the folder in the form of TXT.
 
 # preprequisites
 - [Python 3.6](https://www.python.org/downloads/windows/) or later is required
@@ -20,7 +16,7 @@ Finally, it will generate a folder in the current directory, and the results of 
 
 4.Install the dependency
 ```bash
-pip -e ../../tools/azure-sdk-tools
+pip install -r requirements.txt
 ```
 
 5.Execute it with the following command in your powershell:
