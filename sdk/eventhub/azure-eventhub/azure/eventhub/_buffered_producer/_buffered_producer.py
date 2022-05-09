@@ -33,7 +33,7 @@ class BufferedProducer:
             max_concurrent_sends: int = 1,
             max_buffer_length: int = 1500
     ):
-        self._buffered_queue: queue.Queue = queue.Queue(max_buffer_length)
+        self._buffered_queue: queue.Queue = queue.Queue(maxsize=max_buffer_length)
         self._cur_buffered_len = 0
         self._executor: ThreadPoolExecutor = executor
         self._producer: EventHubProducer = producer
