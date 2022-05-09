@@ -50,11 +50,12 @@ class BufferedProducer:
         self.partition_id = partition_id
 
     def start(self):
-        self._cur_batch = EventDataBatch(self._max_message_size_on_link)
-        self._running = True
-        if self._max_wait_time:
-            self._last_send_time = time.time()
-            self._check_max_wait_time_future = self._executor.submit(self.check_max_wait_time_worker)
+        with self._lock:
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._running = True
+            if self._max_wait_time:
+                self._last_send_time = time.time()
+                self._check_max_wait_time_future = self._executor.submit(self.check_max_wait_time_worker)
 
     def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
