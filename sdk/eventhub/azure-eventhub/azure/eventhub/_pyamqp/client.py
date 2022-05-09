@@ -255,6 +255,7 @@ class AMQPClient(object):
                 transport_type=self._transport_type,
                 http_proxy=self._http_proxy,
                 custom_endpoint_address = self._custom_endpoint_address,
+                connection_verify = self._connection_verify
             )
             self._connection.open()
         if not self._session:
