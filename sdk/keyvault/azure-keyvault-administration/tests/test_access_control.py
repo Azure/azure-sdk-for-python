@@ -41,7 +41,6 @@ class TestAccessControl(KeyVaultTestCase):
         assert len(original_definitions)
 
         # create custom role definition
-        variables = kwargs.pop("variables")
         role_name = self.get_resource_name("role-name")
         definition_name = self.get_replayable_uuid("definition-name")
         add_general_regex_sanitizer(regex=definition_name, value = "definition-name")
