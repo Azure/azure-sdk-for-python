@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from subprocess import check_call
 
-from .swaggertosdk.SwaggerToSdkCore import (CONFIG_FILE)
+from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE, CONFIG_FILE_DPG
 from .generate_sdk import generate
 from .generate_utils import get_package_names, init_new_service, update_servicemetadata
 
@@ -23,7 +23,8 @@ def main(generate_input, generate_output):
     input_readme = data["relatedReadmeMdFile"]
     relative_path_readme = str(Path(spec_folder, input_readme))
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-    config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
+    config_file = CONFIG_FILE if 'resource-manager' in input_readme else CONFIG_FILE_DPG
+    config = generate(config_file, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
     package_names = get_package_names(sdk_folder)
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
