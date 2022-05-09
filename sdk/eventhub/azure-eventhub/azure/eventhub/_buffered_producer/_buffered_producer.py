@@ -33,7 +33,8 @@ class BufferedProducer:
             max_concurrent_sends: int = 1,
             max_buffer_length: int = 1500
     ):
-        self._buffered_queue: queue.Queue = queue.Queue(maxsize=max_buffer_length)
+        self._buffered_queue: queue.Queue = queue.Queue()
+        self._max_buffer_len = max_buffer_length
         self._cur_buffered_len = 0
         self._executor: ThreadPoolExecutor = executor
         self._producer: EventHubProducer = producer
@@ -183,7 +184,7 @@ class BufferedProducer:
                 now_time = time.time()
                 _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
                 #flush the partition if its beyond the waiting time or the buffer is at max capacity
-                if (now_time - self._last_send_time > self._max_wait_time and self._running) or (self._buffered_queue.qsize == self._buffered_queue.maxsize and self._running):
+                if (now_time - self._last_send_time > self._max_wait_time and self._running) or (self._cur_buffered_len >= self._max_buffer_len and self._running):
                     # in the worker, not raising error for flush, users can not handle this
                     self.flush(raise_error=False)
             time.sleep(min(self._max_wait_time, 5))
