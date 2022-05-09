@@ -105,6 +105,58 @@ if TYPE_CHECKING:
     )
     from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
+class DictMixin:
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return str(self)
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __delitem__(self, key):
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __contains__(self, key):
+        return key in self.__dict__
+
+    def __str__(self):
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return [k for k in self.__dict__ if not k.startswith("_")]
+
+    def values(self):
+        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
+
+    def items(self):
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
+
+    def get(self, key, default=None):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default
+
 
 class MetricAnomalyAlertScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Anomaly scope"""
@@ -1057,7 +1109,7 @@ class AnomalyDetectionConfiguration(object):
         )
 
 
-class DataFeedSource(dict):
+class DataFeedSource(DictMixin):
     """DataFeedSource base class
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1074,9 +1126,8 @@ class DataFeedSource(dict):
 
     def __init__(self, data_source_type, **kwargs):
         # type: (str, **Any) -> None
-        super(DataFeedSource, self).__init__(
-            data_source_type=data_source_type, **kwargs
-        )
+        kwargs["data_source_type"] = data_source_type
+        super(DataFeedSource, self).__init__(**kwargs)
         self.data_source_type = data_source_type
         self.authentication_type = kwargs.get("authentication_type", None)
         self.credential_id = kwargs.get("credential_id", None)
@@ -3183,7 +3234,7 @@ class IncidentRootCause(msrest.serialization.Model):
         )
 
 
-class MetricFeedback(dict):
+class MetricFeedback(DictMixin):
     """Feedback base class
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3645,7 +3696,7 @@ class PeriodFeedback(MetricFeedback):
         )
 
 
-class DatasourceCredential(dict):
+class DatasourceCredential(DictMixin):
     """DatasourceCredential base class.
 
     :param credential_type: Required. Type of data source credential.Constant filled by
@@ -3669,9 +3720,9 @@ class DatasourceCredential(dict):
 
     def __init__(self, name, credential_type, **kwargs):
         # type: (str, str, Any) -> None
-        super(DatasourceCredential, self).__init__(
-            name=name, credential_type=credential_type, **kwargs
-        )
+        kwargs["name"] = name
+        kwargs["credential_type"] = credential_type
+        super(DatasourceCredential, self).__init__(**kwargs)
         self.credential_type = credential_type
         self.name = name
         self.id = kwargs.get("id", None)
