@@ -59,7 +59,6 @@ from ._pyamqp.message import BatchMessage, Message
 if TYPE_CHECKING:
     import datetime
 
-MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
 PrimitiveTypes = Optional[
     Union[
         int,
