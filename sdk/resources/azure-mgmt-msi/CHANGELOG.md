@@ -1,5 +1,12 @@
 # Release History
 
+## 6.0.1 (2022-05-05)
+
+**Other Changes**
+
+  - Change the internal folder name from `v2019_09_01_preview` to `v2021_09_30_preview` 
+
+
 ## 6.0.0 (2022-03-29)
 
 **Breaking changes**

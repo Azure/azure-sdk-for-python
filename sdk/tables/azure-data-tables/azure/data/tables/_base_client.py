@@ -21,7 +21,6 @@ from azure.core.pipeline.transport import (
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -46,7 +45,7 @@ from ._error import (
     _validate_tablename_error
 )
 from ._models import LocationMode
-from ._authentication import SharedKeyCredentialPolicy
+from ._authentication import BearerTokenChallengePolicy, SharedKeyCredentialPolicy
 from ._policies import (
     CosmosPatchTransformPolicy,
     StorageHeadersPolicy,
@@ -58,7 +57,7 @@ from ._sdk_moniker import SDK_MONIKER
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
+_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 
 
 def get_api_version(kwargs, default):
@@ -249,7 +248,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
     def _configure_credential(self, credential):
         # type: (Any) -> None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(  # type: ignore
+            self._credential_policy = BearerTokenChallengePolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):

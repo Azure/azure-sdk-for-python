@@ -4,22 +4,13 @@
 # ------------------------------------
 import time
 
-from azure_devtools.scenario_tests.patches import patch_time_sleep_api
-from devtools_testutils import AzureTestCase
+from azure.keyvault.keys._shared import HttpChallengeCache
+from devtools_testutils import AzureRecordedTestCase
 
 
-class KeyVaultTestCase(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        if "match_body" not in kwargs:
-            kwargs["match_body"] = True
 
-        super(KeyVaultTestCase, self).__init__(*args, **kwargs)
-        self.replay_patches.append(patch_time_sleep_api)
 
-    def setUp(self):
-        self.list_test_size = 7
-        super(KeyVaultTestCase, self).setUp()
-
+class KeyVaultTestCase(AzureRecordedTestCase):
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""
         return super(KeyVaultTestCase, self).get_resource_name("livekvtest{}".format(name))
@@ -48,3 +39,7 @@ class KeyVaultTestCase(AzureTestCase):
                 return
 
         self.fail("expected exception {expected_exception} was not raised")
+
+    def teardown_method(self, method):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0

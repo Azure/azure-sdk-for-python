@@ -15,10 +15,6 @@ from setuptools import setup, find_packages
 # with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect
 # your package.
 
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING
-# all the way up from python 2.7.
-# Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
-
 PACKAGE_NAME = "azure-confidentialledger"
 PACKAGE_PPRINT_NAME = "Confidential Ledger"
 
@@ -55,13 +51,13 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -70,14 +66,10 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         "azure"
     ]),
+    python_requires=">=3.6",
     install_requires=[
         "azure-common~=1.1",
         "azure-core<2.0.0,>=1.2.2",
         "msrest>=0.6.21",
     ],
-    extras_require={
-        ":python_version<'3.0'": ["azure-nspkg"],
-        ":python_version<'3.4'": ["enum34>=1.0.4"],
-        ":python_version<'3.5'": ["typing"],
-    }
 )
