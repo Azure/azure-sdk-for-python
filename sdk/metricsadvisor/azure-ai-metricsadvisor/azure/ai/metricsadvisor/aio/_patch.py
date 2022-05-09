@@ -1505,5 +1505,4 @@ def patch_sdk():
 __all__ = [
     "MetricsAdvisorAdministrationClient",
     "MetricsAdvisorClient",
-    "patch_sdk",
 ]
