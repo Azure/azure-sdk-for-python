@@ -1,3 +1,0 @@
-**Features**
-
-  - Model SuppressionContract has a new parameter expiration_time_stamp
