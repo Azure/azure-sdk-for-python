@@ -8,6 +8,7 @@ from pathlib import Path
 
 error_packages_info = {}
 
+
 def find_report_name(result):
     signal_api_pattern = 'written to'
     multi_api_pattern = 'merged_report'
@@ -24,49 +25,53 @@ def find_report_name(result):
 
     return ''
 
+
 def create_folder(name):
     if not os.path.exists(name):
         os.mkdir(name)
-        print("create folder successfully")
+        print(f"create folder {name} successfully")
     else:
-        print("folder has been created")
+        print(f"folder {name} has been created")
 
-def write_txt(foldor, text_name, text, older_version, last_version):
-    path = foldor + f"\{text_name}" + " " + older_version + "-" + last_version + r".txt"
-    with open(file=path, mode="w", encoding="utf-8") as file:
-        file.write(text)
+
+def write_txt(folder, text_name, content, older_version, last_version):
+    file_path = str(Path(f"{folder}/{text_name}_{older_version}_{last_version}.txt"))
+    with open(file=file_path, mode="w", encoding="utf-8") as file:
+        file.write(content)
     print("change_log.txt create successful")
 
+
 def create_code_report(cmd, service_name):
-    info = sp.Popen(cmd,
-                    stderr=sp.STDOUT,
-                    stdout=sp.PIPE,
-                    universal_newlines=True,
-                    cwd=None,
-                    shell=False,
-                    env=None,
-                    encoding="utf-8",
-                    )
-    output_buffer = []
-    for line in info.stdout:
-        output_buffer.append(line.rstrip())
-    info.wait()
-    if info.returncode:
-        err_info = '\n'.join(output_buffer[-min(len(output_buffer), 7):0])
-        error_packages_info[service_name] = err_info
+    process = sp.Popen(
+        cmd,
+        stderr=sp.STDOUT,
+        stdout=sp.PIPE,
+        universal_newlines=True,
+        cwd=None,
+        shell=False,
+        env=None,
+        encoding="utf-8",
+    )
+    output_buffer = [line.rstrip() for line in process.stdout]
+    process.wait()
+    if process.returncode:
+        error_packages_info[service_name] = '\n'.join(output_buffer)
+        raise Exception(f'fail to create code report of {service_name}')
     return output_buffer
+
 
 if __name__ == '__main__':
     # get sdk path
     env = Path.cwd()
     docker_path = env.parent.parent
+    docker_cmd = 'docker exec -it Change_log /bin/bash -c'
 
     # create docker env in sdk path
     sp.call(fr"docker create -it --rm -h Change_log --name Change_log -v {docker_path}:/_ l601306339/autorest")
     sp.call("docker start Change_log")
 
     # install azure tools
-    sp.call(f'docker exec -it Change_log /bin/bash -c  "python _/scripts/dev_setup.py -p azure-core"  ')
+    sp.call(f'{docker_cmd}  "python _/scripts/dev_setup.py -p azure-core"  ')
 
     # get all azure-mgmt-package paths
     in_files = glob.glob(str(Path(f'{docker_path}/sdk/*/azure-mgmt-*')))
@@ -82,36 +87,37 @@ if __name__ == '__main__':
             last_version = versions[-1]
 
             # generate code_report
-            cmd_last_version = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
-            cmd_older_version = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={older_version}"'
-            last_code_report_info = create_code_report(cmd_last_version, service_name)
-            older_code_report_info = create_code_report(cmd_older_version, service_name)
-
-            # get code_report path
-            route_last_version = find_report_name(last_code_report_info)
-            route_older_version = find_report_name(older_code_report_info)
-
-            # use change_log on these two code_reports
+            cmd_last_version = fr'{docker_cmd} "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
+            cmd_older_version = fr'{docker_cmd} "cd _/ && python -m packaging_tools.code_report {service_name} --version={older_version}"'
             try:
-                result = sp.getoutput(
-                    fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
-            except Exception as e:
-                error_packages_info[service_name] = e
-                continue
-            output_message = result.split("\n")
-            result_text = ""
-            for i in output_message[1:]:
-                result_text = result_text + str(i) + "\n"
+                last_code_report_info = create_code_report(cmd_last_version, service_name)
+                older_code_report_info = create_code_report(cmd_older_version, service_name)
 
-            # write a txt to save change_log
-            change_log_foldor_path = str(env/"Change_Log")
-            create_folder(change_log_foldor_path)
-            write_txt(change_log_foldor_path, service_name, result_text, older_version, last_version)
+                # get code_report path
+                route_last_version = find_report_name(last_code_report_info)
+                route_older_version = find_report_name(older_code_report_info)
+
+                # use change_log on these two code_reports
+                result = sp.check_output(
+                    fr'{docker_cmd} "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
+            except sp.CalledProcessError as e:
+                print(f'error happened for {service_name} during changelog generation')
+                error_packages_info[service_name] = str(e)
+            except Exception as e:
+                print(f'error happened for {service_name} during code report generation: {e}')
+            else:
+                output_message = result.split("\n")
+                result_text = "\n".join(output_message[1:])
+
+                # write a txt to save change_log
+                change_log_folder_path = str(env / "Change_Log")
+                create_folder(change_log_folder_path)
+                write_txt(change_log_folder_path, service_name, result_text, older_version, last_version)
 
     if error_packages_info:
         for k, v in error_packages_info.items():
             print(f'== {k} encountered an error, info: {v}')
 
     # exit and stop docker
-    sp.call(f'docker exec -it Change_log /bin/bash -c "exit"')
+    sp.call(f'{docker_cmd} "exit"')
     sp.call(f'docker stop Change_log')
