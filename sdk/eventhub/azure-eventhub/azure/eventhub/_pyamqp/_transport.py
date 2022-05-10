@@ -41,6 +41,7 @@ import socket
 import ssl
 import struct
 from ssl import SSLError
+from urllib.parse import urlparse
 from contextlib import contextmanager
 from io import BytesIO
 import logging
@@ -147,13 +148,16 @@ class _AbstractTransport(object):
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
+        parsed_custom = urlparse(kwargs.get("custom_endpoint_address"))
+        self._custom_endpoint = parsed_custom.hostname
+        self._port = parsed_custom.port
+        self.host, self.port = to_host_port(self._custom_endpoint or host, self._port or port)
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
-        self._custom_endpoint = kwargs.get("custom_endpoint_address")
+        
 
     def connect(self):
         try:
@@ -684,8 +688,7 @@ class WebSocketTransport(_AbstractTransport):
             import websocket
             from websocket import create_connection
             if self._custom_endpoint:
-                custom_endpoint = self._custom_endpoint.split("://")[1]
-                url="wss://{}".format(custom_endpoint)+"/$servicebus/websocket/"
+                url="wss://{}".format(self._custom_endpoint+":"+str(self._port))+"/$servicebus/websocket/"
             else:
                 url = "wss://{}".format(self._host)
             self.ws = create_connection(
