@@ -20,6 +20,12 @@
     - A new property `EventHubProducerClient.total_buffered_event_count` which returns the total number of events that are currently buffered and waiting to be published, across all partitions.
     - A new boolean keyword argument `flush` to `EventHubProducerClient.close` which indicates whether to flush the buffer or not while closing.
 
+## 5.8.0a4 (2022-05-11)
+
+### Features Added
+
+- Added support for connection using websocket and http proxy.
+
 ## 5.9.0 (2022-05-10)
 
 ### Features Added
