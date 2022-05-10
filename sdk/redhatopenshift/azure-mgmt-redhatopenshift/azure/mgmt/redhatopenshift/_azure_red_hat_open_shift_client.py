@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
-from azure.profiles import KnownProfiles, ProfileDefinition
-from azure.profiles.multiapiclient import MultiApiClientMixin
 from msrest import Deserializer, Serializer
 
-from ._configuration import AzureRedHatOpenShift4ClientConfiguration
+from azure.mgmt.core import ARMPipelineClient
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
+
+from ._configuration import AzureRedHatOpenShiftClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -30,7 +32,7 @@ class _SDKClient(object):
         """
         pass
 
-class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
+class AzureRedHatOpenShiftClient(MultiApiClientMixin, _SDKClient):
     """Rest API for Azure Red Hat OpenShift 4.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
@@ -42,7 +44,7 @@ class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
     group is not described in the profile.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
@@ -54,8 +56,8 @@ class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2020-04-30'
-    _PROFILE_TAG = "azure.mgmt.redhatopenshift.AzureRedHatOpenShift4Client"
+    DEFAULT_API_VERSION = '2022-04-01'
+    _PROFILE_TAG = "azure.mgmt.redhatopenshift.AzureRedHatOpenShiftClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -65,18 +67,16 @@ class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
-        profile: KnownProfiles = KnownProfiles.default,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None, # type: Optional[str]
+        base_url="https://management.azure.com",  # type: str
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
-    ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = AzureRedHatOpenShift4ClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
-        super(AzureRedHatOpenShift4Client, self).__init__(
+    ):
+        self._config = AzureRedHatOpenShiftClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        super(AzureRedHatOpenShiftClient, self).__init__(
             api_version=api_version,
             profile=profile
         )
@@ -90,9 +90,17 @@ class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
         """Module depends on the API version:
 
            * 2020-04-30: :mod:`v2020_04_30.models<azure.mgmt.redhatopenshift.v2020_04_30.models>`
+           * 2021-09-01-preview: :mod:`v2021_09_01_preview.models<azure.mgmt.redhatopenshift.v2021_09_01_preview.models>`
+           * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.redhatopenshift.v2022_04_01.models>`
         """
         if api_version == '2020-04-30':
-            from ..v2020_04_30 import models
+            from .v2020_04_30 import models
+            return models
+        elif api_version == '2021-09-01-preview':
+            from .v2021_09_01_preview import models
+            return models
+        elif api_version == '2022-04-01':
+            from .v2022_04_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -100,11 +108,17 @@ class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
     def open_shift_clusters(self):
         """Instance depends on the API version:
 
-           * 2020-04-30: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2020_04_30.aio.operations.OpenShiftClustersOperations>`
+           * 2020-04-30: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2020_04_30.operations.OpenShiftClustersOperations>`
+           * 2021-09-01-preview: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2021_09_01_preview.operations.OpenShiftClustersOperations>`
+           * 2022-04-01: :class:`OpenShiftClustersOperations<azure.mgmt.redhatopenshift.v2022_04_01.operations.OpenShiftClustersOperations>`
         """
         api_version = self._get_api_version('open_shift_clusters')
         if api_version == '2020-04-30':
-            from ..v2020_04_30.aio.operations import OpenShiftClustersOperations as OperationClass
+            from .v2020_04_30.operations import OpenShiftClustersOperations as OperationClass
+        elif api_version == '2021-09-01-preview':
+            from .v2021_09_01_preview.operations import OpenShiftClustersOperations as OperationClass
+        elif api_version == '2022-04-01':
+            from .v2022_04_01.operations import OpenShiftClustersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'open_shift_clusters'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -113,19 +127,25 @@ class AzureRedHatOpenShift4Client(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2020-04-30: :class:`Operations<azure.mgmt.redhatopenshift.v2020_04_30.aio.operations.Operations>`
+           * 2020-04-30: :class:`Operations<azure.mgmt.redhatopenshift.v2020_04_30.operations.Operations>`
+           * 2021-09-01-preview: :class:`Operations<azure.mgmt.redhatopenshift.v2021_09_01_preview.operations.Operations>`
+           * 2022-04-01: :class:`Operations<azure.mgmt.redhatopenshift.v2022_04_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2020-04-30':
-            from ..v2020_04_30.aio.operations import Operations as OperationClass
+            from .v2020_04_30.operations import Operations as OperationClass
+        elif api_version == '2021-09-01-preview':
+            from .v2021_09_01_preview.operations import Operations as OperationClass
+        elif api_version == '2022-04-01':
+            from .v2022_04_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
-    async def close(self):
-        await self._client.close()
-    async def __aenter__(self):
-        await self._client.__aenter__()
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
         return self
-    async def __aexit__(self, *exc_details):
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)
