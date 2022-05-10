@@ -316,7 +316,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             return JWTTokenAuth(
                 self._auth_uri,
                 self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
+                functools.partial(self._credential.get_token, self._auth_uri)
             )
         return JWTTokenAuth(
             self._auth_uri,
