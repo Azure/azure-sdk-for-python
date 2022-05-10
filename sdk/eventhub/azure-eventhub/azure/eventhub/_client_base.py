@@ -137,7 +137,7 @@ def _parse_conn_str(conn_str, **kwargs):
 
 def _generate_sas_token(uri, policy, key, expiry=None):
     # type: (str, str, str, Optional[timedelta]) -> AccessToken
-    """Create a shared access signature token as a string literal.
+    """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
     """
@@ -188,7 +188,6 @@ class EventHubSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
 
         return _generate_sas_token(scopes[0], self.policy, self.key)
-
 
 
 class EventhubAzureNamedKeyTokenCredential(object):

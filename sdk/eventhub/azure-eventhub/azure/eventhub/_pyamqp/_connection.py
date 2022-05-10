@@ -105,7 +105,7 @@ class Connection(object):
             self._transport = transport
         elif 'sasl_credential' in kwargs:
             sasl_transport = SASLTransport
-            if self._transport_type.name is 'AmqpOverWebsocket' or kwargs.get("http_proxy"):
+            if self._transport_type.name == 'AmqpOverWebsocket' or kwargs.get("http_proxy"):
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
