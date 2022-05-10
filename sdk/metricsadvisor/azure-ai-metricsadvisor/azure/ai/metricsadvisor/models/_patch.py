@@ -18,59 +18,6 @@ if TYPE_CHECKING:
     from .._operations._patch import DataFeedSourceUnion
 
 
-class DictMixin:
-    def __setitem__(self, key, item):
-        self.__dict__[key] = item
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __repr__(self):
-        return str(self)
-
-    def __len__(self):
-        return len(self.keys())
-
-    def __delitem__(self, key):
-        self.__dict__[key] = None
-
-    def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
-        return not self.__eq__(other)
-
-    def __contains__(self, key):
-        return key in self.__dict__
-
-    def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
-
-    def has_key(self, k):
-        return k in self.__dict__
-
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
-
-    def keys(self):
-        return [k for k in self.__dict__ if not k.startswith("_")]
-
-    def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
-
-    def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
-
-    def get(self, key, default=None):
-        if key in self.__dict__:
-            return self.__dict__[key]
-        return default
-
-
 def get_auth_from_datasource_kwargs(
     *, default_authentication_type: str, check_msi_kwarg: bool = True, **kwargs
 ) -> Tuple[str, Optional[bool]]:
@@ -830,7 +777,7 @@ class AnomalyDetectionConfiguration(generated_models.AnomalyDetectionConfigurati
         )
 
 
-class DataFeedSource(DictMixin):
+class DataFeedSource(dict):
     """DataFeedSource base class
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -852,7 +799,7 @@ class DataFeedSource(DictMixin):
         self.credential_id = kwargs.get("credential_id", None)
 
 
-class AzureApplicationInsightsDataFeedSource(DataFeedSource, generated_models.AzureApplicationInsightsDataFeedSource):
+class AzureApplicationInsightsDataFeedSource(generated_models.AzureApplicationInsightsDataFeedSource, dict):
     """AzureApplicationInsightsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -873,8 +820,11 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource, generated_models.Az
 
     def __init__(self, query: str, **kwargs: Any) -> None:
         super().__init__(
-            data_source_type="AzureApplicationInsights", authentication_type="Basic", query=query, **kwargs
+            query=query, **kwargs
         )
+        self.data_source_type = "AzureApplicationInsights"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -891,7 +841,7 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource, generated_models.Az
         )
 
 
-class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeedSource):
+class AzureBlobDataFeedSource(generated_models.AzureBlobDataFeedSource, dict):
     """AzureBlobDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -915,12 +865,13 @@ class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeed
     def __init__(self, container: str, blob_template: str, **kwargs: Any) -> None:
         msi = kwargs.get("msi", False)
         super().__init__(
-            data_source_type="AzureBlob",
-            authentication_type="ManagedIdentity" if msi else "Basic",
             container=container,
             blob_template=blob_template,
             **kwargs
         )
+        self.data_source_type = "AzureBlob"
+        self.authentication_type = "ManagedIdentity" if msi else "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -936,7 +887,7 @@ class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeed
         )
 
 
-class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDbDataFeedSource):
+class AzureCosmosDbDataFeedSource(generated_models.AzureCosmosDbDataFeedSource, dict):
     """AzureCosmosDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -963,10 +914,11 @@ class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDb
             sql_query=sql_query,
             database=database,
             collection_id=collection_id,
-            data_source_type="AzureCosmosDB",
-            authentication_type="Basic",
             **kwargs
         )
+        self.data_source_type = "AzureCosmosDB"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -983,7 +935,7 @@ class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDb
         )
 
 
-class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
+class AzureDataExplorerDataFeedSource(generated_models.AzureDataExplorerDataFeedSource, dict):
     """AzureDataExplorerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1005,16 +957,16 @@ class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureData
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
+        super().__init__(
+            query=query,
+            **kwargs
+        )
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="Basic", **kwargs
         )
-        super().__init__(
-            data_source_type="AzureDataExplorer",
-            query=query,
-            authentication_type=authentication_type,
-            credential_id=credential_id,
-            **kwargs
-        )
+        self.data_source_type = "AzureDataExplorer"
+        self.authentication_type = authentication_type
+        self.credential_id = credential_id
 
     def __repr__(self):
         return (
@@ -1029,7 +981,7 @@ class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureData
         )
 
 
-class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFeedSource):
+class AzureTableDataFeedSource(generated_models.AzureTableDataFeedSource, dict):
     """AzureTableDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1048,7 +1000,10 @@ class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFe
     """
 
     def __init__(self, query: str, table: str, **kwargs: Any) -> None:
-        super().__init__(query=query, table=table, data_source_type="AzureTable", authentication_type="Basic", **kwargs)
+        super().__init__(query=query, table=table, **kwargs)
+        self.data_source_type = "AzureTable"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -1064,7 +1019,7 @@ class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFe
         )
 
 
-class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHubsDataFeedSource):
+class AzureEventHubsDataFeedSource(generated_models.AzureEventHubsDataFeedSource, dict):
     """AzureEventHubsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1083,8 +1038,11 @@ class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHu
 
     def __init__(self, consumer_group: str, **kwargs: Any) -> None:
         super().__init__(
-            data_source_type="AzureEventHubs", authentication_type="Basic", consumer_group=consumer_group, **kwargs
+            consumer_group=consumer_group, **kwargs
         )
+        self.data_source_type = "AzureEventHubs"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -1099,7 +1057,7 @@ class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHu
         )
 
 
-class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSource):
+class InfluxDbDataFeedSource(generated_models.InfluxDbDataFeedSource, dict):
     """InfluxDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1120,7 +1078,10 @@ class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSo
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
-        super().__init__(query=query, data_source_type="InfluxDB", authentication_type="Basic", **kwargs)
+        super().__init__(query=query, **kwargs)
+        self.data_source_type = "InfluxDB"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -1138,7 +1099,7 @@ class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSo
         )
 
 
-class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
+class MySqlDataFeedSource(generated_models.AzureDataExplorerDataFeedSource, dict):
     """MySqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1156,7 +1117,10 @@ class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerData
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
-        super().__init__(data_source_type="MySql", authentication_type="Basic", query=query, **kwargs)
+        super().__init__(query=query, **kwargs)
+        self.data_source_type = "MySql"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -1171,7 +1135,7 @@ class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerData
         )
 
 
-class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
+class PostgreSqlDataFeedSource(generated_models.AzureDataExplorerDataFeedSource, dict):
     """PostgreSqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1189,7 +1153,10 @@ class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplore
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
-        super().__init__(query=query, data_source_type="PostgreSql", authentication_type="Basic", **kwargs)
+        super().__init__(query=query, **kwargs)
+        self.data_source_type = "PostgreSql"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -1204,7 +1171,7 @@ class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplore
         )
 
 
-class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
+class SqlServerDataFeedSource(generated_models.AzureDataExplorerDataFeedSource, dict):
     """SqlServerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1226,19 +1193,19 @@ class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorer
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
+        super().__init__(
+            query=query,
+            **kwargs
+        )
         datasource_sql_connection_string_id = kwargs.get("datasource_sql_connection_string_id", False)
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="AzureSQLConnectionString" if datasource_sql_connection_string_id else "Basic"
         )
         if credential_id is None and datasource_sql_connection_string_id:
             credential_id = datasource_sql_connection_string_id
-        super().__init__(
-            query=query,
-            data_source_type="SqlServer",
-            authentication_type=authentication_type,
-            credential_id=credential_id,
-            **kwargs
-        )
+        self.data_source_type = "SqlServer"
+        self.authentication_type = authentication_type
+        self.credential_id = credential_id
 
     def __repr__(self):
         return (
@@ -1253,7 +1220,7 @@ class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorer
         )
 
 
-class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource, generated_models.AzureDataLakeStorageGen2DataFeedSource):
+class AzureDataLakeStorageGen2DataFeedSource(generated_models.AzureDataLakeStorageGen2DataFeedSource, dict):
     """AzureDataLakeStorageGen2DataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1278,22 +1245,21 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource, generated_models.Az
     """
 
     def __init__(self, file_system_name: str, directory_template: str, file_template: str, **kwargs: Any) -> None:
-
+        super().__init__(
+            file_system_name=file_system_name,
+            directory_template=directory_template,
+            file_template=file_template,
+            **kwargs
+        )
         datasource_datalake_gen2_shared_key_id = kwargs.get("datasource_datalake_gen2_shared_key_id", False)
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="DataLakeGen2SharedKey" if datasource_datalake_gen2_shared_key_id else "Basic",
         )
         if credential_id is None and datasource_datalake_gen2_shared_key_id:
             credential_id = datasource_datalake_gen2_shared_key_id
-        super().__init__(
-            data_source_type="AzureDataLakeStorageGen2",
-            authentication_type=authentication_type,
-            credential_id=credential_id,
-            file_system_name=file_system_name,
-            directory_template=directory_template,
-            file_template=file_template,
-            **kwargs
-        )
+        self.data_source_type = "AzureDataLakeStorageGen2"
+        self.authentication_type = authentication_type
+        self.credential_id = credential_id
 
     def __repr__(self):
         return (
@@ -1312,7 +1278,7 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource, generated_models.Az
         )
 
 
-class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogAnalyticsDataFeedSource):
+class AzureLogAnalyticsDataFeedSource(generated_models.AzureLogAnalyticsDataFeedSource, dict):
     """AzureLogAnalyticsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1338,7 +1304,6 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogA
     """
 
     def __init__(self, workspace_id: str, query: str, **kwargs: Any) -> None:
-        super().__init__(data_source_type="AzureLogAnalytics", **kwargs)
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="Basic",
             check_msi_kwarg=False,
@@ -1351,9 +1316,6 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogA
             client_id = kwargs.get("client_id", None)
             client_secret = kwargs.get("client_secret", None)
         super().__init__(
-            data_source_type="AzureLogAnalytics",
-            authentication_type=authentication_type,
-            credential_id=credential_id,
             tenant_id=tenant_id,
             client_id=client_id,
             client_secret=client_secret,
@@ -1361,6 +1323,9 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogA
             query=query,
             **kwargs
         )
+        self.data_source_type = "AzureLogAnalytics"
+        self.authentication_type = authentication_type
+        self.credential_id = credential_id
 
     def __repr__(self):
         return (
@@ -1378,7 +1343,7 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogA
         )
 
 
-class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSource):
+class MongoDbDataFeedSource(generated_models.MongoDbDataFeedSource, dict):
     """MongoDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1397,7 +1362,10 @@ class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSour
     """
 
     def __init__(self, command: str, **kwargs: Any) -> None:
-        super().__init__(command=command, data_source_type="MongoDB", authentication_type="Basic", **kwargs)
+        super().__init__(command=command, **kwargs)
+        self.data_source_type = "MongoDB"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -2035,7 +2003,7 @@ class IncidentRootCause(msrest.serialization.Model):
         )
 
 
-class MetricFeedback(generated_models.MetricFeedback, DictMixin):
+class MetricFeedback(generated_models.MetricFeedback, dict):
     """Feedback base class
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2071,7 +2039,7 @@ class MetricFeedback(generated_models.MetricFeedback, DictMixin):
         )
 
 
-class AnomalyFeedback(generated_models.AnomalyFeedback, DictMixin):  # pylint:disable=too-many-instance-attributes
+class AnomalyFeedback(generated_models.AnomalyFeedback, dict):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2101,6 +2069,23 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, DictMixin):  # pylint:di
     :paramtype anomaly_detection_configuration_snapshot:
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
     """
+
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "anomaly_detection_configuration_snapshot": {
+            "key": "anomalyDetectionConfigurationSnapshot",
+            "type": "AnomalyDetectionConfiguration",
+        },
+        "value": {"key": "value.anomalyValue", "type": "str"},
+    }
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
         super().__init__(
@@ -2133,7 +2118,7 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, DictMixin):  # pylint:di
         )
 
 
-class ChangePointFeedback(generated_models.ChangePointFeedback, DictMixin):
+class ChangePointFeedback(generated_models.ChangePointFeedback, dict):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2186,7 +2171,7 @@ class ChangePointFeedback(generated_models.ChangePointFeedback, DictMixin):
         )
 
 
-class CommentFeedback(generated_models.CommentFeedback, DictMixin):
+class CommentFeedback(generated_models.CommentFeedback, dict):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2239,7 +2224,7 @@ class CommentFeedback(generated_models.CommentFeedback, DictMixin):
         )
 
 
-class PeriodFeedback(generated_models.PeriodFeedback, DictMixin):
+class PeriodFeedback(generated_models.PeriodFeedback, dict):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2288,7 +2273,7 @@ class PeriodFeedback(generated_models.PeriodFeedback, DictMixin):
         )
 
 
-class DatasourceCredential(generated_models.DatasourceCredential, DictMixin):
+class DatasourceCredential(generated_models.DatasourceCredential, dict):
     """DatasourceCredential base class.
 
     :param credential_type: Required. Type of data source credential.Constant filled by
@@ -2312,7 +2297,7 @@ class DatasourceCredential(generated_models.DatasourceCredential, DictMixin):
         )[:1024]
 
 
-class DatasourceSqlConnectionString(DatasourceCredential, generated_models.DatasourceSqlConnectionString):
+class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionString, dict):
     """DatasourceSqlConnectionString.
 
     All required parameters must be populated in order to send to Azure.
@@ -2333,7 +2318,7 @@ class DatasourceSqlConnectionString(DatasourceCredential, generated_models.Datas
 
     def __init__(self, name: str, connection_string: str, **kwargs: Any) -> None:
         super().__init__(
-            name=name, credential_type="AzureSQLConnectionString", connection_string=connection_string, **kwargs
+            name=name, connection_string=connection_string, **kwargs
         )
 
     def __repr__(self):
@@ -2349,7 +2334,7 @@ class DatasourceSqlConnectionString(DatasourceCredential, generated_models.Datas
         )
 
 
-class DatasourceDataLakeGen2SharedKey(DatasourceCredential, generated_models.DatasourceDataLakeGen2SharedKey):
+class DatasourceDataLakeGen2SharedKey(generated_models.DatasourceDataLakeGen2SharedKey, dict):
     """DatasourceDataLakeGen2SharedKey.
 
     All required parameters must be populated in order to send to Azure.
@@ -2369,7 +2354,7 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential, generated_models.Dat
     """
 
     def __init__(self, name: str, account_key: str, **kwargs: Any) -> None:
-        super().__init__(name=name, credential_type="DataLakeGen2SharedKey", account_key=account_key, **kwargs)
+        super().__init__(name=name, account_key=account_key, **kwargs)
 
     def __repr__(self):
         return (
@@ -2384,7 +2369,7 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential, generated_models.Dat
         )
 
 
-class DatasourceServicePrincipal(DatasourceCredential, generated_models.DatasourceServicePrincipal):
+class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, dict):
     """DatasourceServicePrincipal.
 
     All required parameters must be populated in order to send to Azure.
@@ -2410,7 +2395,6 @@ class DatasourceServicePrincipal(DatasourceCredential, generated_models.Datasour
     def __init__(self, name: str, client_id: str, client_secret: str, tenant_id: str, **kwargs: Any) -> None:
         super().__init__(
             name=name,
-            credential_type="ServicePrincipal",
             client_id=client_id,
             client_secret=client_secret,
             tenant_id=tenant_id,
@@ -2432,7 +2416,7 @@ class DatasourceServicePrincipal(DatasourceCredential, generated_models.Datasour
         )
 
 
-class DatasourceServicePrincipalInKeyVault(DatasourceCredential, generated_models.DatasourceServicePrincipalInKeyVault):
+class DatasourceServicePrincipalInKeyVault(generated_models.DatasourceServicePrincipalInKeyVault, dict):
     """DatasourceServicePrincipalInKeyVault.
 
     All required parameters must be populated in order to send to Azure.
@@ -2471,7 +2455,6 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential, generated_model
     ) -> None:
         super().__init__(
             name=name,
-            credential_type="ServicePrincipalInKV",
             key_vault_endpoint=key_vault_endpoint,
             key_vault_client_id=key_vault_client_id,
             key_vault_client_secret=key_vault_client_secret,

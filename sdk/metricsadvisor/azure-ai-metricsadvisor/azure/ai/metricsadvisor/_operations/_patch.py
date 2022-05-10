@@ -97,15 +97,16 @@ UpdateHelperRetval = Tuple[str, Union[Any, models.DataFeed], Any]
 
 class OperationMixinHelpers:
     @staticmethod
-    def _convert_to_sub_feedback(feedback: models.MetricFeedback) -> FeedbackUnion:
-        if feedback.feedback_type == "Anomaly":
-            return models.AnomalyFeedback.from_dict(feedback.serialize())
-        if feedback.feedback_type == "ChangePoint":
-            return models.ChangePointFeedback.from_dict(feedback.serialize())  # type: ignore
-        if feedback.feedback_type == "Comment":
-            return models.CommentFeedback.from_dict(feedback.serialize())  # type: ignore
-        if feedback.feedback_type == "Period":
-            return models.PeriodFeedback.from_dict(feedback.serialize())  # type: ignore
+    def _convert_to_sub_feedback(feedback) -> FeedbackUnion:
+        feedback_type = feedback["feedbackType"]
+        if feedback_type == "Anomaly":
+            return models.AnomalyFeedback.from_dict(feedback)
+        if feedback_type == "ChangePoint":
+            return models.ChangePointFeedback.from_dict(feedback)  # type: ignore
+        if feedback_type == "Comment":
+            return models.CommentFeedback.from_dict(feedback)  # type: ignore
+        if feedback_type == "Period":
+            return models.PeriodFeedback.from_dict(feedback)  # type: ignore
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
     @staticmethod
@@ -152,7 +153,7 @@ class OperationMixinHelpers:
             "ServicePrincipalInKV": models.DatasourceServicePrincipalInKeyVault,
         }
         datasource_class = type_to_datasource_credential[response["dataSourceCredentialType"]]
-        return datasource_class.deserialize(response)
+        return datasource_class.from_dict(response)
 
     @staticmethod
     def _update_detection_configuration_helper(
@@ -667,10 +668,7 @@ class OperationMixinHelpers:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)  # type: ignore  # pylint: disable=no-member
             raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._convert_to_sub_feedback(
-            self._deserialize(generated_models.MetricFeedback, pipeline_response)  # type: ignore  # pylint: disable=no-member
-        )
+        deserialized = self._convert_to_sub_feedback(pipeline_response.http_response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
