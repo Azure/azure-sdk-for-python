@@ -55,7 +55,7 @@ def create_code_report(cmd, service_name):
     output_buffer = [line.rstrip() for line in process.stdout]
     process.wait()
     if process.returncode:
-        error_packages_info[service_name] = '\n'.join(output_buffer)
+        error_packages_info[service_name] = '\n'.join(output_buffer[-min(len(output_buffer), 10):])
         raise Exception(f'fail to create code report of {service_name}')
     return output_buffer
 
@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     # get all azure-mgmt-package paths
     in_files = glob.glob(str(Path(f'{docker_path}/sdk/*/azure-mgmt-*')))
-    for i in in_files[0:1]:
+    for i in in_files:
         path = Path(i)
         service_name = path.parts[-1]
 
@@ -99,7 +99,8 @@ if __name__ == '__main__':
 
                 # use change_log on these two code_reports
                 result = sp.check_output(
-                    fr'{docker_cmd} "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
+                    f'{docker_cmd} "python -m packaging_tools.change_log {route_older_version} {route_last_version}"',
+                    shell=True, universal_newlines=True)
             except sp.CalledProcessError as e:
                 print(f'error happened for {service_name} during changelog generation')
                 error_packages_info[service_name] = str(e)
