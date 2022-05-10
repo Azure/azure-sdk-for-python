@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._data_policy_manifests_operations import DataPolicyManifestsOperations
-from ._policy_assignments_operations import PolicyAssignmentsOperations
-from ._policy_definitions_operations import PolicyDefinitionsOperations
-from ._policy_set_definitions_operations import PolicySetDefinitionsOperations
-from ._policy_exemptions_operations import PolicyExemptionsOperations
+from ._operations import DataPolicyManifestsOperations
+from ._operations import PolicyAssignmentsOperations
+from ._operations import PolicyDefinitionsOperations
+from ._operations import PolicySetDefinitionsOperations
+from ._operations import PolicyExemptionsOperations
 
 __all__ = [
     'DataPolicyManifestsOperations',

@@ -5,13 +5,13 @@
         "name": "NetworkManagementClient",
         "filename": "_network_management_client",
         "description": "Network Client.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"NetworkManagementClientConfiguration\"], \"._operations_mixin\": [\"NetworkManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"NetworkManagementClientConfiguration\"], \"._operations_mixin\": [\"NetworkManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"NetworkManagementClientConfiguration\"], \"._operations_mixin\": [\"NetworkManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"NetworkManagementClientConfiguration\"], \"._operations_mixin\": [\"NetworkManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -54,7 +54,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -74,7 +74,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -91,11 +91,10 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "azure_firewalls": "AzureFirewallsOperations",
@@ -149,18 +148,18 @@
         "vpn_connections": "VpnConnectionsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}",
         "operations": {
             "check_dns_name_availability" : {
                 "sync": {
-                    "signature": "def check_dns_name_availability(\n    self,\n    location,  # type: str\n    domain_name_label,  # type: str\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2018_04_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def check_dns_name_availability(\n    self,\n    location,  # type: str\n    domain_name_label,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.DnsNameAvailabilityResult\"\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.\n:type domain_name_label: str\n:keyword api_version: Api Version. Default value is \"2018-04-01\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2018_04_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
                     "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e \"_models.DnsNameAvailabilityResult\":\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2018_04_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.\n:type domain_name_label: str\n:keyword api_version: Api Version. Default value is \"2018-04-01\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult, or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2018_04_01.models.DnsNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "location, domain_name_label"
             }

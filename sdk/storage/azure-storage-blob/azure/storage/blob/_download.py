@@ -10,7 +10,7 @@ import time
 
 import warnings
 from io import BytesIO
-from typing import Iterator
+from typing import Iterator, Union
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
@@ -81,6 +81,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         parallel=None,
         validate_content=None,
         encryption_options=None,
+        progress_hook=None,
         **kwargs
     ):
         self.client = client
@@ -96,6 +97,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         self.stream = stream
         self.stream_lock = threading.Lock() if parallel else None
         self.progress_lock = threading.Lock() if parallel else None
+        self.progress_hook = progress_hook
 
         # For a parallel download, the stream is always seekable, so we note down the current position
         # in order to seek to the right place when out-of-order chunks come in
@@ -142,6 +144,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 self.progress_total += length
         else:
             self.progress_total += length
+
+        if self.progress_hook:
+            self.progress_hook(self.progress_total, self.total_size)
 
     def _write_to_stream(self, chunk_data, chunk_start):
         if self.stream_lock:
@@ -322,6 +327,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._encoding = encoding
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
+        self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -514,7 +520,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
-
         :rtype: bytes or str
         """
         stream = BytesIO()
@@ -583,6 +588,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # Write the content to the user stream
         stream.write(self._current_content)
+        if self._progress_hook:
+            self._progress_hook(len(self._current_content), self.size)
+
         if self._download_complete:
             return self.size
 
@@ -604,6 +612,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             use_location=self._location_mode,
+            progress_hook=self._progress_hook,
             **self._request_options
         )
         if parallel:

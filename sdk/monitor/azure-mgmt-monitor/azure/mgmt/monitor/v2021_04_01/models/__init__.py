@@ -6,84 +6,45 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AzureMonitorMetricsDestination
-    from ._models_py3 import ConfigurationAccessEndpointSpec
-    from ._models_py3 import DataCollectionEndpoint
-    from ._models_py3 import DataCollectionEndpointConfigurationAccess
-    from ._models_py3 import DataCollectionEndpointLogsIngestion
-    from ._models_py3 import DataCollectionEndpointNetworkAcls
-    from ._models_py3 import DataCollectionEndpointResource
-    from ._models_py3 import DataCollectionEndpointResourceListResult
-    from ._models_py3 import DataCollectionEndpointResourceProperties
-    from ._models_py3 import DataCollectionEndpointResourceSystemData
-    from ._models_py3 import DataCollectionRule
-    from ._models_py3 import DataCollectionRuleAssociation
-    from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResource
-    from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceListResult
-    from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceProperties
-    from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceSystemData
-    from ._models_py3 import DataCollectionRuleDataSources
-    from ._models_py3 import DataCollectionRuleDestinations
-    from ._models_py3 import DataCollectionRuleResource
-    from ._models_py3 import DataCollectionRuleResourceListResult
-    from ._models_py3 import DataCollectionRuleResourceProperties
-    from ._models_py3 import DataCollectionRuleResourceSystemData
-    from ._models_py3 import DataFlow
-    from ._models_py3 import DataSourcesSpec
-    from ._models_py3 import DestinationsSpec
-    from ._models_py3 import DestinationsSpecAzureMonitorMetrics
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponseCommonV2
-    from ._models_py3 import ExtensionDataSource
-    from ._models_py3 import LogAnalyticsDestination
-    from ._models_py3 import LogsIngestionEndpointSpec
-    from ._models_py3 import NetworkRuleSet
-    from ._models_py3 import PerfCounterDataSource
-    from ._models_py3 import ResourceForUpdate
-    from ._models_py3 import SyslogDataSource
-    from ._models_py3 import SystemData
-    from ._models_py3 import WindowsEventLogDataSource
-except (SyntaxError, ImportError):
-    from ._models import AzureMonitorMetricsDestination  # type: ignore
-    from ._models import ConfigurationAccessEndpointSpec  # type: ignore
-    from ._models import DataCollectionEndpoint  # type: ignore
-    from ._models import DataCollectionEndpointConfigurationAccess  # type: ignore
-    from ._models import DataCollectionEndpointLogsIngestion  # type: ignore
-    from ._models import DataCollectionEndpointNetworkAcls  # type: ignore
-    from ._models import DataCollectionEndpointResource  # type: ignore
-    from ._models import DataCollectionEndpointResourceListResult  # type: ignore
-    from ._models import DataCollectionEndpointResourceProperties  # type: ignore
-    from ._models import DataCollectionEndpointResourceSystemData  # type: ignore
-    from ._models import DataCollectionRule  # type: ignore
-    from ._models import DataCollectionRuleAssociation  # type: ignore
-    from ._models import DataCollectionRuleAssociationProxyOnlyResource  # type: ignore
-    from ._models import DataCollectionRuleAssociationProxyOnlyResourceListResult  # type: ignore
-    from ._models import DataCollectionRuleAssociationProxyOnlyResourceProperties  # type: ignore
-    from ._models import DataCollectionRuleAssociationProxyOnlyResourceSystemData  # type: ignore
-    from ._models import DataCollectionRuleDataSources  # type: ignore
-    from ._models import DataCollectionRuleDestinations  # type: ignore
-    from ._models import DataCollectionRuleResource  # type: ignore
-    from ._models import DataCollectionRuleResourceListResult  # type: ignore
-    from ._models import DataCollectionRuleResourceProperties  # type: ignore
-    from ._models import DataCollectionRuleResourceSystemData  # type: ignore
-    from ._models import DataFlow  # type: ignore
-    from ._models import DataSourcesSpec  # type: ignore
-    from ._models import DestinationsSpec  # type: ignore
-    from ._models import DestinationsSpecAzureMonitorMetrics  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponseCommonV2  # type: ignore
-    from ._models import ExtensionDataSource  # type: ignore
-    from ._models import LogAnalyticsDestination  # type: ignore
-    from ._models import LogsIngestionEndpointSpec  # type: ignore
-    from ._models import NetworkRuleSet  # type: ignore
-    from ._models import PerfCounterDataSource  # type: ignore
-    from ._models import ResourceForUpdate  # type: ignore
-    from ._models import SyslogDataSource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import WindowsEventLogDataSource  # type: ignore
+from ._models_py3 import AzureMonitorMetricsDestination
+from ._models_py3 import ConfigurationAccessEndpointSpec
+from ._models_py3 import DataCollectionEndpoint
+from ._models_py3 import DataCollectionEndpointConfigurationAccess
+from ._models_py3 import DataCollectionEndpointLogsIngestion
+from ._models_py3 import DataCollectionEndpointNetworkAcls
+from ._models_py3 import DataCollectionEndpointResource
+from ._models_py3 import DataCollectionEndpointResourceListResult
+from ._models_py3 import DataCollectionEndpointResourceProperties
+from ._models_py3 import DataCollectionEndpointResourceSystemData
+from ._models_py3 import DataCollectionRule
+from ._models_py3 import DataCollectionRuleAssociation
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResource
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceListResult
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceProperties
+from ._models_py3 import DataCollectionRuleAssociationProxyOnlyResourceSystemData
+from ._models_py3 import DataCollectionRuleDataSources
+from ._models_py3 import DataCollectionRuleDestinations
+from ._models_py3 import DataCollectionRuleResource
+from ._models_py3 import DataCollectionRuleResourceListResult
+from ._models_py3 import DataCollectionRuleResourceProperties
+from ._models_py3 import DataCollectionRuleResourceSystemData
+from ._models_py3 import DataFlow
+from ._models_py3 import DataSourcesSpec
+from ._models_py3 import DestinationsSpec
+from ._models_py3 import DestinationsSpecAzureMonitorMetrics
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponseCommonV2
+from ._models_py3 import ExtensionDataSource
+from ._models_py3 import LogAnalyticsDestination
+from ._models_py3 import LogsIngestionEndpointSpec
+from ._models_py3 import NetworkRuleSet
+from ._models_py3 import PerfCounterDataSource
+from ._models_py3 import ResourceForUpdate
+from ._models_py3 import SyslogDataSource
+from ._models_py3 import SystemData
+from ._models_py3 import WindowsEventLogDataSource
+
 
 from ._monitor_management_client_enums import (
     CreatedByType,

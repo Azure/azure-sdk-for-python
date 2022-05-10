@@ -7,28 +7,27 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "152",
+        "Content-Length": "153",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "a1edbe35-7f2b-11ec-849b-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "modelId": "3498b340-3526-4834-b00a-9eaa1ef70f19",
+        "modelId": "a765bec0-8629-4c1d-8012-e1837cd8494a",
         "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url",
-          "prefix": "subfolder"
+          "prefix": "testfolder"
         }
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "41721141-ff50-491d-84bf-3fe310ebac0a",
+        "apim-request-id": "df890e1d-20f8-40f5-977d-4ffc40181f7c",
         "Content-Type": "application/json",
-        "Date": "Thu, 27 Jan 2022 04:43:11 GMT",
+        "Date": "Thu, 31 Mar 2022 23:41:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "613"
+        "x-envoy-upstream-service-time": "215"
       },
       "ResponseBody": {
         "error": {

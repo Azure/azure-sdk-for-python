@@ -8,7 +8,7 @@ import pytest
 import uuid
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_custom_default_matcher
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from azure.ai.formrecognizer import DocumentModel
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
@@ -20,11 +20,17 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_compose_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
@@ -35,7 +41,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"frtests": "testvalue"})
+            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
             composed_model = await poller.result()
             if self.is_live:
@@ -44,7 +50,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             assert composed_model.model_id
             assert composed_model.description == "my composed model"
             assert composed_model.created_on
-            assert composed_model.tags == {"frtests": "testvalue"}
+            assert composed_model.tags == {"testkey": "testvalue"}
             for name, doc_type in composed_model.doc_types.items():
                 assert name
                 for key, field in doc_type.field_schema.items():
@@ -56,7 +62,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         raw_response = []
 
         def callback(response, _, headers):
@@ -110,7 +119,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model_1 = await poller.result()

@@ -5,41 +5,39 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
-import pytest
-import asyncio
 
-from azure.core.credentials import AzureSasCredential
-from dateutil.tz import tzutc
+import pytest
+import unittest
 from datetime import (
     datetime,
     timedelta,
     date,
 )
-from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+
+from azure.core.credentials import AzureSasCredential
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
     ClientAuthenticationError)
+from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.queue import (
-    QueueSasPermissions,
     AccessPolicy,
-    ResourceTypes,
     AccountSasPermissions,
+    ResourceTypes,
+    QueueSasPermissions,
     generate_account_sas,
     generate_queue_sas
 )
 from azure.storage.queue.aio import QueueServiceClient, QueueClient
 
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'pyqueueasync'
-
 # ------------------------------------------------------------------------------
 
 
@@ -121,6 +119,143 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertEqual(2, len(props.metadata))
         self.assertEqual('test', props.metadata['val1'])
         self.assertEqual('blah', props.metadata['val2'])
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages_with_max_messages(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
+        await queue_client.send_message(u'message5')
+        await queue_client.send_message(u'message6')
+        await queue_client.send_message(u'message7')
+        await queue_client.send_message(u'message8')
+        await queue_client.send_message(u'message9')
+        await queue_client.send_message(u'message10')
+        result = []
+        async for m in queue_client.receive_messages(max_messages=5):
+            result.append(m)
+
+        # Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(5, len(result))
+
+        for message in result:
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertNotEqual('', message.content)
+            self.assertNotEqual('', message.pop_receipt)
+            self.assertEqual(1, message.dequeue_count)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages_with_too_little_messages(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
+        await queue_client.send_message(u'message5')
+        result = []
+        async for m in queue_client.receive_messages(max_messages=10):
+            result.append(m)
+
+        # Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(5, len(result))
+
+        for message in result:
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertNotEqual('', message.content)
+            self.assertNotEqual('', message.pop_receipt)
+            self.assertEqual(1, message.dequeue_count)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages_with_page_bigger_than_max(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
+        await queue_client.send_message(u'message5')
+
+        # Asserts
+        with self.assertRaises(ValueError):
+            queue_client.receive_messages(messages_per_page=5, max_messages=2)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages_with_remainder(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
+        await queue_client.send_message(u'message5')
+        await queue_client.send_message(u'message6')
+        await queue_client.send_message(u'message7')
+        await queue_client.send_message(u'message8')
+        await queue_client.send_message(u'message9')
+        await queue_client.send_message(u'message10')
+        await queue_client.send_message(u'message11')
+        await queue_client.send_message(u'message12')
+
+        result = []
+        async for m in queue_client.receive_messages(messages_per_page=3, max_messages=10):
+            result.append(m)
+
+        remainder = []
+        async for m in queue_client.receive_messages():
+            remainder.append(m)
+
+        # Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(10, len(result))
+
+        self.assertIsNotNone(remainder)
+        self.assertEqual(2, len(remainder))
+
+        for message in result:
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertNotEqual('', message.content)
+            self.assertNotEqual('', message.pop_receipt)
+            self.assertEqual(1, message.dequeue_count)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
+
+        for message in remainder:
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertNotEqual('', message.content)
+            self.assertNotEqual('', message.pop_receipt)
+            self.assertEqual(1, message.dequeue_count)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -220,6 +355,32 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(listed_queue.metadata)
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
+
+    @pytest.mark.live_test_only
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_queues_account_sas(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        sas_token = generate_account_sas(
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1)
+        )
+
+        # Act
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=sas_token)
+        queues = []
+        async for q in qsc.list_queues():
+            queues.append(q)
+
+        # Assert
+        self.assertIsNotNone(queues)
+        assert len(queues) >= 1
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test

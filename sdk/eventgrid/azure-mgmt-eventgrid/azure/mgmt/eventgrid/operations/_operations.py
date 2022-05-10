@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,22 +20,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_list_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/operations')
@@ -56,7 +50,6 @@ def build_list_request(
         **kwargs
     )
 
-# fmt: on
 class Operations(object):
     """Operations operations.
 
@@ -82,9 +75,8 @@ class Operations(object):
     @distributed_trace
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.OperationsListResult"]
+        **kwargs: Any
+    ) -> Iterable["_models.OperationsListResult"]:
         """List available operations.
 
         List the available operations supported by the Microsoft.EventGrid resource provider.
