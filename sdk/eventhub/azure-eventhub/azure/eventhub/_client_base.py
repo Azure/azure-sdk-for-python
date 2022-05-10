@@ -41,6 +41,8 @@ from ._constants import (
     READ_OPERATION
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -133,7 +135,7 @@ def _parse_conn_str(conn_str, **kwargs):
 
 def _generate_sas_token(uri, policy, key, expiry=None):
     # type: (str, str, str, Optional[timedelta]) -> AccessToken
-    """Create a shared access signature token as a string literal.
+    """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
     """
@@ -143,7 +145,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     abs_expiry = int(time.time()) + expiry.seconds
 
     token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):
@@ -184,7 +186,6 @@ class EventHubSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
 
         return _generate_sas_token(scopes[0], self.policy, self.key)
-
 
 
 class EventhubAzureNamedKeyTokenCredential(object):
@@ -260,19 +261,9 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    CredentialTypes = Union[
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-        EventHubSharedKeyCredential,
-        TokenCredential
-    ]
-
-
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, CredentialTypes, Any) -> None
+        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -372,7 +363,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
-        # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
