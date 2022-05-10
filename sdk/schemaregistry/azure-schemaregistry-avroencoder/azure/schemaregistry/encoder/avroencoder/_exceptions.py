@@ -27,6 +27,7 @@
 
 class InvalidSchemaError(ValueError):
     """Error during schema validation.
+
     :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception, if any.
 
@@ -43,6 +44,7 @@ class InvalidSchemaError(ValueError):
 
 class InvalidContentError(ValueError):
     """Error during encoding or decoding content with a schema.
+
     :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception, if any.
 
