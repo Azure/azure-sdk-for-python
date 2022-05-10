@@ -111,7 +111,6 @@ class Connection(object):
             self._transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs['sasl_credential'],
-                port=self._port,
                 **kwargs
             )
         else:

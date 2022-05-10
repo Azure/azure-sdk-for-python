@@ -111,6 +111,7 @@ class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):
         self.credential = credential
         ssl = ssl or True
         http_proxy = kwargs.pop('http_proxy', None)
+        # Do we need to do something special here if it is a custom endpoint? With authentication
         self._transport = WebSocketTransport(
             host,
             port=port,

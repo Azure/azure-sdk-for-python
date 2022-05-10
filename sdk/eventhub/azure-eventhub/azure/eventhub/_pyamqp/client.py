@@ -243,7 +243,7 @@ class AMQPClient(object):
         _logger.debug("Opening client connection.")
         if not self._connection:
             self._connection = Connection(
-                self._custom_endpoint_address or "amqps://" + self._hostname,
+                "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
                 ssl={'ca_certs':self._connection_verify or certifi.where()},
                 container_id=self._name,

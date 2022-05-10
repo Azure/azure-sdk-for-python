@@ -153,6 +153,8 @@ class _AbstractTransport(object):
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+        self._custom_endpoint = kwargs.get("custom_endpoint_address")
+        self._connection_verify = kwargs.get("connection_verify")
 
     def connect(self):
         try:
@@ -489,7 +491,7 @@ class SSLTransport(_AbstractTransport):
     def _wrap_context(self, sock, sslopts, check_hostname=None, **ctx_options):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
+        ctx.load_verify_locations(cafile=self._connection_verify or certifi.where())
         ctx.check_hostname = check_hostname
         return ctx.wrap_socket(sock, **sslopts)
 
@@ -661,7 +663,6 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
 class WebSocketTransport(_AbstractTransport):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
-        print("WEBSOCKET")
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
         self._host = host
@@ -672,6 +673,7 @@ class WebSocketTransport(_AbstractTransport):
         self._http_proxy = kwargs.get('http_proxy', None)
 
     def connect(self):
+        print("WEBSCOKET")
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
         if self._http_proxy:
             http_proxy_host = self._http_proxy['proxy_hostname']
@@ -681,9 +683,15 @@ class WebSocketTransport(_AbstractTransport):
             if username or password:
                 http_proxy_auth = (username, password)
         try:
+            import websocket
             from websocket import create_connection
+            if self._custom_endpoint:
+                custom_endpoint = self._custom_endpoint.split("://")[1]
+                url="wss://{}".format(custom_endpoint)+"/$servicebus/websocket/"
+            else:
+                url = "wss://{}".format(self._host)
             self.ws = create_connection(
-                url="wss://{}".format(self._host),
+                url= url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
