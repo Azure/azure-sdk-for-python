@@ -47,47 +47,42 @@ class BaseClientPreparer(AzureRecordedTestCase):
 
 
 class KeyVaultBackupClientPreparer(BaseClientPreparer):
-    def __init__(self, **kwargs) -> None:
-       super().__init__(**kwargs)
-
     def __call__(self, fn):
-        def _preparer(test_class, api_version, **kwargs):
+        async def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
             kwargs["container_uri"] = self.container_uri
             kwargs["sas_token"] = self.sas_token
             kwargs["managed_hsm_url"] = self.managed_hsm_url
             client = self.create_backup_client(api_version=api_version, **kwargs)
 
-            with client:
-                fn(test_class, client, **kwargs)
+            async with client:
+                await fn(test_class, client, **kwargs)
         return _preparer
 
     def create_backup_client(self, **kwargs):
-        from azure.keyvault.administration import KeyVaultBackupClient
+        from azure.keyvault.administration.aio import KeyVaultBackupClient
 
-        credential = self.get_credential(KeyVaultBackupClient)
+        credential = self.get_credential(KeyVaultBackupClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultBackupClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
 
 
 class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-
     def __call__(self, fn):
-        def _preparer(test_class, api_version, **kwargs):
+        async def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
             client = self.create_access_control_client(api_version=api_version, **kwargs)
 
-            with client:
-                fn(test_class, client, **kwargs)
+            async with client:
+                await fn(test_class, client, **kwargs)
         return _preparer
 
     def create_access_control_client(self, **kwargs):
-        from azure.keyvault.administration import KeyVaultAccessControlClient
+        from azure.keyvault.administration.aio import \
+            KeyVaultAccessControlClient
 
-        credential = self.get_credential(KeyVaultAccessControlClient)
+        credential = self.get_credential(KeyVaultAccessControlClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultAccessControlClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
