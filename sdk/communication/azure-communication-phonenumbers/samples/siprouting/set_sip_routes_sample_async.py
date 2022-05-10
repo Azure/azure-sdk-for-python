@@ -5,29 +5,30 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: replace_sip_routes_sample.py
+FILE: set_sip_routes_sample_async.py
 DESCRIPTION:
-    This sample shows the usage of SIP routing client for replacing current
+    This sample shows the usage of asynchronous SIP routing client for replacing current
     configuration of SIP routes with new values.
 
 USAGE:
-    python replace_sip_routes_sample.py
+    python set_sip_routes_sample_async.py
         Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
     2) COMMUNICATION_SAMPLES_NEW_ROUTES - the list of new SIP route values
 """
 
 import os
-from azure.communication.phonenumbers.siprouting import SipRoutingClient
+import asyncio
+from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 
-class ReplaceSipRoutesSample(object):
+class SetSipRoutesSample(object):
     def __init__(self):
         connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
         self._client = SipRoutingClient.from_connection_string(connection_string)
 
-    def replace_sip_routes_sample(self):
+    async def set_sip_routes_sample(self):
         new_routes = os.getenv("COMMUNICATION_SAMPLES_NEW_ROUTES")
-        sip_routes = self._client.replace_routes(new_routes)
+        sip_routes = await self._client.set_routes(new_routes)
 
         for route in sip_routes:
             print(route.name)
@@ -38,5 +39,7 @@ class ReplaceSipRoutesSample(object):
                 print(trunk_fqdn)
 
 if __name__ == "__main__":
-    sample = ReplaceSipRoutesSample()
-    sample.replace_sip_routes_sample()
+    sample = SetSipRoutesSample()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(sample.set_sip_routes_sample())
+    loop.run_until_complete(sample._client.close())

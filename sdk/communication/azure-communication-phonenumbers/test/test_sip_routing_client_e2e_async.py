@@ -30,10 +30,10 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         )
         self.recording_processors.extend([URIReplacerProcessor()])
         loop = asyncio.get_event_loop()
-        coroutine = self._sip_routing_client.replace_routes([])
+        coroutine = self._sip_routing_client.set_routes([])
         loop.run_until_complete(coroutine)
         loop = asyncio.get_event_loop()
-        coroutine = self._sip_routing_client.replace_trunks(self.TRUNKS)
+        coroutine = self._sip_routing_client.set_trunks(self.TRUNKS)
         loop.run_until_complete(coroutine)
 
     @AsyncCommunicationTestCase.await_prepared_test
@@ -68,7 +68,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_routes(self):
         raised = False
-        await self._sip_routing_client.replace_routes(self.ROUTES)
+        await self._sip_routing_client.set_routes(self.ROUTES)
 
         try:
             routes = await self._sip_routing_client.get_routes()
@@ -81,12 +81,12 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_replace_trunks(self):
+    async def test_set_trunks(self):
         raised = False
         new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
 
         try:
-            await self._sip_routing_client.replace_trunks(new_trunks)
+            await self._sip_routing_client.set_trunks(new_trunks)
             result_trunks = await self._sip_routing_client.get_trunks()
         except Exception as e:
             raised = True
@@ -97,13 +97,13 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._trunks_are_equal(result_trunks,new_trunks), "Trunks are not equal."
     
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_replace_routes(self):
+    async def test_set_routes(self):
         raised = False
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
 
         try:
-            await self._sip_routing_client.replace_routes(self.ROUTES)
-            await self._sip_routing_client.replace_routes(new_routes)
+            await self._sip_routing_client.set_routes(self.ROUTES)
+            await self._sip_routing_client.set_routes(new_routes)
             result_routes = await self._sip_routing_client.get_routes()
         except Exception as e:
             raised = True

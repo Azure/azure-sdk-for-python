@@ -191,12 +191,12 @@ class SipRoutingClient(object):
         return config.routes
 
     @distributed_trace_async
-    async def replace_trunks(
+    async def set_trunks(
         self,
         trunks,  # type: List[SipTrunk]
         **kwargs  # type: Any
     ):  # type: (...) -> None
-        """Replaces the list of SIP trunks.
+        """Overwrites the list of SIP trunks.
 
         :param trunks: New list of trunks to be set.
         :type trunks: List[SipTrunk]
@@ -217,12 +217,12 @@ class SipRoutingClient(object):
             await self._patch_trunks_(trunks, **kwargs)
 
     @distributed_trace_async
-    async def replace_routes(
+    async def set_routes(
         self,
         routes,  # type: List[SipTrunkRoute]
         **kwargs  # type: Any
     ):  # type: (...) -> None
-        """Replaces the list of SIP routes.
+        """Overwrites the list of SIP routes.
 
         :param routes: New list of routes to be set.
         :type routes: List[SipTrunkRoute]

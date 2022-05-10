@@ -25,8 +25,8 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
             self.connection_str, http_logging_policy=get_http_logging_policy()
             )
         self.recording_processors.extend([URIReplacerProcessor()])
-        self._sip_routing_client.replace_routes([])
-        self._sip_routing_client.replace_trunks(self.TRUNKS)
+        self._sip_routing_client.set_routes([])
+        self._sip_routing_client.set_trunks(self.TRUNKS)
 
     def test_retrieval_with_token_auth(self):
         raised = False
@@ -57,7 +57,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
 
     def test_get_routes(self):
         raised = False
-        self._sip_routing_client.replace_routes(self.ROUTES)
+        self._sip_routing_client.set_routes(self.ROUTES)
 
         try:
             routes = self._sip_routing_client.get_routes()
@@ -69,12 +69,12 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
-    def test_replace_trunks(self):
+    def test_set_trunks(self):
         raised = False
         new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
 
         try:
-            self._sip_routing_client.replace_trunks(new_trunks)
+            self._sip_routing_client.set_trunks(new_trunks)
             result_trunks = self._sip_routing_client.get_trunks()
         except Exception as e:
             raised = True
@@ -84,13 +84,13 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         assert result_trunks is not None, "No trunks were returned."
         self._trunks_are_equal(result_trunks,new_trunks)
 
-    def test_replace_routes(self):
+    def test_set_routes(self):
         raised = False
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
 
         try:
-            self._sip_routing_client.replace_routes(self.ROUTES)
-            self._sip_routing_client.replace_routes(new_routes)
+            self._sip_routing_client.set_routes(self.ROUTES)
+            self._sip_routing_client.set_routes(new_routes)
             result_routes = self._sip_routing_client.get_routes()
         except Exception as e:
             raised = True
