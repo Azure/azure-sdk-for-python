@@ -673,7 +673,6 @@ class WebSocketTransport(_AbstractTransport):
         self._http_proxy = kwargs.get('http_proxy', None)
 
     def connect(self):
-        print("WEBSCOKET")
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
         if self._http_proxy:
             http_proxy_host = self._http_proxy['proxy_hostname']

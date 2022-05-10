@@ -196,6 +196,8 @@ class EventHubConsumerClient(ClientBase):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            custom_endpoint_address=self._config.custom_endpoint_address,
+            connection_verify=self._config.connection_verify,
         )
         return handler
 

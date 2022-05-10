@@ -317,9 +317,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 self._auth_uri,
                 self._auth_uri,
                 functools.partial(self._credential.get_token, self._auth_uri),
-                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-                port=self._config.connection_port,
-                verify=self._config.connection_verify,
             )
         return JWTTokenAuth(
             self._auth_uri,
