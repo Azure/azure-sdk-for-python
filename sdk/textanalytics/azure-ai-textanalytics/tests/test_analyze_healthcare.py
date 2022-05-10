@@ -598,3 +598,50 @@ class TestHealth(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
         assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                fhir_version="4.0.1",
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'fhir_version' is only available for API version 2022-04-01-preview and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                display_name="this won't work",
+                fhir_version="4.0.1",
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n'fhir_version' is only available for API version 2022-04-01-preview and up.\n"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_healthcare_fhir_bundle(self, client):
+        poller = client.begin_analyze_healthcare_entities(
+            documents=[
+                "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
+            ],
+            fhir_version="4.0.1",
+            polling_interval=self._interval(),
+        )
+
+        response = poller.result()
+        for res in response:
+            assert res.fhir_bundle

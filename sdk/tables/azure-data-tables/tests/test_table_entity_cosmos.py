@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from uuid import UUID
 import pytest
 
 from datetime import datetime, timedelta
@@ -34,6 +35,8 @@ from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
+
+TEST_GUID = UUID("3bd67b28-2155-4caf-b492-207172d4f183")
 
 # ------------------------------------------------------------------------------
 
@@ -1972,5 +1975,45 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
                     row_key=entity['RowKey'])
                 assert get_entity == entity1
 
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_entity_with_edmtypes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            "bool": ("false", EdmType.BOOLEAN),
+            "text": (42, EdmType.STRING),
+            "number": ("23", EdmType.INT32),
+            "bigNumber": (64, EdmType.INT64),
+            "bytes": ("test", EdmType.BINARY),
+            "amount": ("0", EdmType.DOUBLE),
+            "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
+            "guid": (TEST_GUID, EdmType.GUID)
+        }
+        try:
+            self.table.upsert_entity(entity)
+            result = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            assert result['bool'] == False
+            assert result['text'] == "42"
+            assert result['number'] == 23
+            assert result['bigNumber'][0] == 64
+            assert result['bytes'] == b"test"
+            assert result['amount'] == 0.0
+            assert str(result['since']) == "2008-07-10 00:00:00+00:00"
+            assert result['guid'] == entity["guid"][0]
+
+            with pytest.raises(HttpResponseError) as e:
+                entity = {
+                    'PartitionKey': partition,
+                    'RowKey': row,
+                    "bool": ("not a bool", EdmType.BOOLEAN)
+                }
+                self.table.upsert_entity(entity)
         finally:
             self._tear_down()

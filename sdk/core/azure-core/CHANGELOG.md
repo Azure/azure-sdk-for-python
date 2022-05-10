@@ -1,10 +1,20 @@
 # Release History
 
-## 1.24.0 (2022-05-05)
+## 1.24.1 (Unreleased)
 
 ### Features Added
 
-- Add `SerializationError` and `DeserializationError` in `azure.core.serialization` for errors raised during serialization / deserialization  #24113
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.24.0 (2022-05-06)
+
+### Features Added
+
+- Add `SerializationError` and `DeserializationError` in `azure.core.exceptions` for errors raised during serialization / deserialization  #24312
 
 ## 1.23.1 (2022-03-31)
 

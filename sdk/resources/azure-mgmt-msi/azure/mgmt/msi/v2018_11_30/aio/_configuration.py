@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagedServiceIdentityClientConfiguration(Configuration):
+class ManagedServiceIdentityClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ManagedServiceIdentityClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,6 +29,9 @@ class ManagedServiceIdentityClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Id of the Subscription to which the identity belongs.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2018-11-30". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +41,8 @@ class ManagedServiceIdentityClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(ManagedServiceIdentityClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +50,7 @@ class ManagedServiceIdentityClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2018-11-30"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-msi/{}'.format(VERSION))
         self._configure(**kwargs)
