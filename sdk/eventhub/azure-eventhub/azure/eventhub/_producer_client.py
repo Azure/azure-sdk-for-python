@@ -54,6 +54,14 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~azure.eventhub.TransportType
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
 
     .. admonition:: Example:
 
@@ -183,6 +191,14 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+         If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+         be used instead which uses port 443 for communication.
+        :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:

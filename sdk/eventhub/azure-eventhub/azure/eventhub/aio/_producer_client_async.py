@@ -63,14 +63,6 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
-     the Event Hubs service, allowing network requests to be routed through any application gateways or
-     other paths needed for the host environment. Default is None.
-     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
-     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -223,14 +215,6 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
          If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
          be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
-         the Event Hubs service, allowing network requests to be routed through any application gateways or
-         other paths needed for the host environment. Default is None.
-         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-         If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-         authenticate the identity of the connection endpoint.
-         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
