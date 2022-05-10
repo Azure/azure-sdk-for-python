@@ -154,7 +154,6 @@ class _AbstractTransport(object):
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
         self._custom_endpoint = kwargs.get("custom_endpoint_address")
-        self._connection_verify = kwargs.get("connection_verify")
 
     def connect(self):
         try:
@@ -491,7 +490,7 @@ class SSLTransport(_AbstractTransport):
     def _wrap_context(self, sock, sslopts, check_hostname=None, **ctx_options):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=self._connection_verify or certifi.where())
+        ctx.load_verify_locations(cafile=certifi.where())
         ctx.check_hostname = check_hostname
         return ctx.wrap_socket(sock, **sslopts)
 
