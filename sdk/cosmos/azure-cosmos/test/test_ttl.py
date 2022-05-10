@@ -269,7 +269,8 @@ class Test_ttl_tests(unittest.TestCase):
                                 'name': 'sample document',
                                 'key': 'value'}
 
-        created_document = created_collection.create_item(body=document_definition)
+        created_collection.create_item(body=document_definition)
+        created_document = created_collection.read_item(document_definition['id'], document_definition['id'])
 
         time.sleep(10)
 
@@ -282,7 +283,8 @@ class Test_ttl_tests(unittest.TestCase):
         )
 
         # We can create a document with the same id after the ttl time has expired
-        created_document = created_collection.create_item(body=document_definition)
+        created_collection.create_item(body=document_definition)
+        created_document = created_collection.read_item(document_definition['id'], document_definition['id'])
         self.assertEqual(created_document['id'], document_definition['id'])
 
         time.sleep(3)
