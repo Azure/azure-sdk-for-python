@@ -6,22 +6,16 @@
 
 # pylint:disable=protected-access
 # pylint:disable=too-many-lines
-import sys
 import datetime
-from this import d
 from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 import msrest
 from . import _models as generated_models
 from . import _enums as generated_enums
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
     from .._operations._patch import DataFeedSourceUnion
-
-_SERIALIZER = msrest.Serializer()
-_DESERIALIZER = msrest.Deserializer()
 
 
 class DictMixin:
