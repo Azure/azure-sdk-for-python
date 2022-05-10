@@ -64,19 +64,16 @@ if TYPE_CHECKING:
     from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
     from ._transport._base import AmqpTransport
 
-MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
-PrimitiveTypes = Optional[
-    Union[
-        int,
-        float,
-        bytes,
-        bool,
-        str,
-        Dict,
-        List,
-        uuid.UUID,
-    ]
-]
+PrimitiveTypes = Optional[Union[
+    int,
+    float,
+    bytes,
+    bool,
+    str,
+    Dict,
+    List,
+    uuid.UUID,
+]]
 
 _LOGGER = logging.getLogger(__name__)
 
