@@ -26,7 +26,7 @@ However, if an application wants to roll this certificate without creating new s
 
 ### Explicit rotation
 
-If the application get's notified of certificate rotations and it can directly respond, it might choose to wrap the `CertificateCredential` in a custom credential which provides a means for rotating the certificate. 
+If the application gets notified of certificate rotations and it can directly respond, it might choose to wrap the `CertificateCredential` in a custom credential which provides a means for rotating the certificate. 
 
 ```py
 class RotatableCertificateCredential(object):
