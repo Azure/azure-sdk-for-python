@@ -53,6 +53,7 @@ class RotatingCertificateCredential(object):
         self._tenant_id = tenant_id
         self._client_id = client_id
         self._certificate_path = certificate_path
+        self._certificate_last_modified = time.time()
         self.refresh_certificate()
 
     def get_token(self, *scopes, **kwargs):
