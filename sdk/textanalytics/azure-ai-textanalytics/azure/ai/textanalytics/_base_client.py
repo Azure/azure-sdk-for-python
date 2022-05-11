@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Text Analytics API versions supported by this package"""
+    """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
     #: this is the default version
     V2022_04_01_PREVIEW = "2022-04-01-preview"
