@@ -29,16 +29,13 @@ def find_report_name(result):
 def create_folder(name):
     if not os.path.exists(name):
         os.mkdir(name)
-        print(f"create folder {name} successfully")
-    else:
-        print(f"folder {name} has been created")
 
 
 def write_txt(folder, text_name, content, older_version, last_version):
     file_path = str(Path(f"{folder}/{text_name}_{older_version}_{last_version}.txt"))
     with open(file=file_path, mode="w", encoding="utf-8") as file:
         file.write(content)
-    print("change_log.txt create successful")
+    print(f"{text_name} has been created successfully")
 
 
 def create_code_report(cmd, service_name):
