@@ -17,6 +17,9 @@ These code samples show common champion scenario operations with the AzureMonito
 * Azure EventHub Send EventData: [sample_event_hub.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_event_hub.py)
 * Azure EventHub Blob Storage Checkpoint Store: [sample_blob_checkpoint.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_blob_checkpoint.py)
 * Azure EventGrid Send Event: [sample_event_grid.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_event_grid.py)
+* Azure Communication Chat Create Client/Thread: [sample_comm_chat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_chat.py)
+* Azure Communication Phone Numbers List Purchased Numbers: [sample_comm_phone.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_phone.py)
+* Azure Communication SMS Send Message: [sample_comm_sms.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_sms.py)
 * Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
 * Event: [sample_span_event.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_span_event.py)
 * Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
@@ -259,12 +262,62 @@ The following sample assumes that you have setup an Azure Event Grid [Topic](htt
 * Run the sample
 
 ```sh
-$ # azure-eventhub-checkpointstoreblob library
+$ # azure-azure-eventgrid library
 $ pip install azure-eventgrid
 $ # azure sdk core tracing library for opentelemetry
 $ pip install azure-core-tracing-opentelemetry
 $ # from this directory
 $ python sample_event_grid.py
+```
+
+### Azure Communication Chat Create Client/Thread
+
+The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-communication-chat library
+$ pip install azure-communication-chat
+$ # azure-communication-identity library for authentication
+$ pip install azure-communication-identity
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_comm_chat.py
+```
+
+### Azure Communication Phone Numbers List Purchased Numbers
+
+The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-communication-phonenumbers library
+$ pip install azure-communication-phonenumbers
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_comm_phone.py
+```
+
+### Azure Communication SMS Send Message
+
+The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-communication-sms library
+$ pip install azure-communication-sms
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_comm_sms.py
 ```
 
 ## Explore the data

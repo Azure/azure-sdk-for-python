@@ -4150,9 +4150,9 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
     :ivar model_version:
     :vartype model_version: str
     :ivar fhir_version: The FHIR Spec version that the result will use to format the fhirBundle.
-     For additional information see https://www.hl7.org/fhir/overview.html. The only acceptable
-     values to pass in are None and "4.0.1". The default value is None.
-    :vartype fhir_version: str
+     For additional information see https://www.hl7.org/fhir/overview.html. Possible values include:
+     "4.0.1".
+    :vartype fhir_version: str or ~azure.ai.textanalytics.v2022_04_01_preview.models.FhirVersion
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
      https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
@@ -4173,7 +4173,7 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
         *,
         logging_opt_out: Optional[bool] = False,
         model_version: Optional[str] = "latest",
-        fhir_version: Optional[str] = None,
+        fhir_version: Optional[Union[str, "FhirVersion"]] = None,
         string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
         **kwargs
     ):
@@ -4183,9 +4183,9 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
         :keyword model_version:
         :paramtype model_version: str
         :keyword fhir_version: The FHIR Spec version that the result will use to format the fhirBundle.
-         For additional information see https://www.hl7.org/fhir/overview.html. The only acceptable
-         values to pass in are None and "4.0.1". The default value is None.
-        :paramtype fhir_version: str
+         For additional information see https://www.hl7.org/fhir/overview.html. Possible values include:
+         "4.0.1".
+        :paramtype fhir_version: str or ~azure.ai.textanalytics.v2022_04_01_preview.models.FhirVersion
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
          https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",

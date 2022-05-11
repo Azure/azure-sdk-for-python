@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
 ## 1.1.28 (2022-02-03)
 
 - Raise a NotImplementedError if trying to use CLI credentials were CLI version is higher than 2.21.0  #20657 #21313

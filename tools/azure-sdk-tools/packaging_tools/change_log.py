@@ -182,9 +182,9 @@ def build_change_log(old_report, new_report):
         # Operations
         if diff_line[0][0] == "operations":
             change_log.operation(diff_line)
-        else:
+        elif diff_line[0][0] == "models":
             change_log.models(diff_line)
-        if diff_line[0][0] == 'client':
+        elif diff_line[0][0] == 'client':
             change_log.client()
 
     return change_log
