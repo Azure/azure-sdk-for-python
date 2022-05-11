@@ -35,7 +35,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
         The maximum size for a changefeed blob to be downloaded in a single call,
         the exceeded part will be downloaded in chunks.
     :keyword int max_chunk_get_size:
-        The maximum chunk size used for downloading a changefeed blob.
+        The maximum chunk size used for downloading a changefeed blob. 
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
