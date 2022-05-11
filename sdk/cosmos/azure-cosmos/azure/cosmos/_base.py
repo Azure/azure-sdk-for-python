@@ -242,7 +242,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth.get_authorization_header(
+        authorization = auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
