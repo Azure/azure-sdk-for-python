@@ -62,7 +62,7 @@ class RotatingCertificateCredential(object):
 
     def refresh_certificate():
         certificate_last_modified = os.path.getmtime(self._certificate_path)
-        if self._certificate_path < certificate_last_modified:
+        if self._certificate_last_modified < certificate_last_modified:
             self._certificate_last_modified = certificate_last_modified
             self._credential = CertificateCredential(tenant_id, client_id, self._certificate_path, **kwargs)
 ```
