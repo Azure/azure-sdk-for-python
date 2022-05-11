@@ -15,7 +15,7 @@ Alternatively, the application can load the certificate itself, such as in the f
 ```py
 certificate_data = open(CERT_PATH, "rb").read()
 
-credential = new CertificateCredential(tenant_id, client_id, certificate_data=certificate_data)
+credential = CertificateCredential(tenant_id, client_id, certificate_data=certificate_data)
 ```
 
 ## Rolling certificates
