@@ -143,7 +143,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     abs_expiry = int(time.time()) + expiry.seconds
 
     token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):

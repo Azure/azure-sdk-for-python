@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+from enum import Enum
 from typing import TYPE_CHECKING
 
 from ._pyamqp._connection import Connection, _CLOSING_STATES
