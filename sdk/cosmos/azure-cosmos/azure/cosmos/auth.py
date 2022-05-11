@@ -36,11 +36,11 @@ def GetAuthorizationHeader(
     warnings.warn("This method has been deprecated and will be removed from the SDK in a future release.",
                   DeprecationWarning)
 
-    return get_authorization_header(
+    return _get_authorization_header(
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
 
 
-def get_authorization_header(
+def _get_authorization_header(
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
