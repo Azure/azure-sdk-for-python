@@ -184,11 +184,6 @@ class Test_globaldb_mock_tests(unittest.TestCase):
     def MockGetDatabaseAccountStub(self, endpoint):
         raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.SERVICE_UNAVAILABLE, message="Service unavailable")
-    
-    def MockCreateDatabase(self, client, database):
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
-        _retry_utility.ExecuteFunction = self.MockExecuteFunction
-        client.create_database(database)
 
     def test_globaldb_endpoint_discovery_retry_policy(self):
         connection_policy = documents.ConnectionPolicy()
@@ -196,8 +191,6 @@ class Test_globaldb_mock_tests(unittest.TestCase):
 
         write_location_client = cosmos_client.CosmosClient(Test_globaldb_mock_tests.write_location_host, Test_globaldb_mock_tests.masterKey, consistency_level="Session", connection_policy=connection_policy)
         self.assertEqual(write_location_client.client_connection.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
-        
-        self.MockCreateDatabase(write_location_client, 'mock database')
 
         self.assertEqual(write_location_client.client_connection.WriteEndpoint, Test_globaldb_mock_tests.read_location_host)
 

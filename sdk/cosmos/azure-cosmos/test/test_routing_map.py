@@ -20,6 +20,8 @@
 #SOFTWARE.
 
 import unittest
+import uuid
+
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
@@ -58,7 +60,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
         
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
         cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-        cls.created_container = cls.created_database.create_container(test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        cls.created_container = cls.created_database.create_container("routing_map_tests_"+str(uuid.uuid4()), PartitionKey(path="/pk"))
         cls.collection_link = cls.created_container.container_link
 
     def test_read_partition_key_ranges(self):

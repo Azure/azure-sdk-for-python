@@ -56,8 +56,8 @@ class QueryTest(unittest.TestCase):
         self.query_change_feed(False)
 
     def query_change_feed(self, use_partition_key):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
+                                                                            PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
         partition_key_range_id = 2
@@ -168,7 +168,8 @@ class QueryTest(unittest.TestCase):
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        document_definition = {'pk': 'pk', 'id': 'myId'}
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
         created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
@@ -179,7 +180,7 @@ class QueryTest(unittest.TestCase):
         )
 
         iter_list = list(query_iterable)
-        self.assertEqual(iter_list[0]['id'], 'myId')
+        self.assertEqual(iter_list[0]['id'], doc_id)
 
         METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
         self.assertTrue(METRICS_HEADER_NAME in created_collection.client_connection.last_response_headers)
@@ -297,40 +298,33 @@ class QueryTest(unittest.TestCase):
         self.assertListEqual(list(query_iterable), [])
 
     def test_offset_limit(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        max_item_counts = [0, 2, 5, 10]
+        created_collection = self.created_db.create_container_if_not_exists("offset_limit_test_" + str(uuid.uuid4()),
+                                                                            PartitionKey(path="/pk"))
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
             values.append(created_collection.create_item(body=document_definition)['pk'])
 
-        for max_item_count in max_item_counts:
-            self._validate_offset_limit(created_collection=created_collection,
-                                        query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
-                                        max_item_count=max_item_count,
-                                        results=values[:5])
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
+                                    results=values[:5])
 
-            self._validate_offset_limit(created_collection=created_collection,
-                                        query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
-                                        max_item_count=max_item_count,
-                                        results=values[5:])
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
+                                    results=values[5:])
 
-            self._validate_offset_limit(created_collection=created_collection,
-                                        query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
-                                        max_item_count=max_item_count,
-                                        results=[])
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
+                                    results=[])
 
-            self._validate_offset_limit(created_collection=created_collection,
-                                        query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
-                                        max_item_count=max_item_count,
-                                        results=[])
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
+                                    results=[])
 
-    def _validate_offset_limit(self, created_collection, query, max_item_count, results):
+    def _validate_offset_limit(self, created_collection, query, results):
         query_iterable = created_collection.query_items(
             query=query,
-            enable_cross_partition_query=True,
-            max_item_count=max_item_count
+            enable_cross_partition_query=True
         )
         self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
 
@@ -478,7 +472,6 @@ class QueryTest(unittest.TestCase):
         ]
         self.OriginalExecuteFunction = _QueryExecutionContextBase.__next__
         _QueryExecutionContextBase.__next__ = self._MockNextFunction
-        _QueryExecutionContextBase.next = self._MockNextFunction
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
@@ -497,7 +490,7 @@ class QueryTest(unittest.TestCase):
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c order by c.f2",
-            expected_results=['\'value', 'value'],
+            expected_results=['value', '\'value'],
             get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"])
         )
 

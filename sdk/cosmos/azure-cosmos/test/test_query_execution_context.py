@@ -63,7 +63,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                                                 connection_policy=QueryExecutionContextEndToEndTests.connectionPolicy)
         cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.create_container(
-            id='query_execution_context_tests collection ' + str(uuid.uuid4()),
+            id='query_execution_context_tests_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         cls.document_definitions = []

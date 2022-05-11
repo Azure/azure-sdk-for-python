@@ -72,14 +72,14 @@ class Test_ttl_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_db = cls.client.create_database_if_not_exists("TTL_tests_database" + str(uuid.uuid4()))
 
     def test_collection_and_document_ttl_values(self):
-        ttl = 5
+        ttl = 10
         created_collection = self.created_db.create_container_if_not_exists(
             id='test_ttl_values1' + str(uuid.uuid4()),
-            default_ttl=ttl,
-            partition_key=PartitionKey(path='/id'))
+            partition_key=PartitionKey(path='/id'),
+            default_ttl=ttl)
         created_collection_properties = created_collection.read()
         self.assertEqual(created_collection_properties['defaultTtl'], ttl)
 
