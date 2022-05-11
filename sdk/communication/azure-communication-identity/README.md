@@ -103,7 +103,7 @@ identity_client.delete_user(user)
 
 Use the `get_token_for_teams_user` method to exchange an AAD access token of a Teams User for a new Communication Identity access token.
 ```python
-identity_client.get_token_for_teams_user(add_token)
+identity_client.get_token_for_teams_user(aad_token)
 ```
 
 # Troubleshooting
