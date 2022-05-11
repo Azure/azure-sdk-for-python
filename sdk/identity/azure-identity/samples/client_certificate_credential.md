@@ -67,4 +67,4 @@ class RotatingCertificateCredential(object):
             self._credential = CertificateCredential(tenant_id, client_id, self._certificate_path, **kwargs)
 ```
 
-In this example the custom credential type `RotatingCertificateCredential` again uses a `CertificateCredential` instance `_credential` to retrieve tokens. However, in this case it will attempt to refresh the certificate prior to obtaining the token. The method `refresh_certificate` will query to see if the certificate has changed, and if so it will replace the instance `_credential` with a new instance using the new certificate.
+In this example the custom credential type `RotatingCertificateCredential` again uses a `CertificateCredential` instance, `_credential`, to retrieve tokens. However, in this case it will attempt to refresh the certificate prior to obtaining the token. The method `refresh_certificate` will query to see if the certificate has changed, and if so it will replace `_credential` with a new instance using the new certificate.
