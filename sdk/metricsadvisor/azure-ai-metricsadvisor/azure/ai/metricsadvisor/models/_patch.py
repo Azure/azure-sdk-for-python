@@ -799,7 +799,7 @@ class DataFeedSource(dict):
         self.credential_id = kwargs.get("credential_id", None)
 
 
-class AzureApplicationInsightsDataFeedSource(generated_models.AzureApplicationInsightsDataFeedSource, dict):
+class AzureApplicationInsightsDataFeedSource(generated_models.AzureApplicationInsightsDataFeedSource, DataFeedSource):
     """AzureApplicationInsightsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -820,11 +820,8 @@ class AzureApplicationInsightsDataFeedSource(generated_models.AzureApplicationIn
 
     def __init__(self, query: str, **kwargs: Any) -> None:
         super().__init__(
-            query=query, **kwargs
+            query=query, data_source_type="AzureApplicationInsights", authentication_type="Basic", **kwargs
         )
-        self.data_source_type = "AzureApplicationInsights"
-        self.authentication_type = "Basic"
-        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -2039,7 +2036,7 @@ class MetricFeedback(generated_models.MetricFeedback, dict):
         )
 
 
-class AnomalyFeedback(generated_models.AnomalyFeedback, dict):  # pylint:disable=too-many-instance-attributes
+class AnomalyFeedback(generated_models.AnomalyFeedback, MetricFeedback):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2069,23 +2066,6 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, dict):  # pylint:disable
     :paramtype anomaly_detection_configuration_snapshot:
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
     """
-
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "feedbackId", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
-        "anomaly_detection_configuration_snapshot": {
-            "key": "anomalyDetectionConfigurationSnapshot",
-            "type": "AnomalyDetectionConfiguration",
-        },
-        "value": {"key": "value.anomalyValue", "type": "str"},
-    }
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
         super().__init__(
@@ -2118,7 +2098,7 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, dict):  # pylint:disable
         )
 
 
-class ChangePointFeedback(generated_models.ChangePointFeedback, dict):
+class ChangePointFeedback(generated_models.ChangePointFeedback, MetricFeedback):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2171,7 +2151,7 @@ class ChangePointFeedback(generated_models.ChangePointFeedback, dict):
         )
 
 
-class CommentFeedback(generated_models.CommentFeedback, dict):
+class CommentFeedback(generated_models.CommentFeedback, MetricFeedback):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2224,7 +2204,7 @@ class CommentFeedback(generated_models.CommentFeedback, dict):
         )
 
 
-class PeriodFeedback(generated_models.PeriodFeedback, dict):
+class PeriodFeedback(generated_models.PeriodFeedback, MetricFeedback):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2297,7 +2277,7 @@ class DatasourceCredential(generated_models.DatasourceCredential, dict):
         )[:1024]
 
 
-class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionString, dict):
+class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionString, DatasourceCredential):
     """DatasourceSqlConnectionString.
 
     All required parameters must be populated in order to send to Azure.
@@ -2334,7 +2314,7 @@ class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionStri
         )
 
 
-class DatasourceDataLakeGen2SharedKey(generated_models.DatasourceDataLakeGen2SharedKey, dict):
+class DatasourceDataLakeGen2SharedKey(generated_models.DatasourceDataLakeGen2SharedKey, DatasourceCredential):
     """DatasourceDataLakeGen2SharedKey.
 
     All required parameters must be populated in order to send to Azure.
@@ -2369,7 +2349,7 @@ class DatasourceDataLakeGen2SharedKey(generated_models.DatasourceDataLakeGen2Sha
         )
 
 
-class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, dict):
+class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, DatasourceCredential):
     """DatasourceServicePrincipal.
 
     All required parameters must be populated in order to send to Azure.
@@ -2416,7 +2396,7 @@ class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, di
         )
 
 
-class DatasourceServicePrincipalInKeyVault(generated_models.DatasourceServicePrincipalInKeyVault, dict):
+class DatasourceServicePrincipalInKeyVault(generated_models.DatasourceServicePrincipalInKeyVault, DatasourceCredential):
     """DatasourceServicePrincipalInKeyVault.
 
     All required parameters must be populated in order to send to Azure.
