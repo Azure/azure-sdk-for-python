@@ -18,7 +18,7 @@ certificate_data = open(CERT_PATH, "rb").read()
 credential = new CertificateCredential(tenant_id, client_id, certificate_data=certificate_data)
 ```
 
-## Rolling Certificates
+## Rolling certificates
 
 Long running applications may have the need to roll certificates during process execution. Certificate rotation is not currently supported by the `CertificateCredential` which treats the certificate used to construct the credential as immutable. This means that any clients constructed with a `CertificateCredential` using a particular cert would fail to authenticate requests after that cert has been rolled and the original is no longer valid. 
 
