@@ -10,7 +10,7 @@ Applications commonly need to load a client certificate from disk. One approach 
 ```py
 credential = CertificateCredential(tenant_id, client_id, "./certs/cert.pfx")
 ```
-Alternatively, the application can load the certificate themselves, such as in the following example.
+Alternatively, the application can load the certificate itself, such as in the following example.
 
 ```py
 certificate_data = open(CERT_PATH, "rb").read()
