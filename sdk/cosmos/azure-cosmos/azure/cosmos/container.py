@@ -593,7 +593,7 @@ class ContainerProxy(object):
     @distributed_trace
     def read_offer(self, **kwargs):
         # type: (Any) -> ThroughputProperties
-        """Read the ThroughputProperties object for this container.
+        """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
@@ -604,15 +604,15 @@ class ContainerProxy(object):
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         warnings.warn(
-            "read_offer is a deprecated method name, use read_throughput instead",
+            "read_offer is a deprecated method name, use get_throughput instead",
             DeprecationWarning
         )
-        return self.read_throughput(**kwargs)
+        return self.get_throughput(**kwargs)
 
     @distributed_trace
-    def read_throughput(self, **kwargs):
+    def get_throughput(self, **kwargs):
         # type: (Any) -> ThroughputProperties
-        """Read the ThroughputProperties object for this container.
+        """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 

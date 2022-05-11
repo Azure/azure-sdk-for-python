@@ -546,9 +546,9 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace_async
-    async def read_throughput(self, **kwargs):
+    async def get_throughput(self, **kwargs):
         # type: (Any) -> ThroughputProperties
-        """Read the ThroughputProperties object for this container.
+        """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
@@ -678,7 +678,7 @@ class ContainerProxy(object):
         return result
 
     @distributed_trace_async
-    async def read_conflict(
+    async def get_conflict(
         self,
         conflict,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any

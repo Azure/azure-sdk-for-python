@@ -686,29 +686,11 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    @distributed_trace_async
-    async def read_offer(self, **kwargs):
-        # type: (Any) -> ThroughputProperties
-        """Read the ThroughputProperties object for this database.
-
-        If no ThroughputProperties already exist for the container, an exception is raised.
-
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Throughput for the container.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
-            the throughput properties could not be retrieved.
-        :rtype: ~azure.cosmos.ThroughputProperties
-        """
-        warnings.warn(
-            "read_offer is a deprecated method name, use read_throughput instead",
-            DeprecationWarning
-        )
-        return await self.read_throughput(**kwargs)
 
     @distributed_trace_async
-    async def read_throughput(self, **kwargs):
+    async def get_throughput(self, **kwargs):
         # type: (Any) -> ThroughputProperties
-        """Read the ThroughputProperties object for this database.
+        """Get the ThroughputProperties object for this database.
 
         If no ThroughputProperties already exist for the database, an exception is raised.
 
