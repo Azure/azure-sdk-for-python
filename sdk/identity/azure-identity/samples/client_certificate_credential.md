@@ -33,7 +33,7 @@ class RotatableCertificateCredential(object):
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
         self._tenant_id = tenant_id
         self._client_id = client_id
-        self._credential = CertificateCredential(tenant_id, client_id, certificate_path,**kwargs)
+        self._credential = CertificateCredential(tenant_id, client_id, certificate_path, **kwargs)
     
     def get_token(self, *scopes, **kwargs):
         return self._credential.get_token(*scopes, **kwargs)
