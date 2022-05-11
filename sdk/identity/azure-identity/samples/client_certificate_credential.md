@@ -12,10 +12,10 @@ credential = CertificateCredential(tenant_id, client_id, "./certs/cert.pfx")
 ```
 Alternatively, the application can load the certificate themselves, such as in the following example.
 
-```C# Snippet:Identity_CertificateCredenetial_CreateWithX509Cert
+```py
 certificate_data = open(CERT_PATH, "rb").read()
 
-credential = new CertificateCredential(tenant_id, client_id, certificate_data=certificate_data);
+credential = new CertificateCredential(tenant_id, client_id, certificate_data=certificate_data)
 ```
 
 ## Rolling Certificates
@@ -40,7 +40,6 @@ class RotatableCertificateCredential(object):
 
     def rotate_certificate(certificate_path, **kwargs):
         self._credential = CertificateCredential(self._tenant_id, self._client_id, certificate_path, **kwargs)
-}
 ```
 
 The above example shows a custom credential type `RotatableCertificateCredential` which provides a `rotate_certificate`. The implementation internally relies on a `CertificateCredential` instance `_credential`, and `rotate_certificate` simply replaces this instance with a new instance using the updated certificate.
