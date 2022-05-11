@@ -475,6 +475,24 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         assert "Decryption failed." in str(e.exception)
 
+    @QueuePreparer()
+    def test_encryption_v2(self, storage_account_name, storage_account_key):
+        # Arrange
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            requires_encryption=True,
+            encryption_algorithm='AES_GCM_256',
+            key_encryption_key=KeyWrapper('key1'))
+        queue = self._create_queue(qsc, 'v2-')
+        content = "Hello Crypto World!"
+
+        # Act
+        queue.send_message(content)
+        message = queue.receive_message()
+
+        self.assertEqual(content, message.content)
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

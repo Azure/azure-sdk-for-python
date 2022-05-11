@@ -18,6 +18,7 @@ class MessageEncodePolicy(object):
 
     def __init__(self):
         self.require_encryption = False
+        self.encryption_algorithm = None
         self.key_encryption_key = None
         self.resolver = None
 
@@ -25,11 +26,12 @@ class MessageEncodePolicy(object):
         if content:
             content = self.encode(content)
             if self.key_encryption_key is not None:
-                content = encrypt_queue_message(content, self.key_encryption_key)
+                content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_algorithm)
         return content
 
-    def configure(self, require_encryption, key_encryption_key, resolver):
+    def configure(self, require_encryption, encryption_algorithm, key_encryption_key, resolver):
         self.require_encryption = require_encryption
+        self.encryption_algorithm = encryption_algorithm
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
         if self.require_encryption and not self.key_encryption_key:

@@ -479,6 +479,7 @@ class QueueClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         self._config.message_encode_policy.configure(
             require_encryption=self.require_encryption,
+            encryption_algorithm=self.encryption_algorithm,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function)
         encoded_content = self._config.message_encode_policy(content)
