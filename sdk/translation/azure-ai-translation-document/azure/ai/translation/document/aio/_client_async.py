@@ -196,8 +196,8 @@ class DocumentTranslationClient:
 
     @distributed_trace_async
     async def begin_translation(
-        self, *args, **kwargs
-    ):  # pylint: disable=client-method-missing-type-annotations
+        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -279,7 +279,7 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return await self._client.document_translation.begin_start_translation(
+        return await self._client.document_translation.begin_start_translation(  # type: ignore
             inputs=inputs if not continuation_token else None,
             polling=AsyncDocumentTranslationLROPollingMethod(
                 timeout=polling_interval,
