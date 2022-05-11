@@ -644,7 +644,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "message_bus.destination": "/myeventhub",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.type, "Microsoft.EventHub")
+        self.assertEqual(envelope.data.base_data.type, "Queue Message | Microsoft.EventHub")
         self.assertEqual(envelope.data.base_data.target, "Test_peer//myeventhub")
 
     def test_span_to_envelope_internal(self):

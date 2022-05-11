@@ -120,8 +120,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         if "az.namespace" in span.attributes:  # Azure specific resources
-            # Currently only eventhub and servicebus are supported
+            # Currently only eventhub and servicebus are supported (kind CONSUMER)
             data.source = _get_azure_sdk_target_source(span.attributes)
+            # TODO: timeSinceEnqueued
         elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
             url = ""
             path = ""
@@ -370,7 +371,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if "az.namespace" in span.attributes:
-                data.type = span.attributes["az.namespace"]
+                data.type = "Queue Message | {}".format(span.attributes["az.namespace"])
                 data.target = _get_azure_sdk_target_source(span.attributes)
             else:
                 data.type = "Queue Message"
