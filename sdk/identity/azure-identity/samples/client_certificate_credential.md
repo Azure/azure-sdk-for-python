@@ -42,7 +42,7 @@ class RotatableCertificateCredential(object):
         self._credential = CertificateCredential(self._tenant_id, self._client_id, certificate_path, **kwargs)
 ```
 
-The above example shows a custom credential type `RotatableCertificateCredential` which provides a `rotate_certificate`. The implementation internally relies on a `CertificateCredential` instance `_credential`, and `rotate_certificate` simply replaces this instance with a new instance using the updated certificate.
+The above example shows a custom credential type `RotatableCertificateCredential` which provides a `rotate_certificate` method. The implementation internally relies on a `CertificateCredential` instance, `_credential`, and `rotate_certificate` simply replaces this instance with a new instance using the updated certificate.
 
 ### Implicit rotation
 Some applications might want to respond to certificate rotations which are external to the application, for instance a separate process rotates the certificate by updating it on disk. Here the application create a custom credential which checks for certificate updates when tokens are requested. 
