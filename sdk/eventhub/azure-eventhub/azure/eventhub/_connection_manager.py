@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
+from enum import Enum
 
 from ._pyamqp._connection import Connection, _CLOSING_STATES
 from ._constants import TransportType

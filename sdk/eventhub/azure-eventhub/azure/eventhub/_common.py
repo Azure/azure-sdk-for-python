@@ -59,7 +59,6 @@ from ._pyamqp.message import BatchMessage, Message
 if TYPE_CHECKING:
     import datetime
 
-MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
 PrimitiveTypes = Optional[
     Union[
         int,
@@ -184,33 +183,6 @@ class EventData(object):
             pass
         event_str += " }"
         return event_str
-
-    def __message_content__(self) -> MessageContent:
-        if self.body_type != AmqpMessageBodyType.DATA:
-            raise TypeError("`body_type` must be `AmqpMessageBodyType.DATA`.")
-        content = bytearray()
-        for c in self.body:  # type: ignore
-            content += c  # type: ignore
-        content_type = cast(str, self.content_type)
-        return {"content": bytes(content), "content_type": content_type}
-
-    @classmethod
-    def from_message_content(  # pylint: disable=unused-argument
-        cls,
-        content: bytes,
-        content_type: str,
-        **kwargs: Any
-    ) -> "EventData":
-        """
-        Creates an EventData object given content type and a content value to be set as body.
-
-        :param bytes content: The content value to be set as the body of the message.
-        :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.eventhub.EventData
-        """
-        event_data = cls(content)
-        event_data.content_type = content_type
-        return event_data
 
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
