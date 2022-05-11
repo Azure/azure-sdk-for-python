@@ -138,11 +138,11 @@ class CommunicationIdentityClientSamples(object):
             username=self.msal_username,
             password=self.msal_password,
             scopes=[self.m365_scope])
-        add_token =  result["access_token"]
+        aad_token =  result["access_token"]
         teams_user_oid = result["id_token_claims"]["oid"] 
-        print("AAD access token of a Teams User: " + add_token)
+        print("AAD access token of a Teams User: " + aad_token)
 
-        tokenresponse = identity_client.get_token_for_teams_user(add_token, self.m365_app_id, teams_user_oid)
+        tokenresponse = identity_client.get_token_for_teams_user(aad_token, self.m365_app_id, teams_user_oid)
         print("Token issued with value: " + tokenresponse.token)
 
 
