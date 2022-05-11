@@ -119,6 +119,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
+        envelope.tags["ai.operation.name"] = span.name
+        if SpanAttributes.NET_PEER_IP in span.attributes:
+            envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
         if "az.namespace" in span.attributes:  # Azure specific resources
             # Currently only eventhub and servicebus are supported (kind CONSUMER)
             data.source = _get_azure_sdk_target_source(span.attributes)
@@ -129,10 +132,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                 # TODO: Not exposed in Swagger, need to update def
                 envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
+            # http specific logic for ai.location.ip
             if SpanAttributes.HTTP_CLIENT_IP in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
-            elif SpanAttributes.NET_PEER_IP in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
             # url
             if SpanAttributes.HTTP_URL in span.attributes:
                 url = span.attributes[SpanAttributes.HTTP_URL]
@@ -204,16 +206,12 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     )
                 else:
                     data.source = span.attributes[SpanAttributes.MESSAGING_DESTINATION]
-        else:  # Other
-            envelope.tags["ai.operation.name"] = span.name
-            if SpanAttributes.NET_PEER_IP in span.attributes:
-                envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
         # Apply truncation
         if data.url:
             data.url = data.url[:2048]  # Breeze max length
         if data.response_code:
             data.response_code = data.response_code[:1024]  # Breeze max length
-        if envelope.tags["ai.operation.name"]:
+        if envelope.tags.get("ai.operation.name"):
             data.name = envelope.tags["ai.operation.name"][:1024]  # Breeze max length
     else:  # INTERNAL, CLIENT, PRODUCER
         envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
