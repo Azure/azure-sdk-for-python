@@ -5,7 +5,7 @@ Applications which execute in a protected environment can authenticate using a c
 
 ## Loading certificates from disk
 
-Applications commonly need to load a client certificate from disk. One approach is for the application to construct the `CertificateCredential` by specifying the applications tenant id, client id, and the path to the certificate.
+Applications commonly need to load a client certificate from disk. One approach is for the application to construct the `CertificateCredential` by specifying the application's tenant ID, client ID, and the path to the certificate.
 
 ```py
 credential = CertificateCredential(tenant_id, client_id, "./certs/cert.pfx")
