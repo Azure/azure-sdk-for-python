@@ -36,7 +36,7 @@ def build_delete_request_initial(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/simPolicies/{simPolicyName}')
@@ -73,7 +73,7 @@ def build_get_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/simPolicies/{simPolicyName}')
@@ -115,7 +115,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/simPolicies/{simPolicyName}')
@@ -161,7 +161,7 @@ def build_update_tags_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/simPolicies/{simPolicyName}')
@@ -201,7 +201,7 @@ def build_list_by_mobile_network_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/mobileNetworks/{mobileNetworkName}/simPolicies')
@@ -236,7 +236,7 @@ class SimPoliciesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -371,7 +371,7 @@ class SimPoliciesOperations(object):
         :type sim_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SimPolicy, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.SimPolicy
+        :rtype: ~azure.mgmt.mobilenetwork.models.SimPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SimPolicy"]
@@ -478,7 +478,7 @@ class SimPoliciesOperations(object):
         :param sim_policy_name: The name of the SIM policy.
         :type sim_policy_name: str
         :param parameters: Parameters supplied to the create or update sim policy operation.
-        :type parameters: ~mobile_network_management_client.models.SimPolicy
+        :type parameters: ~azure.mgmt.mobilenetwork.models.SimPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -488,7 +488,7 @@ class SimPoliciesOperations(object):
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either SimPolicy or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~mobile_network_management_client.models.SimPolicy]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mobilenetwork.models.SimPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -552,10 +552,10 @@ class SimPoliciesOperations(object):
         :param sim_policy_name: The name of the SIM policy.
         :type sim_policy_name: str
         :param parameters: Parameters supplied to update Sim Policy tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SimPolicy, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.SimPolicy
+        :rtype: ~azure.mgmt.mobilenetwork.models.SimPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SimPolicy"]
@@ -613,8 +613,7 @@ class SimPoliciesOperations(object):
         :type mobile_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SimPolicyListResult or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~mobile_network_management_client.models.SimPolicyListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.SimPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SimPolicyListResult"]

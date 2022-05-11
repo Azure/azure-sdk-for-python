@@ -45,11 +45,12 @@ from azure.core.exceptions import (
 
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
-
+from ..._enum_meta import CaseInsensitiveEnumMeta
 
 _LOGGER = logging.getLogger(__name__)
 
-class RetryMode(str, Enum):
+class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    # pylint: disable=enum-must-be-uppercase
     Exponential = 'exponential'
     Fixed = 'fixed'
 

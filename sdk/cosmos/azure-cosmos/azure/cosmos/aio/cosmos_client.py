@@ -65,15 +65,15 @@ def _build_connection_policy(kwargs):
         policy.SSLConfiguration = ssl
 
     # Retry config
-    retry = kwargs.pop('retry_options', None) or policy.RetryOptions
+    retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
-    retry._max_retry_attempt_count = total_retries or retry._max_retry_attempt_count
-    retry._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
-        retry._fixed_retry_interval_in_milliseconds
+    retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
+    retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
+        retry_options._fixed_retry_interval_in_milliseconds
     max_backoff = kwargs.pop('retry_backoff_max', None)
-    retry._max_wait_time_in_seconds = max_backoff or retry._max_wait_time_in_seconds
-    policy.RetryOptions = retry
-    connection_retry = kwargs.pop('connection_retry_policy', None) or policy.ConnectionRetryConfiguration
+    retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
+    policy.RetryOptions = retry_options
+    connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
         connection_retry = _ConnectionRetryPolicy(
             retry_total=total_retries,
@@ -88,7 +88,8 @@ def _build_connection_policy(kwargs):
 
     return policy
 
-class CosmosClient(object):
+
+class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.

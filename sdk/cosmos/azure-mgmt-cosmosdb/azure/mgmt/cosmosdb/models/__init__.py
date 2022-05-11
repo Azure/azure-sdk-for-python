@@ -45,11 +45,13 @@ from ._models_py3 import CassandraViewGetResults
 from ._models_py3 import CassandraViewListResult
 from ._models_py3 import CassandraViewResource
 from ._models_py3 import Certificate
+from ._models_py3 import ClientEncryptionIncludedPath
 from ._models_py3 import ClientEncryptionKeyCreateUpdateParameters
 from ._models_py3 import ClientEncryptionKeyGetPropertiesResource
 from ._models_py3 import ClientEncryptionKeyGetResults
 from ._models_py3 import ClientEncryptionKeyResource
 from ._models_py3 import ClientEncryptionKeysListResult
+from ._models_py3 import ClientEncryptionPolicy
 from ._models_py3 import ClusterKey
 from ._models_py3 import ClusterResource
 from ._models_py3 import ClusterResourceProperties
@@ -66,6 +68,7 @@ from ._models_py3 import ContainerPartitionKey
 from ._models_py3 import ContinuousBackupInformation
 from ._models_py3 import ContinuousBackupRestoreLocation
 from ._models_py3 import ContinuousModeBackupPolicy
+from ._models_py3 import ContinuousModeProperties
 from ._models_py3 import CorsPolicy
 from ._models_py3 import CosmosCassandraDataTransferDataSourceSink
 from ._models_py3 import CosmosSqlDataTransferDataSourceSink
@@ -137,6 +140,7 @@ from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import MaterializedViewsBuilderRegionalServiceResource
 from ._models_py3 import MaterializedViewsBuilderServiceResource
 from ._models_py3 import MaterializedViewsBuilderServiceResourceProperties
+from ._models_py3 import MergeParameters
 from ._models_py3 import Metric
 from ._models_py3 import MetricAvailability
 from ._models_py3 import MetricDefinition
@@ -183,6 +187,10 @@ from ._models_py3 import PercentileMetricValue
 from ._models_py3 import PeriodicModeBackupPolicy
 from ._models_py3 import PeriodicModeProperties
 from ._models_py3 import Permission
+from ._models_py3 import PhysicalPartitionId
+from ._models_py3 import PhysicalPartitionStorageInfo
+from ._models_py3 import PhysicalPartitionStorageInfoCollection
+from ._models_py3 import PhysicalPartitionThroughputInfoResource
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateEndpointProperty
@@ -192,6 +200,8 @@ from ._models_py3 import PrivateLinkServiceConnectionStateProperty
 from ._models_py3 import Privilege
 from ._models_py3 import PrivilegeResource
 from ._models_py3 import ProxyResource
+from ._models_py3 import RedistributeThroughputParameters
+from ._models_py3 import RedistributeThroughputPropertiesResource
 from ._models_py3 import RegionForOnlineOffline
 from ._models_py3 import RegionalServiceResource
 from ._models_py3 import Resource
@@ -226,6 +236,8 @@ from ._models_py3 import RestorableTablePropertiesResource
 from ._models_py3 import RestorableTableResourcesListResult
 from ._models_py3 import RestorableTablesListResult
 from ._models_py3 import RestoreParameters
+from ._models_py3 import RetrieveThroughputParameters
+from ._models_py3 import RetrieveThroughputPropertiesResource
 from ._models_py3 import Role
 from ._models_py3 import SeedNode
 from ._models_py3 import ServiceResource
@@ -299,6 +311,7 @@ from ._cosmos_db_management_client_enums import (
     ConflictResolutionMode,
     ConnectionState,
     ConnectorOffer,
+    ContinuousTier,
     CreateMode,
     CreatedByType,
     DataTransferComponent,
@@ -328,6 +341,7 @@ from ._cosmos_db_management_client_enums import (
     ServiceStatus,
     ServiceType,
     SpatialType,
+    ThroughputPolicyType,
     TriggerOperation,
     TriggerType,
     UnitType,
@@ -373,11 +387,13 @@ __all__ = [
     'CassandraViewListResult',
     'CassandraViewResource',
     'Certificate',
+    'ClientEncryptionIncludedPath',
     'ClientEncryptionKeyCreateUpdateParameters',
     'ClientEncryptionKeyGetPropertiesResource',
     'ClientEncryptionKeyGetResults',
     'ClientEncryptionKeyResource',
     'ClientEncryptionKeysListResult',
+    'ClientEncryptionPolicy',
     'ClusterKey',
     'ClusterResource',
     'ClusterResourceProperties',
@@ -394,6 +410,7 @@ __all__ = [
     'ContinuousBackupInformation',
     'ContinuousBackupRestoreLocation',
     'ContinuousModeBackupPolicy',
+    'ContinuousModeProperties',
     'CorsPolicy',
     'CosmosCassandraDataTransferDataSourceSink',
     'CosmosSqlDataTransferDataSourceSink',
@@ -465,6 +482,7 @@ __all__ = [
     'MaterializedViewsBuilderRegionalServiceResource',
     'MaterializedViewsBuilderServiceResource',
     'MaterializedViewsBuilderServiceResourceProperties',
+    'MergeParameters',
     'Metric',
     'MetricAvailability',
     'MetricDefinition',
@@ -511,6 +529,10 @@ __all__ = [
     'PeriodicModeBackupPolicy',
     'PeriodicModeProperties',
     'Permission',
+    'PhysicalPartitionId',
+    'PhysicalPartitionStorageInfo',
+    'PhysicalPartitionStorageInfoCollection',
+    'PhysicalPartitionThroughputInfoResource',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointProperty',
@@ -520,6 +542,8 @@ __all__ = [
     'Privilege',
     'PrivilegeResource',
     'ProxyResource',
+    'RedistributeThroughputParameters',
+    'RedistributeThroughputPropertiesResource',
     'RegionForOnlineOffline',
     'RegionalServiceResource',
     'Resource',
@@ -554,6 +578,8 @@ __all__ = [
     'RestorableTableResourcesListResult',
     'RestorableTablesListResult',
     'RestoreParameters',
+    'RetrieveThroughputParameters',
+    'RetrieveThroughputPropertiesResource',
     'Role',
     'SeedNode',
     'ServiceResource',
@@ -624,6 +650,7 @@ __all__ = [
     'ConflictResolutionMode',
     'ConnectionState',
     'ConnectorOffer',
+    'ContinuousTier',
     'CreateMode',
     'CreatedByType',
     'DataTransferComponent',
@@ -653,6 +680,7 @@ __all__ = [
     'ServiceStatus',
     'ServiceType',
     'SpatialType',
+    'ThroughputPolicyType',
     'TriggerOperation',
     'TriggerType',
     'UnitType',

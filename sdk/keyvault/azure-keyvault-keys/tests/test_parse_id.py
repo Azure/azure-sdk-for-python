@@ -2,15 +2,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
+import os
+
+import pytest
+
 from azure.keyvault.keys import KeyVaultKeyIdentifier
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import KeysTestCase
+from _keys_test_case import KeysTestCase
+from _test_case import KeysClientPreparer, get_decorator
+
+only_vault = get_decorator(only_vault=True)
 
 
-class TestParseId(KeysTestCase, KeyVaultTestCase):
-    def test_parse_key_id_with_version(self):
-        client = self.create_key_client(self.vault_url)
+class TestParseId(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_parse_key_id_with_version(self, client, **kwargs):
         key_name = self.get_resource_name("key")
         # create key
         created_key = client.create_rsa_key(key_name)

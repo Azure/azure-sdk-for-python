@@ -10,8 +10,9 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import uuid
 
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, DecodeError, ResourceNotFoundError
 from azure.data.tables import (
     generate_account_sas,
     AccountSasPermissions,
@@ -22,7 +23,9 @@ from azure.data.tables import (
     TableAnalyticsLogging,
     TableMetrics,
     TableServiceClient,
+    _error
 )
+from azure.data.tables._error import _decode_error
 from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import is_live
@@ -48,7 +51,7 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    def get_token(self, *args):
+    def get_token(self, *args, **kwargs):
         return self.token
 
 
@@ -496,3 +499,20 @@ class RetryCounter(object):
 
     def simple_count(self, retry_context):
         self.count += 1
+
+
+def _decode_proxy_error(response, error_message=None, error_type=None, **kwargs):  # pylint: disable=too-many-branches
+    try:
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(response)
+        if isinstance(error_body, dict):
+            # Special case: there was a playback error during test execution (test proxy only)
+            message = error_body.get("Message")
+            if message and message.startswith("Unable to find a record for the request"):
+                error = ResourceNotFoundError(message=error_message, response=response)
+                error.error_code = 'ResourceNotFoundError'
+                return error
+    except DecodeError:
+        pass
+    return _decode_error(response, error_message, error_type, **kwargs)
+
+_error._decode_error = _decode_proxy_error

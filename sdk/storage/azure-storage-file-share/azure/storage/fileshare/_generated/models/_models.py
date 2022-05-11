@@ -13,12 +13,12 @@ import msrest.serialization
 class AccessPolicy(msrest.serialization.Model):
     """An Access policy.
 
-    :param start: The date-time the policy is active.
-    :type start: str
-    :param expiry: The date-time the policy expires.
-    :type expiry: str
-    :param permission: The permissions for the ACL policy.
-    :type permission: str
+    :ivar start: The date-time the policy is active.
+    :vartype start: str
+    :ivar expiry: The date-time the policy expires.
+    :vartype expiry: str
+    :ivar permission: The permissions for the ACL policy.
+    :vartype permission: str
     """
 
     _attribute_map = {
@@ -31,6 +31,14 @@ class AccessPolicy(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword start: The date-time the policy is active.
+        :paramtype start: str
+        :keyword expiry: The date-time the policy expires.
+        :paramtype expiry: str
+        :keyword permission: The permissions for the ACL policy.
+        :paramtype permission: str
+        """
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = kwargs.get('start', None)
         self.expiry = kwargs.get('expiry', None)
@@ -42,10 +50,10 @@ class ClearRange(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start: Required.
-    :type start: long
-    :param end: Required.
-    :type end: long
+    :ivar start: Required.
+    :vartype start: long
+    :ivar end: Required.
+    :vartype end: long
     """
 
     _validation = {
@@ -65,6 +73,12 @@ class ClearRange(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword start: Required.
+        :paramtype start: long
+        :keyword end: Required.
+        :paramtype end: long
+        """
         super(ClearRange, self).__init__(**kwargs)
         self.start = kwargs['start']
         self.end = kwargs['end']
@@ -73,35 +87,41 @@ class ClearRange(msrest.serialization.Model):
 class CopyFileSmbInfo(msrest.serialization.Model):
     """Parameter group.
 
-    :param file_attributes: Specifies either the option to copy file attributes from a source
+    :ivar file_attributes: Specifies either the option to copy file attributes from a source
      file(source) to a target file or a list of attributes to set on a target file.
-    :type file_attributes: str
-    :param file_creation_time: Specifies either the option to copy file creation time from a source
+    :vartype file_attributes: str
+    :ivar file_creation_time: Specifies either the option to copy file creation time from a source
      file(source) to a target file or a time value in ISO 8601 format to set as creation time on a
      target file.
-    :type file_creation_time: str
-    :param file_last_write_time: Specifies either the option to copy file last write time from a
+    :vartype file_creation_time: str
+    :ivar file_last_write_time: Specifies either the option to copy file last write time from a
      source file(source) to a target file or a time value in ISO 8601 format to set as last write
      time on a target file.
-    :type file_last_write_time: str
-    :param file_permission_copy_mode: Specifies the option to copy file security descriptor from
+    :vartype file_last_write_time: str
+    :ivar file_change_time: Specifies either the option to copy file last write time from a source
+     file(source) to a target file or a time value in ISO 8601 format to set as last write time on a
+     target file.
+    :vartype file_change_time: str
+    :ivar file_permission_copy_mode: Specifies the option to copy file security descriptor from
      source file or to set it using the value which is defined by the header value of
      x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
      "override".
-    :type file_permission_copy_mode: str or ~azure.storage.fileshare.models.PermissionCopyModeType
-    :param ignore_read_only: Specifies the option to overwrite the target file if it already exists
+    :vartype file_permission_copy_mode: str or
+     ~azure.storage.fileshare.models.PermissionCopyModeType
+    :ivar ignore_read_only: Specifies the option to overwrite the target file if it already exists
      and has read-only attribute set.
-    :type ignore_read_only: bool
-    :param set_archive_attribute: Specifies the option to set archive attribute on a target file.
+    :vartype ignore_read_only: bool
+    :ivar set_archive_attribute: Specifies the option to set archive attribute on a target file.
      True means archive attribute will be set on a target file despite attribute overrides or a
      source file state.
-    :type set_archive_attribute: bool
+    :vartype set_archive_attribute: bool
     """
 
     _attribute_map = {
         'file_attributes': {'key': 'fileAttributes', 'type': 'str'},
         'file_creation_time': {'key': 'fileCreationTime', 'type': 'str'},
         'file_last_write_time': {'key': 'fileLastWriteTime', 'type': 'str'},
+        'file_change_time': {'key': 'fileChangeTime', 'type': 'str'},
         'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
         'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'set_archive_attribute': {'key': 'setArchiveAttribute', 'type': 'bool'},
@@ -111,10 +131,41 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword file_attributes: Specifies either the option to copy file attributes from a source
+         file(source) to a target file or a list of attributes to set on a target file.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Specifies either the option to copy file creation time from a
+         source file(source) to a target file or a time value in ISO 8601 format to set as creation time
+         on a target file.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Specifies either the option to copy file last write time from a
+         source file(source) to a target file or a time value in ISO 8601 format to set as last write
+         time on a target file.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Specifies either the option to copy file last write time from a
+         source file(source) to a target file or a time value in ISO 8601 format to set as last write
+         time on a target file.
+        :paramtype file_change_time: str
+        :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
+         source file or to set it using the value which is defined by the header value of
+         x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
+         "override".
+        :paramtype file_permission_copy_mode: str or
+         ~azure.storage.fileshare.models.PermissionCopyModeType
+        :keyword ignore_read_only: Specifies the option to overwrite the target file if it already
+         exists and has read-only attribute set.
+        :paramtype ignore_read_only: bool
+        :keyword set_archive_attribute: Specifies the option to set archive attribute on a target file.
+         True means archive attribute will be set on a target file despite attribute overrides or a
+         source file state.
+        :paramtype set_archive_attribute: bool
+        """
         super(CopyFileSmbInfo, self).__init__(**kwargs)
         self.file_attributes = kwargs.get('file_attributes', None)
         self.file_creation_time = kwargs.get('file_creation_time', None)
         self.file_last_write_time = kwargs.get('file_last_write_time', None)
+        self.file_change_time = kwargs.get('file_change_time', None)
         self.file_permission_copy_mode = kwargs.get('file_permission_copy_mode', None)
         self.ignore_read_only = kwargs.get('ignore_read_only', None)
         self.set_archive_attribute = kwargs.get('set_archive_attribute', None)
@@ -125,24 +176,24 @@ class CorsRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins: Required. The origin domains that are permitted to make a request
+    :ivar allowed_origins: Required. The origin domains that are permitted to make a request
      against the storage service via CORS. The origin domain is the domain from which the request
      originates. Note that the origin must be an exact case-sensitive match with the origin that the
      user age sends to the service. You can also use the wildcard character '*' to allow all origin
      domains to make requests via CORS.
-    :type allowed_origins: str
-    :param allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
+    :vartype allowed_origins: str
+    :ivar allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
      use for a CORS request. (comma separated).
-    :type allowed_methods: str
-    :param allowed_headers: Required. The request headers that the origin domain may specify on the
+    :vartype allowed_methods: str
+    :ivar allowed_headers: Required. The request headers that the origin domain may specify on the
      CORS request.
-    :type allowed_headers: str
-    :param exposed_headers: Required. The response headers that may be sent in the response to the
+    :vartype allowed_headers: str
+    :ivar exposed_headers: Required. The response headers that may be sent in the response to the
      CORS request and exposed by the browser to the request issuer.
-    :type exposed_headers: str
-    :param max_age_in_seconds: Required. The maximum amount time that a browser should cache the
+    :vartype exposed_headers: str
+    :ivar max_age_in_seconds: Required. The maximum amount time that a browser should cache the
      preflight OPTIONS request.
-    :type max_age_in_seconds: int
+    :vartype max_age_in_seconds: int
     """
 
     _validation = {
@@ -165,6 +216,26 @@ class CorsRule(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword allowed_origins: Required. The origin domains that are permitted to make a request
+         against the storage service via CORS. The origin domain is the domain from which the request
+         originates. Note that the origin must be an exact case-sensitive match with the origin that the
+         user age sends to the service. You can also use the wildcard character '*' to allow all origin
+         domains to make requests via CORS.
+        :paramtype allowed_origins: str
+        :keyword allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
+         use for a CORS request. (comma separated).
+        :paramtype allowed_methods: str
+        :keyword allowed_headers: Required. The request headers that the origin domain may specify on
+         the CORS request.
+        :paramtype allowed_headers: str
+        :keyword exposed_headers: Required. The response headers that may be sent in the response to
+         the CORS request and exposed by the browser to the request issuer.
+        :paramtype exposed_headers: str
+        :keyword max_age_in_seconds: Required. The maximum amount time that a browser should cache the
+         preflight OPTIONS request.
+        :paramtype max_age_in_seconds: int
+        """
         super(CorsRule, self).__init__(**kwargs)
         self.allowed_origins = kwargs['allowed_origins']
         self.allowed_methods = kwargs['allowed_methods']
@@ -176,13 +247,13 @@ class CorsRule(msrest.serialization.Model):
 class DestinationLeaseAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param destination_lease_id: Required if the destination file has an active infinite lease. The
+    :ivar destination_lease_id: Required if the destination file has an active infinite lease. The
      lease ID specified for this header must match the lease ID of the destination file. If the
      request does not include the lease ID or it is not valid, the operation fails with status code
      412 (Precondition Failed). If this header is specified and the destination file does not
      currently have an active lease, the operation will also fail with status code 412 (Precondition
      Failed).
-    :type destination_lease_id: str
+    :vartype destination_lease_id: str
     """
 
     _attribute_map = {
@@ -193,6 +264,15 @@ class DestinationLeaseAccessConditions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword destination_lease_id: Required if the destination file has an active infinite lease.
+         The lease ID specified for this header must match the lease ID of the destination file. If the
+         request does not include the lease ID or it is not valid, the operation fails with status code
+         412 (Precondition Failed). If this header is specified and the destination file does not
+         currently have an active lease, the operation will also fail with status code 412 (Precondition
+         Failed).
+        :paramtype destination_lease_id: str
+        """
         super(DestinationLeaseAccessConditions, self).__init__(**kwargs)
         self.destination_lease_id = kwargs.get('destination_lease_id', None)
 
@@ -202,16 +282,16 @@ class DirectoryItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param file_id:
-    :type file_id: str
-    :param properties: File properties.
-    :type properties: ~azure.storage.fileshare.models.FileProperty
-    :param attributes:
-    :type attributes: str
-    :param permission_key:
-    :type permission_key: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar file_id:
+    :vartype file_id: str
+    :ivar properties: File properties.
+    :vartype properties: ~azure.storage.fileshare.models.FileProperty
+    :ivar attributes:
+    :vartype attributes: str
+    :ivar permission_key:
+    :vartype permission_key: str
     """
 
     _validation = {
@@ -233,6 +313,18 @@ class DirectoryItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword file_id:
+        :paramtype file_id: str
+        :keyword properties: File properties.
+        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
+        :keyword attributes:
+        :paramtype attributes: str
+        :keyword permission_key:
+        :paramtype permission_key: str
+        """
         super(DirectoryItem, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.file_id = kwargs.get('file_id', None)
@@ -244,20 +336,20 @@ class DirectoryItem(msrest.serialization.Model):
 class FileHTTPHeaders(msrest.serialization.Model):
     """Parameter group.
 
-    :param file_content_type: Sets the MIME content type of the file. The default type is
+    :ivar file_content_type: Sets the MIME content type of the file. The default type is
      'application/octet-stream'.
-    :type file_content_type: str
-    :param file_content_encoding: Specifies which content encodings have been applied to the file.
-    :type file_content_encoding: str
-    :param file_content_language: Specifies the natural languages used by this resource.
-    :type file_content_language: str
-    :param file_cache_control: Sets the file's cache control. The File service stores this value
-     but does not use or modify it.
-    :type file_cache_control: str
-    :param file_content_md5: Sets the file's MD5 hash.
-    :type file_content_md5: bytearray
-    :param file_content_disposition: Sets the file's Content-Disposition header.
-    :type file_content_disposition: str
+    :vartype file_content_type: str
+    :ivar file_content_encoding: Specifies which content encodings have been applied to the file.
+    :vartype file_content_encoding: str
+    :ivar file_content_language: Specifies the natural languages used by this resource.
+    :vartype file_content_language: str
+    :ivar file_cache_control: Sets the file's cache control. The File service stores this value but
+     does not use or modify it.
+    :vartype file_cache_control: str
+    :ivar file_content_md5: Sets the file's MD5 hash.
+    :vartype file_content_md5: bytearray
+    :ivar file_content_disposition: Sets the file's Content-Disposition header.
+    :vartype file_content_disposition: str
     """
 
     _attribute_map = {
@@ -273,6 +365,23 @@ class FileHTTPHeaders(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: Sets the file's MD5 hash.
+        :paramtype file_content_md5: bytearray
+        :keyword file_content_disposition: Sets the file's Content-Disposition header.
+        :paramtype file_content_disposition: str
+        """
         super(FileHTTPHeaders, self).__init__(**kwargs)
         self.file_content_type = kwargs.get('file_content_type', None)
         self.file_content_encoding = kwargs.get('file_content_encoding', None)
@@ -287,16 +396,16 @@ class FileItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param file_id:
-    :type file_id: str
-    :param properties: Required. File properties.
-    :type properties: ~azure.storage.fileshare.models.FileProperty
-    :param attributes:
-    :type attributes: str
-    :param permission_key:
-    :type permission_key: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar file_id:
+    :vartype file_id: str
+    :ivar properties: Required. File properties.
+    :vartype properties: ~azure.storage.fileshare.models.FileProperty
+    :ivar attributes:
+    :vartype attributes: str
+    :ivar permission_key:
+    :vartype permission_key: str
     """
 
     _validation = {
@@ -319,6 +428,18 @@ class FileItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword file_id:
+        :paramtype file_id: str
+        :keyword properties: Required. File properties.
+        :paramtype properties: ~azure.storage.fileshare.models.FileProperty
+        :keyword attributes:
+        :paramtype attributes: str
+        :keyword permission_key:
+        :paramtype permission_key: str
+        """
         super(FileItem, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.file_id = kwargs.get('file_id', None)
@@ -332,23 +453,23 @@ class FileProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param content_length: Required. Content length of the file. This value may not be up-to-date
+    :ivar content_length: Required. Content length of the file. This value may not be up-to-date
      since an SMB client may have modified the file locally. The value of Content-Length may not
      reflect that fact until the handle is closed or the op-lock is broken. To retrieve current
      property values, call Get File Properties.
-    :type content_length: long
-    :param creation_time:
-    :type creation_time: ~datetime.datetime
-    :param last_access_time:
-    :type last_access_time: ~datetime.datetime
-    :param last_write_time:
-    :type last_write_time: ~datetime.datetime
-    :param change_time:
-    :type change_time: ~datetime.datetime
-    :param last_modified:
-    :type last_modified: ~datetime.datetime
-    :param etag:
-    :type etag: str
+    :vartype content_length: long
+    :ivar creation_time:
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_access_time:
+    :vartype last_access_time: ~datetime.datetime
+    :ivar last_write_time:
+    :vartype last_write_time: ~datetime.datetime
+    :ivar change_time:
+    :vartype change_time: ~datetime.datetime
+    :ivar last_modified:
+    :vartype last_modified: ~datetime.datetime
+    :ivar etag:
+    :vartype etag: str
     """
 
     _validation = {
@@ -369,6 +490,25 @@ class FileProperty(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword content_length: Required. Content length of the file. This value may not be up-to-date
+         since an SMB client may have modified the file locally. The value of Content-Length may not
+         reflect that fact until the handle is closed or the op-lock is broken. To retrieve current
+         property values, call Get File Properties.
+        :paramtype content_length: long
+        :keyword creation_time:
+        :paramtype creation_time: ~datetime.datetime
+        :keyword last_access_time:
+        :paramtype last_access_time: ~datetime.datetime
+        :keyword last_write_time:
+        :paramtype last_write_time: ~datetime.datetime
+        :keyword change_time:
+        :paramtype change_time: ~datetime.datetime
+        :keyword last_modified:
+        :paramtype last_modified: ~datetime.datetime
+        :keyword etag:
+        :paramtype etag: str
+        """
         super(FileProperty, self).__init__(**kwargs)
         self.content_length = kwargs['content_length']
         self.creation_time = kwargs.get('creation_time', None)
@@ -384,10 +524,10 @@ class FileRange(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start: Required. Start of the range.
-    :type start: long
-    :param end: Required. End of the range.
-    :type end: long
+    :ivar start: Required. Start of the range.
+    :vartype start: long
+    :ivar end: Required. End of the range.
+    :vartype end: long
     """
 
     _validation = {
@@ -407,6 +547,12 @@ class FileRange(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword start: Required. Start of the range.
+        :paramtype start: long
+        :keyword end: Required. End of the range.
+        :paramtype end: long
+        """
         super(FileRange, self).__init__(**kwargs)
         self.start = kwargs['start']
         self.end = kwargs['end']
@@ -417,10 +563,10 @@ class FilesAndDirectoriesListSegment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param directory_items: Required.
-    :type directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
-    :param file_items: Required.
-    :type file_items: list[~azure.storage.fileshare.models.FileItem]
+    :ivar directory_items: Required.
+    :vartype directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
+    :ivar file_items: Required.
+    :vartype file_items: list[~azure.storage.fileshare.models.FileItem]
     """
 
     _validation = {
@@ -440,6 +586,12 @@ class FilesAndDirectoriesListSegment(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword directory_items: Required.
+        :paramtype directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
+        :keyword file_items: Required.
+        :paramtype file_items: list[~azure.storage.fileshare.models.FileItem]
+        """
         super(FilesAndDirectoriesListSegment, self).__init__(**kwargs)
         self.directory_items = kwargs['directory_items']
         self.file_items = kwargs['file_items']
@@ -450,23 +602,23 @@ class HandleItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param handle_id: Required. XSMB service handle ID.
-    :type handle_id: str
-    :param path: Required. File or directory name including full path starting from share root.
-    :type path: str
-    :param file_id: Required. FileId uniquely identifies the file or directory.
-    :type file_id: str
-    :param parent_id: ParentId uniquely identifies the parent directory of the object.
-    :type parent_id: str
-    :param session_id: Required. SMB session ID in context of which the file handle was opened.
-    :type session_id: str
-    :param client_ip: Required. Client IP that opened the handle.
-    :type client_ip: str
-    :param open_time: Required. Time when the session that previously opened the handle has last
+    :ivar handle_id: Required. XSMB service handle ID.
+    :vartype handle_id: str
+    :ivar path: Required. File or directory name including full path starting from share root.
+    :vartype path: str
+    :ivar file_id: Required. FileId uniquely identifies the file or directory.
+    :vartype file_id: str
+    :ivar parent_id: ParentId uniquely identifies the parent directory of the object.
+    :vartype parent_id: str
+    :ivar session_id: Required. SMB session ID in context of which the file handle was opened.
+    :vartype session_id: str
+    :ivar client_ip: Required. Client IP that opened the handle.
+    :vartype client_ip: str
+    :ivar open_time: Required. Time when the session that previously opened the handle has last
      been reconnected. (UTC).
-    :type open_time: ~datetime.datetime
-    :param last_reconnect_time: Time handle was last connected to (UTC).
-    :type last_reconnect_time: ~datetime.datetime
+    :vartype open_time: ~datetime.datetime
+    :ivar last_reconnect_time: Time handle was last connected to (UTC).
+    :vartype last_reconnect_time: ~datetime.datetime
     """
 
     _validation = {
@@ -496,6 +648,25 @@ class HandleItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword handle_id: Required. XSMB service handle ID.
+        :paramtype handle_id: str
+        :keyword path: Required. File or directory name including full path starting from share root.
+        :paramtype path: str
+        :keyword file_id: Required. FileId uniquely identifies the file or directory.
+        :paramtype file_id: str
+        :keyword parent_id: ParentId uniquely identifies the parent directory of the object.
+        :paramtype parent_id: str
+        :keyword session_id: Required. SMB session ID in context of which the file handle was opened.
+        :paramtype session_id: str
+        :keyword client_ip: Required. Client IP that opened the handle.
+        :paramtype client_ip: str
+        :keyword open_time: Required. Time when the session that previously opened the handle has last
+         been reconnected. (UTC).
+        :paramtype open_time: ~datetime.datetime
+        :keyword last_reconnect_time: Time handle was last connected to (UTC).
+        :paramtype last_reconnect_time: ~datetime.datetime
+        """
         super(HandleItem, self).__init__(**kwargs)
         self.handle_id = kwargs['handle_id']
         self.path = kwargs['path']
@@ -510,9 +681,9 @@ class HandleItem(msrest.serialization.Model):
 class LeaseAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param lease_id: If specified, the operation only succeeds if the resource's lease is active
-     and matches this ID.
-    :type lease_id: str
+    :ivar lease_id: If specified, the operation only succeeds if the resource's lease is active and
+     matches this ID.
+    :vartype lease_id: str
     """
 
     _attribute_map = {
@@ -523,6 +694,11 @@ class LeaseAccessConditions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID.
+        :paramtype lease_id: str
+        """
         super(LeaseAccessConditions, self).__init__(**kwargs)
         self.lease_id = kwargs.get('lease_id', None)
 
@@ -532,26 +708,26 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param share_name: Required.
-    :type share_name: str
-    :param share_snapshot:
-    :type share_snapshot: str
-    :param directory_path: Required.
-    :type directory_path: str
-    :param prefix: Required.
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param segment: Required. Abstract for entries that can be listed from Directory.
-    :type segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
-    :param next_marker: Required.
-    :type next_marker: str
-    :param directory_id:
-    :type directory_id: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar share_name: Required.
+    :vartype share_name: str
+    :ivar share_snapshot:
+    :vartype share_snapshot: str
+    :ivar directory_path: Required.
+    :vartype directory_path: str
+    :ivar prefix: Required.
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results:
+    :vartype max_results: int
+    :ivar segment: Required. Abstract for entries that can be listed from Directory.
+    :vartype segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
+    :ivar next_marker: Required.
+    :vartype next_marker: str
+    :ivar directory_id:
+    :vartype directory_id: str
     """
 
     _validation = {
@@ -583,6 +759,28 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword share_name: Required.
+        :paramtype share_name: str
+        :keyword share_snapshot:
+        :paramtype share_snapshot: str
+        :keyword directory_path: Required.
+        :paramtype directory_path: str
+        :keyword prefix: Required.
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results:
+        :paramtype max_results: int
+        :keyword segment: Required. Abstract for entries that can be listed from Directory.
+        :paramtype segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
+        :keyword next_marker: Required.
+        :paramtype next_marker: str
+        :keyword directory_id:
+        :paramtype directory_id: str
+        """
         super(ListFilesAndDirectoriesSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = kwargs['service_endpoint']
         self.share_name = kwargs['share_name']
@@ -601,10 +799,10 @@ class ListHandlesResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param handle_list:
-    :type handle_list: list[~azure.storage.fileshare.models.HandleItem]
-    :param next_marker: Required.
-    :type next_marker: str
+    :ivar handle_list:
+    :vartype handle_list: list[~azure.storage.fileshare.models.HandleItem]
+    :ivar next_marker: Required.
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -623,6 +821,12 @@ class ListHandlesResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword handle_list:
+        :paramtype handle_list: list[~azure.storage.fileshare.models.HandleItem]
+        :keyword next_marker: Required.
+        :paramtype next_marker: str
+        """
         super(ListHandlesResponse, self).__init__(**kwargs)
         self.handle_list = kwargs.get('handle_list', None)
         self.next_marker = kwargs['next_marker']
@@ -633,18 +837,18 @@ class ListSharesResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param prefix:
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param share_items:
-    :type share_items: list[~azure.storage.fileshare.models.ShareItemInternal]
-    :param next_marker: Required.
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar prefix:
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results:
+    :vartype max_results: int
+    :ivar share_items:
+    :vartype share_items: list[~azure.storage.fileshare.models.ShareItemInternal]
+    :ivar next_marker: Required.
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -668,6 +872,20 @@ class ListSharesResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword prefix:
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results:
+        :paramtype max_results: int
+        :keyword share_items:
+        :paramtype share_items: list[~azure.storage.fileshare.models.ShareItemInternal]
+        :keyword next_marker: Required.
+        :paramtype next_marker: str
+        """
         super(ListSharesResponse, self).__init__(**kwargs)
         self.service_endpoint = kwargs['service_endpoint']
         self.prefix = kwargs.get('prefix', None)
@@ -682,15 +900,15 @@ class Metrics(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of Storage Analytics to configure.
-    :type version: str
-    :param enabled: Required. Indicates whether metrics are enabled for the File service.
-    :type enabled: bool
-    :param include_apis: Indicates whether metrics should generate summary statistics for called
-     API operations.
-    :type include_apis: bool
-    :param retention_policy: The retention policy.
-    :type retention_policy: ~azure.storage.fileshare.models.RetentionPolicy
+    :ivar version: Required. The version of Storage Analytics to configure.
+    :vartype version: str
+    :ivar enabled: Required. Indicates whether metrics are enabled for the File service.
+    :vartype enabled: bool
+    :ivar include_apis: Indicates whether metrics should generate summary statistics for called API
+     operations.
+    :vartype include_apis: bool
+    :ivar retention_policy: The retention policy.
+    :vartype retention_policy: ~azure.storage.fileshare.models.RetentionPolicy
     """
 
     _validation = {
@@ -709,6 +927,17 @@ class Metrics(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword version: Required. The version of Storage Analytics to configure.
+        :paramtype version: str
+        :keyword enabled: Required. Indicates whether metrics are enabled for the File service.
+        :paramtype enabled: bool
+        :keyword include_apis: Indicates whether metrics should generate summary statistics for called
+         API operations.
+        :paramtype include_apis: bool
+        :keyword retention_policy: The retention policy.
+        :paramtype retention_policy: ~azure.storage.fileshare.models.RetentionPolicy
+        """
         super(Metrics, self).__init__(**kwargs)
         self.version = kwargs['version']
         self.enabled = kwargs['enabled']
@@ -721,13 +950,13 @@ class RetentionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Indicates whether a retention policy is enabled for the File service.
+    :ivar enabled: Required. Indicates whether a retention policy is enabled for the File service.
      If false, metrics data is retained, and the user is responsible for deleting it.
-    :type enabled: bool
-    :param days: Indicates the number of days that metrics data should be retained. All data older
+    :vartype enabled: bool
+    :ivar days: Indicates the number of days that metrics data should be retained. All data older
      than this value will be deleted. Metrics data is deleted on a best-effort basis after the
      retention period expires.
-    :type days: int
+    :vartype days: int
     """
 
     _validation = {
@@ -744,6 +973,15 @@ class RetentionPolicy(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword enabled: Required. Indicates whether a retention policy is enabled for the File
+         service. If false, metrics data is retained, and the user is responsible for deleting it.
+        :paramtype enabled: bool
+        :keyword days: Indicates the number of days that metrics data should be retained. All data
+         older than this value will be deleted. Metrics data is deleted on a best-effort basis after the
+         retention period expires.
+        :paramtype days: int
+        """
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = kwargs['enabled']
         self.days = kwargs.get('days', None)
@@ -752,10 +990,10 @@ class RetentionPolicy(msrest.serialization.Model):
 class ShareFileRangeList(msrest.serialization.Model):
     """The list of file ranges.
 
-    :param ranges:
-    :type ranges: list[~azure.storage.fileshare.models.FileRange]
-    :param clear_ranges:
-    :type clear_ranges: list[~azure.storage.fileshare.models.ClearRange]
+    :ivar ranges:
+    :vartype ranges: list[~azure.storage.fileshare.models.FileRange]
+    :ivar clear_ranges:
+    :vartype clear_ranges: list[~azure.storage.fileshare.models.ClearRange]
     """
 
     _attribute_map = {
@@ -767,6 +1005,12 @@ class ShareFileRangeList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword ranges:
+        :paramtype ranges: list[~azure.storage.fileshare.models.FileRange]
+        :keyword clear_ranges:
+        :paramtype clear_ranges: list[~azure.storage.fileshare.models.ClearRange]
+        """
         super(ShareFileRangeList, self).__init__(**kwargs)
         self.ranges = kwargs.get('ranges', None)
         self.clear_ranges = kwargs.get('clear_ranges', None)
@@ -777,18 +1021,18 @@ class ShareItemInternal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param snapshot:
-    :type snapshot: str
-    :param deleted:
-    :type deleted: bool
-    :param version:
-    :type version: str
-    :param properties: Required. Properties of a share.
-    :type properties: ~azure.storage.fileshare.models.SharePropertiesInternal
-    :param metadata: Dictionary of :code:`<string>`.
-    :type metadata: dict[str, str]
+    :ivar name: Required.
+    :vartype name: str
+    :ivar snapshot:
+    :vartype snapshot: str
+    :ivar deleted:
+    :vartype deleted: bool
+    :ivar version:
+    :vartype version: str
+    :ivar properties: Required. Properties of a share.
+    :vartype properties: ~azure.storage.fileshare.models.SharePropertiesInternal
+    :ivar metadata: Dictionary of :code:`<string>`.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
@@ -812,6 +1056,20 @@ class ShareItemInternal(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword snapshot:
+        :paramtype snapshot: str
+        :keyword deleted:
+        :paramtype deleted: bool
+        :keyword version:
+        :paramtype version: str
+        :keyword properties: Required. Properties of a share.
+        :paramtype properties: ~azure.storage.fileshare.models.SharePropertiesInternal
+        :keyword metadata: Dictionary of :code:`<string>`.
+        :paramtype metadata: dict[str, str]
+        """
         super(ShareItemInternal, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.snapshot = kwargs.get('snapshot', None)
@@ -826,9 +1084,9 @@ class SharePermission(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param permission: Required. The permission in the Security Descriptor Definition Language
+    :ivar permission: Required. The permission in the Security Descriptor Definition Language
      (SDDL).
-    :type permission: str
+    :vartype permission: str
     """
 
     _validation = {
@@ -843,6 +1101,11 @@ class SharePermission(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword permission: Required. The permission in the Security Descriptor Definition Language
+         (SDDL).
+        :paramtype permission: str
+        """
         super(SharePermission, self).__init__(**kwargs)
         self.permission = kwargs['permission']
 
@@ -852,45 +1115,45 @@ class SharePropertiesInternal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param last_modified: Required.
-    :type last_modified: ~datetime.datetime
-    :param etag: Required.
-    :type etag: str
-    :param quota: Required.
-    :type quota: int
-    :param provisioned_iops:
-    :type provisioned_iops: int
-    :param provisioned_ingress_m_bps:
-    :type provisioned_ingress_m_bps: int
-    :param provisioned_egress_m_bps:
-    :type provisioned_egress_m_bps: int
-    :param provisioned_bandwidth_mi_bps:
-    :type provisioned_bandwidth_mi_bps: int
-    :param next_allowed_quota_downgrade_time:
-    :type next_allowed_quota_downgrade_time: ~datetime.datetime
-    :param deleted_time:
-    :type deleted_time: ~datetime.datetime
-    :param remaining_retention_days:
-    :type remaining_retention_days: int
-    :param access_tier:
-    :type access_tier: str
-    :param access_tier_change_time:
-    :type access_tier_change_time: ~datetime.datetime
-    :param access_tier_transition_state:
-    :type access_tier_transition_state: str
-    :param lease_status: The current lease status of the share. Possible values include: "locked",
+    :ivar last_modified: Required.
+    :vartype last_modified: ~datetime.datetime
+    :ivar etag: Required.
+    :vartype etag: str
+    :ivar quota: Required.
+    :vartype quota: int
+    :ivar provisioned_iops:
+    :vartype provisioned_iops: int
+    :ivar provisioned_ingress_m_bps:
+    :vartype provisioned_ingress_m_bps: int
+    :ivar provisioned_egress_m_bps:
+    :vartype provisioned_egress_m_bps: int
+    :ivar provisioned_bandwidth_mi_bps:
+    :vartype provisioned_bandwidth_mi_bps: int
+    :ivar next_allowed_quota_downgrade_time:
+    :vartype next_allowed_quota_downgrade_time: ~datetime.datetime
+    :ivar deleted_time:
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days:
+    :vartype remaining_retention_days: int
+    :ivar access_tier:
+    :vartype access_tier: str
+    :ivar access_tier_change_time:
+    :vartype access_tier_change_time: ~datetime.datetime
+    :ivar access_tier_transition_state:
+    :vartype access_tier_transition_state: str
+    :ivar lease_status: The current lease status of the share. Possible values include: "locked",
      "unlocked".
-    :type lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
-    :param lease_state: Lease state of the share. Possible values include: "available", "leased",
+    :vartype lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
+    :ivar lease_state: Lease state of the share. Possible values include: "available", "leased",
      "expired", "breaking", "broken".
-    :type lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
-    :param lease_duration: When a share is leased, specifies whether the lease is of infinite or
+    :vartype lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
+    :ivar lease_duration: When a share is leased, specifies whether the lease is of infinite or
      fixed duration. Possible values include: "infinite", "fixed".
-    :type lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
-    :param enabled_protocols:
-    :type enabled_protocols: str
-    :param root_squash:  Possible values include: "NoRootSquash", "RootSquash", "AllSquash".
-    :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+    :vartype lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
+    :ivar enabled_protocols:
+    :vartype enabled_protocols: str
+    :ivar root_squash: Possible values include: "NoRootSquash", "RootSquash", "AllSquash".
+    :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
     """
 
     _validation = {
@@ -924,6 +1187,47 @@ class SharePropertiesInternal(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword last_modified: Required.
+        :paramtype last_modified: ~datetime.datetime
+        :keyword etag: Required.
+        :paramtype etag: str
+        :keyword quota: Required.
+        :paramtype quota: int
+        :keyword provisioned_iops:
+        :paramtype provisioned_iops: int
+        :keyword provisioned_ingress_m_bps:
+        :paramtype provisioned_ingress_m_bps: int
+        :keyword provisioned_egress_m_bps:
+        :paramtype provisioned_egress_m_bps: int
+        :keyword provisioned_bandwidth_mi_bps:
+        :paramtype provisioned_bandwidth_mi_bps: int
+        :keyword next_allowed_quota_downgrade_time:
+        :paramtype next_allowed_quota_downgrade_time: ~datetime.datetime
+        :keyword deleted_time:
+        :paramtype deleted_time: ~datetime.datetime
+        :keyword remaining_retention_days:
+        :paramtype remaining_retention_days: int
+        :keyword access_tier:
+        :paramtype access_tier: str
+        :keyword access_tier_change_time:
+        :paramtype access_tier_change_time: ~datetime.datetime
+        :keyword access_tier_transition_state:
+        :paramtype access_tier_transition_state: str
+        :keyword lease_status: The current lease status of the share. Possible values include:
+         "locked", "unlocked".
+        :paramtype lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
+        :keyword lease_state: Lease state of the share. Possible values include: "available", "leased",
+         "expired", "breaking", "broken".
+        :paramtype lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
+        :keyword lease_duration: When a share is leased, specifies whether the lease is of infinite or
+         fixed duration. Possible values include: "infinite", "fixed".
+        :paramtype lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
+        :keyword enabled_protocols:
+        :paramtype enabled_protocols: str
+        :keyword root_squash: Possible values include: "NoRootSquash", "RootSquash", "AllSquash".
+        :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
+        """
         super(SharePropertiesInternal, self).__init__(**kwargs)
         self.last_modified = kwargs['last_modified']
         self.etag = kwargs['etag']
@@ -948,8 +1252,8 @@ class SharePropertiesInternal(msrest.serialization.Model):
 class ShareProtocolSettings(msrest.serialization.Model):
     """Protocol settings.
 
-    :param smb: Settings for SMB protocol.
-    :type smb: ~azure.storage.fileshare.models.ShareSmbSettings
+    :ivar smb: Settings for SMB protocol.
+    :vartype smb: ~azure.storage.fileshare.models.ShareSmbSettings
     """
 
     _attribute_map = {
@@ -963,6 +1267,10 @@ class ShareProtocolSettings(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword smb: Settings for SMB protocol.
+        :paramtype smb: ~azure.storage.fileshare.models.ShareSmbSettings
+        """
         super(ShareProtocolSettings, self).__init__(**kwargs)
         self.smb = kwargs.get('smb', None)
 
@@ -970,8 +1278,8 @@ class ShareProtocolSettings(msrest.serialization.Model):
 class ShareSmbSettings(msrest.serialization.Model):
     """Settings for SMB protocol.
 
-    :param multichannel: Settings for SMB Multichannel.
-    :type multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+    :ivar multichannel: Settings for SMB Multichannel.
+    :vartype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
     """
 
     _attribute_map = {
@@ -985,6 +1293,10 @@ class ShareSmbSettings(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword multichannel: Settings for SMB Multichannel.
+        :paramtype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+        """
         super(ShareSmbSettings, self).__init__(**kwargs)
         self.multichannel = kwargs.get('multichannel', None)
 
@@ -994,9 +1306,9 @@ class ShareStats(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param share_usage_bytes: Required. The approximate size of the data stored in bytes. Note that
+    :ivar share_usage_bytes: Required. The approximate size of the data stored in bytes. Note that
      this value may not include all recently created or recently resized files.
-    :type share_usage_bytes: int
+    :vartype share_usage_bytes: int
     """
 
     _validation = {
@@ -1011,6 +1323,11 @@ class ShareStats(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword share_usage_bytes: Required. The approximate size of the data stored in bytes. Note
+         that this value may not include all recently created or recently resized files.
+        :paramtype share_usage_bytes: int
+        """
         super(ShareStats, self).__init__(**kwargs)
         self.share_usage_bytes = kwargs['share_usage_bytes']
 
@@ -1020,10 +1337,10 @@ class SignedIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A unique id.
-    :type id: str
-    :param access_policy: The access policy.
-    :type access_policy: ~azure.storage.fileshare.models.AccessPolicy
+    :ivar id: Required. A unique id.
+    :vartype id: str
+    :ivar access_policy: The access policy.
+    :vartype access_policy: ~azure.storage.fileshare.models.AccessPolicy
     """
 
     _validation = {
@@ -1039,6 +1356,12 @@ class SignedIdentifier(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword id: Required. A unique id.
+        :paramtype id: str
+        :keyword access_policy: The access policy.
+        :paramtype access_policy: ~azure.storage.fileshare.models.AccessPolicy
+        """
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = kwargs['id']
         self.access_policy = kwargs.get('access_policy', None)
@@ -1047,8 +1370,8 @@ class SignedIdentifier(msrest.serialization.Model):
 class SmbMultichannel(msrest.serialization.Model):
     """Settings for SMB multichannel.
 
-    :param enabled: If SMB multichannel is enabled.
-    :type enabled: bool
+    :ivar enabled: If SMB multichannel is enabled.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
@@ -1062,6 +1385,10 @@ class SmbMultichannel(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword enabled: If SMB multichannel is enabled.
+        :paramtype enabled: bool
+        """
         super(SmbMultichannel, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
 
@@ -1069,8 +1396,8 @@ class SmbMultichannel(msrest.serialization.Model):
 class SourceLeaseAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param source_lease_id: Required if the source file has an active infinite lease.
-    :type source_lease_id: str
+    :ivar source_lease_id: Required if the source file has an active infinite lease.
+    :vartype source_lease_id: str
     """
 
     _attribute_map = {
@@ -1081,6 +1408,10 @@ class SourceLeaseAccessConditions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword source_lease_id: Required if the source file has an active infinite lease.
+        :paramtype source_lease_id: str
+        """
         super(SourceLeaseAccessConditions, self).__init__(**kwargs)
         self.source_lease_id = kwargs.get('source_lease_id', None)
 
@@ -1088,12 +1419,12 @@ class SourceLeaseAccessConditions(msrest.serialization.Model):
 class SourceModifiedAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param source_if_match_crc64: Specify the crc64 value to operate only on range with a matching
+    :ivar source_if_match_crc64: Specify the crc64 value to operate only on range with a matching
      crc64 checksum.
-    :type source_if_match_crc64: bytearray
-    :param source_if_none_match_crc64: Specify the crc64 value to operate only on range without a
+    :vartype source_if_match_crc64: bytearray
+    :ivar source_if_none_match_crc64: Specify the crc64 value to operate only on range without a
      matching crc64 checksum.
-    :type source_if_none_match_crc64: bytearray
+    :vartype source_if_none_match_crc64: bytearray
     """
 
     _attribute_map = {
@@ -1105,6 +1436,14 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword source_if_match_crc64: Specify the crc64 value to operate only on range with a
+         matching crc64 checksum.
+        :paramtype source_if_match_crc64: bytearray
+        :keyword source_if_none_match_crc64: Specify the crc64 value to operate only on range without a
+         matching crc64 checksum.
+        :paramtype source_if_none_match_crc64: bytearray
+        """
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
         self.source_if_match_crc64 = kwargs.get('source_if_match_crc64', None)
         self.source_if_none_match_crc64 = kwargs.get('source_if_none_match_crc64', None)
@@ -1113,8 +1452,8 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
 class StorageError(msrest.serialization.Model):
     """StorageError.
 
-    :param message:
-    :type message: str
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -1125,6 +1464,10 @@ class StorageError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword message:
+        :paramtype message: str
+        """
         super(StorageError, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
 
@@ -1132,16 +1475,16 @@ class StorageError(msrest.serialization.Model):
 class StorageServiceProperties(msrest.serialization.Model):
     """Storage service properties.
 
-    :param hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
+    :ivar hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
      files.
-    :type hour_metrics: ~azure.storage.fileshare.models.Metrics
-    :param minute_metrics: A summary of request statistics grouped by API in minute aggregates for
+    :vartype hour_metrics: ~azure.storage.fileshare.models.Metrics
+    :ivar minute_metrics: A summary of request statistics grouped by API in minute aggregates for
      files.
-    :type minute_metrics: ~azure.storage.fileshare.models.Metrics
-    :param cors: The set of CORS rules.
-    :type cors: list[~azure.storage.fileshare.models.CorsRule]
-    :param protocol: Protocol settings.
-    :type protocol: ~azure.storage.fileshare.models.ShareProtocolSettings
+    :vartype minute_metrics: ~azure.storage.fileshare.models.Metrics
+    :ivar cors: The set of CORS rules.
+    :vartype cors: list[~azure.storage.fileshare.models.CorsRule]
+    :ivar protocol: Protocol settings.
+    :vartype protocol: ~azure.storage.fileshare.models.ShareProtocolSettings
     """
 
     _attribute_map = {
@@ -1155,6 +1498,18 @@ class StorageServiceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
+         files.
+        :paramtype hour_metrics: ~azure.storage.fileshare.models.Metrics
+        :keyword minute_metrics: A summary of request statistics grouped by API in minute aggregates
+         for files.
+        :paramtype minute_metrics: ~azure.storage.fileshare.models.Metrics
+        :keyword cors: The set of CORS rules.
+        :paramtype cors: list[~azure.storage.fileshare.models.CorsRule]
+        :keyword protocol: Protocol settings.
+        :paramtype protocol: ~azure.storage.fileshare.models.ShareProtocolSettings
+        """
         super(StorageServiceProperties, self).__init__(**kwargs)
         self.hour_metrics = kwargs.get('hour_metrics', None)
         self.minute_metrics = kwargs.get('minute_metrics', None)

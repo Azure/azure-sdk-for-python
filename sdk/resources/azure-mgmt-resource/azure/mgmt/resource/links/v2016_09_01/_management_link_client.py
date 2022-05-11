@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ManagementLinkClientConfiguration
@@ -22,7 +23,10 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 class ManagementLinkClient:
-    """Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.
+    """Azure resources can be linked together to form logical relationships. You can establish links
+    between resources belonging to different resource groups. However, all the linked resources
+    must belong to the same subscription. Each resource can be linked to 50 other resources. If any
+    of the linked resources are deleted or moved, the link owner must clean up the remaining link.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resource.links.v2016_09_01.operations.Operations
@@ -33,8 +37,11 @@ class ManagementLinkClient:
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2016-09-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -57,7 +64,7 @@ class ManagementLinkClient:
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

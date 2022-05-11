@@ -1,8 +1,16 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.0b1 (2022-03-23)
 
 ### Features Added
+
+- Adding optional parameter to GetRelayConfiguration to choose credential Time-To-Live in seconds of max 48 hours.
+  The default value will be used if given value exceeds it.
+
+### Breaking Changes
+
+- Making User, RouteType and Ttl part of the options parameter
+- getRelayConfiguration can be called without parameters or passing the GetRelayConfigurationOptions parameter
 
 ## 1.0.0 (2022-02-04) (Deprecated)
 

@@ -5,13 +5,13 @@
         "name": "MySQLManagementClient",
         "filename": "_my_sql_management_client",
         "description": "The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MySQLManagementClientConfiguration\"], \"._operations_mixin\": [\"MySQLManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MySQLManagementClientConfiguration\"], \"._operations_mixin\": [\"MySQLManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MySQLManagementClientConfiguration\"], \"._operations_mixin\": [\"MySQLManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MySQLManagementClientConfiguration\"], \"._operations_mixin\": [\"MySQLManagementClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -54,7 +54,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -74,7 +74,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -91,11 +91,10 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "servers": "ServersOperations",
@@ -125,12 +124,12 @@
         "server_keys": "ServerKeysOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.polling\": [\"LROPoller\", \"NoPolling\", \"PollingMethod\"], \"azure.mgmt.core.polling.arm_polling\": [\"ARMPolling\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\", \"Union\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"], \"azure.core.polling\": [\"AsyncLROPoller\", \"AsyncNoPolling\", \"AsyncPollingMethod\"], \"azure.mgmt.core.polling.async_arm_polling\": [\"AsyncARMPolling\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\", \"Union\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}, \"azurecore\": {\"azure.core.polling\": [\"LROPoller\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}, \"azurecore\": {\"azure.core.polling\": [\"AsyncLROPoller\"]}}}",
         "operations": {
             "reset_query_performance_insight_data" : {
                 "sync": {
-                    "signature": "def reset_query_performance_insight_data(\n    self,\n    resource_group_name,  # type: str\n    server_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "signature": "def reset_query_performance_insight_data(\n    self,\n    resource_group_name,  # type: str\n    server_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.QueryPerformanceInsightResetDataResult\"\n",
                     "doc": "\"\"\"Reset data for Query Performance Insight.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: QueryPerformanceInsightResetDataResult, or the result of cls(response)\n:rtype: ~azure.mgmt.rdbms.mysql.models.QueryPerformanceInsightResetDataResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
@@ -142,25 +141,25 @@
             },
             "_create_recommended_action_session_initial" : {
                 "sync": {
-                    "signature": "def _create_recommended_action_session_initial(\n    self,\n    resource_group_name,  # type: str\n    server_name,  # type: str\n    advisor_name,  # type: str\n    database_name,  # type: str\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def _create_recommended_action_session_initial(\n    self,\n    resource_group_name,  # type: str\n    server_name,  # type: str\n    advisor_name,  # type: str\n    database_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "doc": "\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
                     "signature": "async def _create_recommended_action_session_initial(\n    self,\n    resource_group_name: str,\n    server_name: str,\n    advisor_name: str,\n    database_name: str,\n    **kwargs: Any\n) -\u003e None:\n",
-                    "doc": "\"\"\"\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "doc": "\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "resource_group_name, server_name, advisor_name, database_name"
             },
             "begin_create_recommended_action_session" : {
                 "sync": {
-                    "signature": "def begin_create_recommended_action_session(\n    self,\n    resource_group_name,  # type: str\n    server_name,  # type: str\n    advisor_name,  # type: str\n    database_name,  # type: str\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Create recommendation action session for the advisor.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                    "signature": "def begin_create_recommended_action_session(\n    self,\n    resource_group_name,  # type: str\n    server_name,  # type: str\n    advisor_name,  # type: str\n    database_name,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e LROPoller[None]\n",
+                    "doc": "\"\"\"Create recommendation action session for the advisor.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling. Pass in False for this\n operation to not poll, or pass in your own initialized polling object for a personal polling\n strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
                     "signature": "async def begin_create_recommended_action_session(\n    self,\n    resource_group_name: str,\n    server_name: str,\n    advisor_name: str,\n    database_name: str,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
-                    "doc": "\"\"\"Create recommendation action session for the advisor.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling.\n Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+                    "doc": "\"\"\"Create recommendation action session for the advisor.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param server_name: The name of the server.\n:type server_name: str\n:param advisor_name: The advisor name for recommendation action.\n:type advisor_name: str\n:param database_name: The name of the database.\n:type database_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for\n this operation to not poll, or pass in your own initialized polling object for a personal\n polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "resource_group_name, server_name, advisor_name, database_name"
             }

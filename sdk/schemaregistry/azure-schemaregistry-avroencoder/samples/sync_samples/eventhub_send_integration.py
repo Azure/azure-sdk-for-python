@@ -6,11 +6,27 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show sending event to EventHub with AvroEncoder integrated for data encoding.
+FILE: eventhub_send_integration.py
+DESCRIPTION:
+    Examples to show sending events synchronously to EventHub with AvroEncoder integrated for content encoding.
+USAGE:
+    python eventhub_send_integration.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_TENANT_ID - Required for use of the credential. The ID of the service principal's tenant.
+     Also called its 'directory' ID.
+    2) AZURE_CLIENT_ID - Required for use of the credential. The service principal's client ID.
+     Also called its 'application' ID.
+    3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
+    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to send events to.
+    7) EVENT_HUB_NAME - The name of the Event Hub in the Event Hubs namespace to send events to.
+
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see
+ https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
-
-# pylint: disable=C0111
-
 import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
@@ -37,12 +53,12 @@ SCHEMA_STRING = """
 
 def send_event_data_batch(producer, encoder):
     event_data_batch = producer.create_batch()
-    dict_data = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
+    dict_content = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
     # Use the encode method to convert dict object to bytes with the given avro schema and set body of EventData.
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
-    event_data = encoder.encode(data=dict_data, schema=SCHEMA_STRING, message_type=EventData)
-    print(f'The bytes of encoded dict data is {next(event_data.body)}.')
+    event_data = encoder.encode(content=dict_content, schema=SCHEMA_STRING, message_type=EventData)
+    print(f'The bytes of encoded dict content is {next(event_data.body)}.')
 
     event_data_batch.add(event_data)
     producer.send_batch(event_data_batch)
@@ -63,7 +79,7 @@ avro_encoder = AvroEncoder(
         credential=DefaultAzureCredential()
     ),
     group_name=GROUP_NAME,
-    auto_register_schemas=True
+    auto_register=True
 )
 
 

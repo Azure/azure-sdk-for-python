@@ -5,20 +5,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
+import pytest
+from datetime import datetime, timedelta
 
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
+    AccountSasPermissions,
     BlobAnalyticsLogging,
-    Metrics,
+    BlobServiceClient,
     CorsRule,
+    Metrics,
+    ResourceTypes,
     RetentionPolicy,
     StaticWebsite,
+    generate_account_sas,
 )
 
 from settings.testcase import BlobPreparer
@@ -382,6 +382,25 @@ class ServicePropertiesTest(StorageTestCase):
         # Assert
         received_props = bsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_service_properties_account_sas(self, storage_account_name, storage_account_key):
+        # Arrange
+        sas_token = generate_account_sas(
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=3)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=sas_token)
+
+        # Act
+        props = bsc.get_service_properties()
+
+        # Assert
+        self.assertIsNotNone(props)
 
     # --Test cases for errors ---------------------------------------
     @BlobPreparer()

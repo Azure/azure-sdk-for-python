@@ -55,7 +55,7 @@ if TYPE_CHECKING:
     from .._metrics_advisor_client import FeedbackUnion
 
 
-class MetricsAdvisorClient(object):
+class MetricsAdvisorClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -423,7 +423,7 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_anomalies(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
     ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert.
 
@@ -449,6 +449,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(
         self,
+        *,
         detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
@@ -591,7 +592,7 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_incidents(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
 
         """Query incidents under a specific alert.
@@ -618,6 +619,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_incidents(
         self,
+        *,
         detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],

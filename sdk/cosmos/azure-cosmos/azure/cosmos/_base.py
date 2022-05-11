@@ -30,6 +30,7 @@ import binascii
 from typing import Dict, Any
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import urlsplit
 
 from azure.core import MatchConditions
 
@@ -70,6 +71,7 @@ _COMMON_OPTIONS = {
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion'
 }
+
 
 def _get_match_headers(kwargs):
     # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
@@ -112,14 +114,14 @@ def build_options(kwargs):
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-    cosmos_client_connection,
-    default_headers,
-    verb,
-    path,
-    resource_id,
-    resource_type,
-    options,
-    partition_key_range_id=None,
+        cosmos_client_connection,
+        default_headers,
+        verb,
+        path,
+        resource_id,
+        resource_type,
+        options,
+        partition_key_range_id=None,
 ):
     """Gets HTTP request headers.
 
@@ -240,7 +242,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth.GetAuthorizationHeader(
+        authorization = auth.get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -291,6 +293,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("populateQuotaInfo"):
         headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
+
+    if options.get("maxIntegratedCacheStaleness"):
+        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
 
     return headers
 
@@ -638,7 +643,7 @@ def ParsePaths(paths):
                 newIndex += 1
 
             # This will extract the token excluding the quote chars
-            token = path[currentIndex + 1 : newIndex]
+            token = path[currentIndex + 1: newIndex]
             tokens.append(token)
             currentIndex = newIndex + 1
         else:
@@ -657,3 +662,14 @@ def ParsePaths(paths):
             tokens.append(token)
 
     return tokens
+
+
+def create_scope_from_url(url):
+    parsed_url = urlsplit(url)
+    return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
+
+
+def validate_cache_staleness_value(max_integrated_cache_staleness):
+    int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
+    if max_integrated_cache_staleness <= 0:
+        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
