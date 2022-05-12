@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) 2021 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,18 +19,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create offers in the Azure Cosmos DB SQL API service.
+"""Create throughput properties in the Azure Cosmos DB SQL API service.
 """
 from typing import Dict, Any
 
 
-class Offer(object):
-    """Represents a offer in an Azure Cosmos DB SQL API container.
+class ThroughputProperties(object):
+    """Represents the throughput properties in an Azure Cosmos DB SQL API container.
 
-    To read and update offers use the associated methods on the :class:`Container`.
+    To read and update throughput properties use the associated methods on the :class:`Container`.
     """
 
     def __init__(self, offer_throughput, properties=None):  # pylint: disable=super-init-not-called
         # type: (int, Dict[str, Any]) -> None
         self.offer_throughput = offer_throughput
         self.properties = properties
+
+
+Offer = ThroughputProperties

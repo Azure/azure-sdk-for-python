@@ -32,13 +32,14 @@ from azure.core.tracing.decorator import distributed_trace
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options
 from .container import ContainerProxy
-from ..offer import Offer
+from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from ..documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
+
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
@@ -685,16 +686,19 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
+
     @distributed_trace_async
-    async def read_offer(self, **kwargs):
-        # type: (Any) -> Offer
-        """Read the Offer object for this database.
+    async def get_throughput(self, **kwargs):
+        # type: (Any) -> ThroughputProperties
+        """Get the ThroughputProperties object for this database.
+
+        If no ThroughputProperties already exist for the database, an exception is raised.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the database.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If no offer exists for the database or if the offer could not be retrieved.
-        :rtype: ~azure.cosmos.Offer
+        :returns: ThroughputProperties for the database.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -703,28 +707,30 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(offers) == 0:
+        throughput_properties = [throughput async for throughput in
+                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+                message="Could not find ThroughputProperties for database " + self.database_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, offers)
+            response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
+        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                    properties=throughput_properties[0])
 
     @distributed_trace_async
     async def replace_throughput(self, throughput, **kwargs):
-        # type: (Optional[int], Any) -> Offer
+        # type: (Optional[int], Any) -> ThroughputProperties
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the database, updated with new throughput.
+        :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If no offer exists for the database or if the offer could not be updated.
-        :rtype: ~azure.cosmos.Offer
+            If no throughput properties exists for the database or if the throughput properties could not be updated.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -733,15 +739,17 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(offers) == 0:
+        throughput_properties = [throughput async for throughput in
+                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+                message="Could not find ThroughputProperties for database " + self.database_link)
 
-        new_offer = offers[0].copy()
-        new_offer["content"]["offerThroughput"] = throughput
-        data = await self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
+        new_throughput_properties = throughput_properties[0].copy()
+        new_throughput_properties["content"]["offerThroughput"] = throughput
+        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
+                                                         offer=throughput_properties[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
