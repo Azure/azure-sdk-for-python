@@ -3,6 +3,7 @@
 ### 4.3.0b5 (Unreleased)
 
 #### Breaking Changes
+- Method signatures have been updated to use keyword arguments instead of positional arguments for most method options in the async client.
 - Bugfix: Automatic Id generation for items was turned on for `upsert_items()` method when no 'id' value was present in document body.
 Method call will now require an 'id' field to be present in the document body.
 
