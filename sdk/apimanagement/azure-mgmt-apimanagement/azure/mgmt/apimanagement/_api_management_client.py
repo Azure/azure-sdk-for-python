@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ApiManagementClientConfiguration
@@ -21,178 +22,185 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ApiManagementClient(ApiManagementClientOperationsMixin):
+class ApiManagementClient(ApiManagementClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
     """ApiManagement Client.
 
     :ivar api: ApiOperations operations
-    :vartype api: api_management_client.operations.ApiOperations
+    :vartype api: azure.mgmt.apimanagement.operations.ApiOperations
     :ivar api_revision: ApiRevisionOperations operations
-    :vartype api_revision: api_management_client.operations.ApiRevisionOperations
+    :vartype api_revision: azure.mgmt.apimanagement.operations.ApiRevisionOperations
     :ivar api_release: ApiReleaseOperations operations
-    :vartype api_release: api_management_client.operations.ApiReleaseOperations
+    :vartype api_release: azure.mgmt.apimanagement.operations.ApiReleaseOperations
     :ivar api_operation: ApiOperationOperations operations
-    :vartype api_operation: api_management_client.operations.ApiOperationOperations
+    :vartype api_operation: azure.mgmt.apimanagement.operations.ApiOperationOperations
     :ivar api_operation_policy: ApiOperationPolicyOperations operations
-    :vartype api_operation_policy: api_management_client.operations.ApiOperationPolicyOperations
+    :vartype api_operation_policy: azure.mgmt.apimanagement.operations.ApiOperationPolicyOperations
     :ivar tag: TagOperations operations
-    :vartype tag: api_management_client.operations.TagOperations
+    :vartype tag: azure.mgmt.apimanagement.operations.TagOperations
     :ivar api_product: ApiProductOperations operations
-    :vartype api_product: api_management_client.operations.ApiProductOperations
+    :vartype api_product: azure.mgmt.apimanagement.operations.ApiProductOperations
     :ivar api_policy: ApiPolicyOperations operations
-    :vartype api_policy: api_management_client.operations.ApiPolicyOperations
+    :vartype api_policy: azure.mgmt.apimanagement.operations.ApiPolicyOperations
     :ivar api_schema: ApiSchemaOperations operations
-    :vartype api_schema: api_management_client.operations.ApiSchemaOperations
+    :vartype api_schema: azure.mgmt.apimanagement.operations.ApiSchemaOperations
     :ivar api_diagnostic: ApiDiagnosticOperations operations
-    :vartype api_diagnostic: api_management_client.operations.ApiDiagnosticOperations
+    :vartype api_diagnostic: azure.mgmt.apimanagement.operations.ApiDiagnosticOperations
     :ivar api_issue: ApiIssueOperations operations
-    :vartype api_issue: api_management_client.operations.ApiIssueOperations
+    :vartype api_issue: azure.mgmt.apimanagement.operations.ApiIssueOperations
     :ivar api_issue_comment: ApiIssueCommentOperations operations
-    :vartype api_issue_comment: api_management_client.operations.ApiIssueCommentOperations
+    :vartype api_issue_comment: azure.mgmt.apimanagement.operations.ApiIssueCommentOperations
     :ivar api_issue_attachment: ApiIssueAttachmentOperations operations
-    :vartype api_issue_attachment: api_management_client.operations.ApiIssueAttachmentOperations
+    :vartype api_issue_attachment: azure.mgmt.apimanagement.operations.ApiIssueAttachmentOperations
     :ivar api_tag_description: ApiTagDescriptionOperations operations
-    :vartype api_tag_description: api_management_client.operations.ApiTagDescriptionOperations
+    :vartype api_tag_description: azure.mgmt.apimanagement.operations.ApiTagDescriptionOperations
     :ivar operation: OperationOperations operations
-    :vartype operation: api_management_client.operations.OperationOperations
+    :vartype operation: azure.mgmt.apimanagement.operations.OperationOperations
     :ivar api_export: ApiExportOperations operations
-    :vartype api_export: api_management_client.operations.ApiExportOperations
+    :vartype api_export: azure.mgmt.apimanagement.operations.ApiExportOperations
     :ivar api_version_set: ApiVersionSetOperations operations
-    :vartype api_version_set: api_management_client.operations.ApiVersionSetOperations
+    :vartype api_version_set: azure.mgmt.apimanagement.operations.ApiVersionSetOperations
     :ivar authorization_server: AuthorizationServerOperations operations
-    :vartype authorization_server: api_management_client.operations.AuthorizationServerOperations
+    :vartype authorization_server:
+     azure.mgmt.apimanagement.operations.AuthorizationServerOperations
     :ivar backend: BackendOperations operations
-    :vartype backend: api_management_client.operations.BackendOperations
+    :vartype backend: azure.mgmt.apimanagement.operations.BackendOperations
     :ivar cache: CacheOperations operations
-    :vartype cache: api_management_client.operations.CacheOperations
+    :vartype cache: azure.mgmt.apimanagement.operations.CacheOperations
     :ivar certificate: CertificateOperations operations
-    :vartype certificate: api_management_client.operations.CertificateOperations
+    :vartype certificate: azure.mgmt.apimanagement.operations.CertificateOperations
     :ivar content_type: ContentTypeOperations operations
-    :vartype content_type: api_management_client.operations.ContentTypeOperations
+    :vartype content_type: azure.mgmt.apimanagement.operations.ContentTypeOperations
     :ivar content_item: ContentItemOperations operations
-    :vartype content_item: api_management_client.operations.ContentItemOperations
+    :vartype content_item: azure.mgmt.apimanagement.operations.ContentItemOperations
     :ivar deleted_services: DeletedServicesOperations operations
-    :vartype deleted_services: api_management_client.operations.DeletedServicesOperations
+    :vartype deleted_services: azure.mgmt.apimanagement.operations.DeletedServicesOperations
     :ivar api_management_operations: ApiManagementOperationsOperations operations
     :vartype api_management_operations:
-     api_management_client.operations.ApiManagementOperationsOperations
+     azure.mgmt.apimanagement.operations.ApiManagementOperationsOperations
     :ivar api_management_service_skus: ApiManagementServiceSkusOperations operations
     :vartype api_management_service_skus:
-     api_management_client.operations.ApiManagementServiceSkusOperations
+     azure.mgmt.apimanagement.operations.ApiManagementServiceSkusOperations
     :ivar api_management_service: ApiManagementServiceOperations operations
     :vartype api_management_service:
-     api_management_client.operations.ApiManagementServiceOperations
+     azure.mgmt.apimanagement.operations.ApiManagementServiceOperations
     :ivar diagnostic: DiagnosticOperations operations
-    :vartype diagnostic: api_management_client.operations.DiagnosticOperations
+    :vartype diagnostic: azure.mgmt.apimanagement.operations.DiagnosticOperations
     :ivar email_template: EmailTemplateOperations operations
-    :vartype email_template: api_management_client.operations.EmailTemplateOperations
+    :vartype email_template: azure.mgmt.apimanagement.operations.EmailTemplateOperations
     :ivar gateway: GatewayOperations operations
-    :vartype gateway: api_management_client.operations.GatewayOperations
+    :vartype gateway: azure.mgmt.apimanagement.operations.GatewayOperations
     :ivar gateway_hostname_configuration: GatewayHostnameConfigurationOperations operations
     :vartype gateway_hostname_configuration:
-     api_management_client.operations.GatewayHostnameConfigurationOperations
+     azure.mgmt.apimanagement.operations.GatewayHostnameConfigurationOperations
     :ivar gateway_api: GatewayApiOperations operations
-    :vartype gateway_api: api_management_client.operations.GatewayApiOperations
+    :vartype gateway_api: azure.mgmt.apimanagement.operations.GatewayApiOperations
     :ivar gateway_certificate_authority: GatewayCertificateAuthorityOperations operations
     :vartype gateway_certificate_authority:
-     api_management_client.operations.GatewayCertificateAuthorityOperations
+     azure.mgmt.apimanagement.operations.GatewayCertificateAuthorityOperations
     :ivar group: GroupOperations operations
-    :vartype group: api_management_client.operations.GroupOperations
+    :vartype group: azure.mgmt.apimanagement.operations.GroupOperations
     :ivar group_user: GroupUserOperations operations
-    :vartype group_user: api_management_client.operations.GroupUserOperations
+    :vartype group_user: azure.mgmt.apimanagement.operations.GroupUserOperations
     :ivar identity_provider: IdentityProviderOperations operations
-    :vartype identity_provider: api_management_client.operations.IdentityProviderOperations
+    :vartype identity_provider: azure.mgmt.apimanagement.operations.IdentityProviderOperations
     :ivar issue: IssueOperations operations
-    :vartype issue: api_management_client.operations.IssueOperations
+    :vartype issue: azure.mgmt.apimanagement.operations.IssueOperations
     :ivar logger: LoggerOperations operations
-    :vartype logger: api_management_client.operations.LoggerOperations
+    :vartype logger: azure.mgmt.apimanagement.operations.LoggerOperations
     :ivar named_value: NamedValueOperations operations
-    :vartype named_value: api_management_client.operations.NamedValueOperations
+    :vartype named_value: azure.mgmt.apimanagement.operations.NamedValueOperations
     :ivar network_status: NetworkStatusOperations operations
-    :vartype network_status: api_management_client.operations.NetworkStatusOperations
+    :vartype network_status: azure.mgmt.apimanagement.operations.NetworkStatusOperations
     :ivar notification: NotificationOperations operations
-    :vartype notification: api_management_client.operations.NotificationOperations
+    :vartype notification: azure.mgmt.apimanagement.operations.NotificationOperations
     :ivar notification_recipient_user: NotificationRecipientUserOperations operations
     :vartype notification_recipient_user:
-     api_management_client.operations.NotificationRecipientUserOperations
+     azure.mgmt.apimanagement.operations.NotificationRecipientUserOperations
     :ivar notification_recipient_email: NotificationRecipientEmailOperations operations
     :vartype notification_recipient_email:
-     api_management_client.operations.NotificationRecipientEmailOperations
+     azure.mgmt.apimanagement.operations.NotificationRecipientEmailOperations
     :ivar open_id_connect_provider: OpenIdConnectProviderOperations operations
     :vartype open_id_connect_provider:
-     api_management_client.operations.OpenIdConnectProviderOperations
+     azure.mgmt.apimanagement.operations.OpenIdConnectProviderOperations
     :ivar outbound_network_dependencies_endpoints: OutboundNetworkDependenciesEndpointsOperations
      operations
     :vartype outbound_network_dependencies_endpoints:
-     api_management_client.operations.OutboundNetworkDependenciesEndpointsOperations
+     azure.mgmt.apimanagement.operations.OutboundNetworkDependenciesEndpointsOperations
     :ivar policy: PolicyOperations operations
-    :vartype policy: api_management_client.operations.PolicyOperations
+    :vartype policy: azure.mgmt.apimanagement.operations.PolicyOperations
     :ivar policy_description: PolicyDescriptionOperations operations
-    :vartype policy_description: api_management_client.operations.PolicyDescriptionOperations
+    :vartype policy_description: azure.mgmt.apimanagement.operations.PolicyDescriptionOperations
     :ivar portal_revision: PortalRevisionOperations operations
-    :vartype portal_revision: api_management_client.operations.PortalRevisionOperations
+    :vartype portal_revision: azure.mgmt.apimanagement.operations.PortalRevisionOperations
     :ivar portal_settings: PortalSettingsOperations operations
-    :vartype portal_settings: api_management_client.operations.PortalSettingsOperations
+    :vartype portal_settings: azure.mgmt.apimanagement.operations.PortalSettingsOperations
     :ivar sign_in_settings: SignInSettingsOperations operations
-    :vartype sign_in_settings: api_management_client.operations.SignInSettingsOperations
+    :vartype sign_in_settings: azure.mgmt.apimanagement.operations.SignInSettingsOperations
     :ivar sign_up_settings: SignUpSettingsOperations operations
-    :vartype sign_up_settings: api_management_client.operations.SignUpSettingsOperations
+    :vartype sign_up_settings: azure.mgmt.apimanagement.operations.SignUpSettingsOperations
     :ivar delegation_settings: DelegationSettingsOperations operations
-    :vartype delegation_settings: api_management_client.operations.DelegationSettingsOperations
+    :vartype delegation_settings: azure.mgmt.apimanagement.operations.DelegationSettingsOperations
     :ivar private_endpoint_connection: PrivateEndpointConnectionOperations operations
     :vartype private_endpoint_connection:
-     api_management_client.operations.PrivateEndpointConnectionOperations
+     azure.mgmt.apimanagement.operations.PrivateEndpointConnectionOperations
     :ivar product: ProductOperations operations
-    :vartype product: api_management_client.operations.ProductOperations
+    :vartype product: azure.mgmt.apimanagement.operations.ProductOperations
     :ivar product_api: ProductApiOperations operations
-    :vartype product_api: api_management_client.operations.ProductApiOperations
+    :vartype product_api: azure.mgmt.apimanagement.operations.ProductApiOperations
     :ivar product_group: ProductGroupOperations operations
-    :vartype product_group: api_management_client.operations.ProductGroupOperations
+    :vartype product_group: azure.mgmt.apimanagement.operations.ProductGroupOperations
     :ivar product_subscriptions: ProductSubscriptionsOperations operations
-    :vartype product_subscriptions: api_management_client.operations.ProductSubscriptionsOperations
+    :vartype product_subscriptions:
+     azure.mgmt.apimanagement.operations.ProductSubscriptionsOperations
     :ivar product_policy: ProductPolicyOperations operations
-    :vartype product_policy: api_management_client.operations.ProductPolicyOperations
+    :vartype product_policy: azure.mgmt.apimanagement.operations.ProductPolicyOperations
     :ivar quota_by_counter_keys: QuotaByCounterKeysOperations operations
-    :vartype quota_by_counter_keys: api_management_client.operations.QuotaByCounterKeysOperations
+    :vartype quota_by_counter_keys:
+     azure.mgmt.apimanagement.operations.QuotaByCounterKeysOperations
     :ivar quota_by_period_keys: QuotaByPeriodKeysOperations operations
-    :vartype quota_by_period_keys: api_management_client.operations.QuotaByPeriodKeysOperations
+    :vartype quota_by_period_keys: azure.mgmt.apimanagement.operations.QuotaByPeriodKeysOperations
     :ivar region: RegionOperations operations
-    :vartype region: api_management_client.operations.RegionOperations
+    :vartype region: azure.mgmt.apimanagement.operations.RegionOperations
     :ivar reports: ReportsOperations operations
-    :vartype reports: api_management_client.operations.ReportsOperations
+    :vartype reports: azure.mgmt.apimanagement.operations.ReportsOperations
     :ivar global_schema: GlobalSchemaOperations operations
-    :vartype global_schema: api_management_client.operations.GlobalSchemaOperations
+    :vartype global_schema: azure.mgmt.apimanagement.operations.GlobalSchemaOperations
     :ivar tenant_settings: TenantSettingsOperations operations
-    :vartype tenant_settings: api_management_client.operations.TenantSettingsOperations
+    :vartype tenant_settings: azure.mgmt.apimanagement.operations.TenantSettingsOperations
     :ivar api_management_skus: ApiManagementSkusOperations operations
-    :vartype api_management_skus: api_management_client.operations.ApiManagementSkusOperations
+    :vartype api_management_skus: azure.mgmt.apimanagement.operations.ApiManagementSkusOperations
     :ivar subscription: SubscriptionOperations operations
-    :vartype subscription: api_management_client.operations.SubscriptionOperations
+    :vartype subscription: azure.mgmt.apimanagement.operations.SubscriptionOperations
     :ivar tag_resource: TagResourceOperations operations
-    :vartype tag_resource: api_management_client.operations.TagResourceOperations
+    :vartype tag_resource: azure.mgmt.apimanagement.operations.TagResourceOperations
     :ivar tenant_access: TenantAccessOperations operations
-    :vartype tenant_access: api_management_client.operations.TenantAccessOperations
+    :vartype tenant_access: azure.mgmt.apimanagement.operations.TenantAccessOperations
     :ivar tenant_access_git: TenantAccessGitOperations operations
-    :vartype tenant_access_git: api_management_client.operations.TenantAccessGitOperations
+    :vartype tenant_access_git: azure.mgmt.apimanagement.operations.TenantAccessGitOperations
     :ivar tenant_configuration: TenantConfigurationOperations operations
-    :vartype tenant_configuration: api_management_client.operations.TenantConfigurationOperations
+    :vartype tenant_configuration:
+     azure.mgmt.apimanagement.operations.TenantConfigurationOperations
     :ivar user: UserOperations operations
-    :vartype user: api_management_client.operations.UserOperations
+    :vartype user: azure.mgmt.apimanagement.operations.UserOperations
     :ivar user_group: UserGroupOperations operations
-    :vartype user_group: api_management_client.operations.UserGroupOperations
+    :vartype user_group: azure.mgmt.apimanagement.operations.UserGroupOperations
     :ivar user_subscription: UserSubscriptionOperations operations
-    :vartype user_subscription: api_management_client.operations.UserSubscriptionOperations
+    :vartype user_subscription: azure.mgmt.apimanagement.operations.UserSubscriptionOperations
     :ivar user_identities: UserIdentitiesOperations operations
-    :vartype user_identities: api_management_client.operations.UserIdentitiesOperations
+    :vartype user_identities: azure.mgmt.apimanagement.operations.UserIdentitiesOperations
     :ivar user_confirmation_password: UserConfirmationPasswordOperations operations
     :vartype user_confirmation_password:
-     api_management_client.operations.UserConfirmationPasswordOperations
+     azure.mgmt.apimanagement.operations.UserConfirmationPasswordOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -290,7 +298,7 @@ class ApiManagementClient(ApiManagementClientOperationsMixin):
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
