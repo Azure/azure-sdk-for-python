@@ -37,8 +37,9 @@ class QueryTest(unittest.TestCase):
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        document_definition = {'pk': 'pk', 'id': 'myId'}
+            "test_trimmed_slashes", PartitionKey(path="/pk"))
+        doc_id = 'myId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
         created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
@@ -47,7 +48,7 @@ class QueryTest(unittest.TestCase):
             partition_key='pk'
         )
         iter_list = list(query_iterable)
-        self.assertEqual(iter_list[0]['id'], 'myId')
+        self.assertEqual(iter_list[0]['id'], doc_id)
 
     def test_query_change_feed_with_pk(self):
         self.query_change_feed(True)
@@ -166,8 +167,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
 
     def test_populate_query_metrics(self):
-        created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container_if_not_exists("query_metrics_test", PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         created_collection.create_item(body=document_definition)
