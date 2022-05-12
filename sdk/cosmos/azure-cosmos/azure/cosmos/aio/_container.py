@@ -32,7 +32,7 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, validate_cache_staleness_value
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
-from ..offer import Offer
+from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
 from ..partition_key import NonePartitionKeyValue
 
@@ -58,11 +58,11 @@ class ContainerProxy(object):
     """
 
     def __init__(
-            self,
-            client_connection: CosmosClientConnection,
-            database_link: str,
-            id: str,  # pylint: disable=redefined-builtin
-            properties: Dict[str, Any] = None
+        self,
+        client_connection: CosmosClientConnection,
+        database_link: str,
+        id: str,  # pylint: disable=redefined-builtin
+        properties: Dict[str, Any] = None
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -113,8 +113,8 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def read(
-            self,
-            **kwargs: Any
+        self,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
 
@@ -151,9 +151,9 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def create_item(
-            self,
-            body: Dict[str, Any],
-            **kwargs: Any
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
 
@@ -208,10 +208,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def read_item(
-            self,
-            item: Union[str, Dict[str, Any]],
-            partition_key: Union[str, int, float, bool],
-            **kwargs: Any
+        self,
+        item: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
 
@@ -257,8 +257,8 @@ class ContainerProxy(object):
 
     @distributed_trace
     def read_all_items(
-            self,
-            **kwargs: Any
+        self,
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
 
@@ -296,9 +296,9 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_items(
-            self,
-            query: Union[str, Dict[str, Any]],
-            **kwargs: Any
+        self,
+        query: Union[str, Dict[str, Any]],
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
@@ -387,8 +387,8 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_items_change_feed(
-            self,
-            **kwargs: Any
+        self,
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -434,9 +434,9 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def upsert_item(
-            self,
-            body: Dict[str, Any],
-            **kwargs: Any
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
 
@@ -481,10 +481,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def replace_item(
-            self,
-            item: Union[str, Dict[str, Any]],
-            body: Dict[str, Any],
-            **kwargs: Any
+        self,
+        item: Union[str, Dict[str, Any]],
+        body: Dict[str, Any],
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
 
@@ -528,10 +528,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def delete_item(
-            self,
-            item: Union[str, Dict[str, Any]],
-            partition_key: Union[str, int, float, bool],
-            **kwargs: Any
+        self,
+        item: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
 
@@ -571,17 +571,17 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace_async
-    async def read_offer(self, **kwargs: Any) -> Offer:
-        """Read the Offer object for this container.
+    async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+        """Get the ThroughputProperties object for this container.
 
-        If no Offer already exists for the container, an exception is raised.
+        If no ThroughputProperties already exists for the container, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], List[Dict[str, Any]]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
-            the offer could not be retrieved.
-        :returns: Offer for the container.
-        :rtype: ~azure.cosmos.Offer
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
+            or the throughput properties could not be retrieved.
+        :returns: ThroughputProperties for the container.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -590,30 +590,32 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(offers) == 0:
+        throughput_properties = [throughput async for throughput in
+                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+                message="Could not find ThroughputProperties for container " + self.container_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, offers)
+            response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
+        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                    properties=throughput_properties[0])
 
     @distributed_trace_async
-    async def replace_throughput(self, throughput: int, **kwargs: Any) -> Offer:
+    async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:
         """Replace the container's throughput.
 
-        If no Offer already exists for the container, an exception is raised.
+        If no ThroughputProperties already exist for the container, an exception is raised.
 
         :param int throughput: The throughput to be set (an integer).
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
-            or the offer could not be updated.
-        :returns: Offer for the container, updated with new throughput.
-        :rtype: ~azure.cosmos.Offer
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
+            or the throughput properties could not be updated.
+        :returns: ThroughputProperties for the container, updated with new throughput.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -622,19 +624,21 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(offers) == 0:
+        throughput_properties = [throughput async for throughput in
+                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+                message="Could not find Offer for container " + self.container_link)
 
-        new_offer = offers[0].copy()
+        new_offer = throughput_properties[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = await self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
+        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
+                                                         offer=throughput_properties[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
     def list_conflicts(self, **kwargs: Any) -> AsyncItemPaged[Dict[str, Any]]:
@@ -702,7 +706,7 @@ class ContainerProxy(object):
         return result
 
     @distributed_trace_async
-    async def read_conflict(
+    async def get_conflict(
             self,
             conflict: Union[str, Dict[str, Any]],
             partition_key: Union[str, int, float, bool],
