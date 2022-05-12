@@ -57,7 +57,7 @@ try:
     from ._models_py3 import RoundRobinMode
     from ._models_py3 import RouterJob
     from ._models_py3 import RouterRule
-    from ._models_py3 import RouterWorker
+    from ._models_py3 import RouterWorkerInternal
     from ._models_py3 import RuleEngineQueueSelector
     from ._models_py3 import RuleEngineWorkerSelector
     from ._models_py3 import ScoringRuleOptions
@@ -123,7 +123,7 @@ except (SyntaxError, ImportError):
     from ._models import RoundRobinMode  # type: ignore
     from ._models import RouterJob  # type: ignore
     from ._models import RouterRule  # type: ignore
-    from ._models import RouterWorker  # type: ignore
+    from ._models import RouterWorkerInternal  # type: ignore
     from ._models import RuleEngineQueueSelector  # type: ignore
     from ._models import RuleEngineWorkerSelector  # type: ignore
     from ._models import ScoringRuleOptions  # type: ignore
@@ -202,7 +202,7 @@ __all__ = [
     'RoundRobinMode',
     'RouterJob',
     'RouterRule',
-    'RouterWorker',
+    'RouterWorkerInternal',
     'RuleEngineQueueSelector',
     'RuleEngineWorkerSelector',
     'ScoringRuleOptions',

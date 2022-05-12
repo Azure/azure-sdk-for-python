@@ -36,11 +36,16 @@ from ._generated.models import (
     CancelExceptionAction,
     RouterJob,
     QueueStatistics,
+    ChannelConfiguration,
+    WorkerStateSelector,
+    RouterWorkerState
 )
 
 from ._models import (
     LabelCollection,
-    JobQueue
+    JobQueue,
+    RouterWorker,
+    QueueAssignment,
 )
 
 from ._shared.user_credential import CommunicationTokenCredential
@@ -85,10 +90,15 @@ __all__ = [
     'CancelExceptionAction',
     'RouterJob',
     'QueueStatistics',
+    'ChannelConfiguration',
+    'WorkerStateSelector',
+    'RouterWorkerState',
 
     # Created models
     'LabelCollection',
     'JobQueue',
+    'RouterWorker',
+    'QueueAssignment',
 
     # Credentials
     'CommunicationTokenCredential'

@@ -2590,7 +2590,7 @@ class RouterJob(msrest.serialization.Model):
         self.notes = kwargs.get('notes', None)
 
 
-class RouterWorker(msrest.serialization.Model):
+class RouterWorkerInternal(msrest.serialization.Model):
     """An entity for jobs to be routed to.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2669,7 +2669,7 @@ class RouterWorker(msrest.serialization.Model):
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: bool
         """
-        super(RouterWorker, self).__init__(**kwargs)
+        super(RouterWorkerInternal, self).__init__(**kwargs)
         self.id = None
         self.state = None
         self.queue_assignments = kwargs.get('queue_assignments', None)

@@ -14,6 +14,7 @@ class CompositeKey(object):
     def __init__(self, value):
         self.key = value
 
+
 def test_label_collection_creation():
     labels = LabelCollection(a = 10, b = '10', c = "10", d = 10.01)
     assert labels is not None
@@ -39,6 +40,15 @@ def test_label_collection_creation_with_label_collection():
 
     assert id(copied_labels) != id(original_labels)
     assert copied_labels['a'] == 10
+
+
+def test_label_collection_creation_with_null():
+    labels = LabelCollection(a = 10, b = '10', c = "10", d = 10.01)
+    assert labels is not None
+    assert labels['a'] == 10
+    assert labels['b'] == '10'
+    assert labels['c'] == "10"
+    assert labels['d'] == 10.01
 
 
 def test_label_collection_creation_with_composite_keys_fails():

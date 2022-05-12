@@ -19,18 +19,20 @@ from .._generated.models import (
     ClassificationPolicy,
     DistributionPolicy,
     ExceptionPolicy,
-    QueueStatistics
+    QueueStatistics,
+    WorkerStateSelector
 )
 from .._models import (
     LabelCollection,
-    JobQueue
+    JobQueue,
+    RouterWorker
 )
 
 from .._version import SDK_MONIKER
 from .._utils import _add_repeatability_headers
 
 
-class RouterClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class RouterClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create and update jobs, policies and workers.
@@ -613,6 +615,180 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs)
 
 #endregion ClassificationPolicyAio
+
+    # region WorkerAio
+
+    @distributed_trace_async
+    async def upsert_worker(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> RouterWorker:
+        #  type: (...) -> RouterWorker
+        """Create or update a new exception policy.
+
+        :keyword queue_assignments: The queue(s) that this worker can receive work from.
+        :paramtype queue_assignments: dict[str, ~azure.communication.jobrouter.QueueAssignment]
+        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
+        :paramtype total_capacity: int
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Union[~azure.communication.jobrouter.LabelCollection, Dict[str, Any]]
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :paramtype tags: Union[~azure.communication.jobrouter.LabelCollection, Dict[str, Any]]
+        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
+         workers capacity.
+        :paramtype channel_configurations: dict[str, ~azure.communication.jobrouter.ChannelConfiguration]
+        :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
+        :paramtype available_for_offers: bool
+
+        :return RouterWorker
+        :rtype ~azure.communication.jobrouter.RouterWorker
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        router_worker = kwargs.pop("router_worker", None)
+
+        if not router_worker:
+            total_capacity = kwargs.pop('total_capacity', None)
+            if not total_capacity:
+                raise ValueError("total_capacity cannot be None")
+
+            labels = kwargs.pop('labels', None)
+            if labels is not None:
+                labels = LabelCollection(labels)
+
+            tags = kwargs.pop('tags', None)
+            if tags is not None:
+                tags = LabelCollection(tags)
+
+            router_worker = RouterWorker(
+                queue_assignments = kwargs.pop('queue_assignments', None),
+                total_capacity = total_capacity,
+                labels = labels,
+                tags = tags,
+                channel_configurations = kwargs.pop('channel_configurations', None),
+                available_for_offers = kwargs.pop('available_for_offers', None)
+            )
+
+        return await self._client.job_router.upsert_worker(
+            worker_id = identifier,
+            patch = router_worker._to_generated(),  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: RouterWorker._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_worker(
+            self,
+            identifier,  # type: str
+            **kwargs  # type: Any
+    ) -> RouterWorker:
+        #  type: (...) -> RouterWorker
+        """Retrieves an existing worker by Id.
+
+        :param str identifier: Id of the worker.
+
+        :return RouterWorker
+        :rtype ~azure.communication.jobrouter.RouterWorker
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.get_worker(
+            worker_id = identifier,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: RouterWorker._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_workers(
+            self,
+            **kwargs  # type: Any
+    ) -> AsyncItemPaged[RouterWorker]:
+        #  type: (...) -> AsyncItemPaged[RouterWorker]
+        """Retrieves existing workers.
+
+        :keyword status: If specified, select workers by worker status. Default value is "all".
+        :paramtype status: Union[str, ~azure.communication.jobrouter.WorkerStateSelector]
+          Accepted value(s): active, draining, inactive, all
+
+        :keyword channel_id: If specified, select workers who have a channel configuration
+         with this channel. Default value is None.
+        :paramtype channel_id: str
+
+        :keyword queue_id: If specified, select workers who are assigned to this queue.
+         Default value is None.
+        :paramtype queue_id: str
+
+        :keyword has_capacity: If set to true, select only workers who have capacity for the
+         channel specified by ``channelId`` or for any channel
+        :paramtype has_capacity: bool
+
+        :keyword int results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of RouterWorker
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterWorker]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        results_per_page = kwargs.pop("results_per_page", None)
+
+        status = kwargs.pop('status', None)
+        if status is None:
+            status = WorkerStateSelector.ALL
+        elif not isinstance(status, WorkerStateSelector):
+            try:
+                status = WorkerStateSelector.__getattr__(status)
+            except Exception:
+                raise ValueError(f"status: {status} is not acceptable")
+
+        channel_id = kwargs.pop('channel_id', None)
+        queue_id = kwargs.pop('queue_id', None)
+        has_capacity = kwargs.pop('has_capacity', None)
+
+        return self._client.job_router.list_workers(
+            maxpagesize = results_per_page,
+            status = status,
+            channel_id = channel_id,
+            queue_id = queue_id,
+            has_capacity = has_capacity,
+            # pylint:disable=protected-access
+            cls = lambda objs: [RouterWorker._from_generated(x) for x in objs],
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def delete_worker(
+            self,
+            identifier,  # type: str
+            **kwargs  # type: Any
+    ) -> None:
+        # type: (...) -> None
+        """Delete a worker by Id.
+
+        :param str identifier: Id of the worker to delete.
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.delete_worker(
+            worker_id = identifier,
+            **kwargs
+        )
+    # endRegion WorkerAio
 
     async def close(self) -> None:
         await self._client.close()

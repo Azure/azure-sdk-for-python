@@ -95,3 +95,12 @@ directive:
   transform: >
     $["x-ms-client-name"] = "JobQueueInternal";
 ```
+
+### Rename RouterWorker to RouterWorkerInternal
+```yaml
+directive:
+  from: swagger-document
+  where: '$.definitions.RouterWorker'
+  transform: >
+    $["x-ms-client-name"] = "RouterWorkerInternal";
+```

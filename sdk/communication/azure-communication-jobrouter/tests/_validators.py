@@ -24,6 +24,10 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
+    QueueAssignment,
+    ChannelConfiguration,
+    RouterWorker,
+    RouterWorkerState
 )
 
 
@@ -358,3 +362,104 @@ class ExceptionPolicyValidator(object):
         if 'exception_rules' in kwargs:
             ExceptionPolicyValidator.validate_exception_rules(exception_policy, kwargs.pop("exception_rules"))
 
+
+class RouterWorkerValidator(object):
+
+    @staticmethod
+    def validate_id(
+            entity,
+            identifier,
+            **kwargs
+    ):
+        assert entity.id == identifier
+
+    @staticmethod
+    def validate_total_capacity(
+            entity,
+            total_capacity,
+            **kwargs
+    ):
+        assert entity.total_capacity == total_capacity
+
+    @staticmethod
+    def validate_labels(
+            entity,
+            label_collection,
+            **kwargs
+    ):
+        assert isinstance(entity.labels, LabelCollection) is True
+        assert 'Id' in entity.labels
+        assert entity.labels['Id'] == entity.id
+
+        updated_label_collection = dict(label_collection)
+        updated_label_collection['Id'] = entity.id
+        assert entity.labels == updated_label_collection
+
+    @staticmethod
+    def validate_tags(
+            entity,
+            tag_collection,
+            **kwargs
+    ):
+        assert isinstance(entity.tags, LabelCollection) is True
+        assert entity.tags == tag_collection
+
+    @staticmethod
+    def validate_queue_assignment(
+            entity,
+            queue_assignments,  # type: dict[str, QueueAssignment]
+            **kwargs
+    ):
+        assert len(entity.queue_assignments) == len(queue_assignments)
+        for k, v in queue_assignments.items():
+            assert k in entity.queue_assignments
+
+    @staticmethod
+    def validate_channel_configurations(
+            entity,  # type: RouterWorker
+            channel_configurations,  # type: dict[str, ChannelConfiguration]
+            **kwargs
+    ):
+        assert len(entity.channel_configurations) == len(channel_configurations)
+        for k, v in channel_configurations.items():
+            assert k in entity.channel_configurations
+            assert entity.channel_configurations[k] == v
+
+    @staticmethod
+    def validate_worker_availability(
+            entity,  # type: RouterWorker
+            available_for_offers,  # type: bool
+            **kwargs,  # type: Any
+    ):
+        assert entity.available_for_offers == available_for_offers
+        if entity.available_for_offers is True:
+            assert entity.state == RouterWorkerState.ACTIVE
+        else:
+            assert entity.state == RouterWorkerState.DRAINING \
+                   or entity.state == RouterWorkerState.INACTIVE
+
+    @staticmethod
+    def validate_worker(
+            worker,
+            **kwargs
+    ):
+        if 'identifier' in kwargs:
+            RouterWorkerValidator.validate_id(worker, kwargs.pop("identifier"))
+
+        if 'total_capacity' in kwargs:
+            RouterWorkerValidator.validate_total_capacity(worker, kwargs.pop("total_capacity"))
+
+        if 'labels' in kwargs:
+            RouterWorkerValidator.validate_labels(worker, kwargs.pop("labels"))
+
+        if 'tags' in kwargs:
+            RouterWorkerValidator.validate_tags(worker, kwargs.pop("tags"))
+
+        if 'queue_assignments' in kwargs:
+            RouterWorkerValidator.validate_queue_assignment(worker, kwargs.pop("queue_assignments"))
+
+        if 'channel_configurations' in kwargs:
+            RouterWorkerValidator.validate_channel_configurations(worker, kwargs.pop("channel_configurations"))
+
+        if 'available_for_offers' in kwargs:
+            RouterWorkerValidator.validate_worker_availability(worker, kwargs.pop("available_for_offers"))

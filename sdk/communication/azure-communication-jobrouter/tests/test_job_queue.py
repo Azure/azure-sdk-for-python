@@ -111,8 +111,6 @@ class TestJobQueue(RouterTestCase):
             distribution_policy_id = self.get_distribution_policy_id()
         )
 
-        self.clean_up()
-
     @pytest.mark.skip(reason = "Upsert queue not working correctly")
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_update_queue(self):
@@ -159,8 +157,6 @@ class TestJobQueue(RouterTestCase):
             distribution_policy_id = self.get_distribution_policy_id()
         )
 
-        self.clean_up()
-
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_get_queue(self):
         dp_identifier = "tst_get_q"
@@ -196,8 +192,6 @@ class TestJobQueue(RouterTestCase):
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
         )
-
-        self.clean_up()
 
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_delete_queue(self):
@@ -278,5 +272,3 @@ class TestJobQueue(RouterTestCase):
 
         # all job_queues created were listed
         assert q_count == 0
-
-        self.clean_up()
