@@ -755,9 +755,9 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (Optional[int], Any) -> Offer
         # type: (Optional[int], Any) -> ThroughputProperties
         """Replace the database-level throughput.
+
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database, updated with new throughput.
