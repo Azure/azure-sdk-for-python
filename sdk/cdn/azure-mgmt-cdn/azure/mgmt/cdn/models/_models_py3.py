@@ -494,9 +494,6 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         self.tls_settings = tls_settings
         self.azure_dns_zone = azure_dns_zone
         self.pre_validated_custom_domain_resource_id = pre_validated_custom_domain_resource_id
-        self.domain_validation_state = None
-        self.host_name = host_name
-        self.validation_properties = None
 
 
 class AFDDomainUpdateParameters(msrest.serialization.Model):
@@ -847,8 +844,6 @@ class AFDEndpointProperties(AFDStateProperties, AFDEndpointPropertiesUpdateParam
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
         self.provisioning_state = None
         self.deployment_status = None
-        self.host_name = None
-        self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
 
 
 class AFDEndpointUpdateParameters(msrest.serialization.Model):
