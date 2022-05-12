@@ -157,7 +157,7 @@ class DocumentTranslationClient:
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -184,7 +184,7 @@ class DocumentTranslationClient:
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -237,7 +237,7 @@ class DocumentTranslationClient:
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

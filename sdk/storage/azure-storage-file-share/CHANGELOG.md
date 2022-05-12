@@ -1,8 +1,19 @@
 # Release History
 
-## 12.8.0 (Unreleased)
+## 12.8.1 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.8.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.8.0b1.
 
 ### Bugs Fixed
 - Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use

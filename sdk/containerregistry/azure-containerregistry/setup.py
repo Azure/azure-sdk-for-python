@@ -35,7 +35,7 @@ setup(
     license="MIT License",
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -55,7 +55,7 @@ setup(
     ),
     python_requires=">=3.6",
     install_requires=[
-        "azure-core>=1.20.0,<2.0.0",
+        "azure-core>=1.23.0,<2.0.0",
         "msrest>=0.6.21",
     ],
     project_urls={

@@ -5,11 +5,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 22:36:34 GMT
+      - Fri, 06 May 2022 21:53:20 GMT
       x-ms-version:
-      - '2020-10-02'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/filesystem8a8a16e0?restype=container&timeout=5
   response:
@@ -17,11 +17,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 22:36:34 GMT
-      etag: '"0x8DA181DE7C7C166"'
-      last-modified: Wed, 06 Apr 2022 22:36:34 GMT
+      date: Fri, 06 May 2022 21:53:19 GMT
+      etag: '"0x8DA2FAAD5D0883E"'
+      last-modified: Fri, 06 May 2022 21:53:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2020-10-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
@@ -32,11 +32,11 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 22:36:35 GMT
+      - Fri, 06 May 2022 21:53:21 GMT
       x-ms-version:
-      - '2020-10-02'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem8a8a16e0/file8a8a16e0?resource=file
   response:
@@ -44,12 +44,12 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 22:36:34 GMT
-      etag: '"0x8DA181DE7F67F66"'
-      last-modified: Wed, 06 Apr 2022 22:36:35 GMT
+      date: Fri, 06 May 2022 21:53:20 GMT
+      etag: '"0x8DA2FAAD61AC7F1"'
+      last-modified: Fri, 06 May 2022 21:53:20 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2020-10-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
@@ -60,11 +60,11 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 22:36:35 GMT
+      - Fri, 06 May 2022 21:53:21 GMT
       x-ms-version:
-      - '2020-10-02'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem8a8a16e0/file8a8a16e0?resource=file
   response:
@@ -72,12 +72,12 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 22:36:34 GMT
-      etag: '"0x8DA181DE80068FD"'
-      last-modified: Wed, 06 Apr 2022 22:36:35 GMT
+      date: Fri, 06 May 2022 21:53:21 GMT
+      etag: '"0x8DA2FAAD64D6C9E"'
+      last-modified: Fri, 06 May 2022 21:53:21 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2020-10-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
@@ -88,11 +88,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 22:36:35 GMT
+      - Fri, 06 May 2022 21:53:22 GMT
       x-ms-version:
-      - '2020-10-02'
+      - '2021-06-08'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/filesystem8a8a16e0?restype=container
   response:
@@ -100,9 +100,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 22:36:34 GMT
+      date: Fri, 06 May 2022 21:53:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2020-10-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 202
       message: Accepted

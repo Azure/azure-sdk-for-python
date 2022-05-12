@@ -23,7 +23,7 @@ exporter = AzureMonitorLogExporter.from_connection_string(
 )
 get_log_emitter_provider().add_log_processor(BatchLogProcessor(exporter))
 
-# Attach LoggingHandler handler to namespaced logger
+# Attach LoggingHandler to namespaced logger
 handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
