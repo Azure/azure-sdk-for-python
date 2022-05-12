@@ -340,7 +340,7 @@ class ContainerProxy(object):
             For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 

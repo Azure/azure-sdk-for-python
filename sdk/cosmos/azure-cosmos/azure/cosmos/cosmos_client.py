@@ -136,7 +136,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
-    :type credential: str or dict[str, str]
+    :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
