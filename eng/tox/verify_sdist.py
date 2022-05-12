@@ -11,28 +11,32 @@ import logging
 import os
 import glob
 import shutil
+from unicodedata import name
+from xmlrpc.client import Boolean
 from tox_helper_tasks import (
     get_package_details,
     unzip_file_to_directory,
 )
 from verify_whl import cleanup, should_verify_package
+from typing import List, Mapping, Any
 
 logging.getLogger().setLevel(logging.INFO)
 
 ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 
 
-def get_root_directories_in_source(package_dir):
-    # find all allowed directories in source path
-    source_folders = [
-        d
-        for d in os.listdir(package_dir)
-        if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES
-    ]
+def get_root_directories_in_source(package_dir: str) -> List[str]:
+    """
+    Find all allowed directories in source path.
+    """
+    source_folders = [d for d in os.listdir(package_dir) if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES]
     return source_folders
 
 
-def get_root_directories_in_sdist(dist_dir, version):
+def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
+    """
+    Given an unzipped sdist directory, extract which directories are present.
+    """
     # find sdist zip file
     # extract sdist and find list of directories in sdist
     path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.zip".format(version)))[0]
@@ -44,8 +48,10 @@ def get_root_directories_in_sdist(dist_dir, version):
     return sdist_folders
 
 
-def verify_sdist(package_dir, dist_dir, version):
-    # This function compares the root directories in source against root directories sdist
+def verify_sdist(package_dir: str, dist_dir: str, version: str) -> bool:
+    """
+    Compares the root directories in source against root directories present within a sdist.
+    """
 
     source_folders = get_root_directories_in_source(package_dir)
     sdist_folders = get_root_directories_in_sdist(dist_dir, version)
@@ -63,10 +69,30 @@ def verify_sdist(package_dir, dist_dir, version):
         return True
 
 
+def verify_sdist_pytyped(pkg_dir: str, namespace: str, package_metadata: Mapping[str, Any], include_package_data: bool) -> bool:
+    """
+    Takes a directory that contains the contents of an unzipped source distribution, and
+    ensures that the setup.py is correctly configured for py.typed files.
+    """
+    result = True
+
+    if include_package_data is None or False:
+        logging.info("Ensure that the setup.py present in directory {} has kwarg 'include_package_data' defined and set to 'True'.")
+        result = False
+
+    if package_metadata:
+        if not any([key for key in package_metadata if "py.typed" in str(package_metadata[key])]):
+            logging.info("At least one value in the package_metadata map should include a reference to the py.typed file.")
+            result = False
+    
+    pytyped_file_path = os.path.join(pkg_dir, *namespace.split('.'))
+    if not os.path.exists(pytyped_file_path):
+        logging.info("The py.typed file must exist in the base namespace for your package. Traditionally this would mean the furthest depth, EG 'azure/storage/blob/py.typed'.")
+
+    return result
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Verify directories included in whl and contents in manifest file"
-    )
+    parser = argparse.ArgumentParser(description="Verify directories included in whl and contents in manifest file")
 
     parser.add_argument(
         "-t",
@@ -88,7 +114,7 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, _, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    pkg_name, namespace, ver, package_data, include_package_data = get_package_details(os.path.join(pkg_dir, "setup.py"))
 
     if should_verify_package(pkg_name):
         logging.info("Verifying sdist for package [%s]", pkg_name)
@@ -96,4 +122,11 @@ if __name__ == "__main__":
             logging.info("Verified sdist for package [%s]", pkg_name)
         else:
             logging.info("Failed to verify sdist for package [%s]", pkg_name)
+            exit(1)
+
+        logging.info("Verifying presence of py.typed: [%s]", pkg_name)
+        if verify_sdist_pytyped(pkg_dir, namespace, package_data, include_package_data):
+            logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_name)
+        else:
+            logging.info("Verified py.typed [%s]. Check messages above.", pkg_name)
             exit(1)
