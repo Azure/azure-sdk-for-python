@@ -15,8 +15,10 @@ from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from ..._credentials.imds import get_request, PIPELINE_SETTINGS
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Optional, TypeVar
     from azure.core.credentials import AccessToken
+
+    T = TypeVar("T", bound="ImdsCredential")
 
 
 class ImdsCredential(AsyncContextManager, GetTokenMixin):
@@ -31,7 +33,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    async def __aenter__(self):
+    async def __aenter__(self:T) -> T:
         await self._client.__aenter__()
         return self
 

@@ -13,8 +13,10 @@ from ..._internal import AadClientCertificate, validate_tenant_id
 from ..._persistent_cache import _load_persistent_cache
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Optional, TypeVar
     from azure.core.credentials import AccessToken
+
+    T = TypeVar("T", bound="CertificateCredential")
 
 
 class CertificateCredential(AsyncContextManager, GetTokenMixin):
@@ -62,7 +64,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
         self._client_id = client_id
         super().__init__()
 
-    async def __aenter__(self):
+    async def __aenter__(self:T) -> T:
         await self._client.__aenter__()
         return self
 
