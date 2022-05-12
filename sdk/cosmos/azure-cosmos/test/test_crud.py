@@ -281,7 +281,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition.get('partitionKey').get('kind'),
                          created_collection_properties['partitionKey']['kind'])
 
-        expected_offer = created_collection.read_offer()
+        expected_offer = created_collection.get_throughput()
 
         self.assertIsNotNone(expected_offer)
 
@@ -2283,14 +2283,14 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         # Read the offer.
-        expected_offer = collection.read_offer()
+        expected_offer = collection.get_throughput()
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
         # Now delete the collection.
         db.delete_container(container=collection)
         # Reading fails.
-        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.read_offer)
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.get_throughput)
 
     def test_offer_replace(self):
         # Create database.
@@ -2298,7 +2298,7 @@ class CRUDTests(unittest.TestCase):
         # Create collection.
         collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # Read Offer
-        expected_offer = collection.read_offer()
+        expected_offer = collection.get_throughput()
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
         # Replace the offer.
