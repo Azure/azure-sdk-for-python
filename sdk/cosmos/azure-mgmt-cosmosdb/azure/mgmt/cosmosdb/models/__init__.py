@@ -190,7 +190,10 @@ from ._models_py3 import Permission
 from ._models_py3 import PhysicalPartitionId
 from ._models_py3 import PhysicalPartitionStorageInfo
 from ._models_py3 import PhysicalPartitionStorageInfoCollection
+from ._models_py3 import PhysicalPartitionThroughputInfoProperties
 from ._models_py3 import PhysicalPartitionThroughputInfoResource
+from ._models_py3 import PhysicalPartitionThroughputInfoResult
+from ._models_py3 import PhysicalPartitionThroughputInfoResultPropertiesResource
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateEndpointProperty
@@ -532,7 +535,10 @@ __all__ = [
     'PhysicalPartitionId',
     'PhysicalPartitionStorageInfo',
     'PhysicalPartitionStorageInfoCollection',
+    'PhysicalPartitionThroughputInfoProperties',
     'PhysicalPartitionThroughputInfoResource',
+    'PhysicalPartitionThroughputInfoResult',
+    'PhysicalPartitionThroughputInfoResultPropertiesResource',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointProperty',

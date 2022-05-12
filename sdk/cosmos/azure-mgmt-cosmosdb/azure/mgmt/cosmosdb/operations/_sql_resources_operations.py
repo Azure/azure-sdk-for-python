@@ -3951,7 +3951,7 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
 
     begin_migrate_sql_container_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
 
-    def _sql_container_retrieve_throughput_distribution_initial(  # pylint: disable=inconsistent-return-statements
+    def _sql_container_retrieve_throughput_distribution_initial(
         self,
         resource_group_name: str,
         account_name: str,
@@ -3959,8 +3959,8 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         container_name: str,
         retrieve_throughput_parameters: "_models.RetrieveThroughputParameters",
         **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+    ) -> Optional["_models.PhysicalPartitionThroughputInfoResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionThroughputInfoResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3992,18 +3992,24 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
 
     _sql_container_retrieve_throughput_distribution_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
 
 
     @distributed_trace
-    def begin_sql_container_retrieve_throughput_distribution(  # pylint: disable=inconsistent-return-statements
+    def begin_sql_container_retrieve_throughput_distribution(
         self,
         resource_group_name: str,
         account_name: str,
@@ -4011,7 +4017,7 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         container_name: str,
         retrieve_throughput_parameters: "_models.RetrieveThroughputParameters",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller["_models.PhysicalPartitionThroughputInfoResult"]:
         """Retrieve throughput distribution for an Azure Cosmos DB SQL container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4033,14 +4039,16 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionThroughputInfoResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -4061,8 +4069,11 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
@@ -4079,7 +4090,7 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
 
     begin_sql_container_retrieve_throughput_distribution.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
 
-    def _sql_container_redistribute_throughput_initial(  # pylint: disable=inconsistent-return-statements
+    def _sql_container_redistribute_throughput_initial(
         self,
         resource_group_name: str,
         account_name: str,
@@ -4087,8 +4098,8 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         container_name: str,
         redistribute_throughput_parameters: "_models.RedistributeThroughputParameters",
         **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+    ) -> Optional["_models.PhysicalPartitionThroughputInfoResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionThroughputInfoResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -4120,18 +4131,24 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
 
     _sql_container_redistribute_throughput_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/redistributeThroughput"}  # type: ignore
 
 
     @distributed_trace
-    def begin_sql_container_redistribute_throughput(  # pylint: disable=inconsistent-return-statements
+    def begin_sql_container_redistribute_throughput(
         self,
         resource_group_name: str,
         account_name: str,
@@ -4139,7 +4156,7 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         container_name: str,
         redistribute_throughput_parameters: "_models.RedistributeThroughputParameters",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller["_models.PhysicalPartitionThroughputInfoResult"]:
         """Redistribute throughput for an Azure Cosmos DB SQL container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4162,14 +4179,16 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionThroughputInfoResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -4190,8 +4209,11 @@ class SqlResourcesOperations(object):  # pylint: disable=too-many-public-methods
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
