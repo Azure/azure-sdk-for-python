@@ -500,6 +500,7 @@ from ._models_py3 import PowerQuerySource
 from ._models_py3 import PrestoLinkedService
 from ._models_py3 import PrestoObjectDataset
 from ._models_py3 import PrestoSource
+from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnectionListResponse
 from ._models_py3 import PrivateEndpointConnectionResource
 from ._models_py3 import PrivateLinkConnectionApprovalRequest
@@ -1314,6 +1315,7 @@ __all__ = [
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
+    'PrivateEndpoint',
     'PrivateEndpointConnectionListResponse',
     'PrivateEndpointConnectionResource',
     'PrivateLinkConnectionApprovalRequest',
