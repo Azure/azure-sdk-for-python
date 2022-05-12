@@ -166,6 +166,81 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         self._client.__exit__(*args)  # pylint: disable=no-member
 
     @distributed_trace
+    def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> models.AnomalyAlertConfiguration:
+        """Get a single anomaly alert configuration.
+
+        :param alert_configuration_id: anomaly alert configuration unique id.
+        :type alert_configuration_id: str
+        :return: AnomalyAlertConfiguration
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START get_alert_config]
+                :end-before: [END get_alert_config]
+                :language: python
+                :dedent: 4
+                :caption: Get a single anomaly alert configuration by its ID
+        """
+        return self._client.get_alert_configuration(alert_configuration_id=alert_configuration_id, **kwargs)
+
+    @distributed_trace
+    def update_alert_configuration(
+        self, alert_configuration: Union[str, models.AnomalyAlertConfiguration], **kwargs: Any
+    ) -> models.AnomalyAlertConfiguration:
+        """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
+        with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
+        If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
+        will take precedence.
+
+        :param alert_configuration: AnomalyAlertConfiguration object or the ID to the alert configuration.
+        :type alert_configuration: str or ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
+        :keyword str name: Name for the anomaly alert configuration.
+        :keyword metric_alert_configurations: Anomaly alert configurations.
+        :paramtype metric_alert_configurations: list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
+        :keyword list[str] hook_ids: Unique hook IDs.
+        :keyword cross_metrics_operator: Cross metrics operator should be specified when setting up multiple metric
+            alert configurations. Possible values include: "AND", "OR", "XOR".
+        :paramtype cross_metrics_operator: str or
+            ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
+        :keyword str description: Anomaly alert configuration description.
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START update_alert_config]
+                :end-before: [END update_alert_config]
+                :language: python
+                :dedent: 4
+                :caption: Update an existing anomaly alert configuration
+        """
+        return self._client.update_alert_configuration(alert_configuration=alert_configuration, **kwargs)
+
+    @distributed_trace
+    def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
+        """Delete an anomaly alert configuration by its ID.
+
+        :param str alert_configuration_id: anomaly alert configuration unique id.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START delete_alert_config]
+                :end-before: [END delete_alert_config]
+                :language: python
+                :dedent: 4
+                :caption: Delete an anomaly alert configuration by its ID
+        """
+        return self._client.delete_alert_configuration(*alert_configuration_id, **kwargs)
+
+    @distributed_trace
     def create_alert_configuration(
         self,
         name: str,
@@ -199,6 +274,344 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.create_alert_configuration(
             name=name, metric_alert_configurations=metric_alert_configurations, hook_ids=hook_ids, **kwargs
+        )
+
+    @distributed_trace
+    def list_alerts(
+        self,
+        alert_configuration_id: str,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        time_mode: Union[str, models.AlertQueryTimeMode],
+        **kwargs: Any
+    ) -> ItemPaged[models.AnomalyAlert]:
+        """Query alerts under anomaly alert configuration.
+
+        :param alert_configuration_id: anomaly alert configuration unique id.
+        :type alert_configuration_id: str
+        :param Union[str, datetime.datetime] start_time: start time.
+        :param Union[str, datetime.datetime] end_time: end time.
+        :param time_mode: time mode. Possible values include: "AnomalyTime", "CreatedTime",
+                "ModifiedTime".
+        :type time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
+        :keyword int skip:
+        :return: AnomalyAlerts under anomaly alert configuration.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlert]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START list_alerts]
+                :end-before: [END list_alerts]
+                :language: python
+                :dedent: 4
+                :caption: Query anomaly detection results.
+        """
+        return cast(
+            ItemPaged[models.AnomalyAlert],
+            self._client.list_alerts(
+                alert_configuration_id=alert_configuration_id,
+                start_time=start_time,
+                end_time=end_time,
+                time_mode=time_mode,
+                **kwargs,
+            ),
+        )
+
+    @overload
+    def list_anomalies(
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> ItemPaged[models.DataPointAnomaly]:
+        """Query anomalies under a specific alert.
+
+        :param alert_configuration_id: anomaly alert configuration unique id.
+        :type alert_configuration_id: str
+        :param alert_id: alert id.
+        :type alert_id: str
+        :keyword int skip:
+        :return: Anomalies under a specific alert.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START list_anomalies_for_alert]
+                :end-before: [END list_anomalies_for_alert]
+                :language: python
+                :dedent: 4
+                :caption: Query anomalies using alert id.
+        """
+
+    @overload
+    def list_anomalies(
+        self,
+        *,
+        detection_configuration_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[models.DataPointAnomaly]:
+        """Query anomalies under a detection configuration.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+        :return: Anomalies under anomaly detection configuration.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def list_anomalies(self, **kwargs: Any) -> ItemPaged[models.DataPointAnomaly]:
+        """Query anomalies under a specific alert or detection configuration.
+
+        :keyword str alert_configuration_id: anomaly alert configuration unique id.
+        :keyword str alert_id: alert id.
+        :keyword str detection_configuration_id: anomaly detection configuration unique id.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+        :return: Anomalies under a specific alert or detection configuration.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return cast(ItemPaged[models.DataPointAnomaly], self._client.list_anomalies(**kwargs))
+
+    @distributed_trace
+    def get_detection_configuration(
+        self, detection_configuration_id: str, **kwargs: Any
+    ) -> models.AnomalyDetectionConfiguration:
+        """Get a single anomaly detection configuration.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :return: AnomalyDetectionConfiguration
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START get_detection_config]
+                :end-before: [END get_detection_config]
+                :language: python
+                :dedent: 4
+                :caption: Get a single anomaly detection configuration by its ID
+        """
+        return self._client.get_detection_configuration(detection_configuration_id=detection_configuration_id, **kwargs)
+
+
+    @distributed_trace
+    def update_detection_configuration(
+        self, detection_configuration: Union[str, models.AnomalyDetectionConfiguration], **kwargs: Any
+    ) -> models.AnomalyDetectionConfiguration:
+        """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
+        with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
+        If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
+        will take precedence.
+
+        :param detection_configuration: AnomalyDetectionConfiguration object or the ID to the detection
+            configuration.
+        :type detection_configuration: str or ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+        :keyword str name: The name for the anomaly detection configuration
+        :keyword str metric_id: metric unique id.
+        :keyword whole_series_detection_condition: Required.
+            Conditions to detect anomalies in all time series of a metric.
+        :paramtype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
+        :keyword str description: anomaly detection configuration description.
+        :keyword series_group_detection_conditions: detection configuration for series group.
+        :paramtype series_group_detection_conditions:
+         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
+        :keyword series_detection_conditions: detection configuration for specific series.
+        :paramtype series_detection_conditions:
+            list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START update_detection_config]
+                :end-before: [END update_detection_config]
+                :language: python
+                :dedent: 4
+                :caption: Update an existing anomaly detection configuration
+        """
+        return self._client.update_detection_configuration(detection_configuration=detection_configuration, **kwargs)
+
+    @distributed_trace
+    def delete_detection_configuration(self, *detection_configuration_id: str, **kwargs: Any) -> None:
+        """Delete an anomaly detection configuration by its ID.
+
+        :param str detection_configuration_id: anomaly detection configuration unique id.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START delete_detection_config]
+                :end-before: [END delete_detection_config]
+                :language: python
+                :dedent: 4
+                :caption: Delete an anomaly detection configuration by its ID
+        """
+        return self._client.delete_detection_configuration(*detection_configuration_id, **kwargs)
+
+    @distributed_trace
+    def create_detection_configuration(
+        self,
+        name: str,
+        metric_id: str,
+        whole_series_detection_condition: models.MetricDetectionCondition,
+        **kwargs: Any
+    ) -> models.AnomalyDetectionConfiguration:
+        """Create anomaly detection configuration.
+
+        :param str name: The name for the anomaly detection configuration
+        :param str metric_id: Required. metric unique id.
+        :param whole_series_detection_condition: Required.
+            Conditions to detect anomalies in all time series of a metric.
+        :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
+        :keyword str description: anomaly detection configuration description.
+        :keyword series_group_detection_conditions: detection configuration for series group.
+        :paramtype series_group_detection_conditions:
+         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
+        :keyword series_detection_conditions: detection configuration for specific series.
+        :paramtype series_detection_conditions:
+            list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
+        :return: AnomalyDetectionConfiguration
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START create_detection_config]
+                :end-before: [END create_detection_config]
+                :language: python
+                :dedent: 4
+                :caption: Create an anomaly detection configuration
+        """
+        return self._client.create_detection_configuration(
+            name=name, metric_id=metric_id, whole_series_detection_condition=whole_series_detection_condition, **kwargs
+        )
+
+    @distributed_trace
+    def list_alert_configurations(
+        self, detection_configuration_id: str, **kwargs: Any
+    ) -> ItemPaged[models.AnomalyAlertConfiguration]:
+        """Query all anomaly alert configurations for specific anomaly detection configuration.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :return: Pageable of AnomalyAlertConfiguration
+        :rtype: ~azure.core.paging.ItemPaged[AnomalyAlertConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START list_alert_configs]
+                :end-before: [END list_alert_configs]
+                :language: python
+                :dedent: 4
+                :caption: List all anomaly alert configurations for specific anomaly detection configuration
+        """
+        return cast(
+            ItemPaged[models.AnomalyAlertConfiguration],
+            self._client.list_alert_configurations(detection_configuration_id=detection_configuration_id, **kwargs),
+        )
+
+    @distributed_trace
+    def list_metric_enriched_series_data(
+        self,
+        detection_configuration_id: str,
+        series: Union[List[models.SeriesIdentity], List[Dict[str, str]]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[models.MetricEnrichedSeriesData]:
+        """Query series enriched by anomaly detection.
+
+        :param str detection_configuration_id: anomaly alerting configuration unique id.
+        :param series: List of dimensions specified for series.
+        :type series: ~azure.ai.metricsadvisor.models.SeriesIdentity or list[dict[str, str]]
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :return: Pageable of MetricEnrichedSeriesData
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_enriched_series_data]
+                :end-before: [END list_metric_enriched_series_data]
+                :language: python
+                :dedent: 4
+                :caption: Query metric enriched series data.
+        """
+        return cast(
+            ItemPaged[models.MetricEnrichedSeriesData],
+            self._client.list_metric_enriched_series_data(
+                detection_configuration_id=detection_configuration_id,
+                series=series,
+                start_time=start_time,
+                end_time=end_time,
+                **kwargs,
+            ),
+        )
+
+    @distributed_trace
+    def list_anomaly_dimension_values(
+        self,
+        detection_configuration_id: str,
+        dimension_name: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[str]:
+        """Query dimension values of anomalies.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :param str dimension_name: dimension to query.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
+        :return: Dimension values of anomalies.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_anomaly_dimension_values]
+                :end-before: [END list_anomaly_dimension_values]
+                :language: python
+                :dedent: 4
+                :caption: Query dimension values.
+        """
+        return cast(
+            ItemPaged[str],
+            self._client.list_anomaly_dimension_values(
+                detection_configuration_id=detection_configuration_id,
+                dimension_name=dimension_name,
+                start_time=start_time,
+                end_time=end_time,
+                **kwargs,
+            ),
         )
 
     @distributed_trace
@@ -289,44 +702,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.create_hook(hook=hook, **kwargs)
 
-    @distributed_trace
-    def create_detection_configuration(
-        self,
-        name: str,
-        metric_id: str,
-        whole_series_detection_condition: models.MetricDetectionCondition,
-        **kwargs: Any
-    ) -> models.AnomalyDetectionConfiguration:
-        """Create anomaly detection configuration.
 
-        :param str name: The name for the anomaly detection configuration
-        :param str metric_id: Required. metric unique id.
-        :param whole_series_detection_condition: Required.
-            Conditions to detect anomalies in all time series of a metric.
-        :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
-        :keyword str description: anomaly detection configuration description.
-        :keyword series_group_detection_conditions: detection configuration for series group.
-        :paramtype series_group_detection_conditions:
-         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
-        :keyword series_detection_conditions: detection configuration for specific series.
-        :paramtype series_detection_conditions:
-            list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
-        :return: AnomalyDetectionConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START create_detection_config]
-                :end-before: [END create_detection_config]
-                :language: python
-                :dedent: 4
-                :caption: Create an anomaly detection configuration
-        """
-        return self._client.create_detection_configuration(
-            name=name, metric_id=metric_id, whole_series_detection_condition=whole_series_detection_condition, **kwargs
-        )
 
     @distributed_trace
     def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> models.DataFeed:
@@ -349,49 +725,8 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.get_data_feed(data_feed_id=data_feed_id, **kwargs)
 
-    @distributed_trace
-    def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> models.AnomalyAlertConfiguration:
-        """Get a single anomaly alert configuration.
 
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
-        :return: AnomalyAlertConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START get_alert_config]
-                :end-before: [END get_alert_config]
-                :language: python
-                :dedent: 4
-                :caption: Get a single anomaly alert configuration by its ID
-        """
-        return self._client.get_alert_configuration(alert_configuration_id=alert_configuration_id, **kwargs)
-
-    @distributed_trace
-    def get_detection_configuration(
-        self, detection_configuration_id: str, **kwargs: Any
-    ) -> models.AnomalyDetectionConfiguration:
-        """Get a single anomaly detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :return: AnomalyDetectionConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START get_detection_config]
-                :end-before: [END get_detection_config]
-                :language: python
-                :dedent: 4
-                :caption: Get a single anomaly detection configuration by its ID
-        """
-        return self._client.get_detection_configuration(detection_configuration_id=detection_configuration_id, **kwargs)
 
     @distributed_trace
     def get_hook(
@@ -472,46 +807,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         return self._client.refresh_data_feed_ingestion(
             data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
         )
-
-    @distributed_trace
-    def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
-        """Delete an anomaly alert configuration by its ID.
-
-        :param str alert_configuration_id: anomaly alert configuration unique id.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START delete_alert_config]
-                :end-before: [END delete_alert_config]
-                :language: python
-                :dedent: 4
-                :caption: Delete an anomaly alert configuration by its ID
-        """
-        return self._client.delete_alert_configuration(*alert_configuration_id, **kwargs)
-
-    @distributed_trace
-    def delete_detection_configuration(self, *detection_configuration_id: str, **kwargs: Any) -> None:
-        """Delete an anomaly detection configuration by its ID.
-
-        :param str detection_configuration_id: anomaly detection configuration unique id.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START delete_detection_config]
-                :end-before: [END delete_detection_config]
-                :language: python
-                :dedent: 4
-                :caption: Delete an anomaly detection configuration by its ID
-        """
-        return self._client.delete_detection_configuration(*detection_configuration_id, **kwargs)
 
     @distributed_trace
     def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
@@ -614,77 +909,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.update_data_feed(data_feed=data_feed, **kwargs)
 
-    @distributed_trace
-    def update_alert_configuration(
-        self, alert_configuration: Union[str, models.AnomalyAlertConfiguration], **kwargs: Any
-    ) -> models.AnomalyAlertConfiguration:
-        """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
-        with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
-        If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
-        will take precedence.
-
-        :param alert_configuration: AnomalyAlertConfiguration object or the ID to the alert configuration.
-        :type alert_configuration: str or ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :keyword str name: Name for the anomaly alert configuration.
-        :keyword metric_alert_configurations: Anomaly alert configurations.
-        :paramtype metric_alert_configurations: list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
-        :keyword list[str] hook_ids: Unique hook IDs.
-        :keyword cross_metrics_operator: Cross metrics operator should be specified when setting up multiple metric
-            alert configurations. Possible values include: "AND", "OR", "XOR".
-        :paramtype cross_metrics_operator: str or
-            ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-        :keyword str description: Anomaly alert configuration description.
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START update_alert_config]
-                :end-before: [END update_alert_config]
-                :language: python
-                :dedent: 4
-                :caption: Update an existing anomaly alert configuration
-        """
-        return self._client.update_alert_configuration(alert_configuration=alert_configuration, **kwargs)
-
-    @distributed_trace
-    def update_detection_configuration(
-        self, detection_configuration: Union[str, models.AnomalyDetectionConfiguration], **kwargs: Any
-    ) -> models.AnomalyDetectionConfiguration:
-        """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
-        with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
-        If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
-        will take precedence.
-
-        :param detection_configuration: AnomalyDetectionConfiguration object or the ID to the detection
-            configuration.
-        :type detection_configuration: str or ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :keyword str name: The name for the anomaly detection configuration
-        :keyword str metric_id: metric unique id.
-        :keyword whole_series_detection_condition: Required.
-            Conditions to detect anomalies in all time series of a metric.
-        :paramtype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
-        :keyword str description: anomaly detection configuration description.
-        :keyword series_group_detection_conditions: detection configuration for series group.
-        :paramtype series_group_detection_conditions:
-         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
-        :keyword series_detection_conditions: detection configuration for specific series.
-        :paramtype series_detection_conditions:
-            list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START update_detection_config]
-                :end-before: [END update_detection_config]
-                :language: python
-                :dedent: 4
-                :caption: Update an existing anomaly detection configuration
-        """
-        return self._client.update_detection_configuration(detection_configuration=detection_configuration, **kwargs)
 
     @distributed_trace
     def update_hook(
@@ -781,31 +1005,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return cast(ItemPaged[models.DataFeed], self._client.list_data_feeds(**kwargs))
 
-    @distributed_trace
-    def list_alert_configurations(
-        self, detection_configuration_id: str, **kwargs: Any
-    ) -> ItemPaged[models.AnomalyAlertConfiguration]:
-        """Query all anomaly alert configurations for specific anomaly detection configuration.
 
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :return: Pageable of AnomalyAlertConfiguration
-        :rtype: ~azure.core.paging.ItemPaged[AnomalyAlertConfiguration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_alert_configs]
-                :end-before: [END list_alert_configs]
-                :language: python
-                :dedent: 4
-                :caption: List all anomaly alert configurations for specific anomaly detection configuration
-        """
-        return cast(
-            ItemPaged[models.AnomalyAlertConfiguration],
-            self._client.list_alert_configurations(detection_configuration_id=detection_configuration_id, **kwargs),
-        )
 
     @distributed_trace
     def list_detection_configurations(
@@ -1143,196 +1343,6 @@ class MetricsAdvisorClient:
             detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
         )
 
-    @distributed_trace
-    def list_metric_enriched_series_data(
-        self,
-        detection_configuration_id: str,
-        series: Union[List[models.SeriesIdentity], List[Dict[str, str]]],
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[models.MetricEnrichedSeriesData]:
-        """Query series enriched by anomaly detection.
-
-        :param str detection_configuration_id: anomaly alerting configuration unique id.
-        :param series: List of dimensions specified for series.
-        :type series: ~azure.ai.metricsadvisor.models.SeriesIdentity or list[dict[str, str]]
-        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :return: Pageable of MetricEnrichedSeriesData
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_enriched_series_data]
-                :end-before: [END list_metric_enriched_series_data]
-                :language: python
-                :dedent: 4
-                :caption: Query metric enriched series data.
-        """
-        return cast(
-            ItemPaged[models.MetricEnrichedSeriesData],
-            self._client.list_metric_enriched_series_data(
-                detection_configuration_id=detection_configuration_id,
-                series=series,
-                start_time=start_time,
-                end_time=end_time,
-                **kwargs,
-            ),
-        )
-
-    @distributed_trace
-    def list_alerts(
-        self,
-        alert_configuration_id: str,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        time_mode: Union[str, models.AlertQueryTimeMode],
-        **kwargs: Any
-    ) -> ItemPaged[models.AnomalyAlert]:
-        """Query alerts under anomaly alert configuration.
-
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
-        :param Union[str, datetime.datetime] start_time: start time.
-        :param Union[str, datetime.datetime] end_time: end time.
-        :param time_mode: time mode. Possible values include: "AnomalyTime", "CreatedTime",
-                "ModifiedTime".
-        :type time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
-        :keyword int skip:
-        :return: AnomalyAlerts under anomaly alert configuration.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlert]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_alerts]
-                :end-before: [END list_alerts]
-                :language: python
-                :dedent: 4
-                :caption: Query anomaly detection results.
-        """
-        return cast(
-            ItemPaged[models.AnomalyAlert],
-            self._client.list_alerts(
-                alert_configuration_id=alert_configuration_id,
-                start_time=start_time,
-                end_time=end_time,
-                time_mode=time_mode,
-                **kwargs,
-            ),
-        )
-
-    @overload
-    def list_anomalies(
-        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
-    ) -> ItemPaged[models.DataPointAnomaly]:
-        """Query anomalies under a specific alert.
-
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
-        :param alert_id: alert id.
-        :type alert_id: str
-        :keyword int skip:
-        :return: Anomalies under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_anomalies_for_alert]
-                :end-before: [END list_anomalies_for_alert]
-                :language: python
-                :dedent: 4
-                :caption: Query anomalies using alert id.
-        """
-
-    @overload
-    def list_anomalies(
-        self,
-        *,
-        detection_configuration_id: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[models.DataPointAnomaly]:
-        """Query anomalies under a detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword int skip:
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-        :return: Anomalies under anomaly detection configuration.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def list_anomalies(self, **kwargs: Any) -> ItemPaged[models.DataPointAnomaly]:
-        """Query anomalies under a specific alert or detection configuration.
-
-        :keyword str alert_configuration_id: anomaly alert configuration unique id.
-        :keyword str alert_id: alert id.
-        :keyword str detection_configuration_id: anomaly detection configuration unique id.
-        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword int skip:
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-        :return: Anomalies under a specific alert or detection configuration.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        return cast(ItemPaged[models.DataPointAnomaly], self._client.list_anomalies(**kwargs))
-
-    @distributed_trace
-    def list_anomaly_dimension_values(
-        self,
-        detection_configuration_id: str,
-        dimension_name: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[str]:
-        """Query dimension values of anomalies.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :param str dimension_name: dimension to query.
-        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword int skip:
-        :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
-        :return: Dimension values of anomalies.
-        :rtype: ~azure.core.paging.ItemPaged[str]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_anomaly_dimension_values]
-                :end-before: [END list_anomaly_dimension_values]
-                :language: python
-                :dedent: 4
-                :caption: Query dimension values.
-        """
-        return cast(
-            ItemPaged[str],
-            self._client.list_anomaly_dimension_values(
-                detection_configuration_id=detection_configuration_id,
-                dimension_name=dimension_name,
-                start_time=start_time,
-                end_time=end_time,
-                **kwargs,
-            ),
-        )
 
     @overload
     def list_incidents(
@@ -1548,6 +1558,6 @@ def patch_sdk():  # pylint: disable=function-redefined
 
 __all__ = [
     "MetricsAdvisorKeyCredential",
-    "MetricsAdvisorAdministrationClient",
     "MetricsAdvisorClient",
+    "MetricsAdvisorAdministrationClient",
 ]
