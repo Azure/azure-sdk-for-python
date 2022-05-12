@@ -51,8 +51,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
             cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"), offer_throughput=400)
 
     def test_offer_methods(self):
-        database_offer = self.databaseForTest.read_offer()
-        container_offer = self.containerForTest.read_offer()
+        database_offer = self.databaseForTest.get_throughput()
+        container_offer = self.containerForTest.get_throughput()
 
         self.assertTrue("ThroughputProperties" in str(type(database_offer)))
         self.assertTrue("ThroughputProperties" in str(type(container_offer)))
