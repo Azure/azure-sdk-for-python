@@ -1,5 +1,16 @@
 # Release History
 
+## 27.0.0 (2022-05-12)
+
+**Breaking changes**
+
+  - Operation VirtualMachineRunCommandsOperations.begin_create_or_update has a new parameter content_type
+  - Operation VirtualMachineRunCommandsOperations.begin_update has a new parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update has a new parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_update has a new parameter content_type
+  - Operation VirtualMachineScaleSetVMsOperations.begin_run_command has a new parameter content_type
+  - Operation VirtualMachinesOperations.begin_run_command has a new parameter content_type
+
 ## 26.1.0 (2022-02-28)
 
 **Features**
