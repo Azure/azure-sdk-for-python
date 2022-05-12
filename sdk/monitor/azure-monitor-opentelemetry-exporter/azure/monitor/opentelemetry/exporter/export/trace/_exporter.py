@@ -117,6 +117,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             response_code="0",
             success=span.status.is_ok,
             properties={},
+            measurements={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         envelope.tags["ai.operation.name"] = span.name
@@ -125,7 +126,15 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         if "az.namespace" in span.attributes:  # Azure specific resources
             # Currently only eventhub and servicebus are supported (kind CONSUMER)
             data.source = _get_azure_sdk_target_source(span.attributes)
-            # TODO: timeSinceEnqueued
+            if span.links:
+                total = 0
+                for link in span.links:
+                    attributes = link.attributes
+                    enqueued_time  = attributes.get("enqueuedTime")
+                    if enqueued_time:
+                        difference = (span.start_time / 1000000) - int(enqueued_time)
+                        total += difference
+                data.measurements["timeSinceEnqueued"] = max(0, total / len(span.links))
         elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
             url = ""
             path = ""
@@ -184,16 +193,13 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            else:
-                envelope.tags["ai.operation.name"] = span.name
             if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
                 status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
                 data.response_code = str(status_code)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
-            envelope.tags["ai.operation.name"] = span.name
             if SpanAttributes.NET_PEER_IP in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
-            elif SpanAttributes.MESSAGING_DESTINATION in span.attributes:
+            if SpanAttributes.MESSAGING_DESTINATION in span.attributes:
                 if SpanAttributes.NET_PEER_NAME in span.attributes:
                     data.source = "{}/{}".format(
                         span.attributes[SpanAttributes.NET_PEER_NAME],
