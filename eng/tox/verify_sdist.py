@@ -73,8 +73,7 @@ def verify_sdist_pytyped(
     pkg_dir: str, namespace: str, package_metadata: Mapping[str, Any], include_package_data: bool
 ) -> bool:
     """
-    Takes a directory that contains the contents of an unzipped source distribution, and
-    ensures that the setup.py is correctly configured for py.typed files.
+    Takes a package directory and ensures that the setup.py within is correctly configured for py.typed files.
     """
     result = True
 
@@ -102,7 +101,7 @@ def verify_sdist_pytyped(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Verify directories included in whl and contents in manifest file")
+    parser = argparse.ArgumentParser(description="Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py.")
 
     parser.add_argument(
         "-t",
