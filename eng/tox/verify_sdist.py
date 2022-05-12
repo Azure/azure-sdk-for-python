@@ -91,11 +91,12 @@ def verify_sdist_pytyped(
             )
             result = False
 
-    pytyped_file_path = os.path.join(pkg_dir, *namespace.split("."))
+    pytyped_file_path = os.path.join(pkg_dir, *namespace.split("."), 'py.typed')
     if not os.path.exists(pytyped_file_path):
         logging.info(
             "The py.typed file must exist in the base namespace for your package. Traditionally this would mean the furthest depth, EG 'azure/storage/blob/py.typed'."
         )
+        result = False
 
     return result
 
