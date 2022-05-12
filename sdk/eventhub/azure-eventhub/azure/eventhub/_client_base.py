@@ -366,9 +366,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
+            hostname = self._address.hostname if self._config.transport_type.name == 'Amqp' else self._address.hostname + '/$servicebus/websocket'
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClient(
-                self._address.hostname, auth=mgmt_auth, debug=self._config.network_tracing
+                hostname, auth=mgmt_auth, debug=self._config.network_tracing, transport_type = self._config.transport_type, http_proxy = self._config.http_proxy
             )
             try:
                 mgmt_client.open()

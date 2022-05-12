@@ -176,22 +176,22 @@ class AMQPClientAsync(AMQPClientSync):
                     absolute_timeout -= (end_time - start_time)
         raise retry_settings['history'][-1]
 
-    async def _keep_alive_worker_async(self):
-        interval = 10 if self._keep_alive is True else self._keep_alive
-        start_time = time.time()
-        try:
-            while self._connection and not self._shutdown:
-                current_time = time.time()
-                elapsed_time = (current_time - start_time)
-                if elapsed_time >= interval:
-                    _logger.info("Keeping %r connection alive. %r",
-                                 self.__class__.__name__,
-                                 self._connection._container_id)
-                    await self._connection._get_remote_timeout(current_time)
-                    start_time = current_time
-                await asyncio.sleep(1)
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+    # async def _keep_alive_worker_async(self):
+    #     interval = 10 if self._keep_alive is True else self._keep_alive
+    #     start_time = time.time()
+    #     try:
+    #         while self._connection and not self._shutdown:
+    #             current_time = time.time()
+    #             elapsed_time = (current_time - start_time)
+    #             if elapsed_time >= interval:
+    #                 _logger.info("Keeping %r connection alive. %r",
+    #                              self.__class__.__name__,
+    #                              self._connection._container_id)
+    #                 await self._connection._get_remote_timeout(current_time)
+    #                 start_time = current_time
+    #             await asyncio.sleep(1)
+    #     except Exception as e:  # pylint: disable=broad-except
+    #         _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     async def open_async(self):
         """Asynchronously open the client. The client can create a new Connection
@@ -236,8 +236,8 @@ class AMQPClientAsync(AMQPClientSync):
                 auth_timeout=self._auth_timeout
             )
             await self._cbs_authenticator.open()
-        if self._keep_alive:
-            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_worker_async())
+        # if self._keep_alive:
+        #     self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_worker_async())
         self._shutdown = False
 
     async def close_async(self):
@@ -249,9 +249,9 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
+        # if self._keep_alive_thread:
+        #     await self._keep_alive_thread
+        #     self._keep_alive_thread = None
         await self._close_link_async(close=True)
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()

@@ -116,6 +116,8 @@ class Connection(object):
         else:
             self._transport = Transport(parsed_url.netloc, self._transport_type, **kwargs)
 
+        print(self._transport)
+
         self._container_id = kwargs.pop('container_id', None) or str(uuid.uuid4())  # type: str
         self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)  # type: int
         self._remote_max_frame_size = None  # type: Optional[int]
@@ -221,6 +223,7 @@ class Connection(object):
          descriptor and field values.
         """
         if self._can_read():
+            print("in _read_frame")
             if wait == False:
                 return self._transport.receive_frame(**kwargs)
             elif wait == True:
@@ -656,6 +659,7 @@ class Connection(object):
                     description="Connection was already closed."
                 )
                 return
+            print(f"batch len = {batch}")
             for _ in range(batch):
                 new_frame = self._read_frame(wait=wait, **kwargs)
                 if self._process_incoming_frame(*new_frame):

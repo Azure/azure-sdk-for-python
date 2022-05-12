@@ -73,7 +73,7 @@ class SASLExternalCredential(object):
         return b''
 
 class SASLTransportMixinAsync():
-    async def negotiate(self):
+    async def _negotiate(self):
         await self.write(SASL_HEADER_FRAME)
         _, returned_header = await self.receive_frame()
         if returned_header[1] != SASL_HEADER_FRAME:
@@ -99,10 +99,14 @@ class SASLTransportMixinAsync():
             raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
 class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
-    def __init__(self, host, credential, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, port = AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
-        super(SASLTransport, self).__init__(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        super(SASLTransport, self).__init__(host, port = port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        
+    async def negotiate(self):
+        await self._negotiate()
+
 
 class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
     def __init__(
@@ -120,3 +124,6 @@ class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
             **kwargs
         )
         super().__init__(host, port, connect_timeout, ssl, **kwargs)
+    
+    async def negotiate(self):
+        await self._negotiate()
