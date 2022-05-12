@@ -112,6 +112,360 @@ def get_authentication_policy(credential):
 
     return authentication_policy
 
+class MetricsAdvisorClient:
+    """Represents an client that calls restful API of Azure Metrics Advisor service.
+    :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
+        for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
+    :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
+    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
+    """
+
+    def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
+        try:
+            if not endpoint.lower().startswith("http"):
+                endpoint = "https://" + endpoint
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        self._endpoint = endpoint
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _Client(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs,
+        )
+
+    def __repr__(self) -> str:
+        return "<MetricsAdvisorClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
+
+    def __enter__(self) -> "MetricsAdvisorClient":
+        self._client.__enter__()  # pylint:disable=no-member
+        return self
+
+    def __exit__(self, *args) -> None:
+        self._client.__exit__(*args)  # pylint:disable=no-member
+
+    def close(self) -> None:
+        """Close the :class:`~azure.ai.metricsadvisor.MetricsAdvisorClient` session."""
+        return self._client.close()
+
+    @distributed_trace
+    def add_feedback(self, feedback: FeedbackUnion, **kwargs: Any) -> None:
+        """Create a new metric feedback.
+
+        :param feedback: metric feedback.
+        :type feedback: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
+            ~azure.ai.metricsadvisor.models.CommentFeedback or
+            ~azure.ai.metricsadvisor.models.PeriodFeedback
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_feedback.py
+                :start-after: [START add_feedback]
+                :end-before: [END add_feedback]
+                :language: python
+                :dedent: 4
+                :caption: Add new feedback.
+        """
+        return self._client.add_feedback(feedback=feedback, **kwargs)
+
+    @distributed_trace
+    def get_feedback(self, feedback_id: str, **kwargs: Any) -> Union[models.MetricFeedback, FeedbackUnion]:
+        """Get a metric feedback by its id.
+
+        :param str feedback_id: the id of the feedback.
+        :return: The feedback object
+        :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback or
+            ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
+            ~azure.ai.metricsadvisor.models.CommentFeedback or
+            ~azure.ai.metricsadvisor.models.PeriodFeedback
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_feedback.py
+                :start-after: [START get_feedback]
+                :end-before: [END get_feedback]
+                :language: python
+                :dedent: 4
+                :caption: Get a metric feedback by its id.
+        """
+        return self._client.get_feedback(feedback_id=feedback_id, **kwargs)
+
+    @distributed_trace
+    def list_feedback(self, metric_id: str, **kwargs: Any) -> ItemPaged[Union[models.MetricFeedback, FeedbackUnion]]:
+        """List feedback on the given metric.
+
+        :param str metric_id: filter feedbacks by metric id
+        :keyword int skip:
+        :keyword dimension_key: filter specfic dimension name and values
+        :paramtype dimension_key: dict[str, str]
+        :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
+                "ChangePoint", "Period", "Comment".
+        :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
+                "FeedbackCreatedTime".
+        :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
+        :return: Pageable list of MetricFeedback
+        :rtype: ~azure.core.paging.ItemPaged[
+            Union[MetricFeedback, AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_feedback.py
+                :start-after: [START list_feedback]
+                :end-before: [END list_feedback]
+                :language: python
+                :dedent: 4
+                :caption: List feedback on the given metric.
+        """
+        return self._client.list_feedback(metric_id=metric_id, **kwargs)
+
+    @distributed_trace
+    def list_incident_root_causes(
+        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
+    ) -> ItemPaged[models.IncidentRootCause]:
+        """Query root cause for incident.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :param incident_id: incident id.
+        :type incident_id: str
+        :return: Pageable of root cause for incident
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_incidents.py
+                :start-after: [START list_incident_root_cause]
+                :end-before: [END list_incident_root_cause]
+                :language: python
+                :dedent: 4
+                :caption: Query incident root causes.
+        """
+        return self._client.list_incident_root_causes(
+            detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
+        )
+
+
+    @overload
+    def list_incidents(
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> ItemPaged[models.AnomalyIncident]:
+        """Query incidents under a specific alert.
+
+        :param alert_configuration_id: anomaly alerting configuration unique id.
+        :type alert_configuration_id: str
+        :param alert_id: alert id.
+        :type alert_id: str
+        :keyword int skip:
+        :return: AnomalyIncidents under a specific alert.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_incidents.py
+                :start-after: [START list_incidents_for_alert]
+                :end-before: [END list_incidents_for_alert]
+                :language: python
+                :dedent: 4
+                :caption: Query incidents for alert.
+        """
+
+    @overload
+    def list_incidents(
+        self,
+        *,
+        detection_configuration_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[models.AnomalyIncident]:
+        """Query incidents under a detection configuration.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
+        :return: AnomalyIncidents under a specific alert.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_incidents.py
+                :start-after: [START list_incidents_for_detection_configuration]
+                :end-before: [END list_incidents_for_detection_configuration]
+                :language: python
+                :dedent: 4
+                :caption: Query incidents for detection configuration.
+        """
+
+    @distributed_trace
+    def list_incidents(self, **kwargs: Any) -> ItemPaged[models.AnomalyIncident]:
+        """Query incidents under a specific alert or detection configuration.
+
+        :keyword str alert_configuration_id: anomaly alerting configuration unique id.
+        :keyword str alert_id: alert id.
+        :keyword str detection_configuration_id: anomaly detection configuration unique id.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+        :return: AnomalyIncidents under a specific alert or detection configuration.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return cast(ItemPaged[models.AnomalyIncident], self._client.list_incidents(**kwargs))
+
+    @distributed_trace
+    def list_metric_dimension_values(self, metric_id: str, dimension_name: str, **kwargs: Any) -> ItemPaged[str]:
+        """List dimension from certain metric.
+
+        :param metric_id: metric unique id.
+        :type metric_id: str
+        :param dimension_name: the dimension name
+        :type dimension_name: str
+        :keyword int skip:
+        :keyword dimension_value_filter: dimension value to be filtered.
+        :paramtype dimension_value_filter: str
+        :return: Dimension from certain metric.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_dimension_values]
+                :end-before: [END list_metric_dimension_values]
+                :language: python
+                :dedent: 4
+                :caption: Query metric dimension values.
+        """
+        return cast(
+            ItemPaged[str],
+            self._client.list_metric_dimension_values(metric_id=metric_id, dimension_name=dimension_name, **kwargs),
+        )
+
+    @distributed_trace
+    def list_metric_series_data(
+        self,
+        metric_id: str,
+        series_keys: List[Dict[str, str]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[models.MetricSeriesData]:
+        """Get time series data from metric.
+
+        :param metric_id: metric unique id.
+        :type metric_id: str
+        :param series_keys: query specific series.
+        :type series_keys: list[dict[str, str]]
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :return: Time series data from metric.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_series_data]
+                :end-before: [END list_metric_series_data]
+                :language: python
+                :dedent: 4
+                :caption: Query metrics series data.
+        """
+        return cast(
+            ItemPaged[models.MetricSeriesData],
+            self._client.list_metric_series_data(
+                metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
+            ),
+        )
+
+    @distributed_trace
+    def list_metric_series_definitions(
+        self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
+    ) -> ItemPaged[models.MetricSeriesDefinition]:
+        """List series (dimension combinations) from metric.
+
+        :param metric_id: metric unique id.
+        :type metric_id: str
+        :param active_since: Required. query series ingested after this time, the format should be
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type active_since: datetime.datetime
+        :keyword int skip:
+        :keyword dimension_filter: filter specfic dimension name and values.
+        :paramtype dimension_filter: dict[str, list[str]]
+        :return: Series (dimension combinations) from metric.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_series_definitions]
+                :end-before: [END list_metric_series_definitions]
+                :language: python
+                :dedent: 4
+                :caption: Query metric series definitions.
+        """
+        return cast(
+            ItemPaged[models.MetricSeriesDefinition],
+            self._client.list_metric_series_definitions(metric_id=metric_id, active_since=active_since, **kwargs),
+        )
+
+    @distributed_trace
+    def list_metric_enrichment_status(
+        self,
+        metric_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[models.EnrichmentStatus]:
+        """Query anomaly detection status.
+
+        :param metric_id: filter feedbacks by metric id.
+        :type metric_id: str
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :return: Anomaly detection status.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_enrichment_status]
+                :end-before: [END list_metric_enrichment_status]
+                :language: python
+                :dedent: 4
+                :caption: Query metric enrichment status.
+        """
+        return cast(
+            ItemPaged[models.EnrichmentStatus],
+            self._client.list_metric_enrichment_status(
+                metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
+            ),
+        )
 
 class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods,client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
@@ -407,6 +761,9 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: Get a single anomaly detection configuration by its ID
         """
         return self._client.get_detection_configuration(detection_configuration_id=detection_configuration_id, **kwargs)
+
+
+
 
 
     @distributed_trace
@@ -977,35 +1334,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             self._client.list_hooks(**kwargs),
         )
 
-    @distributed_trace
-    def list_data_feeds(self, **kwargs: Any) -> ItemPaged[models.DataFeed]:
-        """List all data feeds.
-
-        :keyword str data_feed_name: filter data feed by its name.
-        :keyword data_source_type: filter data feed by its source type.
-        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
-        :keyword granularity_type: filter data feed by its granularity.
-        :paramtype granularity_type: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
-        :keyword status: filter data feed by its status.
-        :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-        :keyword str creator: filter data feed by its creator.
-        :keyword int skip:
-        :return: Pageable of DataFeed
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeed]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START list_data_feeds]
-                :end-before: [END list_data_feeds]
-                :language: python
-                :dedent: 4
-                :caption: List data feeds under an account.
-        """
-        return cast(ItemPaged[models.DataFeed], self._client.list_data_feeds(**kwargs))
-
-
 
     @distributed_trace
     def list_detection_configurations(
@@ -1068,6 +1396,34 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
             ),
         )
+
+    @distributed_trace
+    def list_data_feeds(self, **kwargs: Any) -> ItemPaged[models.DataFeed]:
+        """List all data feeds.
+
+        :keyword str data_feed_name: filter data feed by its name.
+        :keyword data_source_type: filter data feed by its source type.
+        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
+        :keyword granularity_type: filter data feed by its granularity.
+        :paramtype granularity_type: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
+        :keyword status: filter data feed by its status.
+        :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
+        :keyword str creator: filter data feed by its creator.
+        :keyword int skip:
+        :return: Pageable of DataFeed
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeed]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_data_feeds.py
+                :start-after: [START list_data_feeds]
+                :end-before: [END list_data_feeds]
+                :language: python
+                :dedent: 4
+                :caption: List data feeds under an account.
+        """
+        return cast(ItemPaged[models.DataFeed], self._client.list_data_feeds(**kwargs))
 
     @distributed_trace
     def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> DatasourceCredentialUnion:
@@ -1194,362 +1550,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: Delete a datasource credential by its ID
         """
         return self._client.delete_datasource_credential(*credential_id, **kwargs)
-
-
-class MetricsAdvisorClient:
-    """Represents an client that calls restful API of Azure Metrics Advisor service.
-    :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
-        for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
-    :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        which requires both subscription key and API key. Or an object which can provide an access
-        token for the vault, such as a credential from :mod:`azure.identity`
-    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
-    """
-
-    def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
-        try:
-            if not endpoint.lower().startswith("http"):
-                endpoint = "https://" + endpoint
-            endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Base URL must be a string.")
-
-        self._endpoint = endpoint
-        authentication_policy = get_authentication_policy(credential)
-        self._client = _Client(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=authentication_policy,
-            **kwargs,
-        )
-
-    def __repr__(self) -> str:
-        return "<MetricsAdvisorClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
-
-    def __enter__(self) -> "MetricsAdvisorClient":
-        self._client.__enter__()  # pylint:disable=no-member
-        return self
-
-    def __exit__(self, *args) -> None:
-        self._client.__exit__(*args)  # pylint:disable=no-member
-
-    def close(self) -> None:
-        """Close the :class:`~azure.ai.metricsadvisor.MetricsAdvisorClient` session."""
-        return self._client.close()
-
-    @distributed_trace
-    def add_feedback(self, feedback: FeedbackUnion, **kwargs: Any) -> None:
-        """Create a new metric feedback.
-
-        :param feedback: metric feedback.
-        :type feedback: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
-            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
-            ~azure.ai.metricsadvisor.models.CommentFeedback or
-            ~azure.ai.metricsadvisor.models.PeriodFeedback
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START add_feedback]
-                :end-before: [END add_feedback]
-                :language: python
-                :dedent: 4
-                :caption: Add new feedback.
-        """
-        return self._client.add_feedback(feedback=feedback, **kwargs)
-
-    @distributed_trace
-    def get_feedback(self, feedback_id: str, **kwargs: Any) -> Union[models.MetricFeedback, FeedbackUnion]:
-        """Get a metric feedback by its id.
-
-        :param str feedback_id: the id of the feedback.
-        :return: The feedback object
-        :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback or
-            ~azure.ai.metricsadvisor.models.AnomalyFeedback or
-            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
-            ~azure.ai.metricsadvisor.models.CommentFeedback or
-            ~azure.ai.metricsadvisor.models.PeriodFeedback
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START get_feedback]
-                :end-before: [END get_feedback]
-                :language: python
-                :dedent: 4
-                :caption: Get a metric feedback by its id.
-        """
-        return self._client.get_feedback(feedback_id=feedback_id, **kwargs)
-
-    @distributed_trace
-    def list_feedback(self, metric_id: str, **kwargs: Any) -> ItemPaged[Union[models.MetricFeedback, FeedbackUnion]]:
-        """List feedback on the given metric.
-
-        :param str metric_id: filter feedbacks by metric id
-        :keyword int skip:
-        :keyword dimension_key: filter specfic dimension name and values
-        :paramtype dimension_key: dict[str, str]
-        :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
-                "ChangePoint", "Period", "Comment".
-        :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
-                "FeedbackCreatedTime".
-        :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
-        :return: Pageable list of MetricFeedback
-        :rtype: ~azure.core.paging.ItemPaged[
-            Union[MetricFeedback, AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START list_feedback]
-                :end-before: [END list_feedback]
-                :language: python
-                :dedent: 4
-                :caption: List feedback on the given metric.
-        """
-        return self._client.list_feedback(metric_id=metric_id, **kwargs)
-
-    @distributed_trace
-    def list_incident_root_causes(
-        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
-    ) -> ItemPaged[models.IncidentRootCause]:
-        """Query root cause for incident.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :param incident_id: incident id.
-        :type incident_id: str
-        :return: Pageable of root cause for incident
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_incidents.py
-                :start-after: [START list_incident_root_cause]
-                :end-before: [END list_incident_root_cause]
-                :language: python
-                :dedent: 4
-                :caption: Query incident root causes.
-        """
-        return self._client.list_incident_root_causes(
-            detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
-        )
-
-
-    @overload
-    def list_incidents(
-        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
-    ) -> ItemPaged[models.AnomalyIncident]:
-        """Query incidents under a specific alert.
-
-        :param alert_configuration_id: anomaly alerting configuration unique id.
-        :type alert_configuration_id: str
-        :param alert_id: alert id.
-        :type alert_id: str
-        :keyword int skip:
-        :return: AnomalyIncidents under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_incidents.py
-                :start-after: [START list_incidents_for_alert]
-                :end-before: [END list_incidents_for_alert]
-                :language: python
-                :dedent: 4
-                :caption: Query incidents for alert.
-        """
-
-    @overload
-    def list_incidents(
-        self,
-        *,
-        detection_configuration_id: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[models.AnomalyIncident]:
-        """Query incidents under a detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
-        :return: AnomalyIncidents under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_incidents.py
-                :start-after: [START list_incidents_for_detection_configuration]
-                :end-before: [END list_incidents_for_detection_configuration]
-                :language: python
-                :dedent: 4
-                :caption: Query incidents for detection configuration.
-        """
-
-    @distributed_trace
-    def list_incidents(self, **kwargs: Any) -> ItemPaged[models.AnomalyIncident]:
-        """Query incidents under a specific alert or detection configuration.
-
-        :keyword str alert_configuration_id: anomaly alerting configuration unique id.
-        :keyword str alert_id: alert id.
-        :keyword str detection_configuration_id: anomaly detection configuration unique id.
-        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword int skip:
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-        :return: AnomalyIncidents under a specific alert or detection configuration.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        return cast(ItemPaged[models.AnomalyIncident], self._client.list_incidents(**kwargs))
-
-    @distributed_trace
-    def list_metric_dimension_values(self, metric_id: str, dimension_name: str, **kwargs: Any) -> ItemPaged[str]:
-        """List dimension from certain metric.
-
-        :param metric_id: metric unique id.
-        :type metric_id: str
-        :param dimension_name: the dimension name
-        :type dimension_name: str
-        :keyword int skip:
-        :keyword dimension_value_filter: dimension value to be filtered.
-        :paramtype dimension_value_filter: str
-        :return: Dimension from certain metric.
-        :rtype: ~azure.core.paging.ItemPaged[str]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_dimension_values]
-                :end-before: [END list_metric_dimension_values]
-                :language: python
-                :dedent: 4
-                :caption: Query metric dimension values.
-        """
-        return cast(
-            ItemPaged[str],
-            self._client.list_metric_dimension_values(metric_id=metric_id, dimension_name=dimension_name, **kwargs),
-        )
-
-    @distributed_trace
-    def list_metric_series_data(
-        self,
-        metric_id: str,
-        series_keys: List[Dict[str, str]],
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[models.MetricSeriesData]:
-        """Get time series data from metric.
-
-        :param metric_id: metric unique id.
-        :type metric_id: str
-        :param series_keys: query specific series.
-        :type series_keys: list[dict[str, str]]
-        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :return: Time series data from metric.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_series_data]
-                :end-before: [END list_metric_series_data]
-                :language: python
-                :dedent: 4
-                :caption: Query metrics series data.
-        """
-        return cast(
-            ItemPaged[models.MetricSeriesData],
-            self._client.list_metric_series_data(
-                metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
-            ),
-        )
-
-    @distributed_trace
-    def list_metric_series_definitions(
-        self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
-    ) -> ItemPaged[models.MetricSeriesDefinition]:
-        """List series (dimension combinations) from metric.
-
-        :param metric_id: metric unique id.
-        :type metric_id: str
-        :param active_since: Required. query series ingested after this time, the format should be
-         yyyy-MM-ddTHH:mm:ssZ.
-        :type active_since: datetime.datetime
-        :keyword int skip:
-        :keyword dimension_filter: filter specfic dimension name and values.
-        :paramtype dimension_filter: dict[str, list[str]]
-        :return: Series (dimension combinations) from metric.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_series_definitions]
-                :end-before: [END list_metric_series_definitions]
-                :language: python
-                :dedent: 4
-                :caption: Query metric series definitions.
-        """
-        return cast(
-            ItemPaged[models.MetricSeriesDefinition],
-            self._client.list_metric_series_definitions(metric_id=metric_id, active_since=active_since, **kwargs),
-        )
-
-    @distributed_trace
-    def list_metric_enrichment_status(
-        self,
-        metric_id: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[models.EnrichmentStatus]:
-        """Query anomaly detection status.
-
-        :param metric_id: filter feedbacks by metric id.
-        :type metric_id: str
-        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword int skip:
-        :return: Anomaly detection status.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_enrichment_status]
-                :end-before: [END list_metric_enrichment_status]
-                :language: python
-                :dedent: 4
-                :caption: Query metric enrichment status.
-        """
-        return cast(
-            ItemPaged[models.EnrichmentStatus],
-            self._client.list_metric_enrichment_status(
-                metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
-            ),
-        )
 
 
 def patch_sdk():  # pylint: disable=function-redefined
