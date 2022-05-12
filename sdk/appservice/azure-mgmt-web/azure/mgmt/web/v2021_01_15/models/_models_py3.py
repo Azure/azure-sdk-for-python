@@ -4217,7 +4217,8 @@ class Certificate(Resource):
     :vartype server_farm_id: str
     :ivar canonical_name: CNAME of the certificate to be issued via free certificate.
     :vartype canonical_name: str
-    :ivar domain_validation_method: Method of domain validation for free cert.
+    :ivar domain_validation_method: Method of domain validation for free cert. Possible values
+     include: 'CNameValidationValue', 'HttpTokenValidationValue'.
     :vartype domain_validation_method: str
     """
 
@@ -4309,7 +4310,8 @@ class Certificate(Resource):
         :paramtype server_farm_id: str
         :keyword canonical_name: CNAME of the certificate to be issued via free certificate.
         :paramtype canonical_name: str
-        :keyword domain_validation_method: Method of domain validation for free cert.
+        :keyword domain_validation_method: Method of domain validation for free cert. Possible values
+         include: 'CNameValidationValue', 'HttpTokenValidationValue'.
         :paramtype domain_validation_method: str
         """
         super(Certificate, self).__init__(kind=kind, location=location, tags=tags, **kwargs)

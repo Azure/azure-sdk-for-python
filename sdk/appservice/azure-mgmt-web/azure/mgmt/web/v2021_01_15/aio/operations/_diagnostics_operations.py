@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
-import warnings
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -25,7 +24,7 @@ from ...operations._diagnostics_operations import build_execute_site_analysis_re
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class DiagnosticsOperations:
+class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
     """DiagnosticsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -56,7 +55,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Hosting Environment Detector Responses.
 
-        Description for List Hosting Environment Detector Responses.
+        List Hosting Environment Detector Responses.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -69,6 +68,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -81,6 +82,7 @@ class DiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_hosting_environment_detector_responses.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -92,6 +94,7 @@ class DiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -109,7 +112,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -123,7 +130,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_hosting_environment_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors'}  # type: ignore
+    list_hosting_environment_detector_responses.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors"}  # type: ignore
 
     @distributed_trace_async
     async def get_hosting_environment_detector_response(
@@ -138,7 +145,7 @@ class DiagnosticsOperations:
     ) -> "_models.DetectorResponse":
         """Get Hosting Environment Detector Response.
 
-        Description for Get Hosting Environment Detector Response.
+        Get Hosting Environment Detector Response.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -146,11 +153,11 @@ class DiagnosticsOperations:
         :type name: str
         :param detector_name: Detector Resource Name.
         :type detector_name: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse, or the result of cls(response)
@@ -163,12 +170,15 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_hosting_environment_detector_response_request(
             resource_group_name=resource_group_name,
             name=name,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -177,7 +187,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -192,7 +206,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_hosting_environment_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}'}  # type: ignore
+    get_hosting_environment_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}"}  # type: ignore
 
 
     @distributed_trace
@@ -204,7 +218,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Site Detector Responses.
 
-        Description for List Site Detector Responses.
+        List Site Detector Responses.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -217,6 +231,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -229,6 +245,7 @@ class DiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_detector_responses.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -240,6 +257,7 @@ class DiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -257,7 +275,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -271,7 +293,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors'}  # type: ignore
+    list_site_detector_responses.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_detector_response(
@@ -286,7 +308,7 @@ class DiagnosticsOperations:
     ) -> "_models.DetectorResponse":
         """Get site detector response.
 
-        Description for Get site detector response.
+        Get site detector response.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -294,11 +316,11 @@ class DiagnosticsOperations:
         :type site_name: str
         :param detector_name: Detector Resource Name.
         :type detector_name: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse, or the result of cls(response)
@@ -311,12 +333,15 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_detector_response_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -325,7 +350,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -340,7 +369,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}'}  # type: ignore
+    get_site_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}"}  # type: ignore
 
 
     @distributed_trace
@@ -352,7 +381,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DiagnosticCategoryCollection"]:
         """Get Diagnostics Categories.
 
-        Description for Get Diagnostics Categories.
+        Get Diagnostics Categories.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -365,6 +394,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DiagnosticCategoryCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategoryCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -377,6 +408,7 @@ class DiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_diagnostic_categories.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -388,6 +420,7 @@ class DiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     site_name=site_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -405,7 +438,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -419,7 +456,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_diagnostic_categories.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics'}  # type: ignore
+    list_site_diagnostic_categories.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_diagnostic_category(
@@ -431,7 +468,7 @@ class DiagnosticsOperations:
     ) -> "_models.DiagnosticCategory":
         """Get Diagnostics Category.
 
-        Description for Get Diagnostics Category.
+        Get Diagnostics Category.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -450,18 +487,25 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_diagnostic_category_request(
             resource_group_name=resource_group_name,
             site_name=site_name,
             diagnostic_category=diagnostic_category,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get_site_diagnostic_category.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -476,7 +520,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_diagnostic_category.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}'}  # type: ignore
+    get_site_diagnostic_category.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}"}  # type: ignore
 
 
     @distributed_trace
@@ -489,7 +533,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DiagnosticAnalysisCollection"]:
         """Get Site Analyses.
 
-        Description for Get Site Analyses.
+        Get Site Analyses.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -504,6 +548,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DiagnosticAnalysisCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysisCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -517,6 +563,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_analyses.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -529,6 +576,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -546,7 +594,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -560,7 +612,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_analyses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses'}  # type: ignore
+    list_site_analyses.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_analysis(
@@ -573,7 +625,7 @@ class DiagnosticsOperations:
     ) -> "_models.AnalysisDefinition":
         """Get Site Analysis.
 
-        Description for Get Site Analysis.
+        Get Site Analysis.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -594,6 +646,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_analysis_request(
             resource_group_name=resource_group_name,
@@ -601,12 +655,17 @@ class DiagnosticsOperations:
             diagnostic_category=diagnostic_category,
             analysis_name=analysis_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get_site_analysis.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -621,7 +680,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}  # type: ignore
+    get_site_analysis.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -638,7 +697,7 @@ class DiagnosticsOperations:
     ) -> "_models.DiagnosticAnalysis":
         """Execute Analysis.
 
-        Description for Execute Analysis.
+        Execute Analysis.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -648,11 +707,11 @@ class DiagnosticsOperations:
         :type diagnostic_category: str
         :param analysis_name: Analysis Resource Name.
         :type analysis_name: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticAnalysis, or the result of cls(response)
@@ -665,6 +724,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_execute_site_analysis_request(
             resource_group_name=resource_group_name,
@@ -672,6 +733,7 @@ class DiagnosticsOperations:
             diagnostic_category=diagnostic_category,
             analysis_name=analysis_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -680,7 +742,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -695,7 +761,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    execute_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'}  # type: ignore
+    execute_site_analysis.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"}  # type: ignore
 
 
     @distributed_trace
@@ -708,7 +774,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detectors.
 
-        Description for Get Detectors.
+        Get Detectors.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -723,6 +789,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DiagnosticDetectorCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -736,6 +804,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_detectors.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -748,6 +817,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     diagnostic_category=diagnostic_category,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -765,7 +835,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -779,7 +853,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_detectors.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors'}  # type: ignore
+    list_site_detectors.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_detector(
@@ -792,7 +866,7 @@ class DiagnosticsOperations:
     ) -> "_models.DetectorDefinition":
         """Get Detector.
 
-        Description for Get Detector.
+        Get Detector.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -813,6 +887,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_detector_request(
             resource_group_name=resource_group_name,
@@ -820,12 +896,17 @@ class DiagnosticsOperations:
             diagnostic_category=diagnostic_category,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get_site_detector.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -840,7 +921,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}  # type: ignore
+    get_site_detector.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -857,7 +938,7 @@ class DiagnosticsOperations:
     ) -> "_models.DiagnosticDetectorResponse":
         """Execute Detector.
 
-        Description for Execute Detector.
+        Execute Detector.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -867,11 +948,11 @@ class DiagnosticsOperations:
         :type detector_name: str
         :param diagnostic_category: Category Name.
         :type diagnostic_category: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorResponse, or the result of cls(response)
@@ -884,6 +965,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_execute_site_detector_request(
             resource_group_name=resource_group_name,
@@ -891,6 +974,7 @@ class DiagnosticsOperations:
             detector_name=detector_name,
             diagnostic_category=diagnostic_category,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -899,7 +983,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -914,7 +1002,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    execute_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}  # type: ignore
+    execute_site_detector.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"}  # type: ignore
 
 
     @distributed_trace
@@ -927,7 +1015,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """List Site Detector Responses.
 
-        Description for List Site Detector Responses.
+        List Site Detector Responses.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -942,6 +1030,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -955,6 +1045,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_detector_responses_slot.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -967,6 +1058,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -984,7 +1076,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -998,7 +1094,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_detector_responses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors'}  # type: ignore
+    list_site_detector_responses_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_detector_response_slot(
@@ -1014,7 +1110,7 @@ class DiagnosticsOperations:
     ) -> "_models.DetectorResponse":
         """Get site detector response.
 
-        Description for Get site detector response.
+        Get site detector response.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1024,11 +1120,11 @@ class DiagnosticsOperations:
         :type detector_name: str
         :param slot: Slot Name.
         :type slot: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse, or the result of cls(response)
@@ -1041,6 +1137,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_detector_response_slot_request(
             resource_group_name=resource_group_name,
@@ -1048,6 +1146,7 @@ class DiagnosticsOperations:
             detector_name=detector_name,
             slot=slot,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -1056,7 +1155,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1071,7 +1174,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_detector_response_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}'}  # type: ignore
+    get_site_detector_response_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}"}  # type: ignore
 
 
     @distributed_trace
@@ -1084,7 +1187,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DiagnosticCategoryCollection"]:
         """Get Diagnostics Categories.
 
-        Description for Get Diagnostics Categories.
+        Get Diagnostics Categories.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1099,6 +1202,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DiagnosticCategoryCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategoryCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1112,6 +1217,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_diagnostic_categories_slot.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -1124,6 +1230,7 @@ class DiagnosticsOperations:
                     site_name=site_name,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -1141,7 +1248,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1155,7 +1266,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_diagnostic_categories_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics'}  # type: ignore
+    list_site_diagnostic_categories_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_diagnostic_category_slot(
@@ -1168,7 +1279,7 @@ class DiagnosticsOperations:
     ) -> "_models.DiagnosticCategory":
         """Get Diagnostics Category.
 
-        Description for Get Diagnostics Category.
+        Get Diagnostics Category.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1189,6 +1300,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_diagnostic_category_slot_request(
             resource_group_name=resource_group_name,
@@ -1196,12 +1309,17 @@ class DiagnosticsOperations:
             diagnostic_category=diagnostic_category,
             slot=slot,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get_site_diagnostic_category_slot.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1216,7 +1334,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_diagnostic_category_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}'}  # type: ignore
+    get_site_diagnostic_category_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}"}  # type: ignore
 
 
     @distributed_trace
@@ -1230,7 +1348,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DiagnosticAnalysisCollection"]:
         """Get Site Analyses.
 
-        Description for Get Site Analyses.
+        Get Site Analyses.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1247,6 +1365,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DiagnosticAnalysisCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysisCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1261,6 +1381,7 @@ class DiagnosticsOperations:
                     diagnostic_category=diagnostic_category,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_analyses_slot.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -1274,6 +1395,7 @@ class DiagnosticsOperations:
                     diagnostic_category=diagnostic_category,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -1291,7 +1413,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1305,7 +1431,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_analyses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses'}  # type: ignore
+    list_site_analyses_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_analysis_slot(
@@ -1319,7 +1445,7 @@ class DiagnosticsOperations:
     ) -> "_models.AnalysisDefinition":
         """Get Site Analysis.
 
-        Description for Get Site Analysis.
+        Get Site Analysis.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1342,6 +1468,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_analysis_slot_request(
             resource_group_name=resource_group_name,
@@ -1350,12 +1478,17 @@ class DiagnosticsOperations:
             analysis_name=analysis_name,
             slot=slot,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get_site_analysis_slot.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1370,7 +1503,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}  # type: ignore
+    get_site_analysis_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -1388,7 +1521,7 @@ class DiagnosticsOperations:
     ) -> "_models.DiagnosticAnalysis":
         """Execute Analysis.
 
-        Description for Execute Analysis.
+        Execute Analysis.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1400,11 +1533,11 @@ class DiagnosticsOperations:
         :type analysis_name: str
         :param slot: Slot Name.
         :type slot: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticAnalysis, or the result of cls(response)
@@ -1417,6 +1550,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_execute_site_analysis_slot_request(
             resource_group_name=resource_group_name,
@@ -1425,6 +1560,7 @@ class DiagnosticsOperations:
             analysis_name=analysis_name,
             slot=slot,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -1433,7 +1569,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1448,7 +1588,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    execute_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'}  # type: ignore
+    execute_site_analysis_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute"}  # type: ignore
 
 
     @distributed_trace
@@ -1462,7 +1602,7 @@ class DiagnosticsOperations:
     ) -> AsyncIterable["_models.DiagnosticDetectorCollection"]:
         """Get Detectors.
 
-        Description for Get Detectors.
+        Get Detectors.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1479,6 +1619,8 @@ class DiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DiagnosticDetectorCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1493,6 +1635,7 @@ class DiagnosticsOperations:
                     diagnostic_category=diagnostic_category,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_site_detectors_slot.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -1506,6 +1649,7 @@ class DiagnosticsOperations:
                     diagnostic_category=diagnostic_category,
                     slot=slot,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -1523,7 +1667,11 @@ class DiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1537,7 +1685,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_site_detectors_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors'}  # type: ignore
+    list_site_detectors_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors"}  # type: ignore
 
     @distributed_trace_async
     async def get_site_detector_slot(
@@ -1551,7 +1699,7 @@ class DiagnosticsOperations:
     ) -> "_models.DetectorDefinition":
         """Get Detector.
 
-        Description for Get Detector.
+        Get Detector.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1574,6 +1722,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_site_detector_slot_request(
             resource_group_name=resource_group_name,
@@ -1582,12 +1732,17 @@ class DiagnosticsOperations:
             detector_name=detector_name,
             slot=slot,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get_site_detector_slot.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1602,7 +1757,7 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    get_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}  # type: ignore
+    get_site_detector_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -1620,7 +1775,7 @@ class DiagnosticsOperations:
     ) -> "_models.DiagnosticDetectorResponse":
         """Execute Detector.
 
-        Description for Execute Detector.
+        Execute Detector.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -1632,11 +1787,11 @@ class DiagnosticsOperations:
         :type diagnostic_category: str
         :param slot: Slot Name.
         :type slot: str
-        :param start_time: Start Time.
+        :param start_time: Start Time. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: End Time.
+        :param end_time: End Time. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: Time Grain.
+        :param time_grain: Time Grain. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticDetectorResponse, or the result of cls(response)
@@ -1649,6 +1804,8 @@ class DiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_execute_site_detector_slot_request(
             resource_group_name=resource_group_name,
@@ -1657,6 +1814,7 @@ class DiagnosticsOperations:
             diagnostic_category=diagnostic_category,
             slot=slot,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -1665,7 +1823,11 @@ class DiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1680,5 +1842,5 @@ class DiagnosticsOperations:
 
         return deserialized
 
-    execute_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}  # type: ignore
+    execute_site_detector_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"}  # type: ignore
 

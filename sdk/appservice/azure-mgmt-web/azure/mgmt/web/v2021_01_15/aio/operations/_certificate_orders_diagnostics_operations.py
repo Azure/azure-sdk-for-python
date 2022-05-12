@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
-import warnings
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -56,7 +55,7 @@ class CertificateOrdersDiagnosticsOperations:
     ) -> AsyncIterable["_models.DetectorResponseCollection"]:
         """Microsoft.CertificateRegistration to get the list of detectors for this RP.
 
-        Description for Microsoft.CertificateRegistration to get the list of detectors for this RP.
+        Microsoft.CertificateRegistration to get the list of detectors for this RP.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -69,6 +68,8 @@ class CertificateOrdersDiagnosticsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2021_01_15.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -81,6 +82,7 @@ class CertificateOrdersDiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     certificate_order_name=certificate_order_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=self.list_app_service_certificate_order_detector_response.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -92,6 +94,7 @@ class CertificateOrdersDiagnosticsOperations:
                     resource_group_name=resource_group_name,
                     certificate_order_name=certificate_order_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -109,7 +112,11 @@ class CertificateOrdersDiagnosticsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -123,7 +130,7 @@ class CertificateOrdersDiagnosticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_app_service_certificate_order_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors'}  # type: ignore
+    list_app_service_certificate_order_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors"}  # type: ignore
 
     @distributed_trace_async
     async def get_app_service_certificate_order_detector_response(
@@ -138,8 +145,7 @@ class CertificateOrdersDiagnosticsOperations:
     ) -> "_models.DetectorResponse":
         """Microsoft.CertificateRegistration call to get a detector response from App Lens.
 
-        Description for Microsoft.CertificateRegistration call to get a detector response from App
-        Lens.
+        Microsoft.CertificateRegistration call to get a detector response from App Lens.
 
         :param resource_group_name: Name of the resource group to which the resource belongs.
         :type resource_group_name: str
@@ -147,11 +153,11 @@ class CertificateOrdersDiagnosticsOperations:
         :type certificate_order_name: str
         :param detector_name: The detector name which needs to be run.
         :type detector_name: str
-        :param start_time: The start time for detector response.
+        :param start_time: The start time for detector response. Default value is None.
         :type start_time: ~datetime.datetime
-        :param end_time: The end time for the detector response.
+        :param end_time: The end time for the detector response. Default value is None.
         :type end_time: ~datetime.datetime
-        :param time_grain: The time grain for the detector response.
+        :param time_grain: The time grain for the detector response. Default value is None.
         :type time_grain: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DetectorResponse, or the result of cls(response)
@@ -164,12 +170,15 @@ class CertificateOrdersDiagnosticsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-01-15")  # type: str
+
         
         request = build_get_app_service_certificate_order_detector_response_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             detector_name=detector_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             start_time=start_time,
             end_time=end_time,
             time_grain=time_grain,
@@ -178,7 +187,11 @@ class CertificateOrdersDiagnosticsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -193,5 +206,5 @@ class CertificateOrdersDiagnosticsOperations:
 
         return deserialized
 
-    get_app_service_certificate_order_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors/{detectorName}'}  # type: ignore
+    get_app_service_certificate_order_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors/{detectorName}"}  # type: ignore
 
