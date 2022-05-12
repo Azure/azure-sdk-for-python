@@ -61,7 +61,7 @@ class QueryTest(unittest.TestCase):
                                                                             PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
-        partition_key_range_id = 2
+        partition_key_range_id = 0
         partitionParam = {"partition_key": partition_key} if use_partition_key else {"partition_key_range_id": partition_key_range_id}
 
         # Read change feed without passing any options
@@ -204,7 +204,7 @@ class QueryTest(unittest.TestCase):
             max_item_count=1,
             enable_cross_partition_query=True
         )
-        self.validate_query_requests_count(query_iterable, 16 * 2 + 1)
+        self.validate_query_requests_count(query_iterable, 11 * 2 + 1)
 
         query_iterable = created_collection.query_items(
             query=query,
@@ -212,7 +212,7 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
 
-        self.validate_query_requests_count(query_iterable, 13)
+        self.validate_query_requests_count(query_iterable, 5)
 
     def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
