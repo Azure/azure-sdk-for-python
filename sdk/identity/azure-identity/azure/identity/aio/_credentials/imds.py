@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
@@ -15,10 +15,10 @@ from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from ..._credentials.imds import get_request, PIPELINE_SETTINGS
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, TypeVar
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
-    T = TypeVar("T", bound="ImdsCredential")
+T = TypeVar("T", bound="ImdsCredential")
 
 
 class ImdsCredential(AsyncContextManager, GetTokenMixin):

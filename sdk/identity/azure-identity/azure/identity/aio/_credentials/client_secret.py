@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import msal
 
@@ -12,10 +12,10 @@ from ..._internal import validate_tenant_id
 from ..._persistent_cache import _load_persistent_cache
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, TypeVar
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
-    T = TypeVar("T", bound="ClientSecretCredential")
+T = TypeVar("T", bound="ClientSecretCredential")
 
 
 class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
