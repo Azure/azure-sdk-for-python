@@ -16,6 +16,7 @@ from azure.core.pipeline.policies import (
     AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy,
 )
+from azure.core.pipeline.policies import _http_challenge_cache as ChallengeCache
 from utils import HTTP_REQUESTS
 
 import pytest
@@ -320,6 +321,7 @@ def test_challenge_policy_uses_scopes_and_tenant(http_request):
         headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource="{resource}"'},
     )
     test_with_challenge(challenge_with_commas, scope, tenant)
+    ChallengeCache.clear()
 
     # this challenge separates the authorization server and resource with only spaces in the WWW-Authenticate header
     challenge_without_commas = Mock(
@@ -327,6 +329,7 @@ def test_challenge_policy_uses_scopes_and_tenant(http_request):
         headers={"WWW-Authenticate": f'Bearer authorization={endpoint} resource={resource}'},
     )
     test_with_challenge(challenge_without_commas, scope, tenant)
+    ChallengeCache.clear()
 
     # this challenge gives an AADv2 scope, ending with "/.default", instead of an AADv1 resource
     challenge_with_scope = Mock(
@@ -334,6 +337,7 @@ def test_challenge_policy_uses_scopes_and_tenant(http_request):
         headers={"WWW-Authenticate": f'Bearer authorization={endpoint} scope={scope}'},
     )
     test_with_challenge(challenge_with_scope, scope, tenant)
+    ChallengeCache.clear()
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -394,6 +398,7 @@ def test_challenge_policy_disable_tenant_discovery(http_request):
     # the request should fail after the challenge because we don't use the correct tenant
     # after the second 4xx response, the policy should raise the authentication error
     test_with_challenge(challenge_with_commas, scope)
+    ChallengeCache.clear()
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -454,6 +459,7 @@ def test_challenge_policy_disable_scopes_discovery(http_request):
     # the request should fail after the challenge because we don't use the correct scope
     # after the second 4xx response, the policy should raise the authentication error
     test_with_challenge(challenge_with_commas, scope, tenant)
+    ChallengeCache.clear()
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -506,6 +512,7 @@ def test_challenge_policy_disable_any_discovery(http_request):
     )
     # the policy should only send one request since we can't update our request per the challenge response
     test_with_challenge(challenge_with_commas, scope, tenant)
+    ChallengeCache.clear()
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -566,6 +573,7 @@ def test_challenge_policy_no_scope_in_challenge(http_request):
     # the request should fail after the challenge because we don't use the correct scope
     # after the second 4xx response, the policy should raise the authentication error
     test_with_challenge(challenge_with_commas, scope, tenant)
+    ChallengeCache.clear()
 
 
 @pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
