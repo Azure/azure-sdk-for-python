@@ -136,11 +136,11 @@ class CRUDTests(unittest.TestCase):
 
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, await database_proxy.read_offer().offer_throughput)
+        self.assertEqual(10000, await database_proxy.get_throughput().offer_throughput)
 
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, await database_proxy.read_offer().offer_throughput)
+        self.assertEqual(10000, await database_proxy.get_throughput().offer_throughput)
 
         await self.client.delete_database(database_id)
 
@@ -156,7 +156,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_db.id, database_id)
 
         # Verify offer throughput for database
-        offer = await created_db.read_offer()
+        offer = await created_db.get_throughput()
         self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput
@@ -271,7 +271,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition.get('partitionKey').get('kind'),
                          created_collection_properties['partitionKey']['kind'])
 
-        expected_offer = await created_collection.read_offer()
+        expected_offer = await created_collection.get_throughput()
 
         self.assertIsNotNone(expected_offer)
 
@@ -2276,7 +2276,7 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         # Read the offer.
-        expected_offer = await collection.read_offer()
+        expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
         await self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
@@ -2291,7 +2291,7 @@ class CRUDTests(unittest.TestCase):
         # Create collection.
         collection = await self.databaseForTest.create_container(test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
         # Read Offer
-        expected_offer = await collection.read_offer()
+        expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
         await self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
         # Replace the offer.
