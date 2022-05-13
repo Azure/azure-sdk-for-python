@@ -655,13 +655,11 @@ class ReceiveClient(AMQPClient):
         :rtype: bool
         """
         try:
-            print("in _client_run")
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.")
             self._shutdown = True
             return False
-        print("returning from in _client_run")
         return True
 
     def _message_received(self, message):
