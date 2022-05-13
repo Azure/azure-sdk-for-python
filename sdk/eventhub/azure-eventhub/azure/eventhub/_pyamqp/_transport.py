@@ -712,7 +712,7 @@ class WebSocketTransport(_AbstractTransport):
                 self._read_buffer = BytesIO(data[n:])
                 n = 0
 
-            return view
+        return view
 
     def _shutdown_transport(self):
         """Do any preliminary work in shutting down the connection."""
