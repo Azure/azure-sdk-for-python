@@ -130,7 +130,7 @@ class EventHubProducer(
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
         self._handler = SendClient(
-            self._client._address.hostname,  # pylint: disable=protected-access
+            hostname,  # pylint: disable=protected-access
             self._target,
             auth=auth,
             idle_timeout=self._idle_timeout,
