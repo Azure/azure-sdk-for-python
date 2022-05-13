@@ -333,7 +333,7 @@ class TestHealth(TextAnalyticsTest):
                 response = []
                 async for r in result:
                     response.append(r)
-        assert err.value.error.code is not None
+        assert err.value.error.code == "InvalidParameterValue"
         assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()

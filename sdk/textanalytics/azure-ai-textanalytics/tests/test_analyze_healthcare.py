@@ -305,7 +305,7 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as err:
             result = client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval()).result()
-        assert err.value.error.code is not None
+        assert err.value.error.code == "InvalidParameterValue"
         assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()
