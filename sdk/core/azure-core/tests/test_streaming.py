@@ -184,15 +184,12 @@ def test_decompress_compressed_header_offline(port, http_request):
     client = PipelineClient("")
     request = http_request(method="GET", url="http://localhost:{}/streams/decompress_header".format(port))
     with RequestsTransport() as sender:
-        try:
-            response = client._pipeline.run(request, stream=True).http_response
-            response.raise_for_status()
-            data = response.stream_download(sender, decompress=True)
-            content = b"".join(list(data))
-            decoded = content.decode('utf-8')
-            assert decoded == "test"
-        except HttpResponseError as e:
-            print(e.response.text())
+        response = client._pipeline.run(request, stream=True).http_response
+        response.raise_for_status()
+        data = response.stream_download(sender, decompress=True)
+        content = b"".join(list(data))
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_header(http_request):
@@ -206,3 +203,8 @@ def test_compress_compressed_header(http_request):
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=False)
     content = b"".join(list(data))
+    try:
+        decoded = content.decode('utf-8')
+        assert False
+    except UnicodeDecodeError:
+        pass
