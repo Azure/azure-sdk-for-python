@@ -197,7 +197,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 

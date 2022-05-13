@@ -8,7 +8,8 @@ from azure.keyvault.certificates import ApiVersion, CertificatePolicy, Certifica
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, CertificatesTestCase
+from _async_test_case import get_decorator, AsyncCertificatesClientPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
 all_api_versions = get_decorator(is_async=True)
@@ -38,9 +39,11 @@ async def test_create_certificate():
     # [END create_certificate_client]
 
 
-class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
-    @all_api_versions()
-    @client_setup
+class TestExamplesKeyVault(KeyVaultTestCase):
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @recorded_by_proxy_async
     async def test_example_certificate_crud_operations(self, certificate_client, **kwargs):
         cert_name = self.get_resource_name("cert-name")
 
@@ -110,8 +113,10 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
         print(deleted_certificate.recovery_id)
         # [END delete_certificate]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @recorded_by_proxy_async
     async def test_example_certificate_list_operations(self, certificate_client, **kwargs):
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -168,8 +173,10 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
             print(certificate.deleted_on)
         # [END list_deleted_certificates]
 
-    @exclude_2016_10_01()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", exclude_2016_10_01)
+    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @recorded_by_proxy_async
     async def test_example_certificate_backup_restore(self, certificate_client, **kwargs):
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -213,8 +220,10 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
         print(restored_certificate.properties.version)
         # [END restore_certificate]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @recorded_by_proxy_async
     async def test_example_certificate_recover(self, certificate_client, **kwargs):
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -250,8 +259,10 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
         print(recovered_certificate.name)
         # [END recover_deleted_certificate]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @recorded_by_proxy_async
     async def test_example_contacts(self, certificate_client, **kwargs):
         # [START set_contacts]
         from azure.keyvault.certificates import CertificateContact
@@ -288,8 +299,10 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
             print(deleted_contact.phone)
         # [END delete_contacts]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @recorded_by_proxy_async
     async def test_example_issuers(self, certificate_client, **kwargs):
         # [START create_issuer]
         from azure.keyvault.certificates import AdministratorContact

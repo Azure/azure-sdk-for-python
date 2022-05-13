@@ -43,9 +43,10 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.create_container_if_not_exists(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID,
+                                                                               partition_key=partition_key.PartitionKey(path="/pk"))
 
     def test_multi_partition_collection_read_document_with_no_pk(self):
         document_definition = {'id': str(uuid.uuid4())}

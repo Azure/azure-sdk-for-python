@@ -1,8 +1,18 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.1 (Unreleased)
 
-**Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure Schema Registry.
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2022-05-10)
+
+**Note:** This is the first stable release of our efforts to create a user-friendly Pythonic Avro Encoder library that integrates with the Python client library for Azure Schema Registry.
 
 ### Features Added
 
@@ -23,10 +33,6 @@ The encoder will automatically register and retrieve schemas from Azure Schema R
 - `InvalidSchemaError` has been introduced for errors related to invalid schemas, where `__cause__` will contain the underlying exception raised by the Apache Avro library.
 - The `encode` and `decode` methods on `AvroEncoder` support the following message models:
   - `azure.eventhub.EventData` in `azure-eventhub>=5.9.0`
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

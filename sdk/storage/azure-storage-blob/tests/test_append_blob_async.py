@@ -35,7 +35,7 @@ from azure.storage.blob.aio import (
 )
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-from test_helpers import ProgressTracker
+from test_helpers_async import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'

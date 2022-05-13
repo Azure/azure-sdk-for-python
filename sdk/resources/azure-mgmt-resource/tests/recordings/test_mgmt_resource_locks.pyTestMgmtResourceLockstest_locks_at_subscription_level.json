@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:13 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.7 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:13 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "0f518919-b21d-4964-a371-b6ad3dd14e8d",
+        "client-request-id": "7a84aab3-a9de-4cdd-bb55-ed4bdfc42ef4",
         "Connection": "keep-alive",
         "Content-Length": "286",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "0f518919-b21d-4964-a371-b6ad3dd14e8d",
+        "client-request-id": "7a84aab3-a9de-4cdd-bb55-ed4bdfc42ef4",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:14 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -232,14 +232,14 @@
         "Cache-Control": "no-cache",
         "Content-Length": "204",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:14 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "81ec3f29-326d-429a-ab1b-eee52143b237",
+        "x-ms-correlation-request-id": "9c369bd1-0046-4110-8498-c5245eb5292f",
         "x-ms-ratelimit-remaining-subscription-writes": "1194",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014714Z:81ec3f29-326d-429a-ab1b-eee52143b237"
+        "x-ms-routing-request-id": "WESTUS:20220428T024654Z:9c369bd1-0046-4110-8498-c5245eb5292f"
       },
       "ResponseBody": {
         "properties": {
@@ -265,7 +265,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:14 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -275,9 +275,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3173c094-520e-49c6-b535-bc82fdb1bdbf",
-        "x-ms-ratelimit-remaining-subscription-reads": "11988",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014714Z:3173c094-520e-49c6-b535-bc82fdb1bdbf"
+        "x-ms-correlation-request-id": "5687eba9-7890-4a51-ad17-8df1865789da",
+        "x-ms-ratelimit-remaining-subscription-reads": "11963",
+        "x-ms-routing-request-id": "WESTUS:20220428T024654Z:5687eba9-7890-4a51-ad17-8df1865789da"
       },
       "ResponseBody": {
         "properties": {
@@ -303,7 +303,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:14 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -313,9 +313,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1da52122-4a99-4c72-b4ba-1871a77f3e14",
-        "x-ms-ratelimit-remaining-subscription-reads": "11987",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014714Z:1da52122-4a99-4c72-b4ba-1871a77f3e14"
+        "x-ms-correlation-request-id": "073a1d4b-ae76-4443-af62-f04391b6334c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11962",
+        "x-ms-routing-request-id": "WESTUS:20220428T024654Z:073a1d4b-ae76-4443-af62-f04391b6334c"
       },
       "ResponseBody": {
         "value": [
@@ -332,9 +332,9 @@
               "level": "CanNotDelete",
               "notes": ""
             },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bez-rg/providers/Microsoft.KeyVault/managedHSMs/bezmhsm/providers/Microsoft.Authorization/locks/delete",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bez-rg/providers/Microsoft.Authorization/locks/deleteRG",
             "type": "Microsoft.Authorization/locks",
-            "name": "delete"
+            "name": "deleteRG"
           },
           {
             "properties": {
@@ -916,14 +916,14 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 26 Apr 2022 01:47:14 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "873b281e-1075-4d36-bd35-cf59bb3b6f75",
+        "x-ms-correlation-request-id": "2f54f788-8cc9-4737-9839-81954f026c12",
         "x-ms-ratelimit-remaining-subscription-deletes": "14997",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014714Z:873b281e-1075-4d36-bd35-cf59bb3b6f75"
+        "x-ms-routing-request-id": "WESTUS:20220428T024654Z:2f54f788-8cc9-4737-9839-81954f026c12"
       },
       "ResponseBody": null
     }

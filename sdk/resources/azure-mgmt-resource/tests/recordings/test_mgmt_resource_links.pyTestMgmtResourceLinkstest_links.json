@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:00 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:41 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:00 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:41 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "f014ebb7-73c5-4d2e-862a-6fc703d10370",
+        "client-request-id": "4277a426-00c2-4370-9a54-9c254a7f112f",
         "Connection": "keep-alive",
         "Content-Length": "286",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "f014ebb7-73c5-4d2e-862a-6fc703d10370",
+        "client-request-id": "4277a426-00c2-4370-9a54-9c254a7f112f",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:00 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:41 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12651.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -230,7 +230,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:01 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:41 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -241,10 +241,10 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1debc164-2b5c-43ef-9764-ffa2ea8088a9",
+        "x-ms-correlation-request-id": "4cb185c2-a853-41e6-823d-0a667177415f",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014701Z:1debc164-2b5c-43ef-9764-ffa2ea8088a9"
+        "x-ms-routing-request-id": "WESTUS:20220428T024642Z:4cb185c2-a853-41e6-823d-0a667177415f"
       },
       "ResponseBody": {
         "name": "pytestavset48042a90",
@@ -279,7 +279,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:02 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:41 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -290,10 +290,10 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "14428ab9-c503-49d6-a68d-3fa3cd36f1c1",
+        "x-ms-correlation-request-id": "09ed4a72-ac67-4bcd-9ed8-9e4bc841e9b1",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1198",
         "x-ms-ratelimit-remaining-subscription-writes": "1196",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014702Z:14428ab9-c503-49d6-a68d-3fa3cd36f1c1"
+        "x-ms-routing-request-id": "WESTUS:20220428T024642Z:09ed4a72-ac67-4bcd-9ed8-9e4bc841e9b1"
       },
       "ResponseBody": {
         "name": "pytestavset48042a902",
@@ -326,12 +326,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:02 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:42 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -420,12 +420,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:02 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:42 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -481,7 +481,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "e0469258-eac3-438c-90a9-72bec60c3d82",
+        "client-request-id": "2ee11d64-ead0-4c5a-a2df-0fbc795fd52f",
         "Connection": "keep-alive",
         "Content-Length": "286",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -499,10 +499,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "e0469258-eac3-438c-90a9-72bec60c3d82",
+        "client-request-id": "2ee11d64-ead0-4c5a-a2df-0fbc795fd52f",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:02 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:42 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -510,7 +510,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -542,14 +542,14 @@
         "Cache-Control": "no-cache",
         "Content-Length": "587",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:02 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:42 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "025e3ca5-a619-46b0-8ee3-c9895c55579a",
+        "x-ms-correlation-request-id": "0e7254d2-a0a9-4b9a-89de-d511dece3852",
         "x-ms-ratelimit-remaining-subscription-writes": "1195",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014703Z:025e3ca5-a619-46b0-8ee3-c9895c55579a"
+        "x-ms-routing-request-id": "WESTUS:20220428T024643Z:0e7254d2-a0a9-4b9a-89de-d511dece3852"
       },
       "ResponseBody": {
         "properties": {
@@ -577,7 +577,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:12 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -587,9 +587,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7b3f86d8-a5d7-4fef-970c-015b27ce4946",
-        "x-ms-ratelimit-remaining-subscription-reads": "11992",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014713Z:7b3f86d8-a5d7-4fef-970c-015b27ce4946"
+        "x-ms-correlation-request-id": "ad22d71b-6661-416b-953a-7447fd6e8ebc",
+        "x-ms-ratelimit-remaining-subscription-reads": "11967",
+        "x-ms-routing-request-id": "WESTUS:20220428T024653Z:ad22d71b-6661-416b-953a-7447fd6e8ebc"
       },
       "ResponseBody": {
         "properties": {
@@ -617,7 +617,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:13 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -627,9 +627,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "64bddd98-6e1f-4888-acf2-00a2be6a36c9",
-        "x-ms-ratelimit-remaining-subscription-reads": "11991",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014713Z:64bddd98-6e1f-4888-acf2-00a2be6a36c9"
+        "x-ms-correlation-request-id": "d5f480d7-eeb1-430b-8a31-70ed39990f6b",
+        "x-ms-ratelimit-remaining-subscription-reads": "11966",
+        "x-ms-routing-request-id": "WESTUS:20220428T024653Z:d5f480d7-eeb1-430b-8a31-70ed39990f6b"
       },
       "ResponseBody": {
         "value": [
@@ -661,7 +661,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:13 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -671,9 +671,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4230a3f6-330b-448f-854d-a92e16fd1efb",
-        "x-ms-ratelimit-remaining-subscription-reads": "11990",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014713Z:4230a3f6-330b-448f-854d-a92e16fd1efb"
+        "x-ms-correlation-request-id": "3aec92b9-0be8-4a73-9dac-fe9ba6b56216",
+        "x-ms-ratelimit-remaining-subscription-reads": "11965",
+        "x-ms-routing-request-id": "WESTUS:20220428T024653Z:3aec92b9-0be8-4a73-9dac-fe9ba6b56216"
       },
       "ResponseBody": {
         "value": [
@@ -705,7 +705,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 01:47:13 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -715,9 +715,9 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "08085fd1-a06d-4a4d-809a-3fb1cbb9f242",
-        "x-ms-ratelimit-remaining-subscription-reads": "11989",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014713Z:08085fd1-a06d-4a4d-809a-3fb1cbb9f242"
+        "x-ms-correlation-request-id": "9c77d999-e559-4db4-9866-b1c59b90ece5",
+        "x-ms-ratelimit-remaining-subscription-reads": "11964",
+        "x-ms-routing-request-id": "WESTUS:20220428T024653Z:9c77d999-e559-4db4-9866-b1c59b90ece5"
       },
       "ResponseBody": {
         "value": [
@@ -749,14 +749,14 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 26 Apr 2022 01:47:13 GMT",
+        "Date": "Thu, 28 Apr 2022 02:46:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "afb1d1f7-e164-4464-a1a1-d0d44e054148",
+        "x-ms-correlation-request-id": "f1ce0399-c3ba-4e79-ab35-df1d2255abfd",
         "x-ms-ratelimit-remaining-subscription-deletes": "14998",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220426T014713Z:afb1d1f7-e164-4464-a1a1-d0d44e054148"
+        "x-ms-routing-request-id": "WESTUS:20220428T024653Z:f1ce0399-c3ba-4e79-ab35-df1d2255abfd"
       },
       "ResponseBody": null
     }

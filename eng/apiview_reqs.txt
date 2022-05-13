@@ -1,1 +1,2 @@
-api-stub-generator==0.3
+api-stub-generator==0.2.11
+pylint-guidelines-checker==0.0.2

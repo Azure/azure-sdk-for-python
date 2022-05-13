@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.0b4 (2022-05-13)
+
+- Deprecate the package
+
 ## 1.0.0b3 (2021-10-25)
 
 **Features**

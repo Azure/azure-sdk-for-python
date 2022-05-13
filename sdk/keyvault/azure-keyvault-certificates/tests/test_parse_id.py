@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyVaultCertificateIdentifier
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import PowerShellPreparer, recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
 
@@ -16,6 +16,7 @@ class TestParseId(KeyVaultTestCase):
         )
 
     @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
+    @recorded_by_proxy
     def test_parse_certificate_id_with_version(self, azure_keyvault_url):
         client = self.create_client(azure_keyvault_url)
 

@@ -786,7 +786,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -871,7 +871,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
