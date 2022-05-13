@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options
 from ._container import ContainerProxy
-from ..offer import Offer
+from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
@@ -149,10 +149,10 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def create_container(
-            self,
-            id: str,  # pylint: disable=redefined-builtin
-            partition_key: PartitionKey,
-            **kwargs: Any
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        partition_key: PartitionKey,
+        **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
 
@@ -241,10 +241,10 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def create_container_if_not_exists(
-            self,
-            id: str,  # pylint: disable=redefined-builtin
-            partition_key: PartitionKey,
-            **kwargs: Any
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        partition_key: PartitionKey,
+        **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
 
@@ -333,8 +333,8 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def list_containers(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the containers in the database.
 
@@ -371,8 +371,8 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def query_containers(
-            self,
-            **kwargs: Any
+        self,
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
 
@@ -408,11 +408,10 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def replace_container(
-            self,
-            container: Union[str, ContainerProxy, Dict[str, Any]],  # Just have ContainerProxy
-                                                                    # move to container.replace() instead
-            partition_key: PartitionKey,  # Remove this to make it so replace is only using proxy
-            **kwargs: Any
+        self,
+        container: Union[str, ContainerProxy, Dict[str, Any]],
+        partition_key: PartitionKey,
+        **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
 
@@ -484,9 +483,9 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def delete_container(
-            self,
-            container: Union[str, ContainerProxy, Dict[str, Any]],
-            **kwargs: Any
+        self,
+        container: Union[str, ContainerProxy, Dict[str, Any]],
+        **kwargs: Any
     ) -> None:
         """Delete a container.
 
@@ -595,9 +594,9 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def query_users(
-            self,
-            query: Union[str, Dict[str, Any]],
-            **kwargs: Any
+        self,
+        query: Union[str, Dict[str, Any]],
+        **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
 
@@ -716,15 +715,17 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace_async
-    async def read_offer(self, **kwargs: Any) -> Offer:
-        """Read the Offer object for this database.
+    async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+        """Get the ThroughputProperties object for this database.
+
+        If no ThroughputProperties already exists for the database, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], List[Dict[str, Any]]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If no offer exists for the database or if the offer could not be retrieved.
-        :returns: Offer for the database.
-        :rtype: ~azure.cosmos.Offer
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
+            or the throughput properties could not be retrieved.
+        :returns: ThroughputProperties for the database.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -733,28 +734,33 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(offers) == 0:
+        throughput_properties = [throughput async for throughput in
+                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+                message="Could not find ThroughputProperties for database " + self.database_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, offers)
+            response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
+        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                    properties=throughput_properties[0])
+
 
     @distributed_trace_async
-    async def replace_throughput(self, throughput: int, **kwargs: Any) -> Offer:
+    async def replace_throughput(self, throughput: int, **kwargs: Any) -> ThroughputProperties:
         """Replace the database-level throughput.
 
-        :param int throughput: The throughput to be set.
+        If no ThroughputProperties already exist for the database, an exception is raised.
+
+        :param int throughput: The throughput to be set (an integer).
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If no offer exists for the database or if the offer could not be updated.
-        :returns: Offer for the database, updated with new throughput.
-        :rtype: ~azure.cosmos.Offer
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
+            or the throughput properties could not be updated.
+        :returns: ThroughputProperties for the database, updated with new throughput.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -763,15 +769,17 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = [offer async for offer in self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(offers) == 0:
+        throughput_properties = [throughput async for throughput in
+                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
+        if len(throughput_properties) == 0:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
                 message="Could not find Offer for database " + self.database_link)
 
-        new_offer = offers[0].copy()
+        new_offer = throughput_properties[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = await self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
+        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
+                                                         offer=throughput_properties[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

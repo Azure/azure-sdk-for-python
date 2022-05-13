@@ -22,8 +22,8 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload  # pylint: disable=unused-import
 
+from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload  # pylint: disable=unused-import
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
@@ -32,7 +32,7 @@ from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, validate_cache_staleness_value
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
-from .offer import Offer
+from .offer import ThroughputProperties
 from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue
 
@@ -626,15 +626,31 @@ class ContainerProxy(object):
     @distributed_trace
     def read_offer(self, **kwargs):
         # type: (Any) -> Offer
-        """Read the Offer object for this container.
-
-        If no Offer already exists for the container, an exception is raised.
-
+        """Get the ThroughputProperties object for this container.
+        If no ThroughputProperties already exist for the container, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the container.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
-            the offer could not be retrieved.
-        :rtype: ~azure.cosmos.Offer
+        :returns: Throughput for the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
+        """
+        warnings.warn(
+            "read_offer is a deprecated method name, use get_throughput instead",
+            DeprecationWarning
+        )
+        return self.get_throughput(**kwargs)
+
+    @distributed_trace
+    def get_throughput(self, **kwargs):
+        # type: (Any) -> ThroughputProperties
+        """Get the ThroughputProperties object for this container.
+
+        If no ThroughputProperties already exist for the container, an exception is raised.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: Throughput for the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -643,30 +659,31 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not offers:
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+                message="Could not find ThroughputProperties for container " + self.container_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, offers)
+            response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
+        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                    properties=throughput_properties[0])
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (int, Any) -> Offer
+        # type: (int, Any) -> ThroughputProperties
         """Replace the container's throughput.
 
-        If no Offer already exists for the container, an exception is raised.
+        If no ThroughputProperties already exist for the container, an exception is raised.
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the container, updated with new throughput.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
-            or the offer could not be updated.
-        :rtype: ~azure.cosmos.Offer
+        :returns: ThroughputProperties for the container, updated with new throughput.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
+            or the throughput properties could not be updated.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -675,19 +692,20 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not offers:
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
                 message="Could not find Offer for container " + self.container_link)
-        new_offer = offers[0].copy()
-        new_offer["content"]["offerThroughput"] = throughput
-        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
+        new_throughput_properties = throughput_properties[0].copy()
+        new_throughput_properties["content"]["offerThroughput"] = throughput
+        data = self.client_connection.ReplaceOffer(
+            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
     def list_conflicts(self, max_item_count=None, **kwargs):

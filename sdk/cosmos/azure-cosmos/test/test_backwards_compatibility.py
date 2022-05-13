@@ -21,10 +21,9 @@
 
 import unittest
 import pytest
-from azure.cosmos import cosmos_client, PartitionKey, http_constants
+from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants
 import test_config
 from unittest.mock import MagicMock
-
 
 # This class tests the backwards compatibility of features being deprecated to ensure users are not broken before
 # properly removing the methods marked for deprecation.
@@ -53,6 +52,16 @@ class TestBackwardsCompatibility(unittest.TestCase):
                                                                        offer_throughput=500)
         cls.containerForTest = cls.databaseForTest.create_container_if_not_exists(
             cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"), offer_throughput=400)
+
+    def test_offer_methods(self):
+        database_offer = self.databaseForTest.get_throughput()
+        container_offer = self.containerForTest.get_throughput()
+
+        self.assertTrue("ThroughputProperties" in str(type(database_offer)))
+        self.assertTrue("ThroughputProperties" in str(type(container_offer)))
+
+        self.assertTrue(isinstance(database_offer, Offer))
+        self.assertTrue(isinstance(container_offer, Offer))
 
     def side_effect_populate_partition_key_range_statistics(self, *args, **kwargs):
         # Extract request headers from args
