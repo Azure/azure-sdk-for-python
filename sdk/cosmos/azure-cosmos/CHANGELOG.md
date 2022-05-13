@@ -7,6 +7,9 @@
 - Bugfix: Automatic Id generation for items was turned on for `upsert_items()` method when no 'id' value was present in document body.
 Method call will now require an 'id' field to be present in the document body.
 
+#### Bugfixes
+- Raise 401 errors when fetching DatabaseAccount information on client initialization.
+
 #### Other Changes
 - Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `get_throughput`).
 - Marked the GetAuthorizationHeader method for deprecation since it will no longer be public in a future release.
