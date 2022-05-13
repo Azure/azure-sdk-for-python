@@ -4,10 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-import urllib.parse
+import urllib.parse as parse
 import six
 
-from . import HTTPPolicy, SansIOHTTPPolicy
+from . import HTTPPolicy, SansIOHTTPPolicy, _http_challenge_cache as ChallengeCache
 from ...exceptions import ServiceRequestError
 
 try:
@@ -25,10 +25,16 @@ if TYPE_CHECKING:
 class HttpChallenge(object):  # pylint:disable=too-few-public-methods
     """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server."""
 
-    def __init__(self, challenge):
+    def __init__(self, request_uri, challenge):
+        if not request_uri:
+            raise ValueError("URL cannot be empty")
         if not challenge:
             raise ValueError("Challenge cannot be empty")
 
+        uri = parse.urlparse(request_uri)
+        if not uri.netloc:
+            raise ValueError("request_uri must be an absolute URI")
+        self.source_authority = uri.netloc
         self._parameters = {}
 
         # Split the scheme ("Bearer") from the challenge parameters
@@ -56,7 +62,7 @@ class HttpChallenge(object):  # pylint:disable=too-few-public-methods
 
         authorization_uri = self._parameters.get("authorization") or self._parameters.get("authorization_uri") or ""
         # the authorization server URI should look something like https://login.windows.net/tenant-id[/oauth2/authorize]
-        uri_path = urllib.parse.urlparse(authorization_uri).path.lstrip("/")
+        uri_path = parse.urlparse(authorization_uri).path.lstrip("/")
         self.tenant_id = uri_path.split("/")[0] or None
 
         self.scope = self._parameters.get("scope") or ""
@@ -241,6 +247,22 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        """Called before the policy sends a request.
+
+        The base implementation authorizes the request with a bearer token.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+        self._enforce_https(request)
+        challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+
+        if self._token is None or self._need_new_token:
+            self._authorize_request_with_challenge(request, challenge)
+        else:
+            self._update_headers(request.http_request.headers, self._token.token)
+
     def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge
 
@@ -255,20 +277,29 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
             return False
 
         try:
-            challenge = HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
-            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
-            if scope == "/.default":
-                scope = self._scopes
+            challenge = HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
+            ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
         except ValueError:
             return False
+
+        self._authorize_request_with_challenge(request, challenge)
+        return True
+
+    def _authorize_request_with_challenge(self, request, challenge):
+        if not challenge:
+            self.authorize_request(request, self._scopes)
+            return
+
+        # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+        # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
+        scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
+        if scope == "/.default":
+            scope = self._scopes
 
         if self._discover_tenant:
             self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
         else:
             self.authorize_request(request, scope)
-        return True
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):

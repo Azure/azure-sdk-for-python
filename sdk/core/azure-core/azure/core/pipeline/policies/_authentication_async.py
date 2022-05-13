@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase, HttpChallenge
 
+from . import _http_challenge_cache as ChallengeCache
 from .._tools_async import await_result
 
 if TYPE_CHECKING:
@@ -157,6 +158,22 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
+    async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
+        """Adds a bearer token Authorization header to request and sends request to next policy.
+
+        :param request: The pipeline request object to be modified.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :raises: :class:`~azure.core.exceptions.ServiceRequestError`
+        """
+        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
+        challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+
+        if self._token is None or self._need_new_token():
+            # We don't acquire the lock here because _authorize_request_with_challenge does via authorize_request
+            await self._authorize_request_with_challenge(request, challenge)
+        else:
+            request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge
 
@@ -171,17 +188,26 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
             return False
 
         try:
-            challenge = HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
-            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
-            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
-            if scope == "/.default":
-                scope = self._scopes
+            challenge = HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
+            ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
         except ValueError:
             return False
+
+        await self._authorize_request_with_challenge(request, challenge)
+        return True
+
+    async def _authorize_request_with_challenge(self, request, challenge):
+        if not challenge:
+            await self.authorize_request(request, self._scopes)
+            return
+
+        # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+        # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
+        scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
+        if scope == "/.default":
+            scope = self._scopes
 
         if self._discover_tenant:
             await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
         else:
             await self.authorize_request(request, scope)
-        return True
