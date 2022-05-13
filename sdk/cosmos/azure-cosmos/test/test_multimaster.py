@@ -36,7 +36,7 @@ class MultiMasterTests(unittest.TestCase):
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey, "Session",
+        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey, consistency_level="Session",
                                             connection_policy=connectionPolicy)
 
         created_db = client.create_database(id='multi_master_tests ' + str(uuid.uuid4()))
@@ -82,7 +82,7 @@ class MultiMasterTests(unittest.TestCase):
         client.delete_database(created_db)
 
         print(len(self.last_headers))
-        is_allow_tentative_writes_set = self.EnableMultipleWritableLocations == True
+        is_allow_tentative_writes_set = self.EnableMultipleWritableLocations is True
 
         # Create Database
         self.assertEqual(self.last_headers[0], is_allow_tentative_writes_set)
