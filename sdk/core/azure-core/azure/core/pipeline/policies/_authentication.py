@@ -245,6 +245,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
+        self.challenge_cache = ChallengeCache
         super().__init__(credential, *scopes, **kwargs)
 
     def on_request(self, request):
@@ -256,7 +257,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
         self._enforce_https(request)
-        challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        challenge = self.challenge_cache.get_challenge_for_url(request.http_request.url)
 
         if self._token is None or self._need_new_token:
             self._authorize_request_with_challenge(request, challenge)
@@ -278,7 +279,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 
         try:
             challenge = HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
-            ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+            self.challenge_cache.set_challenge_for_url(request.http_request.url, challenge)
         except ValueError:
             return False
 

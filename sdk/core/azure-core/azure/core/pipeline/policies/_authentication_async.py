@@ -156,6 +156,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
+        self.challenge_cache = ChallengeCache
         super().__init__(credential, *scopes, **kwargs)
 
     async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
@@ -166,7 +167,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
-        challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+        challenge = self.challenge_cache.get_challenge_for_url(request.http_request.url)
 
         if self._token is None or self._need_new_token():
             # We don't acquire the lock here because _authorize_request_with_challenge does via authorize_request
@@ -189,7 +190,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 
         try:
             challenge = HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
-            ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
+            self.challenge_cache.set_challenge_for_url(request.http_request.url, challenge)
         except ValueError:
             return False
 
