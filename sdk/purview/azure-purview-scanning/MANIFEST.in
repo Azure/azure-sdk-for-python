@@ -4,3 +4,4 @@ include *.md
 include LICENSE
 include azure/__init__.py
 include azure/purview/__init__.py
+include azure/purview/scanning/py.typed

@@ -65,6 +65,10 @@ setup(
         'azure',
         'azure.purview',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         'msrest>=0.6.21',
         'azure-core>=1.20.1,<2.0.0',
