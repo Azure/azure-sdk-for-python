@@ -11,6 +11,11 @@ no-namespace-folders: true
 title: {{ client_name }}
 version-tolerant: true
 package-version: 1.0.0b1
+{%- if security_scope %}
 security: AADToken
 security-scopes: {{ security_scope }}
+{%- elif security_header_name %}
+security: AzureKey
+security-header-name: {{ security_header_name }}
+{%- endif %}
 ```
