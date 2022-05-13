@@ -89,7 +89,7 @@ class Connection(object):
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self.transport = sasl_transport(
-                host=parsed_url.netloc,
+                host=endpoint,
                 credential=kwargs['sasl_credential'],
                 **kwargs
             )
