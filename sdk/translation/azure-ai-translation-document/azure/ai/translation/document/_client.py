@@ -119,7 +119,7 @@ class DocumentTranslationClient:
         category_id: Optional[str] = None,
         glossaries: Optional[List[TranslationGlossary]] = None,
         **kwargs: Any
-    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -164,7 +164,7 @@ class DocumentTranslationClient:
     @overload
     def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
-    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -190,8 +190,8 @@ class DocumentTranslationClient:
 
     @distributed_trace
     def begin_translation(
-        self, *args, **kwargs
-    ):  # pylint: disable=client-method-missing-type-annotations
+        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -273,7 +273,7 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return self._client.document_translation.begin_start_translation(
+        return self._client.document_translation.begin_start_translation(  # type: ignore
             inputs=inputs if not continuation_token else None,
             polling=DocumentTranslationLROPollingMethod(
                 timeout=polling_interval,
