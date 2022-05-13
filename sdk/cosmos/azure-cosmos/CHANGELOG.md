@@ -8,6 +8,7 @@
 Method call will now require an 'id' field to be present in the document body.
 
 #### Other Changes
+- Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `get_throughput`).
 - Marked the GetAuthorizationHeader method for deprecation since it will no longer be public in a future release.
 - Added samples showing how to configure retry options for both the sync and async clients.
 - Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
@@ -37,7 +38,7 @@ Method call will now require an 'id' field to be present in the document body.
 - Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
   to make use of the **preview** CosmosDB integrated cache functionality.
   Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
-- Added support for split-proof queries for the async client
+- Added support for split-proof queries for the async client.
 
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
