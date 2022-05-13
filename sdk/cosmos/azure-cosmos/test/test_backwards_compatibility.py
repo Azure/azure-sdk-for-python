@@ -21,8 +21,9 @@
 
 import unittest
 import pytest
-from azure.cosmos import cosmos_client, PartitionKey, Offer
+from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants
 import test_config
+from unittest.mock import MagicMock
 
 # This class tests the backwards compatibility of features being deprecated to ensure users are not broken before
 # properly removing the methods marked for deprecation.
@@ -36,6 +37,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
+
+    populate_true = True
 
     @classmethod
     def setUpClass(cls):
@@ -59,6 +62,60 @@ class TestBackwardsCompatibility(unittest.TestCase):
 
         self.assertTrue(isinstance(database_offer, Offer))
         self.assertTrue(isinstance(container_offer, Offer))
+
+    def side_effect_populate_partition_key_range_statistics(self, *args, **kwargs):
+        # Extract request headers from args
+        self.assertTrue(args[2][http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] is True)
+        raise StopIteration
+
+    def side_effect_populate_query_metrics(self, *args, **kwargs):
+        # Extract request headers from args
+        self.assertTrue(args[2][http_constants.HttpHeaders.PopulateQueryMetrics] is True)
+        raise StopIteration
+
+    def side_effect_populate_quota_info(self, *args, **kwargs):
+        # Extract request headers from args
+        self.assertTrue(args[2][http_constants.HttpHeaders.PopulateQuotaInfo] is True)
+        raise StopIteration
+
+    def test_populate_query_metrics(self):
+        cosmos_client_connection = self.containerForTest.client_connection
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_populate_query_metrics)
+        try:
+            self.containerForTest.read(populate_query_metrics=True)
+        except StopIteration:
+            pass
+        try:
+            self.containerForTest.read(True)
+        except StopIteration:
+            pass
+
+    def test_populate_quota_info(self):
+        cosmos_client_connection = self.containerForTest.client_connection
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_populate_quota_info)
+        try:
+            self.containerForTest.read(populate_quota_info=True)
+        except StopIteration:
+            pass
+        try:
+            self.containerForTest.read(False, True)
+        except StopIteration:
+            pass
+
+    def test_populate_partition_key_range_statistics(self):
+        cosmos_client_connection = self.containerForTest.client_connection
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_populate_partition_key_range_statistics)
+        try:
+            self.containerForTest.read(populate_partition_key_range_statistics=True)
+        except StopIteration:
+            pass
+        try:
+            self.containerForTest.read(False, False, True)
+        except StopIteration:
+            pass
 
 
 if __name__ == "__main__":
