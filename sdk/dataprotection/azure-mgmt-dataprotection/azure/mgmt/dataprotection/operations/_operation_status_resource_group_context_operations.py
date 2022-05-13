@@ -20,29 +20,26 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
-JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_check_feature_support_request(
+def build_get_request(
+    resource_group_name: str,
     subscription_id: str,
-    location: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
+    operation_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-04-01")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/checkFeatureSupport")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/operationStatus/{operationId}")  # pylint: disable=line-too-long
     path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "location": _SERIALIZER.url("location", location, 'str'),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -53,22 +50,18 @@ def build_check_feature_support_request(
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="POST",
+        method="GET",
         url=_url,
         params=_query_parameters,
         headers=_header_parameters,
-        json=json,
-        content=content,
         **kwargs
     )
 
-class DataProtectionOperations(object):
-    """DataProtectionOperations operations.
+class OperationStatusResourceGroupContextOperations(object):
+    """OperationStatusResourceGroupContextOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -90,43 +83,40 @@ class DataProtectionOperations(object):
         self._config = config
 
     @distributed_trace
-    def check_feature_support(
+    def get(
         self,
-        location: str,
-        parameters: "_models.FeatureValidationRequestBase",
+        resource_group_name: str,
+        operation_id: str,
         **kwargs: Any
-    ) -> "_models.FeatureValidationResponseBase":
-        """Validates if a feature is supported.
+    ) -> "_models.OperationResource":
+        """Gets the operation status for an operation over a ResourceGroup's context.
 
-        Validates if a feature is supported.
+        Gets the operation status for an operation over a ResourceGroup's context.
 
-        :param location:
-        :type location: str
-        :param parameters: Feature support request object.
-        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase
+        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :type resource_group_name: str
+        :param operation_id:
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FeatureValidationResponseBase, or the result of cls(response)
-        :rtype: ~azure.mgmt.dataprotection.models.FeatureValidationResponseBase
+        :return: OperationResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.dataprotection.models.OperationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureValidationResponseBase"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2022-04-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'FeatureValidationRequestBase')
-
-        request = build_check_feature_support_request(
+        
+        request = build_get_request(
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
-            location=location,
+            operation_id=operation_id,
             api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.check_feature_support.metadata['url'],
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -142,12 +132,12 @@ class DataProtectionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('FeatureValidationResponseBase', pipeline_response)
+        deserialized = self._deserialize('OperationResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    check_feature_support.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/checkFeatureSupport"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/operationStatus/{operationId}"}  # type: ignore
 

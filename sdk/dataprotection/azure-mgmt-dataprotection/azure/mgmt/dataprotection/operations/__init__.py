@@ -9,6 +9,8 @@
 from ._backup_vaults_operations import BackupVaultsOperations
 from ._operation_result_operations import OperationResultOperations
 from ._operation_status_operations import OperationStatusOperations
+from ._operation_status_backup_vault_context_operations import OperationStatusBackupVaultContextOperations
+from ._operation_status_resource_group_context_operations import OperationStatusResourceGroupContextOperations
 from ._backup_vault_operation_results_operations import BackupVaultOperationResultsOperations
 from ._data_protection_operations import DataProtectionOperations
 from ._data_protection_operations_operations import DataProtectionOperationsOperations
@@ -25,6 +27,8 @@ __all__ = [
     'BackupVaultsOperations',
     'OperationResultOperations',
     'OperationStatusOperations',
+    'OperationStatusBackupVaultContextOperations',
+    'OperationStatusResourceGroupContextOperations',
     'BackupVaultOperationResultsOperations',
     'DataProtectionOperations',
     'DataProtectionOperationsOperations',

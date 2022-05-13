@@ -17,12 +17,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._restorable_time_ranges_operations import build_find_request
+from ...operations._operation_status_backup_vault_context_operations import build_get_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RestorableTimeRangesOperations:
-    """RestorableTimeRangesOperations async operations.
+class OperationStatusBackupVaultContextOperations:
+    """OperationStatusBackupVaultContextOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,49 +44,44 @@ class RestorableTimeRangesOperations:
         self._config = config
 
     @distributed_trace_async
-    async def find(
+    async def get(
         self,
         resource_group_name: str,
         vault_name: str,
-        backup_instance_name: str,
-        parameters: "_models.AzureBackupFindRestorableTimeRangesRequest",
+        operation_id: str,
         **kwargs: Any
-    ) -> "_models.AzureBackupFindRestorableTimeRangesResponseResource":
-        """find.
+    ) -> "_models.OperationResource":
+        """Gets the operation status for an operation over a BackupVault's context.
+
+        Gets the operation status for an operation over a BackupVault's context.
 
         :param resource_group_name: The name of the resource group where the backup vault is present.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault.
         :type vault_name: str
-        :param backup_instance_name: The name of the backup instance.
-        :type backup_instance_name: str
-        :param parameters: Request body for operation.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
+        :param operation_id:
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AzureBackupFindRestorableTimeRangesResponseResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
+        :return: OperationResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.dataprotection.models.OperationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureBackupFindRestorableTimeRangesResponseResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2022-04-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'AzureBackupFindRestorableTimeRangesRequest')
-
-        request = build_find_request(
+        
+        request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             vault_name=vault_name,
-            backup_instance_name=backup_instance_name,
+            operation_id=operation_id,
             api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.find.metadata['url'],
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -102,12 +97,12 @@ class RestorableTimeRangesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AzureBackupFindRestorableTimeRangesResponseResource', pipeline_response)
+        deserialized = self._deserialize('OperationResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    find.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/findRestorableTimeRanges"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/operationStatus/{operationId}"}  # type: ignore
 
