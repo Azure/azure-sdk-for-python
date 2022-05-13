@@ -363,8 +363,8 @@ class EventProcessor(
                         partition_id, consumer, CloseReason.OWNERSHIP_LOST
                     )
                     continue
-
                 self._do_receive(partition_id, consumer)
+
 
         with self._lock:
             for partition_id, consumer in list(self._consumers.items()):
