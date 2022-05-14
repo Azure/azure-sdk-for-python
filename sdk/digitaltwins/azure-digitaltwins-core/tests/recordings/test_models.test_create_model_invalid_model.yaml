@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel82fa118b%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel82fa118b%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,9 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:10 GMT
+      - Mon, 28 Mar 2022 15:05:00 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-4a4a4d39114af543a70b276610ccabde-a681546fb86c864c-01
     status:
       code: 404
       message: Not Found
@@ -46,25 +48,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"DTDLParserError","message":"None of the models in
         this request could be created due to a problem with one or more models: Top-level
         element requires an identifer but none provided. Add an ''@id'' property whose
         value is a string that conforms to the DTMI syntax -- see https://github.com/Azure/digital-twin-model-identifier..
-        See model documentation(http://aka.ms/ADTv2Models) for supported format."}}'
+        See model documentation(https://aka.ms/ADTv2Models) for supported format."}}'
     headers:
       content-length:
-      - '417'
+      - '418'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:12 GMT
+      - Mon, 28 Mar 2022 15:05:00 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-b66144509834f4458bb5e3a42c67fbf6-31b3e5a25df5ff47-01
     status:
       code: 400
       message: Bad Request

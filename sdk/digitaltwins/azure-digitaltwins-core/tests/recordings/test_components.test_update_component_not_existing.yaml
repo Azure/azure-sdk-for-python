@@ -13,23 +13,25 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"JsonPatchInvalid","message":"Could not resolve path
         /Component2/ComponentProp1. Please provide a valid patch document. See section
-        on update apis in the documentation http://aka.ms/adtv2twins."}}'
+        on update apis in the documentation https://aka.ms/adtv2twins."}}'
     headers:
       content-length:
-      - '213'
+      - '214'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:04:34 GMT
+      - Mon, 28 Mar 2022 15:03:22 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-3a36fcc262bc2c429820736d2d696c58-b3be71abdbd20c42-01
     status:
       code: 400
       message: Bad Request
@@ -47,24 +49,26 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
         twin instance that exists with the ID foo. Please verify that the twin id
         is valid and ensure that the twin is not deleted. See section on querying
-        the twins http://aka.ms/adtv2query."}}'
+        the twins https://aka.ms/adtv2query."}}'
     headers:
       content-length:
-      - '256'
+      - '257'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:04:35 GMT
+      - Mon, 28 Mar 2022 15:03:22 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-4ff83abecb9b824a9e37cddc728a7ec0-2c16760a7c72034d-01
     status:
       code: 404
       message: Not Found
