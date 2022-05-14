@@ -24,6 +24,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 
+EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure"]
+
 
 def get_root_directories_in_source(package_dir: str) -> List[str]:
     """
@@ -76,6 +78,7 @@ def verify_sdist_pytyped(
     Takes a package directory and ensures that the setup.py within is correctly configured for py.typed files.
     """
     result = True
+    manifest_location = os.path.join(pkg_dir, "MANIFEST.in")
 
     if include_package_data is None or False:
         logging.info(
@@ -90,7 +93,15 @@ def verify_sdist_pytyped(
             )
             result = False
 
-    pytyped_file_path = os.path.join(pkg_dir, *namespace.split("."), 'py.typed')
+    if os.path.exists(manifest_location):
+        with open(manifest_location, "r") as f:
+            lines = f.readlines()
+            result = any([include for include in lines if "py.typed" in line])
+
+            if not result:
+                logging.info("Ensure that the MANIFEST.in includes at least one path that leads to a py.typed file.")
+
+    pytyped_file_path = os.path.join(pkg_dir, *namespace.split("."), "py.typed")
     if not os.path.exists(pytyped_file_path):
         logging.info(
             "The py.typed file must exist in the base namespace for your package. Traditionally this would mean the furthest depth, EG 'azure/storage/blob/py.typed'."
@@ -101,7 +112,9 @@ def verify_sdist_pytyped(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py.")
+    parser = argparse.ArgumentParser(
+        description="Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py."
+    )
 
     parser.add_argument(
         "-t",
@@ -135,6 +148,7 @@ if __name__ == "__main__":
             logging.info("Failed to verify sdist for package [%s]", pkg_name)
             exit(1)
 
+    if pkg_name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_name:
         logging.info("Verifying presence of py.typed: [%s]", pkg_name)
         if verify_sdist_pytyped(pkg_dir, namespace, package_data, include_package_data):
             logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_name)
