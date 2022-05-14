@@ -125,8 +125,12 @@ class EventHubProducer(
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
+        transport_type = self._client._config.transport_type   # pylint:disable=protected-access
+        hostname = self._client._address.hostname  # pylint: disable=protected-access
+        if transport_type.name == 'AmqpOverWebsocket':
+            hostname += '/$servicebus/websocket/'
         self._handler = SendClient(
-            self._client._address.hostname,  # pylint: disable=protected-access
+            hostname,  # pylint: disable=protected-access
             self._target,
             auth=auth,
             idle_timeout=self._idle_timeout,
@@ -136,6 +140,8 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            transport_type=transport_type,
+            http_proxy=self._client._config.http_proxy  # pylint: disable=protected-access
         )
 
     def _open_with_retry(self):

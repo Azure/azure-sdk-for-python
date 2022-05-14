@@ -4,11 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for connection using websocket and http proxy.
 
 ## 5.8.0a3 (2022-03-08)
 

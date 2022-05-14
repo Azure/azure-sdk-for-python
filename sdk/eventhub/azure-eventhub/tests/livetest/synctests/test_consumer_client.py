@@ -133,7 +133,7 @@ def test_receive_batch_no_max_wait_time(connstr_senders):
         worker = threading.Thread(target=client.receive_batch, args=(on_event_batch,),
                                   kwargs={"starting_position": "-1"})
         worker.start()
-        time.sleep(10)
+        time.sleep(20)
         assert on_event_batch.received == 2
 
         checkpoints = list(client._event_processors.values())[0]._checkpoint_store.list_checkpoints(

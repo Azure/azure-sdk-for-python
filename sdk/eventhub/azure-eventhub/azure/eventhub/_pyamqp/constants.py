@@ -21,6 +21,14 @@ PORT = 5672
 SECURE_PORT = 5671
 
 
+# default port for AMQP over Websocket
+WEBSOCKET_PORT = 443
+
+
+# subprotocol for AMQP over Websocket
+AMQP_WS_SUBPROTOCOL = 'AMQPWSB10'
+
+
 MAJOR = 1  #: Major protocol version.
 MINOR = 0  #: Minor protocol version.
 REV = 0  #: Protocol revision.
@@ -302,3 +310,14 @@ MESSAGE_DELIVERY_DONE_STATES = (
     MessageDeliveryState.Timeout,
     MessageDeliveryState.Cancelled
 )
+
+
+class TransportType(Enum):
+    """Transport type
+    The underlying transport protocol type:
+     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+     port 443.
+    """
+    Amqp = 1
+    AmqpOverWebsocket = 2

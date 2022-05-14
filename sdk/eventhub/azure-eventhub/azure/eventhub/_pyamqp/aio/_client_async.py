@@ -21,7 +21,6 @@ from ._management_operation_async import ManagementOperation
 from ._receiver_async import ReceiverLink
 from ._sender_async import SenderLink
 from ._session_async import Session
-from ._sasl_async import SASLTransport
 from ._cbs_async import CBSAuthenticator
 from ..client import AMQPClient as AMQPClientSync
 from ..client import ReceiveClient as ReceiveClientSync
@@ -201,7 +200,9 @@ class AMQPClientAsync(AMQPClientSync):
                 channel_max=self._channel_max,
                 idle_timeout=self._idle_timeout,
                 properties=self._properties,
-                network_trace=self._network_trace
+                network_trace=self._network_trace,
+                transport_type=self._transport_type,
+                http_proxy=self._http_proxy
             )
             await self._connection.open()
         if not self._session:
