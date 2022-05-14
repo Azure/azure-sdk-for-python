@@ -59,18 +59,16 @@ from ._pyamqp.message import BatchMessage, Message
 if TYPE_CHECKING:
     import datetime
 
-PrimitiveTypes = Optional[
-    Union[
-        int,
-        float,
-        bytes,
-        bool,
-        str,
-        Dict,
-        List,
-        uuid.UUID,
-    ]
-]
+PrimitiveTypes = Optional[Union[
+    int,
+    float,
+    bytes,
+    bool,
+    str,
+    Dict,
+    List,
+    uuid.UUID,
+]]
 
 _LOGGER = logging.getLogger(__name__)
 

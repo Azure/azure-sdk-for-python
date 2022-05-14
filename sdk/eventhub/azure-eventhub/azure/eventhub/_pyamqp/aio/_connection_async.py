@@ -4,12 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import threading
+import struct
 import uuid
 import logging
 import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
+from enum import Enum
 import asyncio
 
 from ._transport_async import AsyncTransport
@@ -76,9 +79,10 @@ class Connection(object):
         else:
             self.port = PORT
         self.state = None
+
         transport = kwargs.get('transport')
         if transport:
-            self._transport = transport
+            self.transport = transport
         elif 'sasl_credential' in kwargs:
             sasl_transport = SASLTransport
             if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
@@ -90,7 +94,7 @@ class Connection(object):
                 **kwargs
             )
         else:
-            self._transport = AsyncTransport(parsed_url.netloc, **kwargs)
+            self.transport = AsyncTransport(parsed_url.netloc, **kwargs)
         self._container_id = kwargs.get('container_id') or str(uuid.uuid4())
         self.max_frame_size = kwargs.get('max_frame_size', MAX_FRAME_SIZE_BYTES)
         self._remote_max_frame_size = None
@@ -141,9 +145,9 @@ class Connection(object):
     async def _connect(self):
         try:
             if not self.state:
-                await self._transport.connect()
+                await self.transport.connect()
                 await self._set_state(ConnectionState.START)
-            await self._transport.negotiate()
+            await self.transport.negotiate()
             await self._outgoing_header()
             await self._set_state(ConnectionState.HDR_SENT)
             if not self.allow_pipelined_open:
@@ -164,7 +168,7 @@ class Connection(object):
         if self.state == ConnectionState.END:
             return
         await self._set_state(ConnectionState.END)
-        self._transport.close()
+        self.transport.close()
 
     def _can_read(self):
         # type: () -> bool
@@ -173,7 +177,7 @@ class Connection(object):
 
     async def _read_frame(self, **kwargs):
         if self._can_read():
-            return await self._transport.receive_frame(**kwargs)
+            return await self.transport.receive_frame(**kwargs)
         _LOGGER.warning("Cannot read frame in current state: %r", self.state)
 
     def _can_write(self):
@@ -190,7 +194,7 @@ class Connection(object):
         if self._can_write():
             try:
                 self.last_frame_sent_time = time.time()
-                await self._transport.send_frame(channel, frame, **kwargs)
+                await self.transport.send_frame(channel, frame, **kwargs)
             except (OSError, IOError, SSLError, socket.error) as exc:
                 self._error = AMQPConnectionError(
                     ErrorCondition.SocketError,
@@ -218,7 +222,7 @@ class Connection(object):
             _LOGGER.info("-> empty()", extra=self.network_trace_params)
         try:
             if self._can_write():
-                await self._transport.write(EMPTY_FRAME)
+                await self.transport.write(EMPTY_FRAME)
                 self.last_frame_sent_time = time.time()
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
@@ -231,7 +235,7 @@ class Connection(object):
         self.last_frame_sent_time = time.time()
         if self.network_trace:
             _LOGGER.info("-> header(%r)", HEADER_FRAME, extra=self.network_trace_params)
-        await self._transport.write(HEADER_FRAME)
+        await self.transport.write(HEADER_FRAME)
 
     async def _incoming_header(self, channel, frame):
         if self.network_trace:
@@ -246,7 +250,7 @@ class Connection(object):
     async def _outgoing_open(self):
         open_frame = OpenFrame(
             container_id=self._container_id,
-            hostname=self._hostname,
+            hostname=self.hostname,
             max_frame_size=self.max_frame_size,
             channel_max=self.channel_max,
             idle_timeout=self.idle_timeout * 1000 if self.idle_timeout else None,  # Convert to milliseconds

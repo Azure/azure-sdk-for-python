@@ -116,8 +116,6 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
-            transport_type=transport_type,
-            http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
             **self._internal_kwargs
         )
 

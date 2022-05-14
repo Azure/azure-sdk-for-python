@@ -136,10 +136,6 @@ class EventHubConsumer(
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
-        transport_type = self._client._config.transport_type # pylint:disable=protected-access
-        hostname = urlparse(source.address).hostname
-        if transport_type.name is 'AmqpOverWebsocket':
-            hostname += '/$servicebus/websocket/'
         source = Source(address=self._source, filters={})
         if self._offset is not None:
             filter_key = ApacheFilters.selector_filter
@@ -175,9 +171,7 @@ class EventHubConsumer(
             properties=create_properties(self._client._config.user_agent),  # pylint:disable=protected-access
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
-            message_received_callback=self._message_received,
-            transport_type=transport_type,
-            http_proxy=self._client._config.http_proxy  # pylint:disable=protected-access
+            message_received_callback=self._message_received
         )
 
     def _open_with_retry(self):

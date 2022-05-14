@@ -143,7 +143,6 @@ class EventHubConsumer(
                 )
             )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
-
         hostname = urlparse(source.address).hostname
         transport_type = self._client._config.transport_type # pylint:disable=protected-access
         if transport_type.name == 'AmqpOverWebsocket':
@@ -164,9 +163,7 @@ class EventHubConsumer(
             properties=create_properties(self._client._config.user_agent),  # pylint:disable=protected-access
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
-            message_received_callback=self._message_received,
-            transport_type = transport_type,
-            http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
+            message_received_callback=self._message_received
         )
 
     async def _open_with_retry(self) -> None:

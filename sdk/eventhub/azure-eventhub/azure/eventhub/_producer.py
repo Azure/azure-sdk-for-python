@@ -130,7 +130,7 @@ class EventHubProducer(
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
         self._handler = SendClient(
-            hostname,  # pylint: disable=protected-access
+            hostname,
             self._target,
             auth=auth,
             idle_timeout=self._idle_timeout,
@@ -142,8 +142,6 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
-            transport_type=transport_type,
-            http_proxy=self._client._config.http_proxy  # pylint: disable=protected-access
         )
 
     def _open_with_retry(self):

@@ -79,62 +79,9 @@ def get_running_loop():
             _LOGGER.warning('This version of Python is deprecated, please upgrade to >= v3.6')
         if loop is None:
             _LOGGER.warning('No running event loop')
-            loop = self.loop
+            loop = asyncio.get_event_loop()
         return loop
 
-class AsyncTransportMixin():
-    async def receive_frame(self, *args, **kwargs):
-        try:
-            header, channel, payload = await self.read(**kwargs) 
-            if not payload:
-                decoded = decode_empty_frame(header)
-            else:
-                decoded = decode_frame(payload)
-            # TODO: Catch decode error and return amqp:decode-error
-            #_LOGGER.info("ICH%d <- %r", channel, decoded)
-            return channel, decoded
-        except (socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
-            return None, None
-
-    async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
-        async with self.socket_lock:
-            read_frame_buffer = BytesIO()
-            try:
-                frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(await self._read(8, buffer=frame_header, initial=True))
-
-                channel = struct.unpack('>H', frame_header[6:])[0]
-                size = frame_header[0:4]
-                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation
-                    return frame_header, channel, None
-                size = struct.unpack('>I', size)[0]
-                offset = frame_header[4]
-                frame_type = frame_header[5]
-
-                # >I is an unsigned int, but the argument to sock.recv is signed,
-                # so we know the size can be at most 2 * SIGNED_INT_MAX
-                payload_size = size - len(frame_header)
-                payload = memoryview(bytearray(payload_size))
-                if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(await self._read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
-                else:
-                    read_frame_buffer.write(await self._read(payload_size, buffer=payload))
-            except (socket.timeout, asyncio.IncompleteReadError):
-                read_frame_buffer.write(self._read_buffer.getvalue())
-                self._read_buffer = read_frame_buffer
-                self._read_buffer.seek(0)
-                raise
-            except (OSError, IOError, SSLError, socket.error) as exc:
-                # Don't disconnect for ssl read time outs
-                # http://bugs.python.org/issue10272
-                if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                    raise socket.timeout()
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                raise
-            offset -= 2
-        return frame_header, channel, payload[offset:]
 
 class AsyncTransportMixin():
     async def receive_frame(self, *args, **kwargs):
@@ -215,6 +162,7 @@ class AsyncTransport(AsyncTransportMixin):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
+
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
@@ -507,6 +455,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
     async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
@@ -524,10 +473,15 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 view[length: length + n] = data[0:n]
                 self._read_buffer = BytesIO(data[n:])
                 n = 0
+
         return view
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""
+        # TODO: async close doesn't:
+        # 1) shutdown socket and close. --> self.sock.shutdown(socket.SHUT_RDWR) and self.sock.close()
+        # 2) set self.connected = False
+        # I think we need to do this, like in sync
         self.ws.close()
 
     async def write(self, s):
