@@ -148,7 +148,6 @@ class EventHubConsumer(
         transport_type = self._client._config.transport_type # pylint:disable=protected-access
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
-
         self._handler = ReceiveClientAsync(
             hostname,
             source,
@@ -157,6 +156,8 @@ class EventHubConsumer(
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
             link_properties=self._link_properties,
+            transport_type=transport_type,
+            http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
             retry_policy=self._retry_policy,
             client_name=self._name,
             receive_settle_mode=pyamqp_constants.ReceiverSettleMode.First,

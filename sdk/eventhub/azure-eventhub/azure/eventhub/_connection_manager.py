@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
+from threading import Lock
 from enum import Enum
 
 from ._pyamqp._connection import Connection, _CLOSING_STATES
@@ -104,4 +105,7 @@ class _SeparateConnectionManager(object):
 
 def get_connection_manager(**kwargs):
     # type: (...) -> 'ConnectionManager'
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
+    if connection_mode == _ConnectionMode.ShareConnection:
+        return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

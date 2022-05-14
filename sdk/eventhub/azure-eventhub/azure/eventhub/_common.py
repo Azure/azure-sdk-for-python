@@ -199,11 +199,7 @@ class EventData(object):
         event_data = cls(body="")
         event_data.message = message
         # pylint: disable=protected-access
-        event_data._raw_amqp_message = (
-            raw_amqp_message
-            if raw_amqp_message
-            else AmqpAnnotatedMessage(message=message)
-        )
+        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
     def _encode_message(self):
@@ -225,9 +221,7 @@ class EventData(object):
 
     def _to_outgoing_message(self):
         # type: () -> EventData
-        self.message = (
-            self._raw_amqp_message._to_outgoing_amqp_message()  # pylint:disable=protected-access
-        )
+        self.message = (self._raw_amqp_message._to_outgoing_amqp_message())  # pylint:disable=protected-access
         return self
 
     @property
@@ -531,9 +525,7 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
-        outgoing_batch_data = [
-            transform_outbound_single_message(m, EventData) for m in batch_data
-        ]
+        outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data

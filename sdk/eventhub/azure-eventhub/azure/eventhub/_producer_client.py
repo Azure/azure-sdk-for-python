@@ -15,14 +15,18 @@ from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from ._client_base import CredentialTypes
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api-version-keyword
+class EventHubProducerClient(ClientBase):
     """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
 
@@ -70,7 +74,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         self,
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
-        credential,  # type: CredentialTypes
+        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
         **kwargs  # type: Any
     ):
         # type:(...) -> None

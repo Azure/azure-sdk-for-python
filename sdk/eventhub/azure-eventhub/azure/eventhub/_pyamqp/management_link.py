@@ -39,13 +39,13 @@ class ManagementLink(object):
         self.state = ManagementLinkState.IDLE
         self._pending_operations = []
         self._session = session
-        self._request_link = session.create_sender_link(  # type: SenderLink
+        self._request_link: SenderLink = session.create_sender_link(
             endpoint,
             on_link_state_change=self._on_sender_state_change,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First
         )
-        self._response_link = session.create_receiver_link(  # type: ReceiverLink
+        self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
             on_link_state_change=self._on_receiver_state_change,
             on_message_received=self._on_message_received,

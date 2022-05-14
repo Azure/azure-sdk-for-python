@@ -456,7 +456,6 @@ class _AbstractTransport(object):
         else:
             encoded_channel = struct.pack('>H', channel)
             data = header + encoded_channel + performative
-
         self.write(data)
 
     def negotiate(self, encode, decode):
@@ -711,7 +710,6 @@ class WebSocketTransport(_AbstractTransport):
                 view[length: length + n] = data[0:n]
                 self._read_buffer = BytesIO(data[n:])
                 n = 0
-
         return view
 
     def _shutdown_transport(self):
