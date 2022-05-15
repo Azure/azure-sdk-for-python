@@ -1,0 +1,548 @@
+interactions:
+- request:
+    body: '{"name": "test_update_job_w_cp_tst_dp_async", "offerTtlSeconds": 10.0,
+      "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
+      1}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:51 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "name": "test_update_job_w_cp_tst_dp_async", "offerTtlSeconds":
+      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
+      1, "bypassSelectors": false}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:50 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:51 GMT
+      request-context: appId=
+      trace-id: 8b9a73ad2b6d8cb9b2add177330f87c7
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: '{"name": "test_update_job_w_cp_tst_q_async", "distributionPolicyId": "sanitized",
+      "labels": {"key1": "JobKey", "key2": 10, "key3": true}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '161'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:51 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "name": "test_update_job_w_cp_tst_q_async", "distributionPolicyId":
+      "sanitized", "labels": {"key1": "JobKey", "key2": 10, "key3": true, "Id": "sanitized"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:51 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:52 GMT
+      request-context: appId=
+      trace-id: ce1563c6a5f63cc456a64dcbd3345bdf
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: '{"name": "test_update_job_w_cp_tst_flbk_q_async", "distributionPolicyId":
+      "sanitized", "labels": {"key1": "JobKey", "key2": 10, "key3": true}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:51 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "name": "test_update_job_w_cp_tst_flbk_q_async", "distributionPolicyId":
+      "sanitized", "labels": {"key1": "JobKey", "key2": 10, "key3": true, "Id": "sanitized"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:51 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:52 GMT
+      request-context: appId=
+      trace-id: 68a2bccbe1c8bbe97c19d1d6f661d637
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: '{"name": "test_update_job_w_cp_tst_cp", "fallbackQueueId": "sanitized",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "Id", "labelOperator":
+      "equal", "value": "test_update_job_w_cp_tst_q_async"}}], "prioritizationRule":
+      {"kind": "static-rule", "value": 10}, "workerSelectors": [{"kind": "static",
+      "labelSelector": {"key": "FakeKeyFromCp", "labelOperator": "equal", "value":
+      "FakeValue"}}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '434'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:52 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "name": "test_update_job_w_cp_tst_cp", "fallbackQueueId":
+      "sanitized", "queueSelectors": [{"kind": "static", "labelSelector": {"key":
+      "Id", "labelOperator": "equal", "value": "test_update_job_w_cp_tst_q_async"}}],
+      "prioritizationRule": {"kind": "static-rule", "value": 10}, "workerSelectors":
+      [{"kind": "static", "labelSelector": {"expedite": false, "key": "FakeKeyFromCp",
+      "labelOperator": "equal", "value": "FakeValue"}}]}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:51 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:52 GMT
+      request-context: appId=
+      trace-id: a3f81be9ddf942bb560fe70c01f1a826
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/classificationPolicies/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: '{"channelReference": "fakeChannelRef1", "channelId": "fakeChannelId1",
+      "classificationPolicyId": "sanitized", "requestedWorkerSelectors": [{"key":
+      "FakeKey1", "labelOperator": "equal", "value": true}, {"key": "FakeKey2", "labelOperator":
+      "notEqual", "value": false}, {"key": "FakeKey3", "labelOperator": "lessThan",
+      "value": 10}, {"key": "FakeKey4", "labelOperator": "lessThanEqual", "value":
+      10.01}, {"key": "FakeKey5", "labelOperator": "greaterThan", "value": 10}, {"key":
+      "FakeKey6", "labelOperator": "greaterThanEqual", "value": 10}], "labels": {"key1":
+      "JobKey", "key2": 10, "key3": true}, "tags": {"tag1": "WorkerGenericInfo"},
+      "notes": {"2022-05-13T16:59:04.531199Z": "Fake notes attached to job"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '723'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:52 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "channelReference": "fakeChannelRef1", "jobStatus":
+      "pendingClassification", "channelId": "fakeChannelId1", "classificationPolicyId":
+      "sanitized", "priority": 1, "requestedWorkerSelectors": [{"expedite": false,
+      "key": "FakeKey1", "labelOperator": "equal", "value": true}, {"expedite": false,
+      "key": "FakeKey2", "labelOperator": "notEqual", "value": false}, {"expedite":
+      false, "key": "FakeKey3", "labelOperator": "lessThan", "value": 10}, {"expedite":
+      false, "key": "FakeKey4", "labelOperator": "lessThanEqual", "value": 10.01},
+      {"expedite": false, "key": "FakeKey5", "labelOperator": "greaterThan", "value":
+      10}, {"expedite": false, "key": "FakeKey6", "labelOperator": "greaterThanEqual",
+      "value": 10}], "attachedWorkerSelectors": [], "labels": {"key1": "JobKey", "key2":
+      10, "key3": true}, "assignments": {}, "tags": {"tag1": "WorkerGenericInfo"},
+      "notes": {"2022-05-13T16:59:04.531199+00:00": "Fake notes attached to job"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:53 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:53 GMT
+      request-context: appId=
+      trace-id: 30f9cf3bcdc597be974dc329d58a572a
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:52 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "channelReference": "fakeChannelRef1", "jobStatus":
+      "pendingClassification", "channelId": "fakeChannelId1", "classificationPolicyId":
+      "sanitized", "queueId": "sanitized", "priority": 10, "requestedWorkerSelectors":
+      [{"expedite": false, "key": "FakeKey1", "labelOperator": "equal", "value": true},
+      {"expedite": false, "key": "FakeKey2", "labelOperator": "notEqual", "value":
+      false}, {"expedite": false, "key": "FakeKey3", "labelOperator": "lessThan",
+      "value": 10}, {"expedite": false, "key": "FakeKey4", "labelOperator": "lessThanEqual",
+      "value": 10.01}, {"expedite": false, "key": "FakeKey5", "labelOperator": "greaterThan",
+      "value": 10}, {"expedite": false, "key": "FakeKey6", "labelOperator": "greaterThanEqual",
+      "value": 10}], "attachedWorkerSelectors": [{"expedite": false, "key": "FakeKeyFromCp",
+      "labelOperator": "equal", "value": "FakeValue"}], "labels": {"key1": "JobKey",
+      "key2": 10, "key3": true}, "assignments": {}, "tags": {"tag1": "WorkerGenericInfo"},
+      "notes": {"2022-05-13T16:59:04.531199+00:00": "Fake notes attached to job"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:53 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:53 GMT
+      request-context: appId=
+      trace-id: 72e570c8763d7e402cdd9278de0ed0a4
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:56 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "channelReference": "fakeChannelRef1", "jobStatus":
+      "queued", "enqueueTimeUtc": "2022-05-15T01:04:53.4300964+00:00", "channelId":
+      "fakeChannelId1", "classificationPolicyId": "sanitized", "queueId": "sanitized",
+      "priority": 10, "requestedWorkerSelectors": [{"expedite": false, "key": "FakeKey1",
+      "labelOperator": "equal", "value": true}, {"expedite": false, "key": "FakeKey2",
+      "labelOperator": "notEqual", "value": false}, {"expedite": false, "key": "FakeKey3",
+      "labelOperator": "lessThan", "value": 10}, {"expedite": false, "key": "FakeKey4",
+      "labelOperator": "lessThanEqual", "value": 10.01}, {"expedite": false, "key":
+      "FakeKey5", "labelOperator": "greaterThan", "value": 10}, {"expedite": false,
+      "key": "FakeKey6", "labelOperator": "greaterThanEqual", "value": 10}], "attachedWorkerSelectors":
+      [{"expedite": false, "key": "FakeKeyFromCp", "labelOperator": "equal", "value":
+      "FakeValue"}], "labels": {"key1": "JobKey", "key2": 10, "key3": true}, "assignments":
+      {}, "tags": {"tag1": "WorkerGenericInfo"}, "notes": {"2022-05-13T16:59:04.531199+00:00":
+      "Fake notes attached to job"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:56 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:53 GMT
+      request-context: appId=
+      trace-id: 399227c5500b8e0d4f9a72c7e6c59e5f
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: '{"channelReference": "fakeChannelRef1", "channelId": "fakeChannelId1",
+      "classificationPolicyId": "sanitized", "priority": 1, "requestedWorkerSelectors":
+      [{"key": "FakeKey1", "labelOperator": "equal", "value": true, "expedite": false},
+      {"key": "FakeKey2", "labelOperator": "notEqual", "value": false, "expedite":
+      false}, {"key": "FakeKey3", "labelOperator": "lessThan", "value": 10, "expedite":
+      false}, {"key": "FakeKey4", "labelOperator": "lessThanEqual", "value": 10.01,
+      "expedite": false}, {"key": "FakeKey5", "labelOperator": "greaterThan", "value":
+      10, "expedite": false}, {"key": "FakeKey6", "labelOperator": "greaterThanEqual",
+      "value": 10, "expedite": false}], "labels": {"key1": "JobKey", "key2": 10, "key3":
+      true, "FakeKey": "FakeWorkerValue"}, "tags": {"tag1": "WorkerGenericInfo"},
+      "notes": {"2022-05-13T16:59:04.531199Z": "Fake notes attached to job"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '882'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:56 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "channelReference": "fakeChannelRef1", "jobStatus":
+      "pendingClassification", "enqueueTimeUtc": "2022-05-15T01:04:53.4300964+00:00",
+      "channelId": "fakeChannelId1", "classificationPolicyId": "sanitized", "queueId":
+      "sanitized", "priority": 1, "requestedWorkerSelectors": [{"expedite": false,
+      "key": "FakeKey1", "labelOperator": "equal", "value": true}, {"expedite": false,
+      "key": "FakeKey2", "labelOperator": "notEqual", "value": false}, {"expedite":
+      false, "key": "FakeKey3", "labelOperator": "lessThan", "value": 10}, {"expedite":
+      false, "key": "FakeKey4", "labelOperator": "lessThanEqual", "value": 10.01},
+      {"expedite": false, "key": "FakeKey5", "labelOperator": "greaterThan", "value":
+      10}, {"expedite": false, "key": "FakeKey6", "labelOperator": "greaterThanEqual",
+      "value": 10}], "attachedWorkerSelectors": [{"expedite": false, "key": "FakeKeyFromCp",
+      "labelOperator": "equal", "value": "FakeValue"}], "labels": {"key1": "JobKey",
+      "key2": 10, "key3": true, "FakeKey": "FakeWorkerValue"}, "assignments": {},
+      "tags": {"tag1": "WorkerGenericInfo"}, "notes": {"2022-05-13T16:59:04.531199+00:00":
+      "Fake notes attached to job"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:56 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:56 GMT
+      request-context: appId=
+      trace-id: 7e673f0a26563d2604e96f1633e42e50
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:56 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{"id": "sanitized", "channelReference": "fakeChannelRef1", "jobStatus":
+      "queued", "enqueueTimeUtc": "2022-05-15T01:04:53.4300964+00:00", "channelId":
+      "fakeChannelId1", "classificationPolicyId": "sanitized", "queueId": "sanitized",
+      "priority": 10, "requestedWorkerSelectors": [{"expedite": false, "key": "FakeKey1",
+      "labelOperator": "equal", "value": true}, {"expedite": false, "key": "FakeKey2",
+      "labelOperator": "notEqual", "value": false}, {"expedite": false, "key": "FakeKey3",
+      "labelOperator": "lessThan", "value": 10}, {"expedite": false, "key": "FakeKey4",
+      "labelOperator": "lessThanEqual", "value": 10.01}, {"expedite": false, "key":
+      "FakeKey5", "labelOperator": "greaterThan", "value": 10}, {"expedite": false,
+      "key": "FakeKey6", "labelOperator": "greaterThanEqual", "value": 10}], "attachedWorkerSelectors":
+      [{"expedite": false, "key": "FakeKeyFromCp", "labelOperator": "equal", "value":
+      "FakeValue"}], "labels": {"key1": "JobKey", "key2": 10, "key3": true, "FakeKey":
+      "FakeWorkerValue"}, "assignments": {}, "tags": {"tag1": "WorkerGenericInfo"},
+      "notes": {"2022-05-13T16:59:04.531199+00:00": "Fake notes attached to job"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:56 GMT
+      etag: REDACTED
+      last-modified: Sun, 15 May 2022 01:04:56 GMT
+      request-context: appId=
+      trace-id: 425d6e4ee95e3c642987ad852a811620
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: '{"note": "Cancelling job after test cleanup after: test_update_job_w_cp",
+      "dispositionCode": "JobCancelledAsPartOfTestCleanUp"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '127'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:56 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body: '{}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Sun, 15 May 2022 01:04:57 GMT
+      request-context: appId=
+      trace-id: 4a9f28f910120d296d271e6a82900895
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      date: Sun, 15 May 2022 01:04:57 GMT
+      request-context: appId=
+      trace-id: 09658c8f0669071e93f9c4784469e438
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+    url: https://sanitized.int.communication.azure.net/routing/jobs/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      date: Sun, 15 May 2022 01:04:57 GMT
+      request-context: appId=
+      trace-id: f07307242e27b22c36eea3aee291a8c7
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+    url: https://sanitized.int.communication.azure.net/routing/classificationPolicies/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      date: Sun, 15 May 2022 01:04:57 GMT
+      request-context: appId=
+      trace-id: 85a50f4d6e5fcc228bfbcf20a9e64fd2
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      date: Sun, 15 May 2022 01:04:57 GMT
+      request-context: appId=
+      trace-id: 67301cf0aec58c5e8072487505c2deaf
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sun, 15 May 2022 01:04:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      date: Sun, 15 May 2022 01:04:57 GMT
+      request-context: appId=
+      trace-id: 52e7186df754eb03463de5b7eecf771d
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+version: 1

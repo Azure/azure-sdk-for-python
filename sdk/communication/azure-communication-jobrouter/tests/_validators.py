@@ -27,7 +27,8 @@ from azure.communication.jobrouter import (
     QueueAssignment,
     ChannelConfiguration,
     RouterWorker,
-    RouterWorkerState
+    RouterWorkerState,
+    RouterJob
 )
 
 
@@ -463,3 +464,12 @@ class RouterWorkerValidator(object):
 
         if 'available_for_offers' in kwargs:
             RouterWorkerValidator.validate_worker_availability(worker, kwargs.pop("available_for_offers"))
+
+
+class RouterJobValidator(object):
+    @staticmethod
+    def validate_job(
+            router_job,  # type: RouterJob
+            **kwargs,  # type: Any
+    ):
+        pass

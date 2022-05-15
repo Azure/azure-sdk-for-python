@@ -2069,10 +2069,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     def upsert_job(
         self,
         id,  # type: str
-        patch,  # type: _models.RouterJob
+        patch,  # type: _models.RouterJobInternal
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.RouterJob
+        # type: (...) -> _models.RouterJobInternal
         """Upsert a job.
 
         Upsert a job.
@@ -2081,10 +2081,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :type id: str
         :param patch: Model of job properties to be created or patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386.
-        :type patch: ~azure.communication.jobrouter.models.RouterJob
+        :type patch: ~azure.communication.jobrouter.models.RouterJobInternal
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJob, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: RouterJobInternal, or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -2097,9 +2097,9 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJob]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJobInternal]
 
-        _json = self._serialize.body(patch, 'RouterJob')
+        _json = self._serialize.body(patch, 'RouterJobInternal')
 
         request = build_upsert_job_request(
             id=id,
@@ -2128,7 +2128,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RouterJob', pipeline_response)
+        deserialized = self._deserialize('RouterJobInternal', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2144,7 +2144,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.RouterJob
+        # type: (...) -> _models.RouterJobInternal
         """Retrieves an existing job by Id.
 
         Retrieves an existing job by Id.
@@ -2152,8 +2152,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param id: Id of the job to retrieve.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJob, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: RouterJobInternal, or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -2165,7 +2165,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJob]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJobInternal]
 
         
         request = build_get_job_request(
@@ -2193,7 +2193,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RouterJob', pipeline_response)
+        deserialized = self._deserialize('RouterJobInternal', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

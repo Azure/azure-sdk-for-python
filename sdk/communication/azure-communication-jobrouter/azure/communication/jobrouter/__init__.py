@@ -2,6 +2,7 @@ from ._version import VERSION
 from ._router_client import RouterClient
 from ._generated.models import (
     ClassificationPolicy,
+    PagedClassificationPolicy,
     LabelOperator,
     QueueSelector,
     StaticQueueSelector,
@@ -23,29 +24,44 @@ from ._generated.models import (
     AzureFunctionRule,
     AzureFunctionRuleCredential,
     DistributionPolicy,
+    PagedDistributionPolicy,
     DistributionMode,
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode,
     ExceptionPolicy,
+    PagedExceptionPolicy,
     ExceptionRule,
     QueueLengthExceptionTrigger,
     WaitTimeExceptionTrigger,
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    RouterJob,
     QueueStatistics,
     ChannelConfiguration,
     WorkerStateSelector,
-    RouterWorkerState
+    RouterWorkerState,
+    JobStatus,
+    JobAssignment,
+    AcceptJobOfferResponse,
+    JobPositionDetails,
+    JobStateSelector,
 )
 
 from ._models import (
     LabelCollection,
     JobQueue,
-    RouterWorker,
     QueueAssignment,
+    PagedQueue,
+    RouterWorker,
+    PagedWorker,
+    RouterJob,
+    PagedJob,
+    DeclineJobOfferResponse,
+    ReclassifyJobResponse,
+    CancelJobResponse,
+    CompleteJobResponse,
+    CloseJobResponse,
 )
 
 from ._shared.user_credential import CommunicationTokenCredential
@@ -56,6 +72,7 @@ __all__ = [
 
     # Generated models
     'ClassificationPolicy',
+    'PagedClassificationPolicy',
     'LabelOperator',
     'QueueSelector',
     'StaticQueueSelector',
@@ -77,11 +94,13 @@ __all__ = [
     'AzureFunctionRule',
     'AzureFunctionRuleCredential',
     'DistributionPolicy',
+    'PagedDistributionPolicy',
     'DistributionMode',
     'BestWorkerMode',
     'LongestIdleMode',
     'RoundRobinMode',
     'ExceptionPolicy',
+    'PagedExceptionPolicy',
     'ExceptionRule',
     'QueueLengthExceptionTrigger',
     'WaitTimeExceptionTrigger',
@@ -93,12 +112,26 @@ __all__ = [
     'ChannelConfiguration',
     'WorkerStateSelector',
     'RouterWorkerState',
+    'JobStatus',
+    'JobAssignment',
+    'AcceptJobOfferResponse',
+    'JobPositionDetails',
+    'JobStateSelector',
 
     # Created models
     'LabelCollection',
     'JobQueue',
-    'RouterWorker',
     'QueueAssignment',
+    'PagedQueue',
+    'RouterWorker',
+    'PagedWorker',
+    'RouterJob',
+    'PagedJob',
+    'DeclineJobOfferResponse',
+    'ReclassifyJobResponse',
+    'CancelJobResponse',
+    'CompleteJobResponse',
+    'CloseJobResponse',
 
     # Credentials
     'CommunicationTokenCredential'

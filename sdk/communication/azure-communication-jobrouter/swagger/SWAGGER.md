@@ -96,6 +96,16 @@ directive:
     $["x-ms-client-name"] = "JobQueueInternal";
 ```
 
+### Rename PagedQueue to PagedJobQueueInternal
+```yaml
+directive:
+  from: swagger-document
+  where: '$.definitions.PagedQueue'
+  transform: >
+    $["x-ms-client-name"] = "PagedJobQueueInternal";
+```
+
+
 ### Rename RouterWorker to RouterWorkerInternal
 ```yaml
 directive:
@@ -103,4 +113,32 @@ directive:
   where: '$.definitions.RouterWorker'
   transform: >
     $["x-ms-client-name"] = "RouterWorkerInternal";
+```
+
+### Rename PagedWorker to PagedRouterWorkerInternal
+```yaml
+directive:
+  from: swagger-document
+  where: '$.definitions.PagedWorker'
+  transform: >
+    $["x-ms-client-name"] = "PagedRouterWorkerInternal";
+```
+
+
+### Rename RouterJob to RouterJobInternal
+```yaml
+directive:
+  from: swagger-document
+  where: '$.definitions.RouterJob'
+  transform: >
+    $["x-ms-client-name"] = "RouterJobInternal";
+```
+
+### Rename PagedJob to PagedRouterJobInternal
+```yaml
+directive:
+  from: swagger-document
+  where: '$.definitions.PagedJob'
+  transform: >
+    $["x-ms-client-name"] = "PagedRouterJobInternal";
 ```

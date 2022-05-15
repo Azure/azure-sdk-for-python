@@ -20,19 +20,30 @@ from .._generated.models import (
     DistributionPolicy,
     ExceptionPolicy,
     QueueStatistics,
-    WorkerStateSelector
+    WorkerStateSelector,
+    JobStateSelector,
+    AcceptJobOfferResponse,
+    JobPositionDetails,
 )
 from .._models import (
     LabelCollection,
     JobQueue,
-    RouterWorker
+    RouterWorker,
+    PagedWorker,
+    PagedQueue,
+    RouterJob,
+    PagedJob,
+    DeclineJobOfferResponse,
+    ReclassifyJobResponse,
+    CancelJobResponse,
+    CompleteJobResponse,
+    CloseJobResponse,
 )
 
 from .._version import SDK_MONIKER
-from .._utils import _add_repeatability_headers
 
 
-class RouterClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods
+class RouterClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create and update jobs, policies and workers.
@@ -206,7 +217,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     # endregion ExceptionPolicyAio
 
-#region DistributionPolicyAio
+    # region DistributionPolicyAio
 
     @distributed_trace_async
     async def upsert_distribution_policy(
@@ -326,9 +337,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs
         )
 
-#endregion DistributionPolicyAio
+    # endregion DistributionPolicyAio
 
-#region QueueAio
+    # region QueueAio
 
     @distributed_trace_async
     async def upsert_queue(
@@ -437,13 +448,13 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def list_queues(
             self,
             **kwargs: Any
-    ) -> AsyncItemPaged[JobQueue]:
-        #  type: (...) -> AsyncItemPaged[JobQueue]
+    ) -> AsyncItemPaged[PagedQueue]:
+        #  type: (...) -> AsyncItemPaged[PagedQueue]
         """Retrieves existing queues.
 
         :keyword int results_per_page: The maximum number of results to be returned per page.
-        :return: An iterator like instance of JobQueue
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.JobQueue]
+        :return: An iterator like instance of PagedQueue
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.PagedQueue]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -451,7 +462,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         return self._client.job_router.list_queues(
             maxpagesize = results_per_page,
-            cls = lambda objs: [JobQueue._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            cls = lambda objs: [PagedQueue._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs
         )
 
@@ -478,9 +489,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs
         )
 
-#endregion QueueAio
+    # endregion QueueAio
 
-#region ClassificationPolicyAio
+    # region ClassificationPolicyAio
 
     @distributed_trace_async
     async def upsert_classification_policy(
@@ -614,7 +625,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             id = identifier,
             **kwargs)
 
-#endregion ClassificationPolicyAio
+    # endregion ClassificationPolicyAio
 
     # region WorkerAio
 
@@ -712,9 +723,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def list_workers(
             self,
-            **kwargs  # type: Any
-    ) -> AsyncItemPaged[RouterWorker]:
-        #  type: (...) -> AsyncItemPaged[RouterWorker]
+            **kwargs: Any
+    ) -> AsyncItemPaged[PagedWorker]:
+        #  type: (...) -> AsyncItemPaged[PagedWorker]
         """Retrieves existing workers.
 
         :keyword status: If specified, select workers by worker status. Default value is "all".
@@ -735,8 +746,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :keyword int results_per_page: The maximum number of results to be returned per page.
 
-        :return: An iterator like instance of RouterWorker
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterWorker]
+        :return: An iterator like instance of PagedWorker
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.PagedWorker]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -762,7 +773,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             queue_id = queue_id,
             has_capacity = has_capacity,
             # pylint:disable=protected-access
-            cls = lambda objs: [RouterWorker._from_generated(x) for x in objs],
+            cls = lambda objs: [PagedWorker._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -788,7 +799,454 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             worker_id = identifier,
             **kwargs
         )
-    # endRegion WorkerAio
+
+    # endregion WorkerAio
+
+    # region JobAio
+
+    @distributed_trace_async
+    async def upsert_job(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> RouterJob:
+        #  type: (...) -> RouterJob
+        """Create or update a job.
+
+        :keyword router_job: An instance of RouterJob
+        :paramtype router_job: ~azure.communication.jobrouter.RouterJob
+
+        :keyword channel_reference: Reference to an external parent context, eg. call ID.
+        :paramtype channel_reference: str
+
+        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
+        :paramtype channel_id: str
+
+        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
+         job.
+        :paramtype classification_policy_id: str
+
+        :keyword queue_id: The Id of the Queue that this job is queued to.
+        :paramtype queue_id: str
+
+        :keyword priority: The priority of this job.
+        :paramtype priority: int
+
+        :keyword disposition_code: Reason code for cancelled or closed jobs.
+        :paramtype disposition_code: str
+
+        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
+         a worker must satisfy in order to process this job.
+        :paramtype requested_worker_selectors: List[~azure.communication.jobrouter.WorkerSelector]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: ~azure.communication.jobrouter.LabelCollection
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :paramtype tags: ~azure.communication.jobrouter.LabelCollection
+
+        :keyword notes: Notes attached to a job, sorted by timestamp.
+        :paramtype notes: Dict[~datetime.datetime, str]
+
+
+        :return RouterJob
+        :rtype ~azure.communication.jobrouter.RouterJob
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        router_job = kwargs.pop("router_job", None)
+
+        if not router_job:
+            channel_id = kwargs.pop('channel_id', None)
+            if not channel_id:
+                raise ValueError("channel_id cannot be None")
+
+            labels = kwargs.pop('labels', None)
+            if labels is not None:
+                labels = LabelCollection(labels)
+
+            tags = kwargs.pop('tags', None)
+            if tags is not None:
+                tags = LabelCollection(tags)
+
+            router_job = RouterJob(
+                channel_reference = kwargs.pop('channel_reference', None),
+                channel_id = channel_id,
+                classification_policy_id = kwargs.pop('classification_policy_id', None),
+                queue_id = kwargs.pop('queue_id', None),
+                priority = kwargs.pop('priority', None),
+                disposition_code = kwargs.pop('disposition_code', None),
+                requested_worker_selectors = kwargs.pop('requested_worker_selectors', None),
+                labels = labels,
+                tags = tags,
+                notes = kwargs.pop('notes', None)
+            )
+
+        return await self._client.job_router.upsert_job(
+            id = identifier,
+            patch = router_job._to_generated(),  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: RouterJob._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_job(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> RouterJob:
+        #  type: (...) -> RouterJob
+        """Retrieves an existing worker by Id.
+
+        :param str identifier: Id of the worker.
+
+        :return RouterJob
+        :rtype ~azure.communication.jobrouter.RouterJob
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.get_job(
+            id = identifier,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: RouterJob._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_jobs(
+            self,
+            **kwargs  # type: Any
+    ) -> AsyncItemPaged[PagedJob]:
+        #  type: (...) -> AsyncItemPaged[PagedJob]
+        """Retrieves list of jobs based on filter parameters.
+
+        :keyword status: If specified, filter jobs by status. Default value is "all".
+        :paramtype status: Union[str, ~azure.communication.jobrouter.JobStateSelector]
+          Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
+            classificationFailed, active, all
+
+        :keyword channel_id: If specified, filter jobs by channel. Default value is None.
+        :paramtype channel_id: str
+
+        :keyword queue_id: If specified, filter jobs by queue. Default value is None.
+        :paramtype queue_id: str
+
+        :keyword int results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of PagedJob
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.PagedJob]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        results_per_page = kwargs.pop("results_per_page", None)
+
+        status = kwargs.pop('status', None)
+        if status is None:
+            status = JobStateSelector.ALL
+        elif not isinstance(status, JobStateSelector):
+            try:
+                status = JobStateSelector.__getattr__(status)
+            except Exception:
+                raise ValueError(f"status: {status} is not acceptable")
+
+        channel_id = kwargs.pop('channel_id', None)
+        queue_id = kwargs.pop('queue_id', None)
+
+        return self._client.job_router.list_jobs(
+            maxpagesize = results_per_page,
+            status = status,
+            channel_id = channel_id,
+            queue_id = queue_id,
+            # pylint:disable=protected-access
+            cls = lambda objs: [PagedJob._from_generated(x) for x in objs],
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def delete_job(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> None:
+        # type: (...) -> None
+        """Delete a job by Id.
+
+        :param str identifier: Id of the job to delete.
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.delete_job(
+            id = identifier,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_in_queue_position(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> JobPositionDetails:
+        #  type: (...) -> JobPositionDetails
+        """Gets a job's position details.
+
+        :param str identifier: Id of the job.
+
+        :return: JobPositionDetails
+        :rtype: ~azure.communication.jobrouter.JobPositionDetails
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.get_in_queue_position(
+            id = identifier,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def close_job_action(
+            self,
+            identifier: str,
+            assignment_id: str,
+            **kwargs: Any
+    ) -> CloseJobResponse:
+        #  type: (...) -> CloseJobResponse
+        """Closes a completed job.
+
+        :param str identifier: Id of the job.
+
+        :param str assignment_id: The assignment within which the job is to be closed.
+
+        :keyword disposition_code: Indicates the outcome of the job, populate this field with your own
+         custom values. Default value is None.
+        :paramtype disposition_code: str
+
+        :keyword close_time: If not provided, worker capacity is released immediately along with a
+         JobClosedEvent notification. If provided, worker capacity is released along with a JobClosedEvent notification
+         at a future time. Default value is None.
+        :paramtype close_time: ~datetime.datetime
+
+        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
+         current timestamp. Default value is None.
+        :paramtype note: str
+
+        :return: CloseJobResponse
+        :rtype: ~azure.communication.jobrouter.CloseJobResponse
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        if not assignment_id:
+            raise ValueError("assignment_id cannot be None.")
+
+        disposition_code = kwargs.pop('disposition_code', None)
+        close_time = kwargs.pop('close_time', None)
+        note = kwargs.pop('note', None)
+
+        return await self._client.job_router.close_job_action(
+            id = identifier,
+            assignment_id = assignment_id,
+            disposition_code = disposition_code,
+            close_time = close_time,
+            note = note,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: CloseJobResponse._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def complete_job_action(
+            self,
+            identifier: str,
+            assignment_id: str,
+            **kwargs: Any
+    ) -> CompleteJobResponse:
+        #  type: (...) -> CompleteJobResponse
+        """Completes an assigned job.
+
+        :param str identifier: Id of the job.
+
+        :param str assignment_id: The assignment within the job to complete.
+
+        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with th
+         current timestamp. Default value is None.
+        :paramtype note: str
+
+        :return: CompleteJobResponse
+        :rtype: ~azure.communication.jobrouter.CompleteJobResponse
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        if not assignment_id:
+            raise ValueError("assignment_id cannot be None.")
+
+        note = kwargs.pop('note', None)
+
+        return await self._client.job_router.complete_job_action(
+            id = identifier,
+            assignment_id = assignment_id,
+            note = note,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: CompleteJobResponse._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def cancel_job_action(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> CancelJobResponse:
+        #  type: (...) -> CancelJobResponse
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
+
+        :param str identifier: Id of the job.
+
+        :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
+         current timestamp. Default value is None.
+        :paramtype note: str
+
+        :keyword disposition_code: Indicates the outcome of the job, populate this field with your own
+         custom values.
+         If not provided, default value of "Cancelled" is set. Default value is None.
+        :paramtype disposition_code: str
+
+        :return: CancelJobResponse
+        :rtype: ~azure.communication.jobrouter.CancelJobResponse
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        note = kwargs.pop('note', None)
+        disposition_code = kwargs.pop('disposition_code', None)
+
+        return await self._client.job_router.cancel_job_action(
+            id = identifier,
+            note = note,
+            disposition_code = disposition_code,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: CancelJobResponse._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def reclassify_job_action(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> ReclassifyJobResponse:
+        #  type: (...) -> ReclassifyJobResponse
+        """Reclassify a job.
+
+        :param str identifier: Id of the job.
+
+        :return: ReclassifyJobResponse
+        :rtype: ~azure.communication.jobrouter.ReclassifyJobResponse
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.reclassify_job_action(
+            id = identifier,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: ReclassifyJobResponse._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    # endregion JobAio
+
+    # region OfferAio
+
+    @distributed_trace_async
+    async def accept_job_action(
+            self,
+            worker_id: str,
+            offer_id: str,
+            **kwargs: Any
+    ) -> AcceptJobOfferResponse:
+        #  type: (...) -> AcceptJobOfferResponse
+        """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
+        already.
+
+        :param worker_id: Id of the worker.
+        :type worker_id: str
+        :param offer_id: Id of the offer.
+        :type offer_id: str
+
+        :return: AcceptJobOfferResponse
+        :rtype: ~azure.communication.jobrouter.AcceptJobOfferResponse
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not worker_id:
+            raise ValueError("worker_id cannot be None.")
+
+        if not offer_id:
+            raise ValueError("offer_id cannot be None.")
+
+        return await self._client.job_router.accept_job_action(
+            worker_id = worker_id,
+            offer_id = offer_id,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def decline_job_action(
+            self,
+            worker_id: str,
+            offer_id: str,
+            **kwargs: Any
+    ) -> DeclineJobOfferResponse:
+        #  type: (...) -> DeclineJobOfferResponse
+        """Declines an offer to work on a job.
+
+        :param worker_id: Id of the worker.
+        :type worker_id: str
+        :param offer_id: Id of the offer.
+        :type offer_id: str
+
+        :return: DeclineJobOfferResponse
+        :rtype: ~azure.communication.jobrouter.DeclineJobOfferResponse
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not worker_id:
+            raise ValueError("worker_id cannot be None.")
+
+        if not offer_id:
+            raise ValueError("offer_id cannot be None.")
+
+        return await self._client.job_router.decline_job_action(
+            worker_id = worker_id,
+            offer_id = offer_id,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_response, args: DeclineJobOfferResponse._from_generated(
+                deserialized_response),
+            **kwargs
+        )
+
+    # endregion OfferAio
 
     async def close(self) -> None:
         await self._client.close()

@@ -1237,7 +1237,7 @@ class JobCollection(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.PagedJob]
+    :vartype value: list[~azure.communication.jobrouter.models.PagedRouterJobInternal]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -1248,7 +1248,7 @@ class JobCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedJob]'},
+        'value': {'key': 'value', 'type': '[PagedRouterJobInternal]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -1258,7 +1258,7 @@ class JobCollection(msrest.serialization.Model):
     ):
         """
         :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.PagedJob]
+        :paramtype value: list[~azure.communication.jobrouter.models.PagedRouterJobInternal]
         """
         super(JobCollection, self).__init__(**kwargs)
         self.value = kwargs['value']
@@ -1795,7 +1795,64 @@ class PagedExceptionPolicy(msrest.serialization.Model):
         self.exception_rules = kwargs.get('exception_rules', None)
 
 
-class PagedJob(msrest.serialization.Model):
+class PagedJobQueueInternal(msrest.serialization.Model):
+    """A queue returned from a pageable list.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The Id of this queue.
+    :vartype id: str
+    :ivar name: The name of this queue.
+    :vartype name: str
+    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
+     is distributed to workers.
+    :vartype distribution_policy_id: str
+    :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
+     engines to make decisions.
+    :vartype labels: dict[str, any]
+    :ivar exception_policy_id: (Optional) The ID of the exception policy that determines various
+     job escalation rules.
+    :vartype exception_policy_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'distribution_policy_id': {'key': 'distributionPolicyId', 'type': 'str'},
+        'labels': {'key': 'labels', 'type': '{object}'},
+        'exception_policy_id': {'key': 'exceptionPolicyId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of this queue.
+        :paramtype name: str
+        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
+         job is distributed to workers.
+        :paramtype distribution_policy_id: str
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: dict[str, any]
+        :keyword exception_policy_id: (Optional) The ID of the exception policy that determines various
+         job escalation rules.
+        :paramtype exception_policy_id: str
+        """
+        super(PagedJobQueueInternal, self).__init__(**kwargs)
+        self.id = None
+        self.name = kwargs.get('name', None)
+        self.distribution_policy_id = kwargs.get('distribution_policy_id', None)
+        self.labels = kwargs.get('labels', None)
+        self.exception_policy_id = kwargs.get('exception_policy_id', None)
+
+
+class PagedRouterJobInternal(msrest.serialization.Model):
     """A job returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1893,7 +1950,7 @@ class PagedJob(msrest.serialization.Model):
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: dict[str, str]
         """
-        super(PagedJob, self).__init__(**kwargs)
+        super(PagedRouterJobInternal, self).__init__(**kwargs)
         self.id = None
         self.channel_reference = kwargs.get('channel_reference', None)
         self.job_status = None
@@ -1911,64 +1968,7 @@ class PagedJob(msrest.serialization.Model):
         self.notes = kwargs.get('notes', None)
 
 
-class PagedQueue(msrest.serialization.Model):
-    """A queue returned from a pageable list.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The Id of this queue.
-    :vartype id: str
-    :ivar name: The name of this queue.
-    :vartype name: str
-    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
-     is distributed to workers.
-    :vartype distribution_policy_id: str
-    :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions.
-    :vartype labels: dict[str, any]
-    :ivar exception_policy_id: (Optional) The ID of the exception policy that determines various
-     job escalation rules.
-    :vartype exception_policy_id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'distribution_policy_id': {'key': 'distributionPolicyId', 'type': 'str'},
-        'labels': {'key': 'labels', 'type': '{object}'},
-        'exception_policy_id': {'key': 'exceptionPolicyId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword name: The name of this queue.
-        :paramtype name: str
-        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
-         job is distributed to workers.
-        :paramtype distribution_policy_id: str
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-         engines to make decisions.
-        :paramtype labels: dict[str, any]
-        :keyword exception_policy_id: (Optional) The ID of the exception policy that determines various
-         job escalation rules.
-        :paramtype exception_policy_id: str
-        """
-        super(PagedQueue, self).__init__(**kwargs)
-        self.id = None
-        self.name = kwargs.get('name', None)
-        self.distribution_policy_id = kwargs.get('distribution_policy_id', None)
-        self.labels = kwargs.get('labels', None)
-        self.exception_policy_id = kwargs.get('exception_policy_id', None)
-
-
-class PagedWorker(msrest.serialization.Model):
+class PagedRouterWorkerInternal(msrest.serialization.Model):
     """A worker returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2047,7 +2047,7 @@ class PagedWorker(msrest.serialization.Model):
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: bool
         """
-        super(PagedWorker, self).__init__(**kwargs)
+        super(PagedRouterWorkerInternal, self).__init__(**kwargs)
         self.id = None
         self.state = None
         self.queue_assignments = kwargs.get('queue_assignments', None)
@@ -2167,7 +2167,7 @@ class QueueCollection(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.PagedQueue]
+    :vartype value: list[~azure.communication.jobrouter.models.PagedJobQueueInternal]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -2178,7 +2178,7 @@ class QueueCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedQueue]'},
+        'value': {'key': 'value', 'type': '[PagedJobQueueInternal]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -2188,7 +2188,7 @@ class QueueCollection(msrest.serialization.Model):
     ):
         """
         :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.PagedQueue]
+        :paramtype value: list[~azure.communication.jobrouter.models.PagedJobQueueInternal]
         """
         super(QueueCollection, self).__init__(**kwargs)
         self.value = kwargs['value']
@@ -2474,7 +2474,7 @@ class RoundRobinMode(DistributionMode):
         self.kind = 'round-robin'  # type: str
 
 
-class RouterJob(msrest.serialization.Model):
+class RouterJobInternal(msrest.serialization.Model):
     """A unit of work to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2572,7 +2572,7 @@ class RouterJob(msrest.serialization.Model):
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: dict[str, str]
         """
-        super(RouterJob, self).__init__(**kwargs)
+        super(RouterJobInternal, self).__init__(**kwargs)
         self.id = None
         self.channel_reference = kwargs.get('channel_reference', None)
         self.job_status = None
@@ -3117,7 +3117,7 @@ class WorkerCollection(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.PagedWorker]
+    :vartype value: list[~azure.communication.jobrouter.models.PagedRouterWorkerInternal]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -3128,7 +3128,7 @@ class WorkerCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PagedWorker]'},
+        'value': {'key': 'value', 'type': '[PagedRouterWorkerInternal]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -3138,7 +3138,7 @@ class WorkerCollection(msrest.serialization.Model):
     ):
         """
         :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.PagedWorker]
+        :paramtype value: list[~azure.communication.jobrouter.models.PagedRouterWorkerInternal]
         """
         super(WorkerCollection, self).__init__(**kwargs)
         self.value = kwargs['value']

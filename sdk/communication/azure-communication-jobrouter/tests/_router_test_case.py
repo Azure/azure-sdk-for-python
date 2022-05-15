@@ -68,12 +68,14 @@ class RouterTestCase(RouterTestCaseBase):
             conn_str = self.connection_str,
             http_logging_policy=get_http_logging_policy())
 
-    def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
+    def _poll_until_no_exception(self, fn, expected_exception, *args, **kwargs):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
+        max_retries = kwargs.pop('max_retries', 20)
+        retry_delay = kwargs.pop('retry_delay', 3)
 
         for i in range(max_retries):
             try:
-                return fn()
+                return fn(*args, **kwargs)
             except expected_exception:
                 if i == max_retries - 1:
                     raise

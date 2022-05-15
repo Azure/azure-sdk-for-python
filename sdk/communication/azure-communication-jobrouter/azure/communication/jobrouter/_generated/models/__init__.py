@@ -42,9 +42,9 @@ try:
     from ._models_py3 import PagedClassificationPolicy
     from ._models_py3 import PagedDistributionPolicy
     from ._models_py3 import PagedExceptionPolicy
-    from ._models_py3 import PagedJob
-    from ._models_py3 import PagedQueue
-    from ._models_py3 import PagedWorker
+    from ._models_py3 import PagedJobQueueInternal
+    from ._models_py3 import PagedRouterJobInternal
+    from ._models_py3 import PagedRouterWorkerInternal
     from ._models_py3 import PassThroughQueueSelector
     from ._models_py3 import PassThroughWorkerSelector
     from ._models_py3 import QueueCollection
@@ -55,7 +55,7 @@ try:
     from ._models_py3 import QueueWeightedAllocation
     from ._models_py3 import ReclassifyExceptionAction
     from ._models_py3 import RoundRobinMode
-    from ._models_py3 import RouterJob
+    from ._models_py3 import RouterJobInternal
     from ._models_py3 import RouterRule
     from ._models_py3 import RouterWorkerInternal
     from ._models_py3 import RuleEngineQueueSelector
@@ -108,9 +108,9 @@ except (SyntaxError, ImportError):
     from ._models import PagedClassificationPolicy  # type: ignore
     from ._models import PagedDistributionPolicy  # type: ignore
     from ._models import PagedExceptionPolicy  # type: ignore
-    from ._models import PagedJob  # type: ignore
-    from ._models import PagedQueue  # type: ignore
-    from ._models import PagedWorker  # type: ignore
+    from ._models import PagedJobQueueInternal  # type: ignore
+    from ._models import PagedRouterJobInternal  # type: ignore
+    from ._models import PagedRouterWorkerInternal  # type: ignore
     from ._models import PassThroughQueueSelector  # type: ignore
     from ._models import PassThroughWorkerSelector  # type: ignore
     from ._models import QueueCollection  # type: ignore
@@ -121,7 +121,7 @@ except (SyntaxError, ImportError):
     from ._models import QueueWeightedAllocation  # type: ignore
     from ._models import ReclassifyExceptionAction  # type: ignore
     from ._models import RoundRobinMode  # type: ignore
-    from ._models import RouterJob  # type: ignore
+    from ._models import RouterJobInternal  # type: ignore
     from ._models import RouterRule  # type: ignore
     from ._models import RouterWorkerInternal  # type: ignore
     from ._models import RuleEngineQueueSelector  # type: ignore
@@ -187,9 +187,9 @@ __all__ = [
     'PagedClassificationPolicy',
     'PagedDistributionPolicy',
     'PagedExceptionPolicy',
-    'PagedJob',
-    'PagedQueue',
-    'PagedWorker',
+    'PagedJobQueueInternal',
+    'PagedRouterJobInternal',
+    'PagedRouterWorkerInternal',
     'PassThroughQueueSelector',
     'PassThroughWorkerSelector',
     'QueueCollection',
@@ -200,7 +200,7 @@ __all__ = [
     'QueueWeightedAllocation',
     'ReclassifyExceptionAction',
     'RoundRobinMode',
-    'RouterJob',
+    'RouterJobInternal',
     'RouterRule',
     'RouterWorkerInternal',
     'RuleEngineQueueSelector',
