@@ -93,6 +93,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             A connection string to an Azure Communication Service resource.
         :returns: Instance of RouterClient.
         :rtype: ~azure.communication.RouterClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a RouterClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -124,6 +133,16 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return ExceptionPolicy
         :rtype ~azure.communication.jobrouter.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START create_and_update_exception_policy]
+                :end-before: [END create_and_update_exception_policy]
+                :language: python
+                :dedent: 8
+                :caption: Using a RouterClient to create and update an exception policy
         """
         if not identifier:
             raise ValueError("identifier cannot be None.")
@@ -160,6 +179,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return DistributionPolicy
         :rtype ~azure.communication.jobrouter.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START get_exception_policy]
+                :end-before: [END get_exception_policy]
+                :language: python
+                :dedent: 8
+                :caption: Using a RouterClient to get an exception policy
         """
         if not identifier:
             raise ValueError("identifier cannot be None.")
@@ -181,6 +209,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: An iterator like instance of ExceptionPolicy
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.ExceptionPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START list_exception_policies]
+                :end-before: [END list_exception_policies]
+                :language: python
+                :dedent: 8
+                :caption: Using a RouterClient to list exception policies
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -203,6 +240,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START delete_exception_policy]
+                :end-before: [END delete_exception_policy]
+                :language: python
+                :dedent: 8
+                :caption: Using a RouterClient to delete a exception policy
         """
 
         if not identifier:
