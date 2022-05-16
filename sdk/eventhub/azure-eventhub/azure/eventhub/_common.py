@@ -94,19 +94,15 @@ _SYS_PROP_KEYS_TO_MSG_PROPERTIES = (
 
 class EventData(object):
     """The EventData class is a container for event content.
-
     :param body: The data to send in a single message. body can be type of str or bytes.
     :type body: str or bytes
-
     .. admonition:: Example:
-
         .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python
             :dedent: 4
             :caption: Create instances of EventData
-
     """
 
     def __init__(
@@ -187,9 +183,7 @@ class EventData(object):
         # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
         # pylint:disable=protected-access
         """Internal use only.
-
         Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
-
         :param ~uamqp.Message message: A received uamqp message.
         :param ~azure.eventhub.amqp.AmqpAnnotatedMessage message: An amqp annotated message.
         :rtype: ~azure.eventhub.EventData
@@ -232,7 +226,6 @@ class EventData(object):
     def sequence_number(self):
         # type: () -> Optional[int]
         """The sequence number of the event.
-
         :rtype: int
         """
         return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
@@ -241,7 +234,6 @@ class EventData(object):
     def offset(self):
         # type: () -> Optional[str]
         """The offset of the event.
-
         :rtype: str
         """
         try:
@@ -253,7 +245,6 @@ class EventData(object):
     def enqueued_time(self):
         # type: () -> Optional[datetime.datetime]
         """The enqueued timestamp of the event.
-
         :rtype: datetime.datetime
         """
         timestamp = self._raw_amqp_message.annotations.get(PROP_TIMESTAMP, None)
@@ -265,7 +256,6 @@ class EventData(object):
     def partition_key(self):
         # type: () -> Optional[bytes]
         """The partition key of the event.
-
         :rtype: bytes
         """
         try:
@@ -277,7 +267,6 @@ class EventData(object):
     def properties(self):
         # type: () -> Dict[Union[str, bytes], Any]
         """Application-defined properties on the event.
-
         :rtype: dict
         """
         return self._raw_amqp_message.application_properties
@@ -286,7 +275,6 @@ class EventData(object):
     def properties(self, value):
         # type: (Dict[Union[str, bytes], Any]) -> None
         """Application-defined properties on the event.
-
         :param dict value: The application properties for the EventData.
         """
         properties = None if value is None else dict(value)
@@ -296,10 +284,8 @@ class EventData(object):
     def system_properties(self):
         # type: () -> Dict[bytes, Any]
         """Metadata set by the Event Hubs Service associated with the event.
-
         An EventData could have some or all of the following meta data depending on the source
         of the event data.
-
             - b"x-opt-sequence-number" (int)
             - b"x-opt-offset" (bytes)
             - b"x-opt-partition-key" (bytes)
@@ -317,7 +303,6 @@ class EventData(object):
             - b"group-id" (bytes)
             - b"group-sequence" (bytes)
             - b"reply-to-group-id" (bytes)
-
         :rtype: dict
         """
 
@@ -341,7 +326,6 @@ class EventData(object):
         the body could be List or Iterable[List].
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
         the body could be any type.
-
         :rtype: int or bool or float or bytes or str or dict or list or uuid.UUID
         """
         try:
@@ -353,7 +337,6 @@ class EventData(object):
     def body_type(self):
         # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
-
         :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return self._raw_amqp_message.body_type
@@ -361,7 +344,6 @@ class EventData(object):
     def body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         """The content of the event as a string, if the data is of a compatible type.
-
         :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: str
@@ -385,7 +367,6 @@ class EventData(object):
     def body_as_json(self, encoding="UTF-8"):
         # type: (str) -> Dict[str, Any]
         """The content of the event loaded as a JSON object, if the data is compatible.
-
         :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: Dict[str, Any]
@@ -466,23 +447,18 @@ class EventData(object):
 
 class EventDataBatch(object):
     """A batch of events.
-
     Sending events in a batch is more performant than sending individual events.
     EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
-
     Use the `add` method to add events until the maximum batch size limit in bytes has been reached -
     at which point a `ValueError` will be raised.
     Use the `send_batch` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
     for sending.
-
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
-
     **WARNING: Updating the value of the instance variable max_size_in_bytes on an instantiated EventDataBatch object
     is HIGHLY DISCOURAGED. The updated max_size_in_bytes value may conflict with the maximum size of events allowed
     by the Event Hubs service and result in a sending failure.**
-
     :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
     :param str partition_id: The specific partition ID to send to.
     :param str partition_key: With the given partition_key, event data will be sent to a particular partition of the
@@ -525,9 +501,10 @@ class EventDataBatch(object):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
         outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
         batch_data_instance = cls(partition_key=partition_key)
-        batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
-            outgoing_batch_data
-        )
+        
+        for event_data in outgoing_batch_data:
+            batch_data_instance.add(event_data)
+        
         return batch_data_instance
 
     def _load_events(self, events):
@@ -545,7 +522,6 @@ class EventDataBatch(object):
     def size_in_bytes(self):
         # type: () -> int
         """The combined size of the events in the batch, in bytes.
-
         :rtype: int
         """
         return self._size
@@ -553,11 +529,9 @@ class EventDataBatch(object):
     def add(self, event_data):
         # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
         """Try to add an EventData to the batch.
-
         The total size of an added event is the sum of its body, properties, etc.
         If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
         be raised.
-
         :param event_data: The EventData to add to the batch.
         :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
         :rtype: None
