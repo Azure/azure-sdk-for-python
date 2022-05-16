@@ -125,9 +125,9 @@ class EventHubProducer(
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
-        transport_type=self._client._config.transport_type # pylint:disable=protected-access
+        transport_type = self._client._config.transport_type   # pylint:disable=protected-access
         hostname = self._client._address.hostname  # pylint: disable=protected-access
-        if transport_type.name is 'AmqpOverWebsocket':
+        if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
         self._handler = SendClient(
             hostname,

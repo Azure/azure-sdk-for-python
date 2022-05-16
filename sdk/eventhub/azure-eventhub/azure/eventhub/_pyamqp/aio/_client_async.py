@@ -21,7 +21,6 @@ from ._management_operation_async import ManagementOperation
 from ._receiver_async import ReceiverLink
 from ._sender_async import SenderLink
 from ._session_async import Session
-from ._sasl_async import SASLTransport
 from ._cbs_async import CBSAuthenticator
 from ..client import AMQPClient as AMQPClientSync
 from ..client import ReceiveClient as ReceiveClientSync
@@ -176,23 +175,6 @@ class AMQPClientAsync(AMQPClientSync):
                     absolute_timeout -= (end_time - start_time)
         raise retry_settings['history'][-1]
 
-    async def _keep_alive_worker_async(self):
-        interval = 10 if self._keep_alive is True else self._keep_alive
-        start_time = time.time()
-        try:
-            while self._connection and not self._shutdown:
-                current_time = time.time()
-                elapsed_time = (current_time - start_time)
-                if elapsed_time >= interval:
-                    _logger.info("Keeping %r connection alive. %r",
-                                 self.__class__.__name__,
-                                 self._connection._container_id)
-                    await self._connection._get_remote_timeout(current_time)
-                    start_time = current_time
-                await asyncio.sleep(1)
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
-
     async def open_async(self):
         """Asynchronously open the client. The client can create a new Connection
         or an existing Connection can be passed in. This existing Connection
@@ -217,10 +199,10 @@ class AMQPClientAsync(AMQPClientSync):
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
                 idle_timeout=self._idle_timeout,
-                transport_type=self._transport_type,
-                http_proxy=self._http_proxy,
                 properties=self._properties,
-                network_trace=self._network_trace
+                network_trace=self._network_trace,
+                transport_type=self._transport_type,
+                http_proxy=self._http_proxy
             )
             await self._connection.open()
         if not self._session:
@@ -236,8 +218,6 @@ class AMQPClientAsync(AMQPClientSync):
                 auth_timeout=self._auth_timeout
             )
             await self._cbs_authenticator.open()
-        if self._keep_alive:
-            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_worker_async())
         self._shutdown = False
 
     async def close_async(self):
@@ -249,9 +229,6 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
         await self._close_link_async(close=True)
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()

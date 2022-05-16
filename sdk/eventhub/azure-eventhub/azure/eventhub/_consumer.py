@@ -136,10 +136,6 @@ class EventHubConsumer(
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
-        transport_type = self._client._config.transport_type # pylint:disable=protected-access
-        hostname = urlparse(source.address).hostname
-        if transport_type.name is 'AmqpOverWebsocket':
-            hostname += '/$servicebus/websocket/'
         source = Source(address=self._source, filters={})
         if self._offset is not None:
             filter_key = ApacheFilters.selector_filter
@@ -153,6 +149,11 @@ class EventHubConsumer(
                 )
             )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
+
+        transport_type = self._client._config.transport_type # pylint:disable=protected-access
+        hostname = urlparse(source.address).hostname
+        if transport_type.name == 'AmqpOverWebsocket':
+            hostname += '/$servicebus/websocket/'
 
         self._handler = ReceiveClient(
             hostname,

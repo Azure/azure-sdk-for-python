@@ -439,7 +439,7 @@ class _AbstractTransport(object):
 
     def receive_frame(self, *args, **kwargs):
         try:
-            header, channel, payload = self.read(**kwargs) 
+            header, channel, payload = self.read(**kwargs)
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -645,7 +645,6 @@ class TCPTransport(_AbstractTransport):
         result, self._read_buffer = rbuf[:n], rbuf[n:]
         return result
 
-
 def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     """Create transport.
 
@@ -659,8 +658,7 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
-        ):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
         self._host = host
@@ -694,9 +692,9 @@ class WebSocketTransport(_AbstractTransport):
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
-    def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
+    def _read(self, n, initial=False, buffer=None, **kwargs):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
-        
+
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)

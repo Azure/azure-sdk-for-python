@@ -189,11 +189,9 @@ class EventHubProducerClient(ClientBaseAsync):
         *,
         eventhub_name: Optional[str] = None,
         logging_enable: bool = False,
-        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -250,11 +248,9 @@ class EventHubProducerClient(ClientBaseAsync):
             conn_str,
             eventhub_name=eventhub_name,
             logging_enable=logging_enable,
-            http_proxy=http_proxy,
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             **kwargs
         )
         return cls(**constructor_args)
