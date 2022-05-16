@@ -10,6 +10,7 @@ from ._workspaces_operations import WorkspacesOperations
 from ._operations import Operations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._outbound_network_dependencies_endpoints_operations import OutboundNetworkDependenciesEndpointsOperations
 from ._vnet_peering_operations import VNetPeeringOperations
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     'Operations',
     'PrivateLinkResourcesOperations',
     'PrivateEndpointConnectionsOperations',
+    'OutboundNetworkDependenciesEndpointsOperations',
     'VNetPeeringOperations',
 ]

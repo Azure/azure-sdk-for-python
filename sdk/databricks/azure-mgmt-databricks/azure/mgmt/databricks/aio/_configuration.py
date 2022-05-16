@@ -10,7 +10,7 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-from azure.mgmt.core.policies import ARMHttpLoggingPolicy
+from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
 
 from .._version import VERSION
 
@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureDatabricksManagementClientConfiguration(Configuration):
-    """Configuration for AzureDatabricksManagementClient.
+class DatabricksClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for DatabricksClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -29,6 +29,9 @@ class AzureDatabricksManagementClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2021-04-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -37,14 +40,17 @@ class AzureDatabricksManagementClientConfiguration(Configuration):
         subscription_id: str,
         **kwargs: Any
     ) -> None:
+        super(DatabricksClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-04-01-preview")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(AzureDatabricksManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-databricks/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -63,4 +69,4 @@ class AzureDatabricksManagementClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)
