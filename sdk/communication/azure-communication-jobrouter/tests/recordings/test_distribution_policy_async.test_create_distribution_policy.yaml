@@ -12,26 +12,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:05 GMT
+      - Mon, 16 May 2022 07:34:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_create_dp_async", "offerTTLSeconds": 10,
+    body: '{"id": "sanitized", "name": "tst_create_dp_async", "offerTtlSeconds": 10,
       "mode": {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters":
       ["jobLabels", "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
       true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
       false}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Sat, 07 May 2022 00:34:44 GMT
+      date: Mon, 16 May 2022 07:34:27 GMT
       etag: REDACTED
-      last-modified: Sat, 07 May 2022 00:34:57 GMT
+      last-modified: Mon, 16 May 2022 07:34:27 GMT
       request-context: appId=
-      trace-id: f6b9a1383db90fbc132e86986b6295bc
+      trace-id: f54858dca567d4eef709d0be02e236b3
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -51,24 +50,23 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:06 GMT
+      - Mon, 16 May 2022 07:34:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_create_dp_async", "offerTTLSeconds": 10,
+    body: '{"id": "sanitized", "name": "tst_create_dp_async", "offerTtlSeconds": 10,
       "mode": {"kind": "longest-idle", "minConcurrentOffers": 1, "maxConcurrentOffers":
       1, "bypassSelectors": false}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Sat, 07 May 2022 00:34:44 GMT
+      date: Mon, 16 May 2022 07:34:27 GMT
       etag: REDACTED
-      last-modified: Sat, 07 May 2022 00:34:57 GMT
+      last-modified: Mon, 16 May 2022 07:34:27 GMT
       request-context: appId=
-      trace-id: 40f0c4aca40d221bfd2e6ed62245de19
+      trace-id: c8f9f58de6e40c43c6fe822ded52e0a2
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -88,24 +86,23 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:06 GMT
+      - Mon, 16 May 2022 07:34:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_create_dp_async", "offerTTLSeconds": 10,
+    body: '{"id": "sanitized", "name": "tst_create_dp_async", "offerTtlSeconds": 10,
       "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
       1, "bypassSelectors": false}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Sat, 07 May 2022 00:34:44 GMT
+      date: Mon, 16 May 2022 07:34:27 GMT
       etag: REDACTED
-      last-modified: Sat, 07 May 2022 00:34:57 GMT
+      last-modified: Mon, 16 May 2022 07:34:27 GMT
       request-context: appId=
-      trace-id: d097fff9eb364290a928434ccddf107f
+      trace-id: ab348b45a8a49b56f3e45d034b875eac
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -120,7 +117,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:06 GMT
+      - Mon, 16 May 2022 07:34:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -130,10 +127,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
-      date: Sat, 07 May 2022 00:34:49 GMT
+      date: Mon, 16 May 2022 07:34:27 GMT
       request-context: appId=
-      trace-id: 227b0596ec27693b9e1cac7fe4492d6b
+      trace-id: edaf1e7e0d85c58756d0e202f65ce162
       x-cache: CONFIG_NOCACHE
     status:
       code: 204

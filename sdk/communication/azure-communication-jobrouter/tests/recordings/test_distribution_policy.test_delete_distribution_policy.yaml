@@ -16,13 +16,13 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:34:59 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_delete_dp", "offerTTLSeconds": 10, "mode":
+    body: '{"id": "sanitized", "name": "tst_delete_dp", "offerTtlSeconds": 10, "mode":
       {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters": ["jobLabels",
       "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
       true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
@@ -33,15 +33,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       etag:
       - REDACTED
       last-modified:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       request-context:
       - appId=
       trace-id:
-      - 6e4e49e150d1c9dc7b37058799a3bab3
+      - ffe28d09bd1b49ef7ed9360fbad07ba1
       transfer-encoding:
       - chunked
       x-cache:
@@ -63,7 +63,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:00 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -75,11 +75,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       request-context:
       - appId=
       trace-id:
-      - e65cd9d19a638debaed71a32805c5f14
+      - 9a8018256c9f39db701083f1ea15e80e
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -97,7 +97,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:00 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -111,11 +111,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       request-context:
       - appId=
       trace-id:
-      - 99c4d369b07f277e8c9112e900b440b3
+      - 8543779841515929f7dea639d0b86cbb
       transfer-encoding:
       - chunked
       x-cache:
@@ -140,13 +140,13 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:00 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_delete_dp", "offerTTLSeconds": 10, "mode":
+    body: '{"id": "sanitized", "name": "tst_delete_dp", "offerTtlSeconds": 10, "mode":
       {"kind": "longest-idle", "minConcurrentOffers": 1, "maxConcurrentOffers": 1,
       "bypassSelectors": false}}'
     headers:
@@ -155,15 +155,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       etag:
       - REDACTED
       last-modified:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       request-context:
       - appId=
       trace-id:
-      - b0f900d82da5e4ced95b1e493b50ff4e
+      - 153e8a634af5d963d4eaac5a999c7e1a
       transfer-encoding:
       - chunked
       x-cache:
@@ -185,7 +185,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:00 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -197,11 +197,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       request-context:
       - appId=
       trace-id:
-      - bc652240c2e4bbd633463151527c94c2
+      - d226f87ea5fc4dd3c567d1f7a3992177
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -219,7 +219,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:00 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -233,11 +233,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 May 2022 00:34:51 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       request-context:
       - appId=
       trace-id:
-      - 5a46707cd2452b249478ed6f8a501784
+      - 77654b7d105a770584b3e16d3b1124f4
       transfer-encoding:
       - chunked
       x-cache:
@@ -262,13 +262,13 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:00 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_delete_dp", "offerTTLSeconds": 10, "mode":
+    body: '{"id": "sanitized", "name": "tst_delete_dp", "offerTtlSeconds": 10, "mode":
       {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers": 1,
       "bypassSelectors": false}}'
     headers:
@@ -277,15 +277,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 May 2022 00:34:52 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       etag:
       - REDACTED
       last-modified:
-      - Sat, 07 May 2022 00:34:52 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       request-context:
       - appId=
       trace-id:
-      - 13e29875cf7f4e0d01a160fe33705371
+      - 7077b85327cb2310cef36a4755ef4ed8
       transfer-encoding:
       - chunked
       x-cache:
@@ -307,7 +307,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:01 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -319,11 +319,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Sat, 07 May 2022 00:34:52 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       request-context:
       - appId=
       trace-id:
-      - 335fdb92cca85b021bf0d683dd9128bf
+      - 3ee337ab5cccd6fa017919ed21698d89
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -341,7 +341,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Sat, 07 May 2022 00:35:01 GMT
+      - Mon, 16 May 2022 07:34:19 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -355,11 +355,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 07 May 2022 00:34:52 GMT
+      - Mon, 16 May 2022 07:34:20 GMT
       request-context:
       - appId=
       trace-id:
-      - 11d56f55b5247624c8c658b7af47b608
+      - a2e1a4fd0f3c6777d47fd0bca3c133c2
       transfer-encoding:
       - chunked
       x-cache:

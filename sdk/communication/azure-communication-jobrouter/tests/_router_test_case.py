@@ -25,8 +25,12 @@ from azure.communication.jobrouter import (
 
 
 class RouterTestCaseBase(CommunicationTestCase):
+    def __init__(self, method_name, *args, **kwargs):
+        super(RouterTestCaseBase, self).__init__(method_name, *args, **kwargs)
+
     def setUp(self):
         super(RouterTestCaseBase, self).setUp()
+
         self.recording_processors.extend([
             BodyReplacerProcessor(keys = ["id",
                                           "distributionPolicyId",
