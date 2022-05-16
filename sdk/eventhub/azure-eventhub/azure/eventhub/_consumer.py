@@ -150,19 +150,12 @@ class EventHubConsumer(
             )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
-        transport_type = self._client._config.transport_type # pylint:disable=protected-access
-        hostname = urlparse(source.address).hostname
-        if transport_type.name == 'AmqpOverWebsocket':
-            hostname += '/$servicebus/websocket/'
-
         self._handler = ReceiveClient(
-            hostname,
+            urlparse(source.address).hostname,
             source,
             auth=auth,
             idle_timeout=self._idle_timeout,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
-            transport_type=transport_type,
-            http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
             link_credit=self._prefetch,
             link_properties=self._link_properties,
             retry_policy=self._retry_policy,

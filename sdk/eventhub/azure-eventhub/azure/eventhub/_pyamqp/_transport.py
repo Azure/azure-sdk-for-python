@@ -51,7 +51,7 @@ import certifi
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
-from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, TransportType, AMQP_WS_SUBPROTOCOL
+from .constants import TLS_HEADER_FRAME
 
 
 try:
@@ -439,7 +439,7 @@ class _AbstractTransport(object):
 
     def receive_frame(self, *args, **kwargs):
         try:
-            header, channel, payload = self.read(**kwargs)
+            header, channel, payload = self.read(**kwargs) 
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -456,6 +456,7 @@ class _AbstractTransport(object):
         else:
             encoded_channel = struct.pack('>H', channel)
             data = header + encoded_channel + performative
+
         self.write(data)
 
     def negotiate(self, encode, decode):
@@ -645,81 +646,12 @@ class TCPTransport(_AbstractTransport):
         result, self._read_buffer = rbuf[:n], rbuf[n:]
         return result
 
-def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
+
+def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     """Create transport.
 
     Given a few parameters from the Connection constructor,
     select and create a subclass of _AbstractTransport.
     """
-    if transport_type == TransportType.AmqpOverWebsocket:
-        transport = WebSocketTransport
-    else:
-        transport = SSLTransport if ssl else TCPTransport
+    transport = SSLTransport if ssl else TCPTransport
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
-
-class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
-        self.sslopts = ssl if isinstance(ssl, dict) else {}
-        self._connect_timeout = connect_timeout
-        self._host = host
-        super().__init__(
-            host, port, connect_timeout, **kwargs
-            )
-        self.ws = None
-        self._http_proxy = kwargs.get('http_proxy', None)
-
-    def connect(self):
-        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
-        if self._http_proxy:
-            http_proxy_host = self._http_proxy['proxy_hostname']
-            http_proxy_port = self._http_proxy['proxy_port']
-            username = self._http_proxy.get('username', None)
-            password = self._http_proxy.get('password', None)
-            if username or password:
-                http_proxy_auth = (username, password)
-        try:
-            from websocket import create_connection
-            self.ws = create_connection(
-                url="wss://{}".format(self._host),
-                subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self._connect_timeout,
-                skip_utf8_validation=True,
-                sslopt=self.sslopts,
-                http_proxy_host=http_proxy_host,
-                http_proxy_port=http_proxy_port,
-                http_proxy_auth=http_proxy_auth
-            )
-        except ImportError:
-            raise ValueError("Please install websocket-client library to use websocket transport.")
-
-    def _read(self, n, initial=False, buffer=None, **kwargs):  # pylint: disable=unused-arguments
-        """Read exactly n bytes from the peer."""
-
-        length = 0
-        view = buffer or memoryview(bytearray(n))
-        nbytes = self._read_buffer.readinto(view)
-        length += nbytes
-        n -= nbytes
-        while n:
-            data = self.ws.recv()
-
-            if len(data) <= n:
-                view[length: length + len(data)] = data
-                n -= len(data)
-            else:
-                view[length: length + n] = data[0:n]
-                self._read_buffer = BytesIO(data[n:])
-                n = 0
-        return view
-
-    def _shutdown_transport(self):
-        """Do any preliminary work in shutting down the connection."""
-        self.ws.close()
-
-    def _write(self, s):
-        """Completely write a string to the peer.
-        ABNF, OPCODE_BINARY = 0x2
-        See http://tools.ietf.org/html/rfc5234
-        http://tools.ietf.org/html/rfc6455#section-5.2
-        """
-        self.ws.send_binary(s)

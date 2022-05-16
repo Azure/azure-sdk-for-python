@@ -41,8 +41,6 @@ from ._constants import (
     READ_OPERATION
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -135,7 +133,7 @@ def _parse_conn_str(conn_str, **kwargs):
 
 def _generate_sas_token(uri, policy, key, expiry=None):
     # type: (str, str, str, Optional[timedelta]) -> AccessToken
-    """Create a shared access signiture token as a string literal.
+    """Create a shared access signature token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
     """
@@ -186,6 +184,7 @@ class EventHubSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
 
         return _generate_sas_token(scopes[0], self.policy, self.key)
+
 
 
 class EventhubAzureNamedKeyTokenCredential(object):
@@ -261,9 +260,19 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+    CredentialTypes = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        EventHubSharedKeyCredential,
+        TokenCredential
+    ]
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
+        # type: (str, str, CredentialTypes, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -324,6 +333,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
             timeout=self._config.auth_timeout,
+            http_proxy=self._config.http_proxy,
+            transport_type=self._config.transport_type,
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify,
@@ -363,19 +374,13 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
+        # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
-            hostname = self._address.hostname
-            if self._config.transport_type.name == 'AmqpOverWebsocket':
-                hostname += '/$servicebus/websocket/'
             mgmt_client = AMQPClient(
-                hostname,
-                auth=mgmt_auth,
-                debug=self._config.network_tracing,
-                transport_type=self._config.transport_type,
-                http_proxy=self._config.http_proxy
+                self._address.hostname, auth=mgmt_auth, debug=self._config.network_tracing
             )
             try:
                 mgmt_client.open()
