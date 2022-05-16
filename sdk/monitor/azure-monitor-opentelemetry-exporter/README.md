@@ -160,7 +160,7 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 log_emitter_provider = LogEmitterProvider()
-set_log_emitter_provider(LogEmitterProvider())
+set_log_emitter_provider(log_emitter_provider)
 
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -197,7 +197,7 @@ from opentelemetry.sdk._logs.export import BatchLogProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 log_emitter_provider = LogEmitterProvider()
-set_log_emitter_provider(LogEmitterProvider())
+set_log_emitter_provider(log_emitter_provider)
 
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
