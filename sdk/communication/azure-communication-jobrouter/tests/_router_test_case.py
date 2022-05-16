@@ -32,26 +32,9 @@ class RouterTestCaseBase(CommunicationTestCase):
         super(RouterTestCaseBase, self).setUp()
 
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys = ["id",
-                                          "distributionPolicyId",
-                                          "exceptionPolicyId",
-                                          "classificationPolicyId",
-                                          "queueId",
-                                          ]),
             LargeResponseBodyReplacer(),
-            ResponseReplacerProcessor(keys = [self._resource_name]),
-            RouterScrubber(keys = ["Id",
-                                   "etag",
-                                   "id",
-                                   "distributionPolicyId",
-                                   "exceptionPolicyId",
-                                   "classificationPolicyId",
-                                   "fallbackQueueId",
-                                   "queueId",
-                                   "workerId"]),
+            RouterScrubber(keys = ["etag"]),
             RouterHeaderSanitizer(headers = ["etag"]),
-            RouterQuerySanitizer(exceptions = ["api-version"]),
-            RouterURIIdentityReplacer(),
         ])
 
 
