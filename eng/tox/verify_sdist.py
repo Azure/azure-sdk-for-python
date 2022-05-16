@@ -24,7 +24,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 
-EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure"]
+EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure", "azure-common"]
 
 
 def get_root_directories_in_source(package_dir: str) -> List[str]:
