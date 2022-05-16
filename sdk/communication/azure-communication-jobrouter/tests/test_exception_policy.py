@@ -455,16 +455,16 @@ class TestExceptionPolicy(RouterTestCase):
                     assert len(list_of_policies) <= 2
 
                     for policy in list_of_policies:
-                        reponse_at_creation = created_ep_response.get(policy.id, None)
+                        response_at_creation = created_ep_response.get(policy.id, None)
 
-                        if not reponse_at_creation:
+                        if not response_at_creation:
                             continue
 
                         ExceptionPolicyValidator.validate_exception_policy(
                             policy,
-                            identifier = reponse_at_creation.id,
-                            name = reponse_at_creation.name,
-                            exception_rules = reponse_at_creation.exception_rules,
+                            identifier = response_at_creation.id,
+                            name = response_at_creation.name,
+                            exception_rules = response_at_creation.exception_rules,
                         )
                         policy_count -= 1
 

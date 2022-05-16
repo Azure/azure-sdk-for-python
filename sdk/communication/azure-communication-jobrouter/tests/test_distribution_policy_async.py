@@ -234,17 +234,17 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                 assert len(list_of_policies) <= 2
 
                 for policy in list_of_policies:
-                    reponse_at_creation = created_dp_response.get(policy.id, None)
+                    response_at_creation = created_dp_response.get(policy.id, None)
 
-                    if not reponse_at_creation:
+                    if not response_at_creation:
                         continue
 
                     DistributionPolicyValidator.validate_distribution_policy(
                         distribution_policy = policy,
-                        identifier = reponse_at_creation.id,
-                        name = reponse_at_creation.name,
-                        offer_ttl_seconds = reponse_at_creation.offer_ttl_seconds,
-                        mode = reponse_at_creation.mode
+                        identifier = response_at_creation.id,
+                        name = response_at_creation.name,
+                        offer_ttl_seconds = response_at_creation.offer_ttl_seconds,
+                        mode = response_at_creation.mode
                     )
                     policy_count -= 1
 

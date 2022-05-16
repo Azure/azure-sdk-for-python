@@ -206,7 +206,7 @@ class TestRouterJob(RouterTestCase):
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_fallback_queue_id(self):
-        return self._testMethodName + "_tst_flbk_q"
+        return self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
 
     def setup_fallback_queue(self):
         client: RouterClient = self.create_client()
