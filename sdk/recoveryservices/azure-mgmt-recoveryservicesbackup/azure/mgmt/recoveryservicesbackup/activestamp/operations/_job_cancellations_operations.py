@@ -32,7 +32,7 @@ def build_trigger_request(
     job_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -113,7 +113,7 @@ class JobCancellationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_trigger_request(

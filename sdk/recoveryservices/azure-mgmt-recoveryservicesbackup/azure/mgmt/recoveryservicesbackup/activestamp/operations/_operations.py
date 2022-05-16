@@ -29,7 +29,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -87,7 +87,7 @@ class Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicesbackup.activestamp.models.ClientDiscoveryResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClientDiscoveryResponse"]
         error_map = {
