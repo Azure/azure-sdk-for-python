@@ -7,6 +7,10 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- If a key's ID contains a port number, this port will now be preserved in the vault URL of a
+  `CryptographyClient` instance created from this key
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
+  - Port numbers are now preserved in the `vault_url` property of a `KeyVaultKeyIdentifier`
 
 ### Other Changes
 

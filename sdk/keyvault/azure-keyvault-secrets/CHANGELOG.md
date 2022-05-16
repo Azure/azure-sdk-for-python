@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Port numbers are now preserved in the `vault_url` property of a `KeyVaultSecretIdentifier`
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
 
 ### Other Changes
 
