@@ -34,7 +34,7 @@ def build_get_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -77,7 +77,7 @@ def build_register_request(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -122,7 +122,7 @@ def build_unregister_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -164,7 +164,7 @@ def build_inquire_request(
     filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -207,7 +207,7 @@ def build_refresh_request(
     filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -292,7 +292,7 @@ class ProtectionContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_get_request(
@@ -367,7 +367,7 @@ class ProtectionContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'ProtectionContainerResource')
@@ -444,7 +444,7 @@ class ProtectionContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_unregister_request(
@@ -513,7 +513,7 @@ class ProtectionContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_inquire_request(
@@ -580,7 +580,7 @@ class ProtectionContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_refresh_request(
