@@ -79,13 +79,14 @@ def get_running_loop():
             _LOGGER.warning('This version of Python is deprecated, please upgrade to >= v3.6')
         if loop is None:
             _LOGGER.warning('No running event loop')
-            loop = self.loop
+            loop = asyncio.get_event_loop()
         return loop
+
 
 class AsyncTransportMixin():
     async def receive_frame(self, *args, **kwargs):
         try:
-            header, channel, payload = await self.read(**kwargs) 
+            header, channel, payload = await self.read(**kwargs)
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -147,6 +148,7 @@ class AsyncTransportMixin():
         await self.write(data)
         #_LOGGER.info("OCH%d -> %r", channel, frame)
 
+
 class AsyncTransport(AsyncTransportMixin):
     """Common superclass for TCP and SSL transports."""
 
@@ -160,6 +162,7 @@ class AsyncTransport(AsyncTransportMixin):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
+
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
@@ -452,7 +455,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
     async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
-        
+
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
@@ -461,7 +464,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         while n:
             data = await self.loop.run_in_executor(
                 None, self.ws.recv
-                )
+               )
 
             if len(data) <= n:
                 view[length: length + len(data)] = data
@@ -470,10 +473,15 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 view[length: length + n] = data[0:n]
                 self._read_buffer = BytesIO(data[n:])
                 n = 0
+
         return view
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""
+        # TODO: async close doesn't:
+        # 1) shutdown socket and close. --> self.sock.shutdown(socket.SHUT_RDWR) and self.sock.close()
+        # 2) set self.connected = False
+        # I think we need to do this, like in sync
         self.ws.close()
 
     async def write(self, s):

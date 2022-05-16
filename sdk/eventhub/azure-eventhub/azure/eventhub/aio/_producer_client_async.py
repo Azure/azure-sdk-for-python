@@ -401,7 +401,6 @@ class EventHubProducerClient(
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
         logging_enable: bool = False,
-        http_proxy: Optional[Dict[str, Union[str, int]]] = None,
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
@@ -496,11 +495,9 @@ class EventHubProducerClient(
             max_buffer_length=max_buffer_length,
             max_wait_time=max_wait_time,
             logging_enable=logging_enable,
-            http_proxy=http_proxy,
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             **kwargs
         )
         return cls(**constructor_args)
