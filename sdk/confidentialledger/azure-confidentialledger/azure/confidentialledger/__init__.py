@@ -4,6 +4,8 @@
 # ------------------------------------
 # pylint: disable=unused-import
 
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+
 from ._client import ConfidentialLedgerClient
 from ._enums import LedgerUserRole, TransactionState
 from ._models import (
@@ -16,7 +18,6 @@ from ._models import (
     LedgerEntry,
     LedgerUser,
     TransactionReceipt,
-    TransactionStatus,
 )
 from ._shared import ConfidentialLedgerCertificateCredential
 
@@ -37,7 +38,6 @@ __all__ = [
     "LedgerEntry",
     "LedgerUser",
     "TransactionReceipt",
-    "TransactionStatus",
 ]
 
 
