@@ -1,5 +1,17 @@
 # Release History
 
+## 6.1.0 (2022-04-08)
+
+**Features**
+
+  - Model Cluster has a new parameter desired_properties
+  - Model ClusterNode has a new parameter windows_server_subscription
+  - Model ClusterPatch has a new parameter aad_client_id
+  - Model ClusterPatch has a new parameter aad_tenant_id
+  - Model ClusterPatch has a new parameter desired_properties
+  - Model ClusterReportedProperties has a new parameter diagnostic_level
+  - Model ClusterReportedProperties has a new parameter imds_attestation
+
 ## 6.1.0b1 (2021-06-29)
 
 **Features**

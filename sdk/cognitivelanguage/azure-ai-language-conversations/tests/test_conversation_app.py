@@ -58,9 +58,9 @@ class ConversationAppTests(ConversationTest):
             assert isinstance(result.results.prediction, ConversationPrediction)
             assert result.results.prediction.project_kind == 'conversation'
             # assert - top intent
-            assert result.results.prediction.top_intent == 'Read'
+            assert result.results.prediction.top_intent == 'Setup'
             assert len(result.results.prediction.intents) > 0
-            assert result.results.prediction.intents[0].category == 'Read'
+            assert result.results.prediction.intents[0].category == 'Setup'
             assert result.results.prediction.intents[0].confidence > 0
             # assert - entities
             assert len(result.results.prediction.entities) > 0
@@ -104,9 +104,9 @@ class ConversationAppTests(ConversationTest):
             assert isinstance(result.results.prediction, ConversationPrediction)
             assert result.results.prediction.project_kind == 'conversation'
             # assert - top intent
-            assert result.results.prediction.top_intent == 'Read'
+            assert result.results.prediction.top_intent == 'Setup'
             assert len(result.results.prediction.intents) > 0
-            assert result.results.prediction.intents[0].category == 'Read'
+            assert result.results.prediction.intents[0].category == 'Setup'
             assert result.results.prediction.intents[0].confidence > 0
             # assert - entities
             assert len(result.results.prediction.entities) > 0

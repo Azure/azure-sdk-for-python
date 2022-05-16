@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages?loggingOptOut=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/languages?loggingOptOut=true",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json, text/json",
@@ -9,20 +9,27 @@
         "Connection": "keep-alive",
         "Content-Length": "85",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "fd69d7b7-5d10-11ec-81de-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Test for logging disable\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "0",
+            "text": "Test for logging disable",
+            "countryHint": "US"
+          }
+        ]
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3e5f22ed-adc7-45c9-80ad-f78c379b39fa",
+        "apim-request-id": "c9f23c4a-ed1f-4f84-8890-a341f89695b3",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:06:49 GMT",
+        "Date": "Tue, 03 May 2022 00:15:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7"
+        "x-envoy-upstream-service-time": "9"
       },
       "ResponseBody": {
         "documents": [
@@ -31,13 +38,13 @@
             "detectedLanguage": {
               "name": "English",
               "iso6391Name": "en",
-              "confidenceScore": 0.88
+              "confidenceScore": 0.85
             },
             "warnings": []
           }
         ],
         "errors": [],
-        "modelVersion": "2021-01-05"
+        "modelVersion": "2021-11-20"
       }
     }
   ],

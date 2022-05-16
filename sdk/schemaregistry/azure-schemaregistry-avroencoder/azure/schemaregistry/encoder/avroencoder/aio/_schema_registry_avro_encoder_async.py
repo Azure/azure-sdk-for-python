@@ -30,16 +30,15 @@ from .._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
+    MessageType,
 )
 from ._async_lru import alru_cache  # pylint: disable=import-error
 from .._message_protocol import (
-    MessageType,
     MessageContent,
 )  # pylint: disable=import-error
 from .._apache_avro_encoder import (
     ApacheAvroObjectEncoder as AvroObjectEncoder,
 )  # pylint: disable=import-error
-from .._schema_registry_avro_encoder import MessageTypeT  # pylint: disable=import-error
 
 if TYPE_CHECKING:
     from azure.schemaregistry.aio import SchemaRegistryClient
@@ -50,13 +49,14 @@ _LOGGER = logging.getLogger(__name__)
 class AvroEncoder(object):
     """
     AvroEncoder provides the ability to encode and decode content according
-    to the given avro schema. It would automatically register, get and cache the schema.
+    to the given avro schema. It would automatically register, get, and cache the schema.
 
-    :keyword client: Required. The schema registry client
-     which is used to register schema and retrieve schema from the service.
+    :keyword client: Required. The schema registry client which is used to register schema
+     and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
-    :keyword str group_name: Required. Schema group under which schema should be registered.
-    :keyword bool auto_register: When true, register new schemas passed to encode.
+    :keyword Optional[str] group_name: Required for encoding. Not used when decoding.
+     Schema group under which schema should be registered.
+    :keyword bool auto_register: When true, registers new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
 
     """
@@ -64,13 +64,13 @@ class AvroEncoder(object):
     def __init__(self, **kwargs):
         # type: (Any) -> None
         try:
-            self._schema_group = kwargs.pop("group_name")
             self._schema_registry_client = kwargs.pop(
                 "client"
             )  # type: "SchemaRegistryClient"
         except KeyError as exc:
-            raise TypeError("'{}' is a required keyword.".format(exc.args[0]))
+            raise TypeError(f"'{exc.args[0]}' is a required keyword.")
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
+        self._schema_group = kwargs.pop("group_name", None)
         self._auto_register = kwargs.get("auto_register", False)
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
@@ -131,10 +131,10 @@ class AvroEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Type[MessageTypeT],
+        message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageTypeT:
+    ) -> MessageType:
         ...
 
     @overload
@@ -151,16 +151,15 @@ class AvroEncoder(object):
 
     async def encode(
         self,
-        content,
+        content: Mapping[str, Any],
         *,
-        schema,
-        message_type=None,
-        request_options=None,
-        **kwargs,
-    ):
+        schema: str,
+        message_type: Optional[Type[MessageType]] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> Union[MessageType, MessageContent]:
 
-        """
-        Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
+        """Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
          and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content
          and content type will be passed to create message object. If not provided, the following dict will be returned:
          {"content": Avro encoded value, "content_type": Avro mime type string + schema ID}.
@@ -188,6 +187,8 @@ class AvroEncoder(object):
         """
 
         raw_input_schema = schema
+        if not self._schema_group:
+            raise TypeError("'group_name' in constructor cannot be None, if encoding.")
         schema_fullname = validate_schema(self._avro_encoder, raw_input_schema)
 
         cache_misses = (
@@ -225,8 +226,7 @@ class AvroEncoder(object):
         request_options: Dict[str, Any] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """
-        Decode bytes content using schema ID in the content type field. `message` must be one of the following:
+        """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
             1) A object of subtype of the MessageType protocol.
             2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
         Content must follow format of associated Avro RecordSchema:

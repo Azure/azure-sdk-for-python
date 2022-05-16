@@ -1,74 +1,117 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "58",
+        "Content-Length": "231",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2977d236-5d10-11ec-88bf-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "okay",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "dba84cf4-23fa-4d73-b2f8-6c371e22a098",
-        "Date": "Tue, 14 Dec 2021 19:00:53 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/5c95e54c-8ff5-485b-b0f6-a476c64877af",
+        "apim-request-id": "df38c98c-d549-458f-b50a-76fee3247c7a",
+        "Content-Length": "0",
+        "Date": "Tue, 03 May 2022 00:11:36 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d903f23a-f1ae-4130-ae4b-66cc7bb11fd4?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "307"
+        "x-envoy-upstream-service-time": "211"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/5c95e54c-8ff5-485b-b0f6-a476c64877af",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d903f23a-f1ae-4130-ae4b-66cc7bb11fd4?api-version=2022-04-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2977d236-5d10-11ec-88bf-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "29d7c562-c428-4161-a83c-0ea1f2237dd4",
+        "apim-request-id": "0f0787fc-5584-4ca4-a5e1-9f1b0f15f503",
+        "Content-Length": "682",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 19:00:58 GMT",
+        "Date": "Tue, 03 May 2022 00:11:41 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "51"
+        "x-envoy-upstream-service-time": "48"
       },
       "ResponseBody": {
-        "jobId": "5c95e54c-8ff5-485b-b0f6-a476c64877af",
-        "lastUpdateDateTime": "2021-12-14T19:00:54Z",
-        "createdDateTime": "2021-12-14T19:00:53Z",
-        "expirationDateTime": "2021-12-15T19:00:53Z",
+        "jobId": "d903f23a-f1ae-4130-ae4b-66cc7bb11fd4",
+        "lastUpdateDateTime": "2022-05-03T00:11:37Z",
+        "createdDateTime": "2022-05-03T00:11:36Z",
+        "expirationDateTime": "2022-05-04T00:11:36Z",
         "status": "succeeded",
         "errors": [],
-        "results": {
-          "documents": [],
-          "errors": [
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
             {
-              "id": "1",
-              "error": {
-                "code": "InvalidArgument",
-                "message": "Invalid document in request.",
-                "innererror": {
-                  "code": "InvalidDocument",
-                  "message": "Document text is empty."
-                }
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-05-03T00:11:37.3154507Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "2",
+                    "entities": [],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "1",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2022-03-01"
               }
             }
-          ],
-          "modelVersion": "2021-05-15"
+          ]
         }
       }
     }

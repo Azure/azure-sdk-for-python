@@ -333,7 +333,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
-        :rtype: None
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 

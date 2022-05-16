@@ -1,51 +1,77 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/pii?stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "279",
+        "Content-Length": "385",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2c375e0d-5d12-11ec-a69a-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022This was the best day of my life.\u0022, \u0022language\u0022: \u0022fr\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at. It was too expensive.\u0022, \u0022language\u0022: \u0022fr\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The restaurant was not as good as I hoped.\u0022, \u0022language\u0022: \u0022fr\u0022}]}",
+      "RequestBody": {
+        "kind": "PiiEntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "This was the best day of my life.",
+              "language": "fr"
+            },
+            {
+              "id": "1",
+              "text": "I did not like the hotel we stayed at. It was too expensive.",
+              "language": "fr"
+            },
+            {
+              "id": "2",
+              "text": "The restaurant was not as good as I hoped.",
+              "language": "fr"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9d90579d-dd96-423e-b814-435d83dad45a",
+        "apim-request-id": "ffad6a39-2182-4309-841a-30e0d741c3f9",
+        "Content-Length": "410",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Tue, 14 Dec 2021 19:15:16 GMT",
+        "Date": "Tue, 03 May 2022 00:17:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "32"
+        "x-envoy-upstream-service-time": "49"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "redactedText": "This was the best day of my life.",
-            "id": "0",
-            "entities": [],
-            "warnings": []
-          },
-          {
-            "redactedText": "I did not like the hotel we stayed at. It was too expensive.",
-            "id": "1",
-            "entities": [],
-            "warnings": []
-          },
-          {
-            "redactedText": "The restaurant was not as good as I hoped.",
-            "id": "2",
-            "entities": [],
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-01-15"
+        "kind": "PiiEntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "redactedText": "This was the best day of my life.",
+              "id": "0",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": "I did not like the hotel we stayed at. It was too expensive.",
+              "id": "1",
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": "The restaurant was not as good as I hoped.",
+              "id": "2",
+              "entities": [],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-01-15"
+        }
       }
     }
   ],

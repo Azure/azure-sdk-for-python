@@ -7,7 +7,9 @@
 
 from enum import Enum
 import uuid
-from typing import Any, Optional, List
+from datetime import datetime, timedelta
+from typing import Any, Optional, List, Union, Tuple
+from azure.core import CaseInsensitiveEnumMeta
 
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
@@ -188,13 +190,15 @@ class LogsBatchQuery(object):
     """
 
     def __init__(
-        self, workspace_id, query, **kwargs
-    ):  # pylint: disable=super-init-not-called
-        # type: (str, str, Any) -> None
-        if "timespan" not in kwargs:
-            raise TypeError(
-                "LogsBatchQuery() missing 1 required keyword-only argument: 'timespan'"
-            )
+        self,
+        workspace_id: str,
+        query: str,
+        *,
+        timespan: Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        ],
+        **kwargs: Any
+    ) -> None:  # pylint: disable=super-init-not-called
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -211,7 +215,7 @@ class LogsBatchQuery(object):
             prefer += "include-render=true"
 
         headers = {"Prefer": prefer}
-        timespan = construct_iso8601(kwargs.pop("timespan"))
+        timespan = construct_iso8601(timespan)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = str(uuid.uuid4())
         self.body = {
@@ -272,7 +276,7 @@ class LogsQueryResult(object):
         )
 
 
-class MetricNamespaceClassification(str, Enum):
+class MetricNamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of namespace"""
 
     PLATFORM = "Platform"
@@ -318,7 +322,7 @@ class MetricNamespace(object):
         )
 
 
-class MetricClass(str, Enum):
+class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The class of the metric."""
 
     AVAILABILITY = "Availability"
@@ -548,7 +552,7 @@ class MetricAvailability(object):
         return cls(granularity=generated.time_grain, retention=generated.retention)
 
 
-class MetricAggregationType(str, Enum):
+class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The aggregation type of the metric."""
 
     NONE = "None"
@@ -559,7 +563,7 @@ class MetricAggregationType(str, Enum):
     TOTAL = "Total"
 
 
-class MetricUnit(str, Enum):
+class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of the metric."""
 
     COUNT = "Count"
@@ -625,7 +629,7 @@ class LogsQueryPartialResult(object):
         )
 
 
-class LogsQueryStatus(str, Enum):
+class LogsQueryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the result object."""
 
     PARTIAL = "PartialError"

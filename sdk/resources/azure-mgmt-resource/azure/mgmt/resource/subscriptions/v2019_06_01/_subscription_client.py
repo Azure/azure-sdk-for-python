@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import SubscriptionClientConfiguration
@@ -22,7 +23,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 class SubscriptionClient(SubscriptionClientOperationsMixin):
-    """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
+    """All resource groups and resources exist within subscriptions. These operation enable you get
+    information about your subscriptions and tenants. A tenant is a dedicated instance of Azure
+    Active Directory (Azure AD) for your organization.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resource.subscriptions.v2019_06_01.operations.Operations
@@ -33,8 +36,11 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
     :vartype tenants: azure.mgmt.resource.subscriptions.v2019_06_01.operations.TenantsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2019-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -57,7 +63,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

@@ -1,11 +1,12 @@
 function BuildServiceDirectoryPrefix([string]$serviceName) {
+    $serviceName = $serviceName -replace '[\./\\]', '_'
     return $serviceName.ToUpperInvariant() + "_"
 }
 
 # If the ServiceDirectory has multiple segments use the last directory name
 # e.g. D:\foo\bar -> bar or foo/bar -> bar
 function GetServiceLeafDirectoryName([string]$serviceDirectory) {
-    return Split-Path -Leaf $serviceDirectory
+    return $serviceDirectory ? (Split-Path -Leaf $serviceDirectory) : ""
 }
 
 function GetUserName() {
@@ -17,8 +18,8 @@ function GetUserName() {
 
 function GetBaseName([string]$user, [string]$serviceDirectoryName) {
     # Handle service directories in nested directories, e.g. `data/aztables`
-    $serviceDirectorySafeName = $serviceDirectoryName -replace '[/\\]', ''
-    return "$user$serviceDirectorySafeName"
+    $serviceDirectorySafeName = $serviceDirectoryName -replace '[\./\\]', ''
+    return "$user$serviceDirectorySafeName".ToLowerInvariant()
 }
 
 function ShouldMarkValueAsSecret([string]$serviceName, [string]$key, [string]$value, [array]$allowedValues = @())

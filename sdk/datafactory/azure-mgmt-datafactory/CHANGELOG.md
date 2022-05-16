@@ -1,5 +1,18 @@
 # Release History
 
+## 2.5.0 (2022-05-12)
+
+**Features**
+
+  - Model PrivateLinkConnectionApprovalRequest has a new parameter private_endpoint
+
+## 2.4.0 (2022-04-15)
+
+**Features**
+
+  - Model ExecutePipelineActivity has a new parameter policy
+  - Model WebActivity has a new parameter disable_cert_validation
+
 ## 2.3.0 (2022-03-02)
 
 **Features**

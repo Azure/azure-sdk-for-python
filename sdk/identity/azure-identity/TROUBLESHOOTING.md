@@ -174,7 +174,7 @@ curl 'http://169.254.169.254/metadata/identity/oauth2/token?resource=https://man
 
 ## Troubleshoot `VisualStudioCodeCredential` Authentication Issues
 
-> It's a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/23249) that `VisualStudioCodeCredential` doesn't work with [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) versions newer than **0.9.11**. If you're using Azure Account extension version 0.10.0 or later, downgrading to **version 0.9.11** will resolve this issue. A long-term fix to this problem is in progress.
+> It's a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/23249) that `VisualStudioCodeCredential` doesn't work with [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider [authenticating via the Azure CLI](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#authenticate-via-the-azure-cli).
 
 `CredentialUnavailableError`
 | Error Message |Description| Mitigation |
@@ -249,4 +249,4 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 Additional information on ways to reach out for support can be found in the [SUPPORT.md](https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md) at the root of the repo.
 
 <!-- LINKS -->
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging

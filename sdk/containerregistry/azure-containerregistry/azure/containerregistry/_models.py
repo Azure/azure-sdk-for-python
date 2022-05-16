@@ -18,8 +18,9 @@ from ._generated.models import (
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 if TYPE_CHECKING:
+    from typing import IO
     from datetime import datetime
-    from ._generated.models import ManifestAttributesBase
+    from ._generated.models import ManifestAttributesBase, OCIManifest
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -312,7 +313,36 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class ArtifactArchitecture(str, Enum):
+class DownloadBlobResult(object):
+    """The result from downloading a blob from the registry.
+
+    :ivar data: The blob content.
+    :vartype data: IO
+    :ivar str digest: The blob's digest, calculated by the registry.
+    """
+
+    def __init__(self, **kwargs):
+        self.data = kwargs.get("data")
+        self.digest = kwargs.get("digest")
+
+
+class DownloadManifestResult(object):
+    """The result from downloading a manifest from the registry.
+
+    :ivar manifest: The OCI manifest that was downloaded.
+    :vartype manifest: ~azure.containerregistry.models.OCIManifest
+    :ivar data: The manifest stream that was downloaded.
+    :vartype data: IO
+    :ivar str digest: The manifest's digest, calculated by the registry.
+    """
+
+    def __init__(self, **kwargs):
+        self.manifest = kwargs.get("manifest")
+        self.data = kwargs.get("data")
+        self.digest = kwargs.get("digest")
+
+
+class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -329,7 +359,7 @@ class ArtifactArchitecture(str, Enum):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum):
+class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AIX = "aix"
     ANDROID = "android"

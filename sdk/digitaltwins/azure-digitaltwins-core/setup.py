@@ -62,6 +62,10 @@ setup(
             'azure.digitaltwins',
         ]
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",

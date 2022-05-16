@@ -3,10 +3,6 @@ import os
 from io import open
 import re
 
-
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
-
 PACKAGE_NAME = "azure-mixedreality-remoterendering"
 PACKAGE_PPRINT_NAME = "Azure Remote Rendering"
 
@@ -36,6 +32,7 @@ setup(
 
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
     author='Microsoft Corporation',
     author_email='azuresdkengsysadmins@microsoft.com',
@@ -44,17 +41,14 @@ setup(
     # ensure that the development status reflects the status of your package
     classifiers=[
         "Development Status :: 4 - Beta",
-
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
@@ -63,16 +57,16 @@ setup(
         'azure',
         'azure.mixedreality'
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
+    python_requires=">=3.6",
     install_requires=[
         'azure-core<2.0.0,>=1.6.0',
         'azure-mixedreality-authentication>=1.0.0b1',
         'msrest>=0.6.21'
     ],
-    extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-mixedreality-nspkg'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ["typing"]
-    },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
         'Source': 'https://github.com/Azure/azure-sdk-python',
