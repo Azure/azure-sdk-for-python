@@ -2,16 +2,16 @@
     "chosen_version": "2021-11-15-preview",
     "total_api_version_list": ["2021-11-15-preview"],
     "client": {
-        "name": "LabServicesClient",
-        "filename": "_lab_services_client",
+        "name": "ManagedLabsClient",
+        "filename": "_managed_labs_client",
         "description": "REST API for managing Azure Lab Services images.",
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"LabServicesClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"LabServicesClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ManagedLabsClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ManagedLabsClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {

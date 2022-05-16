@@ -73,7 +73,7 @@ from ._models_py3 import VirtualMachineConnectionProfile
 from ._models_py3 import VirtualMachineProfile
 
 
-from ._lab_services_client_enums import (
+from ._managed_labs_client_enums import (
     ActionType,
     ConnectionType,
     CreateOption,

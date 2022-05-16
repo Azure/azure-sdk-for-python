@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._lab_services_client_enums import *
+from ._managed_labs_client_enums import *
 
 
 class AutoShutdownProfile(msrest.serialization.Model):
