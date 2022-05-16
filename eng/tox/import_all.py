@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    package_name, namespace, _ = get_package_details(os.path.join(pkg_dir, 'setup.py'))
+    package_name, namespace, _, _, _ = get_package_details(os.path.join(pkg_dir, 'setup.py'))
 
     if should_run_import_all(package_name):
         # import all modules from current package
