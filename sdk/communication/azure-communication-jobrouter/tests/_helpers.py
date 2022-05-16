@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 
+# cSpell:ignore tzinfos
 def _convert_str_to_datetime(
         datetime_as_str,  # type: str
         **kwargs,  # type: Any

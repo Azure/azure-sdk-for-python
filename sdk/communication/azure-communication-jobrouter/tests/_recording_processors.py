@@ -34,7 +34,7 @@ def sanitize_query_params(value,  # type: str
         if k not in exceptions:
             qs[k] = replacement
 
-    parsed_url = parsed_url._replace(query = urlencode(qs, doseq = True))
+    parsed_url = parsed_url._replace(query = urlencode(qs, doseq = True))  # cSpell:disable-line
 
     return parsed_url.geturl()
 
