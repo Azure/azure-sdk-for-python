@@ -17,30 +17,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:42 GMT
+      - Mon, 16 May 2022 21:12:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_list_exception_policies_tst_dp?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "test_list_exception_policies_tst_dp", "offerTtlSeconds":
-      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}'
+    body:
+      string: '{"id":"test_list_exception_policies_tst_dp","name":"test_list_exception_policies_tst_dp","offerTTLSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:23 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       request-context:
       - appId=
       trace-id:
-      - 2ed256436520614283628c2a19c601ae
+      - 3e090f06cb23e1db6ca383e3a133a691
       transfer-encoding:
       - chunked
       x-cache:
@@ -50,8 +49,8 @@ interactions:
       message: OK
 - request:
     body: '{"name": "test_list_exception_policies_tst_q", "distributionPolicyId":
-      "sanitized", "labels": {"key1": "QueueKey", "key2": 10, "key3": true, "key4":
-      false, "key5": 10.1}}'
+      "test_list_exception_policies_tst_dp", "labels": {"key1": "QueueKey", "key2":
+      10, "key3": true, "key4": false, "key5": 10.1}}'
     headers:
       Accept:
       - application/json
@@ -66,30 +65,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_list_exception_policies_tst_q?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "test_list_exception_policies_tst_q", "distributionPolicyId":
-      "sanitized", "labels": {"key1": "QueueKey", "key2": 10, "key3": true, "key4":
-      false, "key5": 10.1, "Id": "sanitized"}}'
+    body:
+      string: '{"id":"test_list_exception_policies_tst_q","name":"test_list_exception_policies_tst_q","distributionPolicyId":"test_list_exception_policies_tst_dp","labels":{"key1":"QueueKey","key2":10,"key3":true,"key4":false,"key5":10.1,"Id":"test_list_exception_policies_tst_q"}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:23 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       request-context:
       - appId=
       trace-id:
-      - 59e2a86f8135c006e9b7b83b9b8535d3
+      - fb2614574491db67e93c64de8b668668
       transfer-encoding:
       - chunked
       x-cache:
@@ -98,7 +96,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "test_list_exception_policies_tst_cp", "fallbackQueueId": "sanitized"}'
+    body: '{"name": "test_list_exception_policies_tst_cp", "fallbackQueueId": "test_list_exception_policies_tst_q"}'
     headers:
       Accept:
       - application/json
@@ -113,29 +111,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/test_list_exception_policies_tst_cp?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "test_list_exception_policies_tst_cp", "fallbackQueueId":
-      "sanitized", "queueSelectors": [], "workerSelectors": []}'
+    body:
+      string: '{"id":"test_list_exception_policies_tst_cp","name":"test_list_exception_policies_tst_cp","fallbackQueueId":"test_list_exception_policies_tst_q","queueSelectors":[],"workerSelectors":[]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       request-context:
       - appId=
       trace-id:
-      - 1fe1d4373f0eb2fa84e333a0db007d16
+      - 72176d9096c4cbfea131472417901b01
       transfer-encoding:
       - chunked
       x-cache:
@@ -161,30 +159,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "cancel"}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - 266fb8b8db006bd078afa4d0b64901db
+      - 2a149526f4426a8718ae38c14d914353
       transfer-encoding:
       - chunked
       x-cache:
@@ -210,30 +207,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "cancel"}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - fee2cb2edfec75ed64a80e1fd6da40e8
+      - d37ac2ac4f527474135a0195392d5717
       transfer-encoding:
       - chunked
       x-cache:
@@ -259,30 +255,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:43 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "cancel"}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - a94726e5ce9d32f0d7cfc8d4701cd960
+      - ab67a0031415212e76bdb5754d5d8e80
       transfer-encoding:
       - chunked
       x-cache:
@@ -302,29 +297,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_1",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length",
-      "threshold": 1}, "actions": {"fakeExceptionActionId": {"kind": "cancel"}}}}},
-      {"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_2", "exceptionRules":
-      {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length", "threshold": 1},
-      "actions": {"fakeExceptionActionId": {"kind": "cancel"}}}}}], "nextLink": "/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9VelZCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZpYTBGQlFVRkJRVUZCUVhWblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body:
+      string: '{"value":[{"etag":"\"5a05d4c5-0000-0700-0000-6282be390000\"","id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}},{"etag":"\"5a05dbc5-0000-0700-0000-6282be390000\"","id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}],"nextLink":"/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       request-context:
       - appId=
       trace-id:
-      - 5bc30bb60c28a39c7bc997ee0f142cc4
+      - 5cb23f759fc22e208cec8a8f0f09445b
       transfer-encoding:
       - chunked
       x-cache:
@@ -344,26 +335,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_3",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length",
-      "threshold": 1}, "actions": {"fakeExceptionActionId": {"kind": "cancel"}}}}}]}'
+    body:
+      string: '{"value":[{"etag":"\"5a05e6c5-0000-0700-0000-6282be390000\"","id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       request-context:
       - appId=
       trace-id:
-      - fd8ad7d46a9eb671ad3c6e01e9fd75a0
+      - cd69e078300eac7c23073398100aa1db
       transfer-encoding:
       - chunked
       x-cache:
@@ -374,7 +364,8 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1}}}}}'
+      {"kind": "manual-reclassify", "queueId": "test_list_exception_policies_tst_q",
+      "priority": 1}}}}}'
     headers:
       Accept:
       - application/json
@@ -389,31 +380,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - 7589b2b89fde50a03def3aae8dfcf7b7
+      - c42efb645807c0f617a5766ed56b9526
       transfer-encoding:
       - chunked
       x-cache:
@@ -424,7 +413,8 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1}}}}}'
+      {"kind": "manual-reclassify", "queueId": "test_list_exception_policies_tst_q",
+      "priority": 1}}}}}'
     headers:
       Accept:
       - application/json
@@ -439,31 +429,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - fb417113fd326a5854993fe2f334f9b7
+      - 584be2a9c6b03e108f0133402c4de963
       transfer-encoding:
       - chunked
       x-cache:
@@ -474,7 +462,8 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1}}}}}'
+      {"kind": "manual-reclassify", "queueId": "test_list_exception_policies_tst_q",
+      "priority": 1}}}}}'
     headers:
       Accept:
       - application/json
@@ -489,31 +478,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - c69669e385fdb0c948381c487a74438d
+      - 2efe4b20bc8510c64034c276d5243897
       transfer-encoding:
       - chunked
       x-cache:
@@ -533,31 +520,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_1",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length",
-      "threshold": 1}, "actions": {"fakeExceptionActionId": {"kind": "manual-reclassify",
-      "queueId": "sanitized", "priority": 1, "workerSelectors": []}}}}}, {"etag":
-      "sanitized", "id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}], "nextLink": "/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9VelZCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZpYTBGQlFVRkJRVUZCUVhWblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body:
+      string: '{"value":[{"etag":"\"5a05fbc5-0000-0700-0000-6282be390000\"","id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}},{"etag":"\"5a0502c6-0000-0700-0000-6282be390000\"","id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}],"nextLink":"/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - 80c668b804cab97f05f46013a1f24630
+      - 92c990560bedf9c704fb9b47f3415049
       transfer-encoding:
       - chunked
       x-cache:
@@ -577,27 +558,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_3",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length",
-      "threshold": 1}, "actions": {"fakeExceptionActionId": {"kind": "manual-reclassify",
-      "queueId": "sanitized", "priority": 1, "workerSelectors": []}}}}}]}'
+    body:
+      string: '{"value":[{"etag":"\"5a050fc6-0000-0700-0000-6282be390000\"","id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - 2d62dba6ea8688bfce1f96b8de2565b0
+      - aa12d19e4566f182dfc5ca9dad7f9049
       transfer-encoding:
       - chunked
       x-cache:
@@ -608,7 +587,7 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized"}}}}}'
+      {"kind": "reclassify", "classificationPolicyId": "test_list_exception_policies_tst_cp"}}}}}'
     headers:
       Accept:
       - application/json
@@ -623,31 +602,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 2fc3494f66af01de8133aa3f70189f4c
+      - c31d1bb18e7a89af75c065ad0a24d34c
       transfer-encoding:
       - chunked
       x-cache:
@@ -658,7 +635,7 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized"}}}}}'
+      {"kind": "reclassify", "classificationPolicyId": "test_list_exception_policies_tst_cp"}}}}}'
     headers:
       Accept:
       - application/json
@@ -673,31 +650,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 233cee8c49f8cb774d878cc7d0773f52
+      - e81bf6eef8fa0d280539cbf74b479721
       transfer-encoding:
       - chunked
       x-cache:
@@ -708,7 +683,7 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized"}}}}}'
+      {"kind": "reclassify", "classificationPolicyId": "test_list_exception_policies_tst_cp"}}}}}'
     headers:
       Accept:
       - application/json
@@ -723,31 +698,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:44 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 9b870b353c258ea857c68f3ee7517a7a
+      - 63263aa430cdc848df1c14b5635031ae
       transfer-encoding:
       - chunked
       x-cache:
@@ -767,31 +740,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_1",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length",
-      "threshold": 1}, "actions": {"fakeExceptionActionId": {"kind": "reclassify",
-      "classificationPolicyId": "sanitized", "labelsToUpsert": {}}}}}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "queue-length", "threshold": 1}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}], "nextLink": "/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9VelZCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZpYTBGQlFVRkJRVUZCUVhWblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body:
+      string: '{"value":[{"etag":"\"5a052ac6-0000-0700-0000-6282be3a0000\"","id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}},{"etag":"\"5a0531c6-0000-0700-0000-6282be3a0000\"","id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}],"nextLink":"/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - e9c7b63ab93e725e2aa440832b8dc7c9
+      - e4f00190dac3b04480769181a035582f
       transfer-encoding:
       - chunked
       x-cache:
@@ -811,27 +778,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_3",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "queue-length",
-      "threshold": 1}, "actions": {"fakeExceptionActionId": {"kind": "reclassify",
-      "classificationPolicyId": "sanitized", "labelsToUpsert": {}}}}}}]}'
+    body:
+      string: '{"value":[{"etag":"\"5a0538c6-0000-0700-0000-6282be3a0000\"","id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"queue-length","threshold":1},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       request-context:
       - appId=
       trace-id:
-      - a20afebefb58258eaf931e1834b7286b
+      - da1dfce5988c2aebf9b69a87906ab126
       transfer-encoding:
       - chunked
       x-cache:
@@ -857,30 +822,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "cancel"}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 6da4159a44cd388b8ef7edd7340c3767
+      - 3fb6b667e9cf3e208c3dd688abfc8da1
       transfer-encoding:
       - chunked
       x-cache:
@@ -906,30 +870,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "cancel"}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 68bdec2a23f217badaa72a4d84c65ce9
+      - f2f2479250270d7538e717320d3b25b3
       transfer-encoding:
       - chunked
       x-cache:
@@ -955,30 +918,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:45 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "cancel"}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - d370875910f9bad3719d5bca63692e8d
+      - befa237c2fd56bb6981950ab0bc697f9
       transfer-encoding:
       - chunked
       x-cache:
@@ -998,29 +960,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_1",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time",
-      "threshold": "PT1H"}, "actions": {"fakeExceptionActionId": {"kind": "cancel"}}}}},
-      {"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_2", "exceptionRules":
-      {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time", "threshold": "PT1H"},
-      "actions": {"fakeExceptionActionId": {"kind": "cancel"}}}}}], "nextLink": "/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9VelZCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZpYTBGQlFVRkJRVUZCUVhWblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body:
+      string: '{"value":[{"etag":"\"5a0555c6-0000-0700-0000-6282be3a0000\"","id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}},{"etag":"\"5a055ac6-0000-0700-0000-6282be3a0000\"","id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}],"nextLink":"/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 852c5f856ddf831f6dce1aa8974a2407
+      - 483ca49160838013bb1f584f14c3b429
       transfer-encoding:
       - chunked
       x-cache:
@@ -1040,26 +998,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_3",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time",
-      "threshold": "PT1H"}, "actions": {"fakeExceptionActionId": {"kind": "cancel"}}}}}]}'
+    body:
+      string: '{"value":[{"etag":"\"5a056dc6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"cancel"}}}}}]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 794c78ec43e678358ba4237bc40aa83d
+      - 764d21997520886cb38420ebe49a5cc4
       transfer-encoding:
       - chunked
       x-cache:
@@ -1070,7 +1027,8 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1}}}}}'
+      {"kind": "manual-reclassify", "queueId": "test_list_exception_policies_tst_q",
+      "priority": 1}}}}}'
     headers:
       Accept:
       - application/json
@@ -1085,31 +1043,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - ac498240b3fd93917873b6bd83fe7364
+      - e6bc3bb5c5396a246fb5b67d0d488534
       transfer-encoding:
       - chunked
       x-cache:
@@ -1120,7 +1076,8 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1}}}}}'
+      {"kind": "manual-reclassify", "queueId": "test_list_exception_policies_tst_q",
+      "priority": 1}}}}}'
     headers:
       Accept:
       - application/json
@@ -1135,31 +1092,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - 8dfc3011db790a5cd850ba58501257d5
+      - 6e0961eac25accfb081626b15e98be46
       transfer-encoding:
       - chunked
       x-cache:
@@ -1170,7 +1125,8 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1}}}}}'
+      {"kind": "manual-reclassify", "queueId": "test_list_exception_policies_tst_q",
+      "priority": 1}}}}}'
     headers:
       Accept:
       - application/json
@@ -1185,31 +1141,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - ea4211549ce46a2da00cb26c56526de6
+      - 7cb6e4f99b9f306a0579aaa0a9ce3599
       transfer-encoding:
       - chunked
       x-cache:
@@ -1229,31 +1183,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:46 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_1",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time",
-      "threshold": "PT1H"}, "actions": {"fakeExceptionActionId": {"kind": "manual-reclassify",
-      "queueId": "sanitized", "priority": 1, "workerSelectors": []}}}}}, {"etag":
-      "sanitized", "id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "manual-reclassify", "queueId": "sanitized", "priority": 1, "workerSelectors":
-      []}}}}}], "nextLink": "/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9VelZCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZpYTBGQlFVRkJRVUZCUVhWblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body:
+      string: '{"value":[{"etag":"\"5a057fc6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}},{"etag":"\"5a058dc6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}],"nextLink":"/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - df54663843de6cbbe8fa35096bd2dc57
+      - 2ce6da36ec928ddb41f9f4386a0c1c0c
       transfer-encoding:
       - chunked
       x-cache:
@@ -1273,27 +1221,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_3",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time",
-      "threshold": "PT1H"}, "actions": {"fakeExceptionActionId": {"kind": "manual-reclassify",
-      "queueId": "sanitized", "priority": 1, "workerSelectors": []}}}}}]}'
+    body:
+      string: '{"value":[{"etag":"\"5a0598c6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"manual-reclassify","queueId":"test_list_exception_policies_tst_q","priority":1,"workerSelectors":[]}}}}}]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       request-context:
       - appId=
       trace-id:
-      - 4716a6c6e17a6700c080f4131e87686c
+      - 85de7fd74b6364a65a9210280e10df77
       transfer-encoding:
       - chunked
       x-cache:
@@ -1304,7 +1250,7 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized"}}}}}'
+      {"kind": "reclassify", "classificationPolicyId": "test_list_exception_policies_tst_cp"}}}}}'
     headers:
       Accept:
       - application/json
@@ -1319,31 +1265,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_1", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - eae8d922075b024ef89c53b040978cc9
+      - b9e8c66714c76237c35a842e56dc1478
       transfer-encoding:
       - chunked
       x-cache:
@@ -1354,7 +1298,7 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized"}}}}}'
+      {"kind": "reclassify", "classificationPolicyId": "test_list_exception_policies_tst_cp"}}}}}'
     headers:
       Accept:
       - application/json
@@ -1369,31 +1313,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - bf3437387b97eea664ada0d6e9c13ff1
+      - 445c4e965aec669137c7f137eaac8825
       transfer-encoding:
       - chunked
       x-cache:
@@ -1404,7 +1346,7 @@ interactions:
 - request:
     body: '{"name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId": {"trigger":
       {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized"}}}}}'
+      {"kind": "reclassify", "classificationPolicyId": "test_list_exception_policies_tst_cp"}}}}}'
     headers:
       Accept:
       - application/json
@@ -1419,31 +1361,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "tst_list_ep_3", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}'
+    body:
+      string: '{"id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       etag:
       - REDACTED
       last-modified:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - 79bc0643eacd4e2e3ff8a53b8f356dd5
+      - 96c09debf58a0d6ce89ac4a952be85a4
       transfer-encoding:
       - chunked
       x-cache:
@@ -1463,31 +1403,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_1",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time",
-      "threshold": "PT1H"}, "actions": {"fakeExceptionActionId": {"kind": "reclassify",
-      "classificationPolicyId": "sanitized", "labelsToUpsert": {}}}}}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "tst_list_ep_2", "exceptionRules": {"fakeExceptionRuleId":
-      {"trigger": {"kind": "wait-time", "threshold": "PT1H"}, "actions": {"fakeExceptionActionId":
-      {"kind": "reclassify", "classificationPolicyId": "sanitized", "labelsToUpsert":
-      {}}}}}}], "nextLink": "/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9VelZCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZpYTBGQlFVRkJRVUZCUVhWblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body:
+      string: '{"value":[{"etag":"\"5a05a4c6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_1","name":"tst_list_ep_1","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}},{"etag":"\"5a05b2c6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_2","name":"tst_list_ep_2","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}],"nextLink":"/routing/exceptionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - 2499c61afcc1f5b09c2fce714f21bd44
+      - 0e4232e37a811df6e89798dcabfd2e75
       transfer-encoding:
       - chunked
       x-cache:
@@ -1507,27 +1441,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVUxQldrVk9WRkpCUVVGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZrUlVGQlFVRkJRVUZCUVRCblFVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_ep_3",
-      "exceptionRules": {"fakeExceptionRuleId": {"trigger": {"kind": "wait-time",
-      "threshold": "PT1H"}, "actions": {"fakeExceptionActionId": {"kind": "reclassify",
-      "classificationPolicyId": "sanitized", "labelsToUpsert": {}}}}}}]}'
+    body:
+      string: '{"value":[{"etag":"\"5a05bcc6-0000-0700-0000-6282be3b0000\"","id":"tst_list_ep_3","name":"tst_list_ep_3","exceptionRules":{"fakeExceptionRuleId":{"trigger":{"kind":"wait-time","threshold":"PT1H"},"actions":{"fakeExceptionActionId":{"kind":"reclassify","classificationPolicyId":"test_list_exception_policies_tst_cp","labelsToUpsert":{}}}}}}]}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - 738aee4dceb775ea7ff9a23de41dfc13
+      - 10bc5019686ca50be7dd3d2e21eb4c69
       transfer-encoding:
       - chunked
       x-cache:
@@ -1549,11 +1481,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:47 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/test_list_exception_policies_tst_cp?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
@@ -1561,11 +1493,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - bf0c8f667bb1e62694168c7ad6edc052
+      - 9c26ad0261e68dbded9b57906d6f1bcb
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -1585,11 +1517,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_list_exception_policies_tst_q?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
@@ -1597,11 +1529,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       request-context:
       - appId=
       trace-id:
-      - b94638d9b383d6cfbe855cb78df8a71b
+      - e988ec7c7778f090d2385a46af0d82e5
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -1621,11 +1553,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_list_exception_policies_tst_dp?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
@@ -1633,11 +1565,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:28 GMT
       request-context:
       - appId=
       trace-id:
-      - c336cdb9cc4234c60f06d8f5f4b672ab
+      - cba19c65052abf019d5bcf6b88909ee5
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -1657,11 +1589,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_1?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
@@ -1669,11 +1601,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Mon, 16 May 2022 07:34:49 GMT
+      - Mon, 16 May 2022 21:12:28 GMT
       request-context:
       - appId=
       trace-id:
-      - eef25a6838f63ccfd874837402c63ba7
+      - d74ef5b5c51e4b15bbf37cbecf97831a
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -1693,11 +1625,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_3?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
@@ -1705,11 +1637,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Mon, 16 May 2022 07:34:49 GMT
+      - Mon, 16 May 2022 21:12:28 GMT
       request-context:
       - appId=
       trace-id:
-      - 3bfbe6192b5ec8d84aa979e204b87940
+      - f7038ae400e329033fba180c4a26d346
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -1729,11 +1661,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:34:48 GMT
+      - Mon, 16 May 2022 21:12:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/exceptionPolicies/tst_list_ep_2?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
@@ -1741,11 +1673,11 @@ interactions:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
       date:
-      - Mon, 16 May 2022 07:34:49 GMT
+      - Mon, 16 May 2022 21:12:28 GMT
       request-context:
       - appId=
       trace-id:
-      - 673f225b81e7e0b6490b6c0ef2c636b8
+      - f7e0a9c1561183070944c6b27559a5b0
       x-cache:
       - CONFIG_NOCACHE
     status:

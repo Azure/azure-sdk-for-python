@@ -12,32 +12,33 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:35:16 GMT
+      - Mon, 16 May 2022 21:12:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_get_queue_tst_dp_async?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "test_get_queue_tst_dp_async", "offerTtlSeconds":
-      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}'
+    body:
+      string: '{"id":"test_get_queue_tst_dp_async","name":"test_get_queue_tst_dp_async","offerTTLSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 07:35:16 GMT
+      date: Mon, 16 May 2022 21:12:56 GMT
       etag: REDACTED
-      last-modified: Mon, 16 May 2022 07:35:17 GMT
+      last-modified: Mon, 16 May 2022 21:12:56 GMT
       request-context: appId=
-      trace-id: 83dbc310412ab400e14b0ade192a73cd
+      trace-id: 7d733f2b9ac4edf074da563b799dec03
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_get_queue_tst_dp_async?api-version=2021-10-20-preview2
 - request:
-    body: '{"name": "test_get_q_async", "distributionPolicyId": "sanitized", "labels":
-      {"key1": "QueueKey", "key2": 10, "key3": true, "key4": false, "key5": 10.1}}'
+    body: '{"name": "test_get_q_async", "distributionPolicyId": "test_get_queue_tst_dp_async",
+      "labels": {"key1": "QueueKey", "key2": 10, "key3": true, "key4": false, "key5":
+      10.1}}'
     headers:
       Accept:
       - application/json
@@ -48,29 +49,28 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:35:16 GMT
+      - Mon, 16 May 2022 21:12:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_get_q_async?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "test_get_q_async", "distributionPolicyId":
-      "sanitized", "labels": {"key1": "QueueKey", "key2": 10, "key3": true, "key4":
-      false, "key5": 10.1, "Id": "sanitized"}}'
+    body:
+      string: '{"id":"test_get_q_async","name":"test_get_q_async","distributionPolicyId":"test_get_queue_tst_dp_async","labels":{"key1":"QueueKey","key2":10,"key3":true,"key4":false,"key5":10.1,"Id":"test_get_q_async"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 07:35:16 GMT
+      date: Mon, 16 May 2022 21:12:55 GMT
       etag: REDACTED
-      last-modified: Mon, 16 May 2022 07:35:17 GMT
+      last-modified: Mon, 16 May 2022 21:12:56 GMT
       request-context: appId=
-      trace-id: 91313cfc0d6f0c0f87269c7180bede39
+      trace-id: 1f473ae155c6ea73a4189e30a2db6773
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_get_q_async?api-version=2021-10-20-preview2
 - request:
     body: ''
     headers:
@@ -79,29 +79,28 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:35:16 GMT
+      - Mon, 16 May 2022 21:12:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_get_q_async?api-version=2021-10-20-preview2
   response:
-    body: '{"id": "sanitized", "name": "test_get_q_async", "distributionPolicyId":
-      "sanitized", "labels": {"key1": "QueueKey", "key2": 10, "key3": true, "key4":
-      false, "key5": 10.1, "Id": "sanitized"}}'
+    body:
+      string: '{"id":"test_get_q_async","name":"test_get_q_async","distributionPolicyId":"test_get_queue_tst_dp_async","labels":{"key1":"QueueKey","key2":10,"key3":true,"key4":false,"key5":10.1,"Id":"test_get_q_async"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 07:35:16 GMT
+      date: Mon, 16 May 2022 21:12:55 GMT
       etag: REDACTED
-      last-modified: Mon, 16 May 2022 07:35:17 GMT
+      last-modified: Mon, 16 May 2022 21:12:56 GMT
       request-context: appId=
-      trace-id: 4857be7153d0067a775f034bc3410d2f
+      trace-id: 8fd9e2652479591993c4886addf46e3b
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_get_q_async?api-version=2021-10-20-preview2
 - request:
     body: ''
     headers:
@@ -110,24 +109,24 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:35:16 GMT
+      - Mon, 16 May 2022 21:12:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_get_q_async?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      date: Mon, 16 May 2022 07:35:17 GMT
+      date: Mon, 16 May 2022 21:12:56 GMT
       request-context: appId=
-      trace-id: d580a874237c1eb21db911d463bf5dc4
+      trace-id: b844ccb717690d157b7f72b6a5dcf9e2
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_get_q_async?api-version=2021-10-20-preview2
 - request:
     body: ''
     headers:
@@ -136,22 +135,22 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 07:35:17 GMT
+      - Mon, 16 May 2022 21:12:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_get_queue_tst_dp_async?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      date: Mon, 16 May 2022 07:35:17 GMT
+      date: Mon, 16 May 2022 21:12:56 GMT
       request-context: appId=
-      trace-id: 03fc9fe3ed7928446ecfe623da00c05b
+      trace-id: 3c209b1224b63234a7664ce12c456bdd
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_get_queue_tst_dp_async?api-version=2021-10-20-preview2
 version: 1
