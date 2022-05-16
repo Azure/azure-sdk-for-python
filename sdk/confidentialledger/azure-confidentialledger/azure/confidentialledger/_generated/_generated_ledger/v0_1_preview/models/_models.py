@@ -23,22 +23,19 @@ class ConfidentialLedgerEnclaves(msrest.serialization.Model):
     """
 
     _validation = {
-        'current_node_id': {'required': True},
-        'enclave_quotes': {'required': True},
+        "current_node_id": {"required": True},
+        "enclave_quotes": {"required": True},
     }
 
     _attribute_map = {
-        'current_node_id': {'key': 'currentNodeId', 'type': 'str'},
-        'enclave_quotes': {'key': 'enclaveQuotes', 'type': '{EnclaveQuote}'},
+        "current_node_id": {"key": "currentNodeId", "type": "str"},
+        "enclave_quotes": {"key": "enclaveQuotes", "type": "{EnclaveQuote}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerEnclaves, self).__init__(**kwargs)
-        self.current_node_id = kwargs['current_node_id']
-        self.enclave_quotes = kwargs['enclave_quotes']
+        self.current_node_id = kwargs["current_node_id"]
+        self.enclave_quotes = kwargs["enclave_quotes"]
 
 
 class ConfidentialLedgerError(msrest.serialization.Model):
@@ -52,17 +49,14 @@ class ConfidentialLedgerError(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ConfidentialLedgerErrorBody'},
+        "error": {"key": "error", "type": "ConfidentialLedgerErrorBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerError, self).__init__(**kwargs)
         self.error = None
 
@@ -82,21 +76,18 @@ class ConfidentialLedgerErrorBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innererror', 'type': 'ConfidentialLedgerErrorBody'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "inner_error": {"key": "innererror", "type": "ConfidentialLedgerErrorBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerErrorBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -114,19 +105,16 @@ class Consortium(msrest.serialization.Model):
     """
 
     _validation = {
-        'members': {'required': True},
+        "members": {"required": True},
     }
 
     _attribute_map = {
-        'members': {'key': 'members', 'type': '[ConsortiumMember]'},
+        "members": {"key": "members", "type": "[ConsortiumMember]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Consortium, self).__init__(**kwargs)
-        self.members = kwargs['members']
+        self.members = kwargs["members"]
 
 
 class ConsortiumMember(msrest.serialization.Model):
@@ -141,22 +129,19 @@ class ConsortiumMember(msrest.serialization.Model):
     """
 
     _validation = {
-        'certificate': {'required': True},
-        'id': {'required': True},
+        "certificate": {"required": True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'certificate': {'key': 'certificate', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "certificate": {"key": "certificate", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConsortiumMember, self).__init__(**kwargs)
-        self.certificate = kwargs['certificate']
-        self.id = kwargs['id']
+        self.certificate = kwargs["certificate"]
+        self.id = kwargs["id"]
 
 
 class Constitution(msrest.serialization.Model):
@@ -171,22 +156,19 @@ class Constitution(msrest.serialization.Model):
     """
 
     _validation = {
-        'digest': {'required': True},
-        'script': {'required': True},
+        "digest": {"required": True},
+        "script": {"required": True},
     }
 
     _attribute_map = {
-        'digest': {'key': 'digest', 'type': 'str'},
-        'script': {'key': 'script', 'type': 'str'},
+        "digest": {"key": "digest", "type": "str"},
+        "script": {"key": "script", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Constitution, self).__init__(**kwargs)
-        self.digest = kwargs['digest']
-        self.script = kwargs['script']
+        self.digest = kwargs["digest"]
+        self.script = kwargs["script"]
 
 
 class EnclaveQuote(msrest.serialization.Model):
@@ -205,27 +187,24 @@ class EnclaveQuote(msrest.serialization.Model):
     """
 
     _validation = {
-        'node_id': {'required': True},
-        'quote_version': {'required': True},
-        'raw': {'required': True},
+        "node_id": {"required": True},
+        "quote_version": {"required": True},
+        "raw": {"required": True},
     }
 
     _attribute_map = {
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'mrenclave': {'key': 'mrenclave', 'type': 'str'},
-        'quote_version': {'key': 'quoteVersion', 'type': 'str'},
-        'raw': {'key': 'raw', 'type': 'str'},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "mrenclave": {"key": "mrenclave", "type": "str"},
+        "quote_version": {"key": "quoteVersion", "type": "str"},
+        "raw": {"key": "raw", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EnclaveQuote, self).__init__(**kwargs)
-        self.node_id = kwargs['node_id']
-        self.mrenclave = kwargs.get('mrenclave', None)
-        self.quote_version = kwargs['quote_version']
-        self.raw = kwargs['raw']
+        self.node_id = kwargs["node_id"]
+        self.mrenclave = kwargs.get("mrenclave", None)
+        self.quote_version = kwargs["quote_version"]
+        self.raw = kwargs["raw"]
 
 
 class LedgerEntry(msrest.serialization.Model):
@@ -245,23 +224,20 @@ class LedgerEntry(msrest.serialization.Model):
     """
 
     _validation = {
-        'contents': {'required': True},
-        'sub_ledger_id': {'readonly': True},
-        'transaction_id': {'readonly': True},
+        "contents": {"required": True},
+        "sub_ledger_id": {"readonly": True},
+        "transaction_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'contents': {'key': 'contents', 'type': 'str'},
-        'sub_ledger_id': {'key': 'subLedgerId', 'type': 'str'},
-        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        "contents": {"key": "contents", "type": "str"},
+        "sub_ledger_id": {"key": "subLedgerId", "type": "str"},
+        "transaction_id": {"key": "transactionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LedgerEntry, self).__init__(**kwargs)
-        self.contents = kwargs['contents']
+        self.contents = kwargs["contents"]
         self.sub_ledger_id = None
         self.transaction_id = None
 
@@ -281,21 +257,18 @@ class LedgerQueryResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
+        "state": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'entry': {'key': 'entry', 'type': 'LedgerEntry'},
+        "state": {"key": "state", "type": "str"},
+        "entry": {"key": "entry", "type": "LedgerEntry"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LedgerQueryResult, self).__init__(**kwargs)
-        self.state = kwargs['state']
-        self.entry = kwargs.get('entry', None)
+        self.state = kwargs["state"]
+        self.entry = kwargs.get("entry", None)
 
 
 class LedgerUser(msrest.serialization.Model):
@@ -315,21 +288,18 @@ class LedgerUser(msrest.serialization.Model):
     """
 
     _validation = {
-        'assigned_role': {'required': True},
-        'user_id': {'readonly': True},
+        "assigned_role": {"required": True},
+        "user_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'assigned_role': {'key': 'assignedRole', 'type': 'str'},
-        'user_id': {'key': 'userId', 'type': 'str'},
+        "assigned_role": {"key": "assignedRole", "type": "str"},
+        "user_id": {"key": "userId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LedgerUser, self).__init__(**kwargs)
-        self.assigned_role = kwargs['assigned_role']
+        self.assigned_role = kwargs["assigned_role"]
         self.user_id = None
 
 
@@ -343,19 +313,16 @@ class LedgerWriteResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'sub_ledger_id': {'required': True},
+        "sub_ledger_id": {"required": True},
     }
 
     _attribute_map = {
-        'sub_ledger_id': {'key': 'subLedgerId', 'type': 'str'},
+        "sub_ledger_id": {"key": "subLedgerId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LedgerWriteResult, self).__init__(**kwargs)
-        self.sub_ledger_id = kwargs['sub_ledger_id']
+        self.sub_ledger_id = kwargs["sub_ledger_id"]
 
 
 class MerkleProofElement(msrest.serialization.Model):
@@ -368,17 +335,14 @@ class MerkleProofElement(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'left': {'key': 'left', 'type': 'str'},
-        'right': {'key': 'right', 'type': 'str'},
+        "left": {"key": "left", "type": "str"},
+        "right": {"key": "right", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MerkleProofElement, self).__init__(**kwargs)
-        self.left = kwargs.get('left', None)
-        self.right = kwargs.get('right', None)
+        self.left = kwargs.get("left", None)
+        self.right = kwargs.get("right", None)
 
 
 class PagedLedgerEntries(msrest.serialization.Model):
@@ -397,24 +361,21 @@ class PagedLedgerEntries(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'entries': {'required': True},
+        "state": {"required": True},
+        "entries": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'entries': {'key': 'entries', 'type': '[LedgerEntry]'},
+        "state": {"key": "state", "type": "str"},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "entries": {"key": "entries", "type": "[LedgerEntry]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PagedLedgerEntries, self).__init__(**kwargs)
-        self.state = kwargs['state']
-        self.next_link = kwargs.get('next_link', None)
-        self.entries = kwargs['entries']
+        self.state = kwargs["state"]
+        self.next_link = kwargs.get("next_link", None)
+        self.entries = kwargs["entries"]
 
 
 class ReceiptContents(msrest.serialization.Model):
@@ -436,31 +397,28 @@ class ReceiptContents(msrest.serialization.Model):
     """
 
     _validation = {
-        'leaf': {'required': True},
-        'node_id': {'required': True},
-        'proof': {'required': True},
-        'root': {'required': True},
-        'signature': {'required': True},
+        "leaf": {"required": True},
+        "node_id": {"required": True},
+        "proof": {"required": True},
+        "root": {"required": True},
+        "signature": {"required": True},
     }
 
     _attribute_map = {
-        'leaf': {'key': 'leaf', 'type': 'str'},
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'proof': {'key': 'proof', 'type': '[MerkleProofElement]'},
-        'root': {'key': 'root', 'type': 'str'},
-        'signature': {'key': 'signature', 'type': 'str'},
+        "leaf": {"key": "leaf", "type": "str"},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "proof": {"key": "proof", "type": "[MerkleProofElement]"},
+        "root": {"key": "root", "type": "str"},
+        "signature": {"key": "signature", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ReceiptContents, self).__init__(**kwargs)
-        self.leaf = kwargs['leaf']
-        self.node_id = kwargs['node_id']
-        self.proof = kwargs['proof']
-        self.root = kwargs['root']
-        self.signature = kwargs['signature']
+        self.leaf = kwargs["leaf"]
+        self.node_id = kwargs["node_id"]
+        self.proof = kwargs["proof"]
+        self.root = kwargs["root"]
+        self.signature = kwargs["signature"]
 
 
 class RoleAssignment(msrest.serialization.Model):
@@ -477,21 +435,18 @@ class RoleAssignment(msrest.serialization.Model):
     """
 
     _validation = {
-        'role_name': {'required': True},
+        "role_name": {"required": True},
     }
 
     _attribute_map = {
-        'role_name': {'key': 'roleName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "role_name": {"key": "roleName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleAssignment, self).__init__(**kwargs)
-        self.role_name = kwargs['role_name']
-        self.description = kwargs.get('description', None)
+        self.role_name = kwargs["role_name"]
+        self.description = kwargs.get("description", None)
 
 
 class TransactionReceipt(msrest.serialization.Model):
@@ -511,24 +466,21 @@ class TransactionReceipt(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'transaction_id': {'required': True},
+        "state": {"required": True},
+        "transaction_id": {"required": True},
     }
 
     _attribute_map = {
-        'receipt': {'key': 'receipt', 'type': 'ReceiptContents'},
-        'state': {'key': 'state', 'type': 'str'},
-        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        "receipt": {"key": "receipt", "type": "ReceiptContents"},
+        "state": {"key": "state", "type": "str"},
+        "transaction_id": {"key": "transactionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TransactionReceipt, self).__init__(**kwargs)
-        self.receipt = kwargs.get('receipt', None)
-        self.state = kwargs['state']
-        self.transaction_id = kwargs['transaction_id']
+        self.receipt = kwargs.get("receipt", None)
+        self.state = kwargs["state"]
+        self.transaction_id = kwargs["transaction_id"]
 
 
 class TransactionStatus(msrest.serialization.Model):
@@ -546,19 +498,16 @@ class TransactionStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'transaction_id': {'required': True},
+        "state": {"required": True},
+        "transaction_id": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "transaction_id": {"key": "transactionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TransactionStatus, self).__init__(**kwargs)
-        self.state = kwargs['state']
-        self.transaction_id = kwargs['transaction_id']
+        self.state = kwargs["state"]
+        self.transaction_id = kwargs["transaction_id"]

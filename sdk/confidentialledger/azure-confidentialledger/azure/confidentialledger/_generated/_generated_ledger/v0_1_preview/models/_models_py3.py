@@ -27,13 +27,13 @@ class ConfidentialLedgerEnclaves(msrest.serialization.Model):
     """
 
     _validation = {
-        'current_node_id': {'required': True},
-        'enclave_quotes': {'required': True},
+        "current_node_id": {"required": True},
+        "enclave_quotes": {"required": True},
     }
 
     _attribute_map = {
-        'current_node_id': {'key': 'currentNodeId', 'type': 'str'},
-        'enclave_quotes': {'key': 'enclaveQuotes', 'type': '{EnclaveQuote}'},
+        "current_node_id": {"key": "currentNodeId", "type": "str"},
+        "enclave_quotes": {"key": "enclaveQuotes", "type": "{EnclaveQuote}"},
     }
 
     def __init__(
@@ -59,17 +59,14 @@ class ConfidentialLedgerError(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ConfidentialLedgerErrorBody'},
+        "error": {"key": "error", "type": "ConfidentialLedgerErrorBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerError, self).__init__(**kwargs)
         self.error = None
 
@@ -89,21 +86,18 @@ class ConfidentialLedgerErrorBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innererror', 'type': 'ConfidentialLedgerErrorBody'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "inner_error": {"key": "innererror", "type": "ConfidentialLedgerErrorBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerErrorBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -121,19 +115,14 @@ class Consortium(msrest.serialization.Model):
     """
 
     _validation = {
-        'members': {'required': True},
+        "members": {"required": True},
     }
 
     _attribute_map = {
-        'members': {'key': 'members', 'type': '[ConsortiumMember]'},
+        "members": {"key": "members", "type": "[ConsortiumMember]"},
     }
 
-    def __init__(
-        self,
-        *,
-        members: List["ConsortiumMember"],
-        **kwargs
-    ):
+    def __init__(self, *, members: List["ConsortiumMember"], **kwargs):
         super(Consortium, self).__init__(**kwargs)
         self.members = members
 
@@ -150,22 +139,16 @@ class ConsortiumMember(msrest.serialization.Model):
     """
 
     _validation = {
-        'certificate': {'required': True},
-        'id': {'required': True},
+        "certificate": {"required": True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'certificate': {'key': 'certificate', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "certificate": {"key": "certificate", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate: str,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, certificate: str, id: str, **kwargs):
         super(ConsortiumMember, self).__init__(**kwargs)
         self.certificate = certificate
         self.id = id
@@ -183,22 +166,16 @@ class Constitution(msrest.serialization.Model):
     """
 
     _validation = {
-        'digest': {'required': True},
-        'script': {'required': True},
+        "digest": {"required": True},
+        "script": {"required": True},
     }
 
     _attribute_map = {
-        'digest': {'key': 'digest', 'type': 'str'},
-        'script': {'key': 'script', 'type': 'str'},
+        "digest": {"key": "digest", "type": "str"},
+        "script": {"key": "script", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        digest: str,
-        script: str,
-        **kwargs
-    ):
+    def __init__(self, *, digest: str, script: str, **kwargs):
         super(Constitution, self).__init__(**kwargs)
         self.digest = digest
         self.script = script
@@ -220,16 +197,16 @@ class EnclaveQuote(msrest.serialization.Model):
     """
 
     _validation = {
-        'node_id': {'required': True},
-        'quote_version': {'required': True},
-        'raw': {'required': True},
+        "node_id": {"required": True},
+        "quote_version": {"required": True},
+        "raw": {"required": True},
     }
 
     _attribute_map = {
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'mrenclave': {'key': 'mrenclave', 'type': 'str'},
-        'quote_version': {'key': 'quoteVersion', 'type': 'str'},
-        'raw': {'key': 'raw', 'type': 'str'},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "mrenclave": {"key": "mrenclave", "type": "str"},
+        "quote_version": {"key": "quoteVersion", "type": "str"},
+        "raw": {"key": "raw", "type": "str"},
     }
 
     def __init__(
@@ -265,23 +242,18 @@ class LedgerEntry(msrest.serialization.Model):
     """
 
     _validation = {
-        'contents': {'required': True},
-        'sub_ledger_id': {'readonly': True},
-        'transaction_id': {'readonly': True},
+        "contents": {"required": True},
+        "sub_ledger_id": {"readonly": True},
+        "transaction_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'contents': {'key': 'contents', 'type': 'str'},
-        'sub_ledger_id': {'key': 'subLedgerId', 'type': 'str'},
-        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        "contents": {"key": "contents", "type": "str"},
+        "sub_ledger_id": {"key": "subLedgerId", "type": "str"},
+        "transaction_id": {"key": "transactionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        contents: str,
-        **kwargs
-    ):
+    def __init__(self, *, contents: str, **kwargs):
         super(LedgerEntry, self).__init__(**kwargs)
         self.contents = contents
         self.sub_ledger_id = None
@@ -303,12 +275,12 @@ class LedgerQueryResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
+        "state": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'entry': {'key': 'entry', 'type': 'LedgerEntry'},
+        "state": {"key": "state", "type": "str"},
+        "entry": {"key": "entry", "type": "LedgerEntry"},
     }
 
     def __init__(
@@ -340,20 +312,17 @@ class LedgerUser(msrest.serialization.Model):
     """
 
     _validation = {
-        'assigned_role': {'required': True},
-        'user_id': {'readonly': True},
+        "assigned_role": {"required": True},
+        "user_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'assigned_role': {'key': 'assignedRole', 'type': 'str'},
-        'user_id': {'key': 'userId', 'type': 'str'},
+        "assigned_role": {"key": "assignedRole", "type": "str"},
+        "user_id": {"key": "userId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        assigned_role: Union[str, "ConfidentialLedgerUserRoleName"],
-        **kwargs
+        self, *, assigned_role: Union[str, "ConfidentialLedgerUserRoleName"], **kwargs
     ):
         super(LedgerUser, self).__init__(**kwargs)
         self.assigned_role = assigned_role
@@ -370,19 +339,14 @@ class LedgerWriteResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'sub_ledger_id': {'required': True},
+        "sub_ledger_id": {"required": True},
     }
 
     _attribute_map = {
-        'sub_ledger_id': {'key': 'subLedgerId', 'type': 'str'},
+        "sub_ledger_id": {"key": "subLedgerId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sub_ledger_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, sub_ledger_id: str, **kwargs):
         super(LedgerWriteResult, self).__init__(**kwargs)
         self.sub_ledger_id = sub_ledger_id
 
@@ -397,16 +361,12 @@ class MerkleProofElement(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'left': {'key': 'left', 'type': 'str'},
-        'right': {'key': 'right', 'type': 'str'},
+        "left": {"key": "left", "type": "str"},
+        "right": {"key": "right", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        left: Optional[str] = None,
-        right: Optional[str] = None,
-        **kwargs
+        self, *, left: Optional[str] = None, right: Optional[str] = None, **kwargs
     ):
         super(MerkleProofElement, self).__init__(**kwargs)
         self.left = left
@@ -429,14 +389,14 @@ class PagedLedgerEntries(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'entries': {'required': True},
+        "state": {"required": True},
+        "entries": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'entries': {'key': 'entries', 'type': '[LedgerEntry]'},
+        "state": {"key": "state", "type": "str"},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "entries": {"key": "entries", "type": "[LedgerEntry]"},
     }
 
     def __init__(
@@ -472,19 +432,19 @@ class ReceiptContents(msrest.serialization.Model):
     """
 
     _validation = {
-        'leaf': {'required': True},
-        'node_id': {'required': True},
-        'proof': {'required': True},
-        'root': {'required': True},
-        'signature': {'required': True},
+        "leaf": {"required": True},
+        "node_id": {"required": True},
+        "proof": {"required": True},
+        "root": {"required": True},
+        "signature": {"required": True},
     }
 
     _attribute_map = {
-        'leaf': {'key': 'leaf', 'type': 'str'},
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'proof': {'key': 'proof', 'type': '[MerkleProofElement]'},
-        'root': {'key': 'root', 'type': 'str'},
-        'signature': {'key': 'signature', 'type': 'str'},
+        "leaf": {"key": "leaf", "type": "str"},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "proof": {"key": "proof", "type": "[MerkleProofElement]"},
+        "root": {"key": "root", "type": "str"},
+        "signature": {"key": "signature", "type": "str"},
     }
 
     def __init__(
@@ -519,12 +479,12 @@ class RoleAssignment(msrest.serialization.Model):
     """
 
     _validation = {
-        'role_name': {'required': True},
+        "role_name": {"required": True},
     }
 
     _attribute_map = {
-        'role_name': {'key': 'roleName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "role_name": {"key": "roleName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -556,14 +516,14 @@ class TransactionReceipt(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'transaction_id': {'required': True},
+        "state": {"required": True},
+        "transaction_id": {"required": True},
     }
 
     _attribute_map = {
-        'receipt': {'key': 'receipt', 'type': 'ReceiptContents'},
-        'state': {'key': 'state', 'type': 'str'},
-        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        "receipt": {"key": "receipt", "type": "ReceiptContents"},
+        "state": {"key": "state", "type": "str"},
+        "transaction_id": {"key": "transactionId", "type": "str"},
     }
 
     def __init__(
@@ -595,21 +555,17 @@ class TransactionStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'transaction_id': {'required': True},
+        "state": {"required": True},
+        "transaction_id": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "transaction_id": {"key": "transactionId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        state: Union[str, "TransactionState"],
-        transaction_id: str,
-        **kwargs
+        self, *, state: Union[str, "TransactionState"], transaction_id: str, **kwargs
     ):
         super(TransactionStatus, self).__init__(**kwargs)
         self.state = state

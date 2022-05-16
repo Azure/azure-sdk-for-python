@@ -24,30 +24,39 @@ class ConfidentialLedgerIdentityServiceClientConfiguration(Configuration):
     :type identity_service_uri: str
     """
 
-    def __init__(
-        self,
-        identity_service_uri: str,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
         if identity_service_uri is None:
             raise ValueError("Parameter 'identity_service_uri' must not be None.")
-        super(ConfidentialLedgerIdentityServiceClientConfiguration, self).__init__(**kwargs)
+        super(ConfidentialLedgerIdentityServiceClientConfiguration, self).__init__(
+            **kwargs
+        )
 
         self.identity_service_uri = identity_service_uri
         self.api_version = "0.1-preview"
-        kwargs.setdefault('sdk_moniker', 'confidentialledger/{}'.format(VERSION))
+        kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get(
+            "user_agent_policy"
+        ) or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(
+            **kwargs
+        )
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get(
+            "logging_policy"
+        ) or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get(
+            "http_logging_policy"
+        ) or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(
+            **kwargs
+        )
+        self.custom_hook_policy = kwargs.get(
+            "custom_hook_policy"
+        ) or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get(
+            "redirect_policy"
+        ) or policies.AsyncRedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")

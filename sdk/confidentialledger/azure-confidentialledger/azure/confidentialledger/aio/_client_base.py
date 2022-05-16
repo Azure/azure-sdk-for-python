@@ -25,7 +25,9 @@ class AsyncConfidentialLedgerClientBase(object):
         self,
         *,
         endpoint: str,
-        credential: Union[ConfidentialLedgerCertificateCredential, "AsyncTokenCredential"],
+        credential: Union[
+            ConfidentialLedgerCertificateCredential, "AsyncTokenCredential"
+        ],
         ledger_certificate_path: str,
         **kwargs: Any
     ) -> None:

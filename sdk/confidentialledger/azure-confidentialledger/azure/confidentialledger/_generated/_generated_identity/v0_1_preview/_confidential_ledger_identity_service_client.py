@@ -37,17 +37,24 @@ class ConfidentialLedgerIdentityServiceClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{identityServiceUri}'
-        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(identity_service_uri, **kwargs)
+        base_url = "{identityServiceUri}"
+        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
+            identity_service_uri, **kwargs
+        )
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.confidential_ledger_identity_service = ConfidentialLedgerIdentityServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.confidential_ledger_identity_service = (
+            ConfidentialLedgerIdentityServiceOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -60,11 +67,20 @@ class ConfidentialLedgerIdentityServiceClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'identityServiceUri': self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
+            "identityServiceUri": self._serialize.url(
+                "self._config.identity_service_uri",
+                self._config.identity_service_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
         stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            http_request, stream=stream, **kwargs
+        )
         return pipeline_response.http_response
 
     def close(self):

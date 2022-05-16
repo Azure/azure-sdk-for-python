@@ -37,17 +37,20 @@ class ConfidentialLedgerClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{ledgerUri}'
+        base_url = "{ledgerUri}"
         self._config = ConfidentialLedgerClientConfiguration(ledger_uri, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.confidential_ledger = ConfidentialLedgerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -60,11 +63,20 @@ class ConfidentialLedgerClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'ledgerUri': self._serialize.url("self._config.ledger_uri", self._config.ledger_uri, 'str', skip_quote=True),
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
         stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            http_request, stream=stream, **kwargs
+        )
         return pipeline_response.http_response
 
     def close(self):

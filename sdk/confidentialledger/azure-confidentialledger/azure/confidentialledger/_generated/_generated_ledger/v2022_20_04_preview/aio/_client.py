@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class ConfidentialLedgerClient:
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
@@ -41,14 +42,15 @@ class ConfidentialLedgerClient:
     """
 
     def __init__(
-        self,
-        ledger_uri: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
+        self, ledger_uri: str, credential: "AsyncTokenCredential", **kwargs: Any
     ) -> None:
-        _endpoint = '{ledgerUri}'
-        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        _endpoint = "{ledgerUri}"
+        self._config = ConfidentialLedgerClientConfiguration(
+            ledger_uri=ledger_uri, credential=credential, **kwargs
+        )
+        self._client = AsyncPipelineClient(
+            base_url=_endpoint, config=self._config, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -57,11 +59,8 @@ class ConfidentialLedgerClient:
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
     def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
+        self, request: HttpRequest, **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
@@ -82,10 +81,17 @@ class ConfidentialLedgerClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "ledgerUri": self._serialize.url("self._config.ledger_uri", self._config.ledger_uri, 'str', skip_quote=True),
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

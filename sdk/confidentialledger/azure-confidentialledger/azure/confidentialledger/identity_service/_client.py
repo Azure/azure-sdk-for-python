@@ -25,7 +25,9 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-class ConfidentialLedgerIdentityServiceClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ConfidentialLedgerIdentityServiceClient(
+    object
+):  # pylint: disable=client-accepts-api-version-keyword
     """Client for communicating with the Confidential Ledger Identity Service,
     which is used for retrieving identity information about a particular Confidential
     Ledger instance.
@@ -37,7 +39,9 @@ class ConfidentialLedgerIdentityServiceClient(object): # pylint: disable=client-
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, identity_service_url, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
+        self, identity_service_url, **kwargs
+    ):  # pylint: disable=missing-client-constructor-parameter-credential
         # type: (str, Any) -> None
         client = kwargs.get("generated_client")
         if client:
@@ -102,8 +106,7 @@ class ConfidentialLedgerIdentityServiceClient(object): # pylint: disable=client-
             raise ValueError("ledger_id must be a non-empty string")
 
         result = self._client.confidential_ledger_identity_service.get_ledger_identity(
-            ledger_id=ledger_id,
-            **kwargs
+            ledger_id=ledger_id, **kwargs
         )
         return LedgerIdentity(
             ledger_id=result.ledger_id,

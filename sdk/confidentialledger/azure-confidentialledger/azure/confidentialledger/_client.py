@@ -9,7 +9,9 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._client_base import ConfidentialLedgerClientBase
 from ._enums import LedgerUserRole, TransactionState
-from ._generated._generated_ledger.v0_1_preview.models import ConfidentialLedgerQueryState
+from ._generated._generated_ledger.v0_1_preview.models import (
+    ConfidentialLedgerQueryState,
+)
 from ._models import (
     AppendResult,
     Constitution,
@@ -174,8 +176,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
     @distributed_trace
     def get_consortium(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Consortium
         """Gets the consortium members.
@@ -197,8 +198,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
     @distributed_trace
     def get_enclave_quotes(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> LedgerEnclaves
         """Gets enclave quotes from all nodes in the Confidential Ledger network.
@@ -224,8 +224,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
     @distributed_trace
     def get_ledger_entries(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[LedgerEntry]
         """Gets a range of entries in the ledger.
@@ -271,8 +270,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
     @distributed_trace
     def get_ledger_entry(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> LedgerEntry
         """Gets an entry in the ledger. The query may need to be retried while the
@@ -363,8 +361,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         state = None
         for _ in range(max_tries):
             result = self._client.confidential_ledger.get_receipt(
-                transaction_id=transaction_id,
-                **kwargs
+                transaction_id=transaction_id, **kwargs
             )
 
             if result.state is not ConfidentialLedgerQueryState.READY:

@@ -16,7 +16,7 @@ except (SyntaxError, ImportError):
     from ._models import LedgerIdentityInformation  # type: ignore
 
 __all__ = [
-    'ConfidentialLedgerError',
-    'ConfidentialLedgerErrorBody',
-    'LedgerIdentityInformation',
+    "ConfidentialLedgerError",
+    "ConfidentialLedgerErrorBody",
+    "LedgerIdentityInformation",
 ]

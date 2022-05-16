@@ -9,5 +9,5 @@
 from ._confidential_ledger_operations import ConfidentialLedgerOperations
 
 __all__ = [
-    'ConfidentialLedgerOperations',
+    "ConfidentialLedgerOperations",
 ]

@@ -26,24 +26,31 @@ class ConfidentialLedgerIdentityServiceClient(object):
     :type identity_service_uri: str
     """
 
-    def __init__(
-        self,
-        identity_service_uri: str,
-        **kwargs: Any
-    ) -> None:
-        base_url = '{identityServiceUri}'
-        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(identity_service_uri, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
+        base_url = "{identityServiceUri}"
+        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
+            identity_service_uri, **kwargs
+        )
+        self._client = AsyncPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.confidential_ledger_identity_service = ConfidentialLedgerIdentityServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.confidential_ledger_identity_service = (
+            ConfidentialLedgerIdentityServiceOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    async def _send_request(
+        self, http_request: HttpRequest, **kwargs: Any
+    ) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
@@ -53,11 +60,20 @@ class ConfidentialLedgerIdentityServiceClient(object):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
-            'identityServiceUri': self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
+            "identityServiceUri": self._serialize.url(
+                "self._config.identity_service_uri",
+                self._config.identity_service_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
         stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            http_request, stream=stream, **kwargs
+        )
         return pipeline_response.http_response
 
     async def close(self) -> None:

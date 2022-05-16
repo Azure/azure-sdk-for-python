@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -27,23 +28,24 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class ConfidentialLedgerQueryState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """State of a ledger query.
-    """
+    """State of a ledger query."""
 
     LOADING = "Loading"
     READY = "Ready"
 
-class ConfidentialLedgerUserRoleName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Represents an assignable role.
-    """
+
+class ConfidentialLedgerUserRoleName(
+    with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
+):
+    """Represents an assignable role."""
 
     ADMINISTRATOR = "Administrator"
     CONTRIBUTOR = "Contributor"
     READER = "Reader"
 
+
 class TransactionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Represents the state of the transaction.
-    """
+    """Represents the state of the transaction."""
 
     COMMITTED = "Committed"
     PENDING = "Pending"

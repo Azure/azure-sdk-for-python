@@ -185,7 +185,7 @@ class AsyncConfidentialLedgerClientTestMixin:
         @AzureTestCase.await_prepared_test
         async def test_range_query(self):
             modulus = 5
-            num_messages_sent = 201  # Should result in 2 pages.
+            num_messages_sent = 2001  # Should result in 2 pages.
 
             messages = {m: [] for m in range(modulus)}
             for i in range(num_messages_sent):

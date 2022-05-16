@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._confidential_ledger_client import ConfidentialLedgerClient
-__all__ = ['ConfidentialLedgerClient']
+
+__all__ = ["ConfidentialLedgerClient"]

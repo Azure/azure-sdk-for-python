@@ -12,7 +12,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._client_base import AsyncConfidentialLedgerClientBase
 from .._enums import LedgerUserRole, TransactionState
-from .._generated._generated_ledger.v0_1_preview.models import ConfidentialLedgerQueryState
+from .._generated._generated_ledger.v0_1_preview.models import (
+    ConfidentialLedgerQueryState,
+)
 from .._models import (
     AppendResult,
     Constitution,
@@ -55,7 +57,9 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[ConfidentialLedgerCertificateCredential, "AsyncTokenCredential"],
+        credential: Union[
+            ConfidentialLedgerCertificateCredential, "AsyncTokenCredential"
+        ],
         ledger_certificate_path: str,
         **kwargs: Any,
     ) -> None:
@@ -63,7 +67,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             endpoint=endpoint,
             credential=credential,
             ledger_certificate_path=ledger_certificate_path,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -98,7 +102,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             contents=entry_contents,
             sub_ledger_id=sub_ledger_id,
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
-            **kwargs
+            **kwargs,
         )
 
         if wait_for_commit:
@@ -128,7 +132,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         result = await self._client.confidential_ledger.create_or_update_user(
             user_id=user_id,
             assigned_role=role.value if isinstance(role, LedgerUserRole) else role,
-            **kwargs
+            **kwargs,
         )
         return LedgerUser(
             user_id=result.user_id, role=LedgerUserRole(result.assigned_role)
@@ -214,7 +218,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         from_transaction_id=None,  # type: Optional[str]
         to_transaction_id=None,  # type: Optional[str]
         sub_ledger_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ) -> AsyncItemPaged[LedgerEntry]:
         """Gets a range of entries in the ledger.
 
@@ -256,7 +260,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                 if entries is not None
                 else [],
             ),
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -411,7 +415,9 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         if user_id is None:
             raise ValueError("user_id cannot be None")
 
-        result = await self._client.confidential_ledger.get_user(user_id=user_id, **kwargs)
+        result = await self._client.confidential_ledger.get_user(
+            user_id=user_id, **kwargs
+        )
         return LedgerUser(
             user_id=result.user_id, role=LedgerUserRole(result.assigned_role)
         )
@@ -423,7 +429,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         *,
         interval=0.5,  # type: float
         max_queries=3,  # type: int
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> None
         """Queries the status of the specified transaction until it is Committed, indicating that

@@ -8,7 +8,13 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -18,8 +24,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    T = TypeVar("T")
+    ClsType = Optional[
+        Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+    ]
+
 
 class ConfidentialLedgerIdentityServiceOperations(object):
     """ConfidentialLedgerIdentityServiceOperations operations.
@@ -60,43 +69,59 @@ class ConfidentialLedgerIdentityServiceOperations(object):
         :rtype: ~azure.confidentialledger._generated/_generated_identity.v0_1_preview.models.LedgerIdentityInformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LedgerIdentityInformation"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.LedgerIdentityInformation"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "0.1-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_ledger_identity.metadata['url']  # type: ignore
+        url = self.get_ledger_identity.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'identityServiceUri': self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
-            'ledgerId': self._serialize.url("ledger_id", ledger_id, 'str'),
+            "identityServiceUri": self._serialize.url(
+                "self._config.identity_service_uri",
+                self._config.identity_service_uri,
+                "str",
+                skip_quote=True,
+            ),
+            "ledgerId": self._serialize.url("ledger_id", ledger_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query(
+            "api_version", api_version, "str"
+        )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ConfidentialLedgerError, response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('LedgerIdentityInformation', pipeline_response)
+        deserialized = self._deserialize("LedgerIdentityInformation", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_ledger_identity.metadata = {'url': '/ledgerIdentity/{ledgerId}'}  # type: ignore
+
+    get_ledger_identity.metadata = {"url": "/ledgerIdentity/{ledgerId}"}  # type: ignore

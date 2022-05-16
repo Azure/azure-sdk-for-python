@@ -6,5 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._confidential_ledger_identity_service_client import ConfidentialLedgerIdentityServiceClient
-__all__ = ['ConfidentialLedgerIdentityServiceClient']
+from ._confidential_ledger_identity_service_client import (
+    ConfidentialLedgerIdentityServiceClient,
+)
+
+__all__ = ["ConfidentialLedgerIdentityServiceClient"]

@@ -18,7 +18,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ConfidentialLedgerClientConfiguration(
+    Configuration
+):  # pylint: disable=too-many-instance-attributes
     """Configuration for ConfidentialLedgerClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -35,13 +37,10 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
     """
 
     def __init__(
-        self,
-        ledger_uri: str,
-        credential: "TokenCredential",
-        **kwargs: Any
+        self, ledger_uri: str, credential: "TokenCredential", **kwargs: Any
     ) -> None:
         super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-04-20-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2022-04-20-preview")  # type: str
 
         if ledger_uri is None:
             raise ValueError("Parameter 'ledger_uri' must not be None.")
@@ -51,23 +50,38 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
         self.ledger_uri = ledger_uri
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://confidential-ledger.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'confidential-ledger/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop(
+            "credential_scopes", ["https://confidential-ledger.azure.com/.default"]
+        )
+        kwargs.setdefault("sdk_moniker", "confidential-ledger/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+        self.user_agent_policy = kwargs.get(
+            "user_agent_policy"
+        ) or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(
+            **kwargs
+        )
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get(
+            "logging_policy"
+        ) or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get(
+            "http_logging_policy"
+        ) or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get(
+            "custom_hook_policy"
+        ) or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(
+            **kwargs
+        )
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

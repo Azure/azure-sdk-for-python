@@ -21,17 +21,14 @@ class ConfidentialLedgerError(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ConfidentialLedgerErrorBody'},
+        "error": {"key": "error", "type": "ConfidentialLedgerErrorBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerError, self).__init__(**kwargs)
         self.error = None
 
@@ -51,21 +48,18 @@ class ConfidentialLedgerErrorBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innererror', 'type': 'ConfidentialLedgerErrorBody'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "inner_error": {"key": "innererror", "type": "ConfidentialLedgerErrorBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConfidentialLedgerErrorBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -87,19 +81,16 @@ class LedgerIdentityInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'ledger_id': {'readonly': True},
-        'ledger_tls_certificate': {'required': True},
+        "ledger_id": {"readonly": True},
+        "ledger_tls_certificate": {"required": True},
     }
 
     _attribute_map = {
-        'ledger_id': {'key': 'ledgerId', 'type': 'str'},
-        'ledger_tls_certificate': {'key': 'ledgerTlsCertificate', 'type': 'str'},
+        "ledger_id": {"key": "ledgerId", "type": "str"},
+        "ledger_tls_certificate": {"key": "ledgerTlsCertificate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LedgerIdentityInformation, self).__init__(**kwargs)
         self.ledger_id = None
-        self.ledger_tls_certificate = kwargs['ledger_tls_certificate']
+        self.ledger_tls_certificate = kwargs["ledger_tls_certificate"]

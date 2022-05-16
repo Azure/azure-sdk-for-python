@@ -26,24 +26,27 @@ class ConfidentialLedgerClient(object):
     :type ledger_uri: str
     """
 
-    def __init__(
-        self,
-        ledger_uri: str,
-        **kwargs: Any
-    ) -> None:
-        base_url = '{ledgerUri}'
+    def __init__(self, ledger_uri: str, **kwargs: Any) -> None:
+        base_url = "{ledgerUri}"
         self._config = ConfidentialLedgerClientConfiguration(ledger_uri, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.confidential_ledger = ConfidentialLedgerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    async def _send_request(
+        self, http_request: HttpRequest, **kwargs: Any
+    ) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
@@ -53,11 +56,20 @@ class ConfidentialLedgerClient(object):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
-            'ledgerUri': self._serialize.url("self._config.ledger_uri", self._config.ledger_uri, 'str', skip_quote=True),
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
         stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            http_request, stream=stream, **kwargs
+        )
         return pipeline_response.http_response
 
     async def close(self) -> None:
