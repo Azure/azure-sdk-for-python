@@ -12,7 +12,7 @@ ConfidentialLedgerPreparer = functools.partial(
     PowerShellPreparer,
     "confidentialledger",
     confidentialledger_endpoint="fake.confidential-ledger.azure.com",
-    confidentialledgery_group="fakegroup",
+    confidentialledger_group="fakegroup",
 )
 
 
