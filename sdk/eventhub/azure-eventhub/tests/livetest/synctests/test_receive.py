@@ -142,7 +142,8 @@ def test_receive_over_websocket_sync(connstr_senders):
     on_event.app_prop = None
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str,
-                                                           consumer_group='$default',
+                                                           consumer_group='$default', 
+                                                           prefetch=20,
                                                            transport_type=TransportType.AmqpOverWebsocket)
 
     event_list = []
