@@ -36,7 +36,7 @@ def sample_issue_resolution_dict_parms():
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
         poller = client.begin_conversation_analysis(
-            body={
+            jobs={
                 "displayName": "Analyze conversations from xxx",
                 "analysisInput": {
                     "conversations": [
@@ -70,10 +70,9 @@ def sample_issue_resolution_dict_parms():
                 "tasks": [
                     {
                         "taskName": "analyze 1",
-                        "kind": "IssueResolutionSummarization",
+                        "kind": "ConversationalSummarizationTask",
                         "parameters": {
-                            "modelVersion": "2022-04-01",
-                            "summaryAspects": "Issue, Resolution"
+                            "summaryAspects": ["Issue, Resolution"]
                         }
                     }
                 ]
@@ -90,15 +89,17 @@ def sample_issue_resolution_dict_parms():
             print("... errors occured ...")
             for error in issue_resolution_result.errors:
                 print(error)
-        conversation_result = issue_resolution_result.conversations[0]
-        if conversation_result.warnings:
-            print("... view warnings ...")
-            for warning in conversation_result.warnings:
-                print(warning)
-        summaries = conversation_result.summaries
-        print("... view task result ...")
-        print("issue: {}".format(summaries[0].text))
-        print("resolution: {}".format(summaries[1].text))
+        else:
+            conversation_result = issue_resolution_result.conversations[0]
+            if conversation_result.warnings:
+                print("... view warnings ...")
+                for warning in conversation_result.warnings:
+                    print(warning)
+            else:
+                summaries = conversation_result.summaries
+                print("... view task result ...")
+                print("issue: {}".format(summaries[0].text))
+                print("resolution: {}".format(summaries[1].text))
 
     # [END analyze_conversation_app]
 
