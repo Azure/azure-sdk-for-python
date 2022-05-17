@@ -88,7 +88,7 @@ class Connection(object):
 
     def __init__(self, endpoint, **kwargs):
         # type(str, Any) -> None
-        parsed_url = urlparse(endpoint)
+        parsed_url = urlparse(kwargs.get("custom_endpoint_address") or endpoint)
         self._hostname = parsed_url.hostname
         endpoint = self._hostname
         if parsed_url.port:
@@ -110,6 +110,7 @@ class Connection(object):
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
                 host=endpoint,
+                port=self._port,
                 credential=kwargs['sasl_credential'],
                 **kwargs
             )

@@ -160,6 +160,10 @@ class AMQPClient(object):
         self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
         self._http_proxy = kwargs.pop('http_proxy', None)
 
+        # Custom Endpoint
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self._connection_verify = kwargs.get("connection_verify")
+
     def __enter__(self):
         """Run Client in a context manager."""
         self.open()
@@ -239,7 +243,7 @@ class AMQPClient(object):
             self._connection = Connection(
                 "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                ssl={'ca_certs':certifi.where()},
+                ssl={'ca_certs':self._connection_verify or certifi.where()},
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
@@ -247,7 +251,8 @@ class AMQPClient(object):
                 properties=self._properties,
                 network_trace=self._network_trace,
                 transport_type=self._transport_type,
-                http_proxy=self._http_proxy
+                http_proxy=self._http_proxy,
+                custom_endpoint_address=self._custom_endpoint_address
             )
             self._connection.open()
         if not self._session:
