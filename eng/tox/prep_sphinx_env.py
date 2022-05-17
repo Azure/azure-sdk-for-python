@@ -138,7 +138,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     package_path = os.path.abspath(args.target_package)
-    package_name, namespace, package_version = get_package_details(
+    package_name, namespace, package_version, _, _ = get_package_details(
         os.path.join(package_path, "setup.py")
     )
 

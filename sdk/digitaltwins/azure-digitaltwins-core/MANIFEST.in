@@ -5,3 +5,4 @@ include azure/digitaltwins/core/__init__.py
 include LICENSE
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/digitaltwins/core/py.typed

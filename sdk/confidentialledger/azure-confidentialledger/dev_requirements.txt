@@ -1,4 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 -e ../../../tools/azure-devtools
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0

@@ -59,7 +59,7 @@ class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-
 
     def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
         tag = tag_or_digest.split(":")
-        return not (len(tag) == 2 and tag[0].startswith(u"sha"))
+        return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

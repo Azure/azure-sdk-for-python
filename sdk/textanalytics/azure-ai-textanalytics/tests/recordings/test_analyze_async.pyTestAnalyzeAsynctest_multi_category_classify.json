@@ -1,54 +1,82 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1196",
+        "Content-Length": "938",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ec07ec56-5d0f-11ec-a43a-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: [{\u0022parameters\u0022: {\u0022project-name\u0022: \u0022multi_category_classify_project_name\u0022, \u0022deployment-name\u0022: \u0022multi_category_classify_project_name\u0022}, \u0022taskName\u0022: \u00220\u0022}]}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "CustomMultiLabelClassification",
+            "parameters": {
+              "projectName": "multi_category_classify_project_name",
+              "deploymentName": "multi_category_classify_project_name"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "d3368400-f6d1-4424-b6ce-f7c02e8e4ecb",
-        "Date": "Tue, 14 Dec 2021 18:59:10 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2e05a0cb-2328-4868-9250-748dbaed25ea",
+        "apim-request-id": "9c6377d4-38a6-40d9-a011-7789c36dccdb",
+        "Content-Length": "0",
+        "Date": "Thu, 12 May 2022 22:59:38 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0d9b5f7b-bca8-4897-8fad-1ed1ba29e54b?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "395"
+        "x-envoy-upstream-service-time": "376"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2e05a0cb-2328-4868-9250-748dbaed25ea?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0d9b5f7b-bca8-4897-8fad-1ed1ba29e54b?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "ec07ec56-5d0f-11ec-a43a-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "072fc047-fa77-4551-9a09-6abb3d52eba3",
+        "apim-request-id": "9b54c995-f432-4d7c-857f-22b8db34ddf2",
+        "Content-Length": "1012",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:59:15 GMT",
+        "Date": "Thu, 12 May 2022 22:59:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "54"
+        "x-envoy-upstream-service-time": "56"
       },
       "ResponseBody": {
-        "jobId": "2e05a0cb-2328-4868-9250-748dbaed25ea",
-        "lastUpdateDateTime": "2021-12-14T18:59:12Z",
-        "createdDateTime": "2021-12-14T18:59:11Z",
-        "expirationDateTime": "2021-12-15T18:59:11Z",
+        "jobId": "0d9b5f7b-bca8-4897-8fad-1ed1ba29e54b",
+        "lastUpdateDateTime": "2022-05-12T22:59:40Z",
+        "createdDateTime": "2022-05-12T22:59:38Z",
+        "expirationDateTime": "2022-05-13T22:59:38Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -56,11 +84,12 @@
           "failed": 0,
           "inProgress": 0,
           "total": 1,
-          "customMultiClassificationTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:12.2907492Z",
+              "kind": "CustomMultiLabelClassificationLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-12T22:59:40.6761629Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 3,
@@ -71,7 +100,7 @@
                 "documents": [
                   {
                     "id": "1",
-                    "classifications": [],
+                    "class": [],
                     "statistics": {
                       "charactersCount": 295,
                       "transactionsCount": 1
@@ -80,7 +109,7 @@
                   },
                   {
                     "id": "2",
-                    "classifications": [],
+                    "class": [],
                     "statistics": {
                       "charactersCount": 158,
                       "transactionsCount": 1
@@ -89,7 +118,7 @@
                   },
                   {
                     "id": "3",
-                    "classifications": [
+                    "class": [
                       {
                         "category": "BookRestaurant",
                         "confidenceScore": 0.97

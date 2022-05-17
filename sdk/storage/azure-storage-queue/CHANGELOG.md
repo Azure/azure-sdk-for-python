@@ -1,10 +1,23 @@
 # Release History
 
-## 12.3.0 (Unreleased)
+## 12.3.1 (Unreleased)
 
 ### Features Added
 
+### Breaking Changes
+
 ### Bugs Fixed
+
+### Other Changes
+
+## 12.3.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.3.0b1.
+
+### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
 
 ## 12.3.0b1 (2022-04-14)
 

@@ -89,7 +89,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 **kwargs)
 
             if progress_hook:
-                progress_hook(adjusted_count, adjusted_count)
+                await progress_hook(adjusted_count, adjusted_count)
 
             return response
 

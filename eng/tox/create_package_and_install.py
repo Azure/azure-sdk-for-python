@@ -57,7 +57,7 @@ def discover_packages(setuppy_path, args):
 
 def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
     packages = []
-    pkg_name, _, version = get_package_details(setuppy_path)
+    pkg_name, _, version, _, _ = get_package_details(setuppy_path)
     if package_type == "wheel":
         prebuilt_package = find_whl(dist_directory, pkg_name, version)
     else:
