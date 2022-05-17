@@ -4339,7 +4339,7 @@ class OrchestrationServiceStateInput(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar service_name: Required. The name of the service. Possible values include:
-     "AutomaticRepairs", "DummyOrchestrationServiceName".
+     "AutomaticRepairs".
     :vartype service_name: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceNames
     :ivar action: Required. The action to be performed. Possible values include: "Resume",
      "Suspend".
@@ -4365,7 +4365,7 @@ class OrchestrationServiceStateInput(msrest.serialization.Model):
     ):
         """
         :keyword service_name: Required. The name of the service. Possible values include:
-         "AutomaticRepairs", "DummyOrchestrationServiceName".
+         "AutomaticRepairs".
         :paramtype service_name: str or
          ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceNames
         :keyword action: Required. The action to be performed. Possible values include: "Resume",
@@ -4383,8 +4383,7 @@ class OrchestrationServiceSummary(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar service_name: The name of the service. Possible values include: "AutomaticRepairs",
-     "DummyOrchestrationServiceName".
+    :ivar service_name: The name of the service. Possible values include: "AutomaticRepairs".
     :vartype service_name: str or ~azure.mgmt.compute.v2021_11_01.models.OrchestrationServiceNames
     :ivar service_state: The current state of the service. Possible values include: "NotRunning",
      "Running", "Suspended".
@@ -4670,9 +4669,8 @@ class OSProfile(msrest.serialization.Model):
      the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no extensions
      are present on the virtual machine.
     :vartype allow_extension_operations: bool
-    :ivar require_guest_provision_signal: Specifies whether the guest provision signal is required
-     to infer provision success of the virtual machine.  **Note: This property is for private
-     testing only, and all customers must not set the property to false.**.
+    :ivar require_guest_provision_signal: Optional property which must either be set to True or
+     omitted.
     :vartype require_guest_provision_signal: bool
     """
 
@@ -4766,9 +4764,8 @@ class OSProfile(msrest.serialization.Model):
          on the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no
          extensions are present on the virtual machine.
         :paramtype allow_extension_operations: bool
-        :keyword require_guest_provision_signal: Specifies whether the guest provision signal is
-         required to infer provision success of the virtual machine.  **Note: This property is for
-         private testing only, and all customers must not set the property to false.**.
+        :keyword require_guest_provision_signal: Optional property which must either be set to True or
+         omitted.
         :paramtype require_guest_provision_signal: bool
         """
         super(OSProfile, self).__init__(**kwargs)
