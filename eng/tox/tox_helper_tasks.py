@@ -60,13 +60,22 @@ def get_package_details(setup_filename):
     package_name = kwargs["name"]
     # default namespace for the package
     name_space = package_name.replace("-", ".")
+
+    package_data = None
+    if "package_data" in kwargs:
+        package_data = kwargs["package_data"]
+
+    include_package_data = None
+    if "include_package_data" in kwargs:
+        include_package_data = kwargs["include_package_data"]
+
     if "packages" in kwargs.keys():
         packages = kwargs["packages"]
         if packages:
             name_space = packages[0]
             logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
-    return package_name, name_space, kwargs["version"]
+    return package_name, name_space, kwargs["version"], package_data, include_package_data
 
 
 def parse_req(req):

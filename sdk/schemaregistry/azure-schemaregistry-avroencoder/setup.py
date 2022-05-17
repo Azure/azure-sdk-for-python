@@ -64,5 +64,9 @@ setup(
     packages=find_namespace_packages(
         include=['azure.schemaregistry.encoder.*']  # Exclude packages that will be covered by PEP420 or nspkg
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=install_packages
 )
