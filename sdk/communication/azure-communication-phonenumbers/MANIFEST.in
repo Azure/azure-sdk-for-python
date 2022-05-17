@@ -4,3 +4,4 @@ include azure/communication/__init__.py
 include LICENSE
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/communication/phonenumbers/py.typed

@@ -49,13 +49,13 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -65,12 +65,14 @@ setup(
         'azure',
         'azure.ai',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
+    python_requires=">=3.6",
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
         'azure-core>=1.6.0,<2.0.0',
     ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-ai-nspkg'],
-    }
 )

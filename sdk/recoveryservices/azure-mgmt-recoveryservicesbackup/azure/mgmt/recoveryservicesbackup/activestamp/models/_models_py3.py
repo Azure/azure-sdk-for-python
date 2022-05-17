@@ -128,7 +128,7 @@ class ProtectionContainer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'StorageContainer': 'AzureStorageContainer', 'Windows': 'MabContainer'}
+        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaasVMContainer': 'IaaSVMContainer', 'StorageContainer': 'AzureStorageContainer', 'Windows': 'MabContainer'}
     }
 
     def __init__(
@@ -1889,7 +1889,7 @@ class IaaSVMContainer(ProtectionContainer):
         :paramtype resource_group: str
         """
         super(IaaSVMContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, protectable_object_type=protectable_object_type, **kwargs)
-        self.container_type = 'IaaSVMContainer'  # type: str
+        self.container_type = 'IaasVMContainer'  # type: str
         self.virtual_machine_id = virtual_machine_id
         self.virtual_machine_version = virtual_machine_version
         self.resource_group = resource_group

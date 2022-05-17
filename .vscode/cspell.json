@@ -196,7 +196,7 @@
     "livekvtestcertrec",
     "livekvtestgetcertperfcert",
     "livekvtestgetsecretperfsecret",
-    "livekvtestlistperfsecret",    
+    "livekvtestlistperfsecret",
     "livekvtestdecryptperfkey",
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
@@ -242,6 +242,7 @@
     "PSECRET",
     "pygobject",
     "parameterizing",
+    "pytyped",
     "pytz",
     "pywin",
     "pyversion",
@@ -366,7 +367,9 @@
         "italiano",
         "skrivet",
         "verfasst",
-        "engelska"
+        "engelska",
+        "fhir",
+        "FHIR"
       ]
     },
     {

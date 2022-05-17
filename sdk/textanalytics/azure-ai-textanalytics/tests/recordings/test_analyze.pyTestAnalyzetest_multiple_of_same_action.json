@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -122,18 +122,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "592c2a5d-5fa8-40b6-a96f-7fb0ad5e550c",
+        "apim-request-id": "f1e44d4e-23a9-402a-b3ef-12393be8ba09",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:39:30 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8cf1140e-99f3-4fad-9853-f14adecc781b?api-version=2022-03-01-preview",
+        "Date": "Tue, 03 May 2022 00:05:31 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/fec474b9-55d5-42a3-ba86-6eaa73ea6441?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "609"
+        "x-envoy-upstream-service-time": "636"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8cf1140e-99f3-4fad-9853-f14adecc781b?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/fec474b9-55d5-42a3-ba86-6eaa73ea6441?api-version=2022-04-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -144,1269 +144,31 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "65d12d2e-eac2-468b-96ae-9f431a7fe6b1",
-        "Content-Length": "7290",
+        "apim-request-id": "0cf74948-6f77-4203-992e-0cedc482f3ac",
+        "Content-Length": "2042",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:39:35 GMT",
+        "Date": "Tue, 03 May 2022 00:05:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "229"
+        "x-envoy-upstream-service-time": "90"
       },
       "ResponseBody": {
-        "jobId": "8cf1140e-99f3-4fad-9853-f14adecc781b",
-        "lastUpdateDateTime": "2022-04-20T23:39:34Z",
-        "createdDateTime": "2022-04-20T23:39:29Z",
-        "expirationDateTime": "2022-04-21T23:39:29Z",
+        "jobId": "fec474b9-55d5-42a3-ba86-6eaa73ea6441",
+        "lastUpdateDateTime": "2022-05-03T00:05:37Z",
+        "createdDateTime": "2022-05-03T00:05:32Z",
+        "expirationDateTime": "2022-05-04T00:05:32Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 6,
+          "completed": 1,
           "failed": 0,
-          "inProgress": 6,
-          "total": 12,
-          "items": [
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.2659949Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "bingId": "a828cf41-b938-49fe-7986-4b336618d413",
-                        "name": "Brazil",
-                        "matches": [
-                          {
-                            "text": "Brazilian",
-                            "offset": 23,
-                            "length": 9,
-                            "confidenceScore": 0.07
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Brazil",
-                        "url": "https://en.wikipedia.org/wiki/Brazil",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "f4df6dc5-6807-165b-d7ad-9cfb628549f4",
-                        "name": "Cadastro de Pessoas F\u00EDsicas",
-                        "matches": [
-                          {
-                            "text": "CPF number",
-                            "offset": 33,
-                            "length": 10,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Cadastro de Pessoas F\u00EDsicas",
-                        "url": "https://en.wikipedia.org/wiki/Cadastro_de_Pessoas_F\u00EDsicas",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "bingId": "e6fa81f3-561c-8207-0ca8-5b0163484c4d",
-                        "name": "Government Accountability Office",
-                        "matches": [
-                          {
-                            "text": "Government Accountability Office (GAO",
-                            "offset": 23,
-                            "length": 37,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Government Accountability Office",
-                        "url": "https://en.wikipedia.org/wiki/Government_Accountability_Office",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "936aa335-4726-b0db-03a5-2f3755b776e6",
-                        "name": "Bureau of Land Management",
-                        "matches": [
-                          {
-                            "text": "BLM",
-                            "offset": 202,
-                            "length": 3,
-                            "confidenceScore": 0.5
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Bureau of Land Management",
-                        "url": "https://en.wikipedia.org/wiki/Bureau_of_Land_Management",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "6",
-              "lastUpdateDateTime": "2022-04-20T23:39:33.6425639Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "keyPhrases": [
-                      "SSN",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "keyPhrases": [
-                      "Brazilian CPF number",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "7",
-              "lastUpdateDateTime": "2022-04-20T23:39:33.5203083Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [
-                      {
-                        "text": "859",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 10,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "98",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 14,
-                        "length": 2,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "0987",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 17,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "text": "998",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 3,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "214",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 7,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "865",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 11,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "68",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 15,
-                        "length": 2,
-                        "confidenceScore": 0.8
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "9",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.1436241Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "bingId": "a828cf41-b938-49fe-7986-4b336618d413",
-                        "name": "Brazil",
-                        "matches": [
-                          {
-                            "text": "Brazilian",
-                            "offset": 23,
-                            "length": 9,
-                            "confidenceScore": 0.07
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Brazil",
-                        "url": "https://en.wikipedia.org/wiki/Brazil",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "f4df6dc5-6807-165b-d7ad-9cfb628549f4",
-                        "name": "Cadastro de Pessoas F\u00EDsicas",
-                        "matches": [
-                          {
-                            "text": "CPF number",
-                            "offset": 33,
-                            "length": 10,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Cadastro de Pessoas F\u00EDsicas",
-                        "url": "https://en.wikipedia.org/wiki/Cadastro_de_Pessoas_F\u00EDsicas",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "bingId": "e6fa81f3-561c-8207-0ca8-5b0163484c4d",
-                        "name": "Government Accountability Office",
-                        "matches": [
-                          {
-                            "text": "Government Accountability Office (GAO",
-                            "offset": 23,
-                            "length": 37,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Government Accountability Office",
-                        "url": "https://en.wikipedia.org/wiki/Government_Accountability_Office",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "936aa335-4726-b0db-03a5-2f3755b776e6",
-                        "name": "Bureau of Land Management",
-                        "matches": [
-                          {
-                            "text": "BLM",
-                            "offset": 202,
-                            "length": 3,
-                            "confidenceScore": 0.5
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Bureau of Land Management",
-                        "url": "https://en.wikipedia.org/wiki/Bureau_of_Land_Management",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "ExtractiveSummarizationLROResults",
-              "taskName": "10",
-              "lastUpdateDateTime": "2022-04-20T23:39:34.7724702Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "sentences": [
-                      {
-                        "text": "My SSN is 859-98-0987.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 22
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "sentences": [
-                      {
-                        "text": "Is 998.214.865-68 your Brazilian CPF number?",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 44
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "sentences": [
-                      {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "11",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.5922682Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "keyPhrases": [
-                      "SSN",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "keyPhrases": [
-                      "Brazilian CPF number",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8cf1140e-99f3-4fad-9853-f14adecc781b?api-version=2022-03-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "a268c5b9-7d20-46cc-9e21-688b6830ccfc",
-        "Content-Length": "10180",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:39:40 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "351"
-      },
-      "ResponseBody": {
-        "jobId": "8cf1140e-99f3-4fad-9853-f14adecc781b",
-        "lastUpdateDateTime": "2022-04-20T23:39:39Z",
-        "createdDateTime": "2022-04-20T23:39:29Z",
-        "expirationDateTime": "2022-04-21T23:39:29Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 8,
-          "failed": 0,
-          "inProgress": 4,
-          "total": 12,
-          "items": [
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-04-20T23:39:39.5231131Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [
-                      {
-                        "text": "859",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 10,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "98",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 14,
-                        "length": 2,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "0987",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 17,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "text": "998",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 3,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "214",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 7,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "865",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 11,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "68",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 15,
-                        "length": 2,
-                        "confidenceScore": 0.8
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.2659949Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "bingId": "a828cf41-b938-49fe-7986-4b336618d413",
-                        "name": "Brazil",
-                        "matches": [
-                          {
-                            "text": "Brazilian",
-                            "offset": 23,
-                            "length": 9,
-                            "confidenceScore": 0.07
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Brazil",
-                        "url": "https://en.wikipedia.org/wiki/Brazil",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "f4df6dc5-6807-165b-d7ad-9cfb628549f4",
-                        "name": "Cadastro de Pessoas F\u00EDsicas",
-                        "matches": [
-                          {
-                            "text": "CPF number",
-                            "offset": 33,
-                            "length": 10,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Cadastro de Pessoas F\u00EDsicas",
-                        "url": "https://en.wikipedia.org/wiki/Cadastro_de_Pessoas_F\u00EDsicas",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "bingId": "e6fa81f3-561c-8207-0ca8-5b0163484c4d",
-                        "name": "Government Accountability Office",
-                        "matches": [
-                          {
-                            "text": "Government Accountability Office (GAO",
-                            "offset": 23,
-                            "length": 37,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Government Accountability Office",
-                        "url": "https://en.wikipedia.org/wiki/Government_Accountability_Office",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "936aa335-4726-b0db-03a5-2f3755b776e6",
-                        "name": "Bureau of Land Management",
-                        "matches": [
-                          {
-                            "text": "BLM",
-                            "offset": 202,
-                            "length": 3,
-                            "confidenceScore": 0.5
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Bureau of Land Management",
-                        "url": "https://en.wikipedia.org/wiki/Bureau_of_Land_Management",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "PiiEntityRecognitionLROResults",
-              "taskName": "5",
-              "lastUpdateDateTime": "2022-04-20T23:39:38.281995Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "redactedText": "My SSN is ***********. Here is another sentence.",
-                    "id": "28",
-                    "entities": [
-                      {
-                        "text": "859-98-0987",
-                        "category": "USSocialSecurityNumber",
-                        "offset": 10,
-                        "length": 11,
-                        "confidenceScore": 0.65
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence.",
-                    "id": "3",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                    "id": "5",
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-01-15"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "6",
-              "lastUpdateDateTime": "2022-04-20T23:39:33.6425639Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "keyPhrases": [
-                      "SSN",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "keyPhrases": [
-                      "Brazilian CPF number",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "7",
-              "lastUpdateDateTime": "2022-04-20T23:39:33.5203083Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [
-                      {
-                        "text": "859",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 10,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "98",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 14,
-                        "length": 2,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "0987",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 17,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "text": "998",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 3,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "214",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 7,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "865",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 11,
-                        "length": 3,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "68",
-                        "category": "Quantity",
-                        "subcategory": "Number",
-                        "offset": 15,
-                        "length": 2,
-                        "confidenceScore": 0.8
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "text": "cent",
-                        "category": "Quantity",
-                        "subcategory": "Percentage",
-                        "offset": 4,
-                        "length": 4,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "9",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.1436241Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "entities": [
-                      {
-                        "bingId": "a828cf41-b938-49fe-7986-4b336618d413",
-                        "name": "Brazil",
-                        "matches": [
-                          {
-                            "text": "Brazilian",
-                            "offset": 23,
-                            "length": 9,
-                            "confidenceScore": 0.07
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Brazil",
-                        "url": "https://en.wikipedia.org/wiki/Brazil",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "f4df6dc5-6807-165b-d7ad-9cfb628549f4",
-                        "name": "Cadastro de Pessoas F\u00EDsicas",
-                        "matches": [
-                          {
-                            "text": "CPF number",
-                            "offset": 33,
-                            "length": 10,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Cadastro de Pessoas F\u00EDsicas",
-                        "url": "https://en.wikipedia.org/wiki/Cadastro_de_Pessoas_F\u00EDsicas",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "entities": [
-                      {
-                        "bingId": "e6fa81f3-561c-8207-0ca8-5b0163484c4d",
-                        "name": "Government Accountability Office",
-                        "matches": [
-                          {
-                            "text": "Government Accountability Office (GAO",
-                            "offset": 23,
-                            "length": 37,
-                            "confidenceScore": 0.82
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Government Accountability Office",
-                        "url": "https://en.wikipedia.org/wiki/Government_Accountability_Office",
-                        "dataSource": "Wikipedia"
-                      },
-                      {
-                        "bingId": "936aa335-4726-b0db-03a5-2f3755b776e6",
-                        "name": "Bureau of Land Management",
-                        "matches": [
-                          {
-                            "text": "BLM",
-                            "offset": 202,
-                            "length": 3,
-                            "confidenceScore": 0.5
-                          }
-                        ],
-                        "language": "en",
-                        "id": "Bureau of Land Management",
-                        "url": "https://en.wikipedia.org/wiki/Bureau_of_Land_Management",
-                        "dataSource": "Wikipedia"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "ExtractiveSummarizationLROResults",
-              "taskName": "10",
-              "lastUpdateDateTime": "2022-04-20T23:39:34.7724702Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "sentences": [
-                      {
-                        "text": "My SSN is 859-98-0987.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 22
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "sentences": [
-                      {
-                        "text": "Is 998.214.865-68 your Brazilian CPF number?",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 44
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "sentences": [
-                      {
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 295
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-08-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "11",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.5922682Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "keyPhrases": [
-                      "SSN",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "keyPhrases": [
-                      "Brazilian CPF number",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8cf1140e-99f3-4fad-9853-f14adecc781b?api-version=2022-03-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "e96f9f9a-a743-48f0-956c-f1c66e92e464",
-        "Content-Length": "15840",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:39:45 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "532"
-      },
-      "ResponseBody": {
-        "jobId": "8cf1140e-99f3-4fad-9853-f14adecc781b",
-        "lastUpdateDateTime": "2022-04-20T23:39:44Z",
-        "createdDateTime": "2022-04-20T23:39:29Z",
-        "expirationDateTime": "2022-04-21T23:39:29Z",
-        "status": "succeeded",
-        "errors": [],
-        "tasks": {
-          "completed": 12,
-          "failed": 0,
-          "inProgress": 0,
+          "inProgress": 11,
           "total": 12,
           "items": [
             {
               "kind": "SentimentAnalysisLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:39:43.5065182Z",
+              "taskName": "8",
+              "lastUpdateDateTime": "2022-05-03T00:05:35.6854935Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -1428,7 +190,9 @@
                         },
                         "offset": 0,
                         "length": 22,
-                        "text": "My SSN is 859-98-0987."
+                        "text": "My SSN is 859-98-0987.",
+                        "targets": [],
+                        "assessments": []
                       },
                       {
                         "sentiment": "neutral",
@@ -1439,7 +203,9 @@
                         },
                         "offset": 23,
                         "length": 25,
-                        "text": "Here is another sentence."
+                        "text": "Here is another sentence.",
+                        "targets": [],
+                        "assessments": []
                       }
                     ],
                     "warnings": []
@@ -1462,7 +228,9 @@
                         },
                         "offset": 0,
                         "length": 44,
-                        "text": "Is 998.214.865-68 your Brazilian CPF number?"
+                        "text": "Is 998.214.865-68 your Brazilian CPF number?",
+                        "targets": [],
+                        "assessments": []
                       },
                       {
                         "sentiment": "neutral",
@@ -1473,7 +241,9 @@
                         },
                         "offset": 45,
                         "length": 25,
-                        "text": "Here is another sentence."
+                        "text": "Here is another sentence.",
+                        "targets": [],
+                        "assessments": []
                       }
                     ],
                     "warnings": []
@@ -1496,7 +266,9 @@
                         },
                         "offset": 0,
                         "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+                        "targets": [],
+                        "assessments": []
                       }
                     ],
                     "warnings": []
@@ -1505,79 +277,48 @@
                 "errors": [],
                 "modelVersion": "2020-04-01"
               }
-            },
-            {
-              "kind": "PiiEntityRecognitionLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-04-20T23:39:43.8533904Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "redactedText": "My SSN is ***********. Here is another sentence.",
-                    "id": "28",
-                    "entities": [
-                      {
-                        "text": "859-98-0987",
-                        "category": "USSocialSecurityNumber",
-                        "offset": 10,
-                        "length": 11,
-                        "confidenceScore": 0.65
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence.",
-                    "id": "3",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "A recent report by the ******************************** (***) found that the dramatic increase in oil and natural gas development on federal lands over the ************** has stretched the staff of the *** to a point that it has been unable to meet its environmental protection responsibilities.",
-                    "id": "5",
-                    "entities": [
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.95
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.9
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.87
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-01-15"
-              }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/fec474b9-55d5-42a3-ba86-6eaa73ea6441?api-version=2022-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "66be19b5-5dd9-4cca-8f55-0247522b5556",
+        "Content-Length": "10842",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 May 2022 00:05:43 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "520"
+      },
+      "ResponseBody": {
+        "jobId": "fec474b9-55d5-42a3-ba86-6eaa73ea6441",
+        "lastUpdateDateTime": "2022-05-03T00:05:40Z",
+        "createdDateTime": "2022-05-03T00:05:32Z",
+        "expirationDateTime": "2022-05-04T00:05:32Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 8,
+          "failed": 0,
+          "inProgress": 4,
+          "total": 12,
+          "items": [
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-04-20T23:39:39.5231131Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.4440463Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -1735,7 +476,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.2659949Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.5800686Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -1828,7 +569,7 @@
             {
               "kind": "ExtractiveSummarizationLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-04-20T23:39:44.7707469Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:37.7739099Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -1888,7 +629,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "5",
-              "lastUpdateDateTime": "2022-04-20T23:39:38.281995Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.5965907Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -1924,55 +665,9 @@
               }
             },
             {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "6",
-              "lastUpdateDateTime": "2022-04-20T23:39:33.6425639Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "28",
-                    "keyPhrases": [
-                      "SSN",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "keyPhrases": [
-                      "Brazilian CPF number",
-                      "sentence"
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
               "kind": "EntityRecognitionLROResults",
               "taskName": "7",
-              "lastUpdateDateTime": "2022-04-20T23:39:33.5203083Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.5091354Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -2130,7 +825,975 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "8",
-              "lastUpdateDateTime": "2022-04-20T23:39:44.8793346Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:35.6854935Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.01,
+                      "neutral": 0.95,
+                      "negative": 0.04
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 1.0,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 22,
+                        "text": "My SSN is 859-98-0987.",
+                        "targets": [],
+                        "assessments": []
+                      },
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.9,
+                          "negative": 0.08
+                        },
+                        "offset": 23,
+                        "length": 25,
+                        "text": "Here is another sentence.",
+                        "targets": [],
+                        "assessments": []
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.01,
+                      "neutral": 0.95,
+                      "negative": 0.04
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 1.0,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 44,
+                        "text": "Is 998.214.865-68 your Brazilian CPF number?",
+                        "targets": [],
+                        "assessments": []
+                      },
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.9,
+                          "negative": 0.08
+                        },
+                        "offset": 45,
+                        "length": 25,
+                        "text": "Here is another sentence.",
+                        "targets": [],
+                        "assessments": []
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.23,
+                      "neutral": 0.61,
+                      "negative": 0.16
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.23,
+                          "neutral": 0.61,
+                          "negative": 0.16
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+                        "targets": [],
+                        "assessments": []
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "ExtractiveSummarizationLROResults",
+              "taskName": "10",
+              "lastUpdateDateTime": "2022-05-03T00:05:37.694378Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "sentences": [
+                      {
+                        "text": "My SSN is 859-98-0987.",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 22
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentences": [
+                      {
+                        "text": "Is 998.214.865-68 your Brazilian CPF number?",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 44
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "sentences": [
+                      {
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 295
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-08-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "11",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.4958833Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "keyPhrases": [
+                      "SSN",
+                      "sentence"
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "keyPhrases": [
+                      "Brazilian CPF number",
+                      "sentence"
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/fec474b9-55d5-42a3-ba86-6eaa73ea6441?api-version=2022-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b043f38c-510c-4c24-aea6-6fbdf86f4785",
+        "Content-Length": "15840",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 May 2022 00:05:48 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "545"
+      },
+      "ResponseBody": {
+        "jobId": "fec474b9-55d5-42a3-ba86-6eaa73ea6441",
+        "lastUpdateDateTime": "2022-05-03T00:05:46Z",
+        "createdDateTime": "2022-05-03T00:05:32Z",
+        "expirationDateTime": "2022-05-04T00:05:32Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 12,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 12,
+          "items": [
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-05-03T00:05:46.5005122Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.01,
+                      "neutral": 0.95,
+                      "negative": 0.04
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 1.0,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 22,
+                        "text": "My SSN is 859-98-0987."
+                      },
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.9,
+                          "negative": 0.08
+                        },
+                        "offset": 23,
+                        "length": 25,
+                        "text": "Here is another sentence."
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.01,
+                      "neutral": 0.95,
+                      "negative": 0.04
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 1.0,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 44,
+                        "text": "Is 998.214.865-68 your Brazilian CPF number?"
+                      },
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.02,
+                          "neutral": 0.9,
+                          "negative": 0.08
+                        },
+                        "offset": 45,
+                        "length": 25,
+                        "text": "Here is another sentence."
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "sentiment": "neutral",
+                    "confidenceScores": {
+                      "positive": 0.23,
+                      "neutral": 0.61,
+                      "negative": 0.16
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.23,
+                          "neutral": 0.61,
+                          "negative": 0.16
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:05:46.5746398Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "redactedText": "My SSN is ***********. Here is another sentence.",
+                    "id": "28",
+                    "entities": [
+                      {
+                        "text": "859-98-0987",
+                        "category": "USSocialSecurityNumber",
+                        "offset": 10,
+                        "length": 11,
+                        "confidenceScore": 0.65
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence.",
+                    "id": "3",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "A recent report by the ******************************** (***) found that the dramatic increase in oil and natural gas development on federal lands over the ************** has stretched the staff of the *** to a point that it has been unable to meet its environmental protection responsibilities.",
+                    "id": "5",
+                    "entities": [
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.9
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.87
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.4440463Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "entities": [
+                      {
+                        "text": "859",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 10,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "98",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 14,
+                        "length": 2,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "0987",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 17,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "entities": [
+                      {
+                        "text": "998",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 3,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "214",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 7,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "865",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 11,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "68",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 15,
+                        "length": 2,
+                        "confidenceScore": 0.8
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "EntityLinkingLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.5800686Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "entities": [
+                      {
+                        "bingId": "a828cf41-b938-49fe-7986-4b336618d413",
+                        "name": "Brazil",
+                        "matches": [
+                          {
+                            "text": "Brazilian",
+                            "offset": 23,
+                            "length": 9,
+                            "confidenceScore": 0.07
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Brazil",
+                        "url": "https://en.wikipedia.org/wiki/Brazil",
+                        "dataSource": "Wikipedia"
+                      },
+                      {
+                        "bingId": "f4df6dc5-6807-165b-d7ad-9cfb628549f4",
+                        "name": "Cadastro de Pessoas F\u00EDsicas",
+                        "matches": [
+                          {
+                            "text": "CPF number",
+                            "offset": 33,
+                            "length": 10,
+                            "confidenceScore": 0.82
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Cadastro de Pessoas F\u00EDsicas",
+                        "url": "https://en.wikipedia.org/wiki/Cadastro_de_Pessoas_F\u00EDsicas",
+                        "dataSource": "Wikipedia"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "entities": [
+                      {
+                        "bingId": "e6fa81f3-561c-8207-0ca8-5b0163484c4d",
+                        "name": "Government Accountability Office",
+                        "matches": [
+                          {
+                            "text": "Government Accountability Office (GAO",
+                            "offset": 23,
+                            "length": 37,
+                            "confidenceScore": 0.82
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Government Accountability Office",
+                        "url": "https://en.wikipedia.org/wiki/Government_Accountability_Office",
+                        "dataSource": "Wikipedia"
+                      },
+                      {
+                        "bingId": "936aa335-4726-b0db-03a5-2f3755b776e6",
+                        "name": "Bureau of Land Management",
+                        "matches": [
+                          {
+                            "text": "BLM",
+                            "offset": 202,
+                            "length": 3,
+                            "confidenceScore": 0.5
+                          }
+                        ],
+                        "language": "en",
+                        "id": "Bureau of Land Management",
+                        "url": "https://en.wikipedia.org/wiki/Bureau_of_Land_Management",
+                        "dataSource": "Wikipedia"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "ExtractiveSummarizationLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-05-03T00:05:37.7739099Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "sentences": [
+                      {
+                        "text": "My SSN is 859-98-0987.",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 22
+                      },
+                      {
+                        "text": "Here is another sentence.",
+                        "rankScore": 0.0,
+                        "offset": 23,
+                        "length": 25
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentences": [
+                      {
+                        "text": "Is 998.214.865-68 your Brazilian CPF number?",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 44
+                      },
+                      {
+                        "text": "Here is another sentence.",
+                        "rankScore": 0.0,
+                        "offset": 45,
+                        "length": 25
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "sentences": [
+                      {
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+                        "rankScore": 1.0,
+                        "offset": 0,
+                        "length": 295
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-08-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "5",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.5965907Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "redactedText": "My SSN is ***********. Here is another sentence.",
+                    "id": "28",
+                    "entities": [
+                      {
+                        "text": "859-98-0987",
+                        "category": "USSocialSecurityNumber",
+                        "offset": 10,
+                        "length": 11,
+                        "confidenceScore": 0.65
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence.",
+                    "id": "3",
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+                    "id": "5",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "6",
+              "lastUpdateDateTime": "2022-05-03T00:05:46.6521684Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "keyPhrases": [
+                      "SSN",
+                      "sentence"
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "keyPhrases": [
+                      "Brazilian CPF number",
+                      "sentence"
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "7",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.5091354Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "28",
+                    "entities": [
+                      {
+                        "text": "859",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 10,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "98",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 14,
+                        "length": 2,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "0987",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 17,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "entities": [
+                      {
+                        "text": "998",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 3,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "214",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 7,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "865",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 11,
+                        "length": 3,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "68",
+                        "category": "Quantity",
+                        "subcategory": "Number",
+                        "offset": 15,
+                        "length": 2,
+                        "confidenceScore": 0.8
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "8",
+              "lastUpdateDateTime": "2022-05-03T00:05:35.6854935Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -2243,7 +1906,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "9",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.1436241Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:46.4448321Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -2336,7 +1999,7 @@
             {
               "kind": "ExtractiveSummarizationLROResults",
               "taskName": "10",
-              "lastUpdateDateTime": "2022-04-20T23:39:34.7724702Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:37.694378Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -2384,7 +2047,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "11",
-              "lastUpdateDateTime": "2022-04-20T23:39:32.5922682Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:40.4958833Z",
               "status": "succeeded",
               "results": {
                 "documents": [

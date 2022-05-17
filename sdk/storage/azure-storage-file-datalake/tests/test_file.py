@@ -108,7 +108,7 @@ class FileTest(StorageTestCase):
                                              file_client.file_system_name + '/',
                                              '/' + file_client.path_name,
                                              credential=datalake_storage_account_key, logging_enable=True)
-        response = file_client.create_file()
+        response = new_file_client.create_file()
 
         # Assert
         self.assertIsNotNone(response)

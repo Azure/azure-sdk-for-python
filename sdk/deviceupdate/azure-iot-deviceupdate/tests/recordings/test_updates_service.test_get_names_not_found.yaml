@@ -11,20 +11,20 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://https://fake_account.account.purview.azure.com/deviceupdate/instance/updates/providers/foo/names?api-version=2021-06-01-preview
+    uri: https://fake_account.account.purview.azure.com/deviceupdate/instance/updates/providers/foo/names?api-version=2021-06-01-preview
   response:
     body:
       string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
-        Found","status":404,"traceId":"00-e80f0c6bb339f64580930d767538aaf8-caae0785f8fdd944-00"}'
+        Found","status":404,"traceId":"00-13b439aa71f00d4c842dd2d70f892d5e-25586801222ade4f-00"}'
     headers:
       content-length:
       - '161'
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Fri, 14 Jan 2022 03:29:03 GMT
+      - Sat, 14 May 2022 03:46:00 GMT
       traceparent:
-      - 00-e80f0c6bb339f64580930d767538aaf8-44fbc97c59ff3047-00
+      - 00-13b439aa71f00d4c842dd2d70f892d5e-a9f2e2a34475994d-00
     status:
       code: 404
       message: Not Found

@@ -787,7 +787,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Now")
+        file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = file_client.get_file_properties().last_write_time
@@ -801,7 +801,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Preserve")
+        file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = file_client.get_file_properties().last_write_time
@@ -982,7 +982,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      file_last_written_mode="Now")
+                                                      file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = destination_file_client.get_file_properties().last_write_time
@@ -1011,7 +1011,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      file_last_written_mode="Preserve")
+                                                      file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = destination_file_client.get_file_properties().last_write_time
@@ -2357,20 +2357,17 @@ class StorageFileTest(StorageTestCase):
     def test_rename_file_content_type(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_file = self._create_file('file1')
-
-        content_settings = ContentSettings (
-            content_type='text/plain'
-        )
+        content_type = 'text/plain'
 
         # Act
         new_file = source_file.rename_file(
             'file2',
-            content_settings=content_settings)
+            content_type=content_type)
 
         # Assert
         props = new_file.get_file_properties()
         self.assertIsNotNone(props)
-        self.assertEqual(content_settings.content_type, props.content_settings.content_type)
+        self.assertEqual(content_type, props.content_settings.content_type)
 
     @FileSharePreparer()
     def test_rename_file_with_lease(self, storage_account_name, storage_account_key):

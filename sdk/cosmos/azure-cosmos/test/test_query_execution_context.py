@@ -31,8 +31,8 @@ from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
 
-#IMPORTANT NOTES:
-  
+# IMPORTANT NOTES:
+
 #      Most test cases in this file create collections in your Azure Cosmos account.
 #      Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
   
@@ -59,15 +59,18 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host,
                                                 QueryExecutionContextEndToEndTests.masterKey,
-                                                "Session",
+                                                consistency_level="Session",
                                                 connection_policy=QueryExecutionContextEndToEndTests.connectionPolicy)
-        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = cls.create_collection(cls.created_db)
+        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.create_container(
+            id='query_execution_context_tests_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
         cls.document_definitions = []
 
         # create a document using the document definition
         for i in xrange(20):
-            d = {'id' : str(i),
+            d = {'id': str(i),
                  'name': 'sample document',
                  'spam': 'eggs' + str(i),
                  'key': 'value'}
@@ -93,15 +96,13 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
 
     def test_no_query_default_execution_context(self):        
                     
-        options = {}    
-        options['maxItemCount'] = 2
+        options = {'maxItemCount': 2}
 
         self._test_default_execution_context(options, None, 20)
 
     def test_no_query_default_execution_context_with_small_last_page(self):        
                     
-        options = {}    
-        options['maxItemCount'] = 3
+        options = {'maxItemCount': 3}
 
         self._test_default_execution_context(options, None, 20)
 
@@ -110,14 +111,12 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         query = {
                 'query': 'SELECT * FROM root r WHERE r.id != @id',
                 'parameters': [
-                    { 'name': '@id', 'value': '5'}
+                    {'name': '@id', 'value': '5'}
                 ]
         }
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
+        options = {'enableCrossPartitionQuery': True, 'maxItemCount': 2}
+
         res = self.created_collection.query_items(
             query=query,
             enable_cross_partition_query=True,
@@ -206,16 +205,6 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         
         # no more results will be returned
         self.assertEqual(ex.fetch_next_block(), [])
-
-    @classmethod
-    def create_collection(cls, created_db):
-
-        created_collection = created_db.create_container(
-            id='query_execution_context_tests collection ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        return created_collection
 
     @classmethod
     def insert_doc(cls, document_definitions):

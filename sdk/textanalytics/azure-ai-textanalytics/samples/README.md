@@ -13,7 +13,7 @@ urlFragment: textanalytics-samples
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
 
-You can authenticate your client with a Cognitive Services/Text Analytics API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
+You can authenticate your client with a Language API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
 These sample programs show common scenarios for the Text Analytics client's offerings.
@@ -38,7 +38,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 ## Prerequisites
 * Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
-[Azure Text Analytics account][azure_text_analytics_account] to run these samples.
+[Azure Language account][azure_language_account] to run these samples.
 
 ## Setup
 
@@ -114,6 +114,6 @@ what you can do with the Azure Text Analytics client library.
 [sample_model_version_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_model_version_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
-[azure_text_analytics_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
+[azure_language_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [api_reference_documentation]: https://aka.ms/azsdk-python-textanalytics-ref-docs
