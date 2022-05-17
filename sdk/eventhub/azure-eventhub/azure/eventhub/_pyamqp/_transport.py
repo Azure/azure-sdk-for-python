@@ -49,10 +49,6 @@ from urllib.parse import urlparse
 
 import certifi
 
-import websocket
-from websocket import create_connection
-websocket.enableTrace(True)
-
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
