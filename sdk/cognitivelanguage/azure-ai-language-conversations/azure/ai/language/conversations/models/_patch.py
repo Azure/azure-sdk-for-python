@@ -8,9 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from ast import Dict
 from typing import List, Optional
-from ._models import (
-    CustomConversationTaskParameters as CustomConversationTaskParametersGenerated,
-)
+# from ._models import (
+#     CustomConversationTaskParameters as CustomConversationTaskParametersGenerated,
+# )
 
 # class CustomConversationTaskParameters(CustomConversationTaskParametersGenerated):
 #     """Input parameters necessary for a CustomConversation task.

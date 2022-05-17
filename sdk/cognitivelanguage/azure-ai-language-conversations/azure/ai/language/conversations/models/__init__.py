@@ -20,6 +20,9 @@ from ._models import AnalyzeConversationSummarizationResult
 from ._models import AnalyzeConversationSummarizationTask
 from ._models import AnalyzeConversationTask
 from ._models import AnalyzeConversationTaskResult
+from ._models import AnswerSpan
+from ._models import AnswersOptions
+from ._models import AnswersResult
 from ._models import AreaResolution
 from ._models import AudioTiming
 from ._models import BaseExtraInformation
@@ -45,14 +48,14 @@ from ._models import ConversationResultBase
 from ._models import ConversationStatistics
 from ._models import ConversationSummarizationTaskParameters
 from ._models import ConversationTargetIntentResult
+from ._models import ConversationTaskParameters
 from ._models import ConversationTasksState
 from ._models import ConversationTasksStateTasks
+from ._models import ConversationalTask
+from ._models import ConversationalTaskResult
 from ._models import ConversationsSummaryResult
 from ._models import ConversationsSummaryResultSummariesItem
 from ._models import CurrencyResolution
-from ._models import CustomConversationTaskParameters
-from ._models import CustomConversationalTask
-from ._models import CustomConversationalTaskResult
 from ._models import DateTimeResolution
 from ._models import Entity
 from ._models import EntitySubtype
@@ -63,24 +66,32 @@ from ._models import InnerErrorModel
 from ._models import InputError
 from ._models import InputWarning
 from ._models import JobState
-from ._models import LUISCallingOptions
-from ._models import LUISParameters
-from ._models import LUISTargetIntentResult
+from ._models import KnowledgeBaseAnswer
+from ._models import KnowledgeBaseAnswerContext
+from ._models import KnowledgeBaseAnswerDialog
+from ._models import KnowledgeBaseAnswerPrompt
 from ._models import LengthResolution
 from ._models import ListKey
+from ._models import LuisCallingOptions
+from ._models import LuisParameters
+from ._models import LuisTargetIntentResult
+from ._models import MetadataFilter
+from ._models import MetadataRecord
 from ._models import MultiLanguageConversationAnalysisInput
 from ._models import NoneLinkedTargetIntentResult
 from ._models import NumberResolution
 from ._models import NumericRangeResolution
-from ._models import OrchestratorPrediction
+from ._models import OrchestrationPrediction
 from ._models import OrdinalResolution
 from ._models import PreBuiltResult
 from ._models import PreBuiltTaskParameters
 from ._models import QuantityResolution
+from ._models import QueryFilters
 from ._models import QuestionAnsweringParameters
 from ._models import QuestionAnsweringTargetIntentResult
 from ._models import RedactedTranscriptContent
 from ._models import RequestStatistics
+from ._models import ShortAnswerOptions
 from ._models import SpeedResolution
 from ._models import SummaryResult
 from ._models import SummaryResultConversationsItem
@@ -115,21 +126,24 @@ from ._enums import (
     ExtraInformationKind,
     InformationUnit,
     InnerErrorCode,
+    InputModality,
     JobStateEnum,
     LengthUnit,
-    Modality,
-    Modifier,
+    LogicalOperationKind,
     NumberKind,
     ProjectKind,
     RangeKind,
+    RankerKind,
     RelativeTo,
     ResolutionKind,
     Role,
     SpeedUnit,
+    StringIndexType,
     SummaryAspectEnum,
     TargetProjectKind,
     TaskStateEnum,
     TemperatureUnit,
+    TemporalModifier,
     TranscriptContentType,
     VolumeUnit,
     WeightUnit,
@@ -152,6 +166,9 @@ __all__ = [
     'AnalyzeConversationSummarizationTask',
     'AnalyzeConversationTask',
     'AnalyzeConversationTaskResult',
+    'AnswerSpan',
+    'AnswersOptions',
+    'AnswersResult',
     'AreaResolution',
     'AudioTiming',
     'BaseExtraInformation',
@@ -177,14 +194,14 @@ __all__ = [
     'ConversationStatistics',
     'ConversationSummarizationTaskParameters',
     'ConversationTargetIntentResult',
+    'ConversationTaskParameters',
     'ConversationTasksState',
     'ConversationTasksStateTasks',
+    'ConversationalTask',
+    'ConversationalTaskResult',
     'ConversationsSummaryResult',
     'ConversationsSummaryResultSummariesItem',
     'CurrencyResolution',
-    'CustomConversationTaskParameters',
-    'CustomConversationalTask',
-    'CustomConversationalTaskResult',
     'DateTimeResolution',
     'Entity',
     'EntitySubtype',
@@ -195,24 +212,32 @@ __all__ = [
     'InputError',
     'InputWarning',
     'JobState',
-    'LUISCallingOptions',
-    'LUISParameters',
-    'LUISTargetIntentResult',
+    'KnowledgeBaseAnswer',
+    'KnowledgeBaseAnswerContext',
+    'KnowledgeBaseAnswerDialog',
+    'KnowledgeBaseAnswerPrompt',
     'LengthResolution',
     'ListKey',
+    'LuisCallingOptions',
+    'LuisParameters',
+    'LuisTargetIntentResult',
+    'MetadataFilter',
+    'MetadataRecord',
     'MultiLanguageConversationAnalysisInput',
     'NoneLinkedTargetIntentResult',
     'NumberResolution',
     'NumericRangeResolution',
-    'OrchestratorPrediction',
+    'OrchestrationPrediction',
     'OrdinalResolution',
     'PreBuiltResult',
     'PreBuiltTaskParameters',
     'QuantityResolution',
+    'QueryFilters',
     'QuestionAnsweringParameters',
     'QuestionAnsweringTargetIntentResult',
     'RedactedTranscriptContent',
     'RequestStatistics',
+    'ShortAnswerOptions',
     'SpeedResolution',
     'SummaryResult',
     'SummaryResultConversationsItem',
@@ -244,21 +269,24 @@ __all__ = [
     'ExtraInformationKind',
     'InformationUnit',
     'InnerErrorCode',
+    'InputModality',
     'JobStateEnum',
     'LengthUnit',
-    'Modality',
-    'Modifier',
+    'LogicalOperationKind',
     'NumberKind',
     'ProjectKind',
     'RangeKind',
+    'RankerKind',
     'RelativeTo',
     'ResolutionKind',
     'Role',
     'SpeedUnit',
+    'StringIndexType',
     'SummaryAspectEnum',
     'TargetProjectKind',
     'TaskStateEnum',
     'TemperatureUnit',
+    'TemporalModifier',
     'TranscriptContentType',
     'VolumeUnit',
     'WeightUnit',

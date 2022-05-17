@@ -138,12 +138,12 @@ class AnalysisParameters(msrest.serialization.Model):
     """This is the parameter set of either the Orchestration project itself or one of the target services.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ConversationParameters, LUISParameters, QuestionAnsweringParameters.
+    sub-classes are: ConversationParameters, LuisParameters, QuestionAnsweringParameters.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_project_kind: Required. The type of a target service.Constant filled by server.
-     Known values are: "Luis", "CustomConversation", "QuestionAnswering", "NonLinked".
+     Known values are: "Luis", "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -159,7 +159,7 @@ class AnalysisParameters(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'target_project_kind': {'CustomConversation': 'ConversationParameters', 'Luis': 'LUISParameters', 'QuestionAnswering': 'QuestionAnsweringParameters'}
+        'target_project_kind': {'Conversation': 'ConversationParameters', 'Luis': 'LuisParameters', 'QuestionAnswering': 'QuestionAnsweringParameters'}
     }
 
     def __init__(
@@ -423,10 +423,10 @@ class JobState(msrest.serialization.Model):
     :vartype expiration_date_time: ~datetime.datetime
     :ivar job_id: Required.
     :vartype job_id: str
-    :ivar last_update_date_time: Required.
-    :vartype last_update_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Required.
+    :vartype last_updated_date_time: ~datetime.datetime
     :ivar status: Required. Known values are: "notStarted", "running", "succeeded",
-     "partiallySucceeded", "failed", "cancelled", "cancelling".
+     "partiallyCompleted", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.language.conversations.models.JobStateEnum
     :ivar errors:
     :vartype errors: list[~azure.ai.language.conversations.models.Error]
@@ -437,7 +437,7 @@ class JobState(msrest.serialization.Model):
     _validation = {
         'created_date_time': {'required': True},
         'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
+        'last_updated_date_time': {'required': True},
         'status': {'required': True},
     }
 
@@ -446,7 +446,7 @@ class JobState(msrest.serialization.Model):
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
         'job_id': {'key': 'jobId', 'type': 'str'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[Error]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
@@ -457,7 +457,7 @@ class JobState(msrest.serialization.Model):
         *,
         created_date_time: datetime.datetime,
         job_id: str,
-        last_update_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
         status: Union[str, "_models.JobStateEnum"],
         display_name: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
@@ -474,10 +474,10 @@ class JobState(msrest.serialization.Model):
         :paramtype expiration_date_time: ~datetime.datetime
         :keyword job_id: Required.
         :paramtype job_id: str
-        :keyword last_update_date_time: Required.
-        :paramtype last_update_date_time: ~datetime.datetime
+        :keyword last_updated_date_time: Required.
+        :paramtype last_updated_date_time: ~datetime.datetime
         :keyword status: Required. Known values are: "notStarted", "running", "succeeded",
-         "partiallySucceeded", "failed", "cancelled", "cancelling".
+         "partiallyCompleted", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.language.conversations.models.JobStateEnum
         :keyword errors:
         :paramtype errors: list[~azure.ai.language.conversations.models.Error]
@@ -489,7 +489,7 @@ class JobState(msrest.serialization.Model):
         self.created_date_time = created_date_time
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
-        self.last_update_date_time = last_update_date_time
+        self.last_updated_date_time = last_updated_date_time
         self.status = status
         self.errors = errors
         self.next_link = next_link
@@ -513,10 +513,10 @@ class AnalyzeConversationJobState(JobState, ConversationTasksState, AnalyzeConve
     :vartype expiration_date_time: ~datetime.datetime
     :ivar job_id: Required.
     :vartype job_id: str
-    :ivar last_update_date_time: Required.
-    :vartype last_update_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Required.
+    :vartype last_updated_date_time: ~datetime.datetime
     :ivar status: Required. Known values are: "notStarted", "running", "succeeded",
-     "partiallySucceeded", "failed", "cancelled", "cancelling".
+     "partiallyCompleted", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.language.conversations.models.JobStateEnum
     :ivar errors:
     :vartype errors: list[~azure.ai.language.conversations.models.Error]
@@ -528,7 +528,7 @@ class AnalyzeConversationJobState(JobState, ConversationTasksState, AnalyzeConve
         'tasks': {'required': True},
         'created_date_time': {'required': True},
         'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
+        'last_updated_date_time': {'required': True},
         'status': {'required': True},
     }
 
@@ -539,7 +539,7 @@ class AnalyzeConversationJobState(JobState, ConversationTasksState, AnalyzeConve
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
         'job_id': {'key': 'jobId', 'type': 'str'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[Error]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
@@ -551,7 +551,7 @@ class AnalyzeConversationJobState(JobState, ConversationTasksState, AnalyzeConve
         tasks: "_models.ConversationTasksStateTasks",
         created_date_time: datetime.datetime,
         job_id: str,
-        last_update_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
         status: Union[str, "_models.JobStateEnum"],
         statistics: Optional["_models.ConversationRequestStatistics"] = None,
         display_name: Optional[str] = None,
@@ -574,24 +574,24 @@ class AnalyzeConversationJobState(JobState, ConversationTasksState, AnalyzeConve
         :paramtype expiration_date_time: ~datetime.datetime
         :keyword job_id: Required.
         :paramtype job_id: str
-        :keyword last_update_date_time: Required.
-        :paramtype last_update_date_time: ~datetime.datetime
+        :keyword last_updated_date_time: Required.
+        :paramtype last_updated_date_time: ~datetime.datetime
         :keyword status: Required. Known values are: "notStarted", "running", "succeeded",
-         "partiallySucceeded", "failed", "cancelled", "cancelling".
+         "partiallyCompleted", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.language.conversations.models.JobStateEnum
         :keyword errors:
         :paramtype errors: list[~azure.ai.language.conversations.models.Error]
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(AnalyzeConversationJobState, self).__init__(display_name=display_name, created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, errors=errors, next_link=next_link, tasks=tasks, statistics=statistics, **kwargs)
+        super(AnalyzeConversationJobState, self).__init__(display_name=display_name, created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_updated_date_time=last_updated_date_time, status=status, errors=errors, next_link=next_link, tasks=tasks, statistics=statistics, **kwargs)
         self.statistics = statistics
         self.tasks = tasks
         self.display_name = display_name
         self.created_date_time = created_date_time
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
-        self.last_update_date_time = last_update_date_time
+        self.last_updated_date_time = last_updated_date_time
         self.status = status
         self.errors = errors
         self.next_link = next_link
@@ -901,12 +901,12 @@ class AnalyzeConversationTask(msrest.serialization.Model):
     """The base class of a conversation input task.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CustomConversationalTask.
+    sub-classes are: ConversationalTask.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
-     Known values are: "CustomConversation".
+     Known values are: "Conversation".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
     """
 
@@ -919,7 +919,7 @@ class AnalyzeConversationTask(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'kind': {'CustomConversation': 'CustomConversationalTask'}
+        'kind': {'Conversation': 'ConversationalTask'}
     }
 
     def __init__(
@@ -936,12 +936,12 @@ class AnalyzeConversationTaskResult(msrest.serialization.Model):
     """The base class of a conversation task result.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CustomConversationalTaskResult.
+    sub-classes are: ConversationalTaskResult.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
-     server. Known values are: "CustomConversationResult".
+     server. Known values are: "ConversationResult".
     :vartype kind: str or
      ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
     """
@@ -955,7 +955,7 @@ class AnalyzeConversationTaskResult(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'kind': {'CustomConversationResult': 'CustomConversationalTaskResult'}
+        'kind': {'ConversationResult': 'ConversationalTaskResult'}
     }
 
     def __init__(
@@ -966,6 +966,176 @@ class AnalyzeConversationTaskResult(msrest.serialization.Model):
         """
         super(AnalyzeConversationTaskResult, self).__init__(**kwargs)
         self.kind = None  # type: Optional[str]
+
+
+class AnswersOptions(msrest.serialization.Model):
+    """Parameters to query a knowledge base.
+
+    :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+     question.
+    :vartype qna_id: int
+    :ivar question: User question to query against the knowledge base.
+    :vartype question: str
+    :ivar top: Max number of answers to be returned for the question.
+    :vartype top: int
+    :ivar user_id: Unique identifier for the user.
+    :vartype user_id: str
+    :ivar confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
+    :vartype confidence_threshold: float
+    :ivar answer_context: Context object with previous QnA's information.
+    :vartype answer_context: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerContext
+    :ivar ranker_kind: Type of ranker to be used. Known values are: "QuestionOnly", "Default".
+    :vartype ranker_kind: str or ~azure.ai.language.conversations.models.RankerKind
+    :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
+    :vartype filters: ~azure.ai.language.conversations.models.QueryFilters
+    :ivar short_answer_options: To configure Answer span prediction feature.
+    :vartype short_answer_options: ~azure.ai.language.conversations.models.ShortAnswerOptions
+    :ivar include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
+    :vartype include_unstructured_sources: bool
+    """
+
+    _validation = {
+        'confidence_threshold': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'qna_id': {'key': 'qnaId', 'type': 'int'},
+        'question': {'key': 'question', 'type': 'str'},
+        'top': {'key': 'top', 'type': 'int'},
+        'user_id': {'key': 'userId', 'type': 'str'},
+        'confidence_threshold': {'key': 'confidenceScoreThreshold', 'type': 'float'},
+        'answer_context': {'key': 'context', 'type': 'KnowledgeBaseAnswerContext'},
+        'ranker_kind': {'key': 'rankerType', 'type': 'str'},
+        'filters': {'key': 'filters', 'type': 'QueryFilters'},
+        'short_answer_options': {'key': 'answerSpanRequest', 'type': 'ShortAnswerOptions'},
+        'include_unstructured_sources': {'key': 'includeUnstructuredSources', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        qna_id: Optional[int] = None,
+        question: Optional[str] = None,
+        top: Optional[int] = None,
+        user_id: Optional[str] = None,
+        confidence_threshold: Optional[float] = None,
+        answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
+        ranker_kind: Optional[Union[str, "_models.RankerKind"]] = None,
+        filters: Optional["_models.QueryFilters"] = None,
+        short_answer_options: Optional["_models.ShortAnswerOptions"] = None,
+        include_unstructured_sources: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+         question.
+        :paramtype qna_id: int
+        :keyword question: User question to query against the knowledge base.
+        :paramtype question: str
+        :keyword top: Max number of answers to be returned for the question.
+        :paramtype top: int
+        :keyword user_id: Unique identifier for the user.
+        :paramtype user_id: str
+        :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
+        :paramtype confidence_threshold: float
+        :keyword answer_context: Context object with previous QnA's information.
+        :paramtype answer_context: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerContext
+        :keyword ranker_kind: Type of ranker to be used. Known values are: "QuestionOnly", "Default".
+        :paramtype ranker_kind: str or ~azure.ai.language.conversations.models.RankerKind
+        :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
+        :paramtype filters: ~azure.ai.language.conversations.models.QueryFilters
+        :keyword short_answer_options: To configure Answer span prediction feature.
+        :paramtype short_answer_options: ~azure.ai.language.conversations.models.ShortAnswerOptions
+        :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
+         Sources.
+        :paramtype include_unstructured_sources: bool
+        """
+        super(AnswersOptions, self).__init__(**kwargs)
+        self.qna_id = qna_id
+        self.question = question
+        self.top = top
+        self.user_id = user_id
+        self.confidence_threshold = confidence_threshold
+        self.answer_context = answer_context
+        self.ranker_kind = ranker_kind
+        self.filters = filters
+        self.short_answer_options = short_answer_options
+        self.include_unstructured_sources = include_unstructured_sources
+
+
+class AnswerSpan(msrest.serialization.Model):
+    """Answer span object of QnA.
+
+    :ivar text: Predicted text of answer span.
+    :vartype text: str
+    :ivar confidence: Predicted score of answer span, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar offset: The answer span offset from the start of answer.
+    :vartype offset: int
+    :ivar length: The length of the answer span.
+    :vartype length: int
+    """
+
+    _validation = {
+        'confidence': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
+        'offset': {'key': 'offset', 'type': 'int'},
+        'length': {'key': 'length', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        text: Optional[str] = None,
+        confidence: Optional[float] = None,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword text: Predicted text of answer span.
+        :paramtype text: str
+        :keyword confidence: Predicted score of answer span, value ranges from 0 to 1.
+        :paramtype confidence: float
+        :keyword offset: The answer span offset from the start of answer.
+        :paramtype offset: int
+        :keyword length: The length of the answer span.
+        :paramtype length: int
+        """
+        super(AnswerSpan, self).__init__(**kwargs)
+        self.text = text
+        self.confidence = confidence
+        self.offset = offset
+        self.length = length
+
+
+class AnswersResult(msrest.serialization.Model):
+    """Represents List of Question Answers.
+
+    :ivar answers: Represents Answer Result list.
+    :vartype answers: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswer]
+    """
+
+    _attribute_map = {
+        'answers': {'key': 'answers', 'type': '[KnowledgeBaseAnswer]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword answers: Represents Answer Result list.
+        :paramtype answers: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswer]
+        """
+        super(AnswersResult, self).__init__(**kwargs)
+        self.answers = answers
 
 
 class AreaResolution(BaseResolution, QuantityResolution):
@@ -1093,12 +1263,12 @@ class BasePrediction(msrest.serialization.Model):
     """This is the base class of prediction.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ConversationPrediction, OrchestratorPrediction.
+    sub-classes are: ConversationPrediction, OrchestrationPrediction.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
-     are: "CustomConversation", "Orchestrator".
+     are: "Conversation", "Orchestration".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -1114,7 +1284,7 @@ class BasePrediction(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'project_kind': {'CustomConversation': 'ConversationPrediction', 'Orchestrator': 'OrchestratorPrediction'}
+        'project_kind': {'Conversation': 'ConversationPrediction', 'Orchestration': 'OrchestrationPrediction'}
     }
 
     def __init__(
@@ -1185,7 +1355,7 @@ class Conversation(msrest.serialization.Model):
     :vartype language: str
     :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
      server. Known values are: "transcript", "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar domain: Enumeration of supported conversational domains. Known values are: "finance",
      "healthcare", "generic".
     :vartype domain: str or ~azure.ai.language.conversations.models.ConversationDomain
@@ -1230,6 +1400,89 @@ class Conversation(msrest.serialization.Model):
         self.language = language
         self.modality = None  # type: Optional[str]
         self.domain = domain
+
+
+class ConversationalTask(AnalyzeConversationTask):
+    """The input for a custom conversation task.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
+     Known values are: "Conversation".
+    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
+    :ivar analysis_input: Required. The input ConversationItem and its optional parameters.
+    :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
+    :ivar parameters: Required. Input parameters necessary for a Conversation task.
+    :vartype parameters: ~azure.ai.language.conversations.models.ConversationTaskParameters
+    """
+
+    _validation = {
+        'kind': {'required': True},
+        'analysis_input': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+        'analysis_input': {'key': 'analysisInput', 'type': 'ConversationAnalysisOptions'},
+        'parameters': {'key': 'parameters', 'type': 'ConversationTaskParameters'},
+    }
+
+    def __init__(
+        self,
+        *,
+        analysis_input: "_models.ConversationAnalysisOptions",
+        parameters: "_models.ConversationTaskParameters",
+        **kwargs
+    ):
+        """
+        :keyword analysis_input: Required. The input ConversationItem and its optional parameters.
+        :paramtype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
+        :keyword parameters: Required. Input parameters necessary for a Conversation task.
+        :paramtype parameters: ~azure.ai.language.conversations.models.ConversationTaskParameters
+        """
+        super(ConversationalTask, self).__init__(**kwargs)
+        self.kind = 'Conversation'  # type: str
+        self.analysis_input = analysis_input
+        self.parameters = parameters
+
+
+class ConversationalTaskResult(AnalyzeConversationTaskResult):
+    """The results of a Conversation task.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
+     server. Known values are: "ConversationResult".
+    :vartype kind: str or
+     ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
+    :ivar result: Required. Represents a conversation analysis response.
+    :vartype result: ~azure.ai.language.conversations.models.AnalyzeConversationResult
+    """
+
+    _validation = {
+        'kind': {'required': True},
+        'result': {'required': True},
+    }
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+        'result': {'key': 'result', 'type': 'AnalyzeConversationResult'},
+    }
+
+    def __init__(
+        self,
+        *,
+        result: "_models.AnalyzeConversationResult",
+        **kwargs
+    ):
+        """
+        :keyword result: Required. Represents a conversation analysis response.
+        :paramtype result: ~azure.ai.language.conversations.models.AnalyzeConversationResult
+        """
+        super(ConversationalTaskResult, self).__init__(**kwargs)
+        self.kind = 'ConversationResult'  # type: str
+        self.result = result
 
 
 class ConversationAnalysisOptions(msrest.serialization.Model):
@@ -1442,7 +1695,7 @@ class ConversationItemBase(msrest.serialization.Model):
     :vartype language: str
     :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
      server. Known values are: "transcript", "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
     """
@@ -1505,7 +1758,7 @@ class ConversationParameters(AnalysisParameters):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_project_kind: Required. The type of a target service.Constant filled by server.
-     Known values are: "Luis", "CustomConversation", "QuestionAnswering", "NonLinked".
+     Known values are: "Luis", "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -1537,7 +1790,7 @@ class ConversationParameters(AnalysisParameters):
         :paramtype calling_options: ~azure.ai.language.conversations.models.ConversationCallingOptions
         """
         super(ConversationParameters, self).__init__(api_version=api_version, **kwargs)
-        self.target_project_kind = 'CustomConversation'  # type: str
+        self.target_project_kind = 'Conversation'  # type: str
         self.calling_options = calling_options
 
 
@@ -1907,9 +2160,10 @@ class ConversationPIITaskParameters(PreBuiltTaskParameters):
      audio redaction will not be performed.
     :vartype include_audio_redaction: bool
     :ivar redaction_source: For transcript conversations, this parameter provides information
-     regarding which content type (ITN, Text, Lexical, Masked ITN) should be used for redaction. The
-     entities detected the service in will correspond to the text type selected here. Known values
-     are: "lexical", "itn", "maskedItn", "text".
+     regarding which content type (ITN, Text, Lexical, Masked ITN) should be used for entity
+     detection. The details of the entities detected - like the offset, length and the text itself -
+     will correspond to the text type selected here. Known values are: "lexical", "itn",
+     "maskedItn", "text".
     :vartype redaction_source: str or ~azure.ai.language.conversations.models.TranscriptContentType
     """
 
@@ -1948,9 +2202,10 @@ class ConversationPIITaskParameters(PreBuiltTaskParameters):
          audio redaction will not be performed.
         :paramtype include_audio_redaction: bool
         :keyword redaction_source: For transcript conversations, this parameter provides information
-         regarding which content type (ITN, Text, Lexical, Masked ITN) should be used for redaction. The
-         entities detected the service in will correspond to the text type selected here. Known values
-         are: "lexical", "itn", "maskedItn", "text".
+         regarding which content type (ITN, Text, Lexical, Masked ITN) should be used for entity
+         detection. The details of the entities detected - like the offset, length and the text itself -
+         will correspond to the text type selected here. Known values are: "lexical", "itn",
+         "maskedItn", "text".
         :paramtype redaction_source: str or
          ~azure.ai.language.conversations.models.TranscriptContentType
         """
@@ -1966,7 +2221,7 @@ class ConversationPrediction(BasePrediction):
     All required parameters must be populated in order to send to Azure.
 
     :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
-     are: "CustomConversation", "Orchestrator".
+     are: "Conversation", "Orchestration".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -2006,7 +2261,7 @@ class ConversationPrediction(BasePrediction):
         :paramtype entities: list[~azure.ai.language.conversations.models.ConversationEntity]
         """
         super(ConversationPrediction, self).__init__(top_intent=top_intent, **kwargs)
-        self.project_kind = 'CustomConversation'  # type: str
+        self.project_kind = 'Conversation'  # type: str
         self.intents = intents
         self.entities = entities
 
@@ -2352,13 +2607,13 @@ class TargetIntentResult(msrest.serialization.Model):
     """This is the base class of an intent prediction.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ConversationTargetIntentResult, LUISTargetIntentResult, NoneLinkedTargetIntentResult, QuestionAnsweringTargetIntentResult.
+    sub-classes are: ConversationTargetIntentResult, LuisTargetIntentResult, NoneLinkedTargetIntentResult, QuestionAnsweringTargetIntentResult.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_project_kind: Required. This discriminator property specifies the type of the
      target project that returns the response.Constant filled by server. Known values are: "Luis",
-     "CustomConversation", "QuestionAnswering", "NonLinked".
+     "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
@@ -2378,7 +2633,7 @@ class TargetIntentResult(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'target_project_kind': {'CustomConversation': 'ConversationTargetIntentResult', 'Luis': 'LUISTargetIntentResult', 'NonLinked': 'NoneLinkedTargetIntentResult', 'QuestionAnswering': 'QuestionAnsweringTargetIntentResult'}
+        'target_project_kind': {'Conversation': 'ConversationTargetIntentResult', 'Luis': 'LuisTargetIntentResult', 'NonLinked': 'NoneLinkedTargetIntentResult', 'QuestionAnswering': 'QuestionAnsweringTargetIntentResult'}
     }
 
     def __init__(
@@ -2407,7 +2662,7 @@ class ConversationTargetIntentResult(TargetIntentResult):
 
     :ivar target_project_kind: Required. This discriminator property specifies the type of the
      target project that returns the response.Constant filled by server. Known values are: "Luis",
-     "CustomConversation", "QuestionAnswering", "NonLinked".
+     "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
@@ -2446,8 +2701,92 @@ class ConversationTargetIntentResult(TargetIntentResult):
         :paramtype result: ~azure.ai.language.conversations.models.ConversationResult
         """
         super(ConversationTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
-        self.target_project_kind = 'CustomConversation'  # type: str
+        self.target_project_kind = 'Conversation'  # type: str
         self.result = result
+
+
+class ConversationTaskParameters(msrest.serialization.Model):
+    """Input parameters necessary for a Conversation task.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar project_name: Required. The name of the project to use.
+    :vartype project_name: str
+    :ivar deployment_name: Required. The name of the deployment to use.
+    :vartype deployment_name: str
+    :ivar verbose: If true, the service will return more detailed information in the response.
+    :vartype verbose: bool
+    :ivar is_logging_enabled: If true, the service will keep the query for further review.
+    :vartype is_logging_enabled: bool
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
+     "Utf16CodeUnit". Default value: "TextElements_v8".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+    :ivar direct_target: The name of a target project to forward the request to.
+    :vartype direct_target: str
+    :ivar target_project_parameters: A dictionary representing the parameters for each target
+     project.
+    :vartype target_project_parameters: dict[str,
+     ~azure.ai.language.conversations.models.AnalysisParameters]
+    """
+
+    _validation = {
+        'project_name': {'required': True},
+        'deployment_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'verbose': {'key': 'verbose', 'type': 'bool'},
+        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
+        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
+        'direct_target': {'key': 'directTarget', 'type': 'str'},
+        'target_project_parameters': {'key': 'targetProjectParameters', 'type': '{AnalysisParameters}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        verbose: Optional[bool] = None,
+        is_logging_enabled: Optional[bool] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
+        direct_target: Optional[str] = None,
+        target_project_parameters: Optional[Dict[str, "_models.AnalysisParameters"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword project_name: Required. The name of the project to use.
+        :paramtype project_name: str
+        :keyword deployment_name: Required. The name of the deployment to use.
+        :paramtype deployment_name: str
+        :keyword verbose: If true, the service will return more detailed information in the response.
+        :paramtype verbose: bool
+        :keyword is_logging_enabled: If true, the service will keep the query for further review.
+        :paramtype is_logging_enabled: bool
+        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+         https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
+         "Utf16CodeUnit". Default value: "TextElements_v8".
+        :paramtype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+        :keyword direct_target: The name of a target project to forward the request to.
+        :paramtype direct_target: str
+        :keyword target_project_parameters: A dictionary representing the parameters for each target
+         project.
+        :paramtype target_project_parameters: dict[str,
+         ~azure.ai.language.conversations.models.AnalysisParameters]
+        """
+        super(ConversationTaskParameters, self).__init__(**kwargs)
+        self.project_name = project_name
+        self.deployment_name = deployment_name
+        self.verbose = verbose
+        self.is_logging_enabled = is_logging_enabled
+        self.string_index_type = string_index_type
+        self.direct_target = direct_target
+        self.target_project_parameters = target_project_parameters
 
 
 class ConversationTasksStateTasks(msrest.serialization.Model):
@@ -2572,160 +2911,6 @@ class CurrencyResolution(BaseResolution, QuantityResolution):
         self.unit = unit
 
 
-class CustomConversationalTask(AnalyzeConversationTask):
-    """The input for a custom conversation task.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
-     Known values are: "CustomConversation".
-    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
-    :ivar analysis_input: Required. The input ConversationItem and its optional parameters.
-    :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
-    :ivar parameters: Required. Input parameters necessary for a CustomConversation task.
-    :vartype parameters: ~azure.ai.language.conversations.models.CustomConversationTaskParameters
-    """
-
-    _validation = {
-        'kind': {'required': True},
-        'analysis_input': {'required': True},
-        'parameters': {'required': True},
-    }
-
-    _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'analysis_input': {'key': 'analysisInput', 'type': 'ConversationAnalysisOptions'},
-        'parameters': {'key': 'parameters', 'type': 'CustomConversationTaskParameters'},
-    }
-
-    def __init__(
-        self,
-        *,
-        analysis_input: "_models.ConversationAnalysisOptions",
-        parameters: "_models.CustomConversationTaskParameters",
-        **kwargs
-    ):
-        """
-        :keyword analysis_input: Required. The input ConversationItem and its optional parameters.
-        :paramtype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
-        :keyword parameters: Required. Input parameters necessary for a CustomConversation task.
-        :paramtype parameters: ~azure.ai.language.conversations.models.CustomConversationTaskParameters
-        """
-        super(CustomConversationalTask, self).__init__(**kwargs)
-        self.kind = 'CustomConversation'  # type: str
-        self.analysis_input = analysis_input
-        self.parameters = parameters
-
-
-class CustomConversationalTaskResult(AnalyzeConversationTaskResult):
-    """The results of a CustomConversation task.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
-     server. Known values are: "CustomConversationResult".
-    :vartype kind: str or
-     ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
-    :ivar result: Required. Represents a conversation analysis response.
-    :vartype result: ~azure.ai.language.conversations.models.AnalyzeConversationResult
-    """
-
-    _validation = {
-        'kind': {'required': True},
-        'result': {'required': True},
-    }
-
-    _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'result': {'key': 'result', 'type': 'AnalyzeConversationResult'},
-    }
-
-    def __init__(
-        self,
-        *,
-        result: "_models.AnalyzeConversationResult",
-        **kwargs
-    ):
-        """
-        :keyword result: Required. Represents a conversation analysis response.
-        :paramtype result: ~azure.ai.language.conversations.models.AnalyzeConversationResult
-        """
-        super(CustomConversationalTaskResult, self).__init__(**kwargs)
-        self.kind = 'CustomConversationResult'  # type: str
-        self.result = result
-
-
-class CustomConversationTaskParameters(msrest.serialization.Model):
-    """Input parameters necessary for a CustomConversation task.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar project_name: Required. The name of the project to use.
-    :vartype project_name: str
-    :ivar deployment_name: Required. The name of the deployment to use.
-    :vartype deployment_name: str
-    :ivar verbose: If true, the service will return more detailed information in the response.
-    :vartype verbose: bool
-    :ivar is_logging_enabled: If true, the service will keep the query for further review.
-    :vartype is_logging_enabled: bool
-    :ivar direct_target: The name of a target project to forward the request to.
-    :vartype direct_target: str
-    :ivar target_project_parameters: A dictionary representing the parameters for each target
-     project.
-    :vartype target_project_parameters: dict[str,
-     ~azure.ai.language.conversations.models.AnalysisParameters]
-    """
-
-    _validation = {
-        'project_name': {'required': True},
-        'deployment_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
-        'verbose': {'key': 'verbose', 'type': 'bool'},
-        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
-        'direct_target': {'key': 'directTarget', 'type': 'str'},
-        'target_project_parameters': {'key': 'targetProjectParameters', 'type': '{AnalysisParameters}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        project_name: str,
-        deployment_name: str,
-        verbose: Optional[bool] = None,
-        is_logging_enabled: Optional[bool] = None,
-        direct_target: Optional[str] = None,
-        target_project_parameters: Optional[Dict[str, "_models.AnalysisParameters"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword project_name: Required. The name of the project to use.
-        :paramtype project_name: str
-        :keyword deployment_name: Required. The name of the deployment to use.
-        :paramtype deployment_name: str
-        :keyword verbose: If true, the service will return more detailed information in the response.
-        :paramtype verbose: bool
-        :keyword is_logging_enabled: If true, the service will keep the query for further review.
-        :paramtype is_logging_enabled: bool
-        :keyword direct_target: The name of a target project to forward the request to.
-        :paramtype direct_target: str
-        :keyword target_project_parameters: A dictionary representing the parameters for each target
-         project.
-        :paramtype target_project_parameters: dict[str,
-         ~azure.ai.language.conversations.models.AnalysisParameters]
-        """
-        super(CustomConversationTaskParameters, self).__init__(**kwargs)
-        self.project_name = project_name
-        self.deployment_name = deployment_name
-        self.verbose = verbose
-        self.is_logging_enabled = is_logging_enabled
-        self.direct_target = direct_target
-        self.target_project_parameters = target_project_parameters
-
-
 class DateTimeResolution(BaseResolution):
     """A resolution for datetime entity instances.
 
@@ -2748,7 +2933,7 @@ class DateTimeResolution(BaseResolution):
      "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid",
      "More".
-    :vartype modifier: str or ~azure.ai.language.conversations.models.Modifier
+    :vartype modifier: str or ~azure.ai.language.conversations.models.TemporalModifier
     """
 
     _validation = {
@@ -2772,7 +2957,7 @@ class DateTimeResolution(BaseResolution):
         timex: str,
         date_time_sub_kind: Union[str, "_models.DateTimeSubKind"],
         value: str,
-        modifier: Optional[Union[str, "_models.Modifier"]] = None,
+        modifier: Optional[Union[str, "_models.TemporalModifier"]] = None,
         **kwargs
     ):
         """
@@ -2788,7 +2973,7 @@ class DateTimeResolution(BaseResolution):
          "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
          "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
          "Mid", "More".
-        :paramtype modifier: str or ~azure.ai.language.conversations.models.Modifier
+        :paramtype modifier: str or ~azure.ai.language.conversations.models.TemporalModifier
         """
         super(DateTimeResolution, self).__init__(**kwargs)
         self.resolution_kind = 'DateTime'  # type: str
@@ -2921,7 +3106,8 @@ class Error(msrest.serialization.Model):
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
      "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
      "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
-     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
+     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable",
+     "Timeout", "QuotaExceeded", "Conflict", "Warning".
     :vartype code: str or ~azure.ai.language.conversations.models.ErrorCode
     :ivar message: Required. A human-readable representation of the error.
     :vartype message: str
@@ -2967,7 +3153,8 @@ class Error(msrest.serialization.Model):
          "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
          "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
          "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
-         "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable".
+         "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable",
+         "Timeout", "QuotaExceeded", "Conflict", "Warning".
         :paramtype code: str or ~azure.ai.language.conversations.models.ErrorCode
         :keyword message: Required. A human-readable representation of the error.
         :paramtype message: str
@@ -3227,6 +3414,207 @@ class InputWarning(msrest.serialization.Model):
         self.target_ref = target_ref
 
 
+class KnowledgeBaseAnswer(msrest.serialization.Model):
+    """Represents knowledge base answer.
+
+    :ivar questions: List of questions associated with the answer.
+    :vartype questions: list[str]
+    :ivar answer: Answer text.
+    :vartype answer: str
+    :ivar confidence: Answer confidence score, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar qna_id: ID of the QnA result.
+    :vartype qna_id: int
+    :ivar source: Source of QnA result.
+    :vartype source: str
+    :ivar metadata: Metadata associated with the answer, useful to categorize or filter question
+     answers.
+    :vartype metadata: dict[str, str]
+    :ivar dialog: Dialog associated with Answer.
+    :vartype dialog: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerDialog
+    :ivar short_answer: Answer span object of QnA with respect to user's question.
+    :vartype short_answer: ~azure.ai.language.conversations.models.AnswerSpan
+    """
+
+    _validation = {
+        'confidence': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'questions': {'key': 'questions', 'type': '[str]'},
+        'answer': {'key': 'answer', 'type': 'str'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
+        'qna_id': {'key': 'id', 'type': 'int'},
+        'source': {'key': 'source', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
+        'dialog': {'key': 'dialog', 'type': 'KnowledgeBaseAnswerDialog'},
+        'short_answer': {'key': 'answerSpan', 'type': 'AnswerSpan'},
+    }
+
+    def __init__(
+        self,
+        *,
+        questions: Optional[List[str]] = None,
+        answer: Optional[str] = None,
+        confidence: Optional[float] = None,
+        qna_id: Optional[int] = None,
+        source: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
+        **kwargs
+    ):
+        """
+        :keyword questions: List of questions associated with the answer.
+        :paramtype questions: list[str]
+        :keyword answer: Answer text.
+        :paramtype answer: str
+        :keyword confidence: Answer confidence score, value ranges from 0 to 1.
+        :paramtype confidence: float
+        :keyword qna_id: ID of the QnA result.
+        :paramtype qna_id: int
+        :keyword source: Source of QnA result.
+        :paramtype source: str
+        :keyword metadata: Metadata associated with the answer, useful to categorize or filter question
+         answers.
+        :paramtype metadata: dict[str, str]
+        :keyword dialog: Dialog associated with Answer.
+        :paramtype dialog: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerDialog
+        :keyword short_answer: Answer span object of QnA with respect to user's question.
+        :paramtype short_answer: ~azure.ai.language.conversations.models.AnswerSpan
+        """
+        super(KnowledgeBaseAnswer, self).__init__(**kwargs)
+        self.questions = questions
+        self.answer = answer
+        self.confidence = confidence
+        self.qna_id = qna_id
+        self.source = source
+        self.metadata = metadata
+        self.dialog = dialog
+        self.short_answer = short_answer
+
+
+class KnowledgeBaseAnswerContext(msrest.serialization.Model):
+    """Context object with previous QnA's information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar previous_qna_id: Required. Previous turn top answer result QnA ID.
+    :vartype previous_qna_id: int
+    :ivar previous_question: Previous user query.
+    :vartype previous_question: str
+    """
+
+    _validation = {
+        'previous_qna_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'previous_qna_id': {'key': 'previousQnaId', 'type': 'int'},
+        'previous_question': {'key': 'previousUserQuery', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        previous_qna_id: int,
+        previous_question: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword previous_qna_id: Required. Previous turn top answer result QnA ID.
+        :paramtype previous_qna_id: int
+        :keyword previous_question: Previous user query.
+        :paramtype previous_question: str
+        """
+        super(KnowledgeBaseAnswerContext, self).__init__(**kwargs)
+        self.previous_qna_id = previous_qna_id
+        self.previous_question = previous_question
+
+
+class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
+    """Dialog associated with Answer.
+
+    :ivar is_context_only: To mark if a prompt is relevant only with a previous question or not. If
+     true, do not include this QnA as search result for queries without context; otherwise, if
+     false, ignores context and includes this QnA in search result.
+    :vartype is_context_only: bool
+    :ivar prompts: List of prompts associated with the answer.
+    :vartype prompts: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswerPrompt]
+    """
+
+    _validation = {
+        'prompts': {'max_items': 20, 'min_items': 0},
+    }
+
+    _attribute_map = {
+        'is_context_only': {'key': 'isContextOnly', 'type': 'bool'},
+        'prompts': {'key': 'prompts', 'type': '[KnowledgeBaseAnswerPrompt]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_context_only: Optional[bool] = None,
+        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword is_context_only: To mark if a prompt is relevant only with a previous question or not.
+         If true, do not include this QnA as search result for queries without context; otherwise, if
+         false, ignores context and includes this QnA in search result.
+        :paramtype is_context_only: bool
+        :keyword prompts: List of prompts associated with the answer.
+        :paramtype prompts: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswerPrompt]
+        """
+        super(KnowledgeBaseAnswerDialog, self).__init__(**kwargs)
+        self.is_context_only = is_context_only
+        self.prompts = prompts
+
+
+class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
+    """Prompt for an answer.
+
+    :ivar display_order: Index of the prompt - used in ordering of the prompts.
+    :vartype display_order: int
+    :ivar qna_id: QnA ID corresponding to the prompt.
+    :vartype qna_id: int
+    :ivar display_text: Text displayed to represent a follow up question prompt.
+    :vartype display_text: str
+    """
+
+    _validation = {
+        'display_text': {'max_length': 200, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'display_order': {'key': 'displayOrder', 'type': 'int'},
+        'qna_id': {'key': 'qnaId', 'type': 'int'},
+        'display_text': {'key': 'displayText', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_order: Optional[int] = None,
+        qna_id: Optional[int] = None,
+        display_text: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword display_order: Index of the prompt - used in ordering of the prompts.
+        :paramtype display_order: int
+        :keyword qna_id: QnA ID corresponding to the prompt.
+        :paramtype qna_id: int
+        :keyword display_text: Text displayed to represent a follow up question prompt.
+        :paramtype display_text: str
+        """
+        super(KnowledgeBaseAnswerPrompt, self).__init__(**kwargs)
+        self.display_order = display_order
+        self.qna_id = qna_id
+        self.display_text = display_text
+
+
 class LengthResolution(BaseResolution, QuantityResolution):
     """Represents the length entity resolution model.
 
@@ -3315,7 +3703,7 @@ class ListKey(BaseExtraInformation):
         self.key = key
 
 
-class LUISCallingOptions(msrest.serialization.Model):
+class LuisCallingOptions(msrest.serialization.Model):
     """This customizes how the service calls LUIS Generally Available projects.
 
     :ivar verbose: Enable verbose response.
@@ -3368,7 +3756,7 @@ class LUISCallingOptions(msrest.serialization.Model):
          spell check.
         :paramtype bing_spell_check_subscription_key: str
         """
-        super(LUISCallingOptions, self).__init__(**kwargs)
+        super(LuisCallingOptions, self).__init__(**kwargs)
         self.verbose = verbose
         self.log = log
         self.show_all_intents = show_all_intents
@@ -3377,13 +3765,13 @@ class LUISCallingOptions(msrest.serialization.Model):
         self.bing_spell_check_subscription_key = bing_spell_check_subscription_key
 
 
-class LUISParameters(AnalysisParameters):
+class LuisParameters(AnalysisParameters):
     """This is a set of request parameters for LUIS Generally Available projects.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_project_kind: Required. The type of a target service.Constant filled by server.
-     Known values are: "Luis", "CustomConversation", "QuestionAnswering", "NonLinked".
+     Known values are: "Luis", "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -3393,7 +3781,7 @@ class LUISParameters(AnalysisParameters):
     :ivar query: The utterance to predict.
     :vartype query: str
     :ivar calling_options: This customizes how the service calls LUIS Generally Available projects.
-    :vartype calling_options: ~azure.ai.language.conversations.models.LUISCallingOptions
+    :vartype calling_options: ~azure.ai.language.conversations.models.LuisCallingOptions
     """
 
     _validation = {
@@ -3406,7 +3794,7 @@ class LUISParameters(AnalysisParameters):
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'additional_properties': {'key': '', 'type': '{object}'},
         'query': {'key': 'query', 'type': 'str'},
-        'calling_options': {'key': 'callingOptions', 'type': 'LUISCallingOptions'},
+        'calling_options': {'key': 'callingOptions', 'type': 'LuisCallingOptions'},
     }
 
     def __init__(
@@ -3415,7 +3803,7 @@ class LUISParameters(AnalysisParameters):
         api_version: Optional[str] = None,
         additional_properties: Optional[Dict[str, Any]] = None,
         query: Optional[str] = None,
-        calling_options: Optional["_models.LUISCallingOptions"] = None,
+        calling_options: Optional["_models.LuisCallingOptions"] = None,
         **kwargs
     ):
         """
@@ -3428,23 +3816,23 @@ class LUISParameters(AnalysisParameters):
         :paramtype query: str
         :keyword calling_options: This customizes how the service calls LUIS Generally Available
          projects.
-        :paramtype calling_options: ~azure.ai.language.conversations.models.LUISCallingOptions
+        :paramtype calling_options: ~azure.ai.language.conversations.models.LuisCallingOptions
         """
-        super(LUISParameters, self).__init__(api_version=api_version, **kwargs)
+        super(LuisParameters, self).__init__(api_version=api_version, **kwargs)
         self.target_project_kind = 'Luis'  # type: str
         self.additional_properties = additional_properties
         self.query = query
         self.calling_options = calling_options
 
 
-class LUISTargetIntentResult(TargetIntentResult):
+class LuisTargetIntentResult(TargetIntentResult):
     """It is a wrap up of LUIS Generally Available response.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_project_kind: Required. This discriminator property specifies the type of the
      target project that returns the response.Constant filled by server. Known values are: "Luis",
-     "CustomConversation", "QuestionAnswering", "NonLinked".
+     "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
@@ -3482,9 +3870,83 @@ class LUISTargetIntentResult(TargetIntentResult):
         :keyword result: The actual response from a LUIS Generally Available application.
         :paramtype result: any
         """
-        super(LUISTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
+        super(LuisTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
         self.target_project_kind = 'Luis'  # type: str
         self.result = result
+
+
+class MetadataFilter(msrest.serialization.Model):
+    """Find QnAs that are associated with the given list of metadata.
+
+    :ivar metadata:
+    :vartype metadata: list[~azure.ai.language.conversations.models.MetadataRecord]
+    :ivar logical_operation: Operation used to join metadata filters. Known values are: "AND",
+     "OR".
+    :vartype logical_operation: str or ~azure.ai.language.conversations.models.LogicalOperationKind
+    """
+
+    _attribute_map = {
+        'metadata': {'key': 'metadata', 'type': '[MetadataRecord]'},
+        'logical_operation': {'key': 'logicalOperation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        metadata: Optional[List["_models.MetadataRecord"]] = None,
+        logical_operation: Optional[Union[str, "_models.LogicalOperationKind"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword metadata:
+        :paramtype metadata: list[~azure.ai.language.conversations.models.MetadataRecord]
+        :keyword logical_operation: Operation used to join metadata filters. Known values are: "AND",
+         "OR".
+        :paramtype logical_operation: str or
+         ~azure.ai.language.conversations.models.LogicalOperationKind
+        """
+        super(MetadataFilter, self).__init__(**kwargs)
+        self.metadata = metadata
+        self.logical_operation = logical_operation
+
+
+class MetadataRecord(msrest.serialization.Model):
+    """Object to provide the key value pair for each metadata.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: Required. Metadata Key from Metadata dictionary used in the QnA.
+    :vartype key: str
+    :ivar value: Required. Metadata Value from Metadata dictionary used in the QnA.
+    :vartype value: str
+    """
+
+    _validation = {
+        'key': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key: str,
+        value: str,
+        **kwargs
+    ):
+        """
+        :keyword key: Required. Metadata Key from Metadata dictionary used in the QnA.
+        :paramtype key: str
+        :keyword value: Required. Metadata Value from Metadata dictionary used in the QnA.
+        :paramtype value: str
+        """
+        super(MetadataRecord, self).__init__(**kwargs)
+        self.key = key
+        self.value = value
 
 
 class MultiLanguageConversationAnalysisInput(msrest.serialization.Model):
@@ -3525,7 +3987,7 @@ class NoneLinkedTargetIntentResult(TargetIntentResult):
 
     :ivar target_project_kind: Required. This discriminator property specifies the type of the
      target project that returns the response.Constant filled by server. Known values are: "Luis",
-     "CustomConversation", "QuestionAnswering", "NonLinked".
+     "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
@@ -3676,13 +4138,13 @@ class NumericRangeResolution(BaseResolution):
         self.maximum = maximum
 
 
-class OrchestratorPrediction(BasePrediction):
-    """This represents the prediction result of an Orchestrator project.
+class OrchestrationPrediction(BasePrediction):
+    """This represents the prediction result of an Orchestration project.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
-     are: "CustomConversation", "Orchestrator".
+     are: "Conversation", "Orchestration".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -3718,8 +4180,8 @@ class OrchestratorPrediction(BasePrediction):
          actual response from the target project.
         :paramtype intents: dict[str, ~azure.ai.language.conversations.models.TargetIntentResult]
         """
-        super(OrchestratorPrediction, self).__init__(top_intent=top_intent, **kwargs)
-        self.project_kind = 'Orchestrator'  # type: str
+        super(OrchestrationPrediction, self).__init__(top_intent=top_intent, **kwargs)
+        self.project_kind = 'Orchestration'  # type: str
         self.intents = intents
 
 
@@ -3782,18 +4244,62 @@ class OrdinalResolution(BaseResolution):
         self.value = value
 
 
+class QueryFilters(msrest.serialization.Model):
+    """filters over knowledge base.
+
+    :ivar metadata_filter: Find QnAs that are associated with the given list of metadata.
+    :vartype metadata_filter: ~azure.ai.language.conversations.models.MetadataFilter
+    :ivar source_filter: Find QnAs that are associated with any of the given list of sources in
+     knowledge base.
+    :vartype source_filter: list[str]
+    :ivar logical_operation: Logical operation used to join metadata filter with source filter.
+     Known values are: "AND", "OR".
+    :vartype logical_operation: str or ~azure.ai.language.conversations.models.LogicalOperationKind
+    """
+
+    _attribute_map = {
+        'metadata_filter': {'key': 'metadataFilter', 'type': 'MetadataFilter'},
+        'source_filter': {'key': 'sourceFilter', 'type': '[str]'},
+        'logical_operation': {'key': 'logicalOperation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        metadata_filter: Optional["_models.MetadataFilter"] = None,
+        source_filter: Optional[List[str]] = None,
+        logical_operation: Optional[Union[str, "_models.LogicalOperationKind"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword metadata_filter: Find QnAs that are associated with the given list of metadata.
+        :paramtype metadata_filter: ~azure.ai.language.conversations.models.MetadataFilter
+        :keyword source_filter: Find QnAs that are associated with any of the given list of sources in
+         knowledge base.
+        :paramtype source_filter: list[str]
+        :keyword logical_operation: Logical operation used to join metadata filter with source filter.
+         Known values are: "AND", "OR".
+        :paramtype logical_operation: str or
+         ~azure.ai.language.conversations.models.LogicalOperationKind
+        """
+        super(QueryFilters, self).__init__(**kwargs)
+        self.metadata_filter = metadata_filter
+        self.source_filter = source_filter
+        self.logical_operation = logical_operation
+
+
 class QuestionAnsweringParameters(AnalysisParameters):
     """This is a set of request parameters for Question Answering knowledge bases.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_project_kind: Required. The type of a target service.Constant filled by server.
-     Known values are: "Luis", "CustomConversation", "QuestionAnswering", "NonLinked".
+     Known values are: "Luis", "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
     :ivar calling_options: The options sent to a Question Answering KB.
-    :vartype calling_options: any
+    :vartype calling_options: ~azure.ai.language.conversations.models.AnswersOptions
     """
 
     _validation = {
@@ -3803,21 +4309,21 @@ class QuestionAnsweringParameters(AnalysisParameters):
     _attribute_map = {
         'target_project_kind': {'key': 'targetProjectKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'calling_options': {'key': 'callingOptions', 'type': 'object'},
+        'calling_options': {'key': 'callingOptions', 'type': 'AnswersOptions'},
     }
 
     def __init__(
         self,
         *,
         api_version: Optional[str] = None,
-        calling_options: Optional[Any] = None,
+        calling_options: Optional["_models.AnswersOptions"] = None,
         **kwargs
     ):
         """
         :keyword api_version: The API version to use when call a specific target service.
         :paramtype api_version: str
         :keyword calling_options: The options sent to a Question Answering KB.
-        :paramtype calling_options: any
+        :paramtype calling_options: ~azure.ai.language.conversations.models.AnswersOptions
         """
         super(QuestionAnsweringParameters, self).__init__(api_version=api_version, **kwargs)
         self.target_project_kind = 'QuestionAnswering'  # type: str
@@ -3831,14 +4337,14 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
 
     :ivar target_project_kind: Required. This discriminator property specifies the type of the
      target project that returns the response.Constant filled by server. Known values are: "Luis",
-     "CustomConversation", "QuestionAnswering", "NonLinked".
+     "Conversation", "QuestionAnswering", "NonLinked".
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
     :ivar confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
     :vartype confidence: float
     :ivar result: The generated answer by a Question Answering KB.
-    :vartype result: any
+    :vartype result: ~azure.ai.language.conversations.models.AnswersResult
     """
 
     _validation = {
@@ -3850,7 +4356,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
         'target_project_kind': {'key': 'targetProjectKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
         'confidence': {'key': 'confidenceScore', 'type': 'float'},
-        'result': {'key': 'result', 'type': 'object'},
+        'result': {'key': 'result', 'type': 'AnswersResult'},
     }
 
     def __init__(
@@ -3858,7 +4364,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
         *,
         confidence: float,
         api_version: Optional[str] = None,
-        result: Optional[Any] = None,
+        result: Optional["_models.AnswersResult"] = None,
         **kwargs
     ):
         """
@@ -3867,7 +4373,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
         :keyword confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
         :paramtype confidence: float
         :keyword result: The generated answer by a Question Answering KB.
-        :paramtype result: any
+        :paramtype result: ~azure.ai.language.conversations.models.AnswersResult
         """
         super(QuestionAnsweringTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
         self.target_project_kind = 'QuestionAnswering'  # type: str
@@ -3926,6 +4432,55 @@ class RedactedTranscriptContent(msrest.serialization.Model):
         self.text = text
         self.lexical = lexical
         self.audio_timings = audio_timings
+
+
+class ShortAnswerOptions(msrest.serialization.Model):
+    """To configure Answer span prediction feature.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar enable: Enable or disable Answer Span prediction. Has constant value: True.
+    :vartype enable: bool
+    :ivar confidence_threshold: Minimum threshold score required to include an answer span, value
+     ranges from 0 to 1.
+    :vartype confidence_threshold: float
+    :ivar top: Number of Top answers to be considered for span prediction from 1 to 10.
+    :vartype top: int
+    """
+
+    _validation = {
+        'enable': {'required': True, 'constant': True},
+        'confidence_threshold': {'maximum': 1, 'minimum': 0},
+        'top': {'maximum': 10, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'enable': {'key': 'enable', 'type': 'bool'},
+        'confidence_threshold': {'key': 'confidenceScoreThreshold', 'type': 'float'},
+        'top': {'key': 'topAnswersWithSpan', 'type': 'int'},
+    }
+
+    enable = True
+
+    def __init__(
+        self,
+        *,
+        confidence_threshold: Optional[float] = None,
+        top: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword confidence_threshold: Minimum threshold score required to include an answer span,
+         value ranges from 0 to 1.
+        :paramtype confidence_threshold: float
+        :keyword top: Number of Top answers to be considered for span prediction from 1 to 10.
+        :paramtype top: int
+        """
+        super(ShortAnswerOptions, self).__init__(**kwargs)
+        self.confidence_threshold = confidence_threshold
+        self.top = top
 
 
 class SpeedResolution(BaseResolution, QuantityResolution):
@@ -4166,7 +4721,7 @@ class TemporalSpanResolution(BaseResolution):
      "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid",
      "More".
-    :vartype modifier: str or ~azure.ai.language.conversations.models.Modifier
+    :vartype modifier: str or ~azure.ai.language.conversations.models.TemporalModifier
     """
 
     _validation = {
@@ -4187,7 +4742,7 @@ class TemporalSpanResolution(BaseResolution):
         begin: Optional[str] = None,
         end: Optional[str] = None,
         duration: Optional[str] = None,
-        modifier: Optional[Union[str, "_models.Modifier"]] = None,
+        modifier: Optional[Union[str, "_models.TemporalModifier"]] = None,
         **kwargs
     ):
         """
@@ -4204,7 +4759,7 @@ class TemporalSpanResolution(BaseResolution):
          "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
          "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
          "Mid", "More".
-        :paramtype modifier: str or ~azure.ai.language.conversations.models.Modifier
+        :paramtype modifier: str or ~azure.ai.language.conversations.models.TemporalModifier
         """
         super(TemporalSpanResolution, self).__init__(**kwargs)
         self.resolution_kind = 'TemporalSpan'  # type: str
@@ -4225,7 +4780,7 @@ class TextConversation(Conversation):
     :vartype language: str
     :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
      server. Known values are: "transcript", "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar domain: Enumeration of supported conversational domains. Known values are: "finance",
      "healthcare", "generic".
     :vartype domain: str or ~azure.ai.language.conversations.models.ConversationDomain
@@ -4292,10 +4847,10 @@ class TextConversationItem(ConversationItemBase):
     :vartype language: str
     :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
      server. Known values are: "transcript", "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
-    :ivar text: Required. The single input query.
+    :ivar text: Required. The text input.
     :vartype text: str
     """
 
@@ -4340,7 +4895,7 @@ class TextConversationItem(ConversationItemBase):
         :paramtype language: str
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
-        :keyword text: Required. The single input query.
+        :keyword text: Required. The text input.
         :paramtype text: str
         """
         super(TextConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
@@ -4359,7 +4914,7 @@ class TranscriptConversation(Conversation):
     :vartype language: str
     :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
      server. Known values are: "transcript", "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar domain: Enumeration of supported conversational domains. Known values are: "finance",
      "healthcare", "generic".
     :vartype domain: str or ~azure.ai.language.conversations.models.ConversationDomain
@@ -4427,7 +4982,7 @@ class TranscriptConversationItem(ConversationItemBase):
     :vartype language: str
     :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
      server. Known values are: "transcript", "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
     :ivar content: Additional properties for supporting transcript conversation.

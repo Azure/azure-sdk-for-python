@@ -38,13 +38,13 @@ class AnalyzeConversationTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Conversation tasks.
     """
 
-    CUSTOM_CONVERSATION = "CustomConversation"
+    CONVERSATION = "Conversation"
 
 class AnalyzeConversationTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported conversational task results
     """
 
-    CUSTOM_CONVERSATION_RESULT = "CustomConversationResult"
+    CONVERSATION_RESULT = "ConversationResult"
 
 class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The area Unit of measurement
@@ -113,6 +113,10 @@ class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_COGNITIVE_SEARCH_INDEX_LIMIT_REACHED = "AzureCognitiveSearchIndexLimitReached"
     INTERNAL_SERVER_ERROR = "InternalServerError"
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
+    TIMEOUT = "Timeout"
+    QUOTA_EXCEEDED = "QuotaExceeded"
+    CONFLICT = "Conflict"
+    WARNING = "Warning"
 
 class ExtraInformationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extra information object kind.
@@ -158,12 +162,19 @@ class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
+class InputModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported conversational modalities.
+    """
+
+    TRANSCRIPT = "transcript"
+    TEXT = "text"
+
 class JobStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
-    PARTIALLY_SUCCEEDED = "partiallySucceeded"
+    PARTIALLY_COMPLETED = "partiallyCompleted"
     FAILED = "failed"
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
@@ -190,35 +201,12 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LIGHT_YEAR = "LightYear"
     PT = "Pt"
 
-class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumeration of supported conversational modalities.
+class LogicalOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Set to 'OR' or 'AND' for using corresponding logical operation.
     """
 
-    TRANSCRIPT = "transcript"
-    TEXT = "text"
-
-class Modifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An optional modifier of a date/time instance.
-    """
-
-    AFTER_APPROX = "AfterApprox"
-    BEFORE = "Before"
-    BEFORE_START = "BeforeStart"
-    APPROX = "Approx"
-    REFERENCE_UNDEFINED = "ReferenceUndefined"
-    SINCE_END = "SinceEnd"
-    AFTER_MID = "AfterMid"
-    START = "Start"
-    AFTER = "After"
-    BEFORE_END = "BeforeEnd"
-    UNTIL = "Until"
-    END = "End"
-    LESS = "Less"
-    SINCE = "Since"
-    AFTER_START = "AfterStart"
-    BEFORE_APPROX = "BeforeApprox"
-    MID = "Mid"
-    MORE = "More"
+    AND_ENUM = "AND"
+    OR_ENUM = "OR"
 
 class NumberKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the extracted number entity.
@@ -235,8 +223,8 @@ class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the project.
     """
 
-    CUSTOM_CONVERSATION = "CustomConversation"
-    ORCHESTRATOR = "Orchestrator"
+    CONVERSATION = "Conversation"
+    ORCHESTRATION = "Orchestration"
 
 class RangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of range that the resolution object represents.
@@ -252,6 +240,15 @@ class RangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INFORMATION = "Information"
     TEMPERATURE = "Temperature"
     CURRENCY = "Currency"
+
+class RankerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ranker to be used.
+    """
+
+    #: Question only ranker.
+    QUESTION_ONLY = "QuestionOnly"
+    #: Default ranker.
+    DEFAULT = "Default"
 
 class RelativeTo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reference point that the ordinal number denotes.
@@ -308,6 +305,23 @@ class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CENTIMETERS_PER_MILLISECOND = "CentimetersPerMillisecond"
     KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
 
+class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+    according to Unicode v8.0.0. For additional information see
+    https://aka.ms/text-analytics-offsets.
+    """
+
+    #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme
+    #: clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
+    #: written in .Net Framework or .Net Core and you will be using StringInfo.
+    TEXT_ELEMENTS_V8 = "TextElements_v8"
+    #: Returned offset and length values will correspond to Unicode code points. Use this option if
+    #: your application is written in a language that support Unicode, for example Python.
+    UNICODE_CODE_POINT = "UnicodeCodePoint"
+    #: Returned offset and length values will correspond to UTF-16 code units. Use this option if your
+    #: application is written in a language that support Unicode, for example Java, JavaScript.
+    UTF16_CODE_UNIT = "Utf16CodeUnit"
+
 class SummaryAspectEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ISSUE = "Issue"
@@ -319,7 +333,7 @@ class TargetProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     LUIS = "Luis"
-    CUSTOM_CONVERSATION = "CustomConversation"
+    CONVERSATION = "Conversation"
     QUESTION_ANSWERING = "QuestionAnswering"
     NON_LINKED = "NonLinked"
 
@@ -343,6 +357,29 @@ class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KELVIN = "Kelvin"
     RANKINE = "Rankine"
     CELSIUS = "Celsius"
+
+class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An optional modifier of a date/time instance.
+    """
+
+    AFTER_APPROX = "AfterApprox"
+    BEFORE = "Before"
+    BEFORE_START = "BeforeStart"
+    APPROX = "Approx"
+    REFERENCE_UNDEFINED = "ReferenceUndefined"
+    SINCE_END = "SinceEnd"
+    AFTER_MID = "AfterMid"
+    START = "Start"
+    AFTER = "After"
+    BEFORE_END = "BeforeEnd"
+    UNTIL = "Until"
+    END = "End"
+    LESS = "Less"
+    SINCE = "Since"
+    AFTER_START = "AfterStart"
+    BEFORE_APPROX = "BeforeApprox"
+    MID = "Mid"
+    MORE = "More"
 
 class TranscriptContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported transcript content types.

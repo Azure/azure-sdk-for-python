@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/mshaban-msft/azure-rest-api-specs/mshaban/cognitive-language-2022-05-15-swagger-fixes/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/release-cognitiveservices-Language-2022-05-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 namespace: azure.ai.language.conversations
 package-name: azure-ai-language-conversations
@@ -71,7 +71,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/:analyze-conversation"]["post"]
+      where: $["paths"]["/:analyze-conversations"]["post"]
       transform: >
           $["operationId"] = "analyzeConversation";
 ```
@@ -81,7 +81,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/analyze-conversation/jobs"]["post"]
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
       transform: >
           $["operationId"] = "conversationAnalysis";
 ```
@@ -93,7 +93,7 @@ directive:
     - from: swagger-document
       where: $["paths"]
       transform: >
-          delete $["/analyze-conversation/jobs/{jobId}"];
+          delete $["/analyze-conversations/jobs/{jobId}"];
 ```
 
 ## Sync API Directives
@@ -103,7 +103,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/:analyze-conversation"]["post"]
+      where: $["paths"]["/:analyze-conversations"]["post"]
       transform: >
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
@@ -160,7 +160,7 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: '$.paths["/analyze-conversation/jobs"].post'
+    where: '$.paths["/analyze-conversations/jobs"].post'
     transform: >
       $["responses"]["200"] = {
           "description": "dummy schema to get poller response when calling .result()",
@@ -173,13 +173,13 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/analyze-conversation/jobs"]["post"]
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
       transform: >
         $["parameters"][1]["x-ms-client-name"] = "jobs";
 ```
 
 ## Fix Swagger/API mismatch errors
-
+<!-- 
 ### Change api version
 
 ```yaml
@@ -189,6 +189,7 @@ directive:
       transform: >
           $["version"] = "2022-04-01-preview";
 ```
+ -->
 
 ### Fix mis-matching task types - `async POST analyze api`
 
