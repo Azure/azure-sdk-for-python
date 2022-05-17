@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0"
+VERSION = "1.0.0b1"
 
 SDK_MONIKER = "communication-jobrouter/{}".format(VERSION)  # type: str

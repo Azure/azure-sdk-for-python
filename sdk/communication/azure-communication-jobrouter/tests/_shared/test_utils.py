@@ -9,7 +9,7 @@ from azure.communication.jobrouter._shared.utils import(
     _convert_datetime_to_utc_int
 )
 
-
+# cSpell:disable
 class UtilsTest(unittest.TestCase):
 
     @staticmethod
