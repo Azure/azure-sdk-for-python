@@ -1,5 +1,34 @@
 # Release History
 
+## 27.0.0 (2022-05-17)
+
+**Features**
+
+  - Model AutomaticOSUpgradePolicy has a new parameter use_rolling_upgrade_policy
+  - Model DedicatedHostGroup has a new parameter additional_capabilities
+  - Model DedicatedHostGroupUpdate has a new parameter additional_capabilities
+  - Model DiskRestorePointReplicationStatus has a new parameter completion_percent
+  - Model LinuxPatchSettings has a new parameter automatic_by_platform_settings
+  - Model PatchSettings has a new parameter automatic_by_platform_settings
+  - Model ProximityPlacementGroup has a new parameter intent
+  - Model ProximityPlacementGroup has a new parameter zones
+  - Model VMGalleryApplication has a new parameter enable_automatic_upgrade
+  - Model VMGalleryApplication has a new parameter treat_failure_as_deployment_failure
+  - Model VirtualMachineScaleSetDataDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetOSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetUpdateOSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetVM has a new parameter identity
+  - Operation VirtualMachineRunCommandsOperations.begin_create_or_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineRunCommandsOperations.begin_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineScaleSetVMsOperations.begin_run_command has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachinesOperations.begin_run_command has a new optional and keyword-only parameter content_type
+
+**Breaking changes**
+
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 26.1.0 (2022-02-28)
 
 **Features**

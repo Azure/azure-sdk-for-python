@@ -107,7 +107,7 @@ if __name__ == "__main__":
     target_dir = os.path.abspath(args.working_directory)
     package_dir = os.path.abspath(args.package_root)
 
-    package_name, _, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
+    package_name, _, pkg_version, _, _ = get_package_details(os.path.join(package_dir, 'setup.py'))
 
     if should_build_docs(package_name):
         sphinx_build(target_dir, output_dir)

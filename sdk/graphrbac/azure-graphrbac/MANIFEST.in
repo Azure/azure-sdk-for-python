@@ -3,3 +3,4 @@ recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include LICENSE
+include azure/graphrbac/py.typed

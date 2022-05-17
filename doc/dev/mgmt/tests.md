@@ -52,14 +52,14 @@ There are several ways to authenticate to Azure, but to be able to record test H
 ### Get a token with Active Directory application and service principal
 
 Follow this detailed tutorial to set up an Active Directory application and service principal:
-https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal
+https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 
 To use the credentials from Python, you need:
 * Application ID (a.k.a. client ID)
 * Authentication key (a.k.a. client secret)
 * Tenant ID
 * Subscription ID from the Azure portal
-[This section of the above tutorial](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
+[This section of the above tutorial](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
 The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
 ```Shell
