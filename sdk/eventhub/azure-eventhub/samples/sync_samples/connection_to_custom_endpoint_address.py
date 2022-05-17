@@ -54,6 +54,7 @@ def consumer_connecting_to_custom_endpoint():
         eventhub_name=EVENTHUB_NAME,
         custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS,
         connection_verify=CUSTOM_CA_BUNDLE_PATH,
+        prefetch=20
     )
 
     try:
