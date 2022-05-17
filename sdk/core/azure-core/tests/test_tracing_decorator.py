@@ -16,7 +16,7 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
-from azure.core.tracing import common
+from azure.core.tracing import common, SpanKind
 from azure.core.tracing.decorator import distributed_trace
 from tracing_common import FakeSpan
 from utils import HTTP_REQUESTS
@@ -78,6 +78,10 @@ class MockClient:
     def tracing_attr(self):
         time.sleep(0.001)
 
+    @distributed_trace(kind=SpanKind.PRODUCER)
+    def kind_override(self):
+        time.sleep(0.001)
+
     @distributed_trace
     def raising_exception(self):
         raise ValueError("Something went horribly wrong here")
@@ -106,6 +110,7 @@ class TestDecorator(object):
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "MockClient.tracing_attr"
+        assert parent.children[1].kind == SpanKind.INTERNAL
         assert parent.children[1].attributes == {'foo': 'bar'}
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -117,6 +122,18 @@ class TestDecorator(object):
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "different name"
+        assert parent.children[1].kind == SpanKind.INTERNAL
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_kind_override(self, http_request):
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            client.kind_override()
+
+        assert len(parent.children) == 2
+        assert parent.children[0].name == "MockClient.__init__"
+        assert parent.children[1].name == "MockClient.kind_override"
+        assert parent.children[1].kind == SpanKind.PRODUCER
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_used(self, http_request):
