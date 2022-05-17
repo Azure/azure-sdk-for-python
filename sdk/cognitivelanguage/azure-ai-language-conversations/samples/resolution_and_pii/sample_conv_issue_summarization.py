@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_issue_resolution.py
+FILE: sample_conv_issue_summarization.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze a conversation for issue resolution.
@@ -13,14 +13,14 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_issue_resolution.py
+    python sample_conv_issue_summarization.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
     2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
 """
 
-def sample_issue_resolution():
+def sample_conv_issue_summarization():
     # [START analyze_conversation_app]
     # import libraries
     import os
@@ -107,4 +107,4 @@ def sample_issue_resolution():
 
 
 if __name__ == '__main__':
-    sample_issue_resolution()
+    sample_conv_issue_summarization()
