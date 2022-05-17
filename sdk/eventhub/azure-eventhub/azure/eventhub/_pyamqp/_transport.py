@@ -690,7 +690,6 @@ class WebSocketTransport(_AbstractTransport):
                 url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
                 url = "wss://{}".format(self._host)
-            print("URL we are connecting to ", url)
             self.ws = create_connection(
                 url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
@@ -701,6 +700,7 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth
             )
+
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
