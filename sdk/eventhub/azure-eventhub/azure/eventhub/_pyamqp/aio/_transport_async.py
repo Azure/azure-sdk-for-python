@@ -424,7 +424,7 @@ class AsyncTransport(AsyncTransportMixin):
                 TLS_HEADER_FRAME, returned_header[1]))
 
 
-class WebSocketTransportAsync(AsyncTransportMixin):
+class WebSocketTransportAsync(AsyncTransport):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
         self._read_buffer = BytesIO()
@@ -435,6 +435,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.host = host
         self.ws = None
         self._http_proxy = kwargs.get('http_proxy', None)
+        self.parsed_custom_hostname = kwargs.get("custom_hostname")
+        self.parsed_custom_port = kwargs.get("custom_port")
 
     async def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None

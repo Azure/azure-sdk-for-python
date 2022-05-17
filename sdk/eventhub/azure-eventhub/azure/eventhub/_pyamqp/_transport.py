@@ -49,6 +49,10 @@ from urllib.parse import urlparse
 
 import certifi
 
+import websocket
+from websocket import create_connection
+websocket.enableTrace(True)
+
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
@@ -690,6 +694,7 @@ class WebSocketTransport(_AbstractTransport):
                 url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
                 url = "wss://{}".format(self._host)
+            print("URL we are connecting to ", url)
             self.ws = create_connection(
                 url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
@@ -712,7 +717,9 @@ class WebSocketTransport(_AbstractTransport):
         length += nbytes
         n -= nbytes
         while n:
+            print("FIRST trying to recieve via websocket")
             data = self.ws.recv()
+            print("SECOND we have recieved via websocket")
 
             if len(data) <= n:
                 view[length: length + len(data)] = data

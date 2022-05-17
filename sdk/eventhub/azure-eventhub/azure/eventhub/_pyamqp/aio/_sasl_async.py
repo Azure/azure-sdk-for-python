@@ -119,8 +119,8 @@ class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
         ssl = ssl or True
         http_proxy = kwargs.pop('http_proxy', None)
         self._transport = WebSocketTransportAsync(
-            host,
-            port=port,
+            kwargs.get("custom_hostname") or host,
+            port=kwargs.get("custom_port") or port,
             connect_timeout=connect_timeout,
             ssl=ssl,
             http_proxy=http_proxy,
