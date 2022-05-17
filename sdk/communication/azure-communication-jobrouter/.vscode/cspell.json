@@ -1,0 +1,3 @@
+{
+  "ignorePaths": ["tests/_shared/**"]
+}
