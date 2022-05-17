@@ -235,6 +235,10 @@ router_client.delete_exception_policy(identifier = policy_id)
 
 - `identifier`: Id of the exception policy.
 
+## Troubleshooting
+
+Running into issues? This section should contain details as to what to do there.
+
 ## Next steps
 - [Read more about Router in Azure Communication Services][router_concepts]
 
