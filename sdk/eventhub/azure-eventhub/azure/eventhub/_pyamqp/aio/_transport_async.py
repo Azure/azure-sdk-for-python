@@ -165,8 +165,10 @@ class AsyncTransport(AsyncTransportMixin):
 
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         parsed_custom = urlparse(self._custom_endpoint_address)
+        self.parsed_custom_hostname = parsed_custom.hostname
+        self.parsed_custom_port = parsed_custom.port
 
-        self.host, self.port = to_host_port(parsed_custom.hostname or host, parsed_custom.port or port)
+        self.host, self.port = to_host_port(self.parsed_custom_hostname or host, self.parsed_custom_port or port)
 
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
@@ -445,8 +447,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
-            if self._custom_endpoint_address!=None:
-                url = "wss://"+self._host+":"+str(self.port)+"/$servicebus/websocket/"
+            if self.parsed_custom_hostname!=None:
+                url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
                 url = "wss://{}".format(self._host)
             self.ws = create_connection(
