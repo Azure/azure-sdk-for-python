@@ -129,6 +129,9 @@ class EventHubConsumer(
         self._last_callback_called_time = None
         self._callback_task_run = None
 
+        self._custom_endpoint_address = self._client._config.custom_endpoint_address
+        self._connection_verify = self._client._config.connection_verify
+
     def _create_handler(self, auth: "JWTTokenAuthAsync") -> None:
         source = Source(self._source, filters={})
         if self._offset is not None:
@@ -163,7 +166,9 @@ class EventHubConsumer(
             properties=create_properties(self._client._config.user_agent),  # pylint:disable=protected-access
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
-            message_received_callback=self._message_received
+            message_received_callback=self._message_received,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
         )
 
     async def _open_with_retry(self) -> None:

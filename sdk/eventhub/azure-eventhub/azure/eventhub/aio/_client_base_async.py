@@ -254,7 +254,9 @@ class ClientBaseAsync(ClientBase):
                 auth=mgmt_auth,
                 debug=self._config.network_tracing,
                 transport_type=self._config.transport_type,
-                http_proxy=self._config.http_proxy
+                http_proxy=self._config.http_proxy,
+                custom_endpoint_address=self._config.custom_endpoint_address,
+                connection_verify=self._config.connection_verify
             )
             try:
                 await mgmt_client.open_async()
