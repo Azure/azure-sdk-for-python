@@ -153,6 +153,7 @@ class _AbstractTransport(object):
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
 
     def connect(self):
         try:
@@ -679,8 +680,12 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
+            if self._custom_endpoint_address!=None:
+                url = "wss://"+self._host+":"+str(self.port)+"/$servicebus/websocket/"
+            else:
+                url = "wss://{}".format(self._host)
             self.ws = create_connection(
-                url="wss://{}".format(self._host),
+                url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
