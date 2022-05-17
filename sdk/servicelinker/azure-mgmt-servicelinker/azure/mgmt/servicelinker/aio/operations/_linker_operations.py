@@ -545,8 +545,8 @@ class LinkerOperations:
         resource_uri: str,
         linker_name: str,
         **kwargs: Any
-    ) -> Optional["_models.ValidateResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ValidateResult"]]
+    ) -> Optional["_models.ValidateOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ValidateOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -577,7 +577,7 @@ class LinkerOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ValidateResult', pipeline_response)
+            deserialized = self._deserialize('ValidateOperationResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -593,7 +593,7 @@ class LinkerOperations:
         resource_uri: str,
         linker_name: str,
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.ValidateResult"]:
+    ) -> AsyncLROPoller["_models.ValidateOperationResult"]:
         """Validate a link.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
@@ -609,14 +609,15 @@ class LinkerOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ValidateResult or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.ValidateResult]
+        :return: An instance of AsyncLROPoller that returns either ValidateOperationResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.ValidateOperationResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-05-01")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidateResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidateOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -634,7 +635,7 @@ class LinkerOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('ValidateResult', pipeline_response)
+            deserialized = self._deserialize('ValidateOperationResult', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
