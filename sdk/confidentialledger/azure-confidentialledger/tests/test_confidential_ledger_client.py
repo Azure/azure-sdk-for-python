@@ -14,24 +14,18 @@ from .testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestCase
 
 class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     def create_confidentialledger_client(self, endpoint, is_aad):
-        credential = self.get_credential(ConfidentialLedgerClient)
+        # The ACL instance should already have the potential AAD and cert users added as
+        # Administrators.
 
-        # The ACL should've been set up with the AAD user as an Administrator already.
-        client = self.create_client_from_credential(
-            ConfidentialLedgerClient,
-            credential=credential,
-            endpoint=endpoint,
-            ledger_certificate_path=self.network_certificate_path,
-        )
-
-        if not is_aad:
-            # Add the cert-based user as an administrator.
-            client.create_or_update_user(
-                user_id=self.user_certificate_path,
-                role=LedgerUserRole.ADMINISTRATOR,
+        if is_aad:
+            credential = self.get_credential(ConfidentialLedgerClient)
+            client = self.create_client_from_credential(
+                ConfidentialLedgerClient,
+                credential=credential,
+                endpoint=endpoint,
+                ledger_certificate_path=self.network_certificate_path,
             )
-
-            # Recreate the client using cert-based auth.
+        else:
             credential = ConfidentialLedgerCertificateCredential(
                 certificate_path=self.user_certificate_path
             )
@@ -254,26 +248,31 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.user_management_actions(client)
 
     def user_management_actions(self, client):
-        user_id = "0" * 36  # AAD Object Ids have length 36
-        user = client.create_or_update_user(user_id, LedgerUserRole.CONTRIBUTOR)
-        self.assertEqual(user.id, user_id)
-        self.assertEqual(user.role, LedgerUserRole.CONTRIBUTOR)
+        aad_user_id = "0" * 36  # AAD Object Ids have length 36
+        cert_user_id = (
+            "5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:"
+            "05:44:4C:AD:5A:B5"
+        )
+        for user_id in [aad_user_id, cert_user_id]:
+            user = client.create_or_update_user(user_id, LedgerUserRole.CONTRIBUTOR)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.CONTRIBUTOR)
 
-        user = client.get_user(user_id)
-        self.assertEqual(user.id, user_id)
-        self.assertEqual(user.role, LedgerUserRole.CONTRIBUTOR)
+            user = client.get_user(user_id)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.CONTRIBUTOR)
 
-        client.delete_user(user_id)
+            client.delete_user(user_id)
 
-        user = client.create_or_update_user(user_id, LedgerUserRole.READER)
-        self.assertEqual(user.id, user_id)
-        self.assertEqual(user.role, LedgerUserRole.READER)
+            user = client.create_or_update_user(user_id, LedgerUserRole.READER)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.READER)
 
-        user = client.get_user(user_id)
-        self.assertEqual(user.id, user_id)
-        self.assertEqual(user.role, LedgerUserRole.READER)
+            user = client.get_user(user_id)
+            self.assertEqual(user.id, user_id)
+            self.assertEqual(user.role, LedgerUserRole.READER)
 
-        client.delete_user(user_id)
+            client.delete_user(user_id)
 
     @ConfidentialLedgerPreparer()
     def test_verification_methods_aad_user(self, confidentialledger_endpoint):

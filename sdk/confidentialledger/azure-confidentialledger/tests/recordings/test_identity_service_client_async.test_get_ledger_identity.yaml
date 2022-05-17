@@ -1,0 +1,37 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-azure-sdk-for-python?api-version=0.1-preview
+  response:
+    body:
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQCwOtv88CxqPRTAkd4oZqezAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMTAzMTEwMDAwMDBaFw0yMzA2MTEyMzU5\nNTlaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEqh6Boajjk2+ZtA3nZwtlxG8FtYD4fQyIvavHFUsc4r6Z9H9YX6tFfVsI\nLzd1/s/jfwgooNb2BZw8VRI/A91uYaNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUG7FjbaMqKFAeVCcZQBUoRCTIzdQwHwYDVR0jBBgwFoAUG7FjbaMqKFAeVCcZ\nQBUoRCTIzdQwCgYIKoZIzj0EAwIDRwAwRAIgCIWqMN703ftlapmQEfWx+9lPWRyZ\nefxppDt3X5k41WACICJ8/2LTkwAmeb7hWgM07cFGlIMX1rCKvLi4S95qc8UL\n-----END
+        CERTIFICATE-----\n\u0000","ledgerId":"lyshi-azure-sdk-for-python"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 17 May 2022 21:33:00 GMT
+      server:
+      - Kestrel
+      transfer-encoding:
+      - chunked
+      x-ms-image-digest:
+      - sha256:4c44ec07d4690bf5eb5324083447a2fedc0a9758345fc79306c76dc61706f110
+      x-ms-image-tag:
+      - 1.0.01957.438-49bfc4bb6dfdbca9381aec0591c0318a638a6f6c
+      x-ms-machinename:
+      - identityservice-587d6466f9-9hg25
+    status:
+      code: 200
+      message: OK
+version: 1

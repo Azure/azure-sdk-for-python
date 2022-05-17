@@ -2,7 +2,6 @@ import functools
 import os
 import tempfile
 
-from azure.confidentialledger import ConfidentialLedgerClient
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
 from .constants import NETWORK_CERTIFICATE, USER_CERTIFICATE
