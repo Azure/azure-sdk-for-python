@@ -31,8 +31,8 @@ class AnalyzeConversationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Enumeration of supported Conversation Analysis task results.
     """
 
-    ISSUE_RESOLUTION_SUMMARY_RESULTS = "issueResolutionSummaryResults"
-    CONVERSATION_PII_RESULTS = "conversationPIIResults"
+    CONVERSATIONAL_SUMMARIZATION_RESULTS = "conversationalSummarizationResults"
+    CONVERSATIONAL_PII_RESULTS = "conversationalPIIResults"
 
 class AnalyzeConversationTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Conversation tasks.
@@ -322,11 +322,10 @@ class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: application is written in a language that support Unicode, for example Java, JavaScript.
     UTF16_CODE_UNIT = "Utf16CodeUnit"
 
-class SummaryAspectEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SummaryAspect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    ISSUE = "Issue"
-    RESOLUTION = "Resolution"
-    ISSUE_RESOLUTION = "Issue, Resolution"
+    ISSUE = "issue"
+    RESOLUTION = "resolution"
 
 class TargetProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of a target service.

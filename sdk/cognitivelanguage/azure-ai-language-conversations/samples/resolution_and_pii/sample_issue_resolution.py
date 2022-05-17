@@ -74,7 +74,7 @@ def sample_issue_resolution():
                 tasks=[
                     AnalyzeConversationSummarizationTask(
                         parameters=ConversationSummarizationTaskParameters(
-                            summary_aspects="Issue, Resolution"
+                            summary_aspects=["Issue, Resolution"]
                         )
                     )
                 ]
@@ -91,15 +91,17 @@ def sample_issue_resolution():
             print("... errors occured ...")
             for error in issue_resolution_result.errors:
                 print(error)
-        conversation_result = issue_resolution_result.conversations[0]
-        if conversation_result.warnings:
-            print("... view warnings ...")
-            for warning in conversation_result.warnings:
-                print(warning)
-        summaries = conversation_result.summaries
-        print("... view task result ...")
-        print("issue: {}".format(summaries[0].text))
-        print("resolution: {}".format(summaries[1].text))
+        else:
+            conversation_result = issue_resolution_result.conversations[0]
+            if conversation_result.warnings:
+                print("... view warnings ...")
+                for warning in conversation_result.warnings:
+                    print(warning)
+            else:
+                summaries = conversation_result.summaries
+                print("... view task result ...")
+                print("issue: {}".format(summaries[0].text))
+                print("resolution: {}".format(summaries[1].text))
 
     # [END analyze_conversation_app]
 

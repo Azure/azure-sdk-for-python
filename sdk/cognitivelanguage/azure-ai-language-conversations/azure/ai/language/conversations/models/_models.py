@@ -259,7 +259,8 @@ class AnalyzeConversationJobResult(TaskIdentifier, TaskState):
     :ivar task_name:
     :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Conversation Analysis task results.Constant
-     filled by server. Known values are: "issueResolutionSummaryResults", "conversationPIIResults".
+     filled by server. Known values are: "conversationalSummarizationResults",
+     "conversationalPIIResults".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
     """
 
@@ -277,7 +278,7 @@ class AnalyzeConversationJobResult(TaskIdentifier, TaskState):
     }
 
     _subtype_map = {
-        'kind': {'conversationPIIResults': 'AnalyzeConversationPIIResult', 'issueResolutionSummaryResults': 'AnalyzeConversationSummarizationResult'}
+        'kind': {'conversationalPIIResults': 'AnalyzeConversationPIIResult', 'conversationalSummarizationResults': 'AnalyzeConversationSummarizationResult'}
     }
 
     def __init__(
@@ -623,7 +624,7 @@ class AnalyzeConversationLROTask(TaskIdentifier):
     }
 
     _subtype_map = {
-        'kind': {'ConversationPII': 'AnalyzeConversationPIITask', 'IssueResolutionSummarization': 'AnalyzeConversationSummarizationTask'}
+        'kind': {'ConversationalPIITask': 'AnalyzeConversationPIITask', 'ConversationalSummarizationTask': 'AnalyzeConversationSummarizationTask'}
     }
 
     def __init__(
@@ -653,7 +654,8 @@ class AnalyzeConversationPIIResult(AnalyzeConversationJobResult):
     :ivar task_name:
     :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Conversation Analysis task results.Constant
-     filled by server. Known values are: "issueResolutionSummaryResults", "conversationPIIResults".
+     filled by server. Known values are: "conversationalSummarizationResults",
+     "conversationalPIIResults".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
     :ivar results: Required. The result from PII detection and redaction operation for each
      conversation.
@@ -697,7 +699,7 @@ class AnalyzeConversationPIIResult(AnalyzeConversationJobResult):
         :paramtype results: ~azure.ai.language.conversations.models.ConversationPIIResults
         """
         super(AnalyzeConversationPIIResult, self).__init__(last_update_date_time=last_update_date_time, status=status, task_name=task_name, **kwargs)
-        self.kind = 'conversationPIIResults'  # type: str
+        self.kind = 'conversationalPIIResults'  # type: str
         self.results = results
 
 
@@ -741,7 +743,7 @@ class AnalyzeConversationPIITask(AnalyzeConversationLROTask):
         :paramtype parameters: ~azure.ai.language.conversations.models.ConversationPIITaskParameters
         """
         super(AnalyzeConversationPIITask, self).__init__(task_name=task_name, **kwargs)
-        self.kind = 'ConversationPII'  # type: str
+        self.kind = 'ConversationalPIITask'  # type: str
         self.parameters = parameters
 
 
@@ -806,7 +808,8 @@ class AnalyzeConversationSummarizationResult(AnalyzeConversationJobResult):
     :ivar task_name:
     :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Conversation Analysis task results.Constant
-     filled by server. Known values are: "issueResolutionSummaryResults", "conversationPIIResults".
+     filled by server. Known values are: "conversationalSummarizationResults",
+     "conversationalPIIResults".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
     :ivar results: Required.
     :vartype results: ~azure.ai.language.conversations.models.SummaryResult
@@ -848,7 +851,7 @@ class AnalyzeConversationSummarizationResult(AnalyzeConversationJobResult):
         :paramtype results: ~azure.ai.language.conversations.models.SummaryResult
         """
         super(AnalyzeConversationSummarizationResult, self).__init__(last_update_date_time=last_update_date_time, status=status, task_name=task_name, **kwargs)
-        self.kind = 'issueResolutionSummaryResults'  # type: str
+        self.kind = 'conversationalSummarizationResults'  # type: str
         self.results = results
 
 
@@ -893,7 +896,7 @@ class AnalyzeConversationSummarizationTask(AnalyzeConversationLROTask):
          ~azure.ai.language.conversations.models.ConversationSummarizationTaskParameters
         """
         super(AnalyzeConversationSummarizationTask, self).__init__(task_name=task_name, **kwargs)
-        self.kind = 'IssueResolutionSummarization'  # type: str
+        self.kind = 'ConversationalSummarizationTask'  # type: str
         self.parameters = parameters
 
 
@@ -1679,9 +1682,6 @@ class ConversationIntent(msrest.serialization.Model):
 class ConversationItemBase(msrest.serialization.Model):
     """The abstract base for a user input formatted conversation (e.g., Text, Transcript).
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TextConversationItem, TranscriptConversationItem.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
@@ -1693,8 +1693,8 @@ class ConversationItemBase(msrest.serialization.Model):
     :vartype participant_id: str
     :ivar language: The override language of a conversation item in BCP 47 language representation.
     :vartype language: str
-    :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
-     server. Known values are: "transcript", "text".
+    :ivar modality: Enumeration of supported conversational modalities. Known values are:
+     "transcript", "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
@@ -1703,7 +1703,6 @@ class ConversationItemBase(msrest.serialization.Model):
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
-        'modality': {'required': True},
     }
 
     _attribute_map = {
@@ -1715,10 +1714,6 @@ class ConversationItemBase(msrest.serialization.Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'modality': {'text': 'TextConversationItem', 'transcript': 'TranscriptConversationItem'}
-    }
-
     def __init__(
         self,
         *,
@@ -1726,6 +1721,7 @@ class ConversationItemBase(msrest.serialization.Model):
         participant_id: str = "1",
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
+        modality: Optional[Union[str, "_models.InputModality"]] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
         **kwargs
     ):
@@ -1740,6 +1736,9 @@ class ConversationItemBase(msrest.serialization.Model):
         :keyword language: The override language of a conversation item in BCP 47 language
          representation.
         :paramtype language: str
+        :keyword modality: Enumeration of supported conversational modalities. Known values are:
+         "transcript", "text".
+        :paramtype modality: str or ~azure.ai.language.conversations.models.InputModality
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
         """
@@ -1748,7 +1747,7 @@ class ConversationItemBase(msrest.serialization.Model):
         self.id = id
         self.participant_id = participant_id
         self.language = language
-        self.modality = 'ConversationItemBase'  # type: str
+        self.modality = modality
         self.role = role
 
 
@@ -2568,8 +2567,8 @@ class ConversationSummarizationTaskParameters(PreBuiltTaskParameters):
     :vartype logging_opt_out: bool
     :ivar model_version:
     :vartype model_version: str
-    :ivar summary_aspects: Required. Known values are: "Issue", "Resolution", "Issue, Resolution".
-    :vartype summary_aspects: str or ~azure.ai.language.conversations.models.SummaryAspectEnum
+    :ivar summary_aspects: Required.
+    :vartype summary_aspects: list[str or ~azure.ai.language.conversations.models.SummaryAspect]
     """
 
     _validation = {
@@ -2579,13 +2578,13 @@ class ConversationSummarizationTaskParameters(PreBuiltTaskParameters):
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
         'model_version': {'key': 'modelVersion', 'type': 'str'},
-        'summary_aspects': {'key': 'summaryAspects', 'type': 'str'},
+        'summary_aspects': {'key': 'summaryAspects', 'type': '[str]'},
     }
 
     def __init__(
         self,
         *,
-        summary_aspects: Union[str, "_models.SummaryAspectEnum"],
+        summary_aspects: List[Union[str, "_models.SummaryAspect"]],
         logging_opt_out: Optional[bool] = False,
         model_version: Optional[str] = "latest",
         **kwargs
@@ -2595,9 +2594,8 @@ class ConversationSummarizationTaskParameters(PreBuiltTaskParameters):
         :paramtype logging_opt_out: bool
         :keyword model_version:
         :paramtype model_version: str
-        :keyword summary_aspects: Required. Known values are: "Issue", "Resolution", "Issue,
-         Resolution".
-        :paramtype summary_aspects: str or ~azure.ai.language.conversations.models.SummaryAspectEnum
+        :keyword summary_aspects: Required.
+        :paramtype summary_aspects: list[str or ~azure.ai.language.conversations.models.SummaryAspect]
         """
         super(ConversationSummarizationTaskParameters, self).__init__(logging_opt_out=logging_opt_out, model_version=model_version, **kwargs)
         self.summary_aspects = summary_aspects
@@ -4845,8 +4843,8 @@ class TextConversationItem(ConversationItemBase):
     :vartype participant_id: str
     :ivar language: The override language of a conversation item in BCP 47 language representation.
     :vartype language: str
-    :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
-     server. Known values are: "transcript", "text".
+    :ivar modality: Enumeration of supported conversational modalities. Known values are:
+     "transcript", "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
@@ -4857,7 +4855,6 @@ class TextConversationItem(ConversationItemBase):
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
-        'modality': {'required': True},
         'text': {'required': True},
     }
 
@@ -4879,6 +4876,7 @@ class TextConversationItem(ConversationItemBase):
         text: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
+        modality: Optional[Union[str, "_models.InputModality"]] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
         **kwargs
     ):
@@ -4893,13 +4891,15 @@ class TextConversationItem(ConversationItemBase):
         :keyword language: The override language of a conversation item in BCP 47 language
          representation.
         :paramtype language: str
+        :keyword modality: Enumeration of supported conversational modalities. Known values are:
+         "transcript", "text".
+        :paramtype modality: str or ~azure.ai.language.conversations.models.InputModality
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
         :keyword text: Required. The text input.
         :paramtype text: str
         """
-        super(TextConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
-        self.modality = 'text'  # type: str
+        super(TextConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, modality=modality, role=role, **kwargs)
         self.text = text
 
 
@@ -4980,19 +4980,34 @@ class TranscriptConversationItem(ConversationItemBase):
     :vartype participant_id: str
     :ivar language: The override language of a conversation item in BCP 47 language representation.
     :vartype language: str
-    :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
-     server. Known values are: "transcript", "text".
+    :ivar modality: Enumeration of supported conversational modalities. Known values are:
+     "transcript", "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
-    :ivar content: Additional properties for supporting transcript conversation.
-    :vartype content: ~azure.ai.language.conversations.models.TranscriptConversationItemContent
+    :ivar itn: Required. Inverse Text Normalization representation of input. The
+     inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with
+     phone numbers, numbers, abbreviations, and other transformations applied.
+    :vartype itn: str
+    :ivar masked_itn: Required. The Inverse Text Normalized format with profanity masking applied.
+    :vartype masked_itn: str
+    :ivar text: Required. The display form of the recognized text from speech to text API, with
+     punctuation and capitalization added.
+    :vartype text: str
+    :ivar lexical: Required. The lexical form of the recognized text from speech to text API with
+     the actual words recognized.
+    :vartype lexical: str
+    :ivar audio_timings: The list of word level audio timing information.
+    :vartype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
     """
 
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
-        'modality': {'required': True},
+        'itn': {'required': True},
+        'masked_itn': {'required': True},
+        'text': {'required': True},
+        'lexical': {'required': True},
     }
 
     _attribute_map = {
@@ -5002,7 +5017,11 @@ class TranscriptConversationItem(ConversationItemBase):
         'language': {'key': 'language', 'type': 'str'},
         'modality': {'key': 'modality', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'TranscriptConversationItemContent'},
+        'itn': {'key': 'itn', 'type': 'str'},
+        'masked_itn': {'key': 'maskedItn', 'type': 'str'},
+        'text': {'key': 'text', 'type': 'str'},
+        'lexical': {'key': 'lexical', 'type': 'str'},
+        'audio_timings': {'key': 'audioTimings', 'type': '[WordLevelTiming]'},
     }
 
     def __init__(
@@ -5010,10 +5029,15 @@ class TranscriptConversationItem(ConversationItemBase):
         *,
         id: str = "1",
         participant_id: str = "1",
+        itn: str,
+        masked_itn: str,
+        text: str,
+        lexical: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
+        modality: Optional[Union[str, "_models.InputModality"]] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
-        content: Optional["_models.TranscriptConversationItemContent"] = None,
+        audio_timings: Optional[List["_models.WordLevelTiming"]] = None,
         **kwargs
     ):
         """
@@ -5027,69 +5051,11 @@ class TranscriptConversationItem(ConversationItemBase):
         :keyword language: The override language of a conversation item in BCP 47 language
          representation.
         :paramtype language: str
+        :keyword modality: Enumeration of supported conversational modalities. Known values are:
+         "transcript", "text".
+        :paramtype modality: str or ~azure.ai.language.conversations.models.InputModality
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
-        :keyword content: Additional properties for supporting transcript conversation.
-        :paramtype content: ~azure.ai.language.conversations.models.TranscriptConversationItemContent
-        """
-        super(TranscriptConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
-        self.modality = 'transcript'  # type: str
-        self.content = content
-
-
-class TranscriptConversationItemContent(msrest.serialization.Model):
-    """Additional properties for supporting transcript conversation.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar text: Required. The display form of the recognized text from speech to text API, with
-     punctuation and capitalization added.
-    :vartype text: str
-    :ivar lexical: Required. The lexical form of the recognized text from speech to text API with
-     the actual words recognized.
-    :vartype lexical: str
-    :ivar itn: Required. Inverse Text Normalization representation of input. The
-     inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with
-     phone numbers, numbers, abbreviations, and other transformations applied.
-    :vartype itn: str
-    :ivar masked_itn: Required. The Inverse Text Normalized format with profanity masking applied.
-    :vartype masked_itn: str
-    :ivar audio_timings: The list of word level audio timing information.
-    :vartype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
-    """
-
-    _validation = {
-        'text': {'required': True},
-        'lexical': {'required': True},
-        'itn': {'required': True},
-        'masked_itn': {'required': True},
-    }
-
-    _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'lexical': {'key': 'lexical', 'type': 'str'},
-        'itn': {'key': 'itn', 'type': 'str'},
-        'masked_itn': {'key': 'maskedItn', 'type': 'str'},
-        'audio_timings': {'key': 'audioTimings', 'type': '[WordLevelTiming]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        text: str,
-        lexical: str,
-        itn: str,
-        masked_itn: str,
-        audio_timings: Optional[List["_models.WordLevelTiming"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword text: Required. The display form of the recognized text from speech to text API, with
-         punctuation and capitalization added.
-        :paramtype text: str
-        :keyword lexical: Required. The lexical form of the recognized text from speech to text API
-         with the actual words recognized.
-        :paramtype lexical: str
         :keyword itn: Required. Inverse Text Normalization representation of input. The
          inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with
          phone numbers, numbers, abbreviations, and other transformations applied.
@@ -5097,14 +5063,20 @@ class TranscriptConversationItemContent(msrest.serialization.Model):
         :keyword masked_itn: Required. The Inverse Text Normalized format with profanity masking
          applied.
         :paramtype masked_itn: str
+        :keyword text: Required. The display form of the recognized text from speech to text API, with
+         punctuation and capitalization added.
+        :paramtype text: str
+        :keyword lexical: Required. The lexical form of the recognized text from speech to text API
+         with the actual words recognized.
+        :paramtype lexical: str
         :keyword audio_timings: The list of word level audio timing information.
         :paramtype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
         """
-        super(TranscriptConversationItemContent, self).__init__(**kwargs)
-        self.text = text
-        self.lexical = lexical
+        super(TranscriptConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, modality=modality, role=role, **kwargs)
         self.itn = itn
         self.masked_itn = masked_itn
+        self.text = text
+        self.lexical = lexical
         self.audio_timings = audio_timings
 
 

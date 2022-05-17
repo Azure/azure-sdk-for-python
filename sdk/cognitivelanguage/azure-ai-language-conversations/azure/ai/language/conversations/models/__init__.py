@@ -106,7 +106,6 @@ from ._models import TextConversation
 from ._models import TextConversationItem
 from ._models import TranscriptConversation
 from ._models import TranscriptConversationItem
-from ._models import TranscriptConversationItemContent
 from ._models import VolumeResolution
 from ._models import WeightResolution
 from ._models import WordLevelTiming
@@ -139,7 +138,7 @@ from ._enums import (
     Role,
     SpeedUnit,
     StringIndexType,
-    SummaryAspectEnum,
+    SummaryAspect,
     TargetProjectKind,
     TaskStateEnum,
     TemperatureUnit,
@@ -252,7 +251,6 @@ __all__ = [
     'TextConversationItem',
     'TranscriptConversation',
     'TranscriptConversationItem',
-    'TranscriptConversationItemContent',
     'VolumeResolution',
     'WeightResolution',
     'WordLevelTiming',
@@ -282,7 +280,7 @@ __all__ = [
     'Role',
     'SpeedUnit',
     'StringIndexType',
-    'SummaryAspectEnum',
+    'SummaryAspect',
     'TargetProjectKind',
     'TaskStateEnum',
     'TemperatureUnit',
