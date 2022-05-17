@@ -20,9 +20,6 @@ USAGE:
     2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
 """
 
-from azure.ai.language import conversations
-
-
 def sample_conv_pii_transcript_input_dict_parms():
     # [START analyze_conversation_app]
     # import libraries
@@ -40,47 +37,38 @@ def sample_conv_pii_transcript_input_dict_parms():
     with client:
 
         poller = client.begin_conversation_analysis(
-            body={
+            task={
                 "displayName": "Analyze PII in conversation",
                 "analysisInput": {
                     "conversations": [
                         {
                             "conversationItems": [
                                 {
-                                    "content": {
-                                        "text": "It is john doe.",
-                                        "lexical": "It is john doe",
-                                        "itn": "It is john doe",
-                                        "maskedItn": "It is john doe",
-                                        "audioTiming": []
-                                    },
                                     "id": "1",
                                     "participantId": "0",
-                                    "modality": "transcript"
+                                    "modality": "transcript",
+                                    "text": "It is john doe.",
+                                    "lexical": "It is john doe",
+                                    "itn": "It is john doe",
+                                    "maskedItn": "It is john doe"
                                 },
                                 {
-                                    "content": {
-                                        "text": "Yes, 633-27-8199 is my phone",
-                                        "lexical": "yes six three three two seven eight one nine nine is my phone",
-                                        "itn": "yes 633278199 is my phone",
-                                        "maskedItn": "yes 633278199 is my phone",
-                                        "audioTiming": []
-                                    },
                                     "id": "2",
                                     "participantId": "1",
-                                    "modality": "transcript"
+                                    "modality": "transcript",
+                                    "text": "Yes, 633-27-8199 is my phone",
+                                    "lexical": "yes six three three two seven eight one nine nine is my phone",
+                                    "itn": "yes 633278199 is my phone",
+                                    "maskedItn": "yes 633278199 is my phone",
                                 },
                                 {
-                                    "content": {
-                                        "text": "j.doe@yahoo.com is my email",
-                                        "lexical": "j dot doe at yahoo dot com is my email",
-                                        "maskedItn": "j.doe@yahoo.com is my email",
-                                        "itn": "j.doe@yahoo.com is my email",
-                                        "audioTiming": []
-                                    },
                                     "id": "3",
                                     "participantId": "1",
-                                    "modality": "transcript"
+                                    "modality": "transcript",
+                                    "text": "j.doe@yahoo.com is my email",
+                                    "lexical": "j dot doe at yahoo dot com is my email",
+                                    "maskedItn": "j.doe@yahoo.com is my email",
+                                    "itn": "j.doe@yahoo.com is my email",
                                 }
                             ],
                             "modality": "transcript",
@@ -91,12 +79,9 @@ def sample_conv_pii_transcript_input_dict_parms():
                 },
                 "tasks": [
                     {
-                        "taskName": "analyze 1",
-                        "kind": "ConversationPII",
+                        "kind": "ConversationalPIITask",
                         "parameters": {
-                            "modelVersion": "2022-04-01",
-                            "redactionSource": "text",
-                            "loggingOptOut": "false",
+                            "redactionSource": "lexical",
                             "piiCategories": [
                                 "all"
                             ]
@@ -116,21 +101,23 @@ def sample_conv_pii_transcript_input_dict_parms():
             print("... errors occured ...")
             for error in conv_pii_result.errors:
                 print(error)
-        conversation_result = conv_pii_result.conversations[0]
-        if conversation_result.warnings:
-            print("... view warnings ...")
-            for warning in conversation_result.warnings:
-                print(warning)
-        print("... view task result ...")
-        for conversation in conversation_result.conversation_items:
-            print("conversation id: {}".format(conversation.id))
-            print("... entities ...")
-            for entity in conversation.entities:
-                print("text: {}".format(entity.text))
-                print("category: {}".format(entity.category))
-                print("confidence: {}".format(entity.confidence_score))
-                print("offset: {}".format(entity.offset))
-                print("length: {}".format(entity.length))
+        else:
+            conversation_result = conv_pii_result.conversations[0]
+            if conversation_result.warnings:
+                print("... view warnings ...")
+                for warning in conversation_result.warnings:
+                    print(warning)
+            else:
+                print("... view task result ...")
+                for conversation in conversation_result.conversation_items:
+                    print("conversation id: {}".format(conversation.id))
+                    print("... entities ...")
+                    for entity in conversation.entities:
+                        print("text: {}".format(entity.text))
+                        print("category: {}".format(entity.category))
+                        print("confidence: {}".format(entity.confidence_score))
+                        print("offset: {}".format(entity.offset))
+                        print("length: {}".format(entity.length))
 
 
     # [END analyze_conversation_app]
