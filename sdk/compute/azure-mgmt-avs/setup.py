@@ -35,7 +35,6 @@ with open('README.md', encoding='utf-8') as f:
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
-
 setup(
     name=PACKAGE_NAME,
     version=version,
@@ -66,6 +65,10 @@ setup(
         'azure',
         'azure.mgmt',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
