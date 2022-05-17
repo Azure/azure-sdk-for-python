@@ -65,6 +65,10 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.6",
     install_requires=[
         # dependencies for the vendored storage blob

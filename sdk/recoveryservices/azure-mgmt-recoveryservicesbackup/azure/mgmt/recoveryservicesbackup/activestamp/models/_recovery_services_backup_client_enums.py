@@ -643,21 +643,6 @@ class SupportStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT_ON = "DefaultON"
     NOT_SUPPORTED = "NotSupported"
 
-class TieringMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Tiering Mode to control automatic tiering of recovery points. Supported values are:
-    
-    
-    #. TierRecommended: Tier all recovery points recommended to be tiered
-    #. TierAfter: Tier all recovery points after a fixed period, as specified in duration +
-    durationType below.
-    #. DoNotTier: Do not tier any recovery points
-    """
-
-    INVALID = "Invalid"
-    TIER_RECOMMENDED = "TierRecommended"
-    TIER_AFTER = "TierAfter"
-    DO_NOT_TIER = "DoNotTier"
-
 class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Backup management type for this container.
     """
