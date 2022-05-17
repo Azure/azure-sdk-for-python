@@ -35,6 +35,7 @@ with open('README.md', encoding='utf-8') as f:
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
+
 setup(
     name=PACKAGE_NAME,
     version=version,
