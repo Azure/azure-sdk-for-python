@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,client-accepts-api-version-keyword
     """Creates an instance of the Digital Twins client.
 
-    :param str endpoint: The URL endpoint of an Azure search service
+    :param str endpoint: The URL endpoint of an Azure Digital Twin instance
     :param ~azure.core.credentials.TokenCredential credential:
         A credential to authenticate requests to the service
     """
