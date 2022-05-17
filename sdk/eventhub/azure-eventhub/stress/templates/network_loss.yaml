@@ -1,25 +1,26 @@
 {{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.python-eh-network") -}}
 {{- define "stress.python-eh-network" -}}
 apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
+kind: Schedule
 spec:
-  scheduler:
-    cron: '@every 30s'
-  duration: '10s'
-  action: loss
-  direction: to
-  externalTargets:
-    - 'servicebus.windows.net'
-  mode: one
-  selector:
-    labelSelectors:
-      testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
-      chaos: 'true'
-    namespaces:
-      - {{ .Release.Namespace }}
-    podPhaseSelectors:
-      - 'Running'
-  loss:
-    loss: '100'
-    correlation: '100'
+  schedule: '@every 30s'
+  type: 'NetworkChaos'
+  networkChaos:
+    action: loss
+    mode: one
+    selector:
+      labelSelectors:
+        testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
+        chaos: 'true'
+      namespaces:
+        - {{ .Release.Namespace }}
+      podPhaseSelectors:
+        - 'Running'
+    duration: '10s'
+    direction: to
+    externalTargets:
+      - '{{ .Stress.ResourceGroupName }}.servicebus.windows.net'
+    loss:
+      loss: '100'
+      correlation: '100'
 {{- end -}}
