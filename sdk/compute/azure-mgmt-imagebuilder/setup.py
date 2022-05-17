@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -66,6 +65,10 @@ setup(
         'azure',
         'azure.mgmt',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
