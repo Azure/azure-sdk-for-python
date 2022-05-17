@@ -4,4 +4,3 @@
 ../../core/azure-core
 aiohttp>=3.0
 aiounittest>=1.4
-parameterized>=0.7.3
