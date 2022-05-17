@@ -16,8 +16,8 @@ import asyncio
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = "Endpoint=sb://llawtest.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=dfyvExEs2uFFovz9JiFkoEwqEdWMWiYVRq9/lLIZRlw=;EntityPath=eventhub"
+EVENTHUB_NAME = "eventhub"
 # The custom endpoint address to use for establishing a connection to the Event Hubs service,
 # allowing network requests to be routed through any application gateways
 # or other paths needed for the host environment.
@@ -58,6 +58,7 @@ async def consumer_connecting_to_custom_endpoint():
         eventhub_name=EVENTHUB_NAME,
         custom_endpoint_address=CUSTOM_ENDPOINT_ADDRESS,
         connection_verify=CUSTOM_CA_BUNDLE_PATH,
+        prefetch=20
     )
 
     try:
