@@ -43,6 +43,7 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
+from urllib.parse import urlparse
 
 import certifi
 
@@ -161,7 +162,11 @@ class AsyncTransport(AsyncTransportMixin):
         self.writer = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
+
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        parsed_custom = urlparse(self._custom_endpoint_address)
+
+        self.host, self.port = to_host_port(parsed_custom.hostname or host, parsed_custom.port or port)
 
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
@@ -170,7 +175,6 @@ class AsyncTransport(AsyncTransportMixin):
         self.loop = get_running_loop()
         self.socket_lock = asyncio.Lock()
         self.sslopts = self._build_ssl_opts(ssl)
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
 
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:

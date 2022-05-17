@@ -45,6 +45,7 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
+from urllib.parse import urlparse
 
 import certifi
 
@@ -147,14 +148,17 @@ class _AbstractTransport(object):
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
+
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        parsed_custom = urlparse(self._custom_endpoint_address)
+
+        self.host, self.port = to_host_port(parsed_custom.hostname or host, parsed_custom.port or port)
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
-
+        
     def connect(self):
         try:
             # are we already connected?
