@@ -236,7 +236,7 @@ router_client.delete_exception_policy(identifier = policy_id)
 - `identifier`: Id of the exception policy.
 
 ## Next steps
-- [Read more about Router in Azure Communication Services](https://docs.microsoft.com/en-us/azure/communication-services/concepts/router/concepts)
+- [Read more about Router in Azure Communication Services][router_concepts]
 
 ### More sample code
 Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples) directory for detailed examples of how to use this library.
@@ -258,3 +258,4 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 
 <!-- LINKS -->
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
+[router_concepts]: https://docs.microsoft.com/azure/communication-services/concepts/router/concepts
