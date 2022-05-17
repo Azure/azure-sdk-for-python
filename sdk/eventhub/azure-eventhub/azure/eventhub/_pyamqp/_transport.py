@@ -713,10 +713,9 @@ class WebSocketTransport(_AbstractTransport):
         length += nbytes
         n -= nbytes
         while n:
-            print("FIRST trying to recieve via websocket")
-            data = self.ws.recv()
-            print("SECOND we have recieved via websocket")
 
+            data = self.ws.recv()
+            
             if len(data) <= n:
                 view[length: length + len(data)] = data
                 n -= len(data)

@@ -452,7 +452,7 @@ class WebSocketTransportAsync(AsyncTransport):
             if self.parsed_custom_hostname!=None:
                 url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
-                url = "wss://{}".format(self._host)
+                url = "wss://{}".format(self.host)
             self.ws = create_connection(
                 url="wss://{}".format(self.host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
