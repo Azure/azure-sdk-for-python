@@ -161,7 +161,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     def _conversation_analysis_initial(
         self,
-        jobs: _models.AnalyzeConversationJobsInput,
+        task: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
     ) -> Optional[_models.AnalyzeConversationJobState]:
         error_map = {
@@ -176,7 +176,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.AnalyzeConversationJobState]]
 
-        _json = self._serialize.body(jobs, 'AnalyzeConversationJobsInput')
+        _json = self._serialize.body(task, 'AnalyzeConversationJobsInput')
 
         request = build_conversation_analysis_request_initial(
             api_version=api_version,
@@ -220,7 +220,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
     @distributed_trace
     def begin_conversation_analysis(
         self,
-        jobs: _models.AnalyzeConversationJobsInput,
+        task: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
     ) -> LROPoller[_models.AnalyzeConversationJobState]:
         """Submit analysis job for conversations.
@@ -228,8 +228,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        :param jobs: The collection of conversations to analyze and one or more tasks to execute.
-        :type jobs: ~azure.ai.language.conversations.models.AnalyzeConversationJobsInput
+        :param task: The collection of conversations to analyze and one or more tasks to execute.
+        :type task: ~azure.ai.language.conversations.models.AnalyzeConversationJobsInput
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -256,7 +256,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._conversation_analysis_initial(  # type: ignore
-                jobs=jobs,
+                task=task,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,

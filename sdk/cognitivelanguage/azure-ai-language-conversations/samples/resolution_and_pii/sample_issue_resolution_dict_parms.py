@@ -36,7 +36,7 @@ def sample_issue_resolution_dict_parms():
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
         poller = client.begin_conversation_analysis(
-            jobs={
+            task={
                 "displayName": "Analyze conversations from xxx",
                 "analysisInput": {
                     "conversations": [

@@ -178,6 +178,16 @@ directive:
         $["parameters"][1]["x-ms-client-name"] = "jobs";
 ```
 
+### Rename `body` to `tasks`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "task";
+```
+
 ## Fix Swagger/API mismatch errors
 
 ### Fix task types - `async POST analyze api`
