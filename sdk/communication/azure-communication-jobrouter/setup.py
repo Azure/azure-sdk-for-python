@@ -29,21 +29,21 @@ with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name=PACKAGE_NAME,
-    version=version,
-    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    name = PACKAGE_NAME,
+    version = version,
+    description = 'Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
 
     # ensure that these are updated to reflect the package owners' information
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/Azure/azure-sdk-for-python',
-    author='Microsoft Corporation',
-    author_email='azuresdkengsysadmins@microsoft.com',
+    long_description = long_description,
+    long_description_content_type = 'text/markdown',
+    url = 'https://github.com/Azure/azure-sdk-for-python',
+    author = 'Microsoft Corporation',
+    author_email = 'azuresdkengsysadmins@microsoft.com',
 
-    license='MIT License',
+    license = 'MIT License',
     # ensure that the development status reflects the status of your package
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
+    classifiers = [
+        "Development Status :: 4 - Beta",
 
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
@@ -53,19 +53,20 @@ setup(
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
-    packages=find_packages(exclude=[
+    packages = find_packages(exclude = [
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.communication'
     ]),
-    python_requires=">=3.6",
-   install_requires=[
+    python_requires = ">=3.6",
+    install_requires = [
         'azure-core<2.0.0,>=1.23.0',
         'msrest>=0.6.21',
         'six>=1.11.0'
     ],
-    extras_require={
+    extras_require = {
         ":python_version<'3.8'": ["typing-extensions"]
-    }
+    },
+    include_package_data = True,
 )
