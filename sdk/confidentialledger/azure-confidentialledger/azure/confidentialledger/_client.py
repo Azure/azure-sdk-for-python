@@ -364,7 +364,10 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
                 transaction_id=transaction_id, **kwargs
             )
 
-            if result.state is not ConfidentialLedgerQueryState.READY:
+            if (
+                ConfidentialLedgerQueryState(result.state)
+                is not ConfidentialLedgerQueryState.READY
+            ):
                 state = result.state
                 time.sleep(interval)
             else:

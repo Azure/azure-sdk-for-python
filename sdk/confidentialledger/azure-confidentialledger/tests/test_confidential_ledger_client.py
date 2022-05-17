@@ -90,23 +90,17 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry.contents, entry_contents)
         self.assertEqual(latest_entry.sub_ledger_id, append_result_sub_ledger_id)
 
-        client.append_to_ledger(
-            "Test entry 2 from Python SDK", wait_for_commit=True
-        )
+        client.append_to_ledger("Test entry 2 from Python SDK", wait_for_commit=True)
 
         latest_entry = client.get_ledger_entry()
-        self.assertNotEqual(
-            latest_entry.transaction_id, append_result_transaction_id
-        )
+        self.assertNotEqual(latest_entry.transaction_id, append_result_transaction_id)
         self.assertNotEqual(latest_entry.contents, entry_contents)
         self.assertEqual(latest_entry.sub_ledger_id, append_result_sub_ledger_id)
 
         original_entry = client.get_ledger_entry(
             transaction_id=append_result_transaction_id
         )
-        self.assertEqual(
-            original_entry.transaction_id, append_result_transaction_id
-        )
+        self.assertEqual(original_entry.transaction_id, append_result_transaction_id)
         self.assertEqual(original_entry.contents, entry_contents)
         self.assertEqual(original_entry.sub_ledger_id, append_result_sub_ledger_id)
 
@@ -171,18 +165,14 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         )
 
         latest_entry = client.get_ledger_entry(sub_ledger_id=collection_id)
-        self.assertNotEqual(
-            latest_entry.transaction_id, append_result_transaction_id
-        )
+        self.assertNotEqual(latest_entry.transaction_id, append_result_transaction_id)
         self.assertNotEqual(latest_entry.contents, entry_contents)
         self.assertEqual(latest_entry.sub_ledger_id, collection_id)
 
         original_entry = client.get_ledger_entry(
             transaction_id=append_result_transaction_id, sub_ledger_id=collection_id
         )
-        self.assertEqual(
-            original_entry.transaction_id, append_result_transaction_id
-        )
+        self.assertEqual(original_entry.transaction_id, append_result_transaction_id)
         self.assertEqual(original_entry.contents, entry_contents)
         self.assertEqual(original_entry.sub_ledger_id, append_result_sub_ledger_id)
 
@@ -210,9 +200,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             kwargs = (
                 {} if modulus == 0 else {"sub_ledger_id": "{0}".format(i % modulus)}
             )
-            append_result = client.append_to_ledger(
-                entry_contents=message, **kwargs
-            )
+            append_result = client.append_to_ledger(entry_contents=message, **kwargs)
 
             messages[i % modulus].append(
                 (append_result.transaction_id, message, kwargs)
@@ -224,9 +212,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
                 from_transaction_id=messages[i][0][0], **messages[i][0][2]
             )
             for index, historical_entry in enumerate(query_result):
-                self.assertEqual(
-                    historical_entry.transaction_id, messages[i][index][0]
-                )
+                self.assertEqual(historical_entry.transaction_id, messages[i][index][0])
                 self.assertEqual(historical_entry.contents, messages[i][index][1])
                 num_matched += 1
 
@@ -250,8 +236,8 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     def user_management_actions(self, client):
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
         cert_user_id = (
-            "5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:"
-            "05:44:4C:AD:5A:B5"
+            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
+            ":77:30:1F"
         )
         for user_id in [aad_user_id, cert_user_id]:
             user = client.create_or_update_user(user_id, LedgerUserRole.CONTRIBUTOR)

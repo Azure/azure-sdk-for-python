@@ -1,4 +1,6 @@
-from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+from azure.confidentialledger.identity_service import (
+    ConfidentialLedgerIdentityServiceClient,
+)
 from devtools_testutils import AzureTestCase
 
 from .constants import NETWORK_CERTIFICATE

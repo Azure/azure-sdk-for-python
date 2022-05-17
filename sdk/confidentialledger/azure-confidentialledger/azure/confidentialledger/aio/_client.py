@@ -365,7 +365,10 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                 transaction_id=transaction_id, **kwargs
             )
 
-            if result.state is not ConfidentialLedgerQueryState.READY:
+            if (
+                ConfidentialLedgerQueryState(result.state)
+                is not ConfidentialLedgerQueryState.READY
+            ):
                 state = result.state
                 await asyncio.sleep(interval)
             else:

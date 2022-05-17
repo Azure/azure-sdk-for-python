@@ -798,7 +798,7 @@ class ConfidentialLedgerOperations:
                 "str",
                 skip_quote=True,
             ),
-            "userId": self._serialize.url("user_id", user_id, "str"),
+            "userId": user_id,  # Don't url-encode this (it may contain ':' but that's ok).
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -863,7 +863,7 @@ class ConfidentialLedgerOperations:
                 "str",
                 skip_quote=True,
             ),
-            "userId": self._serialize.url("user_id", user_id, "str"),
+            "userId": user_id,  # Don't url-encode this (it may contain ':' but that's ok).
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -942,7 +942,7 @@ class ConfidentialLedgerOperations:
                 "str",
                 skip_quote=True,
             ),
-            "userId": self._serialize.url("user_id", user_id, "str"),
+            "userId": user_id,  # Don't url-encode this (it may contain ':' but that's ok).
         }
         url = self._client.format_url(url, **path_format_arguments)
 

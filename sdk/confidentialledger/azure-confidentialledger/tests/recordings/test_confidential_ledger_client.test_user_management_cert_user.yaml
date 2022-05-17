@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: '{"assignedRole": "Contributor"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: PATCH
+    uri: https://fake.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+  response:
+    body:
+      string: '{"error":{"code":"InvalidAuthenticationInfo","message":"Could not find
+        matching user certificate"}}'
+    headers:
+      content-length:
+      - '99'
+      content-type:
+      - application/json
+    status:
+      code: 401
+      message: Unauthorized
+version: 1
