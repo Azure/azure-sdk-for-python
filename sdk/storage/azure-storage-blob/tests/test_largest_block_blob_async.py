@@ -90,7 +90,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
 
     # --Test cases for block blobs --------------------------------------------
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_bytes_largest(self, storage_account_name, storage_account_key):
@@ -150,7 +150,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_stream_largest(self, storage_account_name, storage_account_key):
@@ -214,7 +214,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_largest_blob_from_path(self, storage_account_name, storage_account_key):
@@ -262,7 +262,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_counter, 1)
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test

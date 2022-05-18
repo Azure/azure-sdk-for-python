@@ -849,11 +849,10 @@ class DirectoryTest(StorageTestCase):
         self.assertIsNotNone(properties)
         self.assertIsNone(properties.get('content_settings'))
 
+    @pytest.mark.skip(reason="Investigate why renaming from shorter path to longer path does not work")
     @DataLakePreparer()
     def test_rename_from_a_shorter_directory_to_longer_directory(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # TODO: investigate why rename shorter path to a longer one does not work
-        pytest.skip("")
         directory_name = self._get_directory_reference()
         self._create_directory_and_get_directory_client(directory_name="old")
 
@@ -992,11 +991,10 @@ class DirectoryTest(StorageTestCase):
 
         self.assertEqual(non_existing_dir_name, res.path_name)
 
+    @pytest.mark.skip(reason="Investigate why renaming non-empty directory doesn't work")
     @DataLakePreparer()
     def test_rename_directory_to_non_empty_directory(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # TODO: investigate why rename non empty dir doesn't work
-        pytest.skip("")
         dir1 = self._create_directory_and_get_directory_client("dir1")
         dir1.create_sub_directory("subdir")
 

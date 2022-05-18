@@ -203,9 +203,9 @@ class FileSystemTest(StorageTestCase):
             self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
         self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Record when enabled.")
     @DataLakePreparer()
     def test_rename_file_system_with_file_system_client(self, datalake_storage_account_name, datalake_storage_account_key):
-        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
@@ -282,11 +282,9 @@ class FileSystemTest(StorageTestCase):
                 props = restored_fs_client.get_file_system_properties()
                 self.assertIsNotNone(props)
 
+    @pytest.mark.skip(reason="We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
     @DataLakePreparer()
     def test_restore_file_system_with_sas(self, datalake_storage_account_name, datalake_storage_account_key):
-        # TODO: Needs soft delete enabled account in ARM template.
-        pytest.skip(
-            "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         token = generate_account_sas(
             self.dsc.account_name,

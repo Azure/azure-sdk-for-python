@@ -124,7 +124,6 @@ class StorageQueueEncodingTest(StorageTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Not applicable on Python 2.7")
     @QueuePreparer()
     def test_message_bytes_fails(self, storage_account_name, storage_account_key):
         # Arrange

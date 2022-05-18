@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-queue/12.3.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 30 Oct 2019 19:51:44 GMT
+      - Thu, 12 May 2022 21:39:38 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2021-02-12'
     method: PUT
     uri: https://storagename.queue.core.windows.net/mytestqueueab781284
   response:
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 30 Oct 2019 19:51:44 GMT
+      - Thu, 12 May 2022 21:39:38 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-03-28'
+      - '2021-02-12'
     status:
       code: 201
       message: Created

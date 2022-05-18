@@ -792,10 +792,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_no_server_encryption(self, storage_account_name, storage_account_key):
-        pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
+    async def test_no_server_encryption_async(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account_name, storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
+        self.byte_data = self.get_random_bytes(1024)
+        await self.bsc.create_container(self.container_name)
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 

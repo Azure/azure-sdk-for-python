@@ -1080,7 +1080,6 @@ class StorageQueueTest(StorageTestCase):
     @QueuePreparer()
     def test_unicode_get_messages_unicode_data(self, storage_account_name, storage_account_key):
         # Action
-        pytest.skip("Uncomment after msrest fix")
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
@@ -1100,7 +1099,6 @@ class StorageQueueTest(StorageTestCase):
     @QueuePreparer()
     def test_unicode_update_message_unicode_data(self, storage_account_name, storage_account_key):
         # Action
-        pytest.skip("Uncomment after msrest fix")
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()

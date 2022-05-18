@@ -61,10 +61,11 @@ class StorageHandleTest(AsyncStorageTestCase):
         self.assertIsNotNone(handles[0].client_ip)
         self.assertIsNotNone(handles[0].open_time)
 
+    @pytest.mark.skip(reason="Needs further investigation.")
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_close_single_handle_async(self, storage_account_name, storage_account_key):
-        pytest.skip("investigate later")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if self.is_live:
@@ -88,10 +89,11 @@ class StorageHandleTest(AsyncStorageTestCase):
         self.assertEqual(1, handles_info['closed_handles_count'])
         self.assertEqual(handles_info['failed_handles_count'], 0)
 
+    @pytest.mark.skip(reason="Needs further investigation.")
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_close_all_handle_async(self, storage_account_name, storage_account_key):
-        pytest.skip("investigate later")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if self.is_live:

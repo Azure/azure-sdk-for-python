@@ -1332,7 +1332,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @BlobPreparer()
     def test_copy_blob_with_blob_tier_specified(self, storage_account_name, storage_account_key):
-        pytest.skip("Unable to set premium account")
         # Arrange
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
@@ -1355,7 +1354,6 @@ class StorageCommonBlobTest(StorageTestCase):
     @BlobPreparer()
     def test_copy_blob_with_rehydrate_priority(self, storage_account_name, storage_account_key):
         # Arrange
-        pytest.skip("Unabe to set up premium storage account type")
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
 
