@@ -1,0 +1,61 @@
+{
+    "chosen_version": "1.0",
+    "total_api_version_list": ["1.0"],
+    "client": {
+        "name": "SearchClient",
+        "filename": "_search_client",
+        "description": "Azure Maps Search REST APIs.",
+        "base_url": "\u0027https://atlas.microsoft.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": false,
+        "has_lro_operations": true,
+        "client_side_validation": false
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "client_id": {
+                "signature": "client_id=None,  # type: Optional[str]",
+                "description": "Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles \u003chttps://aka.ms/amauthdetails\u003e`_ for guidance.",
+                "docstring_type": "str",
+                "required": false
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "client_id": {
+                "signature": "client_id=None,  # type: Optional[str]",
+                "description": "Specifies which account is intended for usage in conjunction with the Azure AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see the following `articles \u003chttps://aka.ms/amauthdetails\u003e`_ for guidance.",
+                "docstring_type": "str",
+                "required": false
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, client_id"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://atlas.microsoft.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+        "search": "SearchOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}
