@@ -173,7 +173,7 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            "dryRun": False,
+            "dryRun": false,
             "specFolder": "../azure-rest-api-specs",
             "headSha": "c6ed0986c1ee45df5c8f2bc56f2a9e802b01d2b0",
             "headRef": "master",
@@ -185,7 +185,7 @@ class CodegenTestPR:
                 "specification/cosmos-db/resource-manager/readme.md"
             ],
             "installInstructionInput": {
-                "isPublic": False,
+                "isPublic": false,
                 "downloadUrlPrefix": "https://portal.azure-devex-tools.com/api/sdk-dl-pub?p=Azure/13991/azure-sdk-for-python-track2/",
                 "downloadCommandTemplate": "curl -L \"{URL}\" -o {FILENAME}",
                 "trigger": "continuousIntegration"
