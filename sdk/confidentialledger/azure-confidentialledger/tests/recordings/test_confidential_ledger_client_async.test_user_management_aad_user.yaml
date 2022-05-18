@@ -4,10 +4,6 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '31'
       Content-Type:
@@ -20,24 +16,18 @@ interactions:
     body:
       string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length:
-      - '78'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32093'
+      content-length: '78'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52132'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
@@ -46,26 +36,18 @@ interactions:
     body:
       string: '{"assignedRole":"Contributor","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length:
-      - '78'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32093'
+      content-length: '78'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52133'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
@@ -74,22 +56,17 @@ interactions:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      x-ms-ccf-transaction-id:
-      - '2.32094'
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.52134'
     status:
       code: 204
       message: No Content
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '26'
       Content-Type:
@@ -102,24 +79,18 @@ interactions:
     body:
       string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length:
-      - '73'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32095'
+      content-length: '73'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52135'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
@@ -128,26 +99,18 @@ interactions:
     body:
       string: '{"assignedRole":"Reader","userId":"000000000000000000000000000000000000"}'
     headers:
-      content-length:
-      - '73'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32096'
+      content-length: '73'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52136'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
@@ -156,22 +119,17 @@ interactions:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      x-ms-ccf-transaction-id:
-      - '2.32097'
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.52137'
     status:
       code: 204
       message: No Content
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: '{"assignedRole": "Contributor"}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '31'
       Content-Type:
@@ -184,24 +142,18 @@ interactions:
     body:
       string: '{"assignedRole":"Contributor","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
     headers:
-      content-length:
-      - '137'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32098'
+      content-length: '137'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52139'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
@@ -210,26 +162,18 @@ interactions:
     body:
       string: '{"assignedRole":"Contributor","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
     headers:
-      content-length:
-      - '137'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32098'
+      content-length: '137'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52139'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
@@ -238,22 +182,17 @@ interactions:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      x-ms-ccf-transaction-id:
-      - '2.32099'
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.52141'
     status:
       code: 204
       message: No Content
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '26'
       Content-Type:
@@ -266,24 +205,18 @@ interactions:
     body:
       string: '{"assignedRole":"Reader","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
     headers:
-      content-length:
-      - '132'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32100'
+      content-length: '132'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52142'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
@@ -292,26 +225,18 @@ interactions:
     body:
       string: '{"assignedRole":"Reader","userId":"7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F"}'
     headers:
-      content-length:
-      - '132'
-      content-type:
-      - application/json
-      x-ms-ccf-transaction-id:
-      - '2.32100'
+      content-length: '132'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.52142'
     status:
       code: 200
       message: OK
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
@@ -320,11 +245,10 @@ interactions:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      x-ms-ccf-transaction-id:
-      - '2.32102'
+      content-length: '0'
+      x-ms-ccf-transaction-id: '2.52144'
     status:
       code: 204
       message: No Content
+    url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/users/7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4:77:30:1F?api-version=0.1-preview
 version: 1

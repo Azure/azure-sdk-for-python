@@ -16,12 +16,13 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
             identity_service_url="https://identity.confidential-ledger.core.azure.com",
         )
 
-        ledger_id = confidentialledger_endpoint.split(".")[0]
-        network_identity = await client.get_ledger_identity(ledger_id=ledger_id)
+        try:
+            ledger_id = confidentialledger_endpoint.split(".")[0]
+            network_identity = await client.get_ledger_identity(ledger_id=ledger_id)
 
-        self.assertEqual(network_identity.ledger_id, ledger_id)
+            self.assertEqual(network_identity.ledger_id, ledger_id)
 
-        cert_recv = network_identity.ledger_tls_certificate
-        self.assertEqual(cert_recv, NETWORK_CERTIFICATE)
-
-        await client.close()
+            cert_recv = network_identity.ledger_tls_certificate
+            self.assertEqual(cert_recv, NETWORK_CERTIFICATE)
+        finally:
+            await client.close()
