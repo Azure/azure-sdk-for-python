@@ -14,10 +14,10 @@ These are code samples that show common scenario operations with the Azure Commu
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 
 
-* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/jobrouter/initial-commit/sdk/communication/azure-communication-jobrouter/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/jobrouter/initial-commit/sdk/communication/azure-communication-jobrouter/samples/sample_authentication_async.py)) - Examples for authenticating and creating the client:
+* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/sample_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
 
-* [exception_policy_crud_ops.py](https://github.com/Azure/azure-sdk-for-python/blob/jobrouter/initial-commit/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops.py) ([async version]) - Examples for interacting with exception policies using the client:
+* [exception_policy_crud_ops.py](https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops.py) ([async version]) - Examples for interacting with exception policies using the client:
     * Create or update an exception policy
     * Get an exception policy
     * List exception policies
