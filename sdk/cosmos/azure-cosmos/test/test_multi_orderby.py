@@ -61,7 +61,7 @@ class MultiOrderbyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
         cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
 
     def generate_multi_orderby_item(self):
@@ -200,15 +200,14 @@ class MultiOrderbyTests(unittest.TestCase):
             ]
         }
 
-        options = { 'offerThroughput': 25100 }
+        options = {'offerThroughput': 25100}
         created_container = self.database.create_container(
             id='multi_orderby_container' + str(uuid.uuid4()),
             indexing_policy=indexingPolicy,
-            partition_key=PartitionKey(path='/pk', kind='Hash'),
+            partition_key=PartitionKey(path='/pk'),
             request_options=options
         )
 
-        number_of_items = 4
         number_of_items = 5
         self.create_random_items(created_container, number_of_items, number_of_items)
 

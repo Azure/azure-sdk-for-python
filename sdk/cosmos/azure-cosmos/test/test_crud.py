@@ -112,9 +112,7 @@ class CRUDTests(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
 
-    def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
-                                                 connection_policy=self.connectionPolicy)
+
     def test_database_crud(self):
         # read databases.
         databases = list(self.client.list_databases())
@@ -281,7 +279,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition.get('partitionKey').get('kind'),
                          created_collection_properties['partitionKey']['kind'])
 
-        expected_offer = created_collection.read_offer()
+        expected_offer = created_collection.get_throughput()
 
         self.assertIsNotNone(expected_offer)
 
@@ -1907,33 +1905,10 @@ class CRUDTests(unittest.TestCase):
             cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
 
     def test_client_connection_retry_configuration(self):
-        total_time_for_two_retries = self.initialize_client_with_connection_urllib_retry_config(2)
-        total_time_for_three_retries = self.initialize_client_with_connection_urllib_retry_config(3)
-        self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
-
         total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
         total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
         self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
 
-    def initialize_client_with_connection_urllib_retry_config(self, retries):
-        retry_policy = Retry(
-            total=retries,
-            read=retries,
-            connect=retries,
-            backoff_factor=0.3,
-            status_forcelist=(500, 502, 504)
-        )
-        start_time = time.time()
-        try:
-            cosmos_client.CosmosClient(
-                "https://localhost:9999",
-                CRUDTests.masterKey,
-                "Session",
-                connection_retry_policy=retry_policy)
-            self.fail()
-        except AzureError as e:
-            end_time = time.time()
-            return end_time - start_time
 
     def initialize_client_with_connection_core_retry_config(self, retries):
         start_time = time.time()
@@ -2283,14 +2258,14 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         # Read the offer.
-        expected_offer = collection.read_offer()
+        expected_offer = collection.get_throughput()
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
         # Now delete the collection.
         db.delete_container(container=collection)
         # Reading fails.
-        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.read_offer)
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.get_throughput)
 
     def test_offer_replace(self):
         # Create database.
@@ -2298,7 +2273,7 @@ class CRUDTests(unittest.TestCase):
         # Create collection.
         collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # Read Offer
-        expected_offer = collection.read_offer()
+        expected_offer = collection.get_throughput()
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
         # Replace the offer.
