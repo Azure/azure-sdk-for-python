@@ -1,5 +1,26 @@
 # Release History
 
+## 7.1.0 (2022-05-16)
+
+**Features**
+
+  - Model AppResourceProperties has a new parameter vnet_addons
+  - Model BuildProperties has a new parameter resource_requests
+  - Model CertificateProperties has a new parameter provisioning_state
+  - Model ClusterResourceProperties has a new parameter marketplace_resource
+  - Model ClusterResourceProperties has a new parameter vnet_addons
+  - Model ContentCertificateProperties has a new parameter provisioning_state
+  - Model CustomContainer has a new parameter language_framework
+  - Model CustomDomainProperties has a new parameter provisioning_state
+  - Model DeploymentSettings has a new parameter liveness_probe
+  - Model DeploymentSettings has a new parameter readiness_probe
+  - Model DeploymentSettings has a new parameter startup_probe
+  - Model DeploymentSettings has a new parameter termination_grace_period_seconds
+  - Model GatewayRouteConfigProperties has a new parameter open_api
+  - Model KeyVaultCertificateProperties has a new parameter provisioning_state
+  - Model ManagedIdentityProperties has a new parameter user_assigned_identities
+  - Model NetworkProfile has a new parameter ingress_config
+
 ## 7.0.0 (2022-02-22)
 
 **Features**

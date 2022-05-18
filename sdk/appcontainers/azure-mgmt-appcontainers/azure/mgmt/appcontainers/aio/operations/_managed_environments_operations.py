@@ -208,7 +208,7 @@ class ManagedEnvironmentsOperations:
     async def get(
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         **kwargs: Any
     ) -> "_models.ManagedEnvironment":
         """Get the properties of a Managed Environment.
@@ -217,8 +217,8 @@ class ManagedEnvironmentsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Environment.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironment, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ManagedEnvironment
@@ -236,7 +236,7 @@ class ManagedEnvironmentsOperations:
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            environment_name=environment_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -262,13 +262,13 @@ class ManagedEnvironmentsOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         environment_envelope: "_models.ManagedEnvironment",
         **kwargs: Any
     ) -> "_models.ManagedEnvironment":
@@ -286,7 +286,7 @@ class ManagedEnvironmentsOperations:
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            environment_name=environment_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -317,14 +317,14 @@ class ManagedEnvironmentsOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_create_or_update(
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         environment_envelope: "_models.ManagedEnvironment",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedEnvironment"]:
@@ -334,8 +334,8 @@ class ManagedEnvironmentsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Environment.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
         :param environment_envelope: Configuration details of the Environment.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -363,7 +363,7 @@ class ManagedEnvironmentsOperations:
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                environment_name=environment_name,
                 environment_envelope=environment_envelope,
                 api_version=api_version,
                 content_type=content_type,
@@ -392,12 +392,12 @@ class ManagedEnvironmentsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -412,7 +412,7 @@ class ManagedEnvironmentsOperations:
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            environment_name=environment_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -433,14 +433,14 @@ class ManagedEnvironmentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a Managed Environment.
@@ -449,8 +449,8 @@ class ManagedEnvironmentsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Environment.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -474,7 +474,7 @@ class ManagedEnvironmentsOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                environment_name=environment_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -498,12 +498,12 @@ class ManagedEnvironmentsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
 
     async def _update_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         environment_envelope: "_models.ManagedEnvironment",
         **kwargs: Any
     ) -> None:
@@ -521,7 +521,7 @@ class ManagedEnvironmentsOperations:
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            name=name,
+            environment_name=environment_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -544,14 +544,14 @@ class ManagedEnvironmentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_update(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        name: str,
+        environment_name: str,
         environment_envelope: "_models.ManagedEnvironment",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -561,8 +561,8 @@ class ManagedEnvironmentsOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: Name of the Environment.
-        :type name: str
+        :param environment_name: Name of the Environment.
+        :type environment_name: str
         :param environment_envelope: Configuration details of the Environment.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -589,7 +589,7 @@ class ManagedEnvironmentsOperations:
         if cont_token is None:
             raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                environment_name=environment_name,
                 environment_envelope=environment_envelope,
                 api_version=api_version,
                 content_type=content_type,
@@ -615,4 +615,4 @@ class ManagedEnvironmentsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}"}  # type: ignore
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}"}  # type: ignore
