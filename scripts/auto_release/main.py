@@ -177,7 +177,6 @@ class CodegenTestPR:
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
             'specFolder': self.spec_repo,
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
-            }
         }
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
