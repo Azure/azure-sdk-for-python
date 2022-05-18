@@ -53,7 +53,11 @@ class PagedEntityMixin(ABC):
 
 
 class LabelCollection(MutableMapping):
-
+    """
+    A dictionary like object that can be used to store labels.
+    Labels are key value pairs that can be of string, number, or boolean data types.
+    The key is constrained to be of type 'str'
+    """
     @staticmethod
     def _validate_value(value):
         primitive = (int,
@@ -62,11 +66,19 @@ class LabelCollection(MutableMapping):
                      bool)
         return isinstance(value, primitive)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+            self,
+            *args,  # type:  Mapping[_KT, _VT]
+            **kwargs,  # type: Any
+    ):
         self.__store = {}
         self.update(*args, **kwargs)
 
-    def __setitem__(self, key, value):
+    def __setitem__(
+            self,
+            key,  # type: str
+            value,  # type: Any
+    ):
         if isinstance(key, str):
             if LabelCollection._validate_value(value):
                 self.__store[key] = value
@@ -75,10 +87,16 @@ class LabelCollection(MutableMapping):
         else:
             raise ValueError("Unsupported key type " + str(type(key)))
 
-    def __delitem__(self, key):
+    def __delitem__(
+            self,
+            key,  # type: str
+    ):
         del self.__store[key]
 
-    def __getitem__(self, item):
+    def __getitem__(
+            self,
+            item,  # type: str
+    ):
         return self.__store[item]
 
     def __iter__(self):
@@ -90,7 +108,10 @@ class LabelCollection(MutableMapping):
     def __repr__(self):
         return repr(self.__store)
 
-    def __eq__(self, other):
+    def __eq__(
+            self,
+            other,  # type: Any
+    ):
         return Counter(self.__store) == Counter(other)
 
 

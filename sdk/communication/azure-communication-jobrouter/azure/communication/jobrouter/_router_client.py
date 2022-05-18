@@ -18,7 +18,10 @@ from ._generated.models import (
     WorkerStateSelector,
     JobStateSelector,
     AcceptJobOfferResponse,
-    JobPositionDetails
+    JobPositionDetails,
+    PagedClassificationPolicy,
+    PagedDistributionPolicy,
+    PagedExceptionPolicy
 )
 from ._models import (
     LabelCollection,
@@ -202,12 +205,12 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             self,
             **kwargs  # type: Any
     ):
-        #  type: (...) -> ItemPaged[ExceptionPolicy]
+        #  type: (...) -> ItemPaged[PagedExceptionPolicy]
         """Retrieves existing exception policies.
 
         :keyword int results_per_page: The maximum number of results to be returned per page.
         :return: An iterator like instance of ExceptionPolicy
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.ExceptionPolicy]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.PagedExceptionPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -277,8 +280,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
-        :type mode: Union[~azure.communication.jobrouter.BestWorkerMode, ~azure.communication.jobrouter.LongestIdleMode,
-        ~azure.communication.jobrouter.RoundRobinMode]
+        :paramtype mode: Union[~azure.communication.jobrouter.BestWorkerMode,
+            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]
 
         :keyword str name: The name of this policy.
 
@@ -342,12 +345,12 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             self,
             **kwargs  # type: Any
     ):
-        #  type: (...) -> ItemPaged[DistributionPolicy]
+        #  type: (...) -> ItemPaged[PagedDistributionPolicy]
         """Retrieves existing distribution policies.
 
         :keyword int results_per_page: The maximum number of results to be returned per page.
         :return: An iterator like instance of DistributionPolicy
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.DistributionPolicy]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.PagedDistributionPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -634,12 +637,12 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[ClassificationPolicy]
+        # type: (...) -> ItemPaged[PagedClassificationPolicy]
         """Retrieves existing classification policies.
 
         :keyword int results_per_page: The maximum number of results to be returned per page.
         :return: An iterator like instance of ClassificationPolicy
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.ClassificationPolicy]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.PagedClassificationPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         results_per_page = kwargs.pop("results_per_page", None)
@@ -681,6 +684,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     ):
         #  type: (...) -> RouterWorker
         """Create or update a new exception policy.
+
+        :param str identifier: Id of the worker.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: dict[str, ~azure.communication.jobrouter.QueueAssignment]
@@ -856,6 +861,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         #  type: (...) -> RouterJob
         """Create or update a job.
 
+        :param str identifier: Id of the job.
+
         :keyword router_job: An instance of RouterJob
         :paramtype router_job: ~azure.communication.jobrouter.RouterJob
 
@@ -946,7 +953,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         #  type: (...) -> RouterJob
         """Retrieves an existing worker by Id.
 
-        :param str identifier: Id of the worker.
+        :param str identifier: Id of the job.
 
         :return RouterJob
         :rtype ~azure.communication.jobrouter.RouterJob
