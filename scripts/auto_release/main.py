@@ -173,22 +173,10 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            "dryRun": False,
-            "specFolder": "../azure-rest-api-specs",
-            "headSha": "9ac082c33a7d0d8fa6768bd64e53394ada9baaf9",
-            "headRef": "master",
-            "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
-            "trigger": "continuousIntegration",
-            "changedFiles": [
-                "specification/hdinsight/resource-manager/readme.python.md"
-            ], "relatedReadmeMdFiles": [
-                "specification/hdinsight/resource-manager/readme.md"
-            ],
-            "installInstructionInput": {
-                "isPublic": False,
-                "downloadUrlPrefix": "https://portal.azure-devex-tools.com/api/sdk-dl-pub?p=Azure/13991/azure-sdk-for-python-track2/",
-                "downloadCommandTemplate": "curl -L \"{URL}\" -o {FILENAME}",
-                "trigger": "continuousIntegration"
+             'headSha': self.get_latest_commit_in_swagger_repo(),
+            'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
+            'specFolder': self.spec_repo,
+            'relatedReadmeMdFiles': [str(self.readme_local_folder())]
             }
         }
 
