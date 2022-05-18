@@ -43,6 +43,7 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
+from azure.eventhub.exceptions import OperationTimeoutError
 
 import certifi
 
@@ -121,7 +122,7 @@ class AsyncTransportMixin():
                     read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
                 else:
                     read_frame_buffer.write(await self._read(payload_size, buffer=payload))
-            except (socket.timeout, asyncio.IncompleteReadError):
+            except (socket.timeout, asyncio.IncompleteReadError, OperationTimeoutError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -455,26 +456,30 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
     async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+        from websocket import WebSocketTimeoutException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        while n:
-            data = await self.loop.run_in_executor(
-                None, self.ws.recv
-               )
+        try:
+            while n:
+                data = await self.loop.run_in_executor(
+                    None, self.ws.recv
+                )
 
-            if len(data) <= n:
-                view[length: length + len(data)] = data
-                n -= len(data)
-            else:
-                view[length: length + n] = data[0:n]
-                self._read_buffer = BytesIO(data[n:])
-                n = 0
+                if len(data) <= n:
+                    view[length: length + len(data)] = data
+                    n -= len(data)
+                else:
+                    view[length: length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
 
-        return view
+            return view
+        except WebSocketTimeoutException:
+            raise OperationTimeoutError()
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""
