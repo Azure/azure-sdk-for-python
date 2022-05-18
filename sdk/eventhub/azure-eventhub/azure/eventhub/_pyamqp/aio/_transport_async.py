@@ -477,7 +477,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
 
-            return view
+            return view 
         except WebSocketTimeoutException:
             raise OperationTimeoutError()
 
