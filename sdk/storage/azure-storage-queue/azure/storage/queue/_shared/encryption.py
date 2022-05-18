@@ -167,14 +167,14 @@ class _EncryptionData:
         self.key_wrapping_metadata = key_wrapping_metadata
 
 
-def _generate_encryption_data_dict(kek, cek, iv, algorithm):
+def _generate_encryption_data_dict(kek, cek, iv, version):
     '''
     Generates and returns the encryption metadata as a dict.
 
     :param object kek: The key encryption key. See calling functions for more information.
     :param bytes cek: The content encryption key.
     :param Optional[bytes] iv: The initialization vector. Only required for AES-CBC.
-    :param str algorithm: The client encryption algorithm used.
+    :param str version: The client encryption version used.
     :return: A dict containing all the encryption metadata.
     :rtype: dict
     '''
@@ -189,13 +189,13 @@ def _generate_encryption_data_dict(kek, cek, iv, algorithm):
     wrapped_content_key['Algorithm'] = kek.get_key_wrap_algorithm()
 
     encryption_agent = OrderedDict()
-    encryption_agent['EncryptionAlgorithm'] = algorithm
+    encryption_agent['Protocol'] = version
 
-    if algorithm == _EncryptionAlgorithm.AES_CBC_256:
-        encryption_agent['Protocol'] = _ENCRYPTION_PROTOCOL_V1
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_CBC_256
 
-    elif algorithm == _EncryptionAlgorithm.AES_GCM_256:
-        encryption_agent['Protocol'] = _ENCRYPTION_PROTOCOL_V2
+    elif version == _ENCRYPTION_PROTOCOL_V2:
+        encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
 
         authentication_block_info = OrderedDict()
         authentication_block_info['CiphertextLength'] = _GCM_BLOCK_SIZE
@@ -204,9 +204,9 @@ def _generate_encryption_data_dict(kek, cek, iv, algorithm):
     encryption_data_dict = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
     encryption_data_dict['EncryptionAgent'] = encryption_agent
-    if algorithm == _EncryptionAlgorithm.AES_CBC_256:
+    if version == _ENCRYPTION_PROTOCOL_V1:
         encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
-    elif algorithm == _EncryptionAlgorithm.AES_GCM_256:
+    elif version == _ENCRYPTION_PROTOCOL_V2:
         encryption_data_dict['AuthenticationBlockInfo'] = authentication_block_info
     encryption_data_dict['KeyWrappingMetadata'] = {'EncryptionLibrary': 'Python ' + VERSION}
 
@@ -298,13 +298,13 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
 
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
 
-    # Validate we have the right info for the specified algorithm
-    if encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256:
+    # Validate we have the right info for the specified version
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
         _validate_not_none('content_encryption_IV', encryption_data.content_encryption_IV)
-    elif encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_GCM_256:
+    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
         _validate_not_none('authentication_block_info', encryption_data.authentication_block_info)
     else:
-        raise ValueError('Specified encryption algorithm is not supported.')
+        raise ValueError('Specified encryption version is not supported.')
 
     content_encryption_key = None
 
@@ -352,7 +352,7 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
     _validate_not_none('message', message)
     content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, resolver)
 
-    if encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256:
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
         if not encryption_data.content_encryption_IV:
             raise ValueError("Missing required metadata for decryption.")
 
@@ -367,7 +367,7 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
         unpadder = PKCS7(128).unpadder()
         decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
 
-    elif encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_GCM_256:
+    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
         block_info = encryption_data.authentication_block_info
         if not block_info or not block_info.nonce_length:
             raise ValueError("Missing required metadata for decryption.")
@@ -382,7 +382,7 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
         decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
 
     else:
-        raise ValueError('Specified encryption algorithm is not supported.')
+        raise ValueError('Specified encryption version is not supported.')
 
     return decrypted_data
 
@@ -544,7 +544,7 @@ def get_blob_encryptor_and_padder(cek, iv, should_pad):
     return encryptor, padder
 
 
-def encrypt_queue_message(message, key_encryption_key, algorithm):
+def encrypt_queue_message(message, key_encryption_key, version):
     '''
     Encrypts the given plain text message using the given algorithm.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -557,7 +557,7 @@ def encrypt_queue_message(message, key_encryption_key, algorithm):
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
         get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
         get_kid()--returns a string key id for this key-encryption-key.
-    :param str algorithm: The client encryption algorithm to use.
+    :param str version: The client encryption version to use.
     :return: A json-formatted string containing the encrypted message and the encryption metadata.
     :rtype: str
     '''
@@ -570,7 +570,7 @@ def encrypt_queue_message(message, key_encryption_key, algorithm):
     # operate on binary strings.
     message = message.encode('utf-8')
 
-    if algorithm == _EncryptionAlgorithm.AES_CBC_256:
+    if version == _ENCRYPTION_PROTOCOL_V1:
         # AES256 CBC uses 256 bit (32 byte) keys and always with 16 byte blocks
         content_encryption_key = os.urandom(32)
         initialization_vector = os.urandom(16)
@@ -585,7 +585,7 @@ def encrypt_queue_message(message, key_encryption_key, algorithm):
         encryptor = cipher.encryptor()
         encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
 
-    elif algorithm == _EncryptionAlgorithm.AES_GCM_256:
+    elif version == _ENCRYPTION_PROTOCOL_V2:
         # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
         content_encryption_key = AESGCM.generate_key(bit_length=256)
         initialization_vector = None
@@ -599,14 +599,14 @@ def encrypt_queue_message(message, key_encryption_key, algorithm):
         encrypted_data = nonce + cipertext_with_tag
 
     else:
-        raise ValueError("Invalid encryption algorithm.")
+        raise ValueError("Invalid encryption version specified.")
 
     # Build the dictionary structure.
     queue_message = {'EncryptedMessageContents': encode_base64(encrypted_data),
                      'EncryptionData': _generate_encryption_data_dict(key_encryption_key,
                                                                       content_encryption_key,
                                                                       initialization_vector,
-                                                                      algorithm)}
+                                                                      version)}
 
     return dumps(queue_message)
 

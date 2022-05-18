@@ -476,22 +476,93 @@ class StorageQueueEncryptionTest(StorageTestCase):
         assert "Decryption failed." in str(e.exception)
 
     @QueuePreparer()
-    def test_encryption_v2(self, storage_account_name, storage_account_key):
+    def test_get_message_encrypted_kek_v2(self, storage_account_name, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             storage_account_key,
             requires_encryption=True,
-            encryption_algorithm='AES_GCM_256',
+            encryption_version='2.0',
             key_encryption_key=KeyWrapper('key1'))
-        queue = self._create_queue(qsc, 'v2-')
-        content = "Hello Crypto World!"
+        queue = self._create_queue(qsc)
+        content = 'Hello World Encrypted!'
 
         # Act
         queue.send_message(content)
         message = queue.receive_message()
 
+        # Assert
         self.assertEqual(content, message.content)
+
+    @QueuePreparer()
+    def test_get_message_encrypted_resolver_v2(self, storage_account_name, storage_account_key):
+        # Arrange
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            requires_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=KeyWrapper('key1'))
+        key_resolver = KeyResolver()
+        key_resolver.put_key(qsc.key_encryption_key)
+
+        queue = self._create_queue(qsc)
+        content = 'Hello World Encrypted!'
+
+        # Act
+        queue.send_message(content)
+        queue.key_resolver_function = key_resolver.resolve_key
+        queue.key_encryption_key = None  # Ensure that the resolver is used
+
+        message = queue.receive_message()
+
+        # Assert
+        self.assertEqual(content, message.content)
+
+    @pytest.mark.live_test_only
+    @QueuePreparer()
+    def test_get_message_encrypted_kek_RSA_v2(self, storage_account_name, storage_account_key):
+        # We can only generate random RSA keys, so this must be run live or
+        # the playback test will fail due to a change in kek values.
+
+        # Arrange
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            requires_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=RSAKeyWrapper('key2'))
+        queue = self._create_queue(qsc)
+        content = 'Hello World Encrypted!'
+
+        # Act
+        queue.send_message(content)
+        message = queue.receive_message()
+
+        # Assert
+        self.assertEqual(content, message.content)
+
+    @QueuePreparer()
+    def test_update_encrypted_message_v2(self, storage_account_name, storage_account_key):
+        # Arrange
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            requires_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=KeyWrapper('key1'))
+        queue = self._create_queue(qsc)
+        queue.send_message('Update Me')
+
+        message = queue.receive_message()
+        message.content = 'Updated'
+
+        # Act
+        queue.update_message(message)
+        message = queue.receive_message()
+
+        # Assert
+        self.assertEqual('Updated', message.content)
 
 
 # ------------------------------------------------------------------------------
