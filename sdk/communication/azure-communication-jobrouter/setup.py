@@ -68,7 +68,7 @@ setup(
         'azure-core<2.0.0,>=1.23.0',
         'msrest>=0.6.21',
         'six>=1.11.0',
-        'python-dateutil>=2.8.2'
+        'python-dateutil>=2.8.0'
     ],
     extras_require = {
         ":python_version<'3.8'": ["typing-extensions"]
