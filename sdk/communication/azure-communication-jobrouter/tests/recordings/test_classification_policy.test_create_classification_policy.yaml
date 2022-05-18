@@ -1,0 +1,3619 @@
+interactions:
+- request:
+    body: '{"name": "test_create_classification_policy_tst_dp", "offerTtlSeconds":
+      10.0, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
+      1}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '162'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:26 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_create_classification_policy_tst_dp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"test_create_classification_policy_tst_dp","name":"test_create_classification_policy_tst_dp","offerTTLSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:27 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:28 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 030cc9071aec809ba6d0be36136b0799
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "test_create_classification_policy_tst_q", "distributionPolicyId":
+      "test_create_classification_policy_tst_dp", "labels": {"key1": "QueueKey", "key2":
+      10, "key3": true, "key4": false, "key5": 10.1}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '206'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:27 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_create_classification_policy_tst_q?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"test_create_classification_policy_tst_q","name":"test_create_classification_policy_tst_q","distributionPolicyId":"test_create_classification_policy_tst_dp","labels":{"key1":"QueueKey","key2":10,"key3":true,"key4":false,"key5":10.1,"Id":"test_create_classification_policy_tst_q"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:28 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - aab48d418e230637d317ce8915ad1ddb
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "static-rule",
+      "value": 1}, "workerSelectors": [{"kind": "static", "labelSelector": {"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '440'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:27 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:28 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - bc3003f6d076d735e846216121e9fe8c
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "static-rule",
+      "value": 1}, "workerSelectors": [{"kind": "conditional", "condition": {"kind":
+      "static-rule", "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '501'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:28 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 26c0c700cb32494b5a5a6c1a5336e096
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "static-rule",
+      "value": 1}, "workerSelectors": [{"kind": "pass-through", "key": "testKey",
+      "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '364'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 57e47946f56fe17433b601ee2358f741
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "static-rule",
+      "value": 1}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '506'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - d266618c94fe3d3e69e00aedce91afeb
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "static",
+      "labelSelector": {"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '474'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 8d0d53b58742845dd023fcc14d0040ab
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "conditional",
+      "condition": {"kind": "static-rule", "value": true}, "labelSelectors": [{"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '535'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 04a3c03f498143ae6f3c03ea7653e7dc
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "pass-through",
+      "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '398'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 84b9c646252793796721a391fe8c2cfa
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '540'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:28 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - ee3c13fd5aebaea5ad7bd7993cf217c7
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '494'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 61f9cf3fe2bb336e7efc8e7ef174e768
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "conditional", "condition": {"kind": "static-rule", "value": true},
+      "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 2e2023e0a89f8fcb7e8471662466f051
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "pass-through", "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '418'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 4a9c30d4a459f5e7fa91d5aed79ac406
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "weighted-allocation-worker-selector", "allocations": [{"weight":
+      1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value":
+      "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '560'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 15eb2451a27ab2beb8de00b60b983a37
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "static", "labelSelector": {"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '536'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - f0d658419d7f5b333363a44b7a71b2b5
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "conditional", "condition": {"kind":
+      "static-rule", "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '597'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 51671185141208f499934b3efe47e977
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "pass-through", "key": "testKey",
+      "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '460'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 0bd2005191f70c7dad59a8dc1cec6e51
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator":
+      "equal", "value": "test_value"}}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '602'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"static","labelSelector":{"key":"test_key","labelOperator":"equal","value":"test_value"}}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 0e05663bc03872f044cb39555e804a83
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "static", "labelSelector": {"key": "test_key",
+      "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite":
+      false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '501'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - f6d126459f37c41b87acd0641b63f30c
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '562'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:31 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 30182472985da4a1cbf7504c0c79b962
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '425'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:31 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 6af7250005c3ae6c4132897426fbab67
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '567'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:31 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 6b9d10cdce75109bf892e83464b4c789
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "static",
+      "labelSelector": {"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '535'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:31 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 20dde71a9f01e61f861e60630c4ed597
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "conditional",
+      "condition": {"kind": "static-rule", "value": true}, "labelSelectors": [{"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '596'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:31 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - e4b8757a78c23b6052b97e1f715ea9f0
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "pass-through",
+      "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '459'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:30 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:31 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 2429d0516b8f5787c8b99464cf96a346
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '601'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 9ee712b341f58f3e9dc23a2ffcdd93ce
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - ccf4a4b9005f7a056ab12c13a0e9625d
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "conditional", "condition": {"kind": "static-rule", "value": true},
+      "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '616'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - b00323328e4084938c5eadc12f70acbf
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "pass-through", "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '479'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 20735a22cb70926ca788f0ae5cba7509
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "weighted-allocation-worker-selector", "allocations": [{"weight":
+      1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value":
+      "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '621'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 21f10d9f9c4add2e64c805d295a8b283
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "static", "labelSelector": {"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '597'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - a8cce20344201f1a1c01691e378be438
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "conditional", "condition": {"kind":
+      "static-rule", "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '658'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - e2f86c1b6a50b127a9bc0bc14ae85d03
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "pass-through", "key": "testKey",
+      "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '521'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - d11bee435e7daebc14a4dd901678b815
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '663'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:32 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - b9b3c0c3d430dbbe1f48bc9837ff4e2b
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "static-rule", "value": 1}, "workerSelectors":
+      [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '403'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 8f971f47a8fe20c5ae401aec820cec06
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "static-rule", "value": 1}, "workerSelectors":
+      [{"kind": "conditional", "condition": {"kind": "static-rule", "value": true},
+      "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '464'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - bd3eeac9fe436fcd7f02eecb87f3421e
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "static-rule", "value": 1}, "workerSelectors":
+      [{"kind": "pass-through", "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '327'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 5ef1058c8c1b962c45e141cd8edf17ab
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "static-rule", "value": 1}, "workerSelectors":
+      [{"kind": "weighted-allocation-worker-selector", "allocations": [{"weight":
+      1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value":
+      "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '469'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 3c242bac1f2a5791b08e88e48b710f0d
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "expression-rule", "language": "powerFx",
+      "expression": "1"}, "workerSelectors": [{"kind": "static", "labelSelector":
+      {"key": "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds":
+      10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '437'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 2fdbecd545c2d75f7ca9329c25bbf6bb
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "expression-rule", "language": "powerFx",
+      "expression": "1"}, "workerSelectors": [{"kind": "conditional", "condition":
+      {"kind": "static-rule", "value": true}, "labelSelectors": [{"key": "test_key",
+      "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite":
+      false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '498'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 0bfc56dd068ab158ba24328e1d7f1a41
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "expression-rule", "language": "powerFx",
+      "expression": "1"}, "workerSelectors": [{"kind": "pass-through", "key": "testKey",
+      "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '361'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:33 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - f38b76cda8033df68a42f1566e626f40
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "expression-rule", "language": "powerFx",
+      "expression": "1"}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '503'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 3791264698ee78c87346abf0f5db1fcb
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors": [{"kind": "static",
+      "labelSelector": {"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '457'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 3c39e35db493c23f98d08e3a4637a578
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors": [{"kind": "conditional",
+      "condition": {"kind": "static-rule", "value": true}, "labelSelectors": [{"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '518'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - cb0be5a3cb7f2a97f2fbd959f978635d
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors": [{"kind": "pass-through",
+      "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '381'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 92dbb8e1e80c4da8104f9e1af3847d5f
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '523'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - a272c506968e48cee63ef113fe46448c
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey": "fakeKey"}},
+      "workerSelectors": [{"kind": "static", "labelSelector": {"key": "test_key",
+      "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite":
+      false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '499'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:33 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 3533b3fb6e740e9f0831e3007b41f09f
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey": "fakeKey"}},
+      "workerSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '560'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:34 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 9c833a0a4b726c9d02f209e55f109ee4
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey": "fakeKey"}},
+      "workerSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '423'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - ce4c96c8cedad0a9597864f00e190a11
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}], "prioritizationRule": {"kind": "azure-function-rule", "functionUrl":
+      "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey": "fakeKey"}},
+      "workerSelectors": [{"kind": "weighted-allocation-worker-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '565'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 6701960fca384f56c5dadb467bc73c1f
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "static", "labelSelector": {"key": "test_key",
+      "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite":
+      false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '505'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 0edef2206bada5199be6b1b280154678
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "conditional", "condition": {"kind": "static-rule",
+      "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '566'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 5dc06a47af6dff94f6d233db499f67a5
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "pass-through", "key": "testKey", "labelOperator":
+      "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '429'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - c7d48aed9d6ba3f62d9fbdcb2ad1b0a2
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "static-rule", "value":
+      1}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '571'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"static-rule","value":1},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 8d3e4fa8b8bd87869308944f3d585818
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "static",
+      "labelSelector": {"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '539'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - aee675ef7e5ace683eec4599f24b3472
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "conditional",
+      "condition": {"kind": "static-rule", "value": true}, "labelSelectors": [{"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '600'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:35 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 1b2d31dcadc8e121eec85ed4ada41655
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "pass-through",
+      "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '463'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - a07ad0a823f47fc594101f4dd65aa324
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "expression-rule",
+      "language": "powerFx", "expression": "1"}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '605'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"expression-rule","language":"powerFx","expression":"1"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 8f066581bf7a7f4792b81deb034d112d
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "static", "labelSelector": {"key": "test_key", "labelOperator": "equal",
+      "value": "test_value", "ttlSeconds": 10.0, "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '559'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 95326fe5ca18a72c7eb2a681fc906fd7
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "conditional", "condition": {"kind": "static-rule", "value": true},
+      "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value": "test_value",
+      "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '620'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - b8502828088d7f94b68b05c53afce9dc
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "pass-through", "key": "testKey", "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '483'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - fd0ac4aac34a56bc5bcf55c8b63a5493
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule"}, "workerSelectors":
+      [{"kind": "weighted-allocation-worker-selector", "allocations": [{"weight":
+      1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal", "value":
+      "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '625'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:35 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule"},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - c13b4c5c68841201f8fb467bd872079b
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "static", "labelSelector": {"key":
+      "test_key", "labelOperator": "equal", "value": "test_value", "ttlSeconds": 10.0,
+      "expedite": false}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '601'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"static","labelSelector":{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - dc65314e9fb4b544dc88b0eab8698803
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "conditional", "condition": {"kind":
+      "static-rule", "value": true}, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '662'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"conditional","condition":{"kind":"static-rule","value":true},"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:37 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 9841919dfbf20dc2fbf0ac801230787f
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "pass-through", "key": "testKey",
+      "labelOperator": "equal"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '525'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"pass-through","key":"testKey","labelOperator":"equal"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:37 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - ed3771630b7a902db91d1e4f54282bf5
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "tst_create_cp", "fallbackQueueId": "test_create_classification_policy_tst_q",
+      "queueSelectors": [{"kind": "weighted-allocation-queue-selector", "allocations":
+      [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator": "equal",
+      "value": "test_value"}]}]}], "prioritizationRule": {"kind": "azure-function-rule",
+      "functionUrl": "https://fake.azurewebsites.net/fakeRule", "credential": {"functionKey":
+      "fakeKey"}}, "workerSelectors": [{"kind": "weighted-allocation-worker-selector",
+      "allocations": [{"weight": 1.0, "labelSelectors": [{"key": "test_key", "labelOperator":
+      "equal", "value": "test_value", "ttlSeconds": 10.0, "expedite": false}]}]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '667'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: '{"id":"tst_create_cp","name":"tst_create_cp","fallbackQueueId":"test_create_classification_policy_tst_q","queueSelectors":[{"kind":"weighted-allocation-queue-selector","allocations":[{"weight":1,"labelSelectors":[{"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}],"prioritizationRule":{"kind":"azure-function-rule","functionUrl":"https://fake.azurewebsites.net/fakeRule","credential":{"functionKey":"fakeKey"}},"workerSelectors":[{"kind":"weighted-allocation-worker-selector","allocations":[{"weight":1,"labelSelectors":[{"ttlSeconds":10,"expedite":false,"key":"test_key","labelOperator":"equal","value":"test_value"}]}]}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Mon, 16 May 2022 21:08:37 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - cd87dc30ec0f116c1839816576aff8e1
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 5d8f6f47354630d61feecb8e905e8a5e
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:36 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_create_classification_policy_tst_q?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      date:
+      - Mon, 16 May 2022 21:08:37 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 78af8fdc5a5b6abf22fab9a95b47964a
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_create_classification_policy_tst_dp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      date:
+      - Mon, 16 May 2022 21:08:37 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 40d50c0e522cb4a7d3535c9cbbb78224
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/classificationPolicies/tst_create_cp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      date:
+      - Mon, 16 May 2022 21:08:38 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 38f850ebf54c882956f2a8e8c05dd152
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_create_classification_policy_tst_q?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      date:
+      - Mon, 16 May 2022 21:08:38 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 86dbfbfe96c13ce612062365edbfd666
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Mon, 16 May 2022 21:08:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_create_classification_policy_tst_dp?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      date:
+      - Mon, 16 May 2022 21:08:38 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 65d555887747585b4be8de36811973e0
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+version: 1
