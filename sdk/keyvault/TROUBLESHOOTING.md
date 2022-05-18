@@ -98,6 +98,26 @@ user.
     [Enable logging][identity_logging] and you will see which credential the [DefaultAzureCredential] used as shown
     below, and why previously-attempted credentials were rejected.
 
+### Failing token requests
+
+Depending on the versions of `azure-keyvault-x` and [azure-identity] you have installed, you may see an error similar
+to:
+
+```text
+{CredentialType}.get_token failed: request() got an unexpected keyword argument 'tenant_id'
+```
+
+This indicates that your `azure-keyvault-x` package supports multitenant authentication, but your version of
+[azure-identity] does not. Multitenant authentication is supported by [azure-identity] version 1.8.0 and newer, and is
+enabled on the following `azure-keyvault-x` versions or newer:
+
+Package | Minimum Version
+--- | ---
+`azure-keyvault-administration` | 4.1.0
+`azure-keyvault-certificates` | 4.4.0
+`azure-keyvault-keys` | 4.5.0
+`azure-keyvault-secrets` | 4.4.0
+
 ## Other service errors
 
 To troubleshoot additional HTTP service errors not described below, see
