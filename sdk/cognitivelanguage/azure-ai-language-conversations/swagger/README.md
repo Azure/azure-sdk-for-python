@@ -32,7 +32,6 @@ title: ConversationAnalysisClient
 tag: release_2022_05_01_preview
 openapi-type: data-plane
 version-tolerant: true
-models-mode: msrest
 package-version: 1.0.0b4
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
