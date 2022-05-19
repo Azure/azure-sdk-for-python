@@ -126,7 +126,7 @@ class AsyncTransportMixin():
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
                 raise
-            except (OSError, IOError, SSLError, socket.error, TimeoutError) as exc:
+            except (OSError, IOError, SSLError, socket.error) as exc:
                 # Don't disconnect for ssl read time outs
                 # http://bugs.python.org/issue10272
                 if isinstance(exc, SSLError) and 'timed out' in str(exc):
@@ -390,7 +390,7 @@ class AsyncTransport(AsyncTransportMixin):
             await self._write(s)
         except TimeoutError:
             raise
-        except (OSError, IOError, socket.error, TimeoutError) as exc:
+        except (OSError, IOError, socket.error) as exc:
             if get_errno(exc) not in _UNAVAIL:
                 self.connected = False
             raise
