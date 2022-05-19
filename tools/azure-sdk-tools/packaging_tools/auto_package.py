@@ -16,6 +16,7 @@ def main(generate_input, generate_output):
 
     sdk_folder = "."
     result = {"packages": []}
+    print("======data value:", data)
     for package in data.values():
         package_name = package["packageName"]
         # Changelog
@@ -24,10 +25,15 @@ def main(generate_input, generate_output):
             md_output = change_log_generate(package_name, last_version, package["tagIsStable"])
         else:
             md_output = "data-plan skip changelog generation temporarily"
+        print("\nmd output: ", md_output)
+        res = extract_breaking_change(md_output)
+        # print('***', res)
+        print('++++', package)
+
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking changes" in md_output,
-            "breakingChangeItems": extract_breaking_change(md_output),
+            "breakingChangeItems": res,
         }
         package["version"] = last_version[-1]
 
