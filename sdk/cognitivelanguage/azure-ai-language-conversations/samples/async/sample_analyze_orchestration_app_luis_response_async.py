@@ -26,18 +26,11 @@ USAGE:
 import asyncio
 
 async def sample_analyze_orchestration_app_luis_response_async():
-    # [START analyze_orchestration_app_luis_response_async]
+    # [START analyze_orchestration_app_luis_response]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
-
     from azure.ai.language.conversations.aio import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import (
-        CustomConversationalTask,
-        ConversationAnalysisOptions,
-        CustomConversationTaskParameters,
-        TextConversationItem
-    )
 
     # get secrets
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -49,41 +42,47 @@ async def sample_analyze_orchestration_app_luis_response_async():
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
         query = "Reserve a table for 2 at the Italian restaurant"
-        result = await client.analyze_conversation(
-                task=CustomConversationalTask(
-                    analysis_input=ConversationAnalysisOptions(
-                        conversation_item=TextConversationItem(
-                            text=query
-                        )
-                    ),
-                    parameters=CustomConversationTaskParameters(
-                        project_name=project_name,
-                        deployment_name=deployment_name
-                    )
-                )
-            )
+        result = await client.conversation_analysis.analyze_conversation(
+            task={
+                "kind": "Conversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "verbose": True
+                }
+            }
+        )
 
-        # view result
-        print("query: {}".format(result.results.query))
-        print("project kind: {}\n".format(result.results.prediction.project_kind))
+    # view result
+    print("query: {}".format(result["result"]["query"]))
+    print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
 
-        # top intent
-        top_intent = result.results.prediction.top_intent
-        print("top intent: {}".format(top_intent))
-        top_intent_object = result.results.prediction.intents[top_intent]
-        print("confidence score: {}".format(top_intent_object.confidence))
-        print("project kind: {}".format(top_intent_object.target_kind))
+    # top intent
+    top_intent = result["result"]["prediction"]["topIntent"]
+    print("top intent: {}".format(top_intent))
+    top_intent_object = result["result"]["prediction"]["intents"][top_intent]
+    print("confidence score: {}".format(top_intent_object["confidenceScore"]))
+    print("project kind: {}".format(top_intent_object["targetProjectKind"]))
 
-        if top_intent_object.target_kind == "luis":
-            print("\nluis response:")
-            luis_response = top_intent_object.result["prediction"]
-            print("top intent: {}".format(luis_response["topIntent"]))
-            print("\nentities:")
-            for entity in luis_response["entities"]:
-                print("\n{}".format(entity))
+    if top_intent_object["targetProjectKind"] == "Luis":
+        print("\nluis response:")
+        luis_response = top_intent_object["result"]["prediction"]
+        print("top intent: {}".format(luis_response["topIntent"]))
+        print("\nentities:")
+        for entity in luis_response["entities"]:
+            print("\n{}".format(entity))
 
-    # [END analyze_orchestration_app_luis_response_async]
-
+    # [END analyze_orchestration_app_luis_response]
 
 async def main():
     await sample_analyze_orchestration_app_luis_response_async()
