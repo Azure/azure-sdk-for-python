@@ -208,7 +208,9 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
 
 def main(base, latest, tag_is_stable: bool = False):
     old_report = get_report_from_parameter(base)
+    print('== old_report get successfully')
     new_report = get_report_from_parameter(latest, tag_is_stable)
+    print('== new_report get successfully')
     
 
     # result = diff(old_report, new_report)
