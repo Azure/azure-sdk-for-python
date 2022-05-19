@@ -424,7 +424,7 @@ class AsyncTransport(AsyncTransportMixin):
                 TLS_HEADER_FRAME, returned_header[1]))
 
 
-class WebSocketTransportAsync(AsyncTransport):
+class WebSocketTransportAsync(AsyncTransportMixin):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
         self._read_buffer = BytesIO()
@@ -432,11 +432,11 @@ class WebSocketTransportAsync(AsyncTransport):
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
-        self.host = host
-        self.ws = None
-        self._http_proxy = kwargs.get('http_proxy', None)
         self.parsed_custom_hostname = kwargs.get("custom_hostname")
         self.parsed_custom_port = kwargs.get("custom_port")
+        self.host = self.parsed_custom_hostname or host 
+        self.ws = None
+        self._http_proxy = kwargs.get('http_proxy', None)
 
     async def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
@@ -449,6 +449,8 @@ class WebSocketTransportAsync(AsyncTransport):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
+            import websocket
+            websocket.enableTrace(True)
             if self.parsed_custom_hostname!=None:
                 url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
