@@ -30,13 +30,6 @@ def sample_analyze_orchestration_direct_target():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import (
-        CustomConversationalTask,
-        ConversationAnalysisOptions,
-        CustomConversationTaskParameters,
-        TextConversationItem,
-        QuestionAnsweringParameters
-    )
 
     # get secrets
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -49,45 +42,52 @@ def sample_analyze_orchestration_direct_target():
     with client:
         query = "How are you?"
         qna_app = "ChitChat-QnA"
-        result = client.analyze_conversation(
-                task=CustomConversationalTask(
-                    analysis_input=ConversationAnalysisOptions(
-                        conversation_item=TextConversationItem(
-                            text=query
-                        )
-                    ),
-                    parameters=CustomConversationTaskParameters(
-                        project_name=project_name,
-                        deployment_name=deployment_name,
-                        direct_target=qna_app,
-                        target_project_parameters={
-                            "ChitChat-QnA": QuestionAnsweringParameters(
-                                calling_options={
-                                    "question": query
-                                }
-                            )
+        result = client.conversation_analysis.analyze_conversation(
+            task={
+                "kind": "Conversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "directTarget": qna_app,
+                    "targetProjectParameters": {
+                        "ChitChat-QnA": {
+                            "targetProjectKind": "QuestionAnswering",
+                            "callingOptions": {
+                                "question": query
+                            }
                         }
-                    )
-                )
-            )
+                    }
+                }
+            }
+        )
 
     # view result
-    print("query: {}".format(result.results.query))
-    print("project kind: {}\n".format(result.results.prediction.project_kind))
+    print("query: {}".format(result["result"]["query"]))
+    print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
 
     # top intent
-    top_intent = result.results.prediction.top_intent
+    top_intent = result["result"]["prediction"]["topIntent"]
     print("top intent: {}".format(top_intent))
-    top_intent_object = result.results.prediction.intents[top_intent]
-    print("confidence score: {}".format(top_intent_object.confidence))
-    print("project kind: {}".format(top_intent_object.target_kind))
+    top_intent_object = result["result"]["prediction"]["intents"][top_intent]
+    print("confidence score: {}".format(top_intent_object["confidenceScore"]))
+    print("project kind: {}".format(top_intent_object["targetProjectKind"]))
 
-    if top_intent_object.target_kind == "question_answering":
+    if top_intent_object["targetProjectKind"] == "QuestionAnswering":
         print("\nview qna result:")
-        qna_result = top_intent_object.result
-        for answer in qna_result.answers:
-            print("\nanswer: {}".format(answer.answer))
-            print("answer: {}".format(answer.confidence))
+        qna_result = top_intent_object["result"]
+        for answer in qna_result["answers"]:
+            print("\nanswer: {}".format(answer["answer"]))
+            print("answer: {}".format(answer["confidenceScore"]))
 
     # [END analyze_orchestration_app_qna_response]
 
