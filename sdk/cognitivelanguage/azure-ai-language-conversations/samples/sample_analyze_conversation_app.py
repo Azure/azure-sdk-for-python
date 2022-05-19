@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_conversation_with_dict_parms.py
+FILE: sample_analyze_conversation_app.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query for intents and entities using
@@ -14,7 +14,7 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_analyze_conversation_with_dict_parms.py
+    python sample_analyze_conversation_app.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
@@ -23,7 +23,7 @@ USAGE:
     4) AZURE_CONVERSATIONS_DEPLOYMENT_NAME  - deployment name for your CLU conversations project.
 """
 
-def sample_analyze_conversation_with_dict_parms():
+def sample_analyze_conversation_app():
     # [START analyze_conversation_app]
     # import libraries
     import os
@@ -92,4 +92,4 @@ def sample_analyze_conversation_with_dict_parms():
 
 
 if __name__ == '__main__':
-    sample_analyze_conversation_with_dict_parms()
+    sample_analyze_conversation_app()
