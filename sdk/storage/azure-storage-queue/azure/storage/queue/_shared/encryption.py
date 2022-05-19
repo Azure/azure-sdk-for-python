@@ -27,8 +27,10 @@ from . import encode_base64, decode_base64_to_bytes
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
 _ENCRYPTION_PROTOCOL_V2 = '2.0'
-_GCM_BLOCK_SIZE = 4 * 1024 * 1024
+_GCM_REGION_LENGTH = 4 * 1024 * 1024
 _GCM_NONCE_LENGTH = 12
+_GCM_TAG_LENGTH = 16
+
 _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'
 
@@ -80,24 +82,28 @@ class _WrappedContentKey:
         self.key_id = key_id
 
 
-class _AuthenticationBlockInfo:
+class _EncryptedRegionInfo:
     '''
     Represents the length of encryption elements.
-    This is only used for AES-GCM.
+    This is only used for Encryption V2.
     '''
 
-    def __init__(self, ciphertext_length, nonce_length):
+    def __init__(self, encrypted_region_data_length, nonce_length, tag_length):
         '''
-        :param int ciphertext_length:
-            The length of the ciphertext block.
+        :param int encrypted_region_data_length:
+            The length of the encryption region data (not including nonce + tag).
         :param str nonce_length:
             The length of nonce used when encrypting.
+        :param int tag_length:
+            The length of the encryption tag.
         '''
-        _validate_not_none('ciphertext_length', ciphertext_length)
+        _validate_not_none('encrypted_region_data_length', encrypted_region_data_length)
         _validate_not_none('nonce_length', nonce_length)
+        _validate_not_none('tag_length', tag_length)
 
-        self.ciphertext_length = ciphertext_length
+        self.encrypted_region_data_length = encrypted_region_data_length
         self.nonce_length = nonce_length
+        self.tag_length = tag_length
 
 
 class _EncryptionAgent:
@@ -129,7 +135,7 @@ class _EncryptionData:
     def __init__(
             self,
             content_encryption_IV,
-            authentication_block_info,
+            encrypted_region_info,
             encryption_agent,
             wrapped_content_key,
             key_wrapping_metadata):
@@ -137,7 +143,7 @@ class _EncryptionData:
         :param Optional[bytes] content_encryption_IV:
             The content encryption initialization vector.
             Required for AES-CBC.
-        :param Optional[_AuthenticationBlockInfo] authentication_block_info:
+        :param Optional[_EncryptedRegionInfo] encrypted_region_info:
             The info about the autenticated block sizes.
             Required for AES-GCM.
         :param _EncryptionAgent encryption_agent:
@@ -156,12 +162,12 @@ class _EncryptionData:
         if encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256:
             _validate_not_none('content_encryption_IV', content_encryption_IV)
         elif encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_GCM_256:
-            _validate_not_none('authentication_block_info', authentication_block_info)
+            _validate_not_none('encrypted_region_info', encrypted_region_info)
         else:
             raise ValueError("Invalid encryption algorithm.")
 
         self.content_encryption_IV = content_encryption_IV
-        self.authentication_block_info = authentication_block_info
+        self.encrypted_region_info = encrypted_region_info
         self.encryption_agent = encryption_agent
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
@@ -197,9 +203,10 @@ def _generate_encryption_data_dict(kek, cek, iv, version):
     elif version == _ENCRYPTION_PROTOCOL_V2:
         encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
 
-        authentication_block_info = OrderedDict()
-        authentication_block_info['CiphertextLength'] = _GCM_BLOCK_SIZE
-        authentication_block_info['NonceLength'] = _GCM_NONCE_LENGTH
+        encrypted_region_info = OrderedDict()
+        encrypted_region_info['EncryptedRegionDataLength'] = _GCM_REGION_LENGTH
+        encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
+        encrypted_region_info['TagLength'] = _GCM_TAG_LENGTH
 
     encryption_data_dict = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
@@ -207,7 +214,7 @@ def _generate_encryption_data_dict(kek, cek, iv, version):
     if version == _ENCRYPTION_PROTOCOL_V1:
         encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
     elif version == _ENCRYPTION_PROTOCOL_V2:
-        encryption_data_dict['AuthenticationBlockInfo'] = authentication_block_info
+        encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info
     encryption_data_dict['KeyWrappingMetadata'] = {'EncryptionLibrary': 'Python ' + VERSION}
 
     return encryption_data_dict
@@ -249,14 +256,15 @@ def _dict_to_encryption_data(encryption_data_dict):
         encryption_iv = decode_base64_to_bytes(encryption_data_dict['ContentEncryptionIV'])
 
     # AES-GCM only
-    block_info = None
-    if 'AuthenticationBlockInfo' in encryption_data_dict:
-        authentication_block_info = encryption_data_dict['AuthenticationBlockInfo']
-        block_info = _AuthenticationBlockInfo(authentication_block_info['CiphertextLength'],
-                                              authentication_block_info['NonceLength'])
+    region_info = None
+    if 'EncryptedRegionInfo' in encryption_data_dict:
+        encrypted_region_info = encryption_data_dict['EncryptedRegionInfo']
+        region_info = _EncryptedRegionInfo(encrypted_region_info['EncryptedRegionDataLength'],
+                                          encrypted_region_info['NonceLength'],
+                                          encrypted_region_info['TagLength'])
 
     encryption_data = _EncryptionData(encryption_iv,
-                                      block_info,
+                                      region_info,
                                       encryption_agent,
                                       wrapped_content_key,
                                       key_wrapping_metadata)
@@ -302,7 +310,7 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
         _validate_not_none('content_encryption_IV', encryption_data.content_encryption_IV)
     elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
-        _validate_not_none('authentication_block_info', encryption_data.authentication_block_info)
+        _validate_not_none('encrypted_region_info', encryption_data.encrypted_region_info)
     else:
         raise ValueError('Specified encryption version is not supported.')
 
@@ -368,11 +376,11 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
         decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
 
     elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
-        block_info = encryption_data.authentication_block_info
+        block_info = encryption_data.encrypted_region_info
         if not block_info or not block_info.nonce_length:
             raise ValueError("Missing required metadata for decryption.")
 
-        nonce_length = encryption_data.authentication_block_info.nonce_length
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
 
         # First bytes are the nonce
         nonce = message[:nonce_length]
