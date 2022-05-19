@@ -75,21 +75,19 @@ if TYPE_CHECKING:
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class
+    """The Language service API is a suite of natural language processing (NLP) skills built with the best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
     tasks such as sentiment analysis, key phrase extraction, entities recognition,
-    and language detection, and more. No training data is needed to use this API - just bring your text data.
-    This API uses advanced natural language processing techniques to deliver best in class predictions.
+    and language detection, and more.
 
     Further documentation can be found in
     https://docs.microsoft.com/azure/cognitive-services/language-service/overview
 
-    :param str endpoint: Supported Cognitive Services or Text Analytics resource
+    :param str endpoint: Supported Cognitive Services or Language resource
         endpoints (protocol and hostname, for example: 'https://<resource-name>.cognitiveservices.azure.com').
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of AzureKeyCredential if using a
-        cognitive services/text analytics API key or a token credential
-        from :mod:`azure.identity`.
+        This can be the an instance of AzureKeyCredential if using a Cognitive Services/Language API key
+        or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
@@ -168,9 +166,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -261,7 +259,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -270,12 +268,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -364,7 +362,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -384,10 +382,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
-        :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
-            input text on the service side for troubleshooting. If set to False, Text Analytics logs your
+        :keyword bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+            input text on the service side for troubleshooting. If set to False, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Please see
+            the service's natural language processing functions. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
@@ -483,7 +481,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -495,9 +493,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -609,7 +607,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
             on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
@@ -624,10 +622,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
-            input text on the service side for troubleshooting. If set to False, Text Analytics logs your
+        :keyword bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+            input text on the service side for troubleshooting. If set to False, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Please see
+            the service's natural language processing functions. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
@@ -638,7 +636,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
@@ -788,7 +786,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -796,9 +794,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -891,7 +889,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -903,9 +901,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -1032,7 +1030,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
-        combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
+        combine multiple text analysis actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
         .. note:: See the service documentation for regional support of custom action features:
@@ -1058,7 +1056,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -1083,7 +1081,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
             or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
             DocumentError]]]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.

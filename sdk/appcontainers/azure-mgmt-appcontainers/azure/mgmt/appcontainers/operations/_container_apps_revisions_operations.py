@@ -70,19 +70,19 @@ def build_get_revision_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    revision_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -108,19 +108,19 @@ def build_activate_revision_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    revision_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/activate")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -146,19 +146,19 @@ def build_deactivate_revision_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    revision_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/deactivate")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -184,19 +184,19 @@ def build_restart_revision_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    revision_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/restart")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -333,7 +333,7 @@ class ContainerAppsRevisionsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        revision_name: str,
         **kwargs: Any
     ) -> "_models.Revision":
         """Get a revision of a Container App.
@@ -344,8 +344,8 @@ class ContainerAppsRevisionsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App Revision.
-        :type name: str
+        :param revision_name: Name of the Container App Revision.
+        :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Revision, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Revision
@@ -364,7 +364,7 @@ class ContainerAppsRevisionsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            revision_name=revision_name,
             api_version=api_version,
             template_url=self.get_revision.metadata['url'],
         )
@@ -390,7 +390,7 @@ class ContainerAppsRevisionsOperations(object):
 
         return deserialized
 
-    get_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}"}  # type: ignore
+    get_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}"}  # type: ignore
 
 
     @distributed_trace
@@ -398,7 +398,7 @@ class ContainerAppsRevisionsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        revision_name: str,
         **kwargs: Any
     ) -> None:
         """Activates a revision for a Container App.
@@ -409,8 +409,8 @@ class ContainerAppsRevisionsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App Revision.
-        :type name: str
+        :param revision_name: Name of the Container App Revision.
+        :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -429,7 +429,7 @@ class ContainerAppsRevisionsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            revision_name=revision_name,
             api_version=api_version,
             template_url=self.activate_revision.metadata['url'],
         )
@@ -451,7 +451,7 @@ class ContainerAppsRevisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    activate_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate"}  # type: ignore
+    activate_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/activate"}  # type: ignore
 
 
     @distributed_trace
@@ -459,7 +459,7 @@ class ContainerAppsRevisionsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        revision_name: str,
         **kwargs: Any
     ) -> None:
         """Deactivates a revision for a Container App.
@@ -470,8 +470,8 @@ class ContainerAppsRevisionsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App Revision.
-        :type name: str
+        :param revision_name: Name of the Container App Revision.
+        :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -490,7 +490,7 @@ class ContainerAppsRevisionsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            revision_name=revision_name,
             api_version=api_version,
             template_url=self.deactivate_revision.metadata['url'],
         )
@@ -512,7 +512,7 @@ class ContainerAppsRevisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    deactivate_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate"}  # type: ignore
+    deactivate_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/deactivate"}  # type: ignore
 
 
     @distributed_trace
@@ -520,7 +520,7 @@ class ContainerAppsRevisionsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        revision_name: str,
         **kwargs: Any
     ) -> None:
         """Restarts a revision for a Container App.
@@ -531,8 +531,8 @@ class ContainerAppsRevisionsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App Revision.
-        :type name: str
+        :param revision_name: Name of the Container App Revision.
+        :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -551,7 +551,7 @@ class ContainerAppsRevisionsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            revision_name=revision_name,
             api_version=api_version,
             template_url=self.restart_revision.metadata['url'],
         )
@@ -573,5 +573,5 @@ class ContainerAppsRevisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    restart_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart"}  # type: ignore
+    restart_revision.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/restart"}  # type: ignore
 

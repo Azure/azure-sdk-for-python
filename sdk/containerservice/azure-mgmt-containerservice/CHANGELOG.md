@@ -1,5 +1,20 @@
 # Release History
 
+## 19.1.0 (2022-05-13)
+
+**Features**
+
+  - Added operation group TrustedAccessRoleBindingsOperations
+  - Added operation group TrustedAccessRolesOperations
+  - Model AgentPool has a new parameter enable_custom_ca_trust
+  - Model ContainerServiceNetworkProfile has a new parameter network_plugin_mode
+  - Model ManagedCluster has a new parameter storage_profile
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_custom_ca_trust
+  - Model NetworkProfileForSnapshot has a new parameter network_plugin_mode
+
 ## 19.0.0 (2022-04-15)
 
 **Features**

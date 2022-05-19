@@ -97,6 +97,8 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CREATING = "Creating"
     UPDATING = "Updating"
+    STARTING = "Starting"
+    STOPPING = "Stopping"
     DELETING = "Deleting"
     DELETED = "Deleted"
     SUCCEEDED = "Succeeded"
@@ -136,6 +138,12 @@ class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANUAL = "Manual"
     AUTOMATIC = "Automatic"
 
+class StorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the storage.
+    """
+
+    STORAGE_ACCOUNT = "StorageAccount"
+
 class SupportedRuntimePlatform(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The platform of this runtime version (possible values: "Java" or ".NET").
     """
@@ -164,6 +172,12 @@ class TrafficDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
+
+class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the underlying resource to mount as a persistent disk.
+    """
+
+    AZURE_FILE_VOLUME = "AzureFileVolume"
 
 class UserSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the source uploaded

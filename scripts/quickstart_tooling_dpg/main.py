@@ -5,7 +5,7 @@ import os
 from jinja2 import Environment, FileSystemLoader
 from subprocess import check_call
 import time
-from typing import Any
+from typing import Any, Dict
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -106,6 +106,11 @@ def build_package(**kwargs) -> None:
     _LOGGER.info("Build complete: %s", package_name)
 
 
+def validate_params(**kwargs):
+    if not kwargs.get("security_scope") and not kwargs.get("security_header_name"):
+        raise Exception('At least one of "security-scope" and "security-header-name" is needed')
+
+
 def main(**kwargs):
     build_package(**kwargs)
 
@@ -132,8 +137,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--security-scope", "-c",
         dest="security_scope",
-        required=True,
-        help="Each service for data plan should have specific scopes",
+        required=False,
+        help="If authentication is AADToken, this param is necessary",
+    )
+    parser.add_argument(
+        "--security-header-name",
+        dest="security_header_name",
+        required=False,
+        help="If authentication is api key, this param is necessary",
     )
     parser.add_argument(
         "--package-name", "-p",
@@ -160,4 +171,5 @@ if __name__ == "__main__":
     main_logger.setLevel(logging.INFO)
 
     parameters = vars(args)
+    validate_params(**parameters)
     main(**parameters)

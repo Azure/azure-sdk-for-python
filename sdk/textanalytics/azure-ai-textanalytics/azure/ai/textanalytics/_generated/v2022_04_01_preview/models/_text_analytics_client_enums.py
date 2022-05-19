@@ -125,6 +125,13 @@ class ExtractiveSummarizationSortingCriteria(with_metaclass(CaseInsensitiveEnumM
     #: the model.
     RANK = "Rank"
 
+class FhirVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The FHIR Spec version that the result will use to format the fhirBundle. For additional
+    information see https://www.hl7.org/fhir/overview.html.
+    """
+
+    FOUR0_1 = "4.0.1"
+
 class HealthcareEntityCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Healthcare Entity Category.
     """
