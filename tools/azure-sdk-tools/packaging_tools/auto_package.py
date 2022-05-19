@@ -14,10 +14,15 @@ def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
         _LOGGER.info(f"auto_package input: {data}")
+    
+    print("======data value:", data)    
+    data = {'azure-mgmt-cosmosdb': {'packageName': 'azure-mgmt-cosmosdb', 'path': ['sdk/cosmos'],
+                                    'readmeMd': ['specification/cosmos-db/resource-manager/readme.md'],
+                                    'tagIsStable': True}}
 
     sdk_folder = "."
     result = {"packages": []}
-    print("======data value:", data)
+    
     for package in data.values():
         package_name = package["packageName"]
         # Changelog
