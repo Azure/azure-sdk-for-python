@@ -94,7 +94,7 @@ class AsyncTransportMixin():
             # TODO: Catch decode error and return amqp:decode-error
             #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (TimeoutError, asyncio.IncompleteReadError, asyncio.TimeoutError):
+        except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
     async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
@@ -121,7 +121,7 @@ class AsyncTransportMixin():
                     read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
                 else:
                     read_frame_buffer.write(await self._read(payload_size, buffer=payload))
-            except (TimeoutError, asyncio.IncompleteReadError):
+            except (TimeoutError, socket.timeout,  asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -130,7 +130,7 @@ class AsyncTransportMixin():
                 # Don't disconnect for ssl read time outs
                 # http://bugs.python.org/issue10272
                 if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                    raise TimeoutError()
+                    raise socket.timeout()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
                 raise
@@ -353,12 +353,12 @@ class AsyncTransport(AsyncTransportMixin):
                     # ssl.sock.read may cause a SSLerror without errno
                     # http://bugs.python.org/issue10272
                     if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                        raise TimeoutError()
+                        raise socket.timeout()
                     # ssl.sock.read may cause ENOENT if the
                     # operation couldn't be performed (Issue celery#1414).
                     if exc.errno in _errnos:
                         if initial and self.raise_on_initial_eintr:
-                            raise TimeoutError()
+                            raise socket.timeout()
                         continue
                     raise
                 if not nbytes:
@@ -388,7 +388,7 @@ class AsyncTransport(AsyncTransportMixin):
     async def write(self, s):
         try:
             await self._write(s)
-        except TimeoutError:
+        except socket.timeout:
             raise
         except (OSError, IOError, socket.error) as exc:
             if get_errno(exc) not in _UNAVAIL:
@@ -404,7 +404,7 @@ class AsyncTransport(AsyncTransportMixin):
             else:
                 decoded = decode_frame(payload)
             return channel, decoded
-        except TimeoutError:
+        except (socket.timeout, TimeoutError):
             return None, None
 
     async def negotiate(self):
