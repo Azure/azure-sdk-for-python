@@ -15,10 +15,7 @@ def main(generate_input, generate_output):
         data = json.load(reader)
         _LOGGER.info(f"auto_package input: {data}")
     
-    print("======data value:", data)    
-    data = {'azure-mgmt-cosmosdb': {'packageName': 'azure-mgmt-cosmosdb', 'path': ['sdk/cosmos'],
-                                    'readmeMd': ['specification/cosmos-db/resource-manager/readme.md'],
-                                    'tagIsStable': True}}
+    print("======data value:", data)
 
     sdk_folder = "."
     result = {"packages": []}
