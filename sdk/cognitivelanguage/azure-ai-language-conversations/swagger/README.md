@@ -64,7 +64,7 @@ directive:
 ```
 
 ## Rename client operations 
-
+<!-- 
 ### Sync `analyze operation - POST`
 
 ```yaml
@@ -74,7 +74,7 @@ directive:
       transform: >
           $["operationId"] = "analyzeConversation";
 ```
-
+ -->
 ### Async `analyze operation - POST`
 
 ```yaml

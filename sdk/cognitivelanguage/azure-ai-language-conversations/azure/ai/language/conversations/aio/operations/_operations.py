@@ -18,7 +18,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import build_analyze_conversation_cancel_job_request_initial, build_analyze_conversation_request, build_conversation_analysis_request_initial
+from ...operations._operations import build_analyze_conversation_cancel_job_request_initial, build_conversation_analysis_analyze_conversation_request, build_conversation_analysis_request_initial
 from .._vendor import MixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -28,7 +28,23 @@ JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
+class ConversationAnalysisOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.language.conversations.aio.ConversationAnalysisClient`'s
+        :attr:`conversation_analysis` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def analyze_conversation(
@@ -73,7 +89,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         _json = task
 
-        request = build_analyze_conversation_request(
+        request = build_conversation_analysis_analyze_conversation_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -107,6 +123,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
 
+class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     async def _conversation_analysis_initial(
         self,
