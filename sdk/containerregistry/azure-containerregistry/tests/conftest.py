@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import sys
+import os
 
 import pytest
 from devtools_testutils import add_general_regex_sanitizer, test_proxy
@@ -36,3 +37,5 @@ def add_sanitizers(test_proxy):
         regex="batch[a-z]*_([0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b)",
         group_for_replace="1",
     )
+    client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
+    add_general_regex_sanitizer(regex=client_secret, value="client-secret")
