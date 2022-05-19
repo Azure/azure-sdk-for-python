@@ -188,14 +188,14 @@ class _AbstractTransport(object):
             except SSLError as exc:
                 if 'timed out' in str(exc):
                     # http://bugs.python.org/issue10272
-                    raise socket.timeout()
+                    raise TimeoutError()
                 elif 'The operation did not complete' in str(exc):
                     # Non-blocking SSL sockets can throw SSLError
-                    raise socket.timeout()
+                    raise TimeoutError()
                 raise
             except socket.error as exc:
                 if get_errno(exc) == errno.EWOULDBLOCK:
-                    raise socket.timeout()
+                    raise TimeoutError()
                 raise
             finally:
                 if timeout != prev:
@@ -213,14 +213,14 @@ class _AbstractTransport(object):
         except SSLError as exc:
             if 'timed out' in str(exc):
                 # http://bugs.python.org/issue10272
-                raise socket.timeout()
+                raise TimeoutError()
             elif 'The operation did not complete' in str(exc):
                 # Non-blocking SSL sockets can throw SSLError
-                raise socket.timeout()
+                raise TimeoutError()
             raise
         except socket.error as exc:
             if get_errno(exc) == errno.EWOULDBLOCK:
-                raise socket.timeout()
+                raise TimeoutError()
             raise
         finally:
             if bocking_timeout != prev:
@@ -238,14 +238,14 @@ class _AbstractTransport(object):
         except SSLError as exc:
             if 'timed out' in str(exc):
                 # http://bugs.python.org/issue10272
-                raise socket.timeout()
+                raise TimeoutError()
             elif 'The operation did not complete' in str(exc):
                 # Non-blocking SSL sockets can throw SSLError
-                raise socket.timeout()
+                raise TimeoutError()
             raise
         except socket.error as exc:
             if get_errno(exc) == errno.EWOULDBLOCK:
-                raise socket.timeout()
+                raise TimeoutError()
             raise
         finally:
             if non_bocking_timeout != prev:
@@ -411,7 +411,7 @@ class _AbstractTransport(object):
                 read_frame_buffer.write(read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
             else:
                 read_frame_buffer.write(read(payload_size, buffer=payload))
-        except socket.timeout:
+        except TimeoutError:
             read_frame_buffer.write(self._read_buffer.getvalue())
             self._read_buffer = read_frame_buffer
             self._read_buffer.seek(0)
@@ -420,7 +420,7 @@ class _AbstractTransport(object):
             # Don't disconnect for ssl read time outs
             # http://bugs.python.org/issue10272
             if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                raise socket.timeout()
+                raise TimeoutError()
             if get_errno(exc) not in _UNAVAIL:
                 self.connected = False
             raise
@@ -430,7 +430,7 @@ class _AbstractTransport(object):
     def write(self, s):
         try:
             self._write(s)
-        except socket.timeout:
+        except TimeoutError:
             raise
         except (OSError, IOError, socket.error) as exc:
             if get_errno(exc) not in _UNAVAIL:
@@ -446,7 +446,7 @@ class _AbstractTransport(object):
                 decoded = decode_frame(payload)
             # TODO: Catch decode error and return amqp:decode-error
             return channel, decoded
-        except socket.timeout:
+        except TimeoutError:
             return None, None
 
     def send_frame(self, channel, frame, **kwargs):
@@ -568,12 +568,12 @@ class SSLTransport(_AbstractTransport):
                     # ssl.sock.read may cause a SSLerror without errno
                     # http://bugs.python.org/issue10272
                     if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                        raise socket.timeout()
+                        raise TimeoutError()
                     # ssl.sock.read may cause ENOENT if the
                     # operation couldn't be performed (Issue celery#1414).
                     if exc.errno in _errnos:
                         if initial and self.raise_on_initial_eintr:
-                            raise socket.timeout()
+                            raise TimeoutError()
                         continue
                     raise
                 if not nbytes:
@@ -632,7 +632,7 @@ class TCPTransport(_AbstractTransport):
                 except socket.error as exc:
                     if exc.errno in _errnos:
                         if initial and self.raise_on_initial_eintr:
-                            raise socket.timeout()
+                            raise TimeoutError()
                         continue
                     raise
                 if not s:
@@ -694,23 +694,27 @@ class WebSocketTransport(_AbstractTransport):
 
     def _read(self, n, initial=False, buffer=None, **kwargs):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+        from websocket import WebSocketTimeoutException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        while n:
-            data = self.ws.recv()
+        try:
+            while n:
+                data = self.ws.recv()
 
-            if len(data) <= n:
-                view[length: length + len(data)] = data
-                n -= len(data)
-            else:
-                view[length: length + n] = data[0:n]
-                self._read_buffer = BytesIO(data[n:])
-                n = 0
-        return view
+                if len(data) <= n:
+                    view[length: length + len(data)] = data
+                    n -= len(data)
+                else:
+                    view[length: length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
+            return view
+        except WebSocketTimeoutException:
+            raise TimeoutError()
 
     def _shutdown_transport(self):
         """Do any preliminary work in shutting down the connection."""
