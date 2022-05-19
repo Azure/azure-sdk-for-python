@@ -19,12 +19,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 
-try:
-    from urllib.parse import urlparse, quote, unquote  # pylint: disable=unused-import
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -379,6 +373,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         timeout = kwargs.pop('timeout', None)
         self._config.message_encode_policy.configure(
             require_encryption=self.require_encryption,
+            encryption_version=self.encryption_version,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
         )
@@ -607,7 +602,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
             self._config.message_encode_policy.configure(
-                self.require_encryption, self.key_encryption_key, self.key_resolver_function
+                self.require_encryption,
+                self.encryption_version,
+                self.key_encryption_key,
+                self.key_resolver_function
             )
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
