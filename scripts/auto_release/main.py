@@ -173,23 +173,10 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            "dryRun": False,
-            "specFolder": "../azure-rest-api-specs",
-            "headSha": "c6ed0986c1ee45df5c8f2bc56f2a9e802b01d2b0",
-            "headRef": "master",
-            "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
-            "trigger": "continuousIntegration",
-            "changedFiles": [
-                "specification/cosmos-db/resource-manager/readme.python.md"
-            ], "relatedReadmeMdFiles": [
-                "specification/cosmos-db/resource-manager/readme.md"
-            ],
-            "installInstructionInput": {
-                "isPublic": False,
-                "downloadUrlPrefix": "https://portal.azure-devex-tools.com/api/sdk-dl-pub?p=Azure/13991/azure-sdk-for-python-track2/",
-                "downloadCommandTemplate": "curl -L \"{URL}\" -o {FILENAME}",
-                "trigger": "continuousIntegration"
-            }
+            'headSha': self.get_latest_commit_in_swagger_repo(),
+            'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
+            'specFolder': self.spec_repo,
+            'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
