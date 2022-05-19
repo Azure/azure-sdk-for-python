@@ -25,7 +25,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))
     inputs:
      scriptPath: 'scripts/analyze_deps.py'
      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"'
