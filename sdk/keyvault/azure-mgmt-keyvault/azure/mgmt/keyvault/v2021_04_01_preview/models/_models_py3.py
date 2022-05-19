@@ -20,17 +20,17 @@ class AccessPolicyEntry(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tenant_id: Required. The Azure Active Directory tenant ID that should be used for
+    :ivar tenant_id: Required. The Azure Active Directory tenant ID that should be used for
      authenticating requests to the key vault.
-    :type tenant_id: str
-    :param object_id: Required. The object ID of a user, service principal or security group in the
+    :vartype tenant_id: str
+    :ivar object_id: Required. The object ID of a user, service principal or security group in the
      Azure Active Directory tenant for the vault. The object ID must be unique for the list of
      access policies.
-    :type object_id: str
-    :param application_id: Application ID of the client making request on behalf of a principal.
-    :type application_id: str
-    :param permissions: Required. Permissions the identity has for keys, secrets and certificates.
-    :type permissions: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Permissions
+    :vartype object_id: str
+    :ivar application_id: Application ID of the client making request on behalf of a principal.
+    :vartype application_id: str
+    :ivar permissions: Required. Permissions the identity has for keys, secrets and certificates.
+    :vartype permissions: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Permissions
     """
 
     _validation = {
@@ -55,6 +55,20 @@ class AccessPolicyEntry(msrest.serialization.Model):
         application_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tenant_id: Required. The Azure Active Directory tenant ID that should be used for
+         authenticating requests to the key vault.
+        :paramtype tenant_id: str
+        :keyword object_id: Required. The object ID of a user, service principal or security group in
+         the Azure Active Directory tenant for the vault. The object ID must be unique for the list of
+         access policies.
+        :paramtype object_id: str
+        :keyword application_id: Application ID of the client making request on behalf of a principal.
+        :paramtype application_id: str
+        :keyword permissions: Required. Permissions the identity has for keys, secrets and
+         certificates.
+        :paramtype permissions: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Permissions
+        """
         super(AccessPolicyEntry, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.object_id = object_id
@@ -95,6 +109,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
@@ -104,11 +120,11 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from Key Vault resource provider.
 
-    :param code: Error code. This is a mnemonic that can be consumed programmatically.
-    :type code: str
-    :param message: User friendly error message. The message is typically localized and may vary
+    :ivar code: Error code. This is a mnemonic that can be consumed programmatically.
+    :vartype code: str
+    :ivar message: User friendly error message. The message is typically localized and may vary
      with service version.
-    :type message: str
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -123,6 +139,13 @@ class CloudErrorBody(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code. This is a mnemonic that can be consumed programmatically.
+        :paramtype code: str
+        :keyword message: User friendly error message. The message is typically localized and may vary
+         with service version.
+        :paramtype message: str
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -139,8 +162,9 @@ class DeletedManagedHsm(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type of the managed HSM Pool.
     :vartype type: str
-    :param properties: Properties of the deleted managed HSM.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedManagedHsmProperties
+    :ivar properties: Properties of the deleted managed HSM.
+    :vartype properties:
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedManagedHsmProperties
     """
 
     _validation = {
@@ -162,6 +186,11 @@ class DeletedManagedHsm(msrest.serialization.Model):
         properties: Optional["DeletedManagedHsmProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the deleted managed HSM.
+        :paramtype properties:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedManagedHsmProperties
+        """
         super(DeletedManagedHsm, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -172,10 +201,10 @@ class DeletedManagedHsm(msrest.serialization.Model):
 class DeletedManagedHsmListResult(msrest.serialization.Model):
     """List of deleted managed HSM Pools.
 
-    :param value: The list of deleted managed HSM Pools.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedManagedHsm]
-    :param next_link: The URL to get the next set of deleted managed HSM Pools.
-    :type next_link: str
+    :ivar value: The list of deleted managed HSM Pools.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedManagedHsm]
+    :ivar next_link: The URL to get the next set of deleted managed HSM Pools.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -190,6 +219,12 @@ class DeletedManagedHsmListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of deleted managed HSM Pools.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedManagedHsm]
+        :keyword next_link: The URL to get the next set of deleted managed HSM Pools.
+        :paramtype next_link: str
+        """
         super(DeletedManagedHsmListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -236,6 +271,8 @@ class DeletedManagedHsmProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedManagedHsmProperties, self).__init__(**kwargs)
         self.mhsm_id = None
         self.location = None
@@ -256,8 +293,8 @@ class DeletedVault(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type of the key vault.
     :vartype type: str
-    :param properties: Properties of the vault.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVaultProperties
+    :ivar properties: Properties of the vault.
+    :vartype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVaultProperties
     """
 
     _validation = {
@@ -279,6 +316,10 @@ class DeletedVault(msrest.serialization.Model):
         properties: Optional["DeletedVaultProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the vault.
+        :paramtype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVaultProperties
+        """
         super(DeletedVault, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -289,10 +330,10 @@ class DeletedVault(msrest.serialization.Model):
 class DeletedVaultListResult(msrest.serialization.Model):
     """List of vaults.
 
-    :param value: The list of deleted vaults.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVault]
-    :param next_link: The URL to get the next set of deleted vaults.
-    :type next_link: str
+    :ivar value: The list of deleted vaults.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVault]
+    :ivar next_link: The URL to get the next set of deleted vaults.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -307,6 +348,12 @@ class DeletedVaultListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of deleted vaults.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DeletedVault]
+        :keyword next_link: The URL to get the next set of deleted vaults.
+        :paramtype next_link: str
+        """
         super(DeletedVaultListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -353,6 +400,8 @@ class DeletedVaultProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedVaultProperties, self).__init__(**kwargs)
         self.vault_id = None
         self.location = None
@@ -365,13 +414,13 @@ class DeletedVaultProperties(msrest.serialization.Model):
 class DimensionProperties(msrest.serialization.Model):
     """Type of operation: get, read, delete, etc.
 
-    :param name: Name of dimension.
-    :type name: str
-    :param display_name: Display name of dimension.
-    :type display_name: str
-    :param to_be_exported_for_shoebox: Property to specify whether the dimension should be exported
+    :ivar name: Name of dimension.
+    :vartype name: str
+    :ivar display_name: Display name of dimension.
+    :vartype display_name: str
+    :ivar to_be_exported_for_shoebox: Property to specify whether the dimension should be exported
      for Shoebox.
-    :type to_be_exported_for_shoebox: bool
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
@@ -388,6 +437,15 @@ class DimensionProperties(msrest.serialization.Model):
         to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of dimension.
+        :paramtype name: str
+        :keyword display_name: Display name of dimension.
+        :paramtype display_name: str
+        :keyword to_be_exported_for_shoebox: Property to specify whether the dimension should be
+         exported for Shoebox.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
         super(DimensionProperties, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -423,6 +481,8 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -434,9 +494,9 @@ class IPRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple
+    :ivar value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple
      IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78).
-    :type value: str
+    :vartype value: str
     """
 
     _validation = {
@@ -453,6 +513,11 @@ class IPRule(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91'
+         (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78).
+        :paramtype value: str
+        """
         super(IPRule, self).__init__(**kwargs)
         self.value = value
 
@@ -460,12 +525,12 @@ class IPRule(msrest.serialization.Model):
 class LogSpecification(msrest.serialization.Model):
     """Log specification of operation.
 
-    :param name: Name of log specification.
-    :type name: str
-    :param display_name: Display name of log specification.
-    :type display_name: str
-    :param blob_duration: Blob duration of specification.
-    :type blob_duration: str
+    :ivar name: Name of log specification.
+    :vartype name: str
+    :ivar display_name: Display name of log specification.
+    :vartype display_name: str
+    :ivar blob_duration: Blob duration of specification.
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
@@ -482,6 +547,14 @@ class LogSpecification(msrest.serialization.Model):
         blob_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of log specification.
+        :paramtype name: str
+        :keyword display_name: Display name of log specification.
+        :paramtype display_name: str
+        :keyword blob_duration: Blob duration of specification.
+        :paramtype blob_duration: str
+        """
         super(LogSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -499,12 +572,12 @@ class ManagedHsmResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type of the managed HSM Pool.
     :vartype type: str
-    :param location: The supported Azure location where the managed HSM Pool should be created.
-    :type location: str
-    :param sku: SKU details.
-    :type sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The supported Azure location where the managed HSM Pool should be created.
+    :vartype location: str
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the key vault
      resource.
     :vartype system_data: ~azure.mgmt.keyvault.v2021_04_01_preview.models.SystemData
@@ -535,6 +608,14 @@ class ManagedHsmResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The supported Azure location where the managed HSM Pool should be created.
+        :paramtype location: str
+        :keyword sku: SKU details.
+        :paramtype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ManagedHsmResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -556,17 +637,17 @@ class ManagedHsm(ManagedHsmResource):
     :vartype name: str
     :ivar type: The resource type of the managed HSM Pool.
     :vartype type: str
-    :param location: The supported Azure location where the managed HSM Pool should be created.
-    :type location: str
-    :param sku: SKU details.
-    :type sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The supported Azure location where the managed HSM Pool should be created.
+    :vartype location: str
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the key vault
      resource.
     :vartype system_data: ~azure.mgmt.keyvault.v2021_04_01_preview.models.SystemData
-    :param properties: Properties of the managed HSM.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmProperties
+    :ivar properties: Properties of the managed HSM.
+    :vartype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmProperties
     """
 
     _validation = {
@@ -596,6 +677,16 @@ class ManagedHsm(ManagedHsmResource):
         properties: Optional["ManagedHsmProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword location: The supported Azure location where the managed HSM Pool should be created.
+        :paramtype location: str
+        :keyword sku: SKU details.
+        :paramtype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of the managed HSM.
+        :paramtype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmProperties
+        """
         super(ManagedHsm, self).__init__(location=location, sku=sku, tags=tags, **kwargs)
         self.properties = properties
 
@@ -621,6 +712,8 @@ class ManagedHsmError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedHsmError, self).__init__(**kwargs)
         self.error = None
 
@@ -628,10 +721,10 @@ class ManagedHsmError(msrest.serialization.Model):
 class ManagedHsmListResult(msrest.serialization.Model):
     """List of managed HSM Pools.
 
-    :param value: The list of managed HSM Pools.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsm]
-    :param next_link: The URL to get the next set of managed HSM Pools.
-    :type next_link: str
+    :ivar value: The list of managed HSM Pools.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsm]
+    :ivar next_link: The URL to get the next set of managed HSM Pools.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -646,6 +739,12 @@ class ManagedHsmListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of managed HSM Pools.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsm]
+        :keyword next_link: The URL to get the next set of managed HSM Pools.
+        :paramtype next_link: str
+        """
         super(ManagedHsmListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -656,30 +755,30 @@ class ManagedHsmProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
+    :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the managed HSM pool.
-    :type tenant_id: str
-    :param initial_admin_object_ids: Array of initial administrators object ids for this managed
-     hsm pool.
-    :type initial_admin_object_ids: list[str]
+    :vartype tenant_id: str
+    :ivar initial_admin_object_ids: Array of initial administrators object ids for this managed hsm
+     pool.
+    :vartype initial_admin_object_ids: list[str]
     :ivar hsm_uri: The URI of the managed hsm pool for performing operations on keys.
     :vartype hsm_uri: str
-    :param enable_soft_delete: Property to specify whether the 'soft delete' functionality is
+    :ivar enable_soft_delete: Property to specify whether the 'soft delete' functionality is
      enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
      new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
      reverted to false.
-    :type enable_soft_delete: bool
-    :param soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
-    :type soft_delete_retention_in_days: int
-    :param enable_purge_protection: Property specifying whether protection against purge is enabled
+    :vartype enable_soft_delete: bool
+    :ivar soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
+    :vartype soft_delete_retention_in_days: int
+    :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this managed HSM pool. Setting this property to true activates protection against purge for
      this managed HSM pool and its content - only the Managed HSM service may initiate a hard,
      irrecoverable deletion. The setting is effective only if soft delete is also enabled. Enabling
      this functionality is irreversible.
-    :type enable_purge_protection: bool
-    :param create_mode: The create mode to indicate whether the resource is being created or is
+    :vartype enable_purge_protection: bool
+    :ivar create_mode: The create mode to indicate whether the resource is being created or is
      being recovered from a deleted resource. Possible values include: "recover", "default".
-    :type create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
+    :vartype create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
     :ivar status_message: Resource Status Message.
     :vartype status_message: str
     :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded",
@@ -687,16 +786,16 @@ class ManagedHsmProperties(msrest.serialization.Model):
      "Restoring".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.ProvisioningState
-    :param network_acls: Rules governing the accessibility of the key vault from specific network
+    :ivar network_acls: Rules governing the accessibility of the key vault from specific network
      locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMNetworkRuleSet
+    :vartype network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMNetworkRuleSet
     :ivar private_endpoint_connections: List of private endpoint connections associated with the
      managed hsm pool.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpointConnectionItem]
-    :param public_network_access: Control permission for data plane traffic coming from public
+    :ivar public_network_access: Control permission for data plane traffic coming from public
      networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or
+    :vartype public_network_access: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PublicNetworkAccess
     :ivar scheduled_purge_date: The scheduled purge date in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
@@ -739,6 +838,38 @@ class ManagedHsmProperties(msrest.serialization.Model):
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         **kwargs
     ):
+        """
+        :keyword tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
+         requests to the managed HSM pool.
+        :paramtype tenant_id: str
+        :keyword initial_admin_object_ids: Array of initial administrators object ids for this managed
+         hsm pool.
+        :paramtype initial_admin_object_ids: list[str]
+        :keyword enable_soft_delete: Property to specify whether the 'soft delete' functionality is
+         enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
+         new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
+         reverted to false.
+        :paramtype enable_soft_delete: bool
+        :keyword soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and
+         <=90.
+        :paramtype soft_delete_retention_in_days: int
+        :keyword enable_purge_protection: Property specifying whether protection against purge is
+         enabled for this managed HSM pool. Setting this property to true activates protection against
+         purge for this managed HSM pool and its content - only the Managed HSM service may initiate a
+         hard, irrecoverable deletion. The setting is effective only if soft delete is also enabled.
+         Enabling this functionality is irreversible.
+        :paramtype enable_purge_protection: bool
+        :keyword create_mode: The create mode to indicate whether the resource is being created or is
+         being recovered from a deleted resource. Possible values include: "recover", "default".
+        :paramtype create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
+        :keyword network_acls: Rules governing the accessibility of the key vault from specific network
+         locations.
+        :paramtype network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMNetworkRuleSet
+        :keyword public_network_access: Control permission for data plane traffic coming from public
+         networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PublicNetworkAccess
+        """
         super(ManagedHsmProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.initial_admin_object_ids = initial_admin_object_ids
@@ -760,11 +891,11 @@ class ManagedHsmSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param family: Required. SKU Family of the managed HSM Pool. Possible values include: "B".
-    :type family: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSkuFamily
-    :param name: Required. SKU of the managed HSM Pool. Possible values include: "Standard_B1",
+    :ivar family: Required. SKU Family of the managed HSM Pool. Possible values include: "B".
+    :vartype family: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSkuFamily
+    :ivar name: Required. SKU of the managed HSM Pool. Possible values include: "Standard_B1",
      "Custom_B32".
-    :type name: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSkuName
+    :vartype name: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSkuName
     """
 
     _validation = {
@@ -784,6 +915,13 @@ class ManagedHsmSku(msrest.serialization.Model):
         name: Union[str, "ManagedHsmSkuName"],
         **kwargs
     ):
+        """
+        :keyword family: Required. SKU Family of the managed HSM Pool. Possible values include: "B".
+        :paramtype family: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSkuFamily
+        :keyword name: Required. SKU of the managed HSM Pool. Possible values include: "Standard_B1",
+         "Custom_B32".
+        :paramtype name: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSkuName
+        """
         super(ManagedHsmSku, self).__init__(**kwargs)
         self.family = family
         self.name = name
@@ -792,29 +930,29 @@ class ManagedHsmSku(msrest.serialization.Model):
 class MetricSpecification(msrest.serialization.Model):
     """Metric specification of operation.
 
-    :param name: Name of metric specification.
-    :type name: str
-    :param display_name: Display name of metric specification.
-    :type display_name: str
-    :param display_description: Display description of metric specification.
-    :type display_description: str
-    :param unit: The metric unit. Possible values include: 'Bytes', 'Count', 'Milliseconds'.
-    :type unit: str
-    :param aggregation_type: The metric aggregation type. Possible values include: 'Average',
+    :ivar name: Name of metric specification.
+    :vartype name: str
+    :ivar display_name: Display name of metric specification.
+    :vartype display_name: str
+    :ivar display_description: Display description of metric specification.
+    :vartype display_description: str
+    :ivar unit: The metric unit. Possible values include: 'Bytes', 'Count', 'Milliseconds'.
+    :vartype unit: str
+    :ivar aggregation_type: The metric aggregation type. Possible values include: 'Average',
      'Count', 'Total'.
-    :type aggregation_type: str
-    :param supported_aggregation_types: The supported aggregation types for the metrics.
-    :type supported_aggregation_types: list[str]
-    :param supported_time_grain_types: The supported time grain types for the metrics.
-    :type supported_time_grain_types: list[str]
-    :param lock_aggregation_type: The metric lock aggregation type.
-    :type lock_aggregation_type: str
-    :param dimensions: The dimensions of metric.
-    :type dimensions: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DimensionProperties]
-    :param fill_gap_with_zero: Property to specify whether to fill gap with zero.
-    :type fill_gap_with_zero: bool
-    :param internal_metric_name: The internal metric name.
-    :type internal_metric_name: str
+    :vartype aggregation_type: str
+    :ivar supported_aggregation_types: The supported aggregation types for the metrics.
+    :vartype supported_aggregation_types: list[str]
+    :ivar supported_time_grain_types: The supported time grain types for the metrics.
+    :vartype supported_time_grain_types: list[str]
+    :ivar lock_aggregation_type: The metric lock aggregation type.
+    :vartype lock_aggregation_type: str
+    :ivar dimensions: The dimensions of metric.
+    :vartype dimensions: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DimensionProperties]
+    :ivar fill_gap_with_zero: Property to specify whether to fill gap with zero.
+    :vartype fill_gap_with_zero: bool
+    :ivar internal_metric_name: The internal metric name.
+    :vartype internal_metric_name: str
     """
 
     _attribute_map = {
@@ -847,6 +985,32 @@ class MetricSpecification(msrest.serialization.Model):
         internal_metric_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of metric specification.
+        :paramtype name: str
+        :keyword display_name: Display name of metric specification.
+        :paramtype display_name: str
+        :keyword display_description: Display description of metric specification.
+        :paramtype display_description: str
+        :keyword unit: The metric unit. Possible values include: 'Bytes', 'Count', 'Milliseconds'.
+        :paramtype unit: str
+        :keyword aggregation_type: The metric aggregation type. Possible values include: 'Average',
+         'Count', 'Total'.
+        :paramtype aggregation_type: str
+        :keyword supported_aggregation_types: The supported aggregation types for the metrics.
+        :paramtype supported_aggregation_types: list[str]
+        :keyword supported_time_grain_types: The supported time grain types for the metrics.
+        :paramtype supported_time_grain_types: list[str]
+        :keyword lock_aggregation_type: The metric lock aggregation type.
+        :paramtype lock_aggregation_type: str
+        :keyword dimensions: The dimensions of metric.
+        :paramtype dimensions:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.DimensionProperties]
+        :keyword fill_gap_with_zero: Property to specify whether to fill gap with zero.
+        :paramtype fill_gap_with_zero: bool
+        :keyword internal_metric_name: The internal metric name.
+        :paramtype internal_metric_name: str
+        """
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -866,9 +1030,9 @@ class MHSMIPRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple
+    :ivar value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple
      IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78).
-    :type value: str
+    :vartype value: str
     """
 
     _validation = {
@@ -885,6 +1049,11 @@ class MHSMIPRule(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword value: Required. An IPv4 address range in CIDR notation, such as '124.56.78.91'
+         (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78).
+        :paramtype value: str
+        """
         super(MHSMIPRule, self).__init__(**kwargs)
         self.value = value
 
@@ -892,18 +1061,20 @@ class MHSMIPRule(msrest.serialization.Model):
 class MHSMNetworkRuleSet(msrest.serialization.Model):
     """A set of rules governing the network accessibility of a managed hsm pool.
 
-    :param bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
+    :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
      'None'.  If not specified the default is 'AzureServices'. Possible values include:
      "AzureServices", "None".
-    :type bypass: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleBypassOptions
-    :param default_action: The default action when no rule from ipRules and from
-     virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-     Possible values include: "Allow", "Deny".
-    :type default_action: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleAction
-    :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMIPRule]
-    :param virtual_network_rules: The list of virtual network rules.
-    :type virtual_network_rules:
+    :vartype bypass: str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleBypassOptions
+    :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
+     match. This is only used after the bypass property has been evaluated. Possible values include:
+     "Allow", "Deny".
+    :vartype default_action: str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleAction
+    :ivar ip_rules: The list of IP address rules.
+    :vartype ip_rules: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMIPRule]
+    :ivar virtual_network_rules: The list of virtual network rules.
+    :vartype virtual_network_rules:
      list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMVirtualNetworkRule]
     """
 
@@ -923,6 +1094,23 @@ class MHSMNetworkRuleSet(msrest.serialization.Model):
         virtual_network_rules: Optional[List["MHSMVirtualNetworkRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
+         'None'.  If not specified the default is 'AzureServices'. Possible values include:
+         "AzureServices", "None".
+        :paramtype bypass: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleBypassOptions
+        :keyword default_action: The default action when no rule from ipRules and from
+         virtualNetworkRules match. This is only used after the bypass property has been evaluated.
+         Possible values include: "Allow", "Deny".
+        :paramtype default_action: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleAction
+        :keyword ip_rules: The list of IP address rules.
+        :paramtype ip_rules: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMIPRule]
+        :keyword virtual_network_rules: The list of virtual network rules.
+        :paramtype virtual_network_rules:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMVirtualNetworkRule]
+        """
         super(MHSMNetworkRuleSet, self).__init__(**kwargs)
         self.bypass = bypass
         self.default_action = default_action
@@ -951,6 +1139,8 @@ class MHSMPrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MHSMPrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -966,25 +1156,25 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
     :vartype name: str
     :ivar type: The resource type of the managed HSM Pool.
     :vartype type: str
-    :param location: The supported Azure location where the managed HSM Pool should be created.
-    :type location: str
-    :param sku: SKU details.
-    :type sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The supported Azure location where the managed HSM Pool should be created.
+    :vartype location: str
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the key vault
      resource.
     :vartype system_data: ~azure.mgmt.keyvault.v2021_04_01_preview.models.SystemData
-    :param etag: Modified whenever there is a change in the state of private endpoint connection.
-    :type etag: str
-    :param private_endpoint: Properties of the private endpoint object.
-    :type private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpoint
-    :param private_link_service_connection_state: Approval state of the private link connection.
-    :type private_link_service_connection_state:
+    :ivar etag: Modified whenever there is a change in the state of private endpoint connection.
+    :vartype etag: str
+    :ivar private_endpoint: Properties of the private endpoint object.
+    :vartype private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpoint
+    :ivar private_link_service_connection_state: Approval state of the private link connection.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint connection. Possible
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
@@ -1021,6 +1211,26 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
         provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The supported Azure location where the managed HSM Pool should be created.
+        :paramtype location: str
+        :keyword sku: SKU details.
+        :paramtype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword etag: Modified whenever there is a change in the state of private endpoint connection.
+        :paramtype etag: str
+        :keyword private_endpoint: Properties of the private endpoint object.
+        :paramtype private_endpoint:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpoint
+        :keyword private_link_service_connection_state: Approval state of the private link connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkServiceConnectionState
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
+         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
+        """
         super(MHSMPrivateEndpointConnection, self).__init__(location=location, sku=sku, tags=tags, **kwargs)
         self.etag = etag
         self.private_endpoint = private_endpoint
@@ -1031,14 +1241,14 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
 class MHSMPrivateEndpointConnectionItem(msrest.serialization.Model):
     """Private endpoint connection item.
 
-    :param private_endpoint: Properties of the private endpoint object.
-    :type private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpoint
-    :param private_link_service_connection_state: Approval state of the private link connection.
-    :type private_link_service_connection_state:
+    :ivar private_endpoint: Properties of the private endpoint object.
+    :vartype private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpoint
+    :ivar private_link_service_connection_state: Approval state of the private link connection.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint connection. Possible
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
@@ -1056,6 +1266,18 @@ class MHSMPrivateEndpointConnectionItem(msrest.serialization.Model):
         provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Properties of the private endpoint object.
+        :paramtype private_endpoint:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpoint
+        :keyword private_link_service_connection_state: Approval state of the private link connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkServiceConnectionState
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
+         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
+        """
         super(MHSMPrivateEndpointConnectionItem, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -1065,11 +1287,11 @@ class MHSMPrivateEndpointConnectionItem(msrest.serialization.Model):
 class MHSMPrivateEndpointConnectionsListResult(msrest.serialization.Model):
     """List of private endpoint connections associated with a managed HSM Pools.
 
-    :param value: The private endpoint connection associated with a managed HSM Pools.
-    :type value:
+    :ivar value: The private endpoint connection associated with a managed HSM Pools.
+    :vartype value:
      list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpointConnection]
-    :param next_link: The URL to get the next set of managed HSM Pools.
-    :type next_link: str
+    :ivar next_link: The URL to get the next set of managed HSM Pools.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1084,6 +1306,13 @@ class MHSMPrivateEndpointConnectionsListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The private endpoint connection associated with a managed HSM Pools.
+        :paramtype value:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateEndpointConnection]
+        :keyword next_link: The URL to get the next set of managed HSM Pools.
+        :paramtype next_link: str
+        """
         super(MHSMPrivateEndpointConnectionsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1100,12 +1329,12 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
     :vartype name: str
     :ivar type: The resource type of the managed HSM Pool.
     :vartype type: str
-    :param location: The supported Azure location where the managed HSM Pool should be created.
-    :type location: str
-    :param sku: SKU details.
-    :type sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The supported Azure location where the managed HSM Pool should be created.
+    :vartype location: str
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the key vault
      resource.
     :vartype system_data: ~azure.mgmt.keyvault.v2021_04_01_preview.models.SystemData
@@ -1113,8 +1342,8 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
     :vartype group_id: str
     :ivar required_members: Required member names of private link resource.
     :vartype required_members: list[str]
-    :param required_zone_names: Required DNS zone names of the the private link resource.
-    :type required_zone_names: list[str]
+    :ivar required_zone_names: Required DNS zone names of the the private link resource.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
@@ -1148,6 +1377,16 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
         required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The supported Azure location where the managed HSM Pool should be created.
+        :paramtype location: str
+        :keyword sku: SKU details.
+        :paramtype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.ManagedHsmSku
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword required_zone_names: Required DNS zone names of the the private link resource.
+        :paramtype required_zone_names: list[str]
+        """
         super(MHSMPrivateLinkResource, self).__init__(location=location, sku=sku, tags=tags, **kwargs)
         self.group_id = None
         self.required_members = None
@@ -1157,8 +1396,8 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
 class MHSMPrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
-    :param value: Array of private link resources.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkResource]
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkResource]
     """
 
     _attribute_map = {
@@ -1171,6 +1410,10 @@ class MHSMPrivateLinkResourceListResult(msrest.serialization.Model):
         value: Optional[List["MHSMPrivateLinkResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MHSMPrivateLinkResource]
+        """
         super(MHSMPrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1178,15 +1421,16 @@ class MHSMPrivateLinkResourceListResult(msrest.serialization.Model):
 class MHSMPrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
-    :param status: Indicates whether the connection has been approved, rejected or removed by the
+    :ivar status: Indicates whether the connection has been approved, rejected or removed by the
      key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
-    :type status: str or
+    :vartype status: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointServiceConnectionStatus
-    :param description: The reason for approval or rejection.
-    :type description: str
-    :param actions_required: A message indicating if changes on the service provider require any
+    :ivar description: The reason for approval or rejection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
      updates on the consumer. Possible values include: "None".
-    :type actions_required: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ActionsRequired
+    :vartype actions_required: str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.ActionsRequired
     """
 
     _attribute_map = {
@@ -1203,6 +1447,18 @@ class MHSMPrivateLinkServiceConnectionState(msrest.serialization.Model):
         actions_required: Optional[Union[str, "ActionsRequired"]] = None,
         **kwargs
     ):
+        """
+        :keyword status: Indicates whether the connection has been approved, rejected or removed by the
+         key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+        :paramtype status: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval or rejection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer. Possible values include: "None".
+        :paramtype actions_required: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.ActionsRequired
+        """
         super(MHSMPrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -1214,9 +1470,9 @@ class MHSMVirtualNetworkRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Full resource id of a vnet subnet, such as
+    :ivar id: Required. Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-    :type id: str
+    :vartype id: str
     """
 
     _validation = {
@@ -1233,6 +1489,11 @@ class MHSMVirtualNetworkRule(msrest.serialization.Model):
         id: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. Full resource id of a vnet subnet, such as
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+        :paramtype id: str
+        """
         super(MHSMVirtualNetworkRule, self).__init__(**kwargs)
         self.id = id
 
@@ -1240,18 +1501,20 @@ class MHSMVirtualNetworkRule(msrest.serialization.Model):
 class NetworkRuleSet(msrest.serialization.Model):
     """A set of rules governing the network accessibility of a vault.
 
-    :param bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
+    :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
      'None'.  If not specified the default is 'AzureServices'. Possible values include:
      "AzureServices", "None".
-    :type bypass: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleBypassOptions
-    :param default_action: The default action when no rule from ipRules and from
-     virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-     Possible values include: "Allow", "Deny".
-    :type default_action: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleAction
-    :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.IPRule]
-    :param virtual_network_rules: The list of virtual network rules.
-    :type virtual_network_rules:
+    :vartype bypass: str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleBypassOptions
+    :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
+     match. This is only used after the bypass property has been evaluated. Possible values include:
+     "Allow", "Deny".
+    :vartype default_action: str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleAction
+    :ivar ip_rules: The list of IP address rules.
+    :vartype ip_rules: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.IPRule]
+    :ivar virtual_network_rules: The list of virtual network rules.
+    :vartype virtual_network_rules:
      list[~azure.mgmt.keyvault.v2021_04_01_preview.models.VirtualNetworkRule]
     """
 
@@ -1271,6 +1534,23 @@ class NetworkRuleSet(msrest.serialization.Model):
         virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
+         'None'.  If not specified the default is 'AzureServices'. Possible values include:
+         "AzureServices", "None".
+        :paramtype bypass: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleBypassOptions
+        :keyword default_action: The default action when no rule from ipRules and from
+         virtualNetworkRules match. This is only used after the bypass property has been evaluated.
+         Possible values include: "Allow", "Deny".
+        :paramtype default_action: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleAction
+        :keyword ip_rules: The list of IP address rules.
+        :paramtype ip_rules: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.IPRule]
+        :keyword virtual_network_rules: The list of virtual network rules.
+        :paramtype virtual_network_rules:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.VirtualNetworkRule]
+        """
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.bypass = bypass
         self.default_action = default_action
@@ -1281,16 +1561,16 @@ class NetworkRuleSet(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Key Vault REST API operation definition.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.keyvault.v2021_04_01_preview.models.OperationDisplay
-    :param origin: The origin of operations.
-    :type origin: str
-    :param is_data_action: Property to specify whether the action is a data action.
-    :type is_data_action: bool
-    :param service_specification: One property of operation, include metric specifications.
-    :type service_specification:
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: Display metadata associated with the operation.
+    :vartype display: ~azure.mgmt.keyvault.v2021_04_01_preview.models.OperationDisplay
+    :ivar origin: The origin of operations.
+    :vartype origin: str
+    :ivar is_data_action: Property to specify whether the action is a data action.
+    :vartype is_data_action: bool
+    :ivar service_specification: One property of operation, include metric specifications.
+    :vartype service_specification:
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.ServiceSpecification
     """
 
@@ -1312,6 +1592,19 @@ class Operation(msrest.serialization.Model):
         service_specification: Optional["ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: Display metadata associated with the operation.
+        :paramtype display: ~azure.mgmt.keyvault.v2021_04_01_preview.models.OperationDisplay
+        :keyword origin: The origin of operations.
+        :paramtype origin: str
+        :keyword is_data_action: Property to specify whether the action is a data action.
+        :paramtype is_data_action: bool
+        :keyword service_specification: One property of operation, include metric specifications.
+        :paramtype service_specification:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.ServiceSpecification
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -1323,14 +1616,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """Display metadata associated with the operation.
 
-    :param provider: Service provider: Microsoft Key Vault.
-    :type provider: str
-    :param resource: Resource on which the operation is performed etc.
-    :type resource: str
-    :param operation: Type of operation: get, read, delete, etc.
-    :type operation: str
-    :param description: Description of operation.
-    :type description: str
+    :ivar provider: Service provider: Microsoft Key Vault.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed etc.
+    :vartype resource: str
+    :ivar operation: Type of operation: get, read, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -1349,6 +1642,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft Key Vault.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed etc.
+        :paramtype resource: str
+        :keyword operation: Type of operation: get, read, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -1359,10 +1662,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Storage operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Storage operations supported by the Storage resource provider.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Operation]
-    :param next_link: The URL to get the next set of operations.
-    :type next_link: str
+    :ivar value: List of Storage operations supported by the Storage resource provider.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Operation]
+    :ivar next_link: The URL to get the next set of operations.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1377,6 +1680,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Storage operations supported by the Storage resource provider.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Operation]
+        :keyword next_link: The URL to get the next set of operations.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1385,15 +1694,17 @@ class OperationListResult(msrest.serialization.Model):
 class Permissions(msrest.serialization.Model):
     """Permissions the identity has for keys, secrets, certificates and storage.
 
-    :param keys: Permissions to keys.
-    :type keys: list[str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.KeyPermissions]
-    :param secrets: Permissions to secrets.
-    :type secrets: list[str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SecretPermissions]
-    :param certificates: Permissions to certificates.
-    :type certificates: list[str or
+    :ivar keys: Permissions to keys.
+    :vartype keys: list[str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.KeyPermissions]
+    :ivar secrets: Permissions to secrets.
+    :vartype secrets: list[str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.SecretPermissions]
+    :ivar certificates: Permissions to certificates.
+    :vartype certificates: list[str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.CertificatePermissions]
-    :param storage: Permissions to storage accounts.
-    :type storage: list[str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.StoragePermissions]
+    :ivar storage: Permissions to storage accounts.
+    :vartype storage: list[str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.StoragePermissions]
     """
 
     _attribute_map = {
@@ -1412,6 +1723,19 @@ class Permissions(msrest.serialization.Model):
         storage: Optional[List[Union[str, "StoragePermissions"]]] = None,
         **kwargs
     ):
+        """
+        :keyword keys: Permissions to keys.
+        :paramtype keys: list[str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.KeyPermissions]
+        :keyword secrets: Permissions to secrets.
+        :paramtype secrets: list[str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.SecretPermissions]
+        :keyword certificates: Permissions to certificates.
+        :paramtype certificates: list[str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.CertificatePermissions]
+        :keyword storage: Permissions to storage accounts.
+        :paramtype storage: list[str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.StoragePermissions]
+        """
         super(Permissions, self).__init__(**kwargs)
         self.keys = keys
         self.secrets = secrets
@@ -1440,6 +1764,8 @@ class PrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -1481,6 +1807,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1504,16 +1832,16 @@ class PrivateEndpointConnection(Resource):
     :vartype location: str
     :ivar tags: A set of tags. Tags assigned to the key vault resource.
     :vartype tags: dict[str, str]
-    :param etag: Modified whenever there is a change in the state of private endpoint connection.
-    :type etag: str
-    :param private_endpoint: Properties of the private endpoint object.
-    :type private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpoint
-    :param private_link_service_connection_state: Approval state of the private link connection.
-    :type private_link_service_connection_state:
+    :ivar etag: Modified whenever there is a change in the state of private endpoint connection.
+    :vartype etag: str
+    :ivar private_endpoint: Properties of the private endpoint object.
+    :vartype private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Approval state of the private link connection.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint connection. Possible
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
@@ -1546,6 +1874,19 @@ class PrivateEndpointConnection(Resource):
         provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Modified whenever there is a change in the state of private endpoint connection.
+        :paramtype etag: str
+        :keyword private_endpoint: Properties of the private endpoint object.
+        :paramtype private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Approval state of the private link connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkServiceConnectionState
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
+         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.etag = etag
         self.private_endpoint = private_endpoint
@@ -1556,18 +1897,18 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionItem(msrest.serialization.Model):
     """Private endpoint connection item.
 
-    :param id: Id of private endpoint connection.
-    :type id: str
-    :param etag: Modified whenever there is a change in the state of private endpoint connection.
-    :type etag: str
-    :param private_endpoint: Properties of the private endpoint object.
-    :type private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpoint
-    :param private_link_service_connection_state: Approval state of the private link connection.
-    :type private_link_service_connection_state:
+    :ivar id: Id of private endpoint connection.
+    :vartype id: str
+    :ivar etag: Modified whenever there is a change in the state of private endpoint connection.
+    :vartype etag: str
+    :ivar private_endpoint: Properties of the private endpoint object.
+    :vartype private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Approval state of the private link connection.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkServiceConnectionState
-    :param provisioning_state: Provisioning state of the private endpoint connection. Possible
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
@@ -1589,6 +1930,21 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
         provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Id of private endpoint connection.
+        :paramtype id: str
+        :keyword etag: Modified whenever there is a change in the state of private endpoint connection.
+        :paramtype etag: str
+        :keyword private_endpoint: Properties of the private endpoint object.
+        :paramtype private_endpoint: ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Approval state of the private link connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkServiceConnectionState
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
+         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnectionProvisioningState
+        """
         super(PrivateEndpointConnectionItem, self).__init__(**kwargs)
         self.id = id
         self.etag = etag
@@ -1600,10 +1956,10 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """List of private endpoint connections.
 
-    :param value: The list of private endpoint connections.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnection]
-    :param next_link: The URL to get the next set of private endpoint connections.
-    :type next_link: str
+    :ivar value: The list of private endpoint connections.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnection]
+    :ivar next_link: The URL to get the next set of private endpoint connections.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1618,6 +1974,13 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of private endpoint connections.
+        :paramtype value:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointConnection]
+        :keyword next_link: The URL to get the next set of private endpoint connections.
+        :paramtype next_link: str
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1642,8 +2005,8 @@ class PrivateLinkResource(Resource):
     :vartype group_id: str
     :ivar required_members: Required member names of private link resource.
     :vartype required_members: list[str]
-    :param required_zone_names: Required DNS zone names of the the private link resource.
-    :type required_zone_names: list[str]
+    :ivar required_zone_names: Required DNS zone names of the the private link resource.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
@@ -1673,6 +2036,10 @@ class PrivateLinkResource(Resource):
         required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword required_zone_names: Required DNS zone names of the the private link resource.
+        :paramtype required_zone_names: list[str]
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -1682,8 +2049,8 @@ class PrivateLinkResource(Resource):
 class PrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
-    :param value: Array of private link resources.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkResource]
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkResource]
     """
 
     _attribute_map = {
@@ -1696,6 +2063,10 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         value: Optional[List["PrivateLinkResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateLinkResource]
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1703,15 +2074,16 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
-    :param status: Indicates whether the connection has been approved, rejected or removed by the
+    :ivar status: Indicates whether the connection has been approved, rejected or removed by the
      key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
-    :type status: str or
+    :vartype status: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointServiceConnectionStatus
-    :param description: The reason for approval or rejection.
-    :type description: str
-    :param actions_required: A message indicating if changes on the service provider require any
+    :ivar description: The reason for approval or rejection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
      updates on the consumer. Possible values include: "None".
-    :type actions_required: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.ActionsRequired
+    :vartype actions_required: str or
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.ActionsRequired
     """
 
     _attribute_map = {
@@ -1728,6 +2100,18 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         actions_required: Optional[Union[str, "ActionsRequired"]] = None,
         **kwargs
     ):
+        """
+        :keyword status: Indicates whether the connection has been approved, rejected or removed by the
+         key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+        :paramtype status: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval or rejection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer. Possible values include: "None".
+        :paramtype actions_required: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.ActionsRequired
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -1737,10 +2121,10 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 class ResourceListResult(msrest.serialization.Model):
     """List of vault resources.
 
-    :param value: The list of vault resources.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Resource]
-    :param next_link: The URL to get the next set of vault resources.
-    :type next_link: str
+    :ivar value: The list of vault resources.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Resource]
+    :ivar next_link: The URL to get the next set of vault resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1755,6 +2139,12 @@ class ResourceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of vault resources.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Resource]
+        :keyword next_link: The URL to get the next set of vault resources.
+        :paramtype next_link: str
+        """
         super(ResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1763,11 +2153,11 @@ class ResourceListResult(msrest.serialization.Model):
 class ServiceSpecification(msrest.serialization.Model):
     """One property of operation, include log specifications.
 
-    :param log_specifications: Log specifications of operation.
-    :type log_specifications:
+    :ivar log_specifications: Log specifications of operation.
+    :vartype log_specifications:
      list[~azure.mgmt.keyvault.v2021_04_01_preview.models.LogSpecification]
-    :param metric_specifications: Metric specifications of operation.
-    :type metric_specifications:
+    :ivar metric_specifications: Metric specifications of operation.
+    :vartype metric_specifications:
      list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MetricSpecification]
     """
 
@@ -1783,6 +2173,14 @@ class ServiceSpecification(msrest.serialization.Model):
         metric_specifications: Optional[List["MetricSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword log_specifications: Log specifications of operation.
+        :paramtype log_specifications:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.LogSpecification]
+        :keyword metric_specifications: Metric specifications of operation.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.MetricSpecification]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications
@@ -1793,11 +2191,11 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param family: Required. SKU family name. Possible values include: "A".
-    :type family: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SkuFamily
-    :param name: Required. SKU name to specify whether the key vault is a standard vault or a
+    :ivar family: Required. SKU family name. Possible values include: "A".
+    :vartype family: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SkuFamily
+    :ivar name: Required. SKU name to specify whether the key vault is a standard vault or a
      premium vault. Possible values include: "standard", "premium".
-    :type name: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SkuName
+    :vartype name: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SkuName
     """
 
     _validation = {
@@ -1817,6 +2215,13 @@ class Sku(msrest.serialization.Model):
         name: Union[str, "SkuName"],
         **kwargs
     ):
+        """
+        :keyword family: Required. SKU family name. Possible values include: "A".
+        :paramtype family: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SkuFamily
+        :keyword name: Required. SKU name to specify whether the key vault is a standard vault or a
+         premium vault. Possible values include: "standard", "premium".
+        :paramtype name: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.SkuName
+        """
         super(Sku, self).__init__(**kwargs)
         self.family = family
         self.name = name
@@ -1825,21 +2230,21 @@ class Sku(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the key vault resource.
 
-    :param created_by: The identity that created the key vault resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the key vault resource. Possible
+    :ivar created_by: The identity that created the key vault resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the key vault resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.IdentityType
-    :param created_at: The timestamp of the key vault resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the key vault resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the key vault resource.
+    :vartype created_by_type: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.IdentityType
+    :ivar created_at: The timestamp of the key vault resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the key vault resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the key vault resource.
      Possible values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.IdentityType
-    :param last_modified_at: The timestamp of the key vault resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of the key vault resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1862,6 +2267,23 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the key vault resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the key vault resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.IdentityType
+        :keyword created_at: The timestamp of the key vault resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the key vault resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the key vault resource.
+         Possible values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.IdentityType
+        :keyword last_modified_at: The timestamp of the key vault resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1884,14 +2306,14 @@ class Vault(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type of the key vault resource.
     :vartype type: str
-    :param location: Azure location of the key vault resource.
-    :type location: str
-    :param tags: A set of tags. Tags assigned to the key vault resource.
-    :type tags: dict[str, str]
+    :ivar location: Azure location of the key vault resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags assigned to the key vault resource.
+    :vartype tags: dict[str, str]
     :ivar system_data: System metadata for the key vault.
     :vartype system_data: ~azure.mgmt.keyvault.v2021_04_01_preview.models.SystemData
-    :param properties: Required. Properties of the vault.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProperties
+    :ivar properties: Required. Properties of the vault.
+    :vartype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProperties
     """
 
     _validation = {
@@ -1920,6 +2342,14 @@ class Vault(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Azure location of the key vault resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags assigned to the key vault resource.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Required. Properties of the vault.
+        :paramtype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProperties
+        """
         super(Vault, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1945,8 +2375,9 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
     :vartype type: str
     :ivar location: The resource type of the access policy.
     :vartype location: str
-    :param properties: Required. Properties of the access policy.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyProperties
+    :ivar properties: Required. Properties of the access policy.
+    :vartype properties:
+     ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyProperties
     """
 
     _validation = {
@@ -1971,6 +2402,11 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
         properties: "VaultAccessPolicyProperties",
         **kwargs
     ):
+        """
+        :keyword properties: Required. Properties of the access policy.
+        :paramtype properties:
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultAccessPolicyProperties
+        """
         super(VaultAccessPolicyParameters, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1984,9 +2420,10 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param access_policies: Required. An array of 0 to 16 identities that have access to the key
+    :ivar access_policies: Required. An array of 0 to 16 identities that have access to the key
      vault. All identities in the array must use the same tenant ID as the key vault's tenant ID.
-    :type access_policies: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
+    :vartype access_policies:
+     list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
     """
 
     _validation = {
@@ -2003,6 +2440,12 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
         access_policies: List["AccessPolicyEntry"],
         **kwargs
     ):
+        """
+        :keyword access_policies: Required. An array of 0 to 16 identities that have access to the key
+         vault. All identities in the array must use the same tenant ID as the key vault's tenant ID.
+        :paramtype access_policies:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
+        """
         super(VaultAccessPolicyProperties, self).__init__(**kwargs)
         self.access_policies = access_policies
 
@@ -2014,8 +2457,8 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The vault name.
-    :type name: str
+    :ivar name: Required. The vault name.
+    :vartype name: str
     :ivar type: The type of resource, Microsoft.KeyVault/vaults. Has constant value:
      "Microsoft.KeyVault/vaults".
     :vartype type: str
@@ -2039,6 +2482,10 @@ class VaultCheckNameAvailabilityParameters(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The vault name.
+        :paramtype name: str
+        """
         super(VaultCheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
 
@@ -2048,12 +2495,12 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The supported Azure location where the key vault should be created.
-    :type location: str
-    :param tags: A set of tags. The tags that will be assigned to the key vault.
-    :type tags: dict[str, str]
-    :param properties: Required. Properties of the vault.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProperties
+    :ivar location: Required. The supported Azure location where the key vault should be created.
+    :vartype location: str
+    :ivar tags: A set of tags. The tags that will be assigned to the key vault.
+    :vartype tags: dict[str, str]
+    :ivar properties: Required. Properties of the vault.
+    :vartype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProperties
     """
 
     _validation = {
@@ -2075,6 +2522,15 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The supported Azure location where the key vault should be
+         created.
+        :paramtype location: str
+        :keyword tags: A set of tags. The tags that will be assigned to the key vault.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Required. Properties of the vault.
+        :paramtype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProperties
+        """
         super(VaultCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -2084,10 +2540,10 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
 class VaultListResult(msrest.serialization.Model):
     """List of vaults.
 
-    :param value: The list of vaults.
-    :type value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
-    :param next_link: The URL to get the next set of vaults.
-    :type next_link: str
+    :ivar value: The list of vaults.
+    :vartype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
+    :ivar next_link: The URL to get the next set of vaults.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2102,6 +2558,12 @@ class VaultListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of vaults.
+        :paramtype value: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.Vault]
+        :keyword next_link: The URL to get the next set of vaults.
+        :paramtype next_link: str
+        """
         super(VaultListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2110,10 +2572,10 @@ class VaultListResult(msrest.serialization.Model):
 class VaultPatchParameters(msrest.serialization.Model):
     """Parameters for creating or updating a vault.
 
-    :param tags: A set of tags. The tags that will be assigned to the key vault.
-    :type tags: dict[str, str]
-    :param properties: Properties of the vault.
-    :type properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultPatchProperties
+    :ivar tags: A set of tags. The tags that will be assigned to the key vault.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the vault.
+    :vartype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultPatchProperties
     """
 
     _attribute_map = {
@@ -2128,6 +2590,12 @@ class VaultPatchParameters(msrest.serialization.Model):
         properties: Optional["VaultPatchProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags that will be assigned to the key vault.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of the vault.
+        :paramtype properties: ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultPatchProperties
+        """
         super(VaultPatchParameters, self).__init__(**kwargs)
         self.tags = tags
         self.properties = properties
@@ -2136,47 +2604,48 @@ class VaultPatchParameters(msrest.serialization.Model):
 class VaultPatchProperties(msrest.serialization.Model):
     """Properties of the vault.
 
-    :param tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
+    :ivar tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
      requests to the key vault.
-    :type tenant_id: str
-    :param sku: SKU details.
-    :type sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Sku
-    :param access_policies: An array of 0 to 16 identities that have access to the key vault. All
+    :vartype tenant_id: str
+    :ivar sku: SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Sku
+    :ivar access_policies: An array of 0 to 16 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID.
-    :type access_policies: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
-    :param enabled_for_deployment: Property to specify whether Azure Virtual Machines are permitted
+    :vartype access_policies:
+     list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
+    :ivar enabled_for_deployment: Property to specify whether Azure Virtual Machines are permitted
      to retrieve certificates stored as secrets from the key vault.
-    :type enabled_for_deployment: bool
-    :param enabled_for_disk_encryption: Property to specify whether Azure Disk Encryption is
+    :vartype enabled_for_deployment: bool
+    :ivar enabled_for_disk_encryption: Property to specify whether Azure Disk Encryption is
      permitted to retrieve secrets from the vault and unwrap keys.
-    :type enabled_for_disk_encryption: bool
-    :param enabled_for_template_deployment: Property to specify whether Azure Resource Manager is
+    :vartype enabled_for_disk_encryption: bool
+    :ivar enabled_for_template_deployment: Property to specify whether Azure Resource Manager is
      permitted to retrieve secrets from the key vault.
-    :type enabled_for_template_deployment: bool
-    :param enable_soft_delete: Property to specify whether the 'soft delete' functionality is
+    :vartype enabled_for_template_deployment: bool
+    :ivar enable_soft_delete: Property to specify whether the 'soft delete' functionality is
      enabled for this key vault. Once set to true, it cannot be reverted to false.
-    :type enable_soft_delete: bool
-    :param enable_rbac_authorization: Property that controls how data actions are authorized. When
+    :vartype enable_soft_delete: bool
+    :ivar enable_rbac_authorization: Property that controls how data actions are authorized. When
      true, the key vault will use Role Based Access Control (RBAC) for authorization of data
      actions, and the access policies specified in vault properties will be  ignored. When false,
      the key vault will use the access policies specified in vault properties, and any policy stored
      on Azure Resource Manager will be ignored. If null or not specified, the value of this property
      will not change.
-    :type enable_rbac_authorization: bool
-    :param soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
-    :type soft_delete_retention_in_days: int
-    :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
+    :vartype enable_rbac_authorization: bool
+    :ivar soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
+    :vartype soft_delete_retention_in_days: int
+    :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
      or not. Possible values include: "recover", "default".
-    :type create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
-    :param enable_purge_protection: Property specifying whether protection against purge is enabled
+    :vartype create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
+    :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
      and its content - only the Key Vault service may initiate a hard, irrecoverable deletion. The
      setting is effective only if soft delete is also enabled. Enabling this functionality is
      irreversible - that is, the property does not accept false as its value.
-    :type enable_purge_protection: bool
-    :param network_acls: A collection of rules governing the accessibility of the vault from
+    :vartype enable_purge_protection: bool
+    :ivar network_acls: A collection of rules governing the accessibility of the vault from
      specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleSet
+    :vartype network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleSet
     """
 
     _attribute_map = {
@@ -2211,6 +2680,51 @@ class VaultPatchProperties(msrest.serialization.Model):
         network_acls: Optional["NetworkRuleSet"] = None,
         **kwargs
     ):
+        """
+        :keyword tenant_id: The Azure Active Directory tenant ID that should be used for authenticating
+         requests to the key vault.
+        :paramtype tenant_id: str
+        :keyword sku: SKU details.
+        :paramtype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Sku
+        :keyword access_policies: An array of 0 to 16 identities that have access to the key vault. All
+         identities in the array must use the same tenant ID as the key vault's tenant ID.
+        :paramtype access_policies:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
+        :keyword enabled_for_deployment: Property to specify whether Azure Virtual Machines are
+         permitted to retrieve certificates stored as secrets from the key vault.
+        :paramtype enabled_for_deployment: bool
+        :keyword enabled_for_disk_encryption: Property to specify whether Azure Disk Encryption is
+         permitted to retrieve secrets from the vault and unwrap keys.
+        :paramtype enabled_for_disk_encryption: bool
+        :keyword enabled_for_template_deployment: Property to specify whether Azure Resource Manager is
+         permitted to retrieve secrets from the key vault.
+        :paramtype enabled_for_template_deployment: bool
+        :keyword enable_soft_delete: Property to specify whether the 'soft delete' functionality is
+         enabled for this key vault. Once set to true, it cannot be reverted to false.
+        :paramtype enable_soft_delete: bool
+        :keyword enable_rbac_authorization: Property that controls how data actions are authorized.
+         When true, the key vault will use Role Based Access Control (RBAC) for authorization of data
+         actions, and the access policies specified in vault properties will be  ignored. When false,
+         the key vault will use the access policies specified in vault properties, and any policy stored
+         on Azure Resource Manager will be ignored. If null or not specified, the value of this property
+         will not change.
+        :paramtype enable_rbac_authorization: bool
+        :keyword soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and
+         <=90.
+        :paramtype soft_delete_retention_in_days: int
+        :keyword create_mode: The vault's create mode to indicate whether the vault need to be
+         recovered or not. Possible values include: "recover", "default".
+        :paramtype create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
+        :keyword enable_purge_protection: Property specifying whether protection against purge is
+         enabled for this vault. Setting this property to true activates protection against purge for
+         this vault and its content - only the Key Vault service may initiate a hard, irrecoverable
+         deletion. The setting is effective only if soft delete is also enabled. Enabling this
+         functionality is irreversible - that is, the property does not accept false as its value.
+        :paramtype enable_purge_protection: bool
+        :keyword network_acls: A collection of rules governing the accessibility of the vault from
+         specific network locations.
+        :paramtype network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleSet
+        """
         super(VaultPatchProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.sku = sku
@@ -2233,57 +2747,58 @@ class VaultProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tenant_id: Required. The Azure Active Directory tenant ID that should be used for
+    :ivar tenant_id: Required. The Azure Active Directory tenant ID that should be used for
      authenticating requests to the key vault.
-    :type tenant_id: str
-    :param sku: Required. SKU details.
-    :type sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Sku
-    :param access_policies: An array of 0 to 1024 identities that have access to the key vault. All
+    :vartype tenant_id: str
+    :ivar sku: Required. SKU details.
+    :vartype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Sku
+    :ivar access_policies: An array of 0 to 1024 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID. When
      ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
      policies are required.
-    :type access_policies: list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
-    :param vault_uri: The URI of the vault for performing operations on keys and secrets.
-    :type vault_uri: str
+    :vartype access_policies:
+     list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
+    :ivar vault_uri: The URI of the vault for performing operations on keys and secrets.
+    :vartype vault_uri: str
     :ivar hsm_pool_resource_id: The resource id of HSM Pool.
     :vartype hsm_pool_resource_id: str
-    :param enabled_for_deployment: Property to specify whether Azure Virtual Machines are permitted
+    :ivar enabled_for_deployment: Property to specify whether Azure Virtual Machines are permitted
      to retrieve certificates stored as secrets from the key vault.
-    :type enabled_for_deployment: bool
-    :param enabled_for_disk_encryption: Property to specify whether Azure Disk Encryption is
+    :vartype enabled_for_deployment: bool
+    :ivar enabled_for_disk_encryption: Property to specify whether Azure Disk Encryption is
      permitted to retrieve secrets from the vault and unwrap keys.
-    :type enabled_for_disk_encryption: bool
-    :param enabled_for_template_deployment: Property to specify whether Azure Resource Manager is
+    :vartype enabled_for_disk_encryption: bool
+    :ivar enabled_for_template_deployment: Property to specify whether Azure Resource Manager is
      permitted to retrieve secrets from the key vault.
-    :type enabled_for_template_deployment: bool
-    :param enable_soft_delete: Property to specify whether the 'soft delete' functionality is
+    :vartype enabled_for_template_deployment: bool
+    :ivar enable_soft_delete: Property to specify whether the 'soft delete' functionality is
      enabled for this key vault. If it's not set to any value(true or false) when creating new key
      vault, it will be set to true by default. Once set to true, it cannot be reverted to false.
-    :type enable_soft_delete: bool
-    :param soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
-    :type soft_delete_retention_in_days: int
-    :param enable_rbac_authorization: Property that controls how data actions are authorized. When
+    :vartype enable_soft_delete: bool
+    :ivar soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
+    :vartype soft_delete_retention_in_days: int
+    :ivar enable_rbac_authorization: Property that controls how data actions are authorized. When
      true, the key vault will use Role Based Access Control (RBAC) for authorization of data
      actions, and the access policies specified in vault properties will be  ignored. When false,
      the key vault will use the access policies specified in vault properties, and any policy stored
      on Azure Resource Manager will be ignored. If null or not specified, the vault is created with
      the default value of false. Note that management actions are always authorized with RBAC.
-    :type enable_rbac_authorization: bool
-    :param create_mode: The vault's create mode to indicate whether the vault need to be recovered
+    :vartype enable_rbac_authorization: bool
+    :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
      or not. Possible values include: "recover", "default".
-    :type create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
-    :param enable_purge_protection: Property specifying whether protection against purge is enabled
+    :vartype create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
+    :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
      and its content - only the Key Vault service may initiate a hard, irrecoverable deletion. The
      setting is effective only if soft delete is also enabled. Enabling this functionality is
      irreversible - that is, the property does not accept false as its value.
-    :type enable_purge_protection: bool
-    :param network_acls: Rules governing the accessibility of the key vault from specific network
+    :vartype enable_purge_protection: bool
+    :ivar network_acls: Rules governing the accessibility of the key vault from specific network
      locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleSet
-    :param provisioning_state: Provisioning state of the vault. Possible values include:
+    :vartype network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleSet
+    :ivar provisioning_state: Provisioning state of the vault. Possible values include:
      "Succeeded", "RegisteringDns".
-    :type provisioning_state: str or
+    :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProvisioningState
     :ivar private_endpoint_connections: List of private endpoint connections associated with the
      key vault.
@@ -2336,6 +2851,60 @@ class VaultProperties(msrest.serialization.Model):
         provisioning_state: Optional[Union[str, "VaultProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword tenant_id: Required. The Azure Active Directory tenant ID that should be used for
+         authenticating requests to the key vault.
+        :paramtype tenant_id: str
+        :keyword sku: Required. SKU details.
+        :paramtype sku: ~azure.mgmt.keyvault.v2021_04_01_preview.models.Sku
+        :keyword access_policies: An array of 0 to 1024 identities that have access to the key vault.
+         All identities in the array must use the same tenant ID as the key vault's tenant ID. When
+         ``createMode`` is set to ``recover``\ , access policies are not required. Otherwise, access
+         policies are required.
+        :paramtype access_policies:
+         list[~azure.mgmt.keyvault.v2021_04_01_preview.models.AccessPolicyEntry]
+        :keyword vault_uri: The URI of the vault for performing operations on keys and secrets.
+        :paramtype vault_uri: str
+        :keyword enabled_for_deployment: Property to specify whether Azure Virtual Machines are
+         permitted to retrieve certificates stored as secrets from the key vault.
+        :paramtype enabled_for_deployment: bool
+        :keyword enabled_for_disk_encryption: Property to specify whether Azure Disk Encryption is
+         permitted to retrieve secrets from the vault and unwrap keys.
+        :paramtype enabled_for_disk_encryption: bool
+        :keyword enabled_for_template_deployment: Property to specify whether Azure Resource Manager is
+         permitted to retrieve secrets from the key vault.
+        :paramtype enabled_for_template_deployment: bool
+        :keyword enable_soft_delete: Property to specify whether the 'soft delete' functionality is
+         enabled for this key vault. If it's not set to any value(true or false) when creating new key
+         vault, it will be set to true by default. Once set to true, it cannot be reverted to false.
+        :paramtype enable_soft_delete: bool
+        :keyword soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and
+         <=90.
+        :paramtype soft_delete_retention_in_days: int
+        :keyword enable_rbac_authorization: Property that controls how data actions are authorized.
+         When true, the key vault will use Role Based Access Control (RBAC) for authorization of data
+         actions, and the access policies specified in vault properties will be  ignored. When false,
+         the key vault will use the access policies specified in vault properties, and any policy stored
+         on Azure Resource Manager will be ignored. If null or not specified, the vault is created with
+         the default value of false. Note that management actions are always authorized with RBAC.
+        :paramtype enable_rbac_authorization: bool
+        :keyword create_mode: The vault's create mode to indicate whether the vault need to be
+         recovered or not. Possible values include: "recover", "default".
+        :paramtype create_mode: str or ~azure.mgmt.keyvault.v2021_04_01_preview.models.CreateMode
+        :keyword enable_purge_protection: Property specifying whether protection against purge is
+         enabled for this vault. Setting this property to true activates protection against purge for
+         this vault and its content - only the Key Vault service may initiate a hard, irrecoverable
+         deletion. The setting is effective only if soft delete is also enabled. Enabling this
+         functionality is irreversible - that is, the property does not accept false as its value.
+        :paramtype enable_purge_protection: bool
+        :keyword network_acls: Rules governing the accessibility of the key vault from specific network
+         locations.
+        :paramtype network_acls: ~azure.mgmt.keyvault.v2021_04_01_preview.models.NetworkRuleSet
+        :keyword provisioning_state: Provisioning state of the vault. Possible values include:
+         "Succeeded", "RegisteringDns".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.keyvault.v2021_04_01_preview.models.VaultProvisioningState
+        """
         super(VaultProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.sku = sku
@@ -2360,12 +2929,12 @@ class VirtualNetworkRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Full resource id of a vnet subnet, such as
+    :ivar id: Required. Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-    :type id: str
-    :param ignore_missing_vnet_service_endpoint: Property to specify whether NRP will ignore the
+    :vartype id: str
+    :ivar ignore_missing_vnet_service_endpoint: Property to specify whether NRP will ignore the
      check if parent subnet has serviceEndpoints configured.
-    :type ignore_missing_vnet_service_endpoint: bool
+    :vartype ignore_missing_vnet_service_endpoint: bool
     """
 
     _validation = {
@@ -2384,6 +2953,14 @@ class VirtualNetworkRule(msrest.serialization.Model):
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. Full resource id of a vnet subnet, such as
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+        :paramtype id: str
+        :keyword ignore_missing_vnet_service_endpoint: Property to specify whether NRP will ignore the
+         check if parent subnet has serviceEndpoints configured.
+        :paramtype ignore_missing_vnet_service_endpoint: bool
+        """
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.id = id
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
