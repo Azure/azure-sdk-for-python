@@ -29,8 +29,9 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False)
     except:
         return "  - Initial Release"
     else:
-        print(f"********{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
-        return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
+        res = change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
+        print(f"********res: {res}")
+        return res
 
 
 def extract_breaking_change(changelog):
