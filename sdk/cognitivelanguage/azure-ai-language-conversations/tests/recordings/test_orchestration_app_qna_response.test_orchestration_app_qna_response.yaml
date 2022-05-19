@@ -1,8 +1,9 @@
 interactions:
 - request:
-    body: '{"kind": "CustomConversation", "analysisInput": {"conversationItem": {"participantId":
-      "1", "id": "1", "modality": "text", "text": "How are you?"}}, "parameters":
-      {"projectName": "orch_test", "deploymentName": "dep_test"}}'
+    body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
+      "1", "id": "1", "modality": "text", "language": "en", "text": "How are you?"},
+      "isLoggingEnabled": false}, "parameters": {"projectName": "orch_test", "deploymentName":
+      "dep_test", "verbose": true}}'
     headers:
       Accept:
       - application/json
@@ -11,16 +12,16 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '234'
+      - '291'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b3 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-03-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"kind":"CustomConversationResult","results":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"workflow","intents":{"ChitChat-QnA":{"confidenceScore":0.9983183,"targetKind":"question_answering","result":{"answers":[{"questions":["How''d
+      string: '{"kind":"ConversationResult","result":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":0.98765355,"targetProjectKind":"QuestionAnswering","result":{"answers":[{"questions":["How''d
         you sleep last night?","Are you doing good?","Are you feeling well?","How
         are you doing?","How is the day treating you?","Are you feeling OK?","How
         are you?","How''s it hangin?","How''s tricks?","Are you doing OK?","Hey, how
@@ -29,21 +30,23 @@ interactions:
         feeling good?","Are you doing well?","How are things going?","How''s it going?","Say,
         how are you doing?","How''s the day treating you?","How''s life?","How''s
         life treating you?","How are you today?","Yo, how are you?","How you doing?","How
-        you doing bot?","How ya doing?","How is the day treating ya?","How''s it hanging?"],"answer":"I''m
-        doing great, thanks for asking!","confidenceScore":1.0,"id":72,"source":"qna_chitchat_friendly.tsv","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"RestaurantIntent":{"confidenceScore":0.5251951,"targetKind":"luis"},"EmailIntent":{"confidenceScore":0.20227265,"targetKind":"conversation"},"None":{"confidenceScore":0.16831747,"targetKind":"non_linked"}}}}}'
+        you doing bot?","How ya doing?","How is the day treating ya?","How''s it hanging?"],"answer":"Great,
+        thanks.","confidenceScore":1.0,"id":58,"source":"qna_chitchat_Professional","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"RestaurantIntent":{"confidenceScore":0.52488893,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137206,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740133,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 05313a7e-bc26-483a-b298-3c6a91a0cf1d
+      - 965edcdf-409c-43d7-94b2-78df0dd2646f
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Sat, 16 Apr 2022 00:58:16 GMT
+      - Thu, 19 May 2022 22:15:38 GMT
       pragma:
       - no-cache
       request-id:
-      - 05313a7e-bc26-483a-b298-3c6a91a0cf1d
+      - 965edcdf-409c-43d7-94b2-78df0dd2646f
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -51,7 +54,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1429'
+      - '357'
     status:
       code: 200
       message: OK
