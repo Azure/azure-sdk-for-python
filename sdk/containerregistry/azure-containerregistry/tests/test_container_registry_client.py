@@ -622,6 +622,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_upload_oci_manifest(self, containerregistry_endpoint):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
@@ -644,11 +645,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        base_path = os.path.join(os.getcwd(), "data", "oci_artifact")
         manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
         manifest = _deserialize_manifest(manifest_stream)     
         client = self.create_registry_client(containerregistry_endpoint)
@@ -668,6 +670,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
@@ -700,11 +703,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        base_path = os.path.join(os.getcwd(), "data", "oci_artifact")
         manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
         manifest = _deserialize_manifest(manifest_stream)
         client = self.create_registry_client(containerregistry_endpoint)
@@ -734,13 +738,14 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_upload_blob(self, containerregistry_endpoint):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
         client = self.create_registry_client(containerregistry_endpoint)       
         blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+        path = os.path.join(os.getcwd(), "data", "oci_artifact", blob)
         
         # Act
         data = open(path, "rb")
