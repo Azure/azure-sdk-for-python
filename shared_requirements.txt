@@ -343,3 +343,5 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-appcontainers msrest>=0.6.21
 #override azure-mgmt-appcontainers azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-recoveryservicesbackup azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-confluent msrest>=0.6.21
+#override azure-mgmt-confluent azure-mgmt-core>=1.3.0,<2.0.0
