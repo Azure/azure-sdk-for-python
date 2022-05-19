@@ -753,6 +753,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         
         client.delete_blob(repo, digest)
 
+
 def test_set_api_version():
     containerregistry_endpoint="https://fake_url.azurecr.io"
     
