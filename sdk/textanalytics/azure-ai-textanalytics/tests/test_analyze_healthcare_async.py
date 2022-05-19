@@ -321,7 +321,6 @@ class TestHealth(TextAnalyticsTest):
 
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -334,8 +333,8 @@ class TestHealth(TextAnalyticsTest):
                 response = []
                 async for r in result:
                     response.append(r)
-        assert err.error.code == "ModelVersionIncorrect"
-        assert err.error.message is not None
+        assert err.value.error.code == "InvalidParameterValue"
+        assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

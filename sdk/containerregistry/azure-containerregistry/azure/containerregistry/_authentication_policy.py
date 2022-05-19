@@ -5,6 +5,7 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING, Any
+from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.pipeline.policies import HTTPPolicy
 
@@ -52,6 +53,14 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         if response.http_response.status_code == 401:
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and self.on_challenge(request, response, challenge):
+                if request.http_request.body and hasattr(request.http_request.body, 'read'):
+                    try:
+                        # attempt to rewind the body to the initial position
+                        request.http_request.body.seek(0, SEEK_SET)
+                    except (UnsupportedOperation, ValueError, AttributeError):
+                        # if body is not seekable, then retry would not work
+                        return response
+
                 response = self.next.send(request)
 
         return response

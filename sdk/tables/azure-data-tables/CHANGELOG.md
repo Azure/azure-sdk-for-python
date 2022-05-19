@@ -1,9 +1,22 @@
 # Release History
 
+## 12.4.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.4.0 (2022-05-10)
 
 ### Features Added
-- Support for multitenant authentication ([#24278](https://github.com/Azure/azure-sdk-for-python/pull/24278))
+* Support for multitenant authentication ([#24278](https://github.com/Azure/azure-sdk-for-python/pull/24278))
+
+### Bugs Fixed
+* Fixed bug where odmtype tag was not being included for boolean and int32 types even when a full EdmProperty tuple was passed in. This is needed for CLI compatibility.
 
 ## 12.3.0 (2022-03-10)
 
