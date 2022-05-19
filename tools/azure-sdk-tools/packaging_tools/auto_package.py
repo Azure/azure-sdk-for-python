@@ -13,6 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
+        _LOGGER.info(f"auto_package input: {data}")
 
     sdk_folder = "."
     result = {"packages": []}
