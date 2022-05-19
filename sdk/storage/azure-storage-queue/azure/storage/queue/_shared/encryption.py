@@ -648,9 +648,12 @@ def decrypt_queue_message(message, response, require_encryption, key_encryption_
         decoded_data = decode_base64_to_bytes(message['EncryptedMessageContents'])
     except (KeyError, ValueError):
         # Message was not json formatted and so was not encrypted
-        # or the user provided a json formatted message.
+        # or the user provided a json formatted message
+        # or the metadata was malformed.
         if require_encryption:
-            raise ValueError('Message was not encrypted.')
+            raise ValueError(
+                'Encryption required, but received message does not contain appropriate metatadata. ' + \
+                'Message was either not encrypted or metadata was incorrect.')
 
         return message
     try:

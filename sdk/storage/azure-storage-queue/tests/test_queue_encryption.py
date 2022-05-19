@@ -486,7 +486,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             storage_account_key,
-            requires_encryption=True,
+            require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=KeyWrapper('key1'))
         queue = self._create_queue(qsc)
@@ -505,7 +505,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             storage_account_key,
-            requires_encryption=True,
+            require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=KeyWrapper('key1'))
         key_resolver = KeyResolver()
@@ -534,7 +534,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             storage_account_key,
-            requires_encryption=True,
+            require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=RSAKeyWrapper('key2'))
         queue = self._create_queue(qsc)
@@ -576,7 +576,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             storage_account_key,
-            requires_encryption=True,
+            require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
         queue = self._create_queue(qsc)
@@ -584,7 +584,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         queue.send_message(content)
 
         # Act
-        queue.requires_encryption = False
+        queue.require_encryption = False
         queue.key_encryption_key = None  # Message will not be decrypted
         message = queue.receive_message().content
         message = loads(message)
