@@ -209,12 +209,14 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
 def main(base, latest, tag_is_stable: bool = False):
     old_report = get_report_from_parameter(base)
     new_report = get_report_from_parameter(latest, tag_is_stable)
+    
 
     # result = diff(old_report, new_report)
     # with open("result.json", "w") as fd:
     #     json.dump(result, fd)
 
     change_log = build_change_log(old_report, new_report)
+    print("****** change log: ", change_log)
     return change_log.build_md()
 
 
