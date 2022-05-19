@@ -446,7 +446,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         with self.assertRaises(ValueError) as e:
             next(queue.receive_messages())
 
-        self.assertEqual(str(e.exception), 'Message was not encrypted.')
+        self.assertTrue('Message was either not encrypted or metadata was incorrect.' in str(e.exception))
 
     @QueuePreparer()
     def test_encryption_add_encrypted_64k_message(self, storage_account_name, storage_account_key):

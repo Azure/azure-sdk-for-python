@@ -14,6 +14,7 @@ from collections import OrderedDict
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
@@ -25,6 +26,11 @@ from . import encode_base64, decode_base64_to_bytes
 
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
+_ENCRYPTION_PROTOCOL_V2 = '2.0'
+_GCM_REGION_LENGTH = 4 * 1024 * 1024
+_GCM_NONCE_LENGTH = 12
+_GCM_TAG_LENGTH = 16
+
 _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'
 
@@ -49,6 +55,7 @@ class _EncryptionAlgorithm(object):
     Specifies which client encryption algorithm is used.
     '''
     AES_CBC_256 = 'AES_CBC_256'
+    AES_GCM_256 = 'AES_GCM_256'
 
 
 class _WrappedContentKey:
@@ -73,6 +80,30 @@ class _WrappedContentKey:
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key
         self.key_id = key_id
+
+
+class _EncryptedRegionInfo:
+    '''
+    Represents the length of encryption elements.
+    This is only used for Encryption V2.
+    '''
+
+    def __init__(self, encrypted_region_data_length, nonce_length, tag_length):
+        '''
+        :param int encrypted_region_data_length:
+            The length of the encryption region data (not including nonce + tag).
+        :param str nonce_length:
+            The length of nonce used when encrypting.
+        :param int tag_length:
+            The length of the encryption tag.
+        '''
+        _validate_not_none('encrypted_region_data_length', encrypted_region_data_length)
+        _validate_not_none('nonce_length', nonce_length)
+        _validate_not_none('tag_length', tag_length)
+
+        self.encrypted_region_data_length = encrypted_region_data_length
+        self.nonce_length = nonce_length
+        self.tag_length = tag_length
 
 
 class _EncryptionAgent:
@@ -101,11 +132,20 @@ class _EncryptionData:
     Represents the encryption data that is stored on the service.
     '''
 
-    def __init__(self, content_encryption_IV, encryption_agent, wrapped_content_key,
-                 key_wrapping_metadata):
+    def __init__(
+            self,
+            content_encryption_IV,
+            encrypted_region_info,
+            encryption_agent,
+            wrapped_content_key,
+            key_wrapping_metadata):
         '''
-        :param bytes content_encryption_IV:
+        :param Optional[bytes] content_encryption_IV:
             The content encryption initialization vector.
+            Required for AES-CBC.
+        :param Optional[_EncryptedRegionInfo] encrypted_region_info:
+            The info about the autenticated block sizes.
+            Required for AES-GCM.
         :param _EncryptionAgent encryption_agent:
             The encryption agent.
         :param _WrappedContentKey wrapped_content_key:
@@ -115,23 +155,32 @@ class _EncryptionData:
             A dict containing metadata related to the key wrapping.
         '''
 
-        _validate_not_none('content_encryption_IV', content_encryption_IV)
         _validate_not_none('encryption_agent', encryption_agent)
         _validate_not_none('wrapped_content_key', wrapped_content_key)
 
+        # Validate we have the right info for the specified algorithm
+        if encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256:
+            _validate_not_none('content_encryption_IV', content_encryption_IV)
+        elif encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_GCM_256:
+            _validate_not_none('encrypted_region_info', encrypted_region_info)
+        else:
+            raise ValueError("Invalid encryption algorithm.")
+
         self.content_encryption_IV = content_encryption_IV
+        self.encrypted_region_info = encrypted_region_info
         self.encryption_agent = encryption_agent
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
 
 
-def _generate_encryption_data_dict(kek, cek, iv):
+def _generate_encryption_data_dict(kek, cek, iv, version):
     '''
     Generates and returns the encryption metadata as a dict.
 
     :param object kek: The key encryption key. See calling functions for more information.
     :param bytes cek: The content encryption key.
-    :param bytes iv: The initialization vector.
+    :param Optional[bytes] iv: The initialization vector. Only required for AES-CBC.
+    :param str version: The client encryption version used.
     :return: A dict containing all the encryption metadata.
     :rtype: dict
     '''
@@ -146,13 +195,26 @@ def _generate_encryption_data_dict(kek, cek, iv):
     wrapped_content_key['Algorithm'] = kek.get_key_wrap_algorithm()
 
     encryption_agent = OrderedDict()
-    encryption_agent['Protocol'] = _ENCRYPTION_PROTOCOL_V1
-    encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_CBC_256
+    encryption_agent['Protocol'] = version
+
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_CBC_256
+
+    elif version == _ENCRYPTION_PROTOCOL_V2:
+        encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
+
+        encrypted_region_info = OrderedDict()
+        encrypted_region_info['EncryptedRegionDataLength'] = _GCM_REGION_LENGTH
+        encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
+        encrypted_region_info['TagLength'] = _GCM_TAG_LENGTH
 
     encryption_data_dict = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
     encryption_data_dict['EncryptionAgent'] = encryption_agent
-    encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
+    elif version == _ENCRYPTION_PROTOCOL_V2:
+        encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info
     encryption_data_dict['KeyWrappingMetadata'] = {'EncryptionLibrary': 'Python ' + VERSION}
 
     return encryption_data_dict
@@ -169,7 +231,8 @@ def _dict_to_encryption_data(encryption_data_dict):
     :rtype: _EncryptionData
     '''
     try:
-        if encryption_data_dict['EncryptionAgent']['Protocol'] != _ENCRYPTION_PROTOCOL_V1:
+        protocol = encryption_data_dict['EncryptionAgent']['Protocol']
+        if protocol not in [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2]:
             raise ValueError("Unsupported encryption version.")
     except KeyError:
         raise ValueError("Unsupported encryption version.")
@@ -187,7 +250,21 @@ def _dict_to_encryption_data(encryption_data_dict):
     else:
         key_wrapping_metadata = None
 
-    encryption_data = _EncryptionData(decode_base64_to_bytes(encryption_data_dict['ContentEncryptionIV']),
+    # AES-CBC only
+    encryption_iv = None
+    if 'ContentEncryptionIV' in encryption_data_dict:
+        encryption_iv = decode_base64_to_bytes(encryption_data_dict['ContentEncryptionIV'])
+
+    # AES-GCM only
+    region_info = None
+    if 'EncryptedRegionInfo' in encryption_data_dict:
+        encrypted_region_info = encryption_data_dict['EncryptedRegionInfo']
+        region_info = _EncryptedRegionInfo(encrypted_region_info['EncryptedRegionDataLength'],
+                                          encrypted_region_info['NonceLength'],
+                                          encrypted_region_info['TagLength'])
+
+    encryption_data = _EncryptionData(encryption_iv,
+                                      region_info,
                                       encryption_agent,
                                       wrapped_content_key,
                                       key_wrapping_metadata)
@@ -227,11 +304,15 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     :rtype: bytes[]
     '''
 
-    _validate_not_none('content_encryption_IV', encryption_data.content_encryption_IV)
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
 
-    if _ENCRYPTION_PROTOCOL_V1 != encryption_data.encryption_agent.protocol:
-        raise ValueError('Encryption version is not supported.')
+    # Validate we have the right info for the specified version
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
+        _validate_not_none('content_encryption_IV', encryption_data.content_encryption_IV)
+    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
+        _validate_not_none('encrypted_region_info', encryption_data.encrypted_region_info)
+    else:
+        raise ValueError('Specified encryption version is not supported.')
 
     content_encryption_key = None
 
@@ -279,19 +360,37 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
     _validate_not_none('message', message)
     content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, resolver)
 
-    if _EncryptionAlgorithm.AES_CBC_256 != encryption_data.encryption_agent.encryption_algorithm:
-        raise ValueError('Specified encryption algorithm is not supported.')
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
+        if not encryption_data.content_encryption_IV:
+            raise ValueError("Missing required metadata for decryption.")
 
-    cipher = _generate_AES_CBC_cipher(content_encryption_key, encryption_data.content_encryption_IV)
+        cipher = _generate_AES_CBC_cipher(content_encryption_key, encryption_data.content_encryption_IV)
 
-    # decrypt data
-    decrypted_data = message
-    decryptor = cipher.decryptor()
-    decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
+        # decrypt data
+        decrypted_data = message
+        decryptor = cipher.decryptor()
+        decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
 
-    # unpad data
-    unpadder = PKCS7(128).unpadder()
-    decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
+        # unpad data
+        unpadder = PKCS7(128).unpadder()
+        decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
+
+    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
+        block_info = encryption_data.encrypted_region_info
+        if not block_info or not block_info.nonce_length:
+            raise ValueError("Missing required metadata for decryption.")
+
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+
+        # First bytes are the nonce
+        nonce = message[:nonce_length]
+        ciphertext_with_tag = message[nonce_length:]
+
+        aesgcm = AESGCM(content_encryption_key)
+        decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+
+    else:
+        raise ValueError('Specified encryption version is not supported.')
 
     return decrypted_data
 
@@ -333,7 +432,7 @@ def encrypt_blob(blob, key_encryption_key):
     encryptor = cipher.encryptor()
     encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
     encryption_data = _generate_encryption_data_dict(key_encryption_key, content_encryption_key,
-                                                     initialization_vector)
+                                                     initialization_vector, _EncryptionAlgorithm.AES_CBC_256)
     encryption_data['EncryptionMode'] = 'FullBlob'
 
     return dumps(encryption_data), encrypted_data
@@ -358,7 +457,8 @@ def generate_blob_encryption_data(key_encryption_key):
         initialization_vector = urandom(16)
         encryption_data = _generate_encryption_data_dict(key_encryption_key,
                                                          content_encryption_key,
-                                                         initialization_vector)
+                                                         initialization_vector,
+                                                         _EncryptionAlgorithm.AES_CBC_256)
         encryption_data['EncryptionMode'] = 'FullBlob'
         encryption_data = dumps(encryption_data)
 
@@ -452,9 +552,9 @@ def get_blob_encryptor_and_padder(cek, iv, should_pad):
     return encryptor, padder
 
 
-def encrypt_queue_message(message, key_encryption_key):
+def encrypt_queue_message(message, key_encryption_key, version):
     '''
-    Encrypts the given plain text message using AES256 in CBC mode with 128 bit padding.
+    Encrypts the given plain text message using the given algorithm.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
@@ -465,6 +565,7 @@ def encrypt_queue_message(message, key_encryption_key):
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
         get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
         get_kid()--returns a string key id for this key-encryption-key.
+    :param str version: The client encryption version to use.
     :return: A json-formatted string containing the encrypted message and the encryption metadata.
     :rtype: str
     '''
@@ -473,29 +574,47 @@ def encrypt_queue_message(message, key_encryption_key):
     _validate_not_none('key_encryption_key', key_encryption_key)
     _validate_key_encryption_key_wrap(key_encryption_key)
 
-    # AES256 uses 256 bit (32 byte) keys and always with 16 byte blocks
-    content_encryption_key = os.urandom(32)
-    initialization_vector = os.urandom(16)
-
     # Queue encoding functions all return unicode strings, and encryption should
     # operate on binary strings.
     message = message.encode('utf-8')
 
-    cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        # AES256 CBC uses 256 bit (32 byte) keys and always with 16 byte blocks
+        content_encryption_key = os.urandom(32)
+        initialization_vector = os.urandom(16)
 
-    # PKCS7 with 16 byte blocks ensures compatibility with AES.
-    padder = PKCS7(128).padder()
-    padded_data = padder.update(message) + padder.finalize()
+        cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
 
-    # Encrypt the data.
-    encryptor = cipher.encryptor()
-    encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
+        # PKCS7 with 16 byte blocks ensures compatibility with AES.
+        padder = PKCS7(128).padder()
+        padded_data = padder.update(message) + padder.finalize()
+
+        # Encrypt the data.
+        encryptor = cipher.encryptor()
+        encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
+
+    elif version == _ENCRYPTION_PROTOCOL_V2:
+        # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
+        content_encryption_key = AESGCM.generate_key(bit_length=256)
+        initialization_vector = None
+
+        # The nonce MUST be different for each key
+        nonce = os.urandom(12)
+        aesgcm = AESGCM(content_encryption_key)
+
+        # Returns ciphertext + tag
+        cipertext_with_tag = aesgcm.encrypt(nonce, message, None)
+        encrypted_data = nonce + cipertext_with_tag
+
+    else:
+        raise ValueError("Invalid encryption version specified.")
 
     # Build the dictionary structure.
     queue_message = {'EncryptedMessageContents': encode_base64(encrypted_data),
                      'EncryptionData': _generate_encryption_data_dict(key_encryption_key,
                                                                       content_encryption_key,
-                                                                      initialization_vector)}
+                                                                      initialization_vector,
+                                                                      version)}
 
     return dumps(queue_message)
 
@@ -520,6 +639,7 @@ def decrypt_queue_message(message, response, require_encryption, key_encryption_
     :return: The plain text message from the queue message.
     :rtype: str
     '''
+    response = response.http_response
 
     try:
         message = loads(message)
@@ -528,9 +648,12 @@ def decrypt_queue_message(message, response, require_encryption, key_encryption_
         decoded_data = decode_base64_to_bytes(message['EncryptedMessageContents'])
     except (KeyError, ValueError):
         # Message was not json formatted and so was not encrypted
-        # or the user provided a json formatted message.
+        # or the user provided a json formatted message
+        # or the metadata was malformed.
         if require_encryption:
-            raise ValueError('Message was not encrypted.')
+            raise ValueError(
+                'Encryption required, but received message does not contain appropriate metatadata. ' + \
+                'Message was either not encrypted or metadata was incorrect.')
 
         return message
     try:
