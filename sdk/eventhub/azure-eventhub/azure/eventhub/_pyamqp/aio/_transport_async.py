@@ -449,8 +449,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
-            import websocket
-            websocket.enableTrace(True)
             if self.parsed_custom_hostname!=None:
                 url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
