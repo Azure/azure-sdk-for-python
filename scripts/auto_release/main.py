@@ -175,7 +175,6 @@ class CodegenTestPR:
         input_data = {
             "dryRun": False,
             "specFolder": "../azure-rest-api-specs",
-            "packageName": "azure-mgmt-cosmosdb",
             "headSha": "c6ed0986c1ee45df5c8f2bc56f2a9e802b01d2b0",
             "headRef": "master",
             "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
@@ -200,6 +199,9 @@ class CodegenTestPR:
         # generate code
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        with open(self.autorest_result, 'r') as fr:
+            print("#### self.autorest_result", fr.read())
+        
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
