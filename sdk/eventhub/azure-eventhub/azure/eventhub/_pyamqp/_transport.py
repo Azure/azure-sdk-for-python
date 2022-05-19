@@ -661,7 +661,7 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
 class WebSocketTransport(_AbstractTransport):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
-        self._connect_timeout = connect_timeout
+        self._connect_timeout = connect_timeout or 1.0
         self._host = host
         super().__init__(
             host, port, connect_timeout, **kwargs
