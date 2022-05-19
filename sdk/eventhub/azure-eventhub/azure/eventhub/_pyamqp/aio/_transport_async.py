@@ -418,7 +418,7 @@ class AsyncTransport(AsyncTransportMixin):
 
 
 class WebSocketTransportAsync(AsyncTransportMixin):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs
         ):
         self._read_buffer = BytesIO()
         self.loop = get_running_loop()
