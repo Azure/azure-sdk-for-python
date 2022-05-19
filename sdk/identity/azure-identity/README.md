@@ -36,12 +36,11 @@ local development.
 
 #### Authenticate via Visual Studio Code
 
-`DefaultAzureCredential` and `VisualStudioCodeCredential` can authenticate as
-the user signed in to Visual Studio Code's
-[Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account).
-After installing the extension, sign in to Azure in Visual Studio Code by
-pressing `F1` to open the command palette and running the `Azure: Sign In`
-command.
+Developers using Visual Studio Code can use the [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) to authenticate via the editor. Apps using `DefaultAzureCredential` or `VisualStudioCodeCredential` can then use this account to authenticate calls in their app when running locally.
+
+To authenticate in Visual Studio Code, ensure the Azure Account extension is installed. Once installed, open the **Command Palette** and run the **Azure: Sign In** command.
+
+It's a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/23249) that `VisualStudioCodeCredential` doesn't work with [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider [authenticating via the Azure CLI](#authenticate-via-the-azure-cli).
 
 #### Authenticate via the Azure CLI
 
@@ -69,29 +68,18 @@ this library's credential classes.
 
 ### DefaultAzureCredential
 
-`DefaultAzureCredential` is appropriate for most applications which will run in
-the Azure Cloud because it combines common production credentials with
-development credentials. `DefaultAzureCredential` attempts to authenticate via
-the following mechanisms in this order, stopping when one succeeds:
+`DefaultAzureCredential` is appropriate for most applications which will run in the Azure Cloud because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms in this order, stopping when one succeeds:
 
-![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
+![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/mermaidjs/DefaultAzureCredentialAuthFlow.svg)
 
-- Environment - `DefaultAzureCredential` will read account information specified
-  via [environment variables](#environment-variables "environment variables")
-  and use it to authenticate.
-- Managed Identity - if the application is deployed to an Azure host with
-  Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
-- Visual Studio Code - if a user has signed in to the Visual Studio Code Azure
-  Account extension, `DefaultAzureCredential` will authenticate as that user.
-- Azure CLI - if a user has signed in via the Azure CLI `az login` command,
-  `DefaultAzureCredential` will authenticate as that user.
-- Azure PowerShell - if a user has signed in via Azure PowerShell's
-  `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate
-  as that user.
-- Interactive - if enabled, `DefaultAzureCredential` will interactively
-  authenticate a user via the default browser. This is disabled by default.
+1. **Environment** - `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables "environment variables") and use it to authenticate.
+2. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
+3. **Visual Studio Code** - If a user has signed in to the Visual Studio Code Azure Account extension, `DefaultAzureCredential` will authenticate as that user.
+4. **Azure CLI** - If a user has signed in via the Azure CLI `az login` command, `DefaultAzureCredential` will authenticate as that user.
+5. **Azure PowerShell** - If a user has signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate as that user.
+6. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This is disabled by default.
 
->DefaultAzureCredential is intended to simplify getting started with the SDK by handling common
+>`DefaultAzureCredential` is intended to simplify getting started with the SDK by handling common
 >scenarios with reasonable default behaviors. Developers who want more control or whose scenario
 >isn't served by the default settings should use other credential types.
 

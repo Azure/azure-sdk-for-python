@@ -1,8 +1,6 @@
 # Release History
 
-## 1.1.0 (Unreleased)
-
-This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+## 1.1.1 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +9,18 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.1.0 (2022-05-10)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+- `group_name` and `name` have been added as instance variables to `SchemaProperties`.
+
+### Other Changes
+
+- Updated azure-core minimum dependency to 1.23.0.
 
 ## 1.0.0 (2021-11-10)
 

@@ -11,6 +11,8 @@ trigger:
     include:
     - sdk/template/
     - scripts/
+    # eng/common code changes trigger template pipeline for basic checking.
+    - eng/common/
 
 pr:
   branches:
@@ -23,6 +25,8 @@ pr:
   paths:
     include:
     - sdk/template/
+    # eng/common code changes trigger template pipeline for basic checking.
+    - eng/common/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

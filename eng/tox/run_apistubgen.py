@@ -18,7 +18,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 
 def get_package_wheel_path(pkg_root):
     # parse setup.py to get package name and version
-    pkg_name, _, version = get_package_details(os.path.join(pkg_root, "setup.py"))
+    pkg_name, _, version, _, _ = get_package_details(os.path.join(pkg_root, "setup.py"))
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:

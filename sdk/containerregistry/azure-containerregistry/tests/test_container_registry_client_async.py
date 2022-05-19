@@ -602,6 +602,16 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         with pytest.raises(TypeError):
             client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
 
+    @acr_preparer()
+    async def test_get_misspell_property(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        properties = await client.get_repository_properties(ALPINE)
+        
+        with self.assertWarns(DeprecationWarning):
+            last_udpated_on = properties.last_udpated_on
+        last_updated_on = properties.last_updated_on
+        assert last_udpated_on == last_updated_on
+
 
 def test_set_api_version():
     containerregistry_endpoint="https://fake_url.azurecr.io"

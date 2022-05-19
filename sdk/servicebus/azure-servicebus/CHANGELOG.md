@@ -1,14 +1,16 @@
 # Release History
 
-## 7.6.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.6.2 (Unreleased)
 
 ### Bugs Fixed
 
+- Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
+
+## 7.6.1 (2022-04-11)
+
 ### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
 
 ## 7.6.0 (2022-02-10)
 

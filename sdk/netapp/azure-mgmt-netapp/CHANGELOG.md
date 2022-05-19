@@ -1,5 +1,26 @@
 # Release History
 
+## 7.0.0 (2022-03-15)
+
+**Features**
+
+  - Added operation SnapshotsOperations.begin_restore_files
+  - Added operation group SubvolumesOperations
+  - Model ActiveDirectory has a new parameter ldap_search_scope
+  - Model BackupPolicy has a new parameter system_data
+  - Model CapacityPool has a new parameter system_data
+  - Model SnapshotPolicy has a new parameter system_data
+  - Model Volume has a new parameter enable_subvolumes
+  - Model Volume has a new parameter maximum_number_of_files
+  - Model Volume has a new parameter system_data
+  - Model VolumeGroupVolumeProperties has a new parameter enable_subvolumes
+  - Model VolumeGroupVolumeProperties has a new parameter maximum_number_of_files
+  - Model VolumePatch has a new parameter unix_permissions
+
+**Breaking changes**
+
+  - Operation VolumesOperations.begin_delete has a new signature
+
 ## 6.0.1 (2022-01-12)
 
 **Fixes**

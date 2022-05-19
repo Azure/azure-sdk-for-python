@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,15 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.1.0b1 (2022-05-10)
+
+### Features Added
+- Support uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`. ([#24004](https://github.com/Azure/azure-sdk-for-python/pull/24004))
+### Other Changes
+
+- Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.
+- Bumped dependency on `azure-core` to `>=1.23.0`.
 
 ## 1.0.0 (2022-01-25)
 
@@ -54,7 +63,7 @@
 
 ### Bugs Fixed
 
-- Fixeed a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
+- Fixed a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
 
 ## 1.0.0b3 (2021-06-08)
 

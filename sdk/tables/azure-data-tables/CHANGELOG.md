@@ -1,6 +1,6 @@
 # Release History
 
-## 12.2.1 (Unreleased)
+## 12.4.1 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,26 @@
 ### Bugs Fixed
 
 ### Other Changes
-* Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
+## 12.4.0 (2022-05-10)
+
+### Features Added
+* Support for multitenant authentication ([#24278](https://github.com/Azure/azure-sdk-for-python/pull/24278))
+
+### Bugs Fixed
+* Fixed bug where odmtype tag was not being included for boolean and int32 types even when a full EdmProperty tuple was passed in. This is needed for CLI compatibility.
+
+## 12.3.0 (2022-03-10)
+
+### Bugs Fixed
+* Validation of the table name has been removed from the constructor of the TableClient. Instead individual APIs will validate the table name and raise a ValueError only if the service rejects the request due to the table name not being valid (#23106)
+* Fixed hard-coded URL scheme in batch requests (#21953)
+* Improved documentation for query formatting in `query_entities` APIs (#23235)
+* Removed unsecure debug logging
+
+### Other Changes
+* Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+* Bumped dependency on `azure-core` to `>=1.15.0`
 
 ## 12.2.0 (2021-11-10)
 **Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.

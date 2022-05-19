@@ -53,8 +53,8 @@ def test_http_logger(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 2
-    messages_request = mock_handler.messages[0].message.split("/n")
-    messages_response = mock_handler.messages[1].message.split("/n")
+    messages_request = mock_handler.messages[0].message.split("\n")
+    messages_response = mock_handler.messages[1].message.split("\n")
     assert messages_request[0] == "Request URL: 'http://localhost/'"
     assert messages_request[1] == "Request method: 'GET'"
     assert messages_request[2] == 'Request headers:'
@@ -76,10 +76,10 @@ def test_http_logger(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 4
-    messages_request1 = mock_handler.messages[0].message.split("/n")
-    messages_response1 = mock_handler.messages[1].message.split("/n")
-    messages_request2 = mock_handler.messages[2].message.split("/n")
-    messages_response2 = mock_handler.messages[3].message.split("/n")
+    messages_request1 = mock_handler.messages[0].message.split("\n")
+    messages_response1 = mock_handler.messages[1].message.split("\n")
+    messages_request2 = mock_handler.messages[2].message.split("\n")
+    messages_response2 = mock_handler.messages[3].message.split("\n")
     assert messages_request1[0] == "Request URL: 'http://localhost/'"
     assert messages_request1[1] == "Request method: 'GET'"
     assert messages_request1[2] == 'Request headers:'
@@ -115,8 +115,8 @@ def test_http_logger(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 2
-    messages_request = mock_handler.messages[0].message.split("/n")
-    messages_response = mock_handler.messages[1].message.split("/n")
+    messages_request = mock_handler.messages[0].message.split("\n")
+    messages_response = mock_handler.messages[1].message.split("\n")
     assert messages_request[0] == "Request URL: 'http://localhost/?country=france&city=REDACTED'"
     assert messages_request[1] == "Request method: 'GET'"
     assert messages_request[2] == "Request headers:"
@@ -177,8 +177,8 @@ def test_http_logger_operation_level(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 2
-    messages_request = mock_handler.messages[0].message.split("/n")
-    messages_response = mock_handler.messages[1].message.split("/n")
+    messages_request = mock_handler.messages[0].message.split("\n")
+    messages_response = mock_handler.messages[1].message.split("\n")
     assert messages_request[0] == "Request URL: 'http://localhost/'"
     assert messages_request[1] == "Request method: 'GET'"
     assert messages_request[2] == 'Request headers:'
@@ -202,10 +202,10 @@ def test_http_logger_operation_level(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 4
-    messages_request1 = mock_handler.messages[0].message.split("/n")
-    messages_response1 = mock_handler.messages[1].message.split("/n")
-    messages_request2 = mock_handler.messages[2].message.split("/n")
-    messages_response2 = mock_handler.messages[3].message.split("/n")
+    messages_request1 = mock_handler.messages[0].message.split("\n")
+    messages_response1 = mock_handler.messages[1].message.split("\n")
+    messages_request2 = mock_handler.messages[2].message.split("\n")
+    messages_response2 = mock_handler.messages[3].message.split("\n")
     assert messages_request1[0] == "Request URL: 'http://localhost/'"
     assert messages_request1[1] == "Request method: 'GET'"
     assert messages_request1[2] == 'Request headers:'
@@ -253,8 +253,8 @@ def test_http_logger_with_body(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 2
-    messages_request = mock_handler.messages[0].message.split("/n")
-    messages_response = mock_handler.messages[1].message.split("/n")
+    messages_request = mock_handler.messages[0].message.split("\n")
+    messages_response = mock_handler.messages[1].message.split("\n")
     assert messages_request[0] == "Request URL: 'http://localhost/'"
     assert messages_request[1] == "Request method: 'GET'"
     assert messages_request[2] == 'Request headers:'
@@ -298,8 +298,8 @@ def test_http_logger_with_generator_body(http_request, http_response):
 
     assert all(m.levelname == 'INFO' for m in mock_handler.messages)
     assert len(mock_handler.messages) == 2
-    messages_request = mock_handler.messages[0].message.split("/n")
-    messages_response = mock_handler.messages[1].message.split("/n")
+    messages_request = mock_handler.messages[0].message.split("\n")
+    messages_response = mock_handler.messages[1].message.split("\n")
     assert messages_request[0] == "Request URL: 'http://localhost/'"
     assert messages_request[1] == "Request method: 'GET'"
     assert messages_request[2] == 'Request headers:'

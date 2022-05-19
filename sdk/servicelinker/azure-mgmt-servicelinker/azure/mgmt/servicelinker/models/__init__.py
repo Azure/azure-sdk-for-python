@@ -6,65 +6,67 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AuthInfoBase
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LinkerList
-    from ._models_py3 import LinkerPatch
-    from ._models_py3 import LinkerResource
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import SecretAuthInfo
-    from ._models_py3 import ServicePrincipalCertificateAuthInfo
-    from ._models_py3 import ServicePrincipalSecretAuthInfo
-    from ._models_py3 import SourceConfiguration
-    from ._models_py3 import SourceConfigurationResult
-    from ._models_py3 import SystemAssignedIdentityAuthInfo
-    from ._models_py3 import SystemData
-    from ._models_py3 import UserAssignedIdentityAuthInfo
-    from ._models_py3 import ValidateResult
-except (SyntaxError, ImportError):
-    from ._models import AuthInfoBase  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LinkerList  # type: ignore
-    from ._models import LinkerPatch  # type: ignore
-    from ._models import LinkerResource  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SecretAuthInfo  # type: ignore
-    from ._models import ServicePrincipalCertificateAuthInfo  # type: ignore
-    from ._models import ServicePrincipalSecretAuthInfo  # type: ignore
-    from ._models import SourceConfiguration  # type: ignore
-    from ._models import SourceConfigurationResult  # type: ignore
-    from ._models import SystemAssignedIdentityAuthInfo  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import UserAssignedIdentityAuthInfo  # type: ignore
-    from ._models import ValidateResult  # type: ignore
+from ._models_py3 import AuthInfoBase
+from ._models_py3 import AzureKeyVaultProperties
+from ._models_py3 import AzureResource
+from ._models_py3 import AzureResourcePropertiesBase
+from ._models_py3 import ConfluentBootstrapServer
+from ._models_py3 import ConfluentSchemaRegistry
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import KeyVaultSecretReferenceSecretInfo
+from ._models_py3 import KeyVaultSecretUriSecretInfo
+from ._models_py3 import LinkerList
+from ._models_py3 import LinkerPatch
+from ._models_py3 import LinkerResource
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import SecretAuthInfo
+from ._models_py3 import SecretInfoBase
+from ._models_py3 import SecretStore
+from ._models_py3 import ServicePrincipalCertificateAuthInfo
+from ._models_py3 import ServicePrincipalSecretAuthInfo
+from ._models_py3 import SourceConfiguration
+from ._models_py3 import SourceConfigurationResult
+from ._models_py3 import SystemAssignedIdentityAuthInfo
+from ._models_py3 import SystemData
+from ._models_py3 import TargetServiceBase
+from ._models_py3 import UserAssignedIdentityAuthInfo
+from ._models_py3 import VNetSolution
+from ._models_py3 import ValidateOperationResult
+from ._models_py3 import ValidationResultItem
+from ._models_py3 import ValueSecretInfo
 
-from ._microsoft_service_linker_enums import (
+
+from ._service_linker_management_client_enums import (
     ActionType,
     AuthType,
+    AzureResourceType,
     ClientType,
     CreatedByType,
-    LinkerStatus,
     Origin,
+    SecretType,
+    TargetServiceType,
+    VNetSolutionType,
+    ValidationResultStatus,
 )
 
 __all__ = [
     'AuthInfoBase',
+    'AzureKeyVaultProperties',
+    'AzureResource',
+    'AzureResourcePropertiesBase',
+    'ConfluentBootstrapServer',
+    'ConfluentSchemaRegistry',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'KeyVaultSecretReferenceSecretInfo',
+    'KeyVaultSecretUriSecretInfo',
     'LinkerList',
     'LinkerPatch',
     'LinkerResource',
@@ -74,18 +76,28 @@ __all__ = [
     'ProxyResource',
     'Resource',
     'SecretAuthInfo',
+    'SecretInfoBase',
+    'SecretStore',
     'ServicePrincipalCertificateAuthInfo',
     'ServicePrincipalSecretAuthInfo',
     'SourceConfiguration',
     'SourceConfigurationResult',
     'SystemAssignedIdentityAuthInfo',
     'SystemData',
+    'TargetServiceBase',
     'UserAssignedIdentityAuthInfo',
-    'ValidateResult',
+    'VNetSolution',
+    'ValidateOperationResult',
+    'ValidationResultItem',
+    'ValueSecretInfo',
     'ActionType',
     'AuthType',
+    'AzureResourceType',
     'ClientType',
     'CreatedByType',
-    'LinkerStatus',
     'Origin',
+    'SecretType',
+    'TargetServiceType',
+    'VNetSolutionType',
+    'ValidationResultStatus',
 ]

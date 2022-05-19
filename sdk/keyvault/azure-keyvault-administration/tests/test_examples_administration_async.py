@@ -5,27 +5,30 @@
 import asyncio
 
 import pytest
+from devtools_testutils import set_bodiless_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
 
+from _async_test_case import KeyVaultBackupClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
-
 
 all_api_versions = get_decorator(is_async=True)
 
 
-class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, match_body=False, **kwargs)
+class TestExamplesTests(KeyVaultTestCase):
+    def create_key_client(self, vault_uri, **kwargs):
+        from azure.keyvault.keys.aio import KeyClient
+        credential = self.get_credential(KeyClient, is_async=True)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
 
-    @all_api_versions()
-    @backup_client_setup
-    async def test_example_backup_and_restore(self, client):
-        if self.is_live:
-            pytest.skip("SAS token failures are causing sev2 alerts for service team")
-
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy_async
+    async def test_example_backup_and_restore(self, client, **kwargs):
+        set_bodiless_matcher()
         backup_client = client
-        container_uri = self.container_uri
-        sas_token = self.sas_token
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
 
         # [START begin_backup]
         # begin a vault backup
@@ -55,20 +58,22 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
         if self.is_live:
             await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-    @all_api_versions()
-    @backup_client_setup
-    async def test_example_selective_key_restore(self, client):
-        if self.is_live:
-            pytest.skip("SAS token failures are causing sev2 alerts for service team")
-
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy_async
+    async def test_example_selective_key_restore(self, client, **kwargs):
         # create a key to selectively restore
-        key_client = self.create_key_client(self.managed_hsm_url, is_async=True)
+        set_bodiless_matcher()
+        managed_hsm_url = kwargs.pop("managed_hsm_url")
+        key_client = self.create_key_client(managed_hsm_url, is_async=True)
         key_name = self.get_resource_name("selective-restore-test-key")
         await key_client.create_rsa_key(key_name)
 
         backup_client = client
-        sas_token = self.sas_token
-        backup_poller = await backup_client.begin_backup(self.container_uri, sas_token)
+        sas_token = kwargs.pop("sas_token")
+        container_uri = kwargs.pop("container_uri")
+        backup_poller = await backup_client.begin_backup(container_uri, sas_token)
         backup_operation = await backup_poller.result()
         folder_url = backup_operation.folder_url
 

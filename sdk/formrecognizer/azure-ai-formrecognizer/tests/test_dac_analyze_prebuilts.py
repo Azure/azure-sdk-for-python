@@ -5,12 +5,14 @@
 # ------------------------------------
 
 import pytest
+import json
 import functools
 from datetime import date, time
 from devtools_testutils import recorded_by_proxy
 from io import BytesIO
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType
 from testcase import FormRecognizerTest
@@ -22,6 +24,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzePrebuilts(FormRecognizerTest):
+
+    def teardown(self):
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -84,8 +89,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -108,8 +111,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert passport["DateOfExpiration"].value == date(2023,1,14)
         assert passport["Sex"].value == "F"
         assert passport["CountryRegion"].value == "CAN"
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -134,8 +135,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -149,11 +148,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_invoice)
 
         with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             model="prebuilt-invoice",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -176,8 +175,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -187,6 +184,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", invoice)
 
         result = poller.result()
+        d = result.to_dict()
+        json.dumps(d, cls=AzureJSONEncoder)
+        result = AnalyzeResult.from_dict(d)
         assert len(result.documents) == 1
         invoice = result.documents[0]
 
@@ -229,18 +229,16 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.amount ==  1.0
         assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.symbol ==  None
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     def test_fail_passing_content_type(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(TypeError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
-                myfile,
+                my_file,
                 content_type=FormContentType.IMAGE_PNG
             )
 
@@ -249,10 +247,10 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @recorded_by_proxy
     def test_receipt_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            poller = client.begin_analyze_document("prebuilt-receipt", myfile)
+            poller = client.begin_analyze_document("prebuilt-receipt", my_file)
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -260,8 +258,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document("prebuilt-receipt", b"xx")
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -274,8 +270,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
                 damaged_pdf
             )
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -286,8 +280,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
                 "prebuilt-receipt",
                 damaged_pdf
             )
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -303,23 +295,19 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         result = poller.result()
         assert result is not None
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_auto_detect_unsupported_stream_content(self, client):
 
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
-                myfile
+                my_file
             )
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -335,11 +323,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             "prebuilt-receipt",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -375,11 +363,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             "prebuilt-receipt",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -401,8 +389,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -438,6 +424,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         result = poller.result()
 
         d = result.to_dict()
+        # this is simply checking that the dict is JSON serializable
+        json.dumps(d, cls=AzureJSONEncoder)
         result = AnalyzeResult.from_dict(d)
 
         assert len(result.documents) == 2
@@ -464,8 +452,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
         assert len(result.pages) == 2
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -480,11 +466,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.multipage_receipt_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             "prebuilt-receipt",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -507,8 +493,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -537,8 +521,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         result = poller.result()
         assert result
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -548,8 +530,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document("prebuilt-receipt", receipt, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -562,5 +542,3 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
-
-        return {}

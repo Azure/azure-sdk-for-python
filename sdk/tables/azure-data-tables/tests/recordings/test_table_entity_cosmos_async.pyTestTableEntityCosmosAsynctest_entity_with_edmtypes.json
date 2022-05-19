@@ -1,0 +1,207 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "31",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:02:26 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:02:26 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "uttablebc132fa"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Fri, 06 May 2022 01:02:25 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A02%3A25.8582536Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttablebc132fa\u0027)",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "TableName": "uttablebc132fa",
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables/@Element"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttablebc132fa(PartitionKey=\u0027pkbc132fa\u0027,RowKey=\u0027rkbc132fa\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "582",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:02:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-date": "Fri, 06 May 2022 01:02:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "pkbc132fa",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "rkbc132fa",
+        "RowKey@odata.type": "Edm.String",
+        "bool": "false",
+        "bool@odata.type": "Edm.Boolean",
+        "text": "42",
+        "text@odata.type": "Edm.String",
+        "number": 23,
+        "number@odata.type": "Edm.Int32",
+        "bigNumber": "64",
+        "bigNumber@odata.type": "Edm.Int64",
+        "bytes": "dGVzdA==",
+        "bytes@odata.type": "Edm.Binary",
+        "amount": "0",
+        "amount@odata.type": "Edm.Double",
+        "since": "2008-07-10T00:00:00",
+        "since@odata.type": "Edm.DateTime",
+        "guid": "c8924069-90ee-4726-83b5-45ff92496126",
+        "guid@odata.type": "Edm.Guid"
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 06 May 2022 01:02:25 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A02%3A26.3582728Z\u0027\u0022"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttablebc132fa(PartitionKey=\u0027pkbc132fa\u0027,RowKey=\u0027rkbc132fa\u0027)",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:02:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:02:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Fri, 06 May 2022 01:02:25 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A02%3A26.3582728Z\u0027\u0022",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/uttablebc132fa/$metadata#uttablebc132fa/@Element",
+        "odata.etag": "W/\u0022datetime\u00272022-05-06T01%3A02%3A26.3582728Z\u0027\u0022",
+        "PartitionKey": "pkbc132fa",
+        "RowKey": "rkbc132fa",
+        "bool": false,
+        "text": "42",
+        "number": 23,
+        "bigNumber@odata.type": "Edm.Int64",
+        "bigNumber": "64",
+        "bytes@odata.type": "Edm.Binary",
+        "bytes": "dGVzdA==",
+        "amount": 0.0,
+        "since@odata.type": "Edm.DateTime",
+        "since": "2008-07-10T00:00:00.0000000Z",
+        "guid@odata.type": "Edm.Guid",
+        "guid": "c8924069-90ee-4726-83b5-45ff92496126",
+        "Timestamp": "2022-05-06T01:02:26.3582728Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttablebc132fa(PartitionKey=\u0027pkbc132fa\u0027,RowKey=\u0027rkbc132fa\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "184",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:02:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-date": "Fri, 06 May 2022 01:02:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "pkbc132fa",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "rkbc132fa",
+        "RowKey@odata.type": "Edm.String",
+        "bool": "not a bool",
+        "bool@odata.type": "Edm.Boolean"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Fri, 06 May 2022 01:02:25 GMT",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "One of the input values is invalid.\r\nActivityId: c927f501-7481-45c6-ba1c-113961cb82a1, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:c927f501-7481-45c6-ba1c-113961cb82a1\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "DataServiceVersion": "3.0",
+        "Date": "Fri, 06 May 2022 01:02:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:02:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Fri, 06 May 2022 01:02:25 GMT",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "TableName": "uttablebc132fa"
+          }
+        ],
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttablebc132fa\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Date": "Fri, 06 May 2022 01:02:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 01:02:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 06 May 2022 01:02:25 GMT"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

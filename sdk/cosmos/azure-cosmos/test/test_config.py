@@ -45,20 +45,21 @@ class _test_config(object):
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
 
-    global_host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
-    write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
-    read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
-    read_location2_host = '[YOUR_READ_ENDPOINT2_HERE]'
-    global_masterKey = '[YOUR_KEY_HERE]'
+    global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
+    write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
+    read_location_host = os.getenv('READ_LOCATION_HOST', host)
+    read_location2_host = os.getenv('READ_LOCATION_HOST2', host)
+    global_masterKey = os.getenv('GLOBAL_ACCOUNT_KEY', masterKey)
 
-    write_location = '[YOUR_WRITE_LOCATION_HERE]'
-    read_location = '[YOUR_READ_LOCATION_HERE]'
-    read_location2 = '[YOUR_READ_LOCATION2_HERE]'
+    write_location = os.getenv('WRITE_LOCATION', host)
+    read_location = os.getenv('READ_LOCATION', host)
+    read_location2 = os.getenv('READ_LOCATION2', host)
 
     THROUGHPUT_FOR_5_PARTITIONS = 30000
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID_PLAIN = "COSMOS_TEST_DATABASE"
     TEST_THROUGHPUT_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
     TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection"
     TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection"
@@ -80,16 +81,6 @@ class _test_config(object):
             return cls.TEST_DATABASE
         cls.try_delete_database(client)
         cls.TEST_DATABASE = client.create_database(cls.TEST_DATABASE_ID)
-        cls.IS_MULTIMASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
-        return cls.TEST_DATABASE
-
-    @classmethod
-    def create_database_if_not_exist_with_throughput(cls, client, throughput):
-        # type: (CosmosClient) -> Database
-        if cls.TEST_DATABASE is not None:
-            return cls.TEST_DATABASE
-        cls.try_delete_database(client)
-        cls.TEST_DATABASE = client.create_database(id=cls.TEST_THROUGHPUT_DATABASE_ID, offer_throughput=throughput)
         cls.IS_MULTIMASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
         return cls.TEST_DATABASE
 
@@ -129,17 +120,6 @@ class _test_config(object):
                     cls.THROUGHPUT_FOR_5_PARTITIONS, True)
         cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK, True)
         return cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK
-
-    @classmethod
-    def create_collection_if_not_exist_no_custom_throughput(cls, client):
-        # type: (CosmosClient) -> Container
-        database = cls.create_database_if_not_exist(client)
-        collection_id = cls.TEST_COLLECTION_SINGLE_PARTITION_ID
-
-        document_collection = database.create_container_if_not_exists(
-            id=collection_id,
-            partition_key=PartitionKey(path="/id"))
-        return document_collection
 
     @classmethod
     def create_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):

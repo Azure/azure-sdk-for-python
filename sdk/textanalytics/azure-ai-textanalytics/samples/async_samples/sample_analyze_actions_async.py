@@ -10,15 +10,15 @@ FILE: sample_analyze_actions_async.py
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
     of text analysis actions, such as Entity Recognition, PII Entity Recognition, Linked Entity Recognition,
-    Sentiment Analysis, Key Phrase Extraction, or Extractive Text Summarization (not shown - see sample sample_extract_summary_async.py).
+    Sentiment Analysis, Key Phrase Extraction and more.
     The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
     python sample_analyze_actions_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 
@@ -38,8 +38,8 @@ async def sample_analyze_async():
         AnalyzeSentimentAction,
     )
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,

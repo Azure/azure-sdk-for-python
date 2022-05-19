@@ -2,7 +2,7 @@
 
 [![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
-The exporter for Azure Monitor allows you to export tracing data utilizing the OpenTelemetry SDK and send telemetry data to Azure Monitor for applications written in Python.
+The exporter for Azure Monitor allows you to export data utilizing the OpenTelemetry SDK and send telemetry data to Azure Monitor for applications written in Python.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/CHANGELOG.md)
 
@@ -25,10 +25,19 @@ To use this package, you must have:
 
 ### Instantiate the client
 
-Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class. You will need a **connection_string** to instantiate the object.
+Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class for distributed tracing or `AzureMonitorTraceExporter` for logging. You will need a **connection_string** to instantiate the object.
 Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
-#### [Create Exporter from connection string][sample_authenticate_client_connstr]
+#### Logging
+
+```Python
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+exporter = AzureMonitorLogExporter.from_connection_string(
+    conn_str = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+```
+
+#### Tracing
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
@@ -38,6 +47,11 @@ exporter = AzureMonitorTraceExporter.from_connection_string(
 ```
 
 You can also instantiate the exporter directly via the constructor. In this case, the connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable.
+
+```python
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+exporter = AzureMonitorLogExporter()
+```
 
 ```python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
@@ -52,26 +66,164 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
 
-* [Trace][trace_concept]: Trace refers to distributed tracing. It can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
+* [Log][log_concept]: Log refers to capturing of logging, exception and events.
+
+* [LogRecord][log_record]: Represents a log record emitted from a supported logging library.
+
+* [LogEmitter][log_emitter]: Converts a `LogRecord` into a readable `LogData`, and will be pushed through the SDK to be exported.
+
+* [LogEmitter Provider][log_emitter_provider]: Provides a `LogEmitter` for the given instrumentation library.
+
+* [LogProcessor][log_processor]: Inteface to hook the log record emitting action.
+
+* [LoggingHandler][logging_handler]: A handler class which writes logging records in OpenTelemetry format from the standard Python `logging` library.
+
+* [AzureMonitorLogExporter][log_reference]: This is the class that is initialized to send logging related telemetry to Azure Monitor.
+
+* [Trace][trace_concept]: Trace refers to distributed tracing. It can be thought of as a directed acyclic graph (DAG) of `Span`s, where the edges between `Span`s are defined as parent/child relationship.
+
+* [Span][span]: Represents a single operation within a `Trace`. Can be nested to form a trace tree. Each trace contains a root span, which typically describes the entire operation and, optionally, one ore more sub-spans for its sub-operations.
+
+* [Tracer][tracer]: Responsible for creating `Span`s.
 
 * [Tracer Provider][tracer_provider]: Provides a `Tracer` for use by the given instrumentation library.
 
 * [Span Processor][span_processor]: A span processor allows hooks for SDK's `Span` start and end method invocations. Follow the link for more information.
 
-* [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
+* [AzureMonitorTraceExporter][trace_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
 
-* [AzureMonitorTraceExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
+* [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
 
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 
 ## Examples
+
+### Logging
+
+The following sections provide several code snippets covering some of the most common tasks, including:
+
+* [Exporting a log record](#export-hello-world-log)
+* [Exporting correlated log record](#export-correlated-log)
+* [Exporting log record with custom properties](#export-custom-properties-log)
+
+#### Export Hello World Log
+
+```Python
+import os
+import logging
+
+from opentelemetry.sdk._logs import (
+    LogEmitterProvider,
+    LoggingHandler,
+    set_log_emitter_provider,
+)
+from opentelemetry.sdk._logs.export import BatchLogProcessor
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+
+log_emitter_provider = LogEmitterProvider()
+set_log_emitter_provider(log_emitter_provider)
+
+exporter = AzureMonitorLogExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+
+log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
+handler = LoggingHandler()
+
+# Attach LoggingHandler to root logger
+logging.getLogger().addHandler(handler)
+logging.getLogger().setLevel(logging.NOTSET)
+
+logger = logging.getLogger(__name__)
+
+logger.warning("Hello World!")
+```
+
+#### Export Correlated Log
+
+```Python
+import os
+import logging
+
+from opentelemetry import trace
+from opentelemetry.sdk._logs import (
+    LogEmitterProvider,
+    LoggingHandler,
+    set_log_emitter_provider,
+)
+from opentelemetry.sdk._logs.export import BatchLogProcessor
+from opentelemetry.sdk.trace import TracerProvider
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+log_emitter_provider = LogEmitterProvider()
+set_log_emitter_provider(log_emitter_provider)
+
+exporter = AzureMonitorLogExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+
+log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
+handler = LoggingHandler()
+
+# Attach LoggingHandler to root logger
+logging.getLogger().addHandler(handler)
+logging.getLogger().setLevel(logging.NOTSET)
+
+logger = logging.getLogger(__name__)
+
+logger.info("INFO: Outside of span")
+with tracer.start_as_current_span("foo"):
+    logger.warning("WARNING: Inside of span")
+logger.error("ERROR: After span")
+```
+
+#### Export Custom Properties Log
+
+```Python
+import os
+import logging
+
+from opentelemetry.sdk._logs import (
+    LogEmitterProvider,
+    LoggingHandler,
+    set_log_emitter_provider,
+)
+from opentelemetry.sdk._logs.export import BatchLogProcessor
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+
+log_emitter_provider = LogEmitterProvider()
+set_log_emitter_provider(log_emitter_provider)
+
+exporter = AzureMonitorLogExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+
+log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
+handler = LoggingHandler()
+
+# Attach LoggingHandler to root logger
+logging.getLogger().addHandler(handler)
+logging.getLogger().setLevel(logging.NOTSET)
+
+logger = logging.getLogger(__name__)
+
+# Custom properties
+logger.debug("DEBUG: Debug with properties", extra={"debug": "true"})
+```
+
+### Tracing
 
 The following sections provide several code snippets covering some of the most common tasks, including:
 
 * [Exporting a custom span](#export-hello-world-trace)
 * [Using an instrumentation to track a library](#instrumentation-with-requests-library)
 
-### Export Hello World Trace
+#### Export Hello World Trace
 
 ```Python
 import os
@@ -93,7 +245,7 @@ with tracer.start_as_current_span("hello"):
     print("Hello, World!")
 ```
 
-### Instrumentation with requests library
+#### Instrumentation with requests library
 
 OpenTelemetry also supports several instrumentations which allows to instrument with third party libraries.
 
@@ -174,12 +326,19 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [virtualenv]: https://virtualenv.pypa.io
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
 [application_insights_namespace]: https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
-[trace_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#trace
-[client_reference]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/trace/_exporter.py#L30
 [opentelemtry_spec]: https://opentelemetry.io/
 [instrumentation_library]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#instrumentation-libraries
+[log_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#log-signal
+[log_record]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/logs.html#opentelemetry.sdk._logs.LogRecord
+[log_emitter]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/logs.html#opentelemetry.sdk._logs.LogEmitter
+[log_emitter_provider]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/logs.html#opentelemetry.sdk._logs.LogEmitterProvider
+[log_processor]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/logs.html#opentelemetry.sdk._logs.LogProcessor
+[logging_handler]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/logs.html#opentelemetry.sdk._logs.LoggingHandler
+[log_reference]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/logs/_exporter.py#L30
+[trace_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#tracing-signal
+[span]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.Span
+[tracer]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.Tracer
 [tracer_provider]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.TracerProvider
 [span_processor]: https://opentelemetry-python.readthedocs.io/en/stable/_modules/opentelemetry/sdk/trace.html?highlight=SpanProcessor#
+[trace_reference]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/trace/_exporter.py#L30
 [sampler_ref]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/sdk.md#sampling
-
-[sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_trace.py

@@ -14,14 +14,14 @@ DESCRIPTION:
     By default, model_version is set to "latest". This indicates that the latest generally available version
     of the model will be used. Model versions are date based, e.g "2021-06-01".
     See the documentation for a list of all model versions:
-    https://docs.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/how-to-call#specify-the-ner-model
+    https://aka.ms/text-analytics-model-versioning
 
 USAGE:
     python sample_model_version_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -34,8 +34,8 @@ async def sample_model_version_async():
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     from azure.ai.textanalytics import RecognizeEntitiesAction
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     documents = [
