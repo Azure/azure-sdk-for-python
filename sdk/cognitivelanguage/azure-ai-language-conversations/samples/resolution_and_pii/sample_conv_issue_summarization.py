@@ -27,14 +27,6 @@ def sample_conv_issue_summarization():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import (
-        AnalyzeConversationJobsInput,
-        MultiLanguageConversationAnalysisInput,
-        TextConversation,
-        TextConversationItem,
-        AnalyzeConversationSummarizationTask,
-        ConversationSummarizationTaskParameters
-    )
 
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -43,65 +35,71 @@ def sample_conv_issue_summarization():
     # analyze quey
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
-        # submit job
         poller = client.begin_conversation_analysis(
-            task=AnalyzeConversationJobsInput(
-                analysis_input=MultiLanguageConversationAnalysisInput(
-                    conversations=[
-                        TextConversation(
-                            id=1,
-                            language="en",
-                            conversation_items=[
-                                TextConversationItem(
-                                    id=1,
-                                    participant_id="Agent",
-                                    text="Hello, how can I help you?"
-                                ),
-                                TextConversationItem(
-                                    id=2,
-                                    participant_id="Customer",
-                                    text="How to upgrade Office? I am getting error messages the whole day."
-                                ),
-                                TextConversationItem(
-                                    id=3,
-                                    participant_id="Agent",
-                                    text="Press the upgrade button please. Then sign in and follow the instructions."
-                                )
-                            ]
-                        )
+            task={
+                "displayName": "Analyze conversations from xxx",
+                "analysisInput": {
+                    "conversations": [
+                        {
+                            "conversationItems": [
+                                {
+                                    "text": "Hello, how can I help you?",
+                                    "modality": "text",
+                                    "id": "1",
+                                    "participantId": "Agent"
+                                },
+                                {
+                                    "text": "How to upgrade Office? I am getting error messages the whole day.",
+                                    "modality": "text",
+                                    "id": "2",
+                                    "participantId": "Customer"
+                                },
+                                {
+                                    "text": "Press the upgrade button please. Then sign in and follow the instructions.",
+                                    "modality": "text",
+                                    "id": "3",
+                                    "participantId": "Agent"
+                                }
+                            ],
+                            "modality": "text",
+                            "id": "conversation1",
+                            "language": "en"
+                        },
                     ]
-                ),
-                tasks=[
-                    AnalyzeConversationSummarizationTask(
-                        parameters=ConversationSummarizationTaskParameters(
-                            summary_aspects=["Issue, Resolution"]
-                        )
-                    )
+                },
+                "tasks": [
+                    {
+                        "taskName": "analyze 1",
+                        "kind": "ConversationalSummarizationTask",
+                        "parameters": {
+                            "summaryAspects": ["Issue, Resolution"]
+                        }
+                    }
                 ]
-            )
+            }
         )
 
         # view result
         result = poller.result()
-        task_result = result.tasks.items[0]
+        task_result = result["tasks"]["items"][0]
         print("... view task status ...")
-        print("status: {}".format(task_result.status))
-        issue_resolution_result = task_result.results
-        if issue_resolution_result.errors:
+        print("status: {}".format(task_result["status"]))
+        issue_resolution_result = task_result["results"]
+        if issue_resolution_result["errors"]:
             print("... errors occured ...")
-            for error in issue_resolution_result.errors:
+            for error in issue_resolution_result["errors"]:
                 print(error)
         else:
-            conversation_result = issue_resolution_result.conversations[0]
-            if conversation_result.warnings:
+            conversation_result = issue_resolution_result["conversations"][0]
+            if conversation_result["warnings"]:
                 print("... view warnings ...")
-                for warning in conversation_result.warnings:
+                for warning in conversation_result["warnings"]:
                     print(warning)
             else:
-                summaries = conversation_result.summaries
+                summaries = conversation_result["summaries"]
                 print("... view task result ...")
-                print("issue: {}".format(summaries[0].text))
-                print("resolution: {}".format(summaries[1].text))
+                print("issue: {}".format(summaries[0]["text"]))
+                print("resolution: {}".format(summaries[1]["text"]))
 
     # [END analyze_conversation_app]
 
