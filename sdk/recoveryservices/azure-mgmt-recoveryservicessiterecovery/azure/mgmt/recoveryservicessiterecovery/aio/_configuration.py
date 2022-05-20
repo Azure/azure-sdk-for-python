@@ -10,7 +10,7 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-from azure.mgmt.core.policies import ARMHttpLoggingPolicy
+from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
 
 from .._version import VERSION
 
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SiteRecoveryManagementClientConfiguration(Configuration):
+class SiteRecoveryManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for SiteRecoveryManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,10 +29,14 @@ class SiteRecoveryManagementClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription Id.
     :type subscription_id: str
-    :param resource_group_name: The name of the resource group where the recovery services vault is present.
+    :param resource_group_name: The name of the resource group where the recovery services vault is
+     present.
     :type resource_group_name: str
     :param resource_name: The name of the recovery services vault.
     :type resource_name: str
+    :keyword api_version: Api Version. Default value is "2022-03-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -43,6 +47,9 @@ class SiteRecoveryManagementClientConfiguration(Configuration):
         resource_name: str,
         **kwargs: Any
     ) -> None:
+        super(SiteRecoveryManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -51,13 +58,12 @@ class SiteRecoveryManagementClientConfiguration(Configuration):
             raise ValueError("Parameter 'resource_group_name' must not be None.")
         if resource_name is None:
             raise ValueError("Parameter 'resource_name' must not be None.")
-        super(SiteRecoveryManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.resource_name = resource_name
-        self.api_version = "2021-06-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-recoveryservicessiterecovery/{}'.format(VERSION))
         self._configure(**kwargs)
@@ -76,4 +82,4 @@ class SiteRecoveryManagementClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)

@@ -6,988 +6,513 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import A2AAddDisksInput
-    from ._models_py3 import A2AApplyRecoveryPointInput
-    from ._models_py3 import A2AContainerCreationInput
-    from ._models_py3 import A2AContainerMappingInput
-    from ._models_py3 import A2ACreateProtectionIntentInput
-    from ._models_py3 import A2ACrossClusterMigrationApplyRecoveryPointInput
-    from ._models_py3 import A2ACrossClusterMigrationContainerCreationInput
-    from ._models_py3 import A2ACrossClusterMigrationEnableProtectionInput
-    from ._models_py3 import A2ACrossClusterMigrationPolicyCreationInput
-    from ._models_py3 import A2ACrossClusterMigrationReplicationDetails
-    from ._models_py3 import A2AEnableProtectionInput
-    from ._models_py3 import A2AEventDetails
-    from ._models_py3 import A2APolicyCreationInput
-    from ._models_py3 import A2APolicyDetails
-    from ._models_py3 import A2AProtectedDiskDetails
-    from ._models_py3 import A2AProtectedManagedDiskDetails
-    from ._models_py3 import A2AProtectionContainerMappingDetails
-    from ._models_py3 import A2AProtectionIntentDiskInputDetails
-    from ._models_py3 import A2AProtectionIntentManagedDiskInputDetails
-    from ._models_py3 import A2ARecoveryPointDetails
-    from ._models_py3 import A2ARemoveDisksInput
-    from ._models_py3 import A2AReplicationDetails
-    from ._models_py3 import A2AReplicationIntentDetails
-    from ._models_py3 import A2AReprotectInput
-    from ._models_py3 import A2ASwitchProtectionInput
-    from ._models_py3 import A2ATestFailoverInput
-    from ._models_py3 import A2AUnplannedFailoverInput
-    from ._models_py3 import A2AUnprotectedDiskDetails
-    from ._models_py3 import A2AUpdateContainerMappingInput
-    from ._models_py3 import A2AUpdateReplicationProtectedItemInput
-    from ._models_py3 import A2AVmDiskInputDetails
-    from ._models_py3 import A2AVmManagedDiskInputDetails
-    from ._models_py3 import A2AVmManagedDiskUpdateDetails
-    from ._models_py3 import A2AZoneDetails
-    from ._models_py3 import ASRTask
-    from ._models_py3 import AddDisksInput
-    from ._models_py3 import AddDisksInputProperties
-    from ._models_py3 import AddDisksProviderSpecificInput
-    from ._models_py3 import AddRecoveryServicesProviderInput
-    from ._models_py3 import AddRecoveryServicesProviderInputProperties
-    from ._models_py3 import AddVCenterRequest
-    from ._models_py3 import AddVCenterRequestProperties
-    from ._models_py3 import AgentDetails
-    from ._models_py3 import AgentDiskDetails
-    from ._models_py3 import Alert
-    from ._models_py3 import AlertCollection
-    from ._models_py3 import AlertProperties
-    from ._models_py3 import ApplyRecoveryPointInput
-    from ._models_py3 import ApplyRecoveryPointInputProperties
-    from ._models_py3 import ApplyRecoveryPointProviderSpecificInput
-    from ._models_py3 import AsrJobDetails
-    from ._models_py3 import AutomationRunbookTaskDetails
-    from ._models_py3 import AzureFabricCreationInput
-    from ._models_py3 import AzureFabricSpecificDetails
-    from ._models_py3 import AzureToAzureCreateNetworkMappingInput
-    from ._models_py3 import AzureToAzureNetworkMappingSettings
-    from ._models_py3 import AzureToAzureUpdateNetworkMappingInput
-    from ._models_py3 import AzureToAzureVmSyncedConfigDetails
-    from ._models_py3 import AzureVmDiskDetails
-    from ._models_py3 import ComputeSizeErrorDetails
-    from ._models_py3 import ConfigurationSettings
-    from ._models_py3 import ConfigureAlertRequest
-    from ._models_py3 import ConfigureAlertRequestProperties
-    from ._models_py3 import ConsistencyCheckTaskDetails
-    from ._models_py3 import CreateNetworkMappingInput
-    from ._models_py3 import CreateNetworkMappingInputProperties
-    from ._models_py3 import CreatePolicyInput
-    from ._models_py3 import CreatePolicyInputProperties
-    from ._models_py3 import CreateProtectionContainerInput
-    from ._models_py3 import CreateProtectionContainerInputProperties
-    from ._models_py3 import CreateProtectionContainerMappingInput
-    from ._models_py3 import CreateProtectionContainerMappingInputProperties
-    from ._models_py3 import CreateProtectionIntentInput
-    from ._models_py3 import CreateProtectionIntentProperties
-    from ._models_py3 import CreateProtectionIntentProviderSpecificDetails
-    from ._models_py3 import CreateRecoveryPlanInput
-    from ._models_py3 import CreateRecoveryPlanInputProperties
-    from ._models_py3 import CurrentJobDetails
-    from ._models_py3 import CurrentScenarioDetails
-    from ._models_py3 import DataStore
-    from ._models_py3 import DisableProtectionInput
-    from ._models_py3 import DisableProtectionInputProperties
-    from ._models_py3 import DisableProtectionProviderSpecificInput
-    from ._models_py3 import DiscoverProtectableItemRequest
-    from ._models_py3 import DiscoverProtectableItemRequestProperties
-    from ._models_py3 import DiskDetails
-    from ._models_py3 import DiskEncryptionInfo
-    from ._models_py3 import DiskEncryptionKeyInfo
-    from ._models_py3 import DiskVolumeDetails
-    from ._models_py3 import Display
-    from ._models_py3 import DraDetails
-    from ._models_py3 import EnableMigrationInput
-    from ._models_py3 import EnableMigrationInputProperties
-    from ._models_py3 import EnableMigrationProviderSpecificInput
-    from ._models_py3 import EnableProtectionInput
-    from ._models_py3 import EnableProtectionInputProperties
-    from ._models_py3 import EnableProtectionProviderSpecificInput
-    from ._models_py3 import EncryptionDetails
-    from ._models_py3 import Event
-    from ._models_py3 import EventCollection
-    from ._models_py3 import EventProperties
-    from ._models_py3 import EventProviderSpecificDetails
-    from ._models_py3 import EventQueryParameter
-    from ._models_py3 import EventSpecificDetails
-    from ._models_py3 import ExistingProtectionProfile
-    from ._models_py3 import ExistingRecoveryAvailabilitySet
-    from ._models_py3 import ExistingRecoveryProximityPlacementGroup
-    from ._models_py3 import ExistingRecoveryResourceGroup
-    from ._models_py3 import ExistingRecoveryVirtualNetwork
-    from ._models_py3 import ExistingStorageAccount
-    from ._models_py3 import ExportJobDetails
-    from ._models_py3 import Fabric
-    from ._models_py3 import FabricCollection
-    from ._models_py3 import FabricCreationInput
-    from ._models_py3 import FabricCreationInputProperties
-    from ._models_py3 import FabricProperties
-    from ._models_py3 import FabricQueryParameter
-    from ._models_py3 import FabricReplicationGroupTaskDetails
-    from ._models_py3 import FabricSpecificCreateNetworkMappingInput
-    from ._models_py3 import FabricSpecificCreationInput
-    from ._models_py3 import FabricSpecificDetails
-    from ._models_py3 import FabricSpecificUpdateNetworkMappingInput
-    from ._models_py3 import FailoverJobDetails
-    from ._models_py3 import FailoverProcessServerRequest
-    from ._models_py3 import FailoverProcessServerRequestProperties
-    from ._models_py3 import FailoverReplicationProtectedItemDetails
-    from ._models_py3 import GroupTaskDetails
-    from ._models_py3 import HealthError
-    from ._models_py3 import HealthErrorSummary
-    from ._models_py3 import HyperVHostDetails
-    from ._models_py3 import HyperVReplica2012EventDetails
-    from ._models_py3 import HyperVReplica2012R2EventDetails
-    from ._models_py3 import HyperVReplicaAzureApplyRecoveryPointInput
-    from ._models_py3 import HyperVReplicaAzureDiskInputDetails
-    from ._models_py3 import HyperVReplicaAzureEnableProtectionInput
-    from ._models_py3 import HyperVReplicaAzureEventDetails
-    from ._models_py3 import HyperVReplicaAzureFailbackProviderInput
-    from ._models_py3 import HyperVReplicaAzureManagedDiskDetails
-    from ._models_py3 import HyperVReplicaAzurePlannedFailoverProviderInput
-    from ._models_py3 import HyperVReplicaAzurePolicyDetails
-    from ._models_py3 import HyperVReplicaAzurePolicyInput
-    from ._models_py3 import HyperVReplicaAzureReplicationDetails
-    from ._models_py3 import HyperVReplicaAzureReprotectInput
-    from ._models_py3 import HyperVReplicaAzureTestFailoverInput
-    from ._models_py3 import HyperVReplicaAzureUnplannedFailoverInput
-    from ._models_py3 import HyperVReplicaAzureUpdateReplicationProtectedItemInput
-    from ._models_py3 import HyperVReplicaBaseEventDetails
-    from ._models_py3 import HyperVReplicaBasePolicyDetails
-    from ._models_py3 import HyperVReplicaBaseReplicationDetails
-    from ._models_py3 import HyperVReplicaBluePolicyDetails
-    from ._models_py3 import HyperVReplicaBluePolicyInput
-    from ._models_py3 import HyperVReplicaBlueReplicationDetails
-    from ._models_py3 import HyperVReplicaPolicyDetails
-    from ._models_py3 import HyperVReplicaPolicyInput
-    from ._models_py3 import HyperVReplicaReplicationDetails
-    from ._models_py3 import HyperVSiteDetails
-    from ._models_py3 import HyperVVirtualMachineDetails
-    from ._models_py3 import IPConfigDetails
-    from ._models_py3 import IPConfigInputDetails
-    from ._models_py3 import IdentityProviderDetails
-    from ._models_py3 import IdentityProviderInput
-    from ._models_py3 import InMageAgentDetails
-    from ._models_py3 import InMageAzureV2ApplyRecoveryPointInput
-    from ._models_py3 import InMageAzureV2DiskInputDetails
-    from ._models_py3 import InMageAzureV2EnableProtectionInput
-    from ._models_py3 import InMageAzureV2EventDetails
-    from ._models_py3 import InMageAzureV2ManagedDiskDetails
-    from ._models_py3 import InMageAzureV2PolicyDetails
-    from ._models_py3 import InMageAzureV2PolicyInput
-    from ._models_py3 import InMageAzureV2ProtectedDiskDetails
-    from ._models_py3 import InMageAzureV2RecoveryPointDetails
-    from ._models_py3 import InMageAzureV2ReplicationDetails
-    from ._models_py3 import InMageAzureV2ReprotectInput
-    from ._models_py3 import InMageAzureV2TestFailoverInput
-    from ._models_py3 import InMageAzureV2UnplannedFailoverInput
-    from ._models_py3 import InMageAzureV2UpdateReplicationProtectedItemInput
-    from ._models_py3 import InMageBasePolicyDetails
-    from ._models_py3 import InMageDisableProtectionProviderSpecificInput
-    from ._models_py3 import InMageDiskDetails
-    from ._models_py3 import InMageDiskExclusionInput
-    from ._models_py3 import InMageDiskSignatureExclusionOptions
-    from ._models_py3 import InMageEnableProtectionInput
-    from ._models_py3 import InMagePolicyDetails
-    from ._models_py3 import InMagePolicyInput
-    from ._models_py3 import InMageProtectedDiskDetails
-    from ._models_py3 import InMageRcmAgentUpgradeBlockingErrorDetails
-    from ._models_py3 import InMageRcmApplyRecoveryPointInput
-    from ._models_py3 import InMageRcmDiscoveredProtectedVmDetails
-    from ._models_py3 import InMageRcmDiskInput
-    from ._models_py3 import InMageRcmDisksDefaultInput
-    from ._models_py3 import InMageRcmEnableProtectionInput
-    from ._models_py3 import InMageRcmEventDetails
-    from ._models_py3 import InMageRcmFabricCreationInput
-    from ._models_py3 import InMageRcmFabricSpecificDetails
-    from ._models_py3 import InMageRcmFailbackDiscoveredProtectedVmDetails
-    from ._models_py3 import InMageRcmFailbackEventDetails
-    from ._models_py3 import InMageRcmFailbackMobilityAgentDetails
-    from ._models_py3 import InMageRcmFailbackNicDetails
-    from ._models_py3 import InMageRcmFailbackPlannedFailoverProviderInput
-    from ._models_py3 import InMageRcmFailbackPolicyCreationInput
-    from ._models_py3 import InMageRcmFailbackPolicyDetails
-    from ._models_py3 import InMageRcmFailbackProtectedDiskDetails
-    from ._models_py3 import InMageRcmFailbackReplicationDetails
-    from ._models_py3 import InMageRcmFailbackReprotectInput
-    from ._models_py3 import InMageRcmFailbackSyncDetails
-    from ._models_py3 import InMageRcmLastAgentUpgradeErrorDetails
-    from ._models_py3 import InMageRcmMobilityAgentDetails
-    from ._models_py3 import InMageRcmNicDetails
-    from ._models_py3 import InMageRcmNicInput
-    from ._models_py3 import InMageRcmPolicyCreationInput
-    from ._models_py3 import InMageRcmPolicyDetails
-    from ._models_py3 import InMageRcmProtectedDiskDetails
-    from ._models_py3 import InMageRcmProtectionContainerMappingDetails
-    from ._models_py3 import InMageRcmRecoveryPointDetails
-    from ._models_py3 import InMageRcmReplicationDetails
-    from ._models_py3 import InMageRcmReprotectInput
-    from ._models_py3 import InMageRcmSyncDetails
-    from ._models_py3 import InMageRcmTestFailoverInput
-    from ._models_py3 import InMageRcmUnplannedFailoverInput
-    from ._models_py3 import InMageRcmUpdateApplianceForReplicationProtectedItemInput
-    from ._models_py3 import InMageRcmUpdateContainerMappingInput
-    from ._models_py3 import InMageRcmUpdateReplicationProtectedItemInput
-    from ._models_py3 import InMageReplicationDetails
-    from ._models_py3 import InMageReprotectInput
-    from ._models_py3 import InMageTestFailoverInput
-    from ._models_py3 import InMageUnplannedFailoverInput
-    from ._models_py3 import InMageVolumeExclusionOptions
-    from ._models_py3 import InconsistentVmDetails
-    from ._models_py3 import InitialReplicationDetails
-    from ._models_py3 import InlineWorkflowTaskDetails
-    from ._models_py3 import InnerHealthError
-    from ._models_py3 import InputEndpoint
-    from ._models_py3 import Job
-    from ._models_py3 import JobCollection
-    from ._models_py3 import JobDetails
-    from ._models_py3 import JobEntity
-    from ._models_py3 import JobErrorDetails
-    from ._models_py3 import JobProperties
-    from ._models_py3 import JobQueryParameter
-    from ._models_py3 import JobStatusEventDetails
-    from ._models_py3 import JobTaskDetails
-    from ._models_py3 import KeyEncryptionKeyInfo
-    from ._models_py3 import LogicalNetwork
-    from ._models_py3 import LogicalNetworkCollection
-    from ._models_py3 import LogicalNetworkProperties
-    from ._models_py3 import ManualActionTaskDetails
-    from ._models_py3 import MarsAgentDetails
-    from ._models_py3 import MasterTargetServer
-    from ._models_py3 import MigrateInput
-    from ._models_py3 import MigrateInputProperties
-    from ._models_py3 import MigrateProviderSpecificInput
-    from ._models_py3 import MigrationItem
-    from ._models_py3 import MigrationItemCollection
-    from ._models_py3 import MigrationItemProperties
-    from ._models_py3 import MigrationItemsQueryParameter
-    from ._models_py3 import MigrationProviderSpecificSettings
-    from ._models_py3 import MigrationRecoveryPoint
-    from ._models_py3 import MigrationRecoveryPointCollection
-    from ._models_py3 import MigrationRecoveryPointProperties
-    from ._models_py3 import MobilityServiceUpdate
-    from ._models_py3 import Network
-    from ._models_py3 import NetworkCollection
-    from ._models_py3 import NetworkMapping
-    from ._models_py3 import NetworkMappingCollection
-    from ._models_py3 import NetworkMappingFabricSpecificSettings
-    from ._models_py3 import NetworkMappingProperties
-    from ._models_py3 import NetworkProperties
-    from ._models_py3 import NewProtectionProfile
-    from ._models_py3 import NewRecoveryVirtualNetwork
-    from ._models_py3 import OSDetails
-    from ._models_py3 import OSDiskDetails
-    from ._models_py3 import OSVersionWrapper
-    from ._models_py3 import OperationsDiscovery
-    from ._models_py3 import OperationsDiscoveryCollection
-    from ._models_py3 import PlannedFailoverInput
-    from ._models_py3 import PlannedFailoverInputProperties
-    from ._models_py3 import PlannedFailoverProviderSpecificFailoverInput
-    from ._models_py3 import Policy
-    from ._models_py3 import PolicyCollection
-    from ._models_py3 import PolicyProperties
-    from ._models_py3 import PolicyProviderSpecificDetails
-    from ._models_py3 import PolicyProviderSpecificInput
-    from ._models_py3 import ProcessServer
-    from ._models_py3 import ProcessServerDetails
-    from ._models_py3 import ProtectableItem
-    from ._models_py3 import ProtectableItemCollection
-    from ._models_py3 import ProtectableItemProperties
-    from ._models_py3 import ProtectableItemQueryParameter
-    from ._models_py3 import ProtectedItemsQueryParameter
-    from ._models_py3 import ProtectionContainer
-    from ._models_py3 import ProtectionContainerCollection
-    from ._models_py3 import ProtectionContainerFabricSpecificDetails
-    from ._models_py3 import ProtectionContainerMapping
-    from ._models_py3 import ProtectionContainerMappingCollection
-    from ._models_py3 import ProtectionContainerMappingProperties
-    from ._models_py3 import ProtectionContainerMappingProviderSpecificDetails
-    from ._models_py3 import ProtectionContainerProperties
-    from ._models_py3 import ProtectionProfileCustomDetails
-    from ._models_py3 import ProviderError
-    from ._models_py3 import ProviderSpecificRecoveryPointDetails
-    from ._models_py3 import PushInstallerDetails
-    from ._models_py3 import RcmProxyDetails
-    from ._models_py3 import RecoveryAvailabilitySetCustomDetails
-    from ._models_py3 import RecoveryPlan
-    from ._models_py3 import RecoveryPlanA2ADetails
-    from ._models_py3 import RecoveryPlanA2AFailoverInput
-    from ._models_py3 import RecoveryPlanA2AInput
-    from ._models_py3 import RecoveryPlanAction
-    from ._models_py3 import RecoveryPlanActionDetails
-    from ._models_py3 import RecoveryPlanAutomationRunbookActionDetails
-    from ._models_py3 import RecoveryPlanCollection
-    from ._models_py3 import RecoveryPlanGroup
-    from ._models_py3 import RecoveryPlanGroupTaskDetails
-    from ._models_py3 import RecoveryPlanHyperVReplicaAzureFailbackInput
-    from ._models_py3 import RecoveryPlanHyperVReplicaAzureFailoverInput
-    from ._models_py3 import RecoveryPlanInMageAzureV2FailoverInput
-    from ._models_py3 import RecoveryPlanInMageFailoverInput
-    from ._models_py3 import RecoveryPlanInMageRcmFailbackFailoverInput
-    from ._models_py3 import RecoveryPlanInMageRcmFailoverInput
-    from ._models_py3 import RecoveryPlanManualActionDetails
-    from ._models_py3 import RecoveryPlanPlannedFailoverInput
-    from ._models_py3 import RecoveryPlanPlannedFailoverInputProperties
-    from ._models_py3 import RecoveryPlanProperties
-    from ._models_py3 import RecoveryPlanProtectedItem
-    from ._models_py3 import RecoveryPlanProviderSpecificDetails
-    from ._models_py3 import RecoveryPlanProviderSpecificFailoverInput
-    from ._models_py3 import RecoveryPlanProviderSpecificInput
-    from ._models_py3 import RecoveryPlanScriptActionDetails
-    from ._models_py3 import RecoveryPlanShutdownGroupTaskDetails
-    from ._models_py3 import RecoveryPlanTestFailoverCleanupInput
-    from ._models_py3 import RecoveryPlanTestFailoverCleanupInputProperties
-    from ._models_py3 import RecoveryPlanTestFailoverInput
-    from ._models_py3 import RecoveryPlanTestFailoverInputProperties
-    from ._models_py3 import RecoveryPlanUnplannedFailoverInput
-    from ._models_py3 import RecoveryPlanUnplannedFailoverInputProperties
-    from ._models_py3 import RecoveryPoint
-    from ._models_py3 import RecoveryPointCollection
-    from ._models_py3 import RecoveryPointProperties
-    from ._models_py3 import RecoveryProximityPlacementGroupCustomDetails
-    from ._models_py3 import RecoveryResourceGroupCustomDetails
-    from ._models_py3 import RecoveryServicesProvider
-    from ._models_py3 import RecoveryServicesProviderCollection
-    from ._models_py3 import RecoveryServicesProviderProperties
-    from ._models_py3 import RecoveryVirtualNetworkCustomDetails
-    from ._models_py3 import RemoveDisksInput
-    from ._models_py3 import RemoveDisksInputProperties
-    from ._models_py3 import RemoveDisksProviderSpecificInput
-    from ._models_py3 import RemoveProtectionContainerMappingInput
-    from ._models_py3 import RemoveProtectionContainerMappingInputProperties
-    from ._models_py3 import RenewCertificateInput
-    from ._models_py3 import RenewCertificateInputProperties
-    from ._models_py3 import ReplicationAgentDetails
-    from ._models_py3 import ReplicationEligibilityResults
-    from ._models_py3 import ReplicationEligibilityResultsCollection
-    from ._models_py3 import ReplicationEligibilityResultsErrorInfo
-    from ._models_py3 import ReplicationEligibilityResultsProperties
-    from ._models_py3 import ReplicationGroupDetails
-    from ._models_py3 import ReplicationProtectedItem
-    from ._models_py3 import ReplicationProtectedItemCollection
-    from ._models_py3 import ReplicationProtectedItemProperties
-    from ._models_py3 import ReplicationProtectionIntent
-    from ._models_py3 import ReplicationProtectionIntentCollection
-    from ._models_py3 import ReplicationProtectionIntentProperties
-    from ._models_py3 import ReplicationProtectionIntentProviderSpecificSettings
-    from ._models_py3 import ReplicationProviderContainerUnmappingInput
-    from ._models_py3 import ReplicationProviderSpecificContainerCreationInput
-    from ._models_py3 import ReplicationProviderSpecificContainerMappingInput
-    from ._models_py3 import ReplicationProviderSpecificSettings
-    from ._models_py3 import ReplicationProviderSpecificUpdateContainerMappingInput
-    from ._models_py3 import ReprotectAgentDetails
-    from ._models_py3 import ResolveHealthError
-    from ._models_py3 import ResolveHealthInput
-    from ._models_py3 import ResolveHealthInputProperties
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceHealthSummary
-    from ._models_py3 import ResumeJobParams
-    from ._models_py3 import ResumeJobParamsProperties
-    from ._models_py3 import ResyncInput
-    from ._models_py3 import ResyncInputProperties
-    from ._models_py3 import ResyncProviderSpecificInput
-    from ._models_py3 import RetentionVolume
-    from ._models_py3 import ReverseReplicationInput
-    from ._models_py3 import ReverseReplicationInputProperties
-    from ._models_py3 import ReverseReplicationProviderSpecificInput
-    from ._models_py3 import RoleAssignment
-    from ._models_py3 import RunAsAccount
-    from ._models_py3 import ScriptActionTaskDetails
-    from ._models_py3 import ServiceError
-    from ._models_py3 import StorageAccountCustomDetails
-    from ._models_py3 import StorageClassification
-    from ._models_py3 import StorageClassificationCollection
-    from ._models_py3 import StorageClassificationMapping
-    from ._models_py3 import StorageClassificationMappingCollection
-    from ._models_py3 import StorageClassificationMappingInput
-    from ._models_py3 import StorageClassificationMappingProperties
-    from ._models_py3 import StorageClassificationProperties
-    from ._models_py3 import StorageMappingInputProperties
-    from ._models_py3 import Subnet
-    from ._models_py3 import SupportedOSDetails
-    from ._models_py3 import SupportedOSProperties
-    from ._models_py3 import SupportedOSProperty
-    from ._models_py3 import SupportedOperatingSystems
-    from ._models_py3 import SwitchProtectionInput
-    from ._models_py3 import SwitchProtectionInputProperties
-    from ._models_py3 import SwitchProtectionJobDetails
-    from ._models_py3 import SwitchProtectionProviderSpecificInput
-    from ._models_py3 import TargetComputeSize
-    from ._models_py3 import TargetComputeSizeCollection
-    from ._models_py3 import TargetComputeSizeProperties
-    from ._models_py3 import TaskTypeDetails
-    from ._models_py3 import TestFailoverCleanupInput
-    from ._models_py3 import TestFailoverCleanupInputProperties
-    from ._models_py3 import TestFailoverInput
-    from ._models_py3 import TestFailoverInputProperties
-    from ._models_py3 import TestFailoverJobDetails
-    from ._models_py3 import TestFailoverProviderSpecificInput
-    from ._models_py3 import TestMigrateCleanupInput
-    from ._models_py3 import TestMigrateCleanupInputProperties
-    from ._models_py3 import TestMigrateInput
-    from ._models_py3 import TestMigrateInputProperties
-    from ._models_py3 import TestMigrateProviderSpecificInput
-    from ._models_py3 import UnplannedFailoverInput
-    from ._models_py3 import UnplannedFailoverInputProperties
-    from ._models_py3 import UnplannedFailoverProviderSpecificInput
-    from ._models_py3 import UpdateApplianceForReplicationProtectedItemInput
-    from ._models_py3 import UpdateApplianceForReplicationProtectedItemInputProperties
-    from ._models_py3 import UpdateApplianceForReplicationProtectedItemProviderSpecificInput
-    from ._models_py3 import UpdateDiskInput
-    from ._models_py3 import UpdateMigrationItemInput
-    from ._models_py3 import UpdateMigrationItemInputProperties
-    from ._models_py3 import UpdateMigrationItemProviderSpecificInput
-    from ._models_py3 import UpdateMobilityServiceRequest
-    from ._models_py3 import UpdateMobilityServiceRequestProperties
-    from ._models_py3 import UpdateNetworkMappingInput
-    from ._models_py3 import UpdateNetworkMappingInputProperties
-    from ._models_py3 import UpdatePolicyInput
-    from ._models_py3 import UpdatePolicyInputProperties
-    from ._models_py3 import UpdateProtectionContainerMappingInput
-    from ._models_py3 import UpdateProtectionContainerMappingInputProperties
-    from ._models_py3 import UpdateRecoveryPlanInput
-    from ._models_py3 import UpdateRecoveryPlanInputProperties
-    from ._models_py3 import UpdateReplicationProtectedItemInput
-    from ._models_py3 import UpdateReplicationProtectedItemInputProperties
-    from ._models_py3 import UpdateReplicationProtectedItemProviderInput
-    from ._models_py3 import UpdateVCenterRequest
-    from ._models_py3 import UpdateVCenterRequestProperties
-    from ._models_py3 import VCenter
-    from ._models_py3 import VCenterCollection
-    from ._models_py3 import VCenterProperties
-    from ._models_py3 import VMNicDetails
-    from ._models_py3 import VMNicInputDetails
-    from ._models_py3 import VMwareCbtContainerCreationInput
-    from ._models_py3 import VMwareCbtContainerMappingInput
-    from ._models_py3 import VMwareCbtDiskInput
-    from ._models_py3 import VMwareCbtEnableMigrationInput
-    from ._models_py3 import VMwareCbtEventDetails
-    from ._models_py3 import VMwareCbtMigrateInput
-    from ._models_py3 import VMwareCbtMigrationDetails
-    from ._models_py3 import VMwareCbtNicDetails
-    from ._models_py3 import VMwareCbtNicInput
-    from ._models_py3 import VMwareCbtPolicyCreationInput
-    from ._models_py3 import VMwareCbtProtectedDiskDetails
-    from ._models_py3 import VMwareCbtProtectionContainerMappingDetails
-    from ._models_py3 import VMwareCbtResyncInput
-    from ._models_py3 import VMwareCbtTestMigrateInput
-    from ._models_py3 import VMwareCbtUpdateDiskInput
-    from ._models_py3 import VMwareCbtUpdateMigrationItemInput
-    from ._models_py3 import VMwareDetails
-    from ._models_py3 import VMwareV2FabricCreationInput
-    from ._models_py3 import VMwareV2FabricSpecificDetails
-    from ._models_py3 import VMwareVirtualMachineDetails
-    from ._models_py3 import VaultHealthDetails
-    from ._models_py3 import VaultHealthProperties
-    from ._models_py3 import VaultSetting
-    from ._models_py3 import VaultSettingCollection
-    from ._models_py3 import VaultSettingCreationInput
-    from ._models_py3 import VaultSettingCreationInputProperties
-    from ._models_py3 import VaultSettingProperties
-    from ._models_py3 import VersionDetails
-    from ._models_py3 import VirtualMachineTaskDetails
-    from ._models_py3 import VmNicUpdatesTaskDetails
-    from ._models_py3 import VmmDetails
-    from ._models_py3 import VmmToAzureCreateNetworkMappingInput
-    from ._models_py3 import VmmToAzureNetworkMappingSettings
-    from ._models_py3 import VmmToAzureUpdateNetworkMappingInput
-    from ._models_py3 import VmmToVmmCreateNetworkMappingInput
-    from ._models_py3 import VmmToVmmNetworkMappingSettings
-    from ._models_py3 import VmmToVmmUpdateNetworkMappingInput
-    from ._models_py3 import VmmVirtualMachineDetails
-    from ._models_py3 import VmwareCbtPolicyDetails
-except (SyntaxError, ImportError):
-    from ._models import A2AAddDisksInput  # type: ignore
-    from ._models import A2AApplyRecoveryPointInput  # type: ignore
-    from ._models import A2AContainerCreationInput  # type: ignore
-    from ._models import A2AContainerMappingInput  # type: ignore
-    from ._models import A2ACreateProtectionIntentInput  # type: ignore
-    from ._models import A2ACrossClusterMigrationApplyRecoveryPointInput  # type: ignore
-    from ._models import A2ACrossClusterMigrationContainerCreationInput  # type: ignore
-    from ._models import A2ACrossClusterMigrationEnableProtectionInput  # type: ignore
-    from ._models import A2ACrossClusterMigrationPolicyCreationInput  # type: ignore
-    from ._models import A2ACrossClusterMigrationReplicationDetails  # type: ignore
-    from ._models import A2AEnableProtectionInput  # type: ignore
-    from ._models import A2AEventDetails  # type: ignore
-    from ._models import A2APolicyCreationInput  # type: ignore
-    from ._models import A2APolicyDetails  # type: ignore
-    from ._models import A2AProtectedDiskDetails  # type: ignore
-    from ._models import A2AProtectedManagedDiskDetails  # type: ignore
-    from ._models import A2AProtectionContainerMappingDetails  # type: ignore
-    from ._models import A2AProtectionIntentDiskInputDetails  # type: ignore
-    from ._models import A2AProtectionIntentManagedDiskInputDetails  # type: ignore
-    from ._models import A2ARecoveryPointDetails  # type: ignore
-    from ._models import A2ARemoveDisksInput  # type: ignore
-    from ._models import A2AReplicationDetails  # type: ignore
-    from ._models import A2AReplicationIntentDetails  # type: ignore
-    from ._models import A2AReprotectInput  # type: ignore
-    from ._models import A2ASwitchProtectionInput  # type: ignore
-    from ._models import A2ATestFailoverInput  # type: ignore
-    from ._models import A2AUnplannedFailoverInput  # type: ignore
-    from ._models import A2AUnprotectedDiskDetails  # type: ignore
-    from ._models import A2AUpdateContainerMappingInput  # type: ignore
-    from ._models import A2AUpdateReplicationProtectedItemInput  # type: ignore
-    from ._models import A2AVmDiskInputDetails  # type: ignore
-    from ._models import A2AVmManagedDiskInputDetails  # type: ignore
-    from ._models import A2AVmManagedDiskUpdateDetails  # type: ignore
-    from ._models import A2AZoneDetails  # type: ignore
-    from ._models import ASRTask  # type: ignore
-    from ._models import AddDisksInput  # type: ignore
-    from ._models import AddDisksInputProperties  # type: ignore
-    from ._models import AddDisksProviderSpecificInput  # type: ignore
-    from ._models import AddRecoveryServicesProviderInput  # type: ignore
-    from ._models import AddRecoveryServicesProviderInputProperties  # type: ignore
-    from ._models import AddVCenterRequest  # type: ignore
-    from ._models import AddVCenterRequestProperties  # type: ignore
-    from ._models import AgentDetails  # type: ignore
-    from ._models import AgentDiskDetails  # type: ignore
-    from ._models import Alert  # type: ignore
-    from ._models import AlertCollection  # type: ignore
-    from ._models import AlertProperties  # type: ignore
-    from ._models import ApplyRecoveryPointInput  # type: ignore
-    from ._models import ApplyRecoveryPointInputProperties  # type: ignore
-    from ._models import ApplyRecoveryPointProviderSpecificInput  # type: ignore
-    from ._models import AsrJobDetails  # type: ignore
-    from ._models import AutomationRunbookTaskDetails  # type: ignore
-    from ._models import AzureFabricCreationInput  # type: ignore
-    from ._models import AzureFabricSpecificDetails  # type: ignore
-    from ._models import AzureToAzureCreateNetworkMappingInput  # type: ignore
-    from ._models import AzureToAzureNetworkMappingSettings  # type: ignore
-    from ._models import AzureToAzureUpdateNetworkMappingInput  # type: ignore
-    from ._models import AzureToAzureVmSyncedConfigDetails  # type: ignore
-    from ._models import AzureVmDiskDetails  # type: ignore
-    from ._models import ComputeSizeErrorDetails  # type: ignore
-    from ._models import ConfigurationSettings  # type: ignore
-    from ._models import ConfigureAlertRequest  # type: ignore
-    from ._models import ConfigureAlertRequestProperties  # type: ignore
-    from ._models import ConsistencyCheckTaskDetails  # type: ignore
-    from ._models import CreateNetworkMappingInput  # type: ignore
-    from ._models import CreateNetworkMappingInputProperties  # type: ignore
-    from ._models import CreatePolicyInput  # type: ignore
-    from ._models import CreatePolicyInputProperties  # type: ignore
-    from ._models import CreateProtectionContainerInput  # type: ignore
-    from ._models import CreateProtectionContainerInputProperties  # type: ignore
-    from ._models import CreateProtectionContainerMappingInput  # type: ignore
-    from ._models import CreateProtectionContainerMappingInputProperties  # type: ignore
-    from ._models import CreateProtectionIntentInput  # type: ignore
-    from ._models import CreateProtectionIntentProperties  # type: ignore
-    from ._models import CreateProtectionIntentProviderSpecificDetails  # type: ignore
-    from ._models import CreateRecoveryPlanInput  # type: ignore
-    from ._models import CreateRecoveryPlanInputProperties  # type: ignore
-    from ._models import CurrentJobDetails  # type: ignore
-    from ._models import CurrentScenarioDetails  # type: ignore
-    from ._models import DataStore  # type: ignore
-    from ._models import DisableProtectionInput  # type: ignore
-    from ._models import DisableProtectionInputProperties  # type: ignore
-    from ._models import DisableProtectionProviderSpecificInput  # type: ignore
-    from ._models import DiscoverProtectableItemRequest  # type: ignore
-    from ._models import DiscoverProtectableItemRequestProperties  # type: ignore
-    from ._models import DiskDetails  # type: ignore
-    from ._models import DiskEncryptionInfo  # type: ignore
-    from ._models import DiskEncryptionKeyInfo  # type: ignore
-    from ._models import DiskVolumeDetails  # type: ignore
-    from ._models import Display  # type: ignore
-    from ._models import DraDetails  # type: ignore
-    from ._models import EnableMigrationInput  # type: ignore
-    from ._models import EnableMigrationInputProperties  # type: ignore
-    from ._models import EnableMigrationProviderSpecificInput  # type: ignore
-    from ._models import EnableProtectionInput  # type: ignore
-    from ._models import EnableProtectionInputProperties  # type: ignore
-    from ._models import EnableProtectionProviderSpecificInput  # type: ignore
-    from ._models import EncryptionDetails  # type: ignore
-    from ._models import Event  # type: ignore
-    from ._models import EventCollection  # type: ignore
-    from ._models import EventProperties  # type: ignore
-    from ._models import EventProviderSpecificDetails  # type: ignore
-    from ._models import EventQueryParameter  # type: ignore
-    from ._models import EventSpecificDetails  # type: ignore
-    from ._models import ExistingProtectionProfile  # type: ignore
-    from ._models import ExistingRecoveryAvailabilitySet  # type: ignore
-    from ._models import ExistingRecoveryProximityPlacementGroup  # type: ignore
-    from ._models import ExistingRecoveryResourceGroup  # type: ignore
-    from ._models import ExistingRecoveryVirtualNetwork  # type: ignore
-    from ._models import ExistingStorageAccount  # type: ignore
-    from ._models import ExportJobDetails  # type: ignore
-    from ._models import Fabric  # type: ignore
-    from ._models import FabricCollection  # type: ignore
-    from ._models import FabricCreationInput  # type: ignore
-    from ._models import FabricCreationInputProperties  # type: ignore
-    from ._models import FabricProperties  # type: ignore
-    from ._models import FabricQueryParameter  # type: ignore
-    from ._models import FabricReplicationGroupTaskDetails  # type: ignore
-    from ._models import FabricSpecificCreateNetworkMappingInput  # type: ignore
-    from ._models import FabricSpecificCreationInput  # type: ignore
-    from ._models import FabricSpecificDetails  # type: ignore
-    from ._models import FabricSpecificUpdateNetworkMappingInput  # type: ignore
-    from ._models import FailoverJobDetails  # type: ignore
-    from ._models import FailoverProcessServerRequest  # type: ignore
-    from ._models import FailoverProcessServerRequestProperties  # type: ignore
-    from ._models import FailoverReplicationProtectedItemDetails  # type: ignore
-    from ._models import GroupTaskDetails  # type: ignore
-    from ._models import HealthError  # type: ignore
-    from ._models import HealthErrorSummary  # type: ignore
-    from ._models import HyperVHostDetails  # type: ignore
-    from ._models import HyperVReplica2012EventDetails  # type: ignore
-    from ._models import HyperVReplica2012R2EventDetails  # type: ignore
-    from ._models import HyperVReplicaAzureApplyRecoveryPointInput  # type: ignore
-    from ._models import HyperVReplicaAzureDiskInputDetails  # type: ignore
-    from ._models import HyperVReplicaAzureEnableProtectionInput  # type: ignore
-    from ._models import HyperVReplicaAzureEventDetails  # type: ignore
-    from ._models import HyperVReplicaAzureFailbackProviderInput  # type: ignore
-    from ._models import HyperVReplicaAzureManagedDiskDetails  # type: ignore
-    from ._models import HyperVReplicaAzurePlannedFailoverProviderInput  # type: ignore
-    from ._models import HyperVReplicaAzurePolicyDetails  # type: ignore
-    from ._models import HyperVReplicaAzurePolicyInput  # type: ignore
-    from ._models import HyperVReplicaAzureReplicationDetails  # type: ignore
-    from ._models import HyperVReplicaAzureReprotectInput  # type: ignore
-    from ._models import HyperVReplicaAzureTestFailoverInput  # type: ignore
-    from ._models import HyperVReplicaAzureUnplannedFailoverInput  # type: ignore
-    from ._models import HyperVReplicaAzureUpdateReplicationProtectedItemInput  # type: ignore
-    from ._models import HyperVReplicaBaseEventDetails  # type: ignore
-    from ._models import HyperVReplicaBasePolicyDetails  # type: ignore
-    from ._models import HyperVReplicaBaseReplicationDetails  # type: ignore
-    from ._models import HyperVReplicaBluePolicyDetails  # type: ignore
-    from ._models import HyperVReplicaBluePolicyInput  # type: ignore
-    from ._models import HyperVReplicaBlueReplicationDetails  # type: ignore
-    from ._models import HyperVReplicaPolicyDetails  # type: ignore
-    from ._models import HyperVReplicaPolicyInput  # type: ignore
-    from ._models import HyperVReplicaReplicationDetails  # type: ignore
-    from ._models import HyperVSiteDetails  # type: ignore
-    from ._models import HyperVVirtualMachineDetails  # type: ignore
-    from ._models import IPConfigDetails  # type: ignore
-    from ._models import IPConfigInputDetails  # type: ignore
-    from ._models import IdentityProviderDetails  # type: ignore
-    from ._models import IdentityProviderInput  # type: ignore
-    from ._models import InMageAgentDetails  # type: ignore
-    from ._models import InMageAzureV2ApplyRecoveryPointInput  # type: ignore
-    from ._models import InMageAzureV2DiskInputDetails  # type: ignore
-    from ._models import InMageAzureV2EnableProtectionInput  # type: ignore
-    from ._models import InMageAzureV2EventDetails  # type: ignore
-    from ._models import InMageAzureV2ManagedDiskDetails  # type: ignore
-    from ._models import InMageAzureV2PolicyDetails  # type: ignore
-    from ._models import InMageAzureV2PolicyInput  # type: ignore
-    from ._models import InMageAzureV2ProtectedDiskDetails  # type: ignore
-    from ._models import InMageAzureV2RecoveryPointDetails  # type: ignore
-    from ._models import InMageAzureV2ReplicationDetails  # type: ignore
-    from ._models import InMageAzureV2ReprotectInput  # type: ignore
-    from ._models import InMageAzureV2TestFailoverInput  # type: ignore
-    from ._models import InMageAzureV2UnplannedFailoverInput  # type: ignore
-    from ._models import InMageAzureV2UpdateReplicationProtectedItemInput  # type: ignore
-    from ._models import InMageBasePolicyDetails  # type: ignore
-    from ._models import InMageDisableProtectionProviderSpecificInput  # type: ignore
-    from ._models import InMageDiskDetails  # type: ignore
-    from ._models import InMageDiskExclusionInput  # type: ignore
-    from ._models import InMageDiskSignatureExclusionOptions  # type: ignore
-    from ._models import InMageEnableProtectionInput  # type: ignore
-    from ._models import InMagePolicyDetails  # type: ignore
-    from ._models import InMagePolicyInput  # type: ignore
-    from ._models import InMageProtectedDiskDetails  # type: ignore
-    from ._models import InMageRcmAgentUpgradeBlockingErrorDetails  # type: ignore
-    from ._models import InMageRcmApplyRecoveryPointInput  # type: ignore
-    from ._models import InMageRcmDiscoveredProtectedVmDetails  # type: ignore
-    from ._models import InMageRcmDiskInput  # type: ignore
-    from ._models import InMageRcmDisksDefaultInput  # type: ignore
-    from ._models import InMageRcmEnableProtectionInput  # type: ignore
-    from ._models import InMageRcmEventDetails  # type: ignore
-    from ._models import InMageRcmFabricCreationInput  # type: ignore
-    from ._models import InMageRcmFabricSpecificDetails  # type: ignore
-    from ._models import InMageRcmFailbackDiscoveredProtectedVmDetails  # type: ignore
-    from ._models import InMageRcmFailbackEventDetails  # type: ignore
-    from ._models import InMageRcmFailbackMobilityAgentDetails  # type: ignore
-    from ._models import InMageRcmFailbackNicDetails  # type: ignore
-    from ._models import InMageRcmFailbackPlannedFailoverProviderInput  # type: ignore
-    from ._models import InMageRcmFailbackPolicyCreationInput  # type: ignore
-    from ._models import InMageRcmFailbackPolicyDetails  # type: ignore
-    from ._models import InMageRcmFailbackProtectedDiskDetails  # type: ignore
-    from ._models import InMageRcmFailbackReplicationDetails  # type: ignore
-    from ._models import InMageRcmFailbackReprotectInput  # type: ignore
-    from ._models import InMageRcmFailbackSyncDetails  # type: ignore
-    from ._models import InMageRcmLastAgentUpgradeErrorDetails  # type: ignore
-    from ._models import InMageRcmMobilityAgentDetails  # type: ignore
-    from ._models import InMageRcmNicDetails  # type: ignore
-    from ._models import InMageRcmNicInput  # type: ignore
-    from ._models import InMageRcmPolicyCreationInput  # type: ignore
-    from ._models import InMageRcmPolicyDetails  # type: ignore
-    from ._models import InMageRcmProtectedDiskDetails  # type: ignore
-    from ._models import InMageRcmProtectionContainerMappingDetails  # type: ignore
-    from ._models import InMageRcmRecoveryPointDetails  # type: ignore
-    from ._models import InMageRcmReplicationDetails  # type: ignore
-    from ._models import InMageRcmReprotectInput  # type: ignore
-    from ._models import InMageRcmSyncDetails  # type: ignore
-    from ._models import InMageRcmTestFailoverInput  # type: ignore
-    from ._models import InMageRcmUnplannedFailoverInput  # type: ignore
-    from ._models import InMageRcmUpdateApplianceForReplicationProtectedItemInput  # type: ignore
-    from ._models import InMageRcmUpdateContainerMappingInput  # type: ignore
-    from ._models import InMageRcmUpdateReplicationProtectedItemInput  # type: ignore
-    from ._models import InMageReplicationDetails  # type: ignore
-    from ._models import InMageReprotectInput  # type: ignore
-    from ._models import InMageTestFailoverInput  # type: ignore
-    from ._models import InMageUnplannedFailoverInput  # type: ignore
-    from ._models import InMageVolumeExclusionOptions  # type: ignore
-    from ._models import InconsistentVmDetails  # type: ignore
-    from ._models import InitialReplicationDetails  # type: ignore
-    from ._models import InlineWorkflowTaskDetails  # type: ignore
-    from ._models import InnerHealthError  # type: ignore
-    from ._models import InputEndpoint  # type: ignore
-    from ._models import Job  # type: ignore
-    from ._models import JobCollection  # type: ignore
-    from ._models import JobDetails  # type: ignore
-    from ._models import JobEntity  # type: ignore
-    from ._models import JobErrorDetails  # type: ignore
-    from ._models import JobProperties  # type: ignore
-    from ._models import JobQueryParameter  # type: ignore
-    from ._models import JobStatusEventDetails  # type: ignore
-    from ._models import JobTaskDetails  # type: ignore
-    from ._models import KeyEncryptionKeyInfo  # type: ignore
-    from ._models import LogicalNetwork  # type: ignore
-    from ._models import LogicalNetworkCollection  # type: ignore
-    from ._models import LogicalNetworkProperties  # type: ignore
-    from ._models import ManualActionTaskDetails  # type: ignore
-    from ._models import MarsAgentDetails  # type: ignore
-    from ._models import MasterTargetServer  # type: ignore
-    from ._models import MigrateInput  # type: ignore
-    from ._models import MigrateInputProperties  # type: ignore
-    from ._models import MigrateProviderSpecificInput  # type: ignore
-    from ._models import MigrationItem  # type: ignore
-    from ._models import MigrationItemCollection  # type: ignore
-    from ._models import MigrationItemProperties  # type: ignore
-    from ._models import MigrationItemsQueryParameter  # type: ignore
-    from ._models import MigrationProviderSpecificSettings  # type: ignore
-    from ._models import MigrationRecoveryPoint  # type: ignore
-    from ._models import MigrationRecoveryPointCollection  # type: ignore
-    from ._models import MigrationRecoveryPointProperties  # type: ignore
-    from ._models import MobilityServiceUpdate  # type: ignore
-    from ._models import Network  # type: ignore
-    from ._models import NetworkCollection  # type: ignore
-    from ._models import NetworkMapping  # type: ignore
-    from ._models import NetworkMappingCollection  # type: ignore
-    from ._models import NetworkMappingFabricSpecificSettings  # type: ignore
-    from ._models import NetworkMappingProperties  # type: ignore
-    from ._models import NetworkProperties  # type: ignore
-    from ._models import NewProtectionProfile  # type: ignore
-    from ._models import NewRecoveryVirtualNetwork  # type: ignore
-    from ._models import OSDetails  # type: ignore
-    from ._models import OSDiskDetails  # type: ignore
-    from ._models import OSVersionWrapper  # type: ignore
-    from ._models import OperationsDiscovery  # type: ignore
-    from ._models import OperationsDiscoveryCollection  # type: ignore
-    from ._models import PlannedFailoverInput  # type: ignore
-    from ._models import PlannedFailoverInputProperties  # type: ignore
-    from ._models import PlannedFailoverProviderSpecificFailoverInput  # type: ignore
-    from ._models import Policy  # type: ignore
-    from ._models import PolicyCollection  # type: ignore
-    from ._models import PolicyProperties  # type: ignore
-    from ._models import PolicyProviderSpecificDetails  # type: ignore
-    from ._models import PolicyProviderSpecificInput  # type: ignore
-    from ._models import ProcessServer  # type: ignore
-    from ._models import ProcessServerDetails  # type: ignore
-    from ._models import ProtectableItem  # type: ignore
-    from ._models import ProtectableItemCollection  # type: ignore
-    from ._models import ProtectableItemProperties  # type: ignore
-    from ._models import ProtectableItemQueryParameter  # type: ignore
-    from ._models import ProtectedItemsQueryParameter  # type: ignore
-    from ._models import ProtectionContainer  # type: ignore
-    from ._models import ProtectionContainerCollection  # type: ignore
-    from ._models import ProtectionContainerFabricSpecificDetails  # type: ignore
-    from ._models import ProtectionContainerMapping  # type: ignore
-    from ._models import ProtectionContainerMappingCollection  # type: ignore
-    from ._models import ProtectionContainerMappingProperties  # type: ignore
-    from ._models import ProtectionContainerMappingProviderSpecificDetails  # type: ignore
-    from ._models import ProtectionContainerProperties  # type: ignore
-    from ._models import ProtectionProfileCustomDetails  # type: ignore
-    from ._models import ProviderError  # type: ignore
-    from ._models import ProviderSpecificRecoveryPointDetails  # type: ignore
-    from ._models import PushInstallerDetails  # type: ignore
-    from ._models import RcmProxyDetails  # type: ignore
-    from ._models import RecoveryAvailabilitySetCustomDetails  # type: ignore
-    from ._models import RecoveryPlan  # type: ignore
-    from ._models import RecoveryPlanA2ADetails  # type: ignore
-    from ._models import RecoveryPlanA2AFailoverInput  # type: ignore
-    from ._models import RecoveryPlanA2AInput  # type: ignore
-    from ._models import RecoveryPlanAction  # type: ignore
-    from ._models import RecoveryPlanActionDetails  # type: ignore
-    from ._models import RecoveryPlanAutomationRunbookActionDetails  # type: ignore
-    from ._models import RecoveryPlanCollection  # type: ignore
-    from ._models import RecoveryPlanGroup  # type: ignore
-    from ._models import RecoveryPlanGroupTaskDetails  # type: ignore
-    from ._models import RecoveryPlanHyperVReplicaAzureFailbackInput  # type: ignore
-    from ._models import RecoveryPlanHyperVReplicaAzureFailoverInput  # type: ignore
-    from ._models import RecoveryPlanInMageAzureV2FailoverInput  # type: ignore
-    from ._models import RecoveryPlanInMageFailoverInput  # type: ignore
-    from ._models import RecoveryPlanInMageRcmFailbackFailoverInput  # type: ignore
-    from ._models import RecoveryPlanInMageRcmFailoverInput  # type: ignore
-    from ._models import RecoveryPlanManualActionDetails  # type: ignore
-    from ._models import RecoveryPlanPlannedFailoverInput  # type: ignore
-    from ._models import RecoveryPlanPlannedFailoverInputProperties  # type: ignore
-    from ._models import RecoveryPlanProperties  # type: ignore
-    from ._models import RecoveryPlanProtectedItem  # type: ignore
-    from ._models import RecoveryPlanProviderSpecificDetails  # type: ignore
-    from ._models import RecoveryPlanProviderSpecificFailoverInput  # type: ignore
-    from ._models import RecoveryPlanProviderSpecificInput  # type: ignore
-    from ._models import RecoveryPlanScriptActionDetails  # type: ignore
-    from ._models import RecoveryPlanShutdownGroupTaskDetails  # type: ignore
-    from ._models import RecoveryPlanTestFailoverCleanupInput  # type: ignore
-    from ._models import RecoveryPlanTestFailoverCleanupInputProperties  # type: ignore
-    from ._models import RecoveryPlanTestFailoverInput  # type: ignore
-    from ._models import RecoveryPlanTestFailoverInputProperties  # type: ignore
-    from ._models import RecoveryPlanUnplannedFailoverInput  # type: ignore
-    from ._models import RecoveryPlanUnplannedFailoverInputProperties  # type: ignore
-    from ._models import RecoveryPoint  # type: ignore
-    from ._models import RecoveryPointCollection  # type: ignore
-    from ._models import RecoveryPointProperties  # type: ignore
-    from ._models import RecoveryProximityPlacementGroupCustomDetails  # type: ignore
-    from ._models import RecoveryResourceGroupCustomDetails  # type: ignore
-    from ._models import RecoveryServicesProvider  # type: ignore
-    from ._models import RecoveryServicesProviderCollection  # type: ignore
-    from ._models import RecoveryServicesProviderProperties  # type: ignore
-    from ._models import RecoveryVirtualNetworkCustomDetails  # type: ignore
-    from ._models import RemoveDisksInput  # type: ignore
-    from ._models import RemoveDisksInputProperties  # type: ignore
-    from ._models import RemoveDisksProviderSpecificInput  # type: ignore
-    from ._models import RemoveProtectionContainerMappingInput  # type: ignore
-    from ._models import RemoveProtectionContainerMappingInputProperties  # type: ignore
-    from ._models import RenewCertificateInput  # type: ignore
-    from ._models import RenewCertificateInputProperties  # type: ignore
-    from ._models import ReplicationAgentDetails  # type: ignore
-    from ._models import ReplicationEligibilityResults  # type: ignore
-    from ._models import ReplicationEligibilityResultsCollection  # type: ignore
-    from ._models import ReplicationEligibilityResultsErrorInfo  # type: ignore
-    from ._models import ReplicationEligibilityResultsProperties  # type: ignore
-    from ._models import ReplicationGroupDetails  # type: ignore
-    from ._models import ReplicationProtectedItem  # type: ignore
-    from ._models import ReplicationProtectedItemCollection  # type: ignore
-    from ._models import ReplicationProtectedItemProperties  # type: ignore
-    from ._models import ReplicationProtectionIntent  # type: ignore
-    from ._models import ReplicationProtectionIntentCollection  # type: ignore
-    from ._models import ReplicationProtectionIntentProperties  # type: ignore
-    from ._models import ReplicationProtectionIntentProviderSpecificSettings  # type: ignore
-    from ._models import ReplicationProviderContainerUnmappingInput  # type: ignore
-    from ._models import ReplicationProviderSpecificContainerCreationInput  # type: ignore
-    from ._models import ReplicationProviderSpecificContainerMappingInput  # type: ignore
-    from ._models import ReplicationProviderSpecificSettings  # type: ignore
-    from ._models import ReplicationProviderSpecificUpdateContainerMappingInput  # type: ignore
-    from ._models import ReprotectAgentDetails  # type: ignore
-    from ._models import ResolveHealthError  # type: ignore
-    from ._models import ResolveHealthInput  # type: ignore
-    from ._models import ResolveHealthInputProperties  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceHealthSummary  # type: ignore
-    from ._models import ResumeJobParams  # type: ignore
-    from ._models import ResumeJobParamsProperties  # type: ignore
-    from ._models import ResyncInput  # type: ignore
-    from ._models import ResyncInputProperties  # type: ignore
-    from ._models import ResyncProviderSpecificInput  # type: ignore
-    from ._models import RetentionVolume  # type: ignore
-    from ._models import ReverseReplicationInput  # type: ignore
-    from ._models import ReverseReplicationInputProperties  # type: ignore
-    from ._models import ReverseReplicationProviderSpecificInput  # type: ignore
-    from ._models import RoleAssignment  # type: ignore
-    from ._models import RunAsAccount  # type: ignore
-    from ._models import ScriptActionTaskDetails  # type: ignore
-    from ._models import ServiceError  # type: ignore
-    from ._models import StorageAccountCustomDetails  # type: ignore
-    from ._models import StorageClassification  # type: ignore
-    from ._models import StorageClassificationCollection  # type: ignore
-    from ._models import StorageClassificationMapping  # type: ignore
-    from ._models import StorageClassificationMappingCollection  # type: ignore
-    from ._models import StorageClassificationMappingInput  # type: ignore
-    from ._models import StorageClassificationMappingProperties  # type: ignore
-    from ._models import StorageClassificationProperties  # type: ignore
-    from ._models import StorageMappingInputProperties  # type: ignore
-    from ._models import Subnet  # type: ignore
-    from ._models import SupportedOSDetails  # type: ignore
-    from ._models import SupportedOSProperties  # type: ignore
-    from ._models import SupportedOSProperty  # type: ignore
-    from ._models import SupportedOperatingSystems  # type: ignore
-    from ._models import SwitchProtectionInput  # type: ignore
-    from ._models import SwitchProtectionInputProperties  # type: ignore
-    from ._models import SwitchProtectionJobDetails  # type: ignore
-    from ._models import SwitchProtectionProviderSpecificInput  # type: ignore
-    from ._models import TargetComputeSize  # type: ignore
-    from ._models import TargetComputeSizeCollection  # type: ignore
-    from ._models import TargetComputeSizeProperties  # type: ignore
-    from ._models import TaskTypeDetails  # type: ignore
-    from ._models import TestFailoverCleanupInput  # type: ignore
-    from ._models import TestFailoverCleanupInputProperties  # type: ignore
-    from ._models import TestFailoverInput  # type: ignore
-    from ._models import TestFailoverInputProperties  # type: ignore
-    from ._models import TestFailoverJobDetails  # type: ignore
-    from ._models import TestFailoverProviderSpecificInput  # type: ignore
-    from ._models import TestMigrateCleanupInput  # type: ignore
-    from ._models import TestMigrateCleanupInputProperties  # type: ignore
-    from ._models import TestMigrateInput  # type: ignore
-    from ._models import TestMigrateInputProperties  # type: ignore
-    from ._models import TestMigrateProviderSpecificInput  # type: ignore
-    from ._models import UnplannedFailoverInput  # type: ignore
-    from ._models import UnplannedFailoverInputProperties  # type: ignore
-    from ._models import UnplannedFailoverProviderSpecificInput  # type: ignore
-    from ._models import UpdateApplianceForReplicationProtectedItemInput  # type: ignore
-    from ._models import UpdateApplianceForReplicationProtectedItemInputProperties  # type: ignore
-    from ._models import UpdateApplianceForReplicationProtectedItemProviderSpecificInput  # type: ignore
-    from ._models import UpdateDiskInput  # type: ignore
-    from ._models import UpdateMigrationItemInput  # type: ignore
-    from ._models import UpdateMigrationItemInputProperties  # type: ignore
-    from ._models import UpdateMigrationItemProviderSpecificInput  # type: ignore
-    from ._models import UpdateMobilityServiceRequest  # type: ignore
-    from ._models import UpdateMobilityServiceRequestProperties  # type: ignore
-    from ._models import UpdateNetworkMappingInput  # type: ignore
-    from ._models import UpdateNetworkMappingInputProperties  # type: ignore
-    from ._models import UpdatePolicyInput  # type: ignore
-    from ._models import UpdatePolicyInputProperties  # type: ignore
-    from ._models import UpdateProtectionContainerMappingInput  # type: ignore
-    from ._models import UpdateProtectionContainerMappingInputProperties  # type: ignore
-    from ._models import UpdateRecoveryPlanInput  # type: ignore
-    from ._models import UpdateRecoveryPlanInputProperties  # type: ignore
-    from ._models import UpdateReplicationProtectedItemInput  # type: ignore
-    from ._models import UpdateReplicationProtectedItemInputProperties  # type: ignore
-    from ._models import UpdateReplicationProtectedItemProviderInput  # type: ignore
-    from ._models import UpdateVCenterRequest  # type: ignore
-    from ._models import UpdateVCenterRequestProperties  # type: ignore
-    from ._models import VCenter  # type: ignore
-    from ._models import VCenterCollection  # type: ignore
-    from ._models import VCenterProperties  # type: ignore
-    from ._models import VMNicDetails  # type: ignore
-    from ._models import VMNicInputDetails  # type: ignore
-    from ._models import VMwareCbtContainerCreationInput  # type: ignore
-    from ._models import VMwareCbtContainerMappingInput  # type: ignore
-    from ._models import VMwareCbtDiskInput  # type: ignore
-    from ._models import VMwareCbtEnableMigrationInput  # type: ignore
-    from ._models import VMwareCbtEventDetails  # type: ignore
-    from ._models import VMwareCbtMigrateInput  # type: ignore
-    from ._models import VMwareCbtMigrationDetails  # type: ignore
-    from ._models import VMwareCbtNicDetails  # type: ignore
-    from ._models import VMwareCbtNicInput  # type: ignore
-    from ._models import VMwareCbtPolicyCreationInput  # type: ignore
-    from ._models import VMwareCbtProtectedDiskDetails  # type: ignore
-    from ._models import VMwareCbtProtectionContainerMappingDetails  # type: ignore
-    from ._models import VMwareCbtResyncInput  # type: ignore
-    from ._models import VMwareCbtTestMigrateInput  # type: ignore
-    from ._models import VMwareCbtUpdateDiskInput  # type: ignore
-    from ._models import VMwareCbtUpdateMigrationItemInput  # type: ignore
-    from ._models import VMwareDetails  # type: ignore
-    from ._models import VMwareV2FabricCreationInput  # type: ignore
-    from ._models import VMwareV2FabricSpecificDetails  # type: ignore
-    from ._models import VMwareVirtualMachineDetails  # type: ignore
-    from ._models import VaultHealthDetails  # type: ignore
-    from ._models import VaultHealthProperties  # type: ignore
-    from ._models import VaultSetting  # type: ignore
-    from ._models import VaultSettingCollection  # type: ignore
-    from ._models import VaultSettingCreationInput  # type: ignore
-    from ._models import VaultSettingCreationInputProperties  # type: ignore
-    from ._models import VaultSettingProperties  # type: ignore
-    from ._models import VersionDetails  # type: ignore
-    from ._models import VirtualMachineTaskDetails  # type: ignore
-    from ._models import VmNicUpdatesTaskDetails  # type: ignore
-    from ._models import VmmDetails  # type: ignore
-    from ._models import VmmToAzureCreateNetworkMappingInput  # type: ignore
-    from ._models import VmmToAzureNetworkMappingSettings  # type: ignore
-    from ._models import VmmToAzureUpdateNetworkMappingInput  # type: ignore
-    from ._models import VmmToVmmCreateNetworkMappingInput  # type: ignore
-    from ._models import VmmToVmmNetworkMappingSettings  # type: ignore
-    from ._models import VmmToVmmUpdateNetworkMappingInput  # type: ignore
-    from ._models import VmmVirtualMachineDetails  # type: ignore
-    from ._models import VmwareCbtPolicyDetails  # type: ignore
+from ._models_py3 import A2AAddDisksInput
+from ._models_py3 import A2AApplyRecoveryPointInput
+from ._models_py3 import A2AContainerCreationInput
+from ._models_py3 import A2AContainerMappingInput
+from ._models_py3 import A2ACreateProtectionIntentInput
+from ._models_py3 import A2ACrossClusterMigrationApplyRecoveryPointInput
+from ._models_py3 import A2ACrossClusterMigrationContainerCreationInput
+from ._models_py3 import A2ACrossClusterMigrationEnableProtectionInput
+from ._models_py3 import A2ACrossClusterMigrationPolicyCreationInput
+from ._models_py3 import A2ACrossClusterMigrationReplicationDetails
+from ._models_py3 import A2AEnableProtectionInput
+from ._models_py3 import A2AEventDetails
+from ._models_py3 import A2APolicyCreationInput
+from ._models_py3 import A2APolicyDetails
+from ._models_py3 import A2AProtectedDiskDetails
+from ._models_py3 import A2AProtectedManagedDiskDetails
+from ._models_py3 import A2AProtectionContainerMappingDetails
+from ._models_py3 import A2AProtectionIntentDiskInputDetails
+from ._models_py3 import A2AProtectionIntentManagedDiskInputDetails
+from ._models_py3 import A2ARecoveryPointDetails
+from ._models_py3 import A2ARemoveDisksInput
+from ._models_py3 import A2AReplicationDetails
+from ._models_py3 import A2AReplicationIntentDetails
+from ._models_py3 import A2AReprotectInput
+from ._models_py3 import A2ASwitchProtectionInput
+from ._models_py3 import A2ATestFailoverInput
+from ._models_py3 import A2AUnplannedFailoverInput
+from ._models_py3 import A2AUnprotectedDiskDetails
+from ._models_py3 import A2AUpdateContainerMappingInput
+from ._models_py3 import A2AUpdateReplicationProtectedItemInput
+from ._models_py3 import A2AVmDiskInputDetails
+from ._models_py3 import A2AVmManagedDiskInputDetails
+from ._models_py3 import A2AVmManagedDiskUpdateDetails
+from ._models_py3 import A2AZoneDetails
+from ._models_py3 import ASRTask
+from ._models_py3 import AddDisksInput
+from ._models_py3 import AddDisksInputProperties
+from ._models_py3 import AddDisksProviderSpecificInput
+from ._models_py3 import AddRecoveryServicesProviderInput
+from ._models_py3 import AddRecoveryServicesProviderInputProperties
+from ._models_py3 import AddVCenterRequest
+from ._models_py3 import AddVCenterRequestProperties
+from ._models_py3 import AgentDetails
+from ._models_py3 import AgentDiskDetails
+from ._models_py3 import Alert
+from ._models_py3 import AlertCollection
+from ._models_py3 import AlertProperties
+from ._models_py3 import ApplianceCollection
+from ._models_py3 import ApplianceQueryParameter
+from ._models_py3 import ApplianceSpecificDetails
+from ._models_py3 import ApplyRecoveryPointInput
+from ._models_py3 import ApplyRecoveryPointInputProperties
+from ._models_py3 import ApplyRecoveryPointProviderSpecificInput
+from ._models_py3 import AsrJobDetails
+from ._models_py3 import AutomationRunbookTaskDetails
+from ._models_py3 import AzureFabricCreationInput
+from ._models_py3 import AzureFabricSpecificDetails
+from ._models_py3 import AzureToAzureCreateNetworkMappingInput
+from ._models_py3 import AzureToAzureNetworkMappingSettings
+from ._models_py3 import AzureToAzureUpdateNetworkMappingInput
+from ._models_py3 import AzureToAzureVmSyncedConfigDetails
+from ._models_py3 import AzureVmDiskDetails
+from ._models_py3 import ComputeSizeErrorDetails
+from ._models_py3 import ConfigurationSettings
+from ._models_py3 import ConfigureAlertRequest
+from ._models_py3 import ConfigureAlertRequestProperties
+from ._models_py3 import ConsistencyCheckTaskDetails
+from ._models_py3 import CreateNetworkMappingInput
+from ._models_py3 import CreateNetworkMappingInputProperties
+from ._models_py3 import CreatePolicyInput
+from ._models_py3 import CreatePolicyInputProperties
+from ._models_py3 import CreateProtectionContainerInput
+from ._models_py3 import CreateProtectionContainerInputProperties
+from ._models_py3 import CreateProtectionContainerMappingInput
+from ._models_py3 import CreateProtectionContainerMappingInputProperties
+from ._models_py3 import CreateProtectionIntentInput
+from ._models_py3 import CreateProtectionIntentProperties
+from ._models_py3 import CreateProtectionIntentProviderSpecificDetails
+from ._models_py3 import CreateRecoveryPlanInput
+from ._models_py3 import CreateRecoveryPlanInputProperties
+from ._models_py3 import CurrentJobDetails
+from ._models_py3 import CurrentScenarioDetails
+from ._models_py3 import DataStore
+from ._models_py3 import DisableProtectionInput
+from ._models_py3 import DisableProtectionInputProperties
+from ._models_py3 import DisableProtectionProviderSpecificInput
+from ._models_py3 import DiscoverProtectableItemRequest
+from ._models_py3 import DiscoverProtectableItemRequestProperties
+from ._models_py3 import DiskDetails
+from ._models_py3 import DiskEncryptionInfo
+from ._models_py3 import DiskEncryptionKeyInfo
+from ._models_py3 import DiskVolumeDetails
+from ._models_py3 import Display
+from ._models_py3 import DraDetails
+from ._models_py3 import EnableMigrationInput
+from ._models_py3 import EnableMigrationInputProperties
+from ._models_py3 import EnableMigrationProviderSpecificInput
+from ._models_py3 import EnableProtectionInput
+from ._models_py3 import EnableProtectionInputProperties
+from ._models_py3 import EnableProtectionProviderSpecificInput
+from ._models_py3 import EncryptionDetails
+from ._models_py3 import Event
+from ._models_py3 import EventCollection
+from ._models_py3 import EventProperties
+from ._models_py3 import EventProviderSpecificDetails
+from ._models_py3 import EventQueryParameter
+from ._models_py3 import EventSpecificDetails
+from ._models_py3 import ExistingProtectionProfile
+from ._models_py3 import ExistingRecoveryAvailabilitySet
+from ._models_py3 import ExistingRecoveryProximityPlacementGroup
+from ._models_py3 import ExistingRecoveryResourceGroup
+from ._models_py3 import ExistingRecoveryVirtualNetwork
+from ._models_py3 import ExistingStorageAccount
+from ._models_py3 import ExportJobDetails
+from ._models_py3 import ExtendedLocation
+from ._models_py3 import Fabric
+from ._models_py3 import FabricCollection
+from ._models_py3 import FabricCreationInput
+from ._models_py3 import FabricCreationInputProperties
+from ._models_py3 import FabricProperties
+from ._models_py3 import FabricQueryParameter
+from ._models_py3 import FabricReplicationGroupTaskDetails
+from ._models_py3 import FabricSpecificCreateNetworkMappingInput
+from ._models_py3 import FabricSpecificCreationInput
+from ._models_py3 import FabricSpecificDetails
+from ._models_py3 import FabricSpecificUpdateNetworkMappingInput
+from ._models_py3 import FailoverJobDetails
+from ._models_py3 import FailoverProcessServerRequest
+from ._models_py3 import FailoverProcessServerRequestProperties
+from ._models_py3 import FailoverReplicationProtectedItemDetails
+from ._models_py3 import GroupTaskDetails
+from ._models_py3 import HealthError
+from ._models_py3 import HealthErrorSummary
+from ._models_py3 import HyperVHostDetails
+from ._models_py3 import HyperVReplica2012EventDetails
+from ._models_py3 import HyperVReplica2012R2EventDetails
+from ._models_py3 import HyperVReplicaAzureApplyRecoveryPointInput
+from ._models_py3 import HyperVReplicaAzureDiskInputDetails
+from ._models_py3 import HyperVReplicaAzureEnableProtectionInput
+from ._models_py3 import HyperVReplicaAzureEventDetails
+from ._models_py3 import HyperVReplicaAzureFailbackProviderInput
+from ._models_py3 import HyperVReplicaAzureManagedDiskDetails
+from ._models_py3 import HyperVReplicaAzurePlannedFailoverProviderInput
+from ._models_py3 import HyperVReplicaAzurePolicyDetails
+from ._models_py3 import HyperVReplicaAzurePolicyInput
+from ._models_py3 import HyperVReplicaAzureReplicationDetails
+from ._models_py3 import HyperVReplicaAzureReprotectInput
+from ._models_py3 import HyperVReplicaAzureTestFailoverInput
+from ._models_py3 import HyperVReplicaAzureUnplannedFailoverInput
+from ._models_py3 import HyperVReplicaAzureUpdateReplicationProtectedItemInput
+from ._models_py3 import HyperVReplicaBaseEventDetails
+from ._models_py3 import HyperVReplicaBasePolicyDetails
+from ._models_py3 import HyperVReplicaBaseReplicationDetails
+from ._models_py3 import HyperVReplicaBluePolicyDetails
+from ._models_py3 import HyperVReplicaBluePolicyInput
+from ._models_py3 import HyperVReplicaBlueReplicationDetails
+from ._models_py3 import HyperVReplicaPolicyDetails
+from ._models_py3 import HyperVReplicaPolicyInput
+from ._models_py3 import HyperVReplicaReplicationDetails
+from ._models_py3 import HyperVSiteDetails
+from ._models_py3 import HyperVVirtualMachineDetails
+from ._models_py3 import IPConfigDetails
+from ._models_py3 import IPConfigInputDetails
+from ._models_py3 import IdentityProviderDetails
+from ._models_py3 import IdentityProviderInput
+from ._models_py3 import InMageAgentDetails
+from ._models_py3 import InMageAzureV2ApplyRecoveryPointInput
+from ._models_py3 import InMageAzureV2DiskInputDetails
+from ._models_py3 import InMageAzureV2EnableProtectionInput
+from ._models_py3 import InMageAzureV2EventDetails
+from ._models_py3 import InMageAzureV2ManagedDiskDetails
+from ._models_py3 import InMageAzureV2PolicyDetails
+from ._models_py3 import InMageAzureV2PolicyInput
+from ._models_py3 import InMageAzureV2ProtectedDiskDetails
+from ._models_py3 import InMageAzureV2RecoveryPointDetails
+from ._models_py3 import InMageAzureV2ReplicationDetails
+from ._models_py3 import InMageAzureV2ReprotectInput
+from ._models_py3 import InMageAzureV2SwitchProviderBlockingErrorDetails
+from ._models_py3 import InMageAzureV2SwitchProviderDetails
+from ._models_py3 import InMageAzureV2SwitchProviderInput
+from ._models_py3 import InMageAzureV2TestFailoverInput
+from ._models_py3 import InMageAzureV2UnplannedFailoverInput
+from ._models_py3 import InMageAzureV2UpdateReplicationProtectedItemInput
+from ._models_py3 import InMageBasePolicyDetails
+from ._models_py3 import InMageDisableProtectionProviderSpecificInput
+from ._models_py3 import InMageDiskDetails
+from ._models_py3 import InMageDiskExclusionInput
+from ._models_py3 import InMageDiskSignatureExclusionOptions
+from ._models_py3 import InMageEnableProtectionInput
+from ._models_py3 import InMageFabricSwitchProviderBlockingErrorDetails
+from ._models_py3 import InMagePolicyDetails
+from ._models_py3 import InMagePolicyInput
+from ._models_py3 import InMageProtectedDiskDetails
+from ._models_py3 import InMageRcmAgentUpgradeBlockingErrorDetails
+from ._models_py3 import InMageRcmApplianceDetails
+from ._models_py3 import InMageRcmApplianceSpecificDetails
+from ._models_py3 import InMageRcmApplyRecoveryPointInput
+from ._models_py3 import InMageRcmDiscoveredProtectedVmDetails
+from ._models_py3 import InMageRcmDiskInput
+from ._models_py3 import InMageRcmDisksDefaultInput
+from ._models_py3 import InMageRcmEnableProtectionInput
+from ._models_py3 import InMageRcmEventDetails
+from ._models_py3 import InMageRcmFabricCreationInput
+from ._models_py3 import InMageRcmFabricSpecificDetails
+from ._models_py3 import InMageRcmFabricSwitchProviderBlockingErrorDetails
+from ._models_py3 import InMageRcmFailbackDiscoveredProtectedVmDetails
+from ._models_py3 import InMageRcmFailbackEventDetails
+from ._models_py3 import InMageRcmFailbackMobilityAgentDetails
+from ._models_py3 import InMageRcmFailbackNicDetails
+from ._models_py3 import InMageRcmFailbackPlannedFailoverProviderInput
+from ._models_py3 import InMageRcmFailbackPolicyCreationInput
+from ._models_py3 import InMageRcmFailbackPolicyDetails
+from ._models_py3 import InMageRcmFailbackProtectedDiskDetails
+from ._models_py3 import InMageRcmFailbackReplicationDetails
+from ._models_py3 import InMageRcmFailbackReprotectInput
+from ._models_py3 import InMageRcmFailbackSyncDetails
+from ._models_py3 import InMageRcmLastAgentUpgradeErrorDetails
+from ._models_py3 import InMageRcmMobilityAgentDetails
+from ._models_py3 import InMageRcmNicDetails
+from ._models_py3 import InMageRcmNicInput
+from ._models_py3 import InMageRcmPolicyCreationInput
+from ._models_py3 import InMageRcmPolicyDetails
+from ._models_py3 import InMageRcmProtectedDiskDetails
+from ._models_py3 import InMageRcmProtectionContainerMappingDetails
+from ._models_py3 import InMageRcmRecoveryPointDetails
+from ._models_py3 import InMageRcmReplicationDetails
+from ._models_py3 import InMageRcmReprotectInput
+from ._models_py3 import InMageRcmSyncDetails
+from ._models_py3 import InMageRcmTestFailoverInput
+from ._models_py3 import InMageRcmUnplannedFailoverInput
+from ._models_py3 import InMageRcmUpdateApplianceForReplicationProtectedItemInput
+from ._models_py3 import InMageRcmUpdateContainerMappingInput
+from ._models_py3 import InMageRcmUpdateReplicationProtectedItemInput
+from ._models_py3 import InMageReplicationDetails
+from ._models_py3 import InMageReprotectInput
+from ._models_py3 import InMageTestFailoverInput
+from ._models_py3 import InMageUnplannedFailoverInput
+from ._models_py3 import InMageVolumeExclusionOptions
+from ._models_py3 import InconsistentVmDetails
+from ._models_py3 import InitialReplicationDetails
+from ._models_py3 import InlineWorkflowTaskDetails
+from ._models_py3 import InnerHealthError
+from ._models_py3 import InputEndpoint
+from ._models_py3 import Job
+from ._models_py3 import JobCollection
+from ._models_py3 import JobDetails
+from ._models_py3 import JobEntity
+from ._models_py3 import JobErrorDetails
+from ._models_py3 import JobProperties
+from ._models_py3 import JobQueryParameter
+from ._models_py3 import JobStatusEventDetails
+from ._models_py3 import JobTaskDetails
+from ._models_py3 import KeyEncryptionKeyInfo
+from ._models_py3 import LogicalNetwork
+from ._models_py3 import LogicalNetworkCollection
+from ._models_py3 import LogicalNetworkProperties
+from ._models_py3 import ManualActionTaskDetails
+from ._models_py3 import MarsAgentDetails
+from ._models_py3 import MasterTargetServer
+from ._models_py3 import MigrateInput
+from ._models_py3 import MigrateInputProperties
+from ._models_py3 import MigrateProviderSpecificInput
+from ._models_py3 import MigrationItem
+from ._models_py3 import MigrationItemCollection
+from ._models_py3 import MigrationItemProperties
+from ._models_py3 import MigrationItemsQueryParameter
+from ._models_py3 import MigrationProviderSpecificSettings
+from ._models_py3 import MigrationRecoveryPoint
+from ._models_py3 import MigrationRecoveryPointCollection
+from ._models_py3 import MigrationRecoveryPointProperties
+from ._models_py3 import MobilityServiceUpdate
+from ._models_py3 import Network
+from ._models_py3 import NetworkCollection
+from ._models_py3 import NetworkMapping
+from ._models_py3 import NetworkMappingCollection
+from ._models_py3 import NetworkMappingFabricSpecificSettings
+from ._models_py3 import NetworkMappingProperties
+from ._models_py3 import NetworkProperties
+from ._models_py3 import NewProtectionProfile
+from ._models_py3 import NewRecoveryVirtualNetwork
+from ._models_py3 import OSDetails
+from ._models_py3 import OSDiskDetails
+from ._models_py3 import OSVersionWrapper
+from ._models_py3 import OperationsDiscovery
+from ._models_py3 import OperationsDiscoveryCollection
+from ._models_py3 import PlannedFailoverInput
+from ._models_py3 import PlannedFailoverInputProperties
+from ._models_py3 import PlannedFailoverProviderSpecificFailoverInput
+from ._models_py3 import Policy
+from ._models_py3 import PolicyCollection
+from ._models_py3 import PolicyProperties
+from ._models_py3 import PolicyProviderSpecificDetails
+from ._models_py3 import PolicyProviderSpecificInput
+from ._models_py3 import ProcessServer
+from ._models_py3 import ProcessServerDetails
+from ._models_py3 import ProtectableItem
+from ._models_py3 import ProtectableItemCollection
+from ._models_py3 import ProtectableItemProperties
+from ._models_py3 import ProtectableItemQueryParameter
+from ._models_py3 import ProtectedItemsQueryParameter
+from ._models_py3 import ProtectionContainer
+from ._models_py3 import ProtectionContainerCollection
+from ._models_py3 import ProtectionContainerFabricSpecificDetails
+from ._models_py3 import ProtectionContainerMapping
+from ._models_py3 import ProtectionContainerMappingCollection
+from ._models_py3 import ProtectionContainerMappingProperties
+from ._models_py3 import ProtectionContainerMappingProviderSpecificDetails
+from ._models_py3 import ProtectionContainerProperties
+from ._models_py3 import ProtectionProfileCustomDetails
+from ._models_py3 import ProviderError
+from ._models_py3 import ProviderSpecificRecoveryPointDetails
+from ._models_py3 import PushInstallerDetails
+from ._models_py3 import RcmProxyDetails
+from ._models_py3 import RecoveryAvailabilitySetCustomDetails
+from ._models_py3 import RecoveryPlan
+from ._models_py3 import RecoveryPlanA2ADetails
+from ._models_py3 import RecoveryPlanA2AFailoverInput
+from ._models_py3 import RecoveryPlanA2AInput
+from ._models_py3 import RecoveryPlanAction
+from ._models_py3 import RecoveryPlanActionDetails
+from ._models_py3 import RecoveryPlanAutomationRunbookActionDetails
+from ._models_py3 import RecoveryPlanCollection
+from ._models_py3 import RecoveryPlanGroup
+from ._models_py3 import RecoveryPlanGroupTaskDetails
+from ._models_py3 import RecoveryPlanHyperVReplicaAzureFailbackInput
+from ._models_py3 import RecoveryPlanHyperVReplicaAzureFailoverInput
+from ._models_py3 import RecoveryPlanInMageAzureV2FailoverInput
+from ._models_py3 import RecoveryPlanInMageFailoverInput
+from ._models_py3 import RecoveryPlanInMageRcmFailbackFailoverInput
+from ._models_py3 import RecoveryPlanInMageRcmFailoverInput
+from ._models_py3 import RecoveryPlanManualActionDetails
+from ._models_py3 import RecoveryPlanPlannedFailoverInput
+from ._models_py3 import RecoveryPlanPlannedFailoverInputProperties
+from ._models_py3 import RecoveryPlanProperties
+from ._models_py3 import RecoveryPlanProtectedItem
+from ._models_py3 import RecoveryPlanProviderSpecificDetails
+from ._models_py3 import RecoveryPlanProviderSpecificFailoverInput
+from ._models_py3 import RecoveryPlanProviderSpecificInput
+from ._models_py3 import RecoveryPlanScriptActionDetails
+from ._models_py3 import RecoveryPlanShutdownGroupTaskDetails
+from ._models_py3 import RecoveryPlanTestFailoverCleanupInput
+from ._models_py3 import RecoveryPlanTestFailoverCleanupInputProperties
+from ._models_py3 import RecoveryPlanTestFailoverInput
+from ._models_py3 import RecoveryPlanTestFailoverInputProperties
+from ._models_py3 import RecoveryPlanUnplannedFailoverInput
+from ._models_py3 import RecoveryPlanUnplannedFailoverInputProperties
+from ._models_py3 import RecoveryPoint
+from ._models_py3 import RecoveryPointCollection
+from ._models_py3 import RecoveryPointProperties
+from ._models_py3 import RecoveryProximityPlacementGroupCustomDetails
+from ._models_py3 import RecoveryResourceGroupCustomDetails
+from ._models_py3 import RecoveryServicesProvider
+from ._models_py3 import RecoveryServicesProviderCollection
+from ._models_py3 import RecoveryServicesProviderProperties
+from ._models_py3 import RecoveryVirtualNetworkCustomDetails
+from ._models_py3 import RemoveDisksInput
+from ._models_py3 import RemoveDisksInputProperties
+from ._models_py3 import RemoveDisksProviderSpecificInput
+from ._models_py3 import RemoveProtectionContainerMappingInput
+from ._models_py3 import RemoveProtectionContainerMappingInputProperties
+from ._models_py3 import RenewCertificateInput
+from ._models_py3 import RenewCertificateInputProperties
+from ._models_py3 import ReplicationAgentDetails
+from ._models_py3 import ReplicationAppliance
+from ._models_py3 import ReplicationApplianceProperties
+from ._models_py3 import ReplicationEligibilityResults
+from ._models_py3 import ReplicationEligibilityResultsCollection
+from ._models_py3 import ReplicationEligibilityResultsErrorInfo
+from ._models_py3 import ReplicationEligibilityResultsProperties
+from ._models_py3 import ReplicationGroupDetails
+from ._models_py3 import ReplicationProtectedItem
+from ._models_py3 import ReplicationProtectedItemCollection
+from ._models_py3 import ReplicationProtectedItemProperties
+from ._models_py3 import ReplicationProtectionIntent
+from ._models_py3 import ReplicationProtectionIntentCollection
+from ._models_py3 import ReplicationProtectionIntentProperties
+from ._models_py3 import ReplicationProtectionIntentProviderSpecificSettings
+from ._models_py3 import ReplicationProviderContainerUnmappingInput
+from ._models_py3 import ReplicationProviderSpecificContainerCreationInput
+from ._models_py3 import ReplicationProviderSpecificContainerMappingInput
+from ._models_py3 import ReplicationProviderSpecificSettings
+from ._models_py3 import ReplicationProviderSpecificUpdateContainerMappingInput
+from ._models_py3 import ReprotectAgentDetails
+from ._models_py3 import ResolveHealthError
+from ._models_py3 import ResolveHealthInput
+from ._models_py3 import ResolveHealthInputProperties
+from ._models_py3 import Resource
+from ._models_py3 import ResourceHealthSummary
+from ._models_py3 import ResumeJobParams
+from ._models_py3 import ResumeJobParamsProperties
+from ._models_py3 import ResyncInput
+from ._models_py3 import ResyncInputProperties
+from ._models_py3 import ResyncProviderSpecificInput
+from ._models_py3 import RetentionVolume
+from ._models_py3 import ReverseReplicationInput
+from ._models_py3 import ReverseReplicationInputProperties
+from ._models_py3 import ReverseReplicationProviderSpecificInput
+from ._models_py3 import RoleAssignment
+from ._models_py3 import RunAsAccount
+from ._models_py3 import ScriptActionTaskDetails
+from ._models_py3 import ServiceError
+from ._models_py3 import StorageAccountCustomDetails
+from ._models_py3 import StorageClassification
+from ._models_py3 import StorageClassificationCollection
+from ._models_py3 import StorageClassificationMapping
+from ._models_py3 import StorageClassificationMappingCollection
+from ._models_py3 import StorageClassificationMappingInput
+from ._models_py3 import StorageClassificationMappingProperties
+from ._models_py3 import StorageClassificationProperties
+from ._models_py3 import StorageMappingInputProperties
+from ._models_py3 import Subnet
+from ._models_py3 import SupportedOSDetails
+from ._models_py3 import SupportedOSProperties
+from ._models_py3 import SupportedOSProperty
+from ._models_py3 import SupportedOperatingSystems
+from ._models_py3 import SwitchProtectionInput
+from ._models_py3 import SwitchProtectionInputProperties
+from ._models_py3 import SwitchProtectionJobDetails
+from ._models_py3 import SwitchProtectionProviderSpecificInput
+from ._models_py3 import SwitchProviderInput
+from ._models_py3 import SwitchProviderInputProperties
+from ._models_py3 import SwitchProviderSpecificInput
+from ._models_py3 import TargetComputeSize
+from ._models_py3 import TargetComputeSizeCollection
+from ._models_py3 import TargetComputeSizeProperties
+from ._models_py3 import TaskTypeDetails
+from ._models_py3 import TestFailoverCleanupInput
+from ._models_py3 import TestFailoverCleanupInputProperties
+from ._models_py3 import TestFailoverInput
+from ._models_py3 import TestFailoverInputProperties
+from ._models_py3 import TestFailoverJobDetails
+from ._models_py3 import TestFailoverProviderSpecificInput
+from ._models_py3 import TestMigrateCleanupInput
+from ._models_py3 import TestMigrateCleanupInputProperties
+from ._models_py3 import TestMigrateInput
+from ._models_py3 import TestMigrateInputProperties
+from ._models_py3 import TestMigrateProviderSpecificInput
+from ._models_py3 import UnplannedFailoverInput
+from ._models_py3 import UnplannedFailoverInputProperties
+from ._models_py3 import UnplannedFailoverProviderSpecificInput
+from ._models_py3 import UpdateApplianceForReplicationProtectedItemInput
+from ._models_py3 import UpdateApplianceForReplicationProtectedItemInputProperties
+from ._models_py3 import UpdateApplianceForReplicationProtectedItemProviderSpecificInput
+from ._models_py3 import UpdateDiskInput
+from ._models_py3 import UpdateMigrationItemInput
+from ._models_py3 import UpdateMigrationItemInputProperties
+from ._models_py3 import UpdateMigrationItemProviderSpecificInput
+from ._models_py3 import UpdateMobilityServiceRequest
+from ._models_py3 import UpdateMobilityServiceRequestProperties
+from ._models_py3 import UpdateNetworkMappingInput
+from ._models_py3 import UpdateNetworkMappingInputProperties
+from ._models_py3 import UpdatePolicyInput
+from ._models_py3 import UpdatePolicyInputProperties
+from ._models_py3 import UpdateProtectionContainerMappingInput
+from ._models_py3 import UpdateProtectionContainerMappingInputProperties
+from ._models_py3 import UpdateRecoveryPlanInput
+from ._models_py3 import UpdateRecoveryPlanInputProperties
+from ._models_py3 import UpdateReplicationProtectedItemInput
+from ._models_py3 import UpdateReplicationProtectedItemInputProperties
+from ._models_py3 import UpdateReplicationProtectedItemProviderInput
+from ._models_py3 import UpdateVCenterRequest
+from ._models_py3 import UpdateVCenterRequestProperties
+from ._models_py3 import VCenter
+from ._models_py3 import VCenterCollection
+from ._models_py3 import VCenterProperties
+from ._models_py3 import VMNicDetails
+from ._models_py3 import VMNicInputDetails
+from ._models_py3 import VMwareCbtContainerCreationInput
+from ._models_py3 import VMwareCbtContainerMappingInput
+from ._models_py3 import VMwareCbtDiskInput
+from ._models_py3 import VMwareCbtEnableMigrationInput
+from ._models_py3 import VMwareCbtEventDetails
+from ._models_py3 import VMwareCbtMigrateInput
+from ._models_py3 import VMwareCbtMigrationDetails
+from ._models_py3 import VMwareCbtNicDetails
+from ._models_py3 import VMwareCbtNicInput
+from ._models_py3 import VMwareCbtPolicyCreationInput
+from ._models_py3 import VMwareCbtProtectedDiskDetails
+from ._models_py3 import VMwareCbtProtectionContainerMappingDetails
+from ._models_py3 import VMwareCbtResyncInput
+from ._models_py3 import VMwareCbtTestMigrateInput
+from ._models_py3 import VMwareCbtUpdateDiskInput
+from ._models_py3 import VMwareCbtUpdateMigrationItemInput
+from ._models_py3 import VMwareDetails
+from ._models_py3 import VMwareV2FabricCreationInput
+from ._models_py3 import VMwareV2FabricSpecificDetails
+from ._models_py3 import VMwareVirtualMachineDetails
+from ._models_py3 import VaultHealthDetails
+from ._models_py3 import VaultHealthProperties
+from ._models_py3 import VaultSetting
+from ._models_py3 import VaultSettingCollection
+from ._models_py3 import VaultSettingCreationInput
+from ._models_py3 import VaultSettingCreationInputProperties
+from ._models_py3 import VaultSettingProperties
+from ._models_py3 import VersionDetails
+from ._models_py3 import VirtualMachineTaskDetails
+from ._models_py3 import VmNicUpdatesTaskDetails
+from ._models_py3 import VmmDetails
+from ._models_py3 import VmmToAzureCreateNetworkMappingInput
+from ._models_py3 import VmmToAzureNetworkMappingSettings
+from ._models_py3 import VmmToAzureUpdateNetworkMappingInput
+from ._models_py3 import VmmToVmmCreateNetworkMappingInput
+from ._models_py3 import VmmToVmmNetworkMappingSettings
+from ._models_py3 import VmmToVmmUpdateNetworkMappingInput
+from ._models_py3 import VmmVirtualMachineDetails
+from ._models_py3 import VmwareCbtPolicyDetails
+
 
 from ._site_recovery_management_client_enums import (
     A2ARecoveryAvailabilityType,
@@ -997,12 +522,14 @@ from ._site_recovery_management_client_enums import (
     AgentVersionStatus,
     AlternateLocationRecoveryOption,
     AutoProtectionOfDataDisk,
+    AutomationAccountAuthenticationType,
     DataSyncStatus,
     DisableProtectionReason,
     DiskAccountType,
     DiskReplicationProgressHealth,
     EthernetAddressType,
     ExportJobOutputSerializationType,
+    ExtendedLocationType,
     FailoverDeploymentModel,
     HealthErrorCategory,
     HealthErrorCustomerResolvability,
@@ -1086,6 +613,9 @@ __all__ = [
     'Alert',
     'AlertCollection',
     'AlertProperties',
+    'ApplianceCollection',
+    'ApplianceQueryParameter',
+    'ApplianceSpecificDetails',
     'ApplyRecoveryPointInput',
     'ApplyRecoveryPointInputProperties',
     'ApplyRecoveryPointProviderSpecificInput',
@@ -1150,6 +680,7 @@ __all__ = [
     'ExistingRecoveryVirtualNetwork',
     'ExistingStorageAccount',
     'ExportJobDetails',
+    'ExtendedLocation',
     'Fabric',
     'FabricCollection',
     'FabricCreationInput',
@@ -1212,6 +743,9 @@ __all__ = [
     'InMageAzureV2RecoveryPointDetails',
     'InMageAzureV2ReplicationDetails',
     'InMageAzureV2ReprotectInput',
+    'InMageAzureV2SwitchProviderBlockingErrorDetails',
+    'InMageAzureV2SwitchProviderDetails',
+    'InMageAzureV2SwitchProviderInput',
     'InMageAzureV2TestFailoverInput',
     'InMageAzureV2UnplannedFailoverInput',
     'InMageAzureV2UpdateReplicationProtectedItemInput',
@@ -1221,10 +755,13 @@ __all__ = [
     'InMageDiskExclusionInput',
     'InMageDiskSignatureExclusionOptions',
     'InMageEnableProtectionInput',
+    'InMageFabricSwitchProviderBlockingErrorDetails',
     'InMagePolicyDetails',
     'InMagePolicyInput',
     'InMageProtectedDiskDetails',
     'InMageRcmAgentUpgradeBlockingErrorDetails',
+    'InMageRcmApplianceDetails',
+    'InMageRcmApplianceSpecificDetails',
     'InMageRcmApplyRecoveryPointInput',
     'InMageRcmDiscoveredProtectedVmDetails',
     'InMageRcmDiskInput',
@@ -1233,6 +770,7 @@ __all__ = [
     'InMageRcmEventDetails',
     'InMageRcmFabricCreationInput',
     'InMageRcmFabricSpecificDetails',
+    'InMageRcmFabricSwitchProviderBlockingErrorDetails',
     'InMageRcmFailbackDiscoveredProtectedVmDetails',
     'InMageRcmFailbackEventDetails',
     'InMageRcmFailbackMobilityAgentDetails',
@@ -1391,6 +929,8 @@ __all__ = [
     'RenewCertificateInput',
     'RenewCertificateInputProperties',
     'ReplicationAgentDetails',
+    'ReplicationAppliance',
+    'ReplicationApplianceProperties',
     'ReplicationEligibilityResults',
     'ReplicationEligibilityResultsCollection',
     'ReplicationEligibilityResultsErrorInfo',
@@ -1445,6 +985,9 @@ __all__ = [
     'SwitchProtectionInputProperties',
     'SwitchProtectionJobDetails',
     'SwitchProtectionProviderSpecificInput',
+    'SwitchProviderInput',
+    'SwitchProviderInputProperties',
+    'SwitchProviderSpecificInput',
     'TargetComputeSize',
     'TargetComputeSizeCollection',
     'TargetComputeSizeProperties',
@@ -1536,12 +1079,14 @@ __all__ = [
     'AgentVersionStatus',
     'AlternateLocationRecoveryOption',
     'AutoProtectionOfDataDisk',
+    'AutomationAccountAuthenticationType',
     'DataSyncStatus',
     'DisableProtectionReason',
     'DiskAccountType',
     'DiskReplicationProgressHealth',
     'EthernetAddressType',
     'ExportJobOutputSerializationType',
+    'ExtendedLocationType',
     'FailoverDeploymentModel',
     'HealthErrorCategory',
     'HealthErrorCustomerResolvability',

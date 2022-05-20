@@ -18,12 +18,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._replication_appliances_operations import build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class ReplicationAppliancesOperations:
+    """ReplicationAppliancesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,22 +47,24 @@ class Operations:
     @distributed_trace
     def list(
         self,
+        filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.OperationsDiscoveryCollection"]:
-        """Returns the list of available operations.
+    ) -> AsyncIterable["_models.ApplianceCollection"]:
+        """Gets the list of appliances.
 
-        Operation to return the list of available operations.
+        Gets the list of Azure Site Recovery appliances for the vault.
 
+        :param filter: OData filter options. Default value is None.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationsDiscoveryCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either ApplianceCollection or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.OperationsDiscoveryCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.ApplianceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationsDiscoveryCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplianceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -71,9 +73,11 @@ class Operations:
             if not next_link:
                 
                 request = build_list_request(
+                    resource_name=self._config.resource_name,
                     resource_group_name=self._config.resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
+                    filter=filter,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -82,9 +86,11 @@ class Operations:
             else:
                 
                 request = build_list_request(
+                    resource_name=self._config.resource_name,
                     resource_group_name=self._config.resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
+                    filter=filter,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -93,7 +99,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationsDiscoveryCollection", pipeline_response)
+            deserialized = self._deserialize("ApplianceCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -119,4 +125,4 @@ class Operations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/operations"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationAppliances"}  # type: ignore

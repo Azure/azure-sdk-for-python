@@ -8,6 +8,7 @@
 
 from ._operations import Operations
 from ._replication_alert_settings_operations import ReplicationAlertSettingsOperations
+from ._replication_appliances_operations import ReplicationAppliancesOperations
 from ._replication_eligibility_results_operations import ReplicationEligibilityResultsOperations
 from ._replication_events_operations import ReplicationEventsOperations
 from ._replication_fabrics_operations import ReplicationFabricsOperations
@@ -37,6 +38,7 @@ from ._replication_vault_setting_operations import ReplicationVaultSettingOperat
 __all__ = [
     'Operations',
     'ReplicationAlertSettingsOperations',
+    'ReplicationAppliancesOperations',
     'ReplicationEligibilityResultsOperations',
     'ReplicationEventsOperations',
     'ReplicationFabricsOperations',
