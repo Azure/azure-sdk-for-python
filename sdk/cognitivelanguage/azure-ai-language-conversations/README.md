@@ -71,18 +71,12 @@ The following examples show common scenarios using the `client` [created above](
 ### Analyze Text with a Conversation App
 If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your conversation's project name as follows:
 
+
 ```python
 # import libraries
 import os
 from azure.core.credentials import AzureKeyCredential
-
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import (
-    CustomConversationalTask,
-    ConversationAnalysisOptions,
-    CustomConversationTaskParameters,
-    TextConversationItem
-)
 
 # get secrets
 clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -94,66 +88,66 @@ deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
     query = "Send an email to Carol about the tomorrow's demo"
-    result = client.analyze_conversation(
-            task=CustomConversationalTask(
-                analysis_input=ConversationAnalysisOptions(
-                    conversation_item=TextConversationItem(
-                        id=1,
-                        participant_id=1,
-                        text=query
-                    )
-                ),
-                parameters=CustomConversationTaskParameters(
-                    project_name=project_name,
-                    deployment_name=deployment_name
-                )
-            )
-        )
+    result = client.conversation_analysis.analyze_conversation(
+        task={
+            "kind": "Conversation",
+            "analysisInput": {
+                "conversationItem": {
+                    "participantId": "1",
+                    "id": "1",
+                    "modality": "text",
+                    "language": "en",
+                    "text": query
+                },
+                "isLoggingEnabled": False
+            },
+            "parameters": {
+                "projectName": project_name,
+                "deploymentName": deployment_name,
+                "verbose": True
+            }
+        }
+    )
 
 # view result
-print("query: {}".format(result.results.query))
-print("project kind: {}\n".format(result.results.prediction.project_kind))
+print("query: {}".format(result["result"]["query"]))
+print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
 
-print("top intent: {}".format(result.results.prediction.top_intent))
-print("category: {}".format(result.results.prediction.intents[0].category))
-print("confidence score: {}\n".format(result.results.prediction.intents[0].confidence))
+print("top intent: {}".format(result["result"]["prediction"]["topIntent"]))
+print("category: {}".format(result["result"]["prediction"]["intents"][0]["category"]))
+print("confidence score: {}\n".format(result["result"]["prediction"]["intents"][0]["confidenceScore"]))
 
 print("entities:")
-for entity in result.results.prediction.entities:
-    print("\ncategory: {}".format(entity.category))
-    print("text: {}".format(entity.text))
-    print("confidence score: {}".format(entity.confidence))
-    if entity.resolutions:
+for entity in result["result"]["prediction"]["entities"]:
+    print("\ncategory: {}".format(entity["category"]))
+    print("text: {}".format(entity["text"]))
+    print("confidence score: {}".format(entity["confidenceScore"]))
+    if "resolutions" in entity:
         print("resolutions")
-        for resolution in entity.resolutions:
-            print("kind: {}".format(resolution.resolution_kind))
-            print("value: {}".format(resolution.additional_properties["value"]))
-    if entity.extra_information:
+        for resolution in entity["resolutions"]:
+            print("kind: {}".format(resolution["resolutionKind"]))
+            print("value: {}".format(resolution["value"]))
+    if "extraInformation" in entity:
         print("extra info")
-        for data in entity.extra_information:
-            print("kind: {}".format(data.extra_information_kind))
-            if data.extra_information_kind == "ListKey":
-                print("key: {}".format(data.key))
-            if data.extra_information_kind == "EntitySubtype":
-                print("value: {}".format(data.value))
+        for data in entity["extraInformation"]:
+            print("kind: {}".format(data["extraInformationKind"]))
+            if data["extraInformationKind"] == "ListKey":
+                print("key: {}".format(data["key"]))
+            if data["extraInformationKind"] == "EntitySubtype":
+                print("value: {}".format(data["value"]))
+
 ```
 
 ### Analyze Text with an Orchestration App
 
 If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
 
+
 ```python
 # import libraries
 import os
 from azure.core.credentials import AzureKeyCredential
-
 from azure.ai.language.conversations import ConversationAnalysisClient
-from azure.ai.language.conversations.models import (
-    CustomConversationalTask,
-    ConversationAnalysisOptions,
-    CustomConversationTaskParameters,
-    TextConversationItem
-)
 
 # get secrets
 clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -164,40 +158,47 @@ deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 # analyze query
 client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
-    query = "How are you?"
-    result = client.analyze_conversation(
-            task=CustomConversationalTask(
-                analysis_input=ConversationAnalysisOptions(
-                    conversation_item=TextConversationItem(
-                        id=1,
-                        participant_id=1,
-                        text=query
-                    )
-                ),
-                parameters=CustomConversationTaskParameters(
-                    project_name=project_name,
-                    deployment_name=deployment_name
-                )
-            )
-        )
+    query = "Reserve a table for 2 at the Italian restaurant"
+    result = client.conversation_analysis.analyze_conversation(
+        task={
+            "kind": "Conversation",
+            "analysisInput": {
+                "conversationItem": {
+                    "participantId": "1",
+                    "id": "1",
+                    "modality": "text",
+                    "language": "en",
+                    "text": query
+                },
+                "isLoggingEnabled": False
+            },
+            "parameters": {
+                "projectName": project_name,
+                "deploymentName": deployment_name,
+                "verbose": True
+            }
+        }
+    )
 
 # view result
-print("query: {}".format(result.results.query))
-print("project kind: {}\n".format(result.results.prediction.project_kind))
+print("query: {}".format(result["result"]["query"]))
+print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
 
 # top intent
-top_intent = result.results.prediction.top_intent
+top_intent = result["result"]["prediction"]["topIntent"]
 print("top intent: {}".format(top_intent))
-top_intent_object = result.results.prediction.intents[top_intent]
-print("confidence score: {}".format(top_intent_object.confidence))
-print("project kind: {}".format(top_intent_object.target_kind))
+top_intent_object = result["result"]["prediction"]["intents"][top_intent]
+print("confidence score: {}".format(top_intent_object["confidenceScore"]))
+print("project kind: {}".format(top_intent_object["targetProjectKind"]))
 
-if top_intent_object.target_kind == "question_answering":
-    print("\nview qna result:")
-    qna_result = top_intent_object.result
-    for answer in qna_result.answers:
-        print("\nanswer: {}".format(answer.answer))
-        print("answer: {}".format(answer.confidence))
+if top_intent_object["targetProjectKind"] == "Luis":
+    print("\nluis response:")
+    luis_response = top_intent_object["result"]["prediction"]
+    print("top intent: {}".format(luis_response["topIntent"]))
+    print("\nentities:")
+    for entity in luis_response["entities"]:
+        print("\n{}".format(entity))
+
 ```
 
 ### Conversational Issue Summarization
