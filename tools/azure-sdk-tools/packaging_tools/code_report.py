@@ -169,14 +169,14 @@ def merge_report(report_paths):
 # find last version or last stable version
 def select_versions(versions: List[str], last_pypi_stable: bool) -> List[str]:
     versions.reverse()
-    print(f'== version list: {version}')
+    print(f'== version list: {versions}')
     if last_pypi_stable:
         for version in versions:
             if not re.search('[a-zA-Z]', version):
                 return [version]
         _LOGGER.info(f"Do not find stable version during {versions}")
         return [versions[0]]
-    print(f'== return version: {version[0]}')
+    print(f'== return version: {versions[0]}')
     return [versions[0]]
 
 
