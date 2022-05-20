@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
@@ -20,12 +20,12 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Fri, 15 Apr 2022 10:05:02 GMT
-      ms-cv: dlxgXSvguU6WenHUT9CtWg.0
+      date: Fri, 20 May 2022 15:03:43 GMT
+      ms-cv: bu8h/GH3ekydQ6iZuBYRlQ.2.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 17ms
+      x-processing-time: 829ms
     status:
       code: 201
       message: Created
@@ -36,7 +36,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
     method: DELETE
     uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-06-01
   response:
@@ -45,12 +45,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-10-31-preview, 2021-11-01, 2022-06-01
-      date: Fri, 15 Apr 2022 10:05:02 GMT
-      ms-cv: fmdLSLUrkka2tE3Ce+PnDg.0
+      date: Fri, 20 May 2022 15:03:43 GMT
+      ms-cv: DIE3JVxHvU+E4m4c3DEOCA.2.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 134ms
+      x-processing-time: 225ms
     status:
       code: 204
       message: No Content

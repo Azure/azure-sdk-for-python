@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrG53tuD8IkUxaQ044ERUDNimPU5aH25Ae7nQ9pa9OM8tqPMHBGpovf3R79t3c9kF8oRe1vdSpSbfag0jZ0Y_-itFshWG6d4uW-qt_nAy3krmXEdSE6mzQ0Qf_Ra5p_PeCMe8Pl5ST4AweKLIDYmeeoGHgMPYjkxgKCveapMTd2tggAA;
-        fpc=Avuv-M7LdEBAsgeS_nKZktw; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrH2Rehe0ZUQPzmvapfncV0mp8ISXwXf5hL0DImQWP-clIak1AJrXTdSQMiGuGgiRC2JSzzcSKdxq8g7zUw4-pskeFs63Or7ITQY2y7Lmq7Lsc7LKMn4NKexP-oDRrAPF2I9oT_HjM_spcyGlj-Xv69IkOj3aNkQ03FoJXbTbKOhggAA;
+        fpc=Ai-2uDKht0VIonXl-XlG7-c; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.27.1
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 Apr 2022 10:05:12 GMT
+      - Fri, 20 May 2022 15:03:48 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=Avuv-M7LdEBAsgeS_nKZktw; expires=Sun, 15-May-2022 10:05:13 GMT; path=/;
+      - fpc=Ai-2uDKht0VIonXl-XlG7-c; expires=Sun, 19-Jun-2022 15:03:48 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12621.9 - WEULR2 ProdSlices
+      - 2.1.12744.11 - WEULR1 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -58,31 +58,31 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '2178'
+      - '2170'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 15 Apr 2022 10:05:13 GMT
+      - Fri, 20 May 2022 15:03:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"error": {"code": "ValidationError", "message": "AAD application is
-        not the expected one.", "target": "appId"}}'
+      string: '{"error": {"code": "ValidationError", "message": "Provided UserId has
+        invalid format.", "target": "userId"}}'
     headers:
       api-supported-versions: 2021-10-31-preview, 2022-06-01
       content-type: application/json
-      date: Fri, 15 Apr 2022 10:05:12 GMT
-      ms-cv: WWbNI8c5mEqSe09XDSeu7w.0
+      date: Fri, 20 May 2022 15:03:48 GMT
+      ms-cv: 5q0t36nX7ESGXnoQJeO9BQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 33ms
+      x-processing-time: 105ms
     status:
       code: 400
       message: Bad Request

@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrGs_7w1vh-PBbk1s_66Pv-5_wdpdw1-EOy4STmjuu8IF76PXGR0iQjpMxxIe-XsFVMsDHtuG-whRiZgQ5x_f3_Z4S2BRoHdJCPrsQVp0U6qXOxFZxj3IAKYEDlzG7iRqARs5UaOhNxETAUVN1Np115_Vb_EjTS2UN8gtc5yI2X6cgAA;
-        fpc=AkizwfOzsWNIsBvwDDhlnIg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrtrvOyXVGFBSxTqZhQwM9NbFJN84Uw9kfqOWxIUSMVJyYjtWV2yuSGwYSdsMQzaX_uSxecr914EuWELoyfjHRneWSyR_EU9-3_BB0m8Siou_a9qpI_v2eWPYqtoat-qurRtEDbStWXm1x_-CmJpsJsmqsonE9aLG_7tgBgTrn0UsgAA;
+        fpc=AhzGqrfwioZFrjGAynX2gCo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.27.1
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 Apr 2022 10:04:48 GMT
+      - Fri, 20 May 2022 15:03:31 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AkizwfOzsWNIsBvwDDhlnIg; expires=Sun, 15-May-2022 10:04:49 GMT; path=/;
+      - fpc=AhzGqrfwioZFrjGAynX2gCo; expires=Sun, 19-Jun-2022 15:03:31 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12621.9 - WEULR2 ProdSlices
+      - 2.1.12744.11 - WEULR1 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -66,9 +66,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 15 Apr 2022 10:04:49 GMT
+      - Fri, 20 May 2022 15:03:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -81,9 +81,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 15 Apr 2022 10:04:49 GMT
+      - Fri, 20 May 2022 15:03:31 GMT
       ms-cv:
-      - a7OOnHoSGUKxjRt20bmu1w.0
+      - xPzUrnSVvEeWGBh1TCCMmg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -93,7 +93,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 111ms
     status:
       code: 400
       message: Bad Request

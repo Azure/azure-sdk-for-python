@@ -19,7 +19,7 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
         super(CommunicationIdentityTestCase, self).setUp()
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
-            self.m365_app_id = "sanitized"
+            self.m365_client_id = "sanitized"
             self.m365_aad_authority = "sanitized"
             self.m365_aad_tenant = "sanitized"
             self.m365_scope = "sanitized" 
@@ -29,7 +29,7 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             self.skip_get_token_for_teams_user_tests = "false"
         else:
             self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
-            self.m365_app_id = os.getenv('COMMUNICATION_M365_APP_ID') 
+            self.m365_client_id = os.getenv('COMMUNICATION_M365_APP_ID') 
             self.m365_aad_authority = os.getenv('COMMUNICATION_M365_AAD_AUTHORITY') 
             self.m365_aad_tenant = os.getenv('COMMUNICATION_M365_AAD_TENANT')
             self.m365_scope = os.getenv('COMMUNICATION_M365_SCOPE') 
@@ -47,7 +47,7 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             teams_user_oid = "sanitized"
         else:
             msal_app = PublicClientApplication(
-                client_id=self.m365_app_id,
+                client_id=self.m365_client_id,
                 authority="{}/{}".format(self.m365_aad_authority, self.m365_aad_tenant))
             result = msal_app.acquire_token_by_username_password(username=self.msal_username, password=self.msal_password, scopes=[self.m365_scope])
             teams_user_aad_token = result["access_token"]

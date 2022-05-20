@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 15 Apr 2022 10:05:15 GMT
+      - Fri, 20 May 2022 15:03:51 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Fri, 15 Apr 2022 10:05:15 GMT
-      ms-cv: 2/CNPE47z0yG9ZactRt3cA.0
+      date: Fri, 20 May 2022 15:03:51 GMT
+      ms-cv: YRwFY9EDAEuEbU/B5EGdow.2.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 27ms
+      x-processing-time: 88ms
     status:
       code: 201
       message: Created
@@ -44,9 +44,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 15 Apr 2022 10:05:16 GMT
+      - Fri, 20 May 2022 15:03:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -57,13 +57,13 @@ interactions:
         field is required.", "target": "Scopes"}}'
     headers:
       content-type: application/json
-      date: Fri, 15 Apr 2022 10:05:15 GMT
-      ms-cv: AQZNgVBlv0u3r0Mw7DoocQ.0
+      date: Fri, 20 May 2022 15:03:52 GMT
+      ms-cv: wWW+7BeWQkmTezJUhf4qnQ.2.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 20ms
+      x-processing-time: 18ms
     status:
       code: 400
       message: Bad Request

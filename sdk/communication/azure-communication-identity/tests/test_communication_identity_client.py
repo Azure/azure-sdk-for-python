@@ -234,8 +234,8 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             credential, 
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_id = self.generate_teams_user_aad_token() 
-        token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_app_id, user_id)
+        aad_token, user_object_id = self.generate_teams_user_aad_token() 
+        token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None
 
     @CommunicationPreparer()
@@ -246,8 +246,8 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_id = self.generate_teams_user_aad_token() 
-        token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_app_id, user_id)
+        aad_token, user_object_id = self.generate_teams_user_aad_token() 
+        token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None
 
     @parameterized.expand(
@@ -264,7 +264,7 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(invalid_token, self.m365_app_id, "")
+            token_response = identity_client.get_token_for_teams_user(invalid_token, self.m365_client_id, "")
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
@@ -276,52 +276,52 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        _, user_id = self.generate_teams_user_aad_token()
+        _, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(self.expired_teams_token, self.m365_app_id, user_id)
+            token_response = identity_client.get_token_for_teams_user(self.expired_teams_token, self.m365_client_id, user_object_id)
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
     
     @parameterized.expand(
         [
-            ("empty_app_id", ""),
-            ("invalid_app_id", "invalid")
+            ("empty_client_id", ""),
+            ("invalid_client_id", "invalid")
         ]
     )    
-    def test_get_token_for_teams_user_with_invalid_app_id(self, _, invalid_app_id):
+    def test_get_token_for_teams_user_with_invalid_client_id(self, _, invalid_client_id):
         if(self.skip_get_token_for_teams_user_test()):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_id = self.generate_teams_user_aad_token()
+        aad_token, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(aad_token, invalid_app_id, user_id)
+            token_response = identity_client.get_token_for_teams_user(aad_token, invalid_client_id, user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
     
     @CommunicationPreparer()
-    def test_get_token_for_teams_user_with_wrong_app_id(self, communication_livetest_dynamic_connection_string):
+    def test_get_token_for_teams_user_with_wrong_client_id(self, communication_livetest_dynamic_connection_string):
         if(self.skip_get_token_for_teams_user_test()):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_id = self.generate_teams_user_aad_token()
+        aad_token, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(aad_token, user_id, user_id)
+            token_response = identity_client.get_token_for_teams_user(aad_token, user_object_id, user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
         
     @parameterized.expand(
         [
-            ("empty_user_id", ""),
-            ("invalid_user_id", "invalid"),
+            ("empty_user_object_id", ""),
+            ("invalid_user_object_id", "invalid"),
         ]
     )    
-    def test_get_token_for_teams_user_with_invalid_user_id(self, _, invalid_user_id):
+    def test_get_token_for_teams_user_with_invalid_user_object_id(self, _, invalid_user_object_id):
         if(self.skip_get_token_for_teams_user_test()):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -330,11 +330,11 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         )
         aad_token, _ = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_app_id, invalid_user_id)
+            token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, invalid_user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
            
-    def test_get_token_for_teams_user_with_wrong_user_id(self):
+    def test_get_token_for_teams_user_with_wrong_user_object_id(self):
         if(self.skip_get_token_for_teams_user_test()):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -343,6 +343,6 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         )
         aad_token, _ = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_app_id, self.m365_app_id)
+            token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, self.m365_client_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None

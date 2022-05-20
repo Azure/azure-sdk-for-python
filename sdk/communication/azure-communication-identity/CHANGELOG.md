@@ -3,10 +3,10 @@
 ## 1.2.0 (Unreleased)
 
 ### Features Added
-- Added support to build custom Teams endpoint using M365 Teams identities:
-    - Added `get_token_for_teams_user(aad_token, app_id, user_id)` method that provides the ability to exchange an AAD access token of a Teams user for a Communication Identity access token to `CommunicationIdentityClient`.
+- Added support to build a custom Teams endpoint using Microsoft 365 Teams identities:
+    - Added `get_token_for_teams_user(aad_token, client_id, user_object_id)` method that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token to `CommunicationIdentityClient`.
 - Removed `ApiVersion.V2021_10_31_preview` from API versions.
-- Added new API version `ApiVersion.V2022_06_01` that is deafult API version
+- Added a new API version `ApiVersion.V2022_06_01` that is now the deafult API version
 
 ### Breaking Changes
 
@@ -20,7 +20,7 @@
 ### Features Added
 
 - Added support for Microsoft 365 Teams identities
-  - `CommunicationIdentityClient` added a new method `get_token_for_teams_user` that provides the ability to exchange an AAD access token of a Teams user for a Communication Identity access token
+  - `CommunicationIdentityClient` added a new method `get_token_for_teams_user` that provides the ability to exchange an Azure AD access token of a Teams user for a Communication Identity access token
 
 ## 1.0.1 (2021-06-08)
 
