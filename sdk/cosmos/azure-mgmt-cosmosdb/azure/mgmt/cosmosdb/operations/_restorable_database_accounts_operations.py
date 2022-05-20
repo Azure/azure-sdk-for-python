@@ -31,7 +31,7 @@ def build_list_by_location_request(
     location: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -64,7 +64,7 @@ def build_list_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -98,7 +98,7 @@ def build_get_by_location_request(
     instance_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -168,7 +168,7 @@ class RestorableDatabaseAccountsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorableDatabaseAccountsListResult"]
         error_map = {
@@ -244,7 +244,7 @@ class RestorableDatabaseAccountsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorableDatabaseAccountsListResult"]
         error_map = {
@@ -328,7 +328,7 @@ class RestorableDatabaseAccountsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_by_location_request(

@@ -1,5 +1,91 @@
 # Release History
 
+## 7.0.0b6 (2022-05-20)
+
+**Breaking changes**
+
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model ContinuousModeBackupPolicy no longer has parameter continuous_mode_properties
+  - Model DataCenterResourceProperties no longer has parameter authentication_method_ldap_properties
+  - Model DatabaseAccountCreateUpdateParameters no longer has parameter diagnostic_log_settings
+  - Model DatabaseAccountCreateUpdateParameters no longer has parameter enable_materialized_views
+  - Model DatabaseAccountGetResults no longer has parameter diagnostic_log_settings
+  - Model DatabaseAccountGetResults no longer has parameter enable_materialized_views
+  - Model DatabaseAccountUpdateParameters no longer has parameter diagnostic_log_settings
+  - Model DatabaseAccountUpdateParameters no longer has parameter enable_materialized_views
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model LocationProperties no longer has parameter status
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model RestorableDatabaseAccountGetResult no longer has parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer no longer has parameter client_encryption_policy
+  - Model RestoreParameters no longer has parameter gremlin_databases_to_restore
+  - Model RestoreParameters no longer has parameter tables_to_restore
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerGetPropertiesResource no longer has parameter client_encryption_policy
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model SqlContainerResource no longer has parameter client_encryption_policy
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Operation RestorableMongodbCollectionsOperations.list no longer has parameter end_time
+  - Operation RestorableMongodbCollectionsOperations.list no longer has parameter start_time
+  - Removed operation CassandraClustersOperations.get_backup
+  - Removed operation CassandraClustersOperations.list_backups
+  - Removed operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Removed operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Removed operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Removed operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Removed operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Removed operation CassandraResourcesOperations.get_cassandra_view
+  - Removed operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Removed operation CassandraResourcesOperations.list_cassandra_views
+  - Removed operation GremlinResourcesOperations.begin_retrieve_continuous_backup_information
+  - Removed operation MongoDBResourcesOperations.begin_create_update_mongo_role_definition
+  - Removed operation MongoDBResourcesOperations.begin_create_update_mongo_user_definition
+  - Removed operation MongoDBResourcesOperations.begin_delete_mongo_role_definition
+  - Removed operation MongoDBResourcesOperations.begin_delete_mongo_user_definition
+  - Removed operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Removed operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Removed operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Removed operation MongoDBResourcesOperations.get_mongo_role_definition
+  - Removed operation MongoDBResourcesOperations.get_mongo_user_definition
+  - Removed operation MongoDBResourcesOperations.list_mongo_role_definitions
+  - Removed operation MongoDBResourcesOperations.list_mongo_user_definitions
+  - Removed operation SqlResourcesOperations.begin_create_update_client_encryption_key
+  - Removed operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Removed operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Removed operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Removed operation SqlResourcesOperations.get_client_encryption_key
+  - Removed operation SqlResourcesOperations.list_client_encryption_keys
+  - Removed operation TableResourcesOperations.begin_retrieve_continuous_backup_information
+  - Removed operation group DataTransferJobsOperations
+  - Removed operation group GraphResourcesOperations
+  - Removed operation group RestorableGremlinDatabasesOperations
+  - Removed operation group RestorableGremlinGraphsOperations
+  - Removed operation group RestorableGremlinResourcesOperations
+  - Removed operation group RestorableTableResourcesOperations
+  - Removed operation group RestorableTablesOperations
+  - Removed operation group ServiceOperations
+
 ## 7.0.0b5 (2022-04-28)
 
 **Features**

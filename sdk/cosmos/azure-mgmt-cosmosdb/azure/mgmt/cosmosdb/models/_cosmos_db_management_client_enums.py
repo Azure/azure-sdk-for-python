@@ -32,12 +32,11 @@ class ApiType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 class AuthenticationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Which authentication method Cassandra should use to authenticate clients. 'None' turns off
     authentication, so should not be used except in emergencies. 'Cassandra' is the default
-    password based authentication. The default is 'Cassandra'. 'Ldap' is in preview.
+    password based authentication. The default is 'Cassandra'.
     """
 
     NONE = "None"
     CASSANDRA = "Cassandra"
-    LDAP = "Ldap"
 
 class BackupPolicyMigrationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the status of migration between backup policy types.
@@ -94,13 +93,6 @@ class ConnectorOffer(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SMALL = "Small"
 
-class ContinuousTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to indicate type of Continuous backup tier.
-    """
-
-    CONTINUOUS7_DAYS = "Continuous7Days"
-    CONTINUOUS30_DAYS = "Continuous30Days"
-
 class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
@@ -125,12 +117,6 @@ class DatabaseAccountKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MONGO_DB = "MongoDB"
     PARSE = "Parse"
 
-class DataTransferComponent(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
-    COSMOS_DB_SQL = "CosmosDBSql"
-    AZURE_BLOB_STORAGE = "AzureBlobStorage"
-
 class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The datatype for which the indexing behavior is applied to.
     """
@@ -151,14 +137,6 @@ class DefaultConsistencyLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     BOUNDED_STALENESS = "BoundedStaleness"
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
-
-class EnableFullTextQuery(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describe the level of detail with which queries are to be logged.
-    """
-
-    NONE = "None"
-    TRUE = "True"
-    FALSE = "False"
 
 class IndexingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the indexing mode.
@@ -202,13 +180,6 @@ class ManagedCassandraResourceIdentityType(with_metaclass(CaseInsensitiveEnumMet
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
-
-class MongoRoleDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether the Role Definition was built-in or user created.
-    """
-
-    BUILT_IN_ROLE = "BuiltInRole"
-    CUSTOM_ROLE = "CustomRole"
 
 class NetworkAclBypass(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates what services are allowed to bypass firewall checks.
@@ -307,34 +278,6 @@ class ServerVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FOUR0 = "4.0"
     FOUR2 = "4.2"
 
-class ServiceSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Instance type for the service.
-    """
-
-    COSMOS_D4_S = "Cosmos.D4s"
-    COSMOS_D8_S = "Cosmos.D8s"
-    COSMOS_D16_S = "Cosmos.D16s"
-
-class ServiceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the status of a service.
-    """
-
-    CREATING = "Creating"
-    RUNNING = "Running"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    ERROR = "Error"
-    STOPPED = "Stopped"
-
-class ServiceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """ServiceType for the service.
-    """
-
-    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
-    DATA_TRANSFER = "DataTransfer"
-    GRAPH_API_COMPUTE = "GraphAPICompute"
-    MATERIALIZED_VIEWS_BUILDER = "MaterializedViewsBuilder"
-
 class SpatialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the spatial type of index.
     """
@@ -343,14 +286,6 @@ class SpatialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LINE_STRING = "LineString"
     POLYGON = "Polygon"
     MULTI_POLYGON = "MultiPolygon"
-
-class ThroughputPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """ThroughputPolicy to apply for throughput redistribution
-    """
-
-    NONE = "none"
-    EQUAL = "equal"
-    CUSTOM = "custom"
 
 class TriggerOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operation the trigger is associated with
