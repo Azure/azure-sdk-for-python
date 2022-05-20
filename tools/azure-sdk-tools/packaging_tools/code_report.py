@@ -170,7 +170,7 @@ def merge_report(report_paths):
 def select_versions(versions: List[str], last_pypi_stable: bool) -> List[str]:
     versions.reverse()
     print(f'== version list: {versions}')
-    if last_pypi_stable:
+    if not last_pypi_stable:
         for version in versions:
             if not re.search('[a-zA-Z]', version):
                 return [version]
