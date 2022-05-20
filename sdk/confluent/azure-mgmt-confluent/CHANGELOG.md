@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0 (2022-05-20)
+
+**Breaking changes**
+
+  - Removed operation OrganizationOperations.list_by_resource_group
+
 ## 2.0.0b1 (2021-05-24)
 
 **Features**
