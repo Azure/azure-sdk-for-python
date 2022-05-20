@@ -1,0 +1,73 @@
+interactions:
+- request:
+    body: '{"displayName": "Analyze PII in conversation", "analysisInput": {"conversations":
+      [{"conversationItems": [{"id": "1", "participantId": "0", "modality": "transcript",
+      "text": "It is john doe.", "lexical": "It is john doe", "itn": "It is john doe",
+      "maskedItn": "It is john doe"}, {"id": "2", "participantId": "1", "modality":
+      "transcript", "text": "Yes, 633-27-8199 is my phone", "lexical": "yes six three
+      three two seven eight one nine nine is my phone", "itn": "yes 633278199 is my
+      phone", "maskedItn": "yes 633278199 is my phone"}, {"id": "3", "participantId":
+      "1", "modality": "transcript", "text": "j.doe@yahoo.com is my email", "lexical":
+      "j dot doe at yahoo dot com is my email", "maskedItn": "j.doe@yahoo.com is my
+      email", "itn": "j.doe@yahoo.com is my email"}], "modality": "transcript", "id":
+      "1", "language": "en"}]}, "tasks": [{"kind": "ConversationalPIITask", "parameters":
+      {"redactionSource": "lexical", "piiCategories": ["all"]}}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '945'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: POST
+    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 2219abf6-2e3b-4f7a-8fa3-a05f85916171
+      content-length: '0'
+      date: Fri, 20 May 2022 01:06:05 GMT
+      operation-location: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/5a98cf9d-90d0-45db-ac72-effffed1e16b?api-version=2022-05-15-preview
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '236'
+    status:
+      code: 202
+      message: Accepted
+    url: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/5a98cf9d-90d0-45db-ac72-effffed1e16b?api-version=2022-05-15-preview
+  response:
+    body:
+      string: '{"jobId":"5a98cf9d-90d0-45db-ac72-effffed1e16b","lastUpdatedDateTime":"2022-05-20T01:06:06Z","createdDateTime":"2022-05-20T01:06:05Z","expirationDateTime":"2022-05-21T01:06:05Z","status":"succeeded","errors":[],"displayName":"Analyze
+        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-20T01:06:06.3488529Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
+        is **** do*","lexical":"It is **** do*","maskedItn":"It is **** do*","text":"It
+        is **** ***."},"entities":[{"text":"john","category":"Name","offset":6,"length":4,"confidenceScore":0.57},{"text":"e","category":"Name","offset":13,"length":1,"confidenceScore":0.53}]},{"id":"2","redactedContent":{"itn":"yes
+        ********* is my phone","lexical":"yes *********************************************
+        is my phone","maskedItn":"yes ********* is my phone","text":"Yes, ***********
+        is my phone"},"entities":[{"text":"six three three two seven eight one nine
+        nine","category":"Phone","offset":4,"length":45,"confidenceScore":0.88}]},{"id":"3","redactedContent":{"itn":"***************
+        is my email","lexical":"************************** is my email","maskedItn":"***************
+        is my email","text":"*************** is my email"},"entities":[{"text":"j
+        dot doe at yahoo dot com","category":"Email","offset":0,"length":26,"confidenceScore":0.78}]}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
+    headers:
+      apim-request-id: b10a4287-ebc2-4109-a2f4-3ee0c53ad305
+      content-length: '1528'
+      content-type: application/json; charset=utf-8
+      date: Fri, 20 May 2022 01:06:35 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '43'
+    status:
+      code: 200
+      message: OK
+    url: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/5a98cf9d-90d0-45db-ac72-effffed1e16b?api-version=2022-05-15-preview
+version: 1

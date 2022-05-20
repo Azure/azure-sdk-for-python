@@ -34,7 +34,7 @@ interactions:
         thanks.","confidenceScore":1.0,"id":58,"source":"qna_chitchat_Professional","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"RestaurantIntent":{"confidenceScore":0.52488893,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137206,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740133,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 965edcdf-409c-43d7-94b2-78df0dd2646f
+      - 99ca4e15-5034-4ed5-aad1-c298099fbf39
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -42,11 +42,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Thu, 19 May 2022 22:15:38 GMT
+      - Fri, 20 May 2022 01:05:34 GMT
       pragma:
       - no-cache
       request-id:
-      - 965edcdf-409c-43d7-94b2-78df0dd2646f
+      - 99ca4e15-5034-4ed5-aad1-c298099fbf39
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -54,7 +54,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '357'
+      - '521'
     status:
       code: 200
       message: OK
