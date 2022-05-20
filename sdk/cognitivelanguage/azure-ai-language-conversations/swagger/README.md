@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/release-cognitiveservices-Language-2022-05-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/d1716d13b0814a9d0785eda9a74529a315212f53/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 namespace: azure.ai.language.conversations
 package-name: azure-ai-language-conversations
