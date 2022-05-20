@@ -1,10 +1,19 @@
 # Release History
 
-## 12.8.0 (Unreleased)
+## 12.9.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-08-06.
+- Added support for `file_change_time` to `start_copy_from_url` API
+
+## 12.8.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.8.0b1.
 
 ### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
 
 ## 12.8.0b1 (2022-04-14)
 
@@ -15,7 +24,7 @@
 - Added support for setting `content_type` on `rename_file()`.
 - Added support for setting `file_change_time` on `create_directory()`, `set_http_headers()` (directory)
 `rename_directory()`, `create_file()`, `set_http_headers()` (file) and `rename_file()`.
-- Added support for setting `file_last_written_mode` on `upload_range()` and `upload_range_from_url()`
+- Added support for setting `file_last_write_mode` on `upload_range()` and `upload_range_from_url()`
 with possible values of `Now` or `Preserve`.
 
 ### Bugs Fixed

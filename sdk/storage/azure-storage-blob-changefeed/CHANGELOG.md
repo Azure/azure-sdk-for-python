@@ -1,5 +1,10 @@
 ## Release History
 
+### 12.0.0b5 (Unreleased)
+
+#### Features Added
+- Added support for `max_single_get_size` and `max_chunk_get_size` to `ChangeFeedClient`
+
 ### 12.0.0b4 (Unreleased)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

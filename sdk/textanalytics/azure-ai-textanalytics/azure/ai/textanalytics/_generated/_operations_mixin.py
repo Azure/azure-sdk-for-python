@@ -79,18 +79,18 @@ class TextAnalyticsClientOperationsMixin(object):
         executed immediately.
 
         :param body: Collection of documents to analyze and a single task to execute.
-        :type body: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTask
+        :type body: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextTask
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextTaskResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResult
+        :rtype: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextTaskResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('analyze_text')
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_text'".format(api_version))
         mixin_instance = OperationClass()
@@ -127,12 +127,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobState
+        :rtype: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('analyze_text_job_status')
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_text_job_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -207,8 +207,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_analyze_text_cancel_job')
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_text_cancel_job'".format(api_version))
         mixin_instance = OperationClass()
@@ -231,7 +231,7 @@ class TextAnalyticsClientOperationsMixin(object):
         executed as a long-running operation.
 
         :param body: Collection of documents to analyze and one or more tasks to execute.
-        :type body: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobsInput
+        :type body: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod. Pass
@@ -243,12 +243,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeTextJobState or the
          result of cls(response)
         :rtype:
-         ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobState]
+         ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobState]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_analyze_text_submit_job')
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == '2022-04-01-preview':
+            from .v2022_04_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_text_submit_job'".format(api_version))
         mixin_instance = OperationClass()

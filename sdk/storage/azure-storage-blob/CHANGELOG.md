@@ -3,17 +3,19 @@
 ## 12.13.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-08-06.
 
-### Bugs Fixed:
-
-## 12.12.0 (Unreleased)
+## 12.12.0 (2022-05-09)
 
 ### Features Added
-- Added an optional callback `progress_hook` to `upload_blob()` that can be used to track progress of a large upload.
+- Stable release of features from 12.12.0b1.
+- Added support for progress tracking to `upload_blob()` and `download_blob()` via a new optional callback,`progress_hook`.
 
-### Bugs Fixed:
+### Bugs Fixed
 - Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
 message if they pass an incorrect URL without a full `/container/blob` path.
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
 
 ## 12.12.0b1 (2022-04-14)
 

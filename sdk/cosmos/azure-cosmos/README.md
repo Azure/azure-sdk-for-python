@@ -468,7 +468,7 @@ For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_
 ### Using the asynchronous client (Preview)
 
 The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
-The Async client needs to be initialized and closed after usage. The example below shows how to do so by using the client's __aenter__() and close() methods.
+The Async client needs to be initialized and closed after usage, which can be done manually or with the use of a context manager. The example below shows how to do so manually.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -481,7 +481,6 @@ CONTAINER_NAME = 'products'
 
 async def create_products():
     client = CosmosClient(URL, credential=KEY)
-    await client.__aenter__()
     database = client.get_database_client(DATABASE_NAME)
     container = database.get_container_client(CONTAINER_NAME)
     for i in range(10):

@@ -860,9 +860,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
-            ContentSettings object used to set file properties of new file.
-            Rename operation currently only supports content type.
+        :keyword str content_type:
+            The Content Type of the new file.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
@@ -902,10 +901,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         kwargs.update(get_rename_smb_properties(kwargs))
 
         file_http_headers = None
-        content_settings = kwargs.pop('content_settings', None)
-        if content_settings:
+        content_type = kwargs.pop('content_type', None)
+        if content_type:
             file_http_headers = FileHTTPHeaders(
-                file_content_type=content_settings.content_type
+                file_content_type=content_type
             )
 
         timeout = kwargs.pop('timeout', None)
@@ -1117,7 +1116,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
-        :keyword file_last_written_mode:
+        :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to
             the current date/time.
@@ -1125,7 +1124,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :paramtype file_last_written_mode: Literal["preserve", "now"]
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1143,6 +1142,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -1158,6 +1158,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
+                file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -1187,6 +1188,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         source_authorization = kwargs.pop('source_authorization', None)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
 
         options = {
             'copy_source_authorization': source_authorization,
@@ -1194,6 +1196,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             'content_length': 0,
             'source_range': source_range,
             'range': destination_range,
+            'file_last_written_mode': file_last_write_mode,
             'source_modified_access_conditions': source_mod_conditions,
             'lease_access_conditions': access_conditions,
             'timeout': kwargs.pop('timeout', None),
@@ -1247,7 +1250,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
-        :keyword file_last_written_mode:
+        :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to
             the current date/time.
@@ -1255,7 +1258,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :paramtype file_last_written_mode: Literal["preserve", "now"]
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

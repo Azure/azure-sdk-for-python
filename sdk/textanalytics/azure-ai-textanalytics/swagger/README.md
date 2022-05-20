@@ -29,7 +29,7 @@ python3-only: true
 batch:
   - tag: release_3_0
   - tag: release_3_1
-  - tag: release_2022_03_01_preview
+  - tag: release_2022_04_01_preview
   - multiapiscript: true
 ```
 
@@ -62,14 +62,14 @@ namespace: azure.ai.textanalytics.v3_1
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_1
 ```
 
-## Release v2022_03_01_preview
+## Release v2022_04_01_preview
 
-These settings apply only when `--tag=release_2022_03_01_preview` is specified on the command line.
+These settings apply only when `--tag=release_2022_04_01_preview` is specified on the command line.
 
-```yaml $(tag) == 'release_2022_03_01_preview'
-input-file: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/swagger/textanalytics.json
-namespace: azure.ai.textanalytics.v2022_03_01_preview
-output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_03_01_preview
+```yaml $(tag) == 'release_2022_04_01_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/cognitiveservices-Language-2022-04-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-04-01-preview/textanalytics.json
+namespace: azure.ai.textanalytics.v2022_04_01_preview
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_04_01_preview
 ```
 
 ### Override Analyze's pager poller for v3.1
@@ -100,7 +100,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override Analyze's pager poller for 2022_03_01_preview
+### Override Analyze's pager poller for 2022_04_01_preview
 
 ```yaml
 directive:
@@ -126,9 +126,9 @@ directive:
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_03_01_preview
+### Fix naming clash with analyze_text method in ApiVersion v2022_04_01_preview
 
-```yaml $(tag) == 'release_2022_03_01_preview'
+```yaml $(tag) == 'release_2022_04_01_preview'
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs"]["post"]'
@@ -136,9 +136,9 @@ directive:
       $["operationId"] = "AnalyzeTextSubmitJob";
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_03_01_preview
+### Fix naming clash with analyze_text method in ApiVersion v2022_04_01_preview
 
-```yaml $(tag) == 'release_2022_03_01_preview'
+```yaml $(tag) == 'release_2022_04_01_preview'
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs/{jobId}"]["get"]'
@@ -146,9 +146,9 @@ directive:
       $["operationId"] = "AnalyzeTextJobStatus";
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_03_01_preview
+### Fix naming clash with analyze_text method in ApiVersion v2022_04_01_preview
 
-```yaml $(tag) == 'release_2022_03_01_preview'
+```yaml $(tag) == 'release_2022_04_01_preview'
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs/{jobId}:cancel"]["post"]'
@@ -156,9 +156,9 @@ directive:
       $["operationId"] = "AnalyzeTextCancelJob";
 ```
 
-### Fix generation of operation class name with ApiVersion v2022_03_01_preview
+### Fix generation of operation class name with ApiVersion v2022_04_01_preview
 
-```yaml $(tag) == 'release_2022_03_01_preview'
+```yaml $(tag) == 'release_2022_04_01_preview'
 directive:
   - from: swagger-document
     where: '$["info"]'

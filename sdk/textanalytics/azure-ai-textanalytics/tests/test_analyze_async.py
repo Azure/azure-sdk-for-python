@@ -44,7 +44,8 @@ from azure.ai.textanalytics import (
     RecognizeCustomEntitiesAction,
     SingleCategoryClassifyResult,
     MultiCategoryClassifyResult,
-    RecognizeCustomEntitiesResult
+    RecognizeCustomEntitiesResult,
+    AnalyzeHealthcareEntitiesAction
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -502,7 +503,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -595,7 +595,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert poller.total_actions_count == 1
             assert poller.id
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -618,7 +617,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -796,7 +794,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 project_name=textanalytics_custom_entities_project_name,
                 deployment_name=textanalytics_custom_entities_deployment_name,
                 disable_service_logs=True
-            )
+            ),
+            AnalyzeHealthcareEntitiesAction(disable_service_logs=True)
         ]
 
         for action in actions:
@@ -1842,3 +1841,109 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.id == document_order[doc_idx]
                     assert not document_result.is_error
                     assert self.document_result_to_action_type(document_result) == action_order[action_idx]
+
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    async def test_analyze_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        with pytest.raises(ValueError) as e:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
+                ],
+                polling_interval=self._interval(),
+            )).result()
+        assert str(e.value) == "'begin_analyze_actions' is only available for API version v3.1 and up."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsCustomPreparer()
+    async def test_analyze_multiapi_validate_v3_1(self, **kwargs):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
+        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
+        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
+        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
+
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), api_version="v3.1")
+
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+        version_supported = "2022-04-01-preview"
+        with pytest.raises(ValueError) as e:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    SingleCategoryClassifyAction(
+                        project_name=textanalytics_single_category_classify_project_name,
+                        deployment_name=textanalytics_single_category_classify_deployment_name
+                    ),
+                    MultiCategoryClassifyAction(
+                        project_name=textanalytics_multi_category_classify_project_name,
+                        deployment_name=textanalytics_multi_category_classify_deployment_name
+                    ),
+                    RecognizeCustomEntitiesAction(
+                        project_name=textanalytics_custom_entities_project_name,
+                        deployment_name=textanalytics_custom_entities_deployment_name
+                    ),
+                    ExtractSummaryAction(),
+                    AnalyzeHealthcareEntitiesAction()
+                ],
+                polling_interval=self._interval(),
+            )).result()
+        assert str(e.value) == f"'ExtractSummaryAction' is only available for API version {version_supported} and " \
+                               f"up.\n'RecognizeCustomEntitiesAction' is only available for API version " \
+                               f"{version_supported} and up.\n'SingleCategoryClassifyAction' is only available " \
+                               f"for API version {version_supported} and up.\n'MultiCategoryClassifyAction' is " \
+                               f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
+                               f"only available for API version {version_supported} and up.\n"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_healthcare_action(self, client):
+        docs = [
+            "Patient does not suffer from high blood pressure.",
+            "Prescribed 100mg ibuprofen, taken twice daily.",
+            ""
+        ]
+        async with client:
+            result = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    AnalyzeHealthcareEntitiesAction(
+                        model_version="latest",
+                        fhir_version="4.0.1"
+                    )
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+            response = []
+            async for r in result:
+                response.append(r)
+
+            for idx, result in enumerate(response):
+                for res in result:
+                    if idx == 2:
+                        assert res.is_error
+                        assert res.error.code == "InvalidDocument"
+                    else:
+                        assert res.entities
+                        assert res.fhir_bundle
+                        assert res.statistics

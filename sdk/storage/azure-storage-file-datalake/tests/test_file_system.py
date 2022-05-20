@@ -160,6 +160,31 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(file_systems[0].has_immutability_policy)
         self.assertIsNotNone(file_systems[0].has_legal_hold)
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_list_file_systems_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+        file_system = self.dsc.create_file_system(file_system_name)
+        sas_token = generate_account_sas(
+            datalake_storage_account_name,
+            datalake_storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=sas_token)
+        file_systems = list(dsc.list_file_systems())
+
+        # Assert
+        self.assertIsNotNone(file_systems)
+        self.assertGreaterEqual(len(file_systems), 1)
+        self.assertIsNotNone(file_systems[0])
+        self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
+
     @DataLakePreparer()
     def test_rename_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
         if not self.is_playback():

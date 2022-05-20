@@ -344,6 +344,14 @@ class SpatialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     POLYGON = "Polygon"
     MULTI_POLYGON = "MultiPolygon"
 
+class ThroughputPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """ThroughputPolicy to apply for throughput redistribution
+    """
+
+    NONE = "none"
+    EQUAL = "equal"
+    CUSTOM = "custom"
+
 class TriggerOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operation the trigger is associated with
     """

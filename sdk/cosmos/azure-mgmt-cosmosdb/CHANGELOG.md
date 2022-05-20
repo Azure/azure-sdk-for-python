@@ -1,5 +1,26 @@
 # Release History
 
+## 7.0.0b5 (2022-04-28)
+
+**Features**
+
+  - Added operation DataTransferJobsOperations.cancel
+  - Added operation DataTransferJobsOperations.pause
+  - Added operation DataTransferJobsOperations.resume
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Model DataTransferJobGetResults has a new parameter processed_count
+  - Model DataTransferJobGetResults has a new parameter total_count
+  - Model DataTransferJobProperties has a new parameter processed_count
+  - Model DataTransferJobProperties has a new parameter total_count
+
+**Breaking changes**
+
+  - Model DataTransferJobGetResults no longer has parameter percentage_complete
+  - Model DataTransferJobProperties no longer has parameter percentage_complete
+
 ## 7.0.0b4 (2022-04-14)
 
 **Features**

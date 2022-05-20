@@ -20,10 +20,10 @@ USAGE:
     python sample_single_category_classify_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
-    3) SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME - your Text Analytics Language Studio project name
-    4) SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME - your Text Analytics deployed model name
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
+    3) SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME - your Language Studio project name
+    4) SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME - your Language Studio deployment name
 """
 
 
@@ -36,10 +36,10 @@ async def sample_classify_document_single_category_async():
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     from azure.ai.textanalytics import SingleCategoryClassifyAction
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
     project_name = os.environ["SINGLE_CATEGORY_CLASSIFY_PROJECT_NAME"]
-    deployed_model_name = os.environ["SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME"]
+    deployment_name = os.environ["SINGLE_CATEGORY_CLASSIFY_DEPLOYMENT_NAME"]
     path_to_sample_document = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
@@ -63,7 +63,7 @@ async def sample_classify_document_single_category_async():
             actions=[
                 SingleCategoryClassifyAction(
                     project_name=project_name,
-                    deployment_name=deployed_model_name
+                    deployment_name=deployment_name
                 ),
             ],
         )
