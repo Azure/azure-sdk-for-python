@@ -434,7 +434,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self._connect_timeout = connect_timeout
         self.parsed_custom_hostname = kwargs.get("custom_hostname")
         self.parsed_custom_port = kwargs.get("custom_port")
-        self.host = self.parsed_custom_hostname or host 
+        self.host = host 
         self.ws = None
         self._http_proxy = kwargs.get('http_proxy', None)
 
@@ -454,7 +454,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
             else:
                 url = "wss://{}".format(self.host)
             self.ws = create_connection(
-                url="wss://{}".format(self.host),
+                url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
