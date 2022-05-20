@@ -6,6 +6,10 @@
 * Async conversation issue summarization task
 * Async conversation PII extraction task
 
+### Breaking Changes
+* Replace LLC with DPG
+* Changed attribute names in sync api
+
 
 ## 1.0.0b3 (2022-04-19)
 
