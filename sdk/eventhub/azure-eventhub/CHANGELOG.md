@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added support for connection using websocket and http proxy.
+- Added support for custom endpoint connection over websocket.
 
 ## 5.8.0a3 (2022-03-08)
 
