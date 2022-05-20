@@ -72,7 +72,14 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
-        """"""
+        """
+        :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
+         as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
+         -122.125679"). Must be properly URL encoded.
+        :type query: str
+        :param coordinates: coordinates
+        :type coordinates: ~azure.maps.search._models.LatLon
+        """
 
     @overload
     def fuzzy_search(
@@ -83,7 +90,15 @@ class SearchClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
-        """"""
+        """
+        :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
+         as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
+         -122.125679"). Must be properly URL encoded.
+        :type query: str
+         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+         search to the specified countries.
+        :type country_filter: list[str]
+        """
 
     @distributed_trace
     def fuzzy_search(
@@ -168,8 +183,15 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = LatLon() if not coordinates else coordinates
+        
+        coordinates = kwargs.get("coordinates", None)
+        country_filter = kwargs.get("country_filter", None)
+        
+        if not coordinates or not country_filter:
+                raise TypeError('at least "country_filter" or "country_filter" is required')
             
+        coordinates = LatLon() if not coordinates else coordinates
+        
         return self._search_client.fuzzy_search(
             query,
             lat=coordinates.lat,
