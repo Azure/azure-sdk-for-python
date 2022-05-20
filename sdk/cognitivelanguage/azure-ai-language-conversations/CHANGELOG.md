@@ -3,12 +3,12 @@
 ## 1.0.0b4 (2022-05-15)
 
 ### Features Added
-* Async conversation issue summarization task
-* Async conversation PII extraction task
+* Conversation issue summarization task (Long-running operation)
+* Conversation PII extraction task (Long-running operation)
 
 ### Breaking Changes
-* Replace LLC with DPG
-* Changed attribute names in sync api
+* Client now uses python dictionaries for method parameters and results instead of classes.
+* Many input and result parameter name changes in `analyze_conversations()` method
 
 
 ## 1.0.0b3 (2022-04-19)
