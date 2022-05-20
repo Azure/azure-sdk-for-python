@@ -190,6 +190,7 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
         from .code_report import main
 
         # if tag is preview, just find last version on pypi to create report
+        print(f'**** change log: input_parameter: {input_parameter}, tag_is_stable: {tag_is_stable}')
         result = main(
             package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi",
             last_pypi_stable=tag_is_stable
