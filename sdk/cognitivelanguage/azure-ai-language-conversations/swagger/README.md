@@ -64,7 +64,7 @@ directive:
 ```
 
 ## Rename client operations 
-<!-- 
+
 ### Sync `analyze operation - POST`
 
 ```yaml
@@ -72,9 +72,9 @@ directive:
     - from: swagger-document
       where: $["paths"]["/:analyze-conversations"]["post"]
       transform: >
-          $["operationId"] = "analyzeConversation";
+          $["operationId"] = "analyzeConversations";
 ```
- -->
+
 ### Async `analyze operation - POST`
 
 ```yaml

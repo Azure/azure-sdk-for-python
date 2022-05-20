@@ -42,7 +42,7 @@ def sample_analyze_orchestration_direct_target():
     with client:
         query = "How are you?"
         qna_app = "ChitChat-QnA"
-        result = client.conversation_analysis.analyze_conversation(
+        result = client.analyze_conversations(
             task={
                 "kind": "Conversation",
                 "analysisInput": {

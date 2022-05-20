@@ -23,7 +23,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
-            result = await client.conversation_analysis.analyze_conversation(
+            result = await client.analyze_conversations(
                 task={
                     "kind": "Conversation",
                     "analysisInput": {

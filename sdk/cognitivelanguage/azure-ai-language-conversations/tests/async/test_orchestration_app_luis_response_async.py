@@ -22,7 +22,7 @@ class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
             query = "Reserve a table for 2 at the Italian restaurant"
-            result = await client.conversation_analysis.analyze_conversation(
+            result = await client.analyze_conversations(
                 task={
                     "kind": "Conversation",
                     "analysisInput": {

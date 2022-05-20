@@ -42,7 +42,7 @@ async def sample_analyze_orchestration_app_conv_response_async():
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
         query = "Send an email to Carol about the tomorrow's demo"
-        result = await client.conversation_analysis.analyze_conversation(
+        result = await client.analyze_conversations(
             task={
                 "kind": "Conversation",
                 "analysisInput": {

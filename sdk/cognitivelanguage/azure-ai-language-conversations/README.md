@@ -88,7 +88,7 @@ deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
     query = "Send an email to Carol about the tomorrow's demo"
-    result = client.conversation_analysis.analyze_conversation(
+    result = client.analyze_conversations(
         task={
             "kind": "Conversation",
             "analysisInput": {
@@ -159,7 +159,7 @@ deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
     query = "Reserve a table for 2 at the Italian restaurant"
-    result = client.conversation_analysis.analyze_conversation(
+    result = client.analyze_conversations(
         task={
             "kind": "Conversation",
             "analysisInput": {

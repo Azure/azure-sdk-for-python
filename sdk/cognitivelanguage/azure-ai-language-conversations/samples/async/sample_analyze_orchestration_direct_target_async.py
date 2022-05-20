@@ -44,7 +44,7 @@ async def sample_analyze_orchestration_direct_target_async():
     async with client:
         query = "How are you?"
         qna_app = "ChitChat-QnA"
-        result = await client.conversation_analysis.analyze_conversation(
+        result = await client.analyze_conversations(
             task={
                 "kind": "Conversation",
                 "analysisInput": {

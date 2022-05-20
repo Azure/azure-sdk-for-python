@@ -16,7 +16,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from ._configuration import ConversationAnalysisClientConfiguration
-from .operations import AnalyzeConversationOperations, ConversationAnalysisClientOperationsMixin, ConversationAnalysisOperations
+from .operations import AnalyzeConversationOperations, ConversationAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -34,9 +34,6 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
     upstream service. The asynchronous APIs in this suite enable tasks like Conversation
     Summarization and Conversational PII detection.
 
-    :ivar conversation_analysis: ConversationAnalysisOperations operations
-    :vartype conversation_analysis:
-     azure.ai.language.conversations.aio.operations.ConversationAnalysisOperations
     :ivar analyze_conversation: AnalyzeConversationOperations operations
     :vartype analyze_conversation:
      azure.ai.language.conversations.aio.operations.AnalyzeConversationOperations
@@ -65,9 +62,6 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.conversation_analysis = ConversationAnalysisOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.analyze_conversation = AnalyzeConversationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

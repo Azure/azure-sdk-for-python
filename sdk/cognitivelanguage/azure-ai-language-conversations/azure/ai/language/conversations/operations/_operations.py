@@ -32,7 +32,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_conversation_analysis_analyze_conversation_request(
+def build_analyze_conversations_request(
     *,
     json: Optional[JSON] = None,
     content: Any = None,
@@ -134,26 +134,10 @@ def build_analyze_conversation_cancel_job_request_initial(
         **kwargs
     )
 
-class ConversationAnalysisOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.language.conversations.ConversationAnalysisClient`'s
-        :attr:`conversation_analysis` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
+class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     @distributed_trace
-    def analyze_conversation(
+    def analyze_conversations(
         self,
         task: JSON,
         **kwargs: Any
@@ -195,7 +179,7 @@ class ConversationAnalysisOperations:
 
         _json = task
 
-        request = build_conversation_analysis_analyze_conversation_request(
+        request = build_analyze_conversations_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -229,7 +213,6 @@ class ConversationAnalysisOperations:
         return cast(JSON, deserialized)
 
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     def _conversation_analysis_initial(
         self,
