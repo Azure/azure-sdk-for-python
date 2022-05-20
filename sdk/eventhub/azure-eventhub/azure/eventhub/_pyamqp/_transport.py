@@ -45,7 +45,6 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
-from urllib.parse import urlparse
 
 import certifi
 
@@ -148,19 +147,13 @@ class _AbstractTransport(object):
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
-        parsed_custom = urlparse(self._custom_endpoint_address)
-        self.parsed_custom_hostname = parsed_custom.hostname
-        self.parsed_custom_port = parsed_custom.port
-
-        self.host, self.port = to_host_port(self.parsed_custom_hostname or host, self.parsed_custom_port or port)
+        self.host, self.port = to_host_port(host, port)
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
-        
+
     def connect(self):
         try:
             # are we already connected?
@@ -668,6 +661,8 @@ class WebSocketTransport(_AbstractTransport):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
+        self.parsed_custom_hostname = kwargs.get("custom_hostname")
+        self.parsed_custom_port = kwargs.get("custom_port")
         self._host = host
         super().__init__(
             host, port, connect_timeout, **kwargs
@@ -689,7 +684,7 @@ class WebSocketTransport(_AbstractTransport):
             if self.parsed_custom_hostname!=None:
                 url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
             else:
-                url = "wss://{}".format(self._host)
+                url = "wss://{}".format(self.host)
             self.ws = create_connection(
                 url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
@@ -713,7 +708,6 @@ class WebSocketTransport(_AbstractTransport):
         length += nbytes
         n -= nbytes
         while n:
-
             data = self.ws.recv()
             
             if len(data) <= n:

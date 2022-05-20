@@ -90,6 +90,9 @@ class Connection(object):
         # type(str, Any) -> None
         parsed_url = urlparse(endpoint)
         self._hostname = parsed_url.hostname
+        custom_parsed_url = urlparse(kwargs.get("custom_endpoint_address"))
+        self.custom_hostname = custom_parsed_url.hostname
+        self.custom_port = custom_parsed_url.port
         endpoint = self._hostname
         if parsed_url.port:
             self._port = parsed_url.port
@@ -111,6 +114,8 @@ class Connection(object):
             self._transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs['sasl_credential'],
+                custom_hostname=self.custom_hostname,
+                custom_port=self.custom_port,
                 **kwargs
             )
         else:
