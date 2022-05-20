@@ -25,7 +25,7 @@ class OrchestrationAppLuisResponseTests(ConversationTest):
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
             query = "Reserve a table for 2 at the Italian restaurant"
-            result = client.analyze_conversations(
+            result = client.analyze_conversation(
                 task={
                     "kind": "Conversation",
                     "analysisInput": {

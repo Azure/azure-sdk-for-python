@@ -42,7 +42,7 @@ async def sample_analyze_orchestration_app_qna_response_async():
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
         query = "How are you?"
-        result = await client.analyze_conversations(
+        result = await client.analyze_conversation(
             task={
                 "kind": "Conversation",
                 "analysisInput": {

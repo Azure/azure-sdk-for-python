@@ -40,7 +40,7 @@ def sample_analyze_orchestration_app_qna_response():
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     with client:
         query = "How are you?"
-        result = client.analyze_conversations(
+        result = client.analyze_conversation(
             task={
                 "kind": "Conversation",
                 "analysisInput": {

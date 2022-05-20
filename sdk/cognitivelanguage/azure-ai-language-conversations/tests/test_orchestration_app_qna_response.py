@@ -25,7 +25,7 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
             query = "How are you?"
-            result = client.analyze_conversations(
+            result = client.analyze_conversation(
                 task={
                     "kind": "Conversation",
                     "analysisInput": {

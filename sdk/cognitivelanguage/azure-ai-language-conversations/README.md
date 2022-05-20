@@ -69,7 +69,7 @@ The `azure-ai-language-conversation` client library provides both synchronous an
 The following examples show common scenarios using the `client` [created above](#create-conversationanalysisclient).
 
 ### Analyze Text with a Conversation App
-If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversations()` method with your conversation's project name as follows:
+If you would like to extract custom intents and entities from a user utterance, you can call the `client.analyze_conversation()` method with your conversation's project name as follows:
 
 
 ```python
@@ -88,7 +88,7 @@ deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
     query = "Send an email to Carol about the tomorrow's demo"
-    result = client.analyze_conversations(
+    result = client.analyze_conversation(
         task={
             "kind": "Conversation",
             "analysisInput": {
@@ -140,7 +140,7 @@ for entity in result["result"]["prediction"]["entities"]:
 
 ### Analyze Text with an Orchestration App
 
-If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversations()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
+If you would like to pass the user utterance to your orchestrator (worflow) app, you can call the `client.analyze_conversation()` method with your orchestration's project name. The orchestrator project simply orchestrates the submitted user utterance between your language apps (Luis, Conversation, and Question Answering) to get the best response according to the user intent. See the next example:
 
 
 ```python
@@ -159,7 +159,7 @@ deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
 with client:
     query = "Reserve a table for 2 at the Italian restaurant"
-    result = client.analyze_conversations(
+    result = client.analyze_conversation(
         task={
             "kind": "Conversation",
             "analysisInput": {
@@ -432,13 +432,13 @@ credential = AzureKeyCredential("<my-api-key>")
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 client = ConversationAnalysisClient(endpoint, credential, logging_enable=True)
-result = client.analyze_conversations(...)
+result = client.analyze_conversation(...)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation, even when it isn't enabled for the client:
 
 ```python
-result = client.analyze_conversations(..., logging_enable=True)
+result = client.analyze_conversation(..., logging_enable=True)
 ```
 
 ## Next steps

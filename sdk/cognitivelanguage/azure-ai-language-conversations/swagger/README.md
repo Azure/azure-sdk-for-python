@@ -72,7 +72,7 @@ directive:
     - from: swagger-document
       where: $["paths"]["/:analyze-conversations"]["post"]
       transform: >
-          $["operationId"] = "analyzeConversations";
+          $["operationId"] = "AnalyzeConversation";
 ```
 
 ### Async `analyze operation - POST`
@@ -82,10 +82,10 @@ directive:
     - from: swagger-document
       where: $["paths"]["/analyze-conversations/jobs"]["post"]
       transform: >
-          $["operationId"] = "conversationAnalysis";
+          $["operationId"] = "ConversationAnalysis";
 ```
 
-### Remove unnecessary async `analyze operation - GET`
+### Remove unnecessary async GET operation status
 
 ```yaml
 directive:
@@ -93,6 +93,16 @@ directive:
       where: $["paths"]
       transform: >
           delete $["/analyze-conversations/jobs/{jobId}"];
+```
+
+### Remove unnecessary async cancel operation
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]
+      transform: >
+          delete $["/analyze-conversations/jobs/{jobId}:cancel"];
 ```
 
 ## Sync API Directives

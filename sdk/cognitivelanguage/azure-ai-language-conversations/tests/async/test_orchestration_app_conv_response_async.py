@@ -21,7 +21,7 @@ class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
-            result = await client.analyze_conversations(
+            result = await client.analyze_conversation(
                 task={
                     "kind": "Conversation",
                     "analysisInput": {

@@ -16,7 +16,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConversationAnalysisClientConfiguration
-from .operations import AnalyzeConversationOperations, ConversationAnalysisClientOperationsMixin
+from ._operations import ConversationAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -34,9 +34,6 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
     upstream service. The asynchronous APIs in this suite enable tasks like Conversation
     Summarization and Conversational PII detection.
 
-    :ivar analyze_conversation: AnalyzeConversationOperations operations
-    :vartype analyze_conversation:
-     azure.ai.language.conversations.operations.AnalyzeConversationOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
@@ -62,9 +59,6 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.analyze_conversation = AnalyzeConversationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
 
     def send_request(

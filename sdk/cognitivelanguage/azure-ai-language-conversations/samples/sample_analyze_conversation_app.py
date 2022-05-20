@@ -40,7 +40,7 @@ def sample_analyze_conversation_app():
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     with client:
         query = "Send an email to Carol about the tomorrow's demo"
-        result = client.analyze_conversations(
+        result = client.analyze_conversation(
             task={
                 "kind": "Conversation",
                 "analysisInput": {
