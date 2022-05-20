@@ -94,7 +94,7 @@ class AsyncTransportMixin():
             # TODO: Catch decode error and return amqp:decode-error
             #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
+        except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
     async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
@@ -121,7 +121,7 @@ class AsyncTransportMixin():
                     read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
                 else:
                     read_frame_buffer.write(await self._read(payload_size, buffer=payload))
-            except (socket.timeout, asyncio.IncompleteReadError):
+            except (TimeoutError, socket.timeout,  asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -403,7 +403,7 @@ class AsyncTransport(AsyncTransportMixin):
             else:
                 decoded = decode_frame(payload)
             return channel, decoded
-        except socket.timeout:
+        except (socket.timeout, TimeoutError):
             return None, None
 
     async def negotiate(self):
@@ -417,7 +417,7 @@ class AsyncTransport(AsyncTransportMixin):
 
 
 class WebSocketTransportAsync(AsyncTransportMixin):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs
         ):
         self._read_buffer = BytesIO()
         self.loop = get_running_loop()
@@ -460,26 +460,30 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
     async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+        from websocket import WebSocketTimeoutException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        while n:
-            data = await self.loop.run_in_executor(
-                None, self.ws.recv
-               )
+        try:
+            while n:
+                data = await self.loop.run_in_executor(
+                    None, self.ws.recv
+                )
 
-            if len(data) <= n:
-                view[length: length + len(data)] = data
-                n -= len(data)
-            else:
-                view[length: length + n] = data[0:n]
-                self._read_buffer = BytesIO(data[n:])
-                n = 0
+                if len(data) <= n:
+                    view[length: length + len(data)] = data
+                    n -= len(data)
+                else:
+                    view[length: length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
 
-        return view
+            return view 
+        except WebSocketTimeoutException as wex:
+            raise TimeoutError()
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""

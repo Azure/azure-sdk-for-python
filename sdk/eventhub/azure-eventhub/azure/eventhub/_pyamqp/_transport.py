@@ -411,7 +411,7 @@ class _AbstractTransport(object):
                 read_frame_buffer.write(read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
             else:
                 read_frame_buffer.write(read(payload_size, buffer=payload))
-        except socket.timeout:
+        except (socket.timeout, TimeoutError):
             read_frame_buffer.write(self._read_buffer.getvalue())
             self._read_buffer = read_frame_buffer
             self._read_buffer.seek(0)
@@ -446,7 +446,7 @@ class _AbstractTransport(object):
                 decoded = decode_frame(payload)
             # TODO: Catch decode error and return amqp:decode-error
             return channel, decoded
-        except socket.timeout:
+        except (socket.timeout, TimeoutError):
             return None, None
 
     def send_frame(self, channel, frame, **kwargs):
@@ -658,7 +658,7 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
         self.parsed_custom_hostname = kwargs.get("custom_hostname")
@@ -701,23 +701,27 @@ class WebSocketTransport(_AbstractTransport):
 
     def _read(self, n, initial=False, buffer=None, **kwargs):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+        from websocket import WebSocketTimeoutException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        while n:
-            data = self.ws.recv()
-            
-            if len(data) <= n:
-                view[length: length + len(data)] = data
-                n -= len(data)
-            else:
-                view[length: length + n] = data[0:n]
-                self._read_buffer = BytesIO(data[n:])
-                n = 0
-        return view
+        try:
+            while n:
+                data = self.ws.recv()
+
+                if len(data) <= n:
+                    view[length: length + len(data)] = data
+                    n -= len(data)
+                else:
+                    view[length: length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
+            return view
+        except WebSocketTimeoutException:
+            raise TimeoutError()
 
     def _shutdown_transport(self):
         """Do any preliminary work in shutting down the connection."""
