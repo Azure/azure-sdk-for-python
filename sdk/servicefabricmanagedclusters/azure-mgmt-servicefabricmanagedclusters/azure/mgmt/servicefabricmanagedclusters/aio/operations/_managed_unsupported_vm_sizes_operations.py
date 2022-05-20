@@ -14,16 +14,17 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._managed_unsupported_vm_sizes_operations import build_get_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class ManagedUnsupportedVMSizesOperations:
+    """ManagedUnsupportedVMSizesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,21 +48,26 @@ class Operations:
     @distributed_trace
     def list(
         self,
+        location: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.OperationListResult"]:
-        """Lists all of the available Service Fabric resource provider API operations.
+    ) -> AsyncIterable["_models.ManagedVMSizesResult"]:
+        """Get the lists of unsupported vm sizes for Service Fabric Managed Clusters.
 
-        Get the list of available Service Fabric resource provider API operations.
+        Get the lists of unsupported vm sizes for Service Fabric Managed Clusters.
 
+        :param location: The location for the cluster code versions. This is different from cluster
+         location.
+        :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
+        :return: An iterator like instance of either ManagedVMSizesResult or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.OperationListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.ManagedVMSizesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedVMSizesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -70,6 +76,8 @@ class Operations:
             if not next_link:
                 
                 request = build_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -79,6 +87,8 @@ class Operations:
             else:
                 
                 request = build_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -88,7 +98,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("ManagedVMSizesResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -115,4 +125,66 @@ class Operations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/providers/Microsoft.ServiceFabric/operations"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/managedUnsupportedVMSizes"}  # type: ignore
+
+    @distributed_trace_async
+    async def get(
+        self,
+        location: str,
+        vm_size: str,
+        **kwargs: Any
+    ) -> "_models.ManagedVMSize":
+        """Get unsupported vm size for Service Fabric Managed Clusters.
+
+        Get unsupported vm size for Service Fabric Managed Clusters.
+
+        :param location: The location for the cluster code versions. This is different from cluster
+         location.
+        :type location: str
+        :param vm_size: VM Size name.
+        :type vm_size: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ManagedVMSize, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ManagedVMSize
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedVMSize"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
+
+        
+        request = build_get_request(
+            location=location,
+            subscription_id=self._config.subscription_id,
+            vm_size=vm_size,
+            api_version=api_version,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ManagedVMSize', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/managedUnsupportedVMSizes/{vmSize}"}  # type: ignore
+

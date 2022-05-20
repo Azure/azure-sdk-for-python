@@ -19,7 +19,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -27,13 +27,25 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 def build_list_request(
+    subscription_id: str,
+    resource_group_name: str,
+    cluster_name: str,
+    node_type_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.ServiceFabric/operations")
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/skus")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, 'str'),
+        "nodeTypeName": _SERIALIZER.url("node_type_name", node_type_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -51,8 +63,8 @@ def build_list_request(
         **kwargs
     )
 
-class Operations(object):
-    """Operations operations.
+class NodeTypeSkusOperations(object):
+    """NodeTypeSkusOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -76,21 +88,31 @@ class Operations(object):
     @distributed_trace
     def list(
         self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.OperationListResult"]:
-        """Lists all of the available Service Fabric resource provider API operations.
+    ) -> Iterable["_models.NodeTypeListSkuResult"]:
+        """Gets a Service Fabric node type SKUs.
 
-        Get the list of available Service Fabric resource provider API operations.
+        Get a Service Fabric node type supported SKUs.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type.
+        :type node_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
+        :return: An iterator like instance of either NodeTypeListSkuResult or the result of
+         cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.OperationListResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeListSkuResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NodeTypeListSkuResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -99,6 +121,10 @@ class Operations(object):
             if not next_link:
                 
                 request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    node_type_name=node_type_name,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -108,6 +134,10 @@ class Operations(object):
             else:
                 
                 request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    node_type_name=node_type_name,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -117,7 +147,7 @@ class Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("NodeTypeListSkuResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -144,4 +174,4 @@ class Operations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/providers/Microsoft.ServiceFabric/operations"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/skus"}  # type: ignore
