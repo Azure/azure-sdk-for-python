@@ -203,7 +203,7 @@ if top_intent_object["targetProjectKind"] == "Luis":
 
 ### Conversational Issue Summarization
 
-You can use this sample if you need to summarize a conversation in the form of an issue, and final resolution. For example, a dialoge from tech support:
+You can use this sample if you need to summarize a conversation in the form of an issue, and final resolution. For example, a dialog from tech support:
 
 ```python
 # import libraries
