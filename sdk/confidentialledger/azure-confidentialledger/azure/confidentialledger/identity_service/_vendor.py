@@ -1,4 +1,3 @@
-# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,18 +5,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import ConfidentialLedgerClient
-from ._version import VERSION
 
-__version__ = VERSION
 
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
-except ImportError:
-    _patch_all = []
-from ._patch import patch_sdk as _patch_sdk
-__all__ = ['ConfidentialLedgerClient']
-__all__.extend([p for p in _patch_all if p not in __all__])
 
-_patch_sdk()
+def _format_url_section(template, **kwargs):
+    components = template.split("/")
+    while components:
+        try:
+            return template.format(**kwargs)
+        except KeyError as key:
+            formatted_components = template.split("/")
+            components = [
+                c for c in formatted_components if "{}".format(key.args[0]) not in c
+            ]
+            template = "/".join(components)

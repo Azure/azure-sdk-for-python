@@ -4,17 +4,35 @@
 
 ### Settings
 
-#### Tag: package-2022-20-04-preview-ledger
-These settings apply only when `--tag=package-2022-20-04-preview-ledger` is specified on the command line.
-```yaml $(tag) == 'package-2022-20-04-preview-ledger'
+#### Tag: confidential-ledger
+These settings apply only when `--tag=confidential-ledger` is specified on the command line.
+```yaml $(tag) == 'confidential-ledger'
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/confidentialledger/data-plane/Microsoft.ConfidentialLedger/preview/2022-20-04-preview/confidentialledger.json
-output-folder: ../azure/confidentialledger/_generated/_generated_ledger/v2022_20_04_preview
+output-folder: ../azure/confidentialledger
 namespace: azure.confidentialledger
-package-name: azure-confidential-ledger
+package-name: azure-confidentialledger
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 title: ConfidentialLedgerClient
+version-tolerant: true
+package-version: 1.0.0b2
+security: AADToken
+security-scopes: https://confidential-ledger.azure.com/.default
+```
+
+#### Tag: identity-service
+These settings apply only when `--tag=identity-service` is specified on the command line.
+```yaml $(tag) == 'identity-service'
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/confidentialledger/data-plane/Microsoft.ConfidentialLedger/preview/2022-20-04-preview/identityservice.json
+output-folder: ../azure/confidentialledger/identity_service
+namespace: azure.confidentialledger.identity_service
+package-name: azure-confidentialledger
+module-name: identityservice
+license-header: MICROSOFT_MIT_NO_VERSION
+clear-output-folder: true
+no-namespace-folders: true
+title: ConfidentialLedgerIdentityServiceClient
 version-tolerant: true
 package-version: 1.0.0b2
 security: AADToken
