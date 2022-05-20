@@ -209,9 +209,9 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
 
 def main(base, latest, tag_is_stable: bool = False):
     print(f"== start getting code report base={base}, latest={latest}, tag_is_stable={tag_is_stable}")
-    old_report = get_report_from_parameter(base)
+    old_report = get_report_from_parameter(base, tag_is_stable)
     print('== old_report get successfully')
-    new_report = get_report_from_parameter(latest, tag_is_stable)
+    new_report = get_report_from_parameter(latest)
     print('== new_report get successfully')
     
 
