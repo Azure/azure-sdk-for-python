@@ -42,7 +42,7 @@ def main(generate_input, generate_output):
             package_entry = {}
             package_entry["packageName"] = package_name
             package_entry["path"] = [folder_name]
-            package_entry["tagIsPreview"] = judge_tag_preview(sdk_code_path)
+            package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
             result[package_name] = package_entry
         else:
             result[package_name]["path"].append(folder_name)
