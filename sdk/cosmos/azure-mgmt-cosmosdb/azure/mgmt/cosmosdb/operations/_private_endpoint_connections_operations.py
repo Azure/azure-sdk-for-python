@@ -35,7 +35,7 @@ def build_list_by_database_account_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -72,7 +72,7 @@ def build_get_request(
     private_endpoint_connection_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -113,7 +113,7 @@ def build_create_or_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -156,7 +156,7 @@ def build_delete_request_initial(
     private_endpoint_connection_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -228,7 +228,7 @@ class PrivateEndpointConnectionsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
@@ -318,7 +318,7 @@ class PrivateEndpointConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_request(
@@ -367,7 +367,7 @@ class PrivateEndpointConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'PrivateEndpointConnection')
@@ -440,7 +440,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
@@ -497,7 +497,7 @@ class PrivateEndpointConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -556,7 +556,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(

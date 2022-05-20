@@ -36,7 +36,7 @@ def build_list_metrics_request(
     filter: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -79,7 +79,7 @@ def build_list_usages_request(
     filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -165,7 +165,7 @@ class CollectionPartitionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.PartitionMetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartitionMetricListResult"]
         error_map = {
@@ -264,7 +264,7 @@ class CollectionPartitionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.PartitionUsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartitionUsagesResult"]
         error_map = {

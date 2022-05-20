@@ -1,5 +1,18 @@
 # Release History
 
+## 7.0.0 (2022-05-20)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group CassandraClustersOperations
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group LocationsOperations
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter capacity
+  - Model DatabaseAccountGetResults has a new parameter capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter capacity
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+
 ## 7.0.0b5 (2022-04-28)
 
 **Features**

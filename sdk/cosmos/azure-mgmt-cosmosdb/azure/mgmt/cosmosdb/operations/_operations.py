@@ -29,7 +29,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -85,7 +85,7 @@ class Operations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
         error_map = {

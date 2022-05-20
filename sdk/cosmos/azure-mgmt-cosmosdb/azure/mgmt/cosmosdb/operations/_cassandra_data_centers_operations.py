@@ -35,7 +35,7 @@ def build_list_request(
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -72,7 +72,7 @@ def build_get_request(
     data_center_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -110,7 +110,7 @@ def build_delete_request_initial(
     data_center_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -151,7 +151,7 @@ def build_create_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -197,7 +197,7 @@ def build_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -272,7 +272,7 @@ class CassandraDataCentersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.ListDataCenters]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListDataCenters"]
         error_map = {
@@ -362,7 +362,7 @@ class CassandraDataCentersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_request(
@@ -410,7 +410,7 @@ class CassandraDataCentersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -469,7 +469,7 @@ class CassandraDataCentersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -521,7 +521,7 @@ class CassandraDataCentersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'DataCenterResource')
@@ -597,7 +597,7 @@ class CassandraDataCentersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.DataCenterResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataCenterResource"]
@@ -655,7 +655,7 @@ class CassandraDataCentersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'DataCenterResource')
@@ -730,7 +730,7 @@ class CassandraDataCentersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.DataCenterResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataCenterResource"]

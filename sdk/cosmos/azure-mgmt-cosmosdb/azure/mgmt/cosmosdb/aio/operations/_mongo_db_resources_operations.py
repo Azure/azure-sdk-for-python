@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._mongo_db_resources_operations import build_create_update_mongo_db_collection_request_initial, build_create_update_mongo_db_database_request_initial, build_create_update_mongo_role_definition_request_initial, build_create_update_mongo_user_definition_request_initial, build_delete_mongo_db_collection_request_initial, build_delete_mongo_db_database_request_initial, build_delete_mongo_role_definition_request_initial, build_delete_mongo_user_definition_request_initial, build_get_mongo_db_collection_request, build_get_mongo_db_collection_throughput_request, build_get_mongo_db_database_request, build_get_mongo_db_database_throughput_request, build_get_mongo_role_definition_request, build_get_mongo_user_definition_request, build_list_mongo_db_collection_partition_merge_request_initial, build_list_mongo_db_collections_request, build_list_mongo_db_databases_request, build_list_mongo_role_definitions_request, build_list_mongo_user_definitions_request, build_migrate_mongo_db_collection_to_autoscale_request_initial, build_migrate_mongo_db_collection_to_manual_throughput_request_initial, build_migrate_mongo_db_database_to_autoscale_request_initial, build_migrate_mongo_db_database_to_manual_throughput_request_initial, build_mongo_db_container_redistribute_throughput_request_initial, build_retrieve_continuous_backup_information_request_initial, build_sql_container_retrieve_throughput_distribution_request_initial, build_update_mongo_db_collection_throughput_request_initial, build_update_mongo_db_database_throughput_request_initial
+from ...operations._mongo_db_resources_operations import build_create_update_mongo_db_collection_request_initial, build_create_update_mongo_db_database_request_initial, build_delete_mongo_db_collection_request_initial, build_delete_mongo_db_database_request_initial, build_get_mongo_db_collection_request, build_get_mongo_db_collection_throughput_request, build_get_mongo_db_database_request, build_get_mongo_db_database_throughput_request, build_list_mongo_db_collections_request, build_list_mongo_db_databases_request, build_migrate_mongo_db_collection_to_autoscale_request_initial, build_migrate_mongo_db_collection_to_manual_throughput_request_initial, build_migrate_mongo_db_database_to_autoscale_request_initial, build_migrate_mongo_db_database_to_manual_throughput_request_initial, build_retrieve_continuous_backup_information_request_initial, build_update_mongo_db_collection_throughput_request_initial, build_update_mongo_db_database_throughput_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -67,7 +67,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MongoDBDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBDatabaseListResult"]
         error_map = {
@@ -158,7 +158,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_mongo_db_database_request(
@@ -207,7 +207,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_mongo_db_database_parameters, 'MongoDBDatabaseCreateUpdateParameters')
@@ -283,7 +283,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBDatabaseGetResults"]
@@ -340,7 +340,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_mongo_db_database_request_initial(
@@ -399,7 +399,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -465,7 +465,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_mongo_db_database_throughput_request(
@@ -514,7 +514,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
@@ -590,7 +590,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
@@ -647,7 +647,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_mongo_db_database_to_autoscale_request_initial(
@@ -714,7 +714,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -768,7 +768,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_mongo_db_database_to_manual_throughput_request_initial(
@@ -835,7 +835,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -876,263 +876,6 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     begin_migrate_mongo_db_database_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
 
-    async def _sql_container_retrieve_throughput_distribution_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        collection_name: str,
-        retrieve_throughput_parameters: "_models.RetrieveThroughputParameters",
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(retrieve_throughput_parameters, 'RetrieveThroughputParameters')
-
-        request = build_sql_container_retrieve_throughput_distribution_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            collection_name=collection_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._sql_container_retrieve_throughput_distribution_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _sql_container_retrieve_throughput_distribution_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_sql_container_retrieve_throughput_distribution(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        collection_name: str,
-        retrieve_throughput_parameters: "_models.RetrieveThroughputParameters",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Retrieve throughput distribution for an Azure Cosmos DB MongoDB container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_name: Cosmos DB database name.
-        :type database_name: str
-        :param collection_name: Cosmos DB collection name.
-        :type collection_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current MongoDB container.
-        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._sql_container_retrieve_throughput_distribution_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                collection_name=collection_name,
-                retrieve_throughput_parameters=retrieve_throughput_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_sql_container_retrieve_throughput_distribution.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
-
-    async def _mongo_db_container_redistribute_throughput_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        collection_name: str,
-        redistribute_throughput_parameters: "_models.RedistributeThroughputParameters",
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(redistribute_throughput_parameters, 'RedistributeThroughputParameters')
-
-        request = build_mongo_db_container_redistribute_throughput_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            collection_name=collection_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._mongo_db_container_redistribute_throughput_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _mongo_db_container_redistribute_throughput_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/redistributeThroughput"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_mongo_db_container_redistribute_throughput(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        collection_name: str,
-        redistribute_throughput_parameters: "_models.RedistributeThroughputParameters",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Redistribute throughput for an Azure Cosmos DB MongoDB container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_name: Cosmos DB database name.
-        :type database_name: str
-        :param collection_name: Cosmos DB collection name.
-        :type collection_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current MongoDB container.
-        :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._mongo_db_container_redistribute_throughput_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                collection_name=collection_name,
-                redistribute_throughput_parameters=redistribute_throughput_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_mongo_db_container_redistribute_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/redistributeThroughput"}  # type: ignore
-
     @distributed_trace
     def list_mongo_db_collections(
         self,
@@ -1156,7 +899,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MongoDBCollectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBCollectionListResult"]
         error_map = {
@@ -1251,7 +994,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_mongo_db_collection_request(
@@ -1302,7 +1045,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_mongo_db_collection_parameters, 'MongoDBCollectionCreateUpdateParameters')
@@ -1382,7 +1125,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBCollectionGetResults"]
@@ -1441,7 +1184,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_mongo_db_collection_request_initial(
@@ -1504,7 +1247,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1543,144 +1286,6 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     begin_delete_mongo_db_collection.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}"}  # type: ignore
 
-    async def _list_mongo_db_collection_partition_merge_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        collection_name: str,
-        merge_parameters: "_models.MergeParameters",
-        **kwargs: Any
-    ) -> Optional["_models.PhysicalPartitionStorageInfoCollection"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionStorageInfoCollection"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(merge_parameters, 'MergeParameters')
-
-        request = build_list_mongo_db_collection_partition_merge_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            collection_name=collection_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._list_mongo_db_collection_partition_merge_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PhysicalPartitionStorageInfoCollection', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _list_mongo_db_collection_partition_merge_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/partitionMerge"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_list_mongo_db_collection_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        collection_name: str,
-        merge_parameters: "_models.MergeParameters",
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.PhysicalPartitionStorageInfoCollection"]:
-        """Merges the partitions of a MongoDB Collection.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_name: Cosmos DB database name.
-        :type database_name: str
-        :param collection_name: Cosmos DB collection name.
-        :type collection_name: str
-        :param merge_parameters: The parameters for the merge operation.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either
-         PhysicalPartitionStorageInfoCollection or the result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionStorageInfoCollection"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._list_mongo_db_collection_partition_merge_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                collection_name=collection_name,
-                merge_parameters=merge_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('PhysicalPartitionStorageInfoCollection', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_list_mongo_db_collection_partition_merge.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/partitionMerge"}  # type: ignore
-
     @distributed_trace_async
     async def get_mongo_db_collection_throughput(
         self,
@@ -1712,7 +1317,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_mongo_db_collection_throughput_request(
@@ -1763,7 +1368,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
@@ -1843,7 +1448,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
@@ -1902,7 +1507,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_mongo_db_collection_to_autoscale_request_initial(
@@ -1973,7 +1578,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -2029,7 +1634,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_mongo_db_collection_to_manual_throughput_request_initial(
@@ -2100,7 +1705,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -2142,786 +1747,6 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     begin_migrate_mongo_db_collection_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
 
-    @distributed_trace_async
-    async def get_mongo_role_definition(
-        self,
-        mongo_role_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> "_models.MongoRoleDefinitionGetResults":
-        """Retrieves the properties of an existing Azure Cosmos DB Mongo Role Definition with the given
-        Id.
-
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}.
-        :type mongo_role_definition_id: str
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MongoRoleDefinitionGetResults, or the result of cls(response)
-        :rtype: ~azure.mgmt.cosmosdb.models.MongoRoleDefinitionGetResults
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoRoleDefinitionGetResults"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        
-        request = build_get_mongo_role_definition_request(
-            mongo_role_definition_id=mongo_role_definition_id,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            api_version=api_version,
-            template_url=self.get_mongo_role_definition.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('MongoRoleDefinitionGetResults', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_mongo_role_definition.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions/{mongoRoleDefinitionId}"}  # type: ignore
-
-
-    async def _create_update_mongo_role_definition_initial(
-        self,
-        mongo_role_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        create_update_mongo_role_definition_parameters: "_models.MongoRoleDefinitionCreateUpdateParameters",
-        **kwargs: Any
-    ) -> Optional["_models.MongoRoleDefinitionGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MongoRoleDefinitionGetResults"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(create_update_mongo_role_definition_parameters, 'MongoRoleDefinitionCreateUpdateParameters')
-
-        request = build_create_update_mongo_role_definition_request_initial(
-            mongo_role_definition_id=mongo_role_definition_id,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._create_update_mongo_role_definition_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MongoRoleDefinitionGetResults', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _create_update_mongo_role_definition_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions/{mongoRoleDefinitionId}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_create_update_mongo_role_definition(
-        self,
-        mongo_role_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        create_update_mongo_role_definition_parameters: "_models.MongoRoleDefinitionCreateUpdateParameters",
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.MongoRoleDefinitionGetResults"]:
-        """Creates or updates an Azure Cosmos DB Mongo Role Definition.
-
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}.
-        :type mongo_role_definition_id: str
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param create_update_mongo_role_definition_parameters: The properties required to create or
-         update a Role Definition.
-        :type create_update_mongo_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoRoleDefinitionCreateUpdateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either MongoRoleDefinitionGetResults or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.MongoRoleDefinitionGetResults]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoRoleDefinitionGetResults"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._create_update_mongo_role_definition_initial(
-                mongo_role_definition_id=mongo_role_definition_id,
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                create_update_mongo_role_definition_parameters=create_update_mongo_role_definition_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('MongoRoleDefinitionGetResults', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_create_update_mongo_role_definition.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions/{mongoRoleDefinitionId}"}  # type: ignore
-
-    async def _delete_mongo_role_definition_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        mongo_role_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        
-        request = build_delete_mongo_role_definition_request_initial(
-            mongo_role_definition_id=mongo_role_definition_id,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            api_version=api_version,
-            template_url=self._delete_mongo_role_definition_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_mongo_role_definition_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions/{mongoRoleDefinitionId}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_delete_mongo_role_definition(  # pylint: disable=inconsistent-return-statements
-        self,
-        mongo_role_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Deletes an existing Azure Cosmos DB Mongo Role Definition.
-
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}.
-        :type mongo_role_definition_id: str
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._delete_mongo_role_definition_initial(
-                mongo_role_definition_id=mongo_role_definition_id,
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_delete_mongo_role_definition.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions/{mongoRoleDefinitionId}"}  # type: ignore
-
-    @distributed_trace
-    def list_mongo_role_definitions(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.MongoRoleDefinitionListResult"]:
-        """Retrieves the list of all Azure Cosmos DB Mongo Role Definitions.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MongoRoleDefinitionListResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MongoRoleDefinitionListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoRoleDefinitionListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_mongo_role_definitions_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    account_name=account_name,
-                    api_version=api_version,
-                    template_url=self.list_mongo_role_definitions.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_mongo_role_definitions_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    account_name=account_name,
-                    api_version=api_version,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MongoRoleDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_mongo_role_definitions.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions"}  # type: ignore
-
-    @distributed_trace_async
-    async def get_mongo_user_definition(
-        self,
-        mongo_user_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> "_models.MongoUserDefinitionGetResults":
-        """Retrieves the properties of an existing Azure Cosmos DB Mongo User Definition with the given
-        Id.
-
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}.
-        :type mongo_user_definition_id: str
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MongoUserDefinitionGetResults, or the result of cls(response)
-        :rtype: ~azure.mgmt.cosmosdb.models.MongoUserDefinitionGetResults
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoUserDefinitionGetResults"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        
-        request = build_get_mongo_user_definition_request(
-            mongo_user_definition_id=mongo_user_definition_id,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            api_version=api_version,
-            template_url=self.get_mongo_user_definition.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('MongoUserDefinitionGetResults', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_mongo_user_definition.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions/{mongoUserDefinitionId}"}  # type: ignore
-
-
-    async def _create_update_mongo_user_definition_initial(
-        self,
-        mongo_user_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        create_update_mongo_user_definition_parameters: "_models.MongoUserDefinitionCreateUpdateParameters",
-        **kwargs: Any
-    ) -> Optional["_models.MongoUserDefinitionGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MongoUserDefinitionGetResults"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(create_update_mongo_user_definition_parameters, 'MongoUserDefinitionCreateUpdateParameters')
-
-        request = build_create_update_mongo_user_definition_request_initial(
-            mongo_user_definition_id=mongo_user_definition_id,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._create_update_mongo_user_definition_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MongoUserDefinitionGetResults', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _create_update_mongo_user_definition_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions/{mongoUserDefinitionId}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_create_update_mongo_user_definition(
-        self,
-        mongo_user_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        create_update_mongo_user_definition_parameters: "_models.MongoUserDefinitionCreateUpdateParameters",
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.MongoUserDefinitionGetResults"]:
-        """Creates or updates an Azure Cosmos DB Mongo User Definition.
-
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}.
-        :type mongo_user_definition_id: str
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param create_update_mongo_user_definition_parameters: The properties required to create or
-         update a User Definition.
-        :type create_update_mongo_user_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoUserDefinitionCreateUpdateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either MongoUserDefinitionGetResults or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.MongoUserDefinitionGetResults]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoUserDefinitionGetResults"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._create_update_mongo_user_definition_initial(
-                mongo_user_definition_id=mongo_user_definition_id,
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                create_update_mongo_user_definition_parameters=create_update_mongo_user_definition_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('MongoUserDefinitionGetResults', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_create_update_mongo_user_definition.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions/{mongoUserDefinitionId}"}  # type: ignore
-
-    async def _delete_mongo_user_definition_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        mongo_user_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        
-        request = build_delete_mongo_user_definition_request_initial(
-            mongo_user_definition_id=mongo_user_definition_id,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            api_version=api_version,
-            template_url=self._delete_mongo_user_definition_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_mongo_user_definition_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions/{mongoUserDefinitionId}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_delete_mongo_user_definition(  # pylint: disable=inconsistent-return-statements
-        self,
-        mongo_user_definition_id: str,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Deletes an existing Azure Cosmos DB Mongo User Definition.
-
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}.
-        :type mongo_user_definition_id: str
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._delete_mongo_user_definition_initial(
-                mongo_user_definition_id=mongo_user_definition_id,
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_delete_mongo_user_definition.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions/{mongoUserDefinitionId}"}  # type: ignore
-
-    @distributed_trace
-    def list_mongo_user_definitions(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.MongoUserDefinitionListResult"]:
-        """Retrieves the list of all Azure Cosmos DB Mongo User Definition.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MongoUserDefinitionListResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MongoUserDefinitionListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoUserDefinitionListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_mongo_user_definitions_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    account_name=account_name,
-                    api_version=api_version,
-                    template_url=self.list_mongo_user_definitions.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_mongo_user_definitions_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    account_name=account_name,
-                    api_version=api_version,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MongoUserDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_mongo_user_definitions.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions"}  # type: ignore
-
     async def _retrieve_continuous_backup_information_initial(
         self,
         resource_group_name: str,
@@ -2937,7 +1762,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(location, 'ContinuousBackupRestoreLocation')
@@ -3014,7 +1839,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupInformation"]

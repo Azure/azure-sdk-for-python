@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._gremlin_resources_operations import build_create_update_gremlin_database_request_initial, build_create_update_gremlin_graph_request_initial, build_delete_gremlin_database_request_initial, build_delete_gremlin_graph_request_initial, build_get_gremlin_database_request, build_get_gremlin_database_throughput_request, build_get_gremlin_graph_request, build_get_gremlin_graph_throughput_request, build_list_gremlin_databases_request, build_list_gremlin_graphs_request, build_migrate_gremlin_database_to_autoscale_request_initial, build_migrate_gremlin_database_to_manual_throughput_request_initial, build_migrate_gremlin_graph_to_autoscale_request_initial, build_migrate_gremlin_graph_to_manual_throughput_request_initial, build_retrieve_continuous_backup_information_request_initial, build_update_gremlin_database_throughput_request_initial, build_update_gremlin_graph_throughput_request_initial
+from ...operations._gremlin_resources_operations import build_create_update_gremlin_database_request_initial, build_create_update_gremlin_graph_request_initial, build_delete_gremlin_database_request_initial, build_delete_gremlin_graph_request_initial, build_get_gremlin_database_request, build_get_gremlin_database_throughput_request, build_get_gremlin_graph_request, build_get_gremlin_graph_throughput_request, build_list_gremlin_databases_request, build_list_gremlin_graphs_request, build_migrate_gremlin_database_to_autoscale_request_initial, build_migrate_gremlin_database_to_manual_throughput_request_initial, build_migrate_gremlin_graph_to_autoscale_request_initial, build_migrate_gremlin_graph_to_manual_throughput_request_initial, build_update_gremlin_database_throughput_request_initial, build_update_gremlin_graph_throughput_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -67,7 +67,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.GremlinDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinDatabaseListResult"]
         error_map = {
@@ -158,7 +158,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_database_request(
@@ -207,7 +207,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_gremlin_database_parameters, 'GremlinDatabaseCreateUpdateParameters')
@@ -283,7 +283,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.GremlinDatabaseGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinDatabaseGetResults"]
@@ -340,7 +340,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_gremlin_database_request_initial(
@@ -399,7 +399,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -465,7 +465,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_database_throughput_request(
@@ -514,7 +514,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
@@ -590,7 +590,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
@@ -647,7 +647,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_database_to_autoscale_request_initial(
@@ -714,7 +714,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -768,7 +768,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_database_to_manual_throughput_request_initial(
@@ -835,7 +835,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -899,7 +899,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.GremlinGraphListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinGraphListResult"]
         error_map = {
@@ -994,7 +994,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_graph_request(
@@ -1045,7 +1045,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_gremlin_graph_parameters, 'GremlinGraphCreateUpdateParameters')
@@ -1124,7 +1124,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.GremlinGraphGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinGraphGetResults"]
@@ -1183,7 +1183,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_gremlin_graph_request_initial(
@@ -1246,7 +1246,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1316,7 +1316,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_graph_throughput_request(
@@ -1367,7 +1367,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
@@ -1447,7 +1447,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
@@ -1506,7 +1506,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_graph_to_autoscale_request_initial(
@@ -1577,7 +1577,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -1633,7 +1633,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_graph_to_manual_throughput_request_initial(
@@ -1704,7 +1704,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -1745,140 +1745,3 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_migrate_gremlin_graph_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
-
-    async def _retrieve_continuous_backup_information_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        graph_name: str,
-        location: "_models.ContinuousBackupRestoreLocation",
-        **kwargs: Any
-    ) -> Optional["_models.BackupInformation"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BackupInformation"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(location, 'ContinuousBackupRestoreLocation')
-
-        request = build_retrieve_continuous_backup_information_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            graph_name=graph_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._retrieve_continuous_backup_information_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('BackupInformation', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _retrieve_continuous_backup_information_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/retrieveContinuousBackupInformation"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def begin_retrieve_continuous_backup_information(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        graph_name: str,
-        location: "_models.ContinuousBackupRestoreLocation",
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.BackupInformation"]:
-        """Retrieves continuous backup information for a gremlin graph.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_name: Cosmos DB database name.
-        :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
-        :param location: The name of the continuous backup restore location.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either BackupInformation or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupInformation"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._retrieve_continuous_backup_information_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                graph_name=graph_name,
-                location=location,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('BackupInformation', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_retrieve_continuous_backup_information.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/retrieveContinuousBackupInformation"}  # type: ignore

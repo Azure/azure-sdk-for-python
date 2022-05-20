@@ -34,7 +34,7 @@ def build_list_metrics_request(
     filter: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -111,7 +111,7 @@ class PercentileOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.PercentileMetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PercentileMetricListResult"]
         error_map = {

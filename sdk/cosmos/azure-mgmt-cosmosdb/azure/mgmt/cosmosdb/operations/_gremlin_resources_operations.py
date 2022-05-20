@@ -35,7 +35,7 @@ def build_list_gremlin_databases_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -72,7 +72,7 @@ def build_get_gremlin_database_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -113,7 +113,7 @@ def build_create_update_gremlin_database_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -156,7 +156,7 @@ def build_delete_gremlin_database_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}")  # pylint: disable=line-too-long
@@ -188,7 +188,7 @@ def build_get_gremlin_database_throughput_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -229,7 +229,7 @@ def build_update_gremlin_database_throughput_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -272,7 +272,7 @@ def build_migrate_gremlin_database_to_autoscale_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -310,7 +310,7 @@ def build_migrate_gremlin_database_to_manual_throughput_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -348,7 +348,7 @@ def build_list_gremlin_graphs_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -387,7 +387,7 @@ def build_get_gremlin_graph_request(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -430,7 +430,7 @@ def build_create_update_gremlin_graph_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -475,7 +475,7 @@ def build_delete_gremlin_graph_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}")  # pylint: disable=line-too-long
@@ -509,7 +509,7 @@ def build_get_gremlin_graph_throughput_request(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -552,7 +552,7 @@ def build_update_gremlin_graph_throughput_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -597,7 +597,7 @@ def build_migrate_gremlin_graph_to_autoscale_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -637,7 +637,7 @@ def build_migrate_gremlin_graph_to_manual_throughput_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -665,54 +665,6 @@ def build_migrate_gremlin_graph_to_manual_throughput_request_initial(
         url=_url,
         params=_query_parameters,
         headers=_header_parameters,
-        **kwargs
-    )
-
-
-def build_retrieve_continuous_backup_information_request_initial(
-    subscription_id: str,
-    resource_group_name: str,
-    account_name: str,
-    database_name: str,
-    graph_name: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/retrieveContinuousBackupInformation")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-        "databaseName": _SERIALIZER.url("database_name", database_name, 'str'),
-        "graphName": _SERIALIZER.url("graph_name", graph_name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
         **kwargs
     )
 
@@ -757,7 +709,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.GremlinDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinDatabaseListResult"]
         error_map = {
@@ -848,7 +800,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_database_request(
@@ -897,7 +849,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_gremlin_database_parameters, 'GremlinDatabaseCreateUpdateParameters')
@@ -972,7 +924,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.GremlinDatabaseGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinDatabaseGetResults"]
@@ -1029,7 +981,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_gremlin_database_request_initial(
@@ -1088,7 +1040,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1154,7 +1106,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_database_throughput_request(
@@ -1203,7 +1155,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
@@ -1278,7 +1230,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
@@ -1335,7 +1287,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_database_to_autoscale_request_initial(
@@ -1401,7 +1353,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -1455,7 +1407,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_database_to_manual_throughput_request_initial(
@@ -1521,7 +1473,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -1584,7 +1536,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.GremlinGraphListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinGraphListResult"]
         error_map = {
@@ -1679,7 +1631,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_graph_request(
@@ -1730,7 +1682,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_gremlin_graph_parameters, 'GremlinGraphCreateUpdateParameters')
@@ -1809,7 +1761,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.GremlinGraphGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GremlinGraphGetResults"]
@@ -1868,7 +1820,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_gremlin_graph_request_initial(
@@ -1931,7 +1883,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -2001,7 +1953,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_gremlin_graph_throughput_request(
@@ -2052,7 +2004,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_throughput_parameters, 'ThroughputSettingsUpdateParameters')
@@ -2131,7 +2083,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
@@ -2190,7 +2142,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_graph_to_autoscale_request_initial(
@@ -2260,7 +2212,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -2316,7 +2268,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_migrate_gremlin_graph_to_manual_throughput_request_initial(
@@ -2386,7 +2338,7 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
@@ -2427,140 +2379,3 @@ class GremlinResourcesOperations(object):  # pylint: disable=too-many-public-met
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_migrate_gremlin_graph_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
-
-    def _retrieve_continuous_backup_information_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        graph_name: str,
-        location: "_models.ContinuousBackupRestoreLocation",
-        **kwargs: Any
-    ) -> Optional["_models.BackupInformation"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BackupInformation"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(location, 'ContinuousBackupRestoreLocation')
-
-        request = build_retrieve_continuous_backup_information_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            graph_name=graph_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._retrieve_continuous_backup_information_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('BackupInformation', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    _retrieve_continuous_backup_information_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/retrieveContinuousBackupInformation"}  # type: ignore
-
-
-    @distributed_trace
-    def begin_retrieve_continuous_backup_information(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        graph_name: str,
-        location: "_models.ContinuousBackupRestoreLocation",
-        **kwargs: Any
-    ) -> LROPoller["_models.BackupInformation"]:
-        """Retrieves continuous backup information for a gremlin graph.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_name: Cosmos DB database name.
-        :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
-        :param location: The name of the continuous backup restore location.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either BackupInformation or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupInformation"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._retrieve_continuous_backup_information_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                graph_name=graph_name,
-                location=location,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('BackupInformation', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_retrieve_continuous_backup_information.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/retrieveContinuousBackupInformation"}  # type: ignore

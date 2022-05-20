@@ -33,7 +33,7 @@ def build_list_by_subscription_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -66,7 +66,7 @@ def build_list_by_resource_group_request(
     resource_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -101,7 +101,7 @@ def build_get_request(
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -137,7 +137,7 @@ def build_delete_request_initial(
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -176,7 +176,7 @@ def build_create_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -220,7 +220,7 @@ def build_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -264,7 +264,7 @@ def build_invoke_command_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -299,87 +299,13 @@ def build_invoke_command_request_initial(
     )
 
 
-def build_list_backups_request(
-    subscription_id: str,
-    resource_group_name: str,
-    cluster_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/backups")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        **kwargs
-    )
-
-
-def build_get_backup_request(
-    subscription_id: str,
-    resource_group_name: str,
-    cluster_name: str,
-    backup_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/backups/{backupId}")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, 'str', max_length=100, min_length=1, pattern=r'^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$'),
-        "backupId": _SERIALIZER.url("backup_id", backup_id, 'str', max_length=15, min_length=1, pattern=r'^[0-9]+$'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        **kwargs
-    )
-
-
 def build_deallocate_request_initial(
     subscription_id: str,
     resource_group_name: str,
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -415,7 +341,7 @@ def build_start_request_initial(
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -451,7 +377,7 @@ def build_status_request(
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -514,7 +440,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.ListClusters]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListClusters"]
         error_map = {
@@ -588,7 +514,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.ListClusters]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListClusters"]
         error_map = {
@@ -673,7 +599,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_request(
@@ -719,7 +645,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -774,7 +700,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -824,7 +750,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ClusterResource')
@@ -896,7 +822,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClusterResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterResource"]
@@ -952,7 +878,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ClusterResource')
@@ -1023,7 +949,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClusterResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterResource"]
@@ -1079,7 +1005,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'CommandPostBody')
@@ -1146,7 +1072,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.CommandOutput]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommandOutput"]
@@ -1189,149 +1115,6 @@ class CassandraClustersOperations(object):
 
     begin_invoke_command.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/invokeCommand"}  # type: ignore
 
-    @distributed_trace
-    def list_backups(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        **kwargs: Any
-    ) -> Iterable["_models.ListBackups"]:
-        """List the backups of this cluster that are available to restore.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param cluster_name: Managed Cassandra cluster name.
-        :type cluster_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ListBackups or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.ListBackups]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListBackups"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_backups_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    cluster_name=cluster_name,
-                    api_version=api_version,
-                    template_url=self.list_backups.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_backups_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    cluster_name=cluster_name,
-                    api_version=api_version,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("ListBackups", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_backups.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/backups"}  # type: ignore
-
-    @distributed_trace
-    def get_backup(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        backup_id: str,
-        **kwargs: Any
-    ) -> "_models.BackupResource":
-        """Get the properties of an individual backup of this cluster that is available to restore.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param cluster_name: Managed Cassandra cluster name.
-        :type cluster_name: str
-        :param backup_id: Id of a restorable backup of a Cassandra cluster.
-        :type backup_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.cosmosdb.models.BackupResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResource"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
-
-        
-        request = build_get_backup_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            backup_id=backup_id,
-            api_version=api_version,
-            template_url=self.get_backup.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('BackupResource', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_backup.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/backups/{backupId}"}  # type: ignore
-
-
     def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
@@ -1344,7 +1127,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_deallocate_request_initial(
@@ -1401,7 +1184,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1450,7 +1233,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_start_request_initial(
@@ -1507,7 +1290,7 @@ class CassandraClustersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1568,7 +1351,7 @@ class CassandraClustersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_status_request(

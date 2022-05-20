@@ -71,7 +71,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_request(
@@ -118,7 +118,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(update_parameters, 'DatabaseAccountUpdateParameters')
@@ -186,7 +186,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseAccountGetResults"]
@@ -242,7 +242,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_update_parameters, 'DatabaseAccountCreateUpdateParameters')
@@ -312,7 +312,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.DatabaseAccountGetResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseAccountGetResults"]
@@ -367,7 +367,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -422,7 +422,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -472,7 +472,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(failover_parameters, 'FailoverPolicies')
@@ -537,7 +537,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -591,7 +591,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.DatabaseAccountsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseAccountsListResult"]
         error_map = {
@@ -667,7 +667,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.DatabaseAccountsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseAccountsListResult"]
         error_map = {
@@ -752,7 +752,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_list_keys_request(
@@ -810,7 +810,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_list_connection_strings_request(
@@ -857,7 +857,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(region_parameter_for_offline, 'RegionForOnlineOffline')
@@ -919,7 +919,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -972,7 +972,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(region_parameter_for_online, 'RegionForOnlineOffline')
@@ -1034,7 +1034,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1098,7 +1098,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_get_read_only_keys_request(
@@ -1156,7 +1156,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_list_read_only_keys_request(
@@ -1203,7 +1203,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(key_to_regenerate, 'DatabaseAccountRegenerateKeyParameters')
@@ -1265,7 +1265,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1328,7 +1328,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         
         request = build_check_name_exists_request(
@@ -1380,7 +1380,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricListResult"]
         error_map = {
@@ -1468,7 +1468,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.UsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsagesResult"]
         error_map = {
@@ -1553,7 +1553,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MetricDefinitionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricDefinitionsListResult"]
         error_map = {

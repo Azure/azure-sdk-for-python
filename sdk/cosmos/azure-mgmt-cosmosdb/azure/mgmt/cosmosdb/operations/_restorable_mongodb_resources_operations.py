@@ -35,7 +35,7 @@ def build_list_request(
     restore_timestamp_in_utc: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -121,7 +121,7 @@ class RestorableMongodbResourcesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.RestorableMongodbResourcesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorableMongodbResourcesListResult"]
         error_map = {

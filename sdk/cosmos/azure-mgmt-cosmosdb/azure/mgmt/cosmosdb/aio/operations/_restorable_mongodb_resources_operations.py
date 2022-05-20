@@ -75,7 +75,7 @@ class RestorableMongodbResourcesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.RestorableMongodbResourcesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorableMongodbResourcesListResult"]
         error_map = {

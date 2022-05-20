@@ -36,7 +36,7 @@ def build_list_request(
     end_time: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -113,9 +113,11 @@ class RestorableSqlContainersOperations(object):
         :type instance_id: str
         :param restorable_sql_database_rid: The resource ID of the SQL database. Default value is None.
         :type restorable_sql_database_rid: str
-        :param start_time: Restorable Sql containers event feed start time. Default value is None.
+        :param start_time: The snapshot create timestamp after which snapshots need to be listed.
+         Default value is None.
         :type start_time: str
-        :param end_time: Restorable Sql containers event feed end time. Default value is None.
+        :param end_time: The snapshot create timestamp before which snapshots need to be listed.
+         Default value is None.
         :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RestorableSqlContainersListResult or the result of
@@ -124,7 +126,7 @@ class RestorableSqlContainersOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.RestorableSqlContainersListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2021-10-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestorableSqlContainersListResult"]
         error_map = {
