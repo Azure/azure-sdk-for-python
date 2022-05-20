@@ -130,7 +130,7 @@ class AsyncTransportMixin():
                 # Don't disconnect for ssl read time outs
                 # http://bugs.python.org/issue10272
                 if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                    raise socket.timeout()
+                    raise TimeoutError()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
                 raise
@@ -388,7 +388,7 @@ class AsyncTransport(AsyncTransportMixin):
     async def write(self, s):
         try:
             await self._write(s)
-        except socket.timeout:
+        except TimeoutError:
             raise
         except (OSError, IOError, socket.error) as exc:
             if get_errno(exc) not in _UNAVAIL:
@@ -418,7 +418,7 @@ class AsyncTransport(AsyncTransportMixin):
 
 
 class WebSocketTransportAsync(AsyncTransportMixin):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs
         ):
         self._read_buffer = BytesIO()
         self.loop = get_running_loop()
