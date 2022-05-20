@@ -682,7 +682,7 @@ class WebSocketTransport(_AbstractTransport):
         try:
             from websocket import create_connection
             if self.parsed_custom_hostname!=None:
-                url = "wss://"+self.parsed_custom_hostname+":"+str(self.parsed_custom_port)+"/$servicebus/websocket/"
+                url = "wss://{}:{}/$servicebus/websocket/".format(self.parsed_custom_hostname,self.parsed_custom_port)
             else:
                 url = "wss://{}".format(self.host)
             self.ws = create_connection(
