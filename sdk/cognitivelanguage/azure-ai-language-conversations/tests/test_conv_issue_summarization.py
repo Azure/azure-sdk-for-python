@@ -14,7 +14,7 @@ from testcase import (
 )
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-class ConversationalIssueSummerizationTests(ConversationTest):
+class ConversationalIssueSummarizationTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
     def test_conversational_issue_summarization(self, endpoint, key):

@@ -14,7 +14,7 @@ from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 
 
-class ConversationalIssueSummerizationAsyncTests(AsyncConversationTest):
+class ConversationalIssueSummarizationAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
     async def test_conversational_issue_summarization(self, endpoint, key):
