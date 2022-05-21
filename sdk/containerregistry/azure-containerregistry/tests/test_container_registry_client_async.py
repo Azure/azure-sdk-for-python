@@ -607,7 +607,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
         properties = await client.get_repository_properties(ALPINE)
         
-        with self.assertWarns(DeprecationWarning):
+        with pytest.warns(DeprecationWarning):
             last_udpated_on = properties.last_udpated_on
         last_updated_on = properties.last_updated_on
         assert last_udpated_on == last_updated_on

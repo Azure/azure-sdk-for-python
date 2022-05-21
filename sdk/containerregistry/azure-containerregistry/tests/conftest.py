@@ -9,7 +9,7 @@ import sys
 import os
 
 import pytest
-from devtools_testutils import add_general_regex_sanitizer, test_proxy
+from devtools_testutils import add_general_regex_sanitizer, add_body_key_sanitizer, test_proxy
 
 # Fixture
 from testcase import load_registry
@@ -37,6 +37,14 @@ def add_sanitizers(test_proxy):
         regex="batch[a-z]*_([0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b)",
         group_for_replace="1",
     )
+    # sanitizes access and refresh tokens that are present in single-string request or response bodies
+    # we expect tokens to either be at the end of this body string, or followed by "\u0026" and more content
+    add_general_regex_sanitizer(value="access_token", regex="(?<=access_token=).*?(?=(?:\\u0026|$))")
+    add_general_regex_sanitizer(value="refresh_token", regex="(?<=refresh_token=).*?(?=(?:\\u0026|$))")
+    # sanitizes access and refresh tokens in JSON-formatted request or response bodies
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    add_body_key_sanitizer(json_path="$..refresh_token", value="refresh_token")
+
     client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
     add_general_regex_sanitizer(regex=client_id, value="client-id")
     client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
