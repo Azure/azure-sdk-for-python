@@ -297,7 +297,6 @@ class TestHealth(TextAnalyticsTest):
                 'The service was unable to process this document:\nDocument Id: 1\nError: ' \
                 'InvalidDocument - Document text is empty.\n'
 
-    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -306,8 +305,8 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as err:
             result = client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval()).result()
-        assert err.error.code == "ModelVersionIncorrect"
-        assert err.error.message is not None
+        assert err.value.error.code == "InvalidParameterValue"
+        assert err.value.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

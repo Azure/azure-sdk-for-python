@@ -136,7 +136,7 @@ class DaprComponentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> "_models.DaprComponent":
         """Get a dapr component.
@@ -147,8 +147,8 @@ class DaprComponentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DaprComponent, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.DaprComponent
@@ -167,7 +167,7 @@ class DaprComponentsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -193,7 +193,7 @@ class DaprComponentsOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -201,7 +201,7 @@ class DaprComponentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         dapr_component_envelope: "_models.DaprComponent",
         **kwargs: Any
     ) -> "_models.DaprComponent":
@@ -213,8 +213,8 @@ class DaprComponentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component.
         :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -237,7 +237,7 @@ class DaprComponentsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -265,7 +265,7 @@ class DaprComponentsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -273,7 +273,7 @@ class DaprComponentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> None:
         """Delete a Dapr Component.
@@ -284,8 +284,8 @@ class DaprComponentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -304,7 +304,7 @@ class DaprComponentsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
@@ -326,7 +326,7 @@ class DaprComponentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -334,7 +334,7 @@ class DaprComponentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> "_models.DaprSecretsCollection":
         """List secrets for a dapr component.
@@ -345,8 +345,8 @@ class DaprComponentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DaprSecretsCollection, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.DaprSecretsCollection
@@ -365,7 +365,7 @@ class DaprComponentsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.list_secrets.metadata['url'],
         )
@@ -391,5 +391,5 @@ class DaprComponentsOperations:
 
         return deserialized
 
-    list_secrets.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}/listSecrets"}  # type: ignore
+    list_secrets.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}/listSecrets"}  # type: ignore
 

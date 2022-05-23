@@ -382,8 +382,8 @@ class CustomPersistentDiskProperties(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Required. The type of the underlying resource to mount as a persistent
-     disk.Constant filled by server.
-    :vartype type: str
+     disk.Constant filled by server. Possible values include: "AzureFileVolume".
+    :vartype type: str or ~azure.mgmt.appplatform.v2021_09_01_preview.models.Type
     :ivar mount_path: Required. The mount path of the persistent disk.
     :vartype mount_path: str
     :ivar read_only: Indicates whether the persistent disk is a readOnly one.
@@ -437,8 +437,8 @@ class AzureFileVolume(CustomPersistentDiskProperties):
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Required. The type of the underlying resource to mount as a persistent
-     disk.Constant filled by server.
-    :vartype type: str
+     disk.Constant filled by server. Possible values include: "AzureFileVolume".
+    :vartype type: str or ~azure.mgmt.appplatform.v2021_09_01_preview.models.Type
     :ivar mount_path: Required. The mount path of the persistent disk.
     :vartype mount_path: str
     :ivar read_only: Indicates whether the persistent disk is a readOnly one.
@@ -838,8 +838,8 @@ class ClusterResourceProperties(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: Provisioning state of the Service. Possible values include:
-     "Creating", "Updating", "Deleting", "Deleted", "Succeeded", "Failed", "Moving", "Moved",
-     "MoveFailed".
+     "Creating", "Updating", "Starting", "Stopping", "Deleting", "Deleted", "Succeeded", "Failed",
+     "Moving", "Moved", "MoveFailed".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2021_09_01_preview.models.ProvisioningState
     :ivar network_profile: Network profile of the Service.
@@ -3660,8 +3660,9 @@ class StorageProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar storage_type: Required. The type of the storage.Constant filled by server.
-    :vartype storage_type: str
+    :ivar storage_type: Required. The type of the storage.Constant filled by server. Possible
+     values include: "StorageAccount".
+    :vartype storage_type: str or ~azure.mgmt.appplatform.v2021_09_01_preview.models.StorageType
     """
 
     _validation = {
@@ -3691,8 +3692,9 @@ class StorageAccount(StorageProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar storage_type: Required. The type of the storage.Constant filled by server.
-    :vartype storage_type: str
+    :ivar storage_type: Required. The type of the storage.Constant filled by server. Possible
+     values include: "StorageAccount".
+    :vartype storage_type: str or ~azure.mgmt.appplatform.v2021_09_01_preview.models.StorageType
     :ivar account_name: Required. The account name of the Azure Storage Account.
     :vartype account_name: str
     :ivar account_key: Required. The account key of the Azure Storage Account.

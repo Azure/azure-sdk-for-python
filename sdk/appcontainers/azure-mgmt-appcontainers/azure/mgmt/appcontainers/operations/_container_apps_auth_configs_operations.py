@@ -67,19 +67,19 @@ def build_get_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    auth_config_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{authConfigName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "authConfigName": _SERIALIZER.url("auth_config_name", auth_config_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -105,7 +105,7 @@ def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    auth_config_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -116,12 +116,12 @@ def build_create_or_update_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{authConfigName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "authConfigName": _SERIALIZER.url("auth_config_name", auth_config_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -151,19 +151,19 @@ def build_delete_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
-    name: str,
+    auth_config_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{authConfigName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "authConfigName": _SERIALIZER.url("auth_config_name", auth_config_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -296,7 +296,7 @@ class ContainerAppsAuthConfigsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        auth_config_name: str,
         **kwargs: Any
     ) -> "_models.AuthConfig":
         """Get a AuthConfig of a Container App.
@@ -307,8 +307,8 @@ class ContainerAppsAuthConfigsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App AuthConfig.
-        :type name: str
+        :param auth_config_name: Name of the Container App AuthConfig.
+        :type auth_config_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthConfig, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.AuthConfig
@@ -327,7 +327,7 @@ class ContainerAppsAuthConfigsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            auth_config_name=auth_config_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -353,7 +353,7 @@ class ContainerAppsAuthConfigsOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{authConfigName}"}  # type: ignore
 
 
     @distributed_trace
@@ -361,7 +361,7 @@ class ContainerAppsAuthConfigsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        auth_config_name: str,
         auth_config_envelope: "_models.AuthConfig",
         **kwargs: Any
     ) -> "_models.AuthConfig":
@@ -373,8 +373,8 @@ class ContainerAppsAuthConfigsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App AuthConfig.
-        :type name: str
+        :param auth_config_name: Name of the Container App AuthConfig.
+        :type auth_config_name: str
         :param auth_config_envelope: Properties used to create a Container App AuthConfig.
         :type auth_config_envelope: ~azure.mgmt.appcontainers.models.AuthConfig
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -397,7 +397,7 @@ class ContainerAppsAuthConfigsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            auth_config_name=auth_config_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -425,7 +425,7 @@ class ContainerAppsAuthConfigsOperations(object):
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{authConfigName}"}  # type: ignore
 
 
     @distributed_trace
@@ -433,7 +433,7 @@ class ContainerAppsAuthConfigsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
-        name: str,
+        auth_config_name: str,
         **kwargs: Any
     ) -> None:
         """Delete a Container App AuthConfig.
@@ -444,8 +444,8 @@ class ContainerAppsAuthConfigsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App.
         :type container_app_name: str
-        :param name: Name of the Container App AuthConfig.
-        :type name: str
+        :param auth_config_name: Name of the Container App AuthConfig.
+        :type auth_config_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -464,7 +464,7 @@ class ContainerAppsAuthConfigsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
-            name=name,
+            auth_config_name=auth_config_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
@@ -486,5 +486,5 @@ class ContainerAppsAuthConfigsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{authConfigName}"}  # type: ignore
 

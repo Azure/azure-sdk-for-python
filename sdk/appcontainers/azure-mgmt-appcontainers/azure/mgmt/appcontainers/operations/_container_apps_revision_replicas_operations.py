@@ -30,20 +30,20 @@ def build_get_replica_request(
     resource_group_name: str,
     container_app_name: str,
     revision_name: str,
-    name: str,
+    replica_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
         "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "replicaName": _SERIALIZER.url("replica_name", replica_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -130,7 +130,7 @@ class ContainerAppsRevisionReplicasOperations(object):
         resource_group_name: str,
         container_app_name: str,
         revision_name: str,
-        name: str,
+        replica_name: str,
         **kwargs: Any
     ) -> "_models.Replica":
         """Get a replica for a Container App Revision.
@@ -143,8 +143,8 @@ class ContainerAppsRevisionReplicasOperations(object):
         :type container_app_name: str
         :param revision_name: Name of the Container App Revision.
         :type revision_name: str
-        :param name: Name of the Container App Revision Replica.
-        :type name: str
+        :param replica_name: Name of the Container App Revision Replica.
+        :type replica_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Replica, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Replica
@@ -164,7 +164,7 @@ class ContainerAppsRevisionReplicasOperations(object):
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
-            name=name,
+            replica_name=replica_name,
             api_version=api_version,
             template_url=self.get_replica.metadata['url'],
         )
@@ -190,7 +190,7 @@ class ContainerAppsRevisionReplicasOperations(object):
 
         return deserialized
 
-    get_replica.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}"}  # type: ignore
+    get_replica.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}"}  # type: ignore
 
 
     @distributed_trace

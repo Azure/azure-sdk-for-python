@@ -67,19 +67,19 @@ def build_get_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    name: str,
+    component_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -105,7 +105,7 @@ def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    name: str,
+    component_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -116,12 +116,12 @@ def build_create_or_update_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -151,19 +151,19 @@ def build_delete_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    name: str,
+    component_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -189,19 +189,19 @@ def build_list_secrets_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    name: str,
+    component_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}/listSecrets")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}/listSecrets")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -334,7 +334,7 @@ class DaprComponentsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> "_models.DaprComponent":
         """Get a dapr component.
@@ -345,8 +345,8 @@ class DaprComponentsOperations(object):
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DaprComponent, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.DaprComponent
@@ -365,7 +365,7 @@ class DaprComponentsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -391,7 +391,7 @@ class DaprComponentsOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
 
 
     @distributed_trace
@@ -399,7 +399,7 @@ class DaprComponentsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         dapr_component_envelope: "_models.DaprComponent",
         **kwargs: Any
     ) -> "_models.DaprComponent":
@@ -411,8 +411,8 @@ class DaprComponentsOperations(object):
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component.
         :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -435,7 +435,7 @@ class DaprComponentsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -463,7 +463,7 @@ class DaprComponentsOperations(object):
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
 
 
     @distributed_trace
@@ -471,7 +471,7 @@ class DaprComponentsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> None:
         """Delete a Dapr Component.
@@ -482,8 +482,8 @@ class DaprComponentsOperations(object):
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -502,7 +502,7 @@ class DaprComponentsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
@@ -524,7 +524,7 @@ class DaprComponentsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
 
 
     @distributed_trace
@@ -532,7 +532,7 @@ class DaprComponentsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> "_models.DaprSecretsCollection":
         """List secrets for a dapr component.
@@ -543,8 +543,8 @@ class DaprComponentsOperations(object):
         :type resource_group_name: str
         :param environment_name: Name of the Managed Environment.
         :type environment_name: str
-        :param name: Name of the Dapr Component.
-        :type name: str
+        :param component_name: Name of the Dapr Component.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DaprSecretsCollection, or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.DaprSecretsCollection
@@ -563,7 +563,7 @@ class DaprComponentsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.list_secrets.metadata['url'],
         )
@@ -589,5 +589,5 @@ class DaprComponentsOperations(object):
 
         return deserialized
 
-    list_secrets.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}/listSecrets"}  # type: ignore
+    list_secrets.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}/listSecrets"}  # type: ignore
 

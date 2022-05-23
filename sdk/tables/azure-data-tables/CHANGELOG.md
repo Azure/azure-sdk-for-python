@@ -1,5 +1,15 @@
 # Release History
 
+## 12.4.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.4.0 (2022-05-10)
 
 ### Features Added
