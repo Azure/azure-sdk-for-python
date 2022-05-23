@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
+from multiprocessing import connection
 
 import uuid
 import logging
@@ -123,15 +124,16 @@ class EventHubProducer(
         self._lock = threading.Lock()
         self._link_properties = {TIMEOUT_SYMBOL: pyamqp_utils.amqp_long_value(int(self._timeout * 1000))}
 
-        self._custom_endpoint_address = self._client._config.custom_endpoint_address
-        self._connection_verify = self._client._config.connection_verify
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
         transport_type = self._client._config.transport_type   # pylint:disable=protected-access
+        custom_endpoint_address = self._client._config.custom_endpoint_address # pylint: disable=protected-access
         hostname = self._client._address.hostname  # pylint: disable=protected-access
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
+            if custom_endpoint_address:
+                custom_endpoint_address += '/$servicebus/websocket/' 
         self._handler = SendClient(
             hostname,
             self._target,
@@ -145,8 +147,8 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
-            custom_endpoint_address=self._custom_endpoint_address,
-            connection_verify=self._connection_verify,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=self._client._config.connection_verify
         )
 
     def _open_with_retry(self):

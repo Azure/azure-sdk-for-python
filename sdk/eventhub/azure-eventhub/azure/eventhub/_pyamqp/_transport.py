@@ -661,9 +661,8 @@ class WebSocketTransport(_AbstractTransport):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
-        self.parsed_custom_hostname = kwargs.get("custom_hostname")
-        self.parsed_custom_port = kwargs.get("custom_port")
         self._host = host
+        self._custom_endpoint = kwargs.get("custom_endpoint")
         super().__init__(
             host, port, connect_timeout, **kwargs
             )
@@ -681,16 +680,11 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
-            if self.parsed_custom_hostname!=None:
-                url = "wss://{}:{}/$servicebus/websocket/".format(self.parsed_custom_hostname,self.parsed_custom_port)
-            else:
-                url = "wss://{}".format(self.host)
             self.ws = create_connection(
-                url=url,
+                url="wss://{}".format(self._custom_endpoint or self.host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
-                sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth

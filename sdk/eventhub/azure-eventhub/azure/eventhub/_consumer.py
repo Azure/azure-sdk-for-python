@@ -134,9 +134,6 @@ class EventHubConsumer(
         self._last_received_event = None  # type: Optional[EventData]
         self._receive_start_time = None  # type: Optional[float]
 
-        self._custom_endpoint_address = self._client._config.custom_endpoint_address
-        self._connection_verify = self._client._config.connection_verify
-
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
         source = Source(address=self._source, filters={})
@@ -153,10 +150,14 @@ class EventHubConsumer(
             )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
+        
+        custom_endpoint_address = self._client._config.custom_endpoint_address
         transport_type = self._client._config.transport_type # pylint:disable=protected-access
         hostname = urlparse(source.address).hostname
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
+            if custom_endpoint_address:
+                custom_endpoint_address += '/$servicebus/websocket/'
 
         self._handler = ReceiveClient(
             hostname,
@@ -175,8 +176,8 @@ class EventHubConsumer(
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
             message_received_callback=self._message_received,
-            custom_endpoint_address=self._custom_endpoint_address,
-            connection_verify=self._connection_verify,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=self._client._config.connection_verify,
         )
 
     def _open_with_retry(self):
