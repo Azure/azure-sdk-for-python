@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
-from multiprocessing import connection
 
 import uuid
 import logging
