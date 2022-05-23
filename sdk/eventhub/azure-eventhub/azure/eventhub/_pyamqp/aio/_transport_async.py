@@ -60,6 +60,7 @@ from .._transport import (
     _UNAVAIL,
     set_cloexec,
     AMQP_PORT,
+    TIMEOUT_INTERVAL,
     WebSocketTransport
 )
 
@@ -418,13 +419,13 @@ class AsyncTransport(AsyncTransportMixin):
 
 
 class WebSocketTransportAsync(AsyncTransportMixin):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
         self._read_buffer = BytesIO()
         self.loop = get_running_loop()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl if isinstance(ssl, dict) else {}
-        self._connect_timeout = connect_timeout
+        self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self.host = host
         self.ws = None
         self._http_proxy = kwargs.get('http_proxy', None)
