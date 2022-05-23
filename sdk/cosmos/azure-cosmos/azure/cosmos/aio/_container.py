@@ -161,22 +161,16 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param Dict[str, str] body: A dict-like object representing the item to create.
-        :keyword pre_trigger_include: trigger id to be used as pre operation trigger.
-        :paramtype pre_trigger_include: str
-        :keyword post_trigger_include: trigger id to be used as post operation trigger.
-        :paramtype post_trigger_include: str
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
         :paramtype indexing_directive: int or ~azure.cosmos.documents.IndexingDirective
-        :keyword enable_automatic_id_generation: Enable automatic id generation if no id present.
-        :paramtype enable_automatic_id_generation: bool
-        :keyword session_token: Token for use with Session consistency.
-        :paramtype session_token: str
-        :keyword initial_headers: Initial headers to be sent as part of the request.
-        :paramtype initial_headers: dict[str,str]
+        :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
-        :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
@@ -451,7 +445,6 @@ class ContainerProxy(object):
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :paramtype session_token: str
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
@@ -585,7 +578,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be retrieved.
         :returns: ThroughputProperties for the container.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -619,7 +612,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()

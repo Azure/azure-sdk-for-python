@@ -725,7 +725,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be retrieved.
         :returns: ThroughputProperties for the database.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -760,7 +760,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the database, updated with new throughput.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
