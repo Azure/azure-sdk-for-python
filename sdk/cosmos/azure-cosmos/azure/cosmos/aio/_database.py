@@ -132,7 +132,7 @@ class DatabaseProxy(object):
         :rtype: Dict[str, Any]
         """
         # TODO this helper function should be extracted from CosmosClient
-        from .cosmos_client import CosmosClient
+        from ._cosmos_client import CosmosClient
 
         database_link = CosmosClient._get_database_link(self)
         request_options = _build_options(kwargs)
