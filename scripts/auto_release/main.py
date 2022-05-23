@@ -315,6 +315,7 @@ class CodegenTestPR:
     def get_autorest_result(self) -> Dict[Any, Any]:
         with open(self.autorest_result, 'r') as file_in:
             content = json.load(file_in)
+        print(f'**** content: {content}')
         return content
 
     def get_changelog(self) -> str:
