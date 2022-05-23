@@ -87,6 +87,7 @@ AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b'AMQP')
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
+WEBSOCKET_TIMEOUT = 1
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r'\[([\.0-9a-f:]+)\](?::(\d+))?')
@@ -658,9 +659,9 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=1, ssl=None, **kwargs):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
-        self._connect_timeout = connect_timeout
+        self._connect_timeout = connect_timeout or WEBSOCKET_TIMEOUT
         self._host = host
         super().__init__(
             host, port, connect_timeout, **kwargs
