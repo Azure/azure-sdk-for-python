@@ -1,6 +1,8 @@
 ## Release History
 
-### 4.3.0b5 (Unreleased)
+### 4.3.0 (Unreleased)
+
+GA release of Async I/O APIs, also including all changes from 4.3.0b1 to 4.3.0b4.
 
 #### Breaking Changes
 - Method signatures have been updated to use keyword arguments instead of positional arguments for most method options in the async client.
