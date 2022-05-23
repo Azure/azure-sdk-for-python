@@ -681,7 +681,7 @@ class WebSocketTransport(_AbstractTransport):
         try:
             from websocket import create_connection
             self.ws = create_connection(
-                url="wss://{}".format(self._custom_endpoint or self.host),
+                url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
