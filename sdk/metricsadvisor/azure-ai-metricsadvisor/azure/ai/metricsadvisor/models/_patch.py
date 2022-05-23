@@ -40,7 +40,7 @@ def get_auth_from_datasource_kwargs(
     return authentication_type, credential_id
 
 
-class MetricAnomalyAlertScopeType(str, Enum):
+class MetricAnomalyAlertScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Anomaly scope"""
 
     WHOLE_SERIES = "WholeSeries"
@@ -72,7 +72,7 @@ class MetricAnomalyAlertScopeType(str, Enum):
         return alert
 
 
-class DataFeedRollupType(str, Enum):
+class DataFeedRollupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data feed rollup type"""
 
     NO_ROLLUP = "NoRollup"
@@ -98,20 +98,6 @@ class DataFeedRollupType(str, Enum):
         if rollup == "NeedRollup":
             return "AutoRollup"
         return rollup
-
-
-class MetricAnomalyAlertConfigurationsOperator(str, Enum):
-    """Cross metrics operator"""
-
-    AND = "AND"
-    OR = "OR"
-    XOR = "XOR"
-
-
-class DetectionConditionOperator(str, Enum):
-
-    AND = "AND"
-    OR = "OR"
 
 
 class DataFeedGranularity:
@@ -2938,7 +2924,6 @@ __all__ = [
     "ChangePointFeedback",
     "CommentFeedback",
     "PeriodFeedback",
-    "MetricAnomalyAlertConfigurationsOperator",
     "DataFeedGranularity",
     "DataFeedIngestionSettings",
     "DataFeedMissingDataPointFillSettings",
@@ -2976,7 +2961,6 @@ __all__ = [
     "DataFeedDimension",
     "DataFeedMetric",
     "DataFeedIngestionProgress",
-    "DetectionConditionOperator",
     "AnomalyDetectionConfiguration",
     "MetricAnomalyAlertConditions",
     "AnomalyIncident",
