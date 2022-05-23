@@ -1,5 +1,14 @@
 # Release History
 
+## 10.0.0 (2022-05-23)
+
+**Breaking changes**
+
+  - Model Key no longer has parameter release_policy
+  - Model Key no longer has parameter rotation_policy
+  - Model KeyProperties no longer has parameter release_policy
+  - Model KeyProperties no longer has parameter rotation_policy
+
 ## 9.3.0 (2021-11-11)
 
 **Features**

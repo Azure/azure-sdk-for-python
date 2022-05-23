@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,13 +17,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:06:57 GMT",
+        "Date": "Mon, 23 May 2022 08:47:31 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12559.4 - WUS2 ProdSlices",
-        "x-ms-request-id": "721ab1dd-6258-4090-b09d-c522a93d2100"
+        "x-ms-ests-server": "2.1.12744.11 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,13 +111,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:06:57 GMT",
+        "Date": "Mon, 23 May 2022 08:47:31 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12529.18 - SEASLR1 ProdSlices",
-        "x-ms-request-id": "ffc3e1ad-950f-4166-9812-da6fd4520200"
+        "x-ms-ests-server": "2.1.12744.11 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "76a856af-58fa-4143-874b-2ef87654a007",
+        "client-request-id": "09f502b8-ed8c-4421-b10d-ffd63d2f3643",
         "Connection": "keep-alive",
-        "Content-Length": "291",
+        "Content-Length": "286",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "win32",
+        "x-client-os": "linux",
         "x-client-sku": "MSAL.Python",
         "x-client-ver": "1.17.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=0vj7Q%7EIsFayrD0V_8oyOfygU-GE3ELOabq95a\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "RequestBody": "client_id=8c41a920-007a-4844-a189-2d0efe39f51e\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=o0XWF_siD-FhI.5AE83-u0GaQHW_GP7cjy\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "76a856af-58fa-4143-874b-2ef87654a007",
+        "client-request-id": "09f502b8-ed8c-4421-b10d-ffd63d2f3643",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:06:58 GMT",
+        "Date": "Mon, 23 May 2022 08:47:31 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,8 +201,8 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12529.17 - SCUS ProdSlices",
-        "x-ms-request-id": "ceb9c98b-3878-4192-9c49-0174d5902601"
+        "x-ms-ests-server": "2.1.12744.11 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
@@ -212,17 +212,15 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2021-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "823",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c3ee7b98-a016-11ec-a9a4-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {
         "location": "eastus",
@@ -294,7 +292,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:08 GMT",
+        "Date": "Mon, 23 May 2022 08:47:39 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -303,12 +301,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "c3ee7b98-a016-11ec-a9a4-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "16faa9ca-6dfc-4d9f-9d78-c8577d506966",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "4a990150-6801-4df5-89df-827aed1c7232",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-request-id": "47ae2471-17be-4ac1-8dfe-8080fa406d84",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020709Z:16faa9ca-6dfc-4d9f-9d78-c8577d506966"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084740Z:4a990150-6801-4df5-89df-827aed1c7232"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
@@ -316,6 +312,14 @@
         "type": "Microsoft.KeyVault/vaults",
         "location": "eastus",
         "tags": {},
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-05-23T08:47:32.933Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-05-23T08:47:32.933Z"
+        },
         "properties": {
           "sku": {
             "family": "A",
@@ -379,20 +383,19 @@
           "enabledForTemplateDeployment": true,
           "enableSoftDelete": true,
           "vaultUri": "https://myValtZikfikxz.vault.azure.net",
-          "provisioningState": "RegisteringDns"
+          "provisioningState": "RegisteringDns",
+          "publicNetworkAccess": "Enabled"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c3ee7b98-a016-11ec-a9a4-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -400,7 +403,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:39 GMT",
+        "Date": "Mon, 23 May 2022 08:48:10 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -409,12 +412,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "c3ee7b98-a016-11ec-a9a4-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "d105d19c-eb07-4784-a0d6-c68449080c5d",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "f57e4838-1d89-4aef-9d4a-9f40ff7852ff",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-request-id": "9a28ecb8-aece-44f0-9e8d-3a389d96286b",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020739Z:d105d19c-eb07-4784-a0d6-c68449080c5d"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084810Z:f57e4838-1d89-4aef-9d4a-9f40ff7852ff"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
@@ -422,6 +423,14 @@
         "type": "Microsoft.KeyVault/vaults",
         "location": "eastus",
         "tags": {},
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-05-23T08:47:32.933Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-05-23T08:47:32.933Z"
+        },
         "properties": {
           "sku": {
             "family": "A",
@@ -485,22 +494,21 @@
           "enabledForTemplateDeployment": true,
           "enableSoftDelete": true,
           "vaultUri": "https://myvaltzikfikxz.vault.azure.net/",
-          "provisioningState": "Succeeded"
+          "provisioningState": "Succeeded",
+          "publicNetworkAccess": "Enabled"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz/accessPolicies/add?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz/accessPolicies/add?api-version=2021-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "225",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "dd208068-a016-11ec-bab6-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {
         "properties": {
@@ -528,7 +536,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:41 GMT",
+        "Date": "Mon, 23 May 2022 08:48:10 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -537,12 +545,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "dd208068-a016-11ec-bab6-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "2e10bf4d-3a1f-465a-ad7b-01109a529e8c",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "92aba4c5-7c0a-4ead-8341-f76c3622cd40",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
-        "x-ms-request-id": "170599de-d04d-4042-b415-75e19243c714",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020741Z:2e10bf4d-3a1f-465a-ad7b-01109a529e8c"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084810Z:92aba4c5-7c0a-4ead-8341-f76c3622cd40"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz/accessPolicies/",
@@ -604,15 +610,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "de4d605c-a016-11ec-9a89-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -620,7 +624,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:41 GMT",
+        "Date": "Mon, 23 May 2022 08:48:10 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -629,12 +633,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "de4d605c-a016-11ec-9a89-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "a9e5a597-ec5c-431d-8c8b-ae15d4932287",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "d4fadc6b-6768-4073-9e52-55c28b6d51e8",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-reads": "11998",
-        "x-ms-request-id": "090b5081-8607-4df1-bd01-3552a04481ba",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020742Z:a9e5a597-ec5c-431d-8c8b-ae15d4932287"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084811Z:d4fadc6b-6768-4073-9e52-55c28b6d51e8"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
@@ -642,6 +644,14 @@
         "type": "Microsoft.KeyVault/vaults",
         "location": "eastus",
         "tags": {},
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-05-23T08:47:32.933Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-05-23T08:48:10.653Z"
+        },
         "properties": {
           "sku": {
             "family": "A",
@@ -705,22 +715,21 @@
           "enabledForTemplateDeployment": true,
           "enableSoftDelete": true,
           "vaultUri": "https://myvaltzikfikxz.vault.azure.net/",
-          "provisioningState": "Succeeded"
+          "provisioningState": "Succeeded",
+          "publicNetworkAccess": "Enabled"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2021-10-01",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "2",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "de85e258-a016-11ec-b947-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {},
       "StatusCode": 200,
@@ -728,7 +737,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:42 GMT",
+        "Date": "Mon, 23 May 2022 08:48:10 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -737,12 +746,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "de85e258-a016-11ec-b947-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "4cc9507f-251b-4423-b4ad-fc766bcbebde",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "baa2434d-56a7-4d62-b5ef-0ee559e28d24",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
-        "x-ms-request-id": "7f1f6d04-f04e-41d3-ae6d-303057fb7de3",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020742Z:4cc9507f-251b-4423-b4ad-fc766bcbebde"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084811Z:baa2434d-56a7-4d62-b5ef-0ee559e28d24"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
@@ -750,6 +757,14 @@
         "type": "Microsoft.KeyVault/vaults",
         "location": "eastus",
         "tags": {},
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-05-23T08:47:32.933Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-05-23T08:48:11.122Z"
+        },
         "properties": {
           "sku": {
             "family": "A",
@@ -813,22 +828,21 @@
           "enabledForTemplateDeployment": true,
           "enableSoftDelete": true,
           "vaultUri": "https://myvaltzikfikxz.vault.azure.net/",
-          "provisioningState": "Succeeded"
+          "provisioningState": "Succeeded",
+          "publicNetworkAccess": "Enabled"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/checkNameAvailability?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/checkNameAvailability?api-version=2021-10-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "61",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "dedd4e1e-a016-11ec-9728-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": {
         "name": "sample-vault",
@@ -839,7 +853,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:44 GMT",
+        "Date": "Mon, 23 May 2022 08:48:11 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -848,13 +862,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "dedd4e1e-a016-11ec-9728-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "4d4e2311-13fe-48cb-b62c-dccd9c76df01",
-        "x-ms-keyvault-service-version": "1.5.286.0",
+        "x-ms-correlation-request-id": "9f4e52be-2f9e-4950-9885-8f053d3cbde2",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-request-id": "08108f6d-8ce2-469c-bd03-d6b8e6862598",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020744Z:4d4e2311-13fe-48cb-b62c-dccd9c76df01",
-        "X-Powered-By": "ASP.NET"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084811Z:9f4e52be-2f9e-4950-9885-8f053d3cbde2"
       },
       "ResponseBody": {
         "nameAvailable": false,
@@ -863,48 +874,42 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2021-10-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "e02a1824-a016-11ec-a2ac-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 10 Mar 2022 02:07:51 GMT",
+        "Date": "Mon, 23 May 2022 08:48:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "e02a1824-a016-11ec-a2ac-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "cea86c59-a802-49ad-b1b4-06efbf6c88ba",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "ef4c6cb1-a87e-443e-868f-d1d3802715d2",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-deletes": "14999",
-        "x-ms-request-id": "9f0324d7-fdc1-4d22-a3a3-48e1bd28cd89",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020751Z:cea86c59-a802-49ad-b1b4-06efbf6c88ba"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084814Z:ef4c6cb1-a87e-443e-868f-d1d3802715d2"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "e4562b70-a016-11ec-88d6-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -912,7 +917,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:51 GMT",
+        "Date": "Mon, 23 May 2022 08:48:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -921,12 +926,10 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "e4562b70-a016-11ec-88d6-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "f956821b-2b8c-40e7-8e29-71b353824c44",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "603386e8-7455-4cf4-9026-8fa81a87fdf7",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-reads": "11996",
-        "x-ms-request-id": "104bc685-ea2b-4f98-aa9f-06f804fc62b1",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020752Z:f956821b-2b8c-40e7-8e29-71b353824c44"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084814Z:603386e8-7455-4cf4-9026-8fa81a87fdf7"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz",
@@ -936,56 +939,50 @@
           "vaultId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz",
           "location": "eastus",
           "tags": {},
-          "deletionDate": "2022-03-10T02:07:45Z",
-          "scheduledPurgeDate": "2022-06-08T02:07:45Z"
+          "deletionDate": "2022-05-23T08:48:11Z",
+          "scheduledPurgeDate": "2022-08-21T08:48:11Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz/purge?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz/purge?api-version=2021-10-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 10 Mar 2022 02:07:52 GMT",
+        "Date": "Mon, 23 May 2022 08:48:14 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzgyNDc0ODczNTYyNzI5MnxCRTJGNDY0QTNDQjQ0NDQ5QTc1QTFDODJENzIyNjRGMw?api-version=2019-09-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
         "Pragma": "no-cache",
         "Retry-After": "5",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "0f5e70fd-90e1-4481-bdce-843b69325723",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "7f0d3c7b-4ef0-4256-8c64-e0f5022c3989",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-request-id": "a29040a1-a56c-4da8-b727-7fe689be4983",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020753Z:0f5e70fd-90e1-4481-bdce-843b69325723"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084814Z:7f0d3c7b-4ef0-4256-8c64-e0f5022c3989"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzgyNDc0ODczNTYyNzI5MnxCRTJGNDY0QTNDQjQ0NDQ5QTc1QTFDODJENzIyNjRGMw?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
@@ -993,37 +990,33 @@
         "Cache-Control": "no-cache",
         "Content-Length": "64",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:07:57 GMT",
+        "Date": "Mon, 23 May 2022 08:48:19 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzgyNDc0ODczNTYyNzI5MnxCRTJGNDY0QTNDQjQ0NDQ5QTc1QTFDODJENzIyNjRGMw?api-version=2019-09-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
         "Pragma": "no-cache",
         "Retry-After": "5",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "88b615f8-31b8-4e64-86c1-b63f819f220e",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "affcebc2-fa1d-47c4-a8ff-5c1ec217062a",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-reads": "11995",
-        "x-ms-request-id": "43db05eb-a6e7-4007-8d62-843ea79943e4",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020758Z:88b615f8-31b8-4e64-86c1-b63f819f220e"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084819Z:affcebc2-fa1d-47c4-a8ff-5c1ec217062a"
       },
       "ResponseBody": {
-        "createdDateTime": "2022-03-10 02:07:52Z",
+        "createdDateTime": "2022-05-23 08:48:14Z",
         "status": "NotStarted"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzgyNDc0ODczNTYyNzI5MnxCRTJGNDY0QTNDQjQ0NDQ5QTc1QTFDODJENzIyNjRGMw?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
@@ -1031,37 +1024,135 @@
         "Cache-Control": "no-cache",
         "Content-Length": "64",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:08:03 GMT",
+        "Date": "Mon, 23 May 2022 08:48:24 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzgyNDc0ODczNTYyNzI5MnxCRTJGNDY0QTNDQjQ0NDQ5QTc1QTFDODJENzIyNjRGMw?api-version=2019-09-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
         "Pragma": "no-cache",
         "Retry-After": "5",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "f40d6910-bbd8-4cf4-8335-1d0f5134bf5a",
-        "x-ms-keyvault-service-version": "1.5.308.0",
+        "x-ms-correlation-request-id": "4ff1d6a6-cc2a-49f1-8caa-276f38bdbfb4",
+        "x-ms-keyvault-service-version": "1.5.372.0",
         "x-ms-ratelimit-remaining-subscription-reads": "11994",
-        "x-ms-request-id": "acaee193-0a5d-43d6-b559-5d7d0a03d420",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020803Z:f40d6910-bbd8-4cf4-8335-1d0f5134bf5a"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084824Z:4ff1d6a6-cc2a-49f1-8caa-276f38bdbfb4"
       },
       "ResponseBody": {
-        "createdDateTime": "2022-03-10 02:07:52Z",
+        "createdDateTime": "2022-05-23 08:48:14Z",
         "status": "NotStarted"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzgyNDc0ODczNTYyNzI5MnxCRTJGNDY0QTNDQjQ0NDQ5QTc1QTFDODJENzIyNjRGMw?api-version=2019-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-keyvault/9.3.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "64",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 23 May 2022 08:48:29 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
+        "Pragma": "no-cache",
+        "Retry-After": "5",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "16f30cb3-f3c6-41e6-8195-6f2d68055104",
+        "x-ms-keyvault-service-version": "1.5.372.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084829Z:16f30cb3-f3c6-41e6-8195-6f2d68055104"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2022-05-23 08:48:14Z",
+        "status": "NotStarted"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "64",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 23 May 2022 08:48:34 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
+        "Pragma": "no-cache",
+        "Retry-After": "5",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2fd8542f-42dc-4cff-abd5-9c0df57f7b7e",
+        "x-ms-keyvault-service-version": "1.5.372.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11992",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084834Z:2fd8542f-42dc-4cff-abd5-9c0df57f7b7e"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2022-05-23 08:48:14Z",
+        "status": "NotStarted"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "64",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 23 May 2022 08:48:39 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
+        "Pragma": "no-cache",
+        "Retry-After": "5",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "9959b3c8-772b-49ab-8611-5b1cffb36dd8",
+        "x-ms-keyvault-service-version": "1.5.372.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11991",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084839Z:9959b3c8-772b-49ab-8611-5b1cffb36dd8"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2022-05-23 08:48:14Z",
+        "status": "NotStarted"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzg4ODkyNDk1Mjk5ODE0NXw1MTRDMkY2QjIyQkY0NjQ4OUVCQjAyNkFFNDg1MUMwQw?api-version=2021-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-keyvault/10.0.0 Python/3.8.12 (Linux-5.13.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1069,7 +1160,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:08:08 GMT",
+        "Date": "Mon, 23 May 2022 08:48:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -1078,16 +1169,14 @@
         "Vary": "Accept-Encoding",
         "X-AspNet-Version": "4.0.30319",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-client-request-id": "e4940646-a016-11ec-bf47-c0b6f9946f2d",
-        "x-ms-correlation-request-id": "9d2c337f-298b-409a-84c7-c194122cddb9",
-        "x-ms-keyvault-service-version": "1.5.308.0",
-        "x-ms-ratelimit-remaining-subscription-reads": "11993",
-        "x-ms-request-id": "56caa9bd-9608-4885-bf7e-cfdd3de4e283",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T020809Z:9d2c337f-298b-409a-84c7-c194122cddb9"
+        "x-ms-correlation-request-id": "9b65f62f-f141-499a-b19f-3bf85d640c1a",
+        "x-ms-keyvault-service-version": "1.5.372.0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11990",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220523T084844Z:9b65f62f-f141-499a-b19f-3bf85d640c1a"
       },
       "ResponseBody": {
-        "createdDateTime": "2022-03-10 02:07:52Z",
-        "lastActionDateTime": "2022-03-10 02:08:07Z",
+        "createdDateTime": "2022-05-23 08:48:14Z",
+        "lastActionDateTime": "2022-05-23 08:48:41Z",
         "status": "Succeeded"
       }
     }
