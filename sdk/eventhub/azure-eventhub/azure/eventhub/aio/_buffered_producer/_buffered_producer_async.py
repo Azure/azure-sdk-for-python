@@ -140,7 +140,6 @@ class BufferedProducer:
             self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         while self._cur_buffered_len:
             remaining_time = timeout_time - time.time() if timeout_time else None
-            # If flush could get the semaphore, perform sending
             if ((remaining_time and remaining_time > 0) or remaining_time is None):
                 batch = self._buffered_queue.get()
                 self._buffered_queue.task_done()
