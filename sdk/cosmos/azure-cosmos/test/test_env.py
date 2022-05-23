@@ -22,6 +22,7 @@
 import unittest
 import pytest
 import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import PartitionKey
 import test_config
 import os
 
@@ -58,9 +59,11 @@ class EnvTest(unittest.TestCase):
 
         os.environ["COSMOS_ENDPOINT"] = cls.host
         os.environ["COSMOS_KEY"] = cls.masterKey
-        cls.client = cosmos_client.CosmosClient(url=cls.host, credential=cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(url=cls.host, credential=cls.masterKey, consistency_level="Session",
+                                                connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists("Test_Env_DB")
+        cls.created_collection = cls.databaseForTest.create_container_if_not_exists(
+            cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
 
     @classmethod
     def tearDownClass(cls):
