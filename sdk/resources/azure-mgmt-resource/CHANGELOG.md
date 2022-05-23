@@ -1,5 +1,12 @@
 # Release History
 
+## 21.1.0 (2022-05-05)
+
+**Features**
+
+  - GA `azure.mgmt.resource.changes`
+
+
 ## 21.1.0b1 (2022-04-19)
 
 **Features**

@@ -590,9 +590,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: List pages and corresponding messages from the queue.
 
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.

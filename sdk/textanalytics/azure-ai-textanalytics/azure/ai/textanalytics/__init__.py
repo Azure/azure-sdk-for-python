@@ -59,6 +59,7 @@ from ._models import (
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
     ClassificationCategory,
+    AnalyzeHealthcareEntitiesAction,
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
@@ -120,6 +121,7 @@ __all__ = [
     "MultiCategoryClassifyAction",
     "MultiCategoryClassifyResult",
     "ClassificationCategory",
+    "AnalyzeHealthcareEntitiesAction",
 ]
 
 __version__ = VERSION

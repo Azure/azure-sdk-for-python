@@ -16,13 +16,13 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
+from ._base_client import TextAnalyticsClientBase
 from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
-    _check_string_index_type_arg,
 )
+from ._validate import validate_multiapi_args, check_for_unsupported_actions_types
 from ._version import DEFAULT_API_VERSION
 from ._response_handlers import (
     process_http_response_error,
@@ -35,8 +35,6 @@ from ._response_handlers import (
     healthcare_paged_result,
     analyze_paged_result,
 )
-
-from ._models import _AnalyzeActionsType
 
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
@@ -67,28 +65,29 @@ from ._models import (
     SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
+    AnalyzeHealthcareEntitiesAction,
+    _AnalyzeActionsType,
 )
+from ._check import is_language_api, string_index_type_compatibility
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class
+    """The Language service API is a suite of natural language processing (NLP) skills built with the best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
     tasks such as sentiment analysis, key phrase extraction, entities recognition,
-    and language detection, and more. No training data is needed to use this API - just bring your text data.
-    This API uses advanced natural language processing techniques to deliver best in class predictions.
+    and language detection, and more.
 
     Further documentation can be found in
     https://docs.microsoft.com/azure/cognitive-services/language-service/overview
 
-    :param str endpoint: Supported Cognitive Services or Text Analytics resource
+    :param str endpoint: Supported Cognitive Services or Language resource
         endpoints (protocol and hostname, for example: 'https://<resource-name>.cognitiveservices.azure.com').
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the an instance of AzureKeyCredential if using a
-        cognitive services/text analytics API key or a token credential
-        from :mod:`azure.identity`.
+        This can be the an instance of AzureKeyCredential if using a Cognitive Services/Language API key
+        or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
@@ -132,6 +131,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
@@ -163,9 +166,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -198,13 +201,29 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
+
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextLanguageDetectionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.LanguageDetectionTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", language_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.languages(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", language_result),
                 **kwargs
             )
@@ -212,6 +231,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -236,7 +259,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -245,12 +268,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -278,29 +301,43 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextEntityRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntitiesTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type_compatibility(string_index_type)
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", entities_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.1"
+    )
     def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -325,7 +362,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -345,10 +382,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
-        :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
-            input text on the service side for troubleshooting. If set to False, Text Analytics logs your
+        :keyword bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+            input text on the service side for troubleshooting. If set to False, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Please see
+            the service's natural language processing functions. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
@@ -377,41 +414,48 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextPiiEntitiesRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.PiiTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            domain=domain_filter,
+                            pii_categories=categories_filter,
+                            string_index_type=string_index_type_compatibility(string_index_type)
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", pii_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
                 pii_categories=categories_filter,
+                logging_opt_out=disable_service_logs,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except ValueError as error:
-            if (
-                "API version v3.0 does not have operation 'entities_recognition_pii'"
-                in str(error)
-            ):
-                raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -437,7 +481,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -449,9 +493,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -480,21 +524,31 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextEntityLinkingInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntityLinkingTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type_compatibility(string_index_type)
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", linked_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_linking(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs
@@ -503,21 +557,27 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _healthcare_result_callback(
-        self, doc_id_order, raw_response, _, headers, show_stats=False
+        self, doc_id_order, raw_response, deserialized, headers, show_stats=False
     ):
-        healthcare_result = self._client.models(
-            api_version=self._api_version
-        ).HealthcareJobState.deserialize(raw_response)
+        if deserialized is None:
+            models = self._client.models(api_version=self._api_version)
+            response_cls = \
+                models.AnalyzeTextJobState if is_language_api(self._api_version) else models.HealthcareJobState
+            deserialized = response_cls.deserialize(raw_response)
         return healthcare_paged_result(
             doc_id_order,
-            self._client.health_status,
+            self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.health_status,
             raw_response,
-            healthcare_result,
+            deserialized,
             headers,
             show_stats=show_stats,
         )
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.1",
+        args_mapping={"2022-04-01-preview": ["display_name", "fhir_version"]}
+    )
     def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -547,7 +607,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+            The only acceptable values to pass in are None and "4.0.1". The default value is None.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -558,10 +622,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
-            input text on the service side for troubleshooting. If set to False, Text Analytics logs your
+        :keyword bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+            input text on the service side for troubleshooting. If set to False, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Please see
+            the service's natural language processing functions. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
@@ -572,10 +636,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
+        .. versionadded:: 2022-04-01-preview
+            The *display_name* and *fhir_version* keyword arguments.
 
         .. admonition:: Example:
 
@@ -592,10 +658,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-        string_index_type = kwargs.pop(
-            "string_index_type", self._string_index_type_default
-        )
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+        display_name = kwargs.pop("display_name", None)
+        fhir_version = kwargs.pop("fhir_version", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -624,8 +690,48 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
+        models = self._client.models(api_version=self._api_version)
 
         try:
+            if is_language_api(self._api_version):
+                docs = models.MultiLanguageAnalysisInput(
+                    documents=_validate_input(documents, "language", language)
+                )
+                return self._client.begin_analyze_text_submit_job(  # type: ignore
+                    body=models.AnalyzeTextJobsInput(
+                        analysis_input=docs,
+                        display_name=display_name,
+                        tasks=[
+                            models.HealthcareLROTask(
+                                task_name="0",
+                                parameters=models.HealthcareTaskParameters(
+                                    model_version=model_version,
+                                    logging_opt_out=disable_service_logs,
+                                    string_index_type=string_index_type_compatibility(string_index_type),
+                                    fhir_version=fhir_version,
+                                )
+                            )
+                        ]
+                    ),
+                    cls=my_cls,
+                    polling=AnalyzeHealthcareEntitiesLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    poller_cls=AnalyzeHealthcareEntitiesLROPoller,
+                    **kwargs
+                )
+
+            # v3.1
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
@@ -647,19 +753,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_health'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_healthcare_entities' method is only available for API version \
-                    V3_1 and up."
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -685,7 +786,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -693,9 +794,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -724,14 +825,29 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextKeyPhraseExtractionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.KeyPhraseTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", key_phrases_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.key_phrases(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs
             )
@@ -739,6 +855,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]}
+    )
     def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -769,7 +889,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -781,9 +901,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            logged on the service side for troubleshooting. By default, the Language service logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
+            the service's natural language processing functions. Setting this parameter to true,
             disables input logging and may limit our ability to remediate issues that occur. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
@@ -813,31 +933,33 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
-
-        if show_opinion_mining is not None:
-            if (
-                self._api_version == TextAnalyticsApiVersion.V3_0
-                and show_opinion_mining
-            ):
-                raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1 and up"
-                )
-            kwargs.update({"opinion_mining": show_opinion_mining})
+        string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextSentimentAnalysisInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.SentimentAnalysisTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type_compatibility(string_index_type),
+                            opinion_mining=show_opinion_mining,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", sentiment_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.sentiment(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
+                opinion_mining=show_opinion_mining,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
@@ -846,22 +968,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _analyze_result_callback(
-        self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
+        self, doc_id_order, task_order, raw_response, deserialized, headers, show_stats=False
     ):
-        analyze_result = self._client.models(
-            api_version=self._api_version
-        ).AnalyzeJobState.deserialize(raw_response)
+
+        if deserialized is None:
+            models = self._client.models(api_version=self._api_version)
+            response_cls = models.AnalyzeTextJobState if is_language_api(self._api_version) else models.AnalyzeJobState
+            deserialized = response_cls.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
             task_order,
-            self._client.analyze_status,
+            self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.analyze_status,
             raw_response,
-            analyze_result,
+            deserialized,
             headers,
             show_stats=show_stats,
         )
 
     @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="v3.1",
+        custom_wrapper=check_for_unsupported_actions_types
+    )
     def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -876,6 +1004,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 RecognizeCustomEntitiesAction,
                 SingleCategoryClassifyAction,
                 MultiCategoryClassifyAction,
+                AnalyzeHealthcareEntitiesAction,
             ]
         ],
         **kwargs: Any,
@@ -892,6 +1021,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     SingleCategoryClassifyResult,
                     MultiCategoryClassifyResult,
+                    AnalyzeHealthcareEntitiesResult,
                     DocumentError,
                 ]
             ]
@@ -900,7 +1030,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
-        combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
+        combine multiple text analysis actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
         .. note:: See the service documentation for regional support of custom action features:
@@ -919,13 +1049,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
-            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction]
+            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or
+            MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -948,16 +1079,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
-            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or DocumentError]]]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
+            DocumentError]]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
-        .. versionadded:: v3.2-preview
+        .. versionadded:: 2022-04-01-preview
             The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
-            and *MultiCategoryClassifyAction* input options and the corresponding *ExtractSummaryResult*,
-            *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*, and *MultiCategoryClassifyResult*
-            result objects
+            *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
+            corresponding *ExtractSummaryResult*, *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
+            *MultiCategoryClassifyResult*, and *AnalyzeHealthcareEntitiesResult* result objects
 
         .. admonition:: Example:
 
@@ -996,9 +1128,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token
             )
 
-        docs = self._client.models(
-            api_version=self._api_version
-        ).MultiLanguageBatchInput(
+        models = self._client.models(api_version=self._api_version)
+
+        input_model_cls = \
+            models.MultiLanguageAnalysisInput if is_language_api(self._api_version) else models.MultiLanguageBatchInput
+        docs = input_model_cls(
             documents=_validate_input(documents, "language", language)
         )
         doc_id_order = [doc.get("id") for doc in docs.documents]
@@ -1012,9 +1146,40 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
-            analyze_tasks = self._client.models(
-                api_version=self._api_version
-            ).JobManifestTasks(
+            if is_language_api(self._api_version):
+                return self._client.begin_analyze_text_submit_job(
+                    body=models.AnalyzeTextJobsInput(
+                        analysis_input=docs,
+                        display_name=display_name,
+                        tasks=generated_tasks
+                    ),
+                    cls=kwargs.pop(
+                        "cls",
+                        partial(
+                            self._analyze_result_callback,
+                            doc_id_order,
+                            task_order,
+                            show_stats=show_stats,
+                        ),
+                    ),
+                    polling=AnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        task_id_order=task_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    **kwargs
+                )
+
+            # v3.1
+            analyze_tasks = models.JobManifestTasks(
                 entity_recognition_tasks=[
                     a for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
@@ -1052,9 +1217,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
-            analyze_body = self._client.models(
-                api_version=self._api_version
-            ).AnalyzeBatchInput(
+            analyze_body = models.AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return self._client.begin_analyze(
@@ -1083,13 +1246,5 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)

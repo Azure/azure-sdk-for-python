@@ -23,6 +23,29 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
+FILE: encode_and_decode_with_message_content.py
+DESCRIPTION:
+    This sample demonstrates the following:
+     - Authenticating a sync SchemaRegistryClient to be used by the AvroEncoder.
+     - Passing in content and schema to the AvroEncoder, which will return a dict containing
+      encoded content and corresponding content type.
+     - Passing in a dict containing Avro-encoded content and corresponding content type to
+      the AvroEncoder, which will return the decoded content.
+USAGE:
+    python encode_and_decode_with_message_content.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
+    2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
+    3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
+    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+
+This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
+For more information on ClientSecretCredential, see:
+    https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
+"""
 import os
 
 from azure.identity import ClientSecretCredential

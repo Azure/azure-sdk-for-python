@@ -98,6 +98,9 @@ def _to_entity_datetime(value):
 
 
 def _to_entity_float(value):
+    if isinstance(value, str):
+        # Pass a serialized value straight through
+        return EdmType.DOUBLE, value
     if isnan(value):
         return EdmType.DOUBLE, "NaN"
     if value == float("inf"):
@@ -129,7 +132,7 @@ def _to_entity_int64(value):
 
 
 def _to_entity_str(value):
-    return EdmType.STRING, value
+    return EdmType.STRING, str(value)
 
 
 def _to_entity_none(value):  # pylint: disable=unused-argument
@@ -163,14 +166,19 @@ except NameError:
     )
 
 # Conversion from Edm type to a function which returns a tuple of the
-# type string and content string.
+# type string and content string. These conversions are only used when the
+# full EdmProperty tuple is specified. As a result, in this case we ALWAYS add
+# the Odatatype tag, even for field types where it's not necessary. This is why
+# boolean and int32 have special processing below, as we would not normally add the
+# Odatatype tags for these to keep payload size minimal.
+# This is also necessary for CLI compatibility.
 _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.BINARY: _to_entity_binary,
-    EdmType.BOOLEAN: _to_entity_bool,
+    EdmType.BOOLEAN: lambda v: (EdmType.BOOLEAN, v),
     EdmType.DATETIME: _to_entity_datetime,
     EdmType.DOUBLE: _to_entity_float,
     EdmType.GUID: _to_entity_guid,
-    EdmType.INT32: _to_entity_int32,
+    EdmType.INT32: lambda v: (EdmType.INT32, _to_entity_int32(v)[1]),  # Still using the int32 validation
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
 }

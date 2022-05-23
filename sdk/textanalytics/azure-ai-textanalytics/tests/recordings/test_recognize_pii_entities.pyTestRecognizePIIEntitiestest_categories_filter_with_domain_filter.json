@@ -1,48 +1,68 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/recognition/pii?domain=phi\u0026stringIndexType=UnicodeCodePoint\u0026piiCategories=USSocialSecurityNumber",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "138",
+        "Content-Length": "306",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1796addf-5d12-11ec-a0d2-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "kind": "PiiEntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "domain": "phi",
+          "piiCategories": [
+            "USSocialSecurityNumber"
+          ],
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0498b06c-b4b8-4e40-b365-ee6345efc35f",
+        "apim-request-id": "719160fb-c1c5-4ce7-ac18-7c4cf4082a67",
+        "Content-Length": "346",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:14:42 GMT",
+        "Date": "Tue, 03 May 2022 00:17:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "39"
+        "x-envoy-upstream-service-time": "33"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "redactedText": "My name is Inigo Montoya, my SSN in *********** and my phone number is 333-3333.",
-            "id": "0",
-            "entities": [
-              {
-                "text": "243-56-0987",
-                "category": "USSocialSecurityNumber",
-                "offset": 36,
-                "length": 11,
-                "confidenceScore": 0.85
-              }
-            ],
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-01-15"
+        "kind": "PiiEntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "redactedText": "My name is Inigo Montoya, my SSN in *********** and my phone number is 333-3333.",
+              "id": "0",
+              "entities": [
+                {
+                  "text": "243-56-0987",
+                  "category": "USSocialSecurityNumber",
+                  "offset": 36,
+                  "length": 11,
+                  "confidenceScore": 0.85
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-01-15"
+        }
       }
     }
   ],

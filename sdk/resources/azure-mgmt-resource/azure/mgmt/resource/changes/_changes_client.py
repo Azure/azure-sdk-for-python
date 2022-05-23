@@ -55,7 +55,7 @@ class ChangesClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2022-03-01-preview'
+    DEFAULT_API_VERSION = '2022-05-01'
     _PROFILE_TAG = "azure.mgmt.resource.changes.ChangesClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -88,10 +88,10 @@ class ChangesClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2022-03-01-preview: :mod:`v2022_03_01_preview.models<azure.mgmt.resource.changes.v2022_03_01_preview.models>`
+           * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.resource.changes.v2022_05_01.models>`
         """
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview import models
+        if api_version == '2022-05-01':
+            from .v2022_05_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -99,11 +99,11 @@ class ChangesClient(MultiApiClientMixin, _SDKClient):
     def changes(self):
         """Instance depends on the API version:
 
-           * 2022-03-01-preview: :class:`ChangesOperations<azure.mgmt.resource.changes.v2022_03_01_preview.operations.ChangesOperations>`
+           * 2022-05-01: :class:`ChangesOperations<azure.mgmt.resource.changes.v2022_05_01.operations.ChangesOperations>`
         """
         api_version = self._get_api_version('changes')
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import ChangesOperations as OperationClass
+        if api_version == '2022-05-01':
+            from .v2022_05_01.operations import ChangesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'changes'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

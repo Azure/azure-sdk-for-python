@@ -37,6 +37,7 @@ class SchemaProperties(object):
     :ivar group_name: Schema group under which schema is stored.
     :vartype group_name: str
     :ivar name: Name of schema.
+    :vartype name: str
     """
 
     def __init__(self, **kwargs):
