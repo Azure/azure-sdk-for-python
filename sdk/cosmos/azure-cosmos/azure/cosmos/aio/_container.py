@@ -165,7 +165,7 @@ class ContainerProxy(object):
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
-        :paramtype indexing_directive: int or ~azure.cosmos.documents.IndexingDirective
+        :paramtype indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
