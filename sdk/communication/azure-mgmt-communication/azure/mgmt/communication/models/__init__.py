@@ -6,46 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CommunicationServiceKeys
-    from ._models_py3 import CommunicationServiceResource
-    from ._models_py3 import CommunicationServiceResourceList
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LinkNotificationHubParameters
-    from ._models_py3 import LinkedNotificationHub
-    from ._models_py3 import LocationResource
-    from ._models_py3 import NameAvailability
-    from ._models_py3 import NameAvailabilityParameters
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationStatus
-    from ._models_py3 import RegenerateKeyParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TaggedResource
-except (SyntaxError, ImportError):
-    from ._models import CommunicationServiceKeys  # type: ignore
-    from ._models import CommunicationServiceResource  # type: ignore
-    from ._models import CommunicationServiceResourceList  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LinkNotificationHubParameters  # type: ignore
-    from ._models import LinkedNotificationHub  # type: ignore
-    from ._models import LocationResource  # type: ignore
-    from ._models import NameAvailability  # type: ignore
-    from ._models import NameAvailabilityParameters  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationStatus  # type: ignore
-    from ._models import RegenerateKeyParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TaggedResource  # type: ignore
+from ._models_py3 import CommunicationServiceKeys
+from ._models_py3 import CommunicationServiceResource
+from ._models_py3 import CommunicationServiceResourceList
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LinkNotificationHubParameters
+from ._models_py3 import LinkedNotificationHub
+from ._models_py3 import LocationResource
+from ._models_py3 import NameAvailability
+from ._models_py3 import NameAvailabilityParameters
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TaggedResource
+
 
 from ._communication_service_management_client_enums import (
     ActionType,
@@ -53,7 +32,6 @@ from ._communication_service_management_client_enums import (
     KeyType,
     Origin,
     ProvisioningState,
-    Status,
 )
 
 __all__ = [
@@ -71,7 +49,6 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'OperationStatus',
     'RegenerateKeyParameters',
     'Resource',
     'SystemData',
@@ -81,5 +58,4 @@ __all__ = [
     'KeyType',
     'Origin',
     'ProvisioningState',
-    'Status',
 ]
