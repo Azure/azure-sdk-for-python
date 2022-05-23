@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
+
 ### Other Changes
 
 ## 1.24.0 (2022-05-06)
