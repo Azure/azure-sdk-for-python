@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.1.0b1 (Unreleased)
 
 ### Features Added
 * Conversation issue summarization task (Long-running operation)
