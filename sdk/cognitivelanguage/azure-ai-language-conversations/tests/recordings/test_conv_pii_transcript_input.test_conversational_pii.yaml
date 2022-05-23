@@ -26,25 +26,29 @@ interactions:
       User-Agent:
       - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - ad1a9d14-32f9-4343-ac12-a906c9cb1438
+      - 31186b01-f51c-4ff7-988e-5e69f91e321f
       content-length:
       - '0'
       date:
-      - Fri, 20 May 2022 01:04:58 GMT
+      - Mon, 23 May 2022 20:35:19 GMT
       operation-location:
-      - https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/45b61746-c50e-45fe-934c-184c6a9d42db?api-version=2022-05-15-preview
+      - https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/e50424e1-e064-4f32-a21f-237a6b321565?api-version=2022-05-15-preview
+      server:
+      - istio-envoy
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '260'
+      - '231'
+      x-http2-stream-id:
+      - '3'
     status:
       code: 202
       message: Accepted
@@ -60,11 +64,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/45b61746-c50e-45fe-934c-184c6a9d42db?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/e50424e1-e064-4f32-a21f-237a6b321565?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"jobId":"45b61746-c50e-45fe-934c-184c6a9d42db","lastUpdatedDateTime":"2022-05-20T01:04:58Z","createdDateTime":"2022-05-20T01:04:58Z","expirationDateTime":"2022-05-21T01:04:58Z","status":"succeeded","errors":[],"displayName":"Analyze
-        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-20T01:04:58.8871215Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
+      string: '{"jobId":"e50424e1-e064-4f32-a21f-237a6b321565","lastUpdatedDateTime":"2022-05-23T20:35:19Z","createdDateTime":"2022-05-23T20:35:19Z","expirationDateTime":"2022-05-24T20:35:19Z","status":"succeeded","errors":[],"displayName":"Analyze
+        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-23T20:35:19.9509273Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
         is **** do*","lexical":"It is **** do*","maskedItn":"It is **** do*","text":"It
         is **** ***."},"entities":[{"text":"john","category":"Name","offset":6,"length":4,"confidenceScore":0.57},{"text":"e","category":"Name","offset":13,"length":1,"confidenceScore":0.53}]},{"id":"2","redactedContent":{"itn":"yes
         ********* is my phone","lexical":"yes *********************************************
@@ -76,19 +80,23 @@ interactions:
         dot doe at yahoo dot com","category":"Email","offset":0,"length":26,"confidenceScore":0.78}]}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
     headers:
       apim-request-id:
-      - f3389cc5-195a-425c-9078-0cf290a4e2f5
+      - c6f8c6df-adaa-44b9-ba5a-3458cc9d7ddf
       content-length:
       - '1528'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 20 May 2022 01:05:28 GMT
+      - Mon, 23 May 2022 20:35:49 GMT
+      server:
+      - istio-envoy
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '131'
+      - '154'
+      x-http2-stream-id:
+      - '3'
     status:
       code: 200
       message: OK

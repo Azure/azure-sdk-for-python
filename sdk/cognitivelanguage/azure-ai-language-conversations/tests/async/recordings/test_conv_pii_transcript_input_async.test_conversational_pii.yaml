@@ -22,33 +22,35 @@ interactions:
       User-Agent:
       - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 2219abf6-2e3b-4f7a-8fa3-a05f85916171
+      apim-request-id: ca1622da-8497-4937-a30d-98f525ee2939
       content-length: '0'
-      date: Fri, 20 May 2022 01:06:05 GMT
-      operation-location: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/5a98cf9d-90d0-45db-ac72-effffed1e16b?api-version=2022-05-15-preview
+      date: Mon, 23 May 2022 20:36:22 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/983d5878-0674-461d-a2d5-d66449a1d398?api-version=2022-05-15-preview
+      server: istio-envoy
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '236'
+      x-envoy-upstream-service-time: '126'
+      x-http2-stream-id: '3'
     status:
       code: 202
       message: Accepted
-    url: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    url: https://clubuildppe.ppe.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/5a98cf9d-90d0-45db-ac72-effffed1e16b?api-version=2022-05-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/983d5878-0674-461d-a2d5-d66449a1d398?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"jobId":"5a98cf9d-90d0-45db-ac72-effffed1e16b","lastUpdatedDateTime":"2022-05-20T01:06:06Z","createdDateTime":"2022-05-20T01:06:05Z","expirationDateTime":"2022-05-21T01:06:05Z","status":"succeeded","errors":[],"displayName":"Analyze
-        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-20T01:06:06.3488529Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
+      string: '{"jobId":"983d5878-0674-461d-a2d5-d66449a1d398","lastUpdatedDateTime":"2022-05-23T20:36:23Z","createdDateTime":"2022-05-23T20:36:23Z","expirationDateTime":"2022-05-24T20:36:23Z","status":"succeeded","errors":[],"displayName":"Analyze
+        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-23T20:36:23.7016216Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
         is **** do*","lexical":"It is **** do*","maskedItn":"It is **** do*","text":"It
         is **** ***."},"entities":[{"text":"john","category":"Name","offset":6,"length":4,"confidenceScore":0.57},{"text":"e","category":"Name","offset":13,"length":1,"confidenceScore":0.53}]},{"id":"2","redactedContent":{"itn":"yes
         ********* is my phone","lexical":"yes *********************************************
@@ -59,15 +61,17 @@ interactions:
         is my email","text":"*************** is my email"},"entities":[{"text":"j
         dot doe at yahoo dot com","category":"Email","offset":0,"length":26,"confidenceScore":0.78}]}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
     headers:
-      apim-request-id: b10a4287-ebc2-4109-a2f4-3ee0c53ad305
+      apim-request-id: 78958ee7-31c5-4337-8983-738f308d1738
       content-length: '1528'
       content-type: application/json; charset=utf-8
-      date: Fri, 20 May 2022 01:06:35 GMT
+      date: Mon, 23 May 2022 20:36:54 GMT
+      server: istio-envoy
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '43'
+      x-envoy-upstream-service-time: '90'
+      x-http2-stream-id: '3'
     status:
       code: 200
       message: OK
-    url: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/5a98cf9d-90d0-45db-ac72-effffed1e16b?api-version=2022-05-15-preview
+    url: https://clubuildppe.ppe.cognitiveservices.azure.com/language/analyze-conversations/jobs/983d5878-0674-461d-a2d5-d66449a1d398?api-version=2022-05-15-preview
 version: 1
