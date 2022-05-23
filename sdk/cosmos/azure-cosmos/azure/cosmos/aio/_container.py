@@ -219,6 +219,7 @@ class ContainerProxy(object):
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
         :type partition_key: Union[str, int, float, bool]
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -245,6 +246,9 @@ class ContainerProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
+        post_trigger_include = kwargs.pop('post_trigger_include', None)
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
