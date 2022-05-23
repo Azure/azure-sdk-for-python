@@ -3,6 +3,7 @@
 ## 12.8.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-08-06
 - Added support for `owner`, `group`, `acl`, `lease_id`, `lease_duration` to both file and directory `create` APIs
 - Added support for `expiry_options`, `expires_on` to file `create` APIs
 - Added `delete_files()` API
