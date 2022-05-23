@@ -6,6 +6,7 @@ import re
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
+from typing import List
 
 from .swaggertosdk.autorest_tools import build_autorest_options
 
@@ -86,3 +87,42 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     if write_flag:
         with open(manifest_file, "w") as f:
             f.write("".join(includes))
+
+
+# find all the files of one folder, including files in subdirectory
+def all_files(path: str, files: List[str]):
+    all_folder = os.listdir(path)
+    for item in all_folder:
+        folder = str(Path(f'{path}/{item}'))
+        if os.path.isdir(folder):
+            all_files(folder, files)
+        else:
+            files.append(folder)
+
+
+def judge_tag_preview(path: str) -> bool:
+    files = []
+    all_files(path, files)
+    default_api_version = ''  # for multi-api
+    api_version = ''  # for single-api
+    for file in files:
+        if '.py' not in file or '.pyc' in file:
+            continue
+        try:
+            with open(file, 'r') as file_in:
+                list_in = file_in.readlines()
+        except:
+            _LOGGER.info(f'can not open {file}')
+            continue
+
+        for line in list_in:
+            if line.find('DEFAULT_API_VERSION = ') > -1:
+                default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
+            if default_api_version == '' and line.find('api_version = ') > -1:
+                api_version += line.split('=')[-1].strip('\n')  # collect all single api version
+    if default_api_version != '':
+        _LOGGER.info(f'find default api version:{default_api_version}')
+        return 'preview' in default_api_version
+
+    _LOGGER.info(f'find single api version:{api_version}')
+    return 'preview' in api_version
