@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:07 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:07 GMT
       etag:
-      - '"0x8DA378D32B9EE09"'
+      - '"0x8DA3CF83BFCEC4D"'
       last-modified:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Mon, 16 May 2022 22:41:21 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       x-ms-meta-name:
       - bob
       x-ms-meta-number:
@@ -75,11 +75,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       etag:
-      - '"0x8DA378D32CC2E76"'
+      - '"0x8DA3CF83C0E9A73"'
       last-modified:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -105,7 +105,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 22:41:21 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -117,17 +117,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       etag:
-      - '"0x8DA378D32CC2E76"'
+      - '"0x8DA3CF83C0E9A73"'
       last-modified:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-snapshot:
-      - '2022-05-16T22:41:20.9984474Z'
+      - '2022-05-23T20:10:08.4782043Z'
       x-ms-version:
       - '2021-06-08'
     status:
@@ -153,7 +153,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Mon, 16 May 2022 22:41:21 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       x-ms-meta-name:
       - car
       x-ms-meta-number:
@@ -171,11 +171,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       etag:
-      - '"0x8DA378D32F75991"'
+      - '"0x8DA3CF83C333658"'
       last-modified:
-      - Mon, 16 May 2022 22:41:21 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -199,7 +199,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 22:41:21 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       x-ms-version:
       - '2021-06-08'
     method: GET
@@ -207,17 +207,17 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"container39251586\"><Blobs><Blob><Name>blob1</Name><Snapshot>2022-05-16T22:41:20.9984474Z</Snapshot><Properties><Creation-Time>Mon,
-        16 May 2022 22:41:20 GMT</Creation-Time><Last-Modified>Mon, 16 May 2022 22:41:20
-        GMT</Last-Modified><Etag>0x8DA378D32CC2E76</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"container39251586\"><Blobs><Blob><Name>blob1</Name><Snapshot>2022-05-23T20:10:08.4782043Z</Snapshot><Properties><Creation-Time>Mon,
+        23 May 2022 20:10:08 GMT</Creation-Time><Last-Modified>Mon, 23 May 2022 20:10:08
+        GMT</Last-Modified><Etag>0x8DA3CF83C0E9A73</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
         /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><number>1</number><name>bob</name></Metadata><OrMetadata
-        /></Blob><Blob><Name>blob1</Name><Properties><Creation-Time>Mon, 16 May 2022
-        22:41:20 GMT</Creation-Time><Last-Modified>Mon, 16 May 2022 22:41:20 GMT</Last-Modified><Etag>0x8DA378D32CC2E76</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /></Blob><Blob><Name>blob1</Name><Properties><Creation-Time>Mon, 23 May 2022
+        20:10:08 GMT</Creation-Time><Last-Modified>Mon, 23 May 2022 20:10:08 GMT</Last-Modified><Etag>0x8DA3CF83C0E9A73</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
         /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><number>1</number><name>bob</name></Metadata><OrMetadata
-        /></Blob><Blob><Name>blob2</Name><Properties><Creation-Time>Mon, 16 May 2022
-        22:41:21 GMT</Creation-Time><Last-Modified>Mon, 16 May 2022 22:41:21 GMT</Last-Modified><Etag>0x8DA378D32F75991</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /></Blob><Blob><Name>blob2</Name><Properties><Creation-Time>Mon, 23 May 2022
+        20:10:08 GMT</Creation-Time><Last-Modified>Mon, 23 May 2022 20:10:08 GMT</Last-Modified><Etag>0x8DA3CF83C333658</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
         /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><number>2</number><name>car</name></Metadata><OrMetadata
         /></Blob></Blobs><NextMarker /></EnumerationResults>"
@@ -225,7 +225,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 16 May 2022 22:41:20 GMT
+      - Mon, 23 May 2022 20:10:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

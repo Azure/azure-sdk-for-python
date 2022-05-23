@@ -68,8 +68,6 @@ class StorageHandleTest(AsyncStorageTestCase):
     async def test_close_single_handle_async(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)

@@ -1811,7 +1811,6 @@ class StorageContainerTest(StorageTestCase):
     @BlobPreparer()
     def test_list_blobs_with_include_multiple(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        # pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')

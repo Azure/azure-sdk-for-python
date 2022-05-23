@@ -859,7 +859,7 @@ class FileTest(StorageTestCase):
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
-    @pytest.mark.skip(reason="Service bug")
+    @pytest.mark.skip(reason="Service bug, requires further investigation.")
     @DataLakePreparer()
     def test_rename_file_with_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
