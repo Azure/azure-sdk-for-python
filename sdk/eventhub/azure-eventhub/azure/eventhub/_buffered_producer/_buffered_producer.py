@@ -30,7 +30,6 @@ class BufferedProducer:
             executor: ThreadPoolExecutor,
             *,
             max_wait_time: float = 1,
-            max_concurrent_sends: int = 1,
             max_buffer_length: int = 1500
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
@@ -39,7 +38,6 @@ class BufferedProducer:
         self._executor: ThreadPoolExecutor = executor
         self._producer: EventHubProducer = producer
         self._lock = RLock()
-        self._max_concurrent_sends = max_concurrent_sends
         self._max_wait_time = max_wait_time
         self._on_success = self.failsafe_callback(on_success)
         self._on_error = self.failsafe_callback(on_error)

@@ -31,7 +31,6 @@ class BufferedProducerDispatcher:
             *,
             max_buffer_length: int = 1500,
             max_wait_time: float = 1,
-            max_concurrent_sends: int = 1,
             executor: Optional[Union[ThreadPoolExecutor, int]] = None,
             max_worker: Optional[int] = None
     ):
@@ -46,7 +45,6 @@ class BufferedProducerDispatcher:
         self._partition_resolver = PartitionResolver(self._partition_ids)
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
-        self._max_concurrent_sends = max_concurrent_sends
         self._existing_executor = bool(executor)
 
         if not executor:
@@ -83,7 +81,6 @@ class BufferedProducerDispatcher:
                     self._max_message_size_on_link,
                     executor=self._executor,
                     max_wait_time=self._max_wait_time,
-                    max_concurrent_sends=self._max_concurrent_sends,
                     max_buffer_length=self._max_buffer_length
                 )
                 buffered_producer.start()
