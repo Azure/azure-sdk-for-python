@@ -22,7 +22,6 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 * An [Azure subscription][azure_subscription]
 * An existing Azure Language Service Resource
 
-> Note: the new unified Cognitive Language Services are not currently available for deployment.
 
 ### Install the package
 
