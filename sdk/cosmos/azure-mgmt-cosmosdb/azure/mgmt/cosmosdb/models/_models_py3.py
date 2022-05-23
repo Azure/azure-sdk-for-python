@@ -9533,6 +9533,34 @@ class PhysicalPartitionStorageInfoCollection(msrest.serialization.Model):
         self.physical_partition_storage_info_collection = None
 
 
+class PhysicalPartitionThroughputInfoProperties(msrest.serialization.Model):
+    """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoProperties object.
+
+    :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
+    :vartype physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    """
+
+    _attribute_map = {
+        'physical_partition_throughput_info': {'key': 'physicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        physical_partition_throughput_info: Optional[List["PhysicalPartitionThroughputInfoResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword physical_partition_throughput_info: Array of physical partition throughput info
+         objects.
+        :paramtype physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        """
+        super(PhysicalPartitionThroughputInfoProperties, self).__init__(**kwargs)
+        self.physical_partition_throughput_info = physical_partition_throughput_info
+
+
 class PhysicalPartitionThroughputInfoResource(msrest.serialization.Model):
     """PhysicalPartitionThroughputInfo object.
 
@@ -9569,6 +9597,105 @@ class PhysicalPartitionThroughputInfoResource(msrest.serialization.Model):
         super(PhysicalPartitionThroughputInfoResource, self).__init__(**kwargs)
         self.id = id
         self.throughput = throughput
+
+
+class PhysicalPartitionThroughputInfoResult(ARMResourceProperties):
+    """An Azure Cosmos DB PhysicalPartitionThroughputInfoResult object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags are a list of key-value pairs that describe the resource. These
+     tags can be used in viewing and grouping this resource (across resource groups). A maximum of
+     15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters
+     and value no greater than 256 characters. For example, the default experience for a template
+     type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values also
+     include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar resource: properties of physical partition throughput info.
+    :vartype resource:
+     ~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'PhysicalPartitionThroughputInfoResultPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
+        resource: Optional["PhysicalPartitionThroughputInfoResultPropertiesResource"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The location of the resource group to which the resource belongs.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+         These tags can be used in viewing and grouping this resource (across resource groups). A
+         maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+         characters and value no greater than 256 characters. For example, the default experience for a
+         template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+         also include "Table", "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+        :keyword resource: properties of physical partition throughput info.
+        :paramtype resource:
+         ~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultPropertiesResource
+        """
+        super(PhysicalPartitionThroughputInfoResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class PhysicalPartitionThroughputInfoResultPropertiesResource(PhysicalPartitionThroughputInfoProperties):
+    """properties of physical partition throughput info.
+
+    :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
+    :vartype physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    """
+
+    _attribute_map = {
+        'physical_partition_throughput_info': {'key': 'physicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        physical_partition_throughput_info: Optional[List["PhysicalPartitionThroughputInfoResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword physical_partition_throughput_info: Array of physical partition throughput info
+         objects.
+        :paramtype physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        """
+        super(PhysicalPartitionThroughputInfoResultPropertiesResource, self).__init__(physical_partition_throughput_info=physical_partition_throughput_info, **kwargs)
 
 
 class Resource(msrest.serialization.Model):
