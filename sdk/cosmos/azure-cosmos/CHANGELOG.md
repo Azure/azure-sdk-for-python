@@ -1,7 +1,7 @@
 ## Release History
 
 ### 4.3.0 (2022-05-23)
-
+#### Features Added
 - GA release of Async I/O APIs, including all changes from 4.3.0b1 to 4.3.0b4.
 
 #### Breaking Changes
