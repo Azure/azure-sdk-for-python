@@ -28,14 +28,7 @@ def sample_analyze_conversation_app():
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
-
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import (
-        CustomConversationalTask,
-        ConversationAnalysisOptions,
-        CustomConversationTaskParameters,
-        TextConversationItem
-    )
 
     # get secrets
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -48,45 +41,52 @@ def sample_analyze_conversation_app():
     with client:
         query = "Send an email to Carol about the tomorrow's demo"
         result = client.analyze_conversation(
-                task=CustomConversationalTask(
-                    analysis_input=ConversationAnalysisOptions(
-                        conversation_item=TextConversationItem(
-                            text=query
-                        )
-                    ),
-                    parameters=CustomConversationTaskParameters(
-                        project_name=project_name,
-                        deployment_name=deployment_name
-                    )
-                )
-            )
+            task={
+                "kind": "Conversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "verbose": True
+                }
+            }
+        )
 
     # view result
-    print("query: {}".format(result.results.query))
-    print("project kind: {}\n".format(result.results.prediction.project_kind))
+    print("query: {}".format(result["result"]["query"]))
+    print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
 
-    print("top intent: {}".format(result.results.prediction.top_intent))
-    print("category: {}".format(result.results.prediction.intents[0].category))
-    print("confidence score: {}\n".format(result.results.prediction.intents[0].confidence))
+    print("top intent: {}".format(result["result"]["prediction"]["topIntent"]))
+    print("category: {}".format(result["result"]["prediction"]["intents"][0]["category"]))
+    print("confidence score: {}\n".format(result["result"]["prediction"]["intents"][0]["confidenceScore"]))
 
     print("entities:")
-    for entity in result.results.prediction.entities:
-        print("\ncategory: {}".format(entity.category))
-        print("text: {}".format(entity.text))
-        print("confidence score: {}".format(entity.confidence))
-        if entity.resolutions:
+    for entity in result["result"]["prediction"]["entities"]:
+        print("\ncategory: {}".format(entity["category"]))
+        print("text: {}".format(entity["text"]))
+        print("confidence score: {}".format(entity["confidenceScore"]))
+        if "resolutions" in entity:
             print("resolutions")
-            for resolution in entity.resolutions:
-                print("kind: {}".format(resolution.resolution_kind))
-                print("value: {}".format(resolution.additional_properties["value"]))
-        if entity.extra_information:
+            for resolution in entity["resolutions"]:
+                print("kind: {}".format(resolution["resolutionKind"]))
+                print("value: {}".format(resolution["value"]))
+        if "extraInformation" in entity:
             print("extra info")
-            for data in entity.extra_information:
-                print("kind: {}".format(data.extra_information_kind))
-                if data.extra_information_kind == "ListKey":
-                    print("key: {}".format(data.key))
-                if data.extra_information_kind == "EntitySubtype":
-                    print("value: {}".format(data.value))
+            for data in entity["extraInformation"]:
+                print("kind: {}".format(data["extraInformationKind"]))
+                if data["extraInformationKind"] == "ListKey":
+                    print("key: {}".format(data["key"]))
+                if data["extraInformationKind"] == "EntitySubtype":
+                    print("value: {}".format(data["value"]))
 
     # [END analyze_conversation_app]
 
