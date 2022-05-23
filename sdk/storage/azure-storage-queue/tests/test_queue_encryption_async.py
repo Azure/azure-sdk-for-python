@@ -428,6 +428,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
 
         encryption_data = _EncryptionData(
             b64decode(encryption_data['ContentEncryptionIV'].encode(encoding='utf-8')),
+            None,
             encryption_agent,
             wrapped_content_key,
             {'EncryptionLibrary': VERSION})

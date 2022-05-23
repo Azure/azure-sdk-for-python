@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import os
-from os import urandom
 from json import (
     dumps,
     loads,
@@ -419,8 +418,8 @@ def encrypt_blob(blob, key_encryption_key):
     _validate_key_encryption_key_wrap(key_encryption_key)
 
     # AES256 uses 256 bit (32 byte) keys and always with 16 byte blocks
-    content_encryption_key = urandom(32)
-    initialization_vector = urandom(16)
+    content_encryption_key = os.urandom(32)
+    initialization_vector = os.urandom(16)
 
     cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
 
@@ -453,8 +452,8 @@ def generate_blob_encryption_data(key_encryption_key):
     initialization_vector = None
     if key_encryption_key:
         _validate_key_encryption_key_wrap(key_encryption_key)
-        content_encryption_key = urandom(32)
-        initialization_vector = urandom(16)
+        content_encryption_key = os.urandom(32)
+        initialization_vector = os.urandom(16)
         encryption_data = _generate_encryption_data_dict(key_encryption_key,
                                                          content_encryption_key,
                                                          initialization_vector,
@@ -554,7 +553,7 @@ def get_blob_encryptor_and_padder(cek, iv, should_pad):
 
 def encrypt_queue_message(message, key_encryption_key, version):
     '''
-    Encrypts the given plain text message using the given algorithm.
+    Encrypts the given plain text message using the given protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
