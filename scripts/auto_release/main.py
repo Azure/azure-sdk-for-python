@@ -188,7 +188,8 @@ class CodegenTestPR:
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
-        self.tag_is_stable = self.get_autorest_result()["packages"][0]["tagIsStable"]
+        generate_result = self.get_autorest_result()
+        self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
