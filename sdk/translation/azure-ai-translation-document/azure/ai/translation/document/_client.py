@@ -119,7 +119,7 @@ class DocumentTranslationClient:
         category_id: Optional[str] = None,
         glossaries: Optional[List[TranslationGlossary]] = None,
         **kwargs: Any
-    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -157,14 +157,14 @@ class DocumentTranslationClient:
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
-    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -184,14 +184,14 @@ class DocumentTranslationClient:
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_translation(
-        self, *args, **kwargs
-    ):  # pylint: disable=client-method-missing-type-annotations
+        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -237,7 +237,7 @@ class DocumentTranslationClient:
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -273,7 +273,7 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return self._client.document_translation.begin_start_translation(
+        return self._client.document_translation.begin_start_translation(  # type: ignore
             inputs=inputs if not continuation_token else None,
             polling=DocumentTranslationLROPollingMethod(
                 timeout=polling_interval,

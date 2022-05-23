@@ -273,7 +273,6 @@ from ._models_py3 import SimpleSchedulePolicyV2
 from ._models_py3 import SubProtectionPolicy
 from ._models_py3 import TargetAFSRestoreInfo
 from ._models_py3 import TargetRestoreInfo
-from ._models_py3 import TieringPolicy
 from ._models_py3 import TokenInformation
 from ._models_py3 import TriggerDataMoveRequest
 from ._models_py3 import UnlockDeleteRequest
@@ -359,7 +358,6 @@ from ._recovery_services_backup_client_enums import (
     StorageType,
     StorageTypeState,
     SupportStatus,
-    TieringMode,
     Type,
     UsagesUnit,
     ValidationStatus,
@@ -637,7 +635,6 @@ __all__ = [
     'SubProtectionPolicy',
     'TargetAFSRestoreInfo',
     'TargetRestoreInfo',
-    'TieringPolicy',
     'TokenInformation',
     'TriggerDataMoveRequest',
     'UnlockDeleteRequest',
@@ -720,7 +717,6 @@ __all__ = [
     'StorageType',
     'StorageTypeState',
     'SupportStatus',
-    'TieringMode',
     'Type',
     'UsagesUnit',
     'ValidationStatus',

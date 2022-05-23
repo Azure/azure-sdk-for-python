@@ -76,7 +76,7 @@ class PrivateEndpointOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_get_operation_status_request(

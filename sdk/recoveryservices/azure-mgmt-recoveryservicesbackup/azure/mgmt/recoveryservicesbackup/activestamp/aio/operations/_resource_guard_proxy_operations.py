@@ -71,7 +71,7 @@ class ResourceGuardProxyOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_get_request(
@@ -112,6 +112,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
+        parameters: "_models.ResourceGuardProxyBaseResource",
         **kwargs: Any
     ) -> "_models.ResourceGuardProxyBaseResource":
         """Add or Update ResourceGuardProxy under vault
@@ -124,6 +125,9 @@ class ResourceGuardProxyOperations:
         :type resource_group_name: str
         :param resource_guard_proxy_name:
         :type resource_guard_proxy_name: str
+        :param parameters: Request body for operation.
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceGuardProxyBaseResource, or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource
@@ -135,15 +139,19 @@ class ResourceGuardProxyOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        
+        _json = self._serialize.body(parameters, 'ResourceGuardProxyBaseResource')
+
         request = build_put_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             resource_guard_proxy_name=resource_guard_proxy_name,
             api_version=api_version,
+            content_type=content_type,
+            json=_json,
             template_url=self.put.metadata['url'],
         )
         request = _convert_request(request)
@@ -198,7 +206,7 @@ class ResourceGuardProxyOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_delete_request(
@@ -260,7 +268,7 @@ class ResourceGuardProxyOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'UnlockDeleteRequest')

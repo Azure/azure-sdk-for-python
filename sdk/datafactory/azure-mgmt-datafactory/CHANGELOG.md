@@ -1,5 +1,11 @@
 # Release History
 
+## 2.5.0 (2022-05-12)
+
+**Features**
+
+  - Model PrivateLinkConnectionApprovalRequest has a new parameter private_endpoint
+
 ## 2.4.0 (2022-04-15)
 
 **Features**

@@ -56,6 +56,10 @@ setup(
     packages=[
         'azure.core.tracing.ext.opentelemetry_span',
     ],
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.6",
     install_requires=[
         'opentelemetry-api<2.0.0,>=1.0.0',
