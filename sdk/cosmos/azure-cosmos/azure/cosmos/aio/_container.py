@@ -160,7 +160,7 @@ class ContainerProxy(object):
         To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
 
-        :param Dict[str, str] body: A dict-like object representing the item to create.
+        :param dict[str, str] body: A dict-like object representing the item to create.
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
