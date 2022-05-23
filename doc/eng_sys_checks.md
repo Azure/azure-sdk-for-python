@@ -99,7 +99,7 @@ This is the most useful skip, but the following skip variables are also supporte
 - `Skip.MyPy`
   - Omit `mypy` checks in `analyze` job.
 - `Skip.AnalyzeDependencies`
-  - Omit 'Analyze Dependenncies' step in `analyze` job.
+  - Omit 'Analyze Dependencies' step in `analyze` job.
 - `Skip.VerifyDependencies`
   - Omit checking that a package's dependencies are on PyPI before releasing.
 
