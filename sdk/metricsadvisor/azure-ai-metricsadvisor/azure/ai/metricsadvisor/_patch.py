@@ -112,6 +112,7 @@ def get_authentication_policy(credential):
 
     return authentication_policy
 
+
 class MetricsAdvisorClient:
     """Represents an client that calls restful API of Azure Metrics Advisor service.
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -258,7 +259,6 @@ class MetricsAdvisorClient:
         return self._client.list_incident_root_causes(
             detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
         )
-
 
     @overload
     def list_incidents(
@@ -466,6 +466,7 @@ class MetricsAdvisorClient:
                 metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
             ),
         )
+
 
 class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods,client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
@@ -762,10 +763,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.get_detection_configuration(detection_configuration_id=detection_configuration_id, **kwargs)
 
-
-
-
-
     @distributed_trace
     def update_detection_configuration(
         self, detection_configuration: Union[str, models.AnomalyDetectionConfiguration], **kwargs: Any
@@ -1059,8 +1056,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.create_hook(hook=hook, **kwargs)
 
-
-
     @distributed_trace
     def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> models.DataFeed:
         """Get a data feed by its id.
@@ -1081,9 +1076,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: Get a single data feed by its ID
         """
         return self._client.get_data_feed(data_feed_id=data_feed_id, **kwargs)
-
-
-
 
     @distributed_trace
     def get_hook(
@@ -1266,7 +1258,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         """
         return self._client.update_data_feed(data_feed=data_feed, **kwargs)
 
-
     @distributed_trace
     def update_hook(
         self, hook: Union[str, models.EmailNotificationHook, models.WebNotificationHook], **kwargs: Any
@@ -1333,7 +1324,6 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             ItemPaged[Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]],
             self._client.list_hooks(**kwargs),
         )
-
 
     @distributed_trace
     def list_detection_configurations(

@@ -14,9 +14,9 @@ from msrest import Deserializer, Serializer
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
 from ._configuration import MetricsAdvisorClientConfiguration
 from ._operations import MetricsAdvisorClientOperationsMixin
+from .models import _models as models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,9 +27,9 @@ class MetricsAdvisorClient(MetricsAdvisorClientOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://:code:`<resource-name>`.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     """
 

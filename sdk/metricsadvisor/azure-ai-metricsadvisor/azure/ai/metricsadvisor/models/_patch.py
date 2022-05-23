@@ -861,11 +861,7 @@ class AzureBlobDataFeedSource(generated_models.AzureBlobDataFeedSource, dict):
 
     def __init__(self, container: str, blob_template: str, **kwargs: Any) -> None:
         msi = kwargs.get("msi", False)
-        super().__init__(
-            container=container,
-            blob_template=blob_template,
-            **kwargs
-        )
+        super().__init__(container=container, blob_template=blob_template, **kwargs)
         self.data_source_type = "AzureBlob"
         self.authentication_type = "ManagedIdentity" if msi else "Basic"
         self.credential_id = kwargs.get("credential_id", None)
@@ -907,12 +903,7 @@ class AzureCosmosDbDataFeedSource(generated_models.AzureCosmosDbDataFeedSource, 
     """
 
     def __init__(self, sql_query: str, database: str, collection_id: str, **kwargs: Any) -> None:
-        super().__init__(
-            sql_query=sql_query,
-            database=database,
-            collection_id=collection_id,
-            **kwargs
-        )
+        super().__init__(sql_query=sql_query, database=database, collection_id=collection_id, **kwargs)
         self.data_source_type = "AzureCosmosDB"
         self.authentication_type = "Basic"
         self.credential_id = kwargs.get("credential_id", None)
@@ -954,10 +945,7 @@ class AzureDataExplorerDataFeedSource(generated_models.AzureDataExplorerDataFeed
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
-        super().__init__(
-            query=query,
-            **kwargs
-        )
+        super().__init__(query=query, **kwargs)
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="Basic", **kwargs
         )
@@ -1034,9 +1022,7 @@ class AzureEventHubsDataFeedSource(generated_models.AzureEventHubsDataFeedSource
     """
 
     def __init__(self, consumer_group: str, **kwargs: Any) -> None:
-        super().__init__(
-            consumer_group=consumer_group, **kwargs
-        )
+        super().__init__(consumer_group=consumer_group, **kwargs)
         self.data_source_type = "AzureEventHubs"
         self.authentication_type = "Basic"
         self.credential_id = kwargs.get("credential_id", None)
@@ -1190,10 +1176,7 @@ class SqlServerDataFeedSource(generated_models.AzureDataExplorerDataFeedSource, 
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
-        super().__init__(
-            query=query,
-            **kwargs
-        )
+        super().__init__(query=query, **kwargs)
         datasource_sql_connection_string_id = kwargs.get("datasource_sql_connection_string_id", False)
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="AzureSQLConnectionString" if datasource_sql_connection_string_id else "Basic"
@@ -1396,17 +1379,14 @@ class NotificationHook(generated_models.NotificationHook):
         super().__init__(name=name, **kwargs)
 
     def __repr__(self):
-        return (
-            "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, "
-            "hook_type={})".format(
-                self.id,
-                self.name,
-                self.description,
-                self.external_link,
-                self.admins,
-                self.hook_type,
-            )[:1024]
-        )
+        return "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, " "hook_type={})".format(
+            self.id,
+            self.name,
+            self.description,
+            self.external_link,
+            self.admins,
+            self.hook_type,
+        )[:1024]
 
 
 class EmailNotificationHook(NotificationHook, generated_models.EmailNotificationHook):
@@ -2297,9 +2277,7 @@ class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionStri
     """
 
     def __init__(self, name: str, connection_string: str, **kwargs: Any) -> None:
-        super().__init__(
-            name=name, connection_string=connection_string, **kwargs
-        )
+        super().__init__(name=name, connection_string=connection_string, **kwargs)
 
     def __repr__(self):
         return (
@@ -2373,13 +2351,7 @@ class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, Da
     """
 
     def __init__(self, name: str, client_id: str, client_secret: str, tenant_id: str, **kwargs: Any) -> None:
-        super().__init__(
-            name=name,
-            client_id=client_id,
-            client_secret=client_secret,
-            tenant_id=tenant_id,
-            **kwargs
-        )
+        super().__init__(name=name, client_id=client_id, client_secret=client_secret, tenant_id=tenant_id, **kwargs)
 
     def __repr__(self):
         return (

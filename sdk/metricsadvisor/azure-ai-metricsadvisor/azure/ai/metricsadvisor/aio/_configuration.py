@@ -25,9 +25,9 @@ class MetricsAdvisorClientConfiguration(Configuration):  # pylint: disable=too-m
     attributes.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://:code:`<resource-name>`.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
