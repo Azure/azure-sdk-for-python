@@ -59,7 +59,8 @@ class BufferedProducer:
     def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
         if flush:
-            self.flush(timeout_time=timeout_time, raise_error=raise_error)
+            with self._lock:
+                self.flush(timeout_time=timeout_time, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -94,7 +95,8 @@ class BufferedProducer:
                 new_events_len
             )
             # flush the buffer
-            self.flush(timeout_time=timeout_time)
+            with self._lock:
+                self.flush(timeout_time=timeout_time)
         if timeout_time and time.time() > timeout_time:
             raise OperationTimeoutError("Failed to enqueue events into buffer due to timeout.")
         try:
@@ -134,7 +136,6 @@ class BufferedProducer:
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
         if self._cur_batch:  # if there is batch, enqueue it to the buffer first
             self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         while self._cur_buffered_len:
             remaining_time = timeout_time - time.time() if timeout_time else None
             if ((remaining_time and remaining_time > 0) or remaining_time is None):
@@ -168,7 +169,7 @@ class BufferedProducer:
                     self.partition_id
                 )
                 if raise_error:
-                    raise OperationTimeoutError("Failed to flush {!r}".format(self.partition_id))
+                    raise OperationTimeoutError("Failed to flush {!r} within {}".format(self.partition_id, timeout_time))
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
@@ -180,8 +181,8 @@ class BufferedProducer:
             if not self._buffered_queue.empty():
                 now_time = time.time()
                 _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
-                #flush the partition if its beyond the waiting time or the buffer is at max capacity
-                if (now_time - self._last_send_time > self._max_wait_time and self._running) or (self._cur_buffered_len >= self._max_buffer_len and self._running):
+                #flush the partition if the producer is running beyond the waiting time or the buffer is at max capacity
+                if (now_time - self._last_send_time > self._max_wait_time) or (self._cur_buffered_len >= self._max_buffer_len):
                     # in the worker, not raising error for flush, users can not handle this
                     self.flush(raise_error=False)
             time.sleep(min(self._max_wait_time, 5))

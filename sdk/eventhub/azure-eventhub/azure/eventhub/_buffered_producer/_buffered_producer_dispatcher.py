@@ -45,13 +45,14 @@ class BufferedProducerDispatcher:
         self._partition_resolver = PartitionResolver(self._partition_ids)
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
-        self._existing_executor = bool(executor)
+        self._existing_executor = False
 
         if not executor:
             self._executor = ThreadPoolExecutor(max_worker)
         elif isinstance(executor, ThreadPoolExecutor):
             self._executor = executor
         elif isinstance(executor, int):
+            self._existing_executor = True
             self._executor = ThreadPoolExecutor(executor)
 
     def _get_partition_id(self, partition_id, partition_key):

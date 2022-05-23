@@ -172,7 +172,7 @@ class BufferedProducer:
                     self.partition_id
                 )
                 if raise_error:
-                    raise OperationTimeoutError("Failed to flush {!r}".format(self.partition_id))
+                    raise OperationTimeoutError("Failed to flush {!r} within {}".format(self.partition_id, timeout_time))
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
