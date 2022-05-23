@@ -424,8 +424,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
-        self.parsed_custom_hostname = kwargs.get("custom_hostname")
-        self.parsed_custom_port = kwargs.get("custom_port")
+        self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host = host 
         self.ws = None
         self._http_proxy = kwargs.get('http_proxy', None)
@@ -441,12 +440,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
-            if self.parsed_custom_hostname!=None:
-                url = "wss://{}:{}/$servicebus/websocket/".format(self.parsed_custom_hostname,self.parsed_custom_port)
-            else:
-                url = "wss://{}".format(self.host)
             self.ws = create_connection(
-                url=url,
+                url="wss://{}".format(self._custom_endpoint or self.host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,

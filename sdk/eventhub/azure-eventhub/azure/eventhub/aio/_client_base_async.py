@@ -247,15 +247,18 @@ class ClientBaseAsync(ClientBase):
         while retried_times <= self._config.max_retries:
             mgmt_auth = await self._create_auth_async()
             hostname = self._address.hostname
+            custom_endpoint_address = self._config.custom_endpoint_address
             if self._config.transport_type.name == 'AmqpOverWebsocket':
                 hostname += '/$servicebus/websocket/'
+                if custom_endpoint_address:
+                    custom_endpoint_address += '/$servicebus/websocket/'
             mgmt_client = AMQPClientAsync(
                 hostname,
                 auth=mgmt_auth,
                 debug=self._config.network_tracing,
                 transport_type=self._config.transport_type,
                 http_proxy=self._config.http_proxy,
-                custom_endpoint_address=self._config.custom_endpoint_address,
+                custom_endpoint_address=custom_endpoint_address,
                 connection_verify=self._config.connection_verify
             )
             try:

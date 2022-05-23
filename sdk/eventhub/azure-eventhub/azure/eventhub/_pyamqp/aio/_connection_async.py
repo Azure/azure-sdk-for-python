@@ -70,9 +70,6 @@ class Connection(object):
     def __init__(self, endpoint, **kwargs):
         parsed_url = urlparse(endpoint)
         self.hostname = parsed_url.hostname
-        custom_parsed_url = urlparse(kwargs.get("custom_endpoint_address"))
-        self.custom_hostname = custom_parsed_url.hostname
-        self.custom_port = custom_parsed_url.port
         endpoint = self.hostname
         self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
         if parsed_url.port:
@@ -82,6 +79,13 @@ class Connection(object):
         else:
             self.port = PORT
         self.state = None
+
+        # Custom Endpoint
+        custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        custom_endpoint = None
+        if custom_endpoint_address:
+            custom_parsed_url = urlparse(custom_endpoint_address)
+            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname,custom_parsed_url.port,custom_parsed_url.path)
 
         transport = kwargs.get('transport')
         if transport:
@@ -94,8 +98,7 @@ class Connection(object):
             self.transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs['sasl_credential'],
-                custom_hostname=self.custom_hostname,
-                custom_port=self.custom_port,
+                custom_endpoint=custom_endpoint,
                 **kwargs
             )
         else:
