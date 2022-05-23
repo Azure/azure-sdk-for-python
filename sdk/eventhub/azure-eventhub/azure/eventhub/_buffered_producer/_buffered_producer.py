@@ -30,7 +30,7 @@ class BufferedProducer:
             executor: ThreadPoolExecutor,
             *,
             max_wait_time: float = 1,
-            max_buffer_length: int = 1500
+            max_buffer_length: int
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length

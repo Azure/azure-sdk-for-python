@@ -31,15 +31,13 @@ class BufferedProducer:
             max_message_size_on_link: int,
             *,
             max_wait_time: float = 1,
-            max_concurrent_sends: int = 1,
-            max_buffer_length: int = 1500
+            max_buffer_length: int
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
         self._cur_buffered_len = 0
         self._producer: EventHubProducer = producer
         self._lock = Lock()
-        self._max_concurrent_sends = max_concurrent_sends
         self._max_wait_time = max_wait_time
         self._on_success = self.failsafe_callback(on_success)
         self._on_error = self.failsafe_callback(on_error)
