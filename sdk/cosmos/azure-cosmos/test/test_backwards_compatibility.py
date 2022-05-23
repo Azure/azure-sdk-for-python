@@ -48,7 +48,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
-        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.configs.TEST_DATABASE_ID,
+        cls.databaseForTest = cls.client.create_database_if_not_exists("Offer_Test_DB",
                                                                        offer_throughput=500)
         cls.containerForTest = cls.databaseForTest.create_container_if_not_exists(
             cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"), offer_throughput=400)

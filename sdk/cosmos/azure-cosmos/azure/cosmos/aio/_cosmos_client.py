@@ -195,11 +195,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
         Create a new database with the given ID (name).
 
-        :param id: ID (name) of the database to create.
-        :type id: str
+        :param str id: ID (name) of the database to create.
         :keyword int offer_throughput: The provisioned throughput for this offer.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -250,7 +249,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param str id: ID (name) of the database to read or create.
         :keyword int offer_throughput: The provisioned throughput for this offer.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -299,7 +298,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
@@ -329,7 +328,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :paramtype parameters: List[Dict[str, Any]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
@@ -363,7 +362,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             instance of the database to delete.
         :type database: Union[str, ~azure.cosmos.DatabaseProxy, Dict[str, Any]]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
