@@ -207,8 +207,8 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
 
 
 def main(base, latest, tag_is_stable: bool = False):
-    old_report = get_report_from_parameter(base)
-    new_report = get_report_from_parameter(latest, tag_is_stable)
+    old_report = get_report_from_parameter(base, tag_is_stable)
+    new_report = get_report_from_parameter(latest)
 
     # result = diff(old_report, new_report)
     # with open("result.json", "w") as fd:
