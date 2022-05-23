@@ -149,6 +149,7 @@ class CodegenTestPR:
         self.pr_number = 0
         self.container_name = ''
         self.private_package_link = []  # List[str]
+        self.tag_is_stable = False
 
     @return_origin_path
     def get_latest_commit_in_swagger_repo(self) -> str:
@@ -183,11 +184,12 @@ class CodegenTestPR:
         with open(self.autorest_result, 'w') as file:
             json.dump(input_data, file)
 
-        # generate code
+        # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
-        with open(self.autorest_result, 'r') as fr:
-            print("#### self.autorest_result", fr.read())
+        
+        self.tag_is_stable = self.get_autorest_result()["packages"][0]["tagIsStable"]
+        log(f"tag_is_stable is {self.tag_is_stable}")
         
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
@@ -286,33 +288,8 @@ class CodegenTestPR:
         all_files(self.sdk_code_path(), files)
         return files
 
-    def judge_tag(self) -> bool:
-        files = self.get_all_files_under_package_folder()
-        default_api_version = ''  # for multi-api
-        api_version = ''  # for single-api
-        for file in files:
-            if '.py' not in file or '.pyc' in file:
-                continue
-            try:
-                with open(file, 'r') as file_in:
-                    list_in = file_in.readlines()
-            except:
-                _LOG.info(f'can not open {file}')
-                continue
-
-            for line in list_in:
-                if line.find('DEFAULT_API_VERSION = ') > -1:
-                    default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-                if default_api_version == '' and line.find('api_version = ') > -1:
-                    api_version += line.split('=')[-1].strip('\n')  # collect all single api version
-        if default_api_version != '':
-            log(f'find default api version:{default_api_version}')
-            return 'preview' in default_api_version
-        log(f'find single api version:{api_version}')
-        return 'preview' in api_version
-
     def calculate_next_version_proc(self, last_version: str):
-        preview_tag = self.judge_tag()
+        preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
             return '0.0.0'
