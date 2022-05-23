@@ -26,6 +26,7 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HOT = "Hot"
     COOL = "Cool"
     ARCHIVE = "Archive"
+    PREMIUM = "Premium"
 
 class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 

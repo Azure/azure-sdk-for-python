@@ -1010,7 +1010,6 @@ class ServiceOperations(object):
 
         request = build_submit_batch_request(
             url=self._config.url,
-            multipart_content_type=multipart_content_type,
             comp=comp,
             version=self._config.version,
             content=_content,

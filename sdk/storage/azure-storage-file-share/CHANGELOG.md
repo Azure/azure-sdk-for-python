@@ -3,7 +3,6 @@
 ## 12.9.0b1 (Unreleased)
 
 ### Features Added
-- Added support for service version 2021-08-06.
 - Added support for `file_change_time` to `start_copy_from_url` API
 
 ## 12.8.0 (2022-05-09)
