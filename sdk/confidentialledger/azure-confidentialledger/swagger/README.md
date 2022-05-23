@@ -16,9 +16,7 @@ clear-output-folder: true
 no-namespace-folders: true
 title: ConfidentialLedgerClient
 version-tolerant: true
-package-version: 1.0.0b2
-security: AADToken
-security-scopes: https://confidential-ledger.azure.com/.default
+package-version: 1.0.0
 ```
 
 #### Tag: identity-service
@@ -34,7 +32,5 @@ clear-output-folder: true
 no-namespace-folders: true
 title: ConfidentialLedgerIdentityServiceClient
 version-tolerant: true
-package-version: 1.0.0b2
-security: AADToken
-security-scopes: https://confidential-ledger.azure.com/.default
+package-version: 1.0.0
 ```

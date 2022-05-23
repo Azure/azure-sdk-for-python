@@ -6,16 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .._version import VERSION
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -27,31 +23,24 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
     :param ledger_uri: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com.
     :type ledger_uri: str
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-04-20-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
         ledger_uri: str,
-        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
         super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-04-20-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-13")  # type: str
 
         if ledger_uri is None:
             raise ValueError("Parameter 'ledger_uri' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
 
         self.ledger_uri = ledger_uri
-        self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://confidential-ledger.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'confidentialledger/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -68,5 +57,3 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

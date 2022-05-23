@@ -21,8 +21,6 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-    from azure.core.credentials import TokenCredential
-
 class ConfidentialLedgerClient:
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
@@ -32,21 +30,18 @@ class ConfidentialLedgerClient:
     :param ledger_uri: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com.
     :type ledger_uri: str
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-04-20-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
         ledger_uri: str,
-        credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         _endpoint = '{ledgerUri}'
-        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, credential=credential, **kwargs)
+        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()

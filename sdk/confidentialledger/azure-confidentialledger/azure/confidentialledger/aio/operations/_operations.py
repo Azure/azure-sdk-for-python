@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import build_confidential_ledger_create_or_update_user_request, build_confidential_ledger_delete_user_request, build_confidential_ledger_get_collections_request, build_confidential_ledger_get_consortium_members_request, build_confidential_ledger_get_constitution_request, build_confidential_ledger_get_current_ledger_entry_request, build_confidential_ledger_get_enclave_quotes_request, build_confidential_ledger_get_ledger_entries_request, build_confidential_ledger_get_ledger_entry_request, build_confidential_ledger_get_receipt_request, build_confidential_ledger_get_transaction_status_request, build_confidential_ledger_get_user_request, build_confidential_ledger_post_ledger_entry_request
+from ...operations._operations import build_confidential_ledger_create_or_update_user_request, build_confidential_ledger_delete_user_request, build_confidential_ledger_get_consortium_members_request, build_confidential_ledger_get_constitution_request, build_confidential_ledger_get_current_ledger_entry_request, build_confidential_ledger_get_enclave_quotes_request, build_confidential_ledger_get_ledger_entry_request, build_confidential_ledger_get_receipt_request, build_confidential_ledger_get_transaction_status_request, build_confidential_ledger_get_user_request, build_confidential_ledger_list_collections_request, build_confidential_ledger_list_ledger_entries_request, build_confidential_ledger_post_ledger_entry_request
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
@@ -75,7 +75,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -147,7 +147,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -226,7 +226,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -264,7 +264,7 @@ class ConfidentialLedgerOperations:
 
 
     @distributed_trace_async
-    async def get_collections(
+    async def list_collections(
         self,
         **kwargs: Any
     ) -> List[JSON]:
@@ -294,11 +294,11 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
 
         
-        request = build_confidential_ledger_get_collections_request(
+        request = build_confidential_ledger_list_collections_request(
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -332,7 +332,7 @@ class ConfidentialLedgerOperations:
 
 
     @distributed_trace
-    def get_ledger_entries(
+    def list_ledger_entries(
         self,
         *,
         collection_id: Optional[str] = None,
@@ -381,7 +381,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         error_map = {
@@ -391,7 +391,7 @@ class ConfidentialLedgerOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_confidential_ledger_get_ledger_entries_request(
+                request = build_confidential_ledger_list_ledger_entries_request(
                     api_version=api_version,
                     collection_id=collection_id,
                     from_transaction_id=from_transaction_id,
@@ -406,7 +406,7 @@ class ConfidentialLedgerOperations:
 
             else:
                 
-                request = build_confidential_ledger_get_ledger_entries_request(
+                request = build_confidential_ledger_list_ledger_entries_request(
                     headers=_headers,
                     params=_params,
                 )
@@ -453,7 +453,7 @@ class ConfidentialLedgerOperations:
     @distributed_trace_async
     async def post_ledger_entry(
         self,
-        entry: Optional[JSON] = None,
+        entry: JSON,
         *,
         collection_id: Optional[str] = None,
         **kwargs: Any
@@ -462,7 +462,7 @@ class ConfidentialLedgerOperations:
 
         A collection id may optionally be specified.
 
-        :param entry: Ledger entry. Default value is None.
+        :param entry: Ledger entry.
         :type entry: JSON
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
@@ -499,14 +499,11 @@ class ConfidentialLedgerOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        if entry is not None:
-            _json = entry
-        else:
-            _json = None
+        _json = entry
 
         request = build_confidential_ledger_post_ledger_entry_request(
             api_version=api_version,
@@ -596,7 +593,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -692,7 +689,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -766,7 +763,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -843,7 +840,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -905,7 +902,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -971,7 +968,7 @@ class ConfidentialLedgerOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
@@ -1055,8 +1052,8 @@ class ConfidentialLedgerOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-20-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         _json = user_details
