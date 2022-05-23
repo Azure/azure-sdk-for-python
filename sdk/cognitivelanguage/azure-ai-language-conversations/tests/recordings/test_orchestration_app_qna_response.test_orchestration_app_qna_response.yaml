@@ -21,20 +21,11 @@ interactions:
     uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"kind":"ConversationResult","result":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":0.98765355,"targetProjectKind":"QuestionAnswering","result":{"answers":[{"questions":["How''d
-        you sleep last night?","Are you doing good?","Are you feeling well?","How
-        are you doing?","How is the day treating you?","Are you feeling OK?","How
-        are you?","How''s it hangin?","How''s tricks?","Are you doing OK?","Hey, how
-        are you?","How are you feeling?","How are ya?","How are things?","How are
-        you going?","How art thou?","Greetings, Bot. How are you doing?","Are you
-        feeling good?","Are you doing well?","How are things going?","How''s it going?","Say,
-        how are you doing?","How''s the day treating you?","How''s life?","How''s
-        life treating you?","How are you today?","Yo, how are you?","How you doing?","How
-        you doing bot?","How ya doing?","How is the day treating ya?","How''s it hanging?"],"answer":"Great,
-        thanks.","confidenceScore":1.0,"id":58,"source":"qna_chitchat_Professional","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"RestaurantIntent":{"confidenceScore":0.52488893,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137206,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740133,"targetProjectKind":"NonLinked"}}}}}'
+      string: '{"kind":"ConversationResult","result":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":0.98765355,"targetProjectKind":"QuestionAnswering","result":{"answers":[{"questions":[],"answer":"No
+        answer found","confidenceScore":0.0,"id":-1,"metadata":{}}]}},"RestaurantIntent":{"confidenceScore":0.52488893,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137206,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740133,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 99ca4e15-5034-4ed5-aad1-c298099fbf39
+      - 6fa92a2f-7ee2-438e-baf8-7ad562e24d75
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -42,11 +33,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Fri, 20 May 2022 01:05:34 GMT
+      - Mon, 23 May 2022 20:27:42 GMT
       pragma:
       - no-cache
       request-id:
-      - 99ca4e15-5034-4ed5-aad1-c298099fbf39
+      - 6fa92a2f-7ee2-438e-baf8-7ad562e24d75
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -54,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '521'
+      - '306'
     status:
       code: 200
       message: OK

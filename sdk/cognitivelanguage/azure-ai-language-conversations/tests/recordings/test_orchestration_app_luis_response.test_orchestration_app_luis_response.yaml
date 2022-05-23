@@ -28,7 +28,7 @@ interactions:
         Extractor","recognitionSources":["model"]}]}}}}},"ChitChat-QnA":{"confidenceScore":0.6333038,"targetProjectKind":"QuestionAnswering"},"EmailIntent":{"confidenceScore":0.26476184,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.24316412,"targetProjectKind":"NonLinked"}}}}}'
     headers:
       apim-request-id:
-      - 7a98dd73-8e35-415f-bfdf-525b3ef84559
+      - 3374c2c8-cdcf-44f3-a824-a52a6e1458d3
       cache-control:
       - no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type:
@@ -36,11 +36,11 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
       date:
-      - Fri, 20 May 2022 01:05:31 GMT
+      - Mon, 23 May 2022 20:27:41 GMT
       pragma:
       - no-cache
       request-id:
-      - 7a98dd73-8e35-415f-bfdf-525b3ef84559
+      - 3374c2c8-cdcf-44f3-a824-a52a6e1458d3
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -48,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '102'
+      - '70'
     status:
       code: 200
       message: OK

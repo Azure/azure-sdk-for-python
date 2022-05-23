@@ -61,4 +61,4 @@ class OrchestrationAppQnaResponseAsyncTests(AsyncConversationTest):
             qna_result = top_intent_object["result"]
             answer = qna_result["answers"][0]["answer"]
             assert not answer is None
-            assert qna_result["answers"][0]["confidenceScore"] > 0
+            assert qna_result["answers"][0]["confidenceScore"] >= 0

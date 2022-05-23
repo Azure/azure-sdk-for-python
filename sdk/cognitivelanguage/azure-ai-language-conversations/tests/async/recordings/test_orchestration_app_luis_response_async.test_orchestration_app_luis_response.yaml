@@ -23,17 +23,17 @@ interactions:
         Extractor","recognitionSources":["model"]}],"Cuisine":[{"type":"Cuisine","text":"Italian","startIndex":29,"length":7,"score":0.9961355,"modelTypeId":1,"modelType":"Entity
         Extractor","recognitionSources":["model"]}]}}}}},"ChitChat-QnA":{"confidenceScore":0.6333038,"targetProjectKind":"QuestionAnswering"},"EmailIntent":{"confidenceScore":0.26476184,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.24316412,"targetProjectKind":"NonLinked"}}}}}'
     headers:
-      apim-request-id: 61ca8f9c-9d7f-45fe-8c69-6f946991f85b
+      apim-request-id: 9c567b9b-508e-49e6-9a5c-16034fa080a2
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
-      date: Fri, 20 May 2022 01:06:39 GMT
+      date: Mon, 23 May 2022 20:27:46 GMT
       pragma: no-cache
-      request-id: 61ca8f9c-9d7f-45fe-8c69-6f946991f85b
+      request-id: 9c567b9b-508e-49e6-9a5c-16034fa080a2
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
+      x-envoy-upstream-service-time: '53'
     status:
       code: 200
       message: OK
