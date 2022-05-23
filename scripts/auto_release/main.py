@@ -82,7 +82,7 @@ def all_files(path: str, files: List[str]):
 
 def checkout_azure_default_branch():
     usr = 'Azure'
-    branch = 'test_autorest_03_18'
+    branch = 'code-report-update-comparision-category-test1'
     print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
     print_check(f'git fetch {usr} {branch}')
     print_check(f'git checkout {usr}/{branch}')
@@ -173,23 +173,10 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            "dryRun": False,
-            "specFolder": "../azure-rest-api-specs",
-            "headSha": "9ac082c33a7d0d8fa6768bd64e53394ada9baaf9",
-            "headRef": "master",
-            "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
-            "trigger": "continuousIntegration",
-            "changedFiles": [
-                "specification/hdinsight/resource-manager/readme.python.md"
-            ], "relatedReadmeMdFiles": [
-                "specification/hdinsight/resource-manager/readme.md"
-            ],
-            "installInstructionInput": {
-                "isPublic": False,
-                "downloadUrlPrefix": "https://portal.azure-devex-tools.com/api/sdk-dl-pub?p=Azure/13991/azure-sdk-for-python-track2/",
-                "downloadCommandTemplate": "curl -L \"{URL}\" -o {FILENAME}",
-                "trigger": "continuousIntegration"
-            }
+            'headSha': self.get_latest_commit_in_swagger_repo(),
+            'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
+            'specFolder': self.spec_repo,
+            'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
@@ -199,10 +186,14 @@ class CodegenTestPR:
         # generate code
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        with open(self.autorest_result, 'r') as fr:
+            print("#### self.autorest_result", fr.read())
+        
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
+        print(f"generate_result: {generate_result}")
         self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
 
     def prepare_branch_with_readme(self):

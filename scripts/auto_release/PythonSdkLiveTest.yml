@@ -47,9 +47,11 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
           cd azure-rest-api-specs
-          git fetch origin test-hdinsight-03-17
-          git checkout test-hdinsight-03-17
+          git fetch origin bigcat/confluent-test-branch-1
+          git checkout bigcat/confluent-test-branch-1
           cd ..
+
+
 
           # install autorest
           sudo npm install -g n
