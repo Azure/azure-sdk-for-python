@@ -5,7 +5,7 @@
 import time
 import queue
 import logging
-from threading import RLock, Condition, Semaphore
+from threading import RLock
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, Callable, TYPE_CHECKING
 
