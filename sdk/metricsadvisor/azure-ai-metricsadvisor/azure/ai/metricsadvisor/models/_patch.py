@@ -808,6 +808,9 @@ class AzureApplicationInsightsDataFeedSource(generated_models.AzureApplicationIn
         super().__init__(
             query=query, data_source_type="AzureApplicationInsights", authentication_type="Basic", **kwargs
         )
+        self.data_source_type = "AzureApplicationInsights"
+        self.authentication_type = "Basic"
+        self.credential_id = kwargs.get("credential_id", None)
 
     def __repr__(self):
         return (
@@ -1966,7 +1969,7 @@ class IncidentRootCause(msrest.serialization.Model):
         )
 
 
-class MetricFeedback(generated_models.MetricFeedback, dict):
+class MetricFeedback(dict):
     """Feedback base class
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1985,8 +1988,23 @@ class MetricFeedback(generated_models.MetricFeedback, dict):
     :ivar dict[str, str] dimension_key: Required. metric dimension filter.
     """
 
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+    }
+
     def __init__(self, feedback_type, metric_id, dimension_key, **kwargs):
-        super().__init__(feedback_type=feedback_type, metric_id=metric_id, dimension_key=dimension_key, **kwargs)
+        super().__init__(**kwargs)
+        self.feedback_type = feedback_type  # type: str
+        self.id = None
+        self.created_time = None
+        self.user_principal = None
+        self.metric_id = metric_id
+        self.dimension_key = dimension_key
 
     def __repr__(self):
         return (
@@ -2002,7 +2020,7 @@ class MetricFeedback(generated_models.MetricFeedback, dict):
         )
 
 
-class AnomalyFeedback(generated_models.AnomalyFeedback, MetricFeedback):  # pylint:disable=too-many-instance-attributes
+class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2033,15 +2051,68 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, MetricFeedback):  # pyli
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
     """
 
+    _validation = {
+        "feedback_type": {"required": True},
+        "id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_key": {"required": True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "anomaly_detection_configuration_snapshot": {
+            "key": "anomalyDetectionConfigurationSnapshot",
+            "type": "AnomalyDetectionConfiguration",
+        },
+        "value": {"key": "value.anomalyValue", "type": "str"},
+    }
+
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super().__init__(
+        super(AnomalyFeedback, self).__init__(
             feedback_type="Anomaly",
             metric_id=metric_id,
             dimension_key=dimension_key,
-            start_time=start_time,
-            end_time=end_time,
-            value=value,
             **kwargs
+        )
+        self.start_time = start_time
+        self.end_time = end_time
+        self.value = value
+        self.anomaly_detection_configuration_id = kwargs.get(
+            "anomaly_detection_configuration_id", None
+        )
+        self.anomaly_detection_configuration_snapshot = kwargs.get(
+            "anomaly_detection_configuration_snapshot", None
+        )
+
+    @classmethod
+    def _from_generated(cls, anomaly_feedback: generated_models.AnomalyFeedback) -> Optional["AnomalyFeedback"]:
+        if not anomaly_feedback:
+            return None
+        dimension_key = anomaly_feedback.dimension_key
+        return cls(
+            id=anomaly_feedback.id,
+            created_time=anomaly_feedback.created_time,
+            user_principal=anomaly_feedback.user_principal,
+            metric_id=anomaly_feedback.metric_id,
+            dimension_key=dimension_key,
+            start_time=anomaly_feedback.start_time,
+            end_time=anomaly_feedback.end_time,
+            value=anomaly_feedback.value,
+            anomaly_detection_configuration_id=anomaly_feedback.anomaly_detection_configuration_id,
+            anomaly_detection_configuration_snapshot=anomaly_feedback.anomaly_detection_configuration_snapshot,
         )
 
     def __repr__(self):
@@ -2064,7 +2135,7 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, MetricFeedback):  # pyli
         )
 
 
-class ChangePointFeedback(generated_models.ChangePointFeedback, MetricFeedback):
+class ChangePointFeedback(MetricFeedback):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2089,16 +2160,40 @@ class ChangePointFeedback(generated_models.ChangePointFeedback, MetricFeedback):
     :type value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
     """
 
+    _validation = {
+        "feedback_type": {"required": True},
+        "id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_key": {"required": True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "value": {"key": "value.changePointValue", "type": "str"},
+    }
+
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super().__init__(
+        super(ChangePointFeedback, self).__init__(
             feedback_type="ChangePoint",
             metric_id=metric_id,
             dimension_key=dimension_key,
-            start_time=start_time,
-            end_time=end_time,
-            value=value,
             **kwargs
         )
+        self.start_time = start_time
+        self.end_time = end_time
+        self.value = value
 
     def __repr__(self):
         return (
@@ -2117,7 +2212,7 @@ class ChangePointFeedback(generated_models.ChangePointFeedback, MetricFeedback):
         )
 
 
-class CommentFeedback(generated_models.CommentFeedback, MetricFeedback):
+class CommentFeedback(MetricFeedback):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2142,16 +2237,28 @@ class CommentFeedback(generated_models.CommentFeedback, MetricFeedback):
     :type value: str
     """
 
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "value": {"key": "value.commentValue", "type": "str"},
+    }
+
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super().__init__(
+        super(CommentFeedback, self).__init__(
             feedback_type="Comment",
             metric_id=metric_id,
             dimension_key=dimension_key,
-            start_time=start_time,
-            end_time=end_time,
-            value=value,
             **kwargs
         )
+        self.start_time = start_time
+        self.end_time = end_time
+        self.value = value
 
     def __repr__(self):
         return (
@@ -2170,7 +2277,7 @@ class CommentFeedback(generated_models.CommentFeedback, MetricFeedback):
         )
 
 
-class PeriodFeedback(generated_models.PeriodFeedback, MetricFeedback):
+class PeriodFeedback(MetricFeedback):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2193,15 +2300,26 @@ class PeriodFeedback(generated_models.PeriodFeedback, MetricFeedback):
     :type period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
     """
 
+    _attribute_map = {
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+        "period_type": {"key": "value.periodType", "type": "str"},
+        "value": {"key": "value.periodValue", "type": "int"},
+    }
+
     def __init__(self, metric_id, dimension_key, value, period_type, **kwargs):
-        super().__init__(
+        super(PeriodFeedback, self).__init__(
             feedback_type="Period",
             metric_id=metric_id,
             dimension_key=dimension_key,
-            value=value,
-            period_type=period_type,
             **kwargs
         )
+        self.value = value
+        self.period_type = period_type
 
     def __repr__(self):
         return (
@@ -2219,7 +2337,7 @@ class PeriodFeedback(generated_models.PeriodFeedback, MetricFeedback):
         )
 
 
-class DatasourceCredential(generated_models.DatasourceCredential, dict):
+class DatasourceCredential(dict):
     """DatasourceCredential base class.
 
     :param credential_type: Required. Type of data source credential.Constant filled by
@@ -2234,8 +2352,26 @@ class DatasourceCredential(generated_models.DatasourceCredential, dict):
     :keyword str description: Description of data source credential.
     """
 
+    _validation = {
+        "credential_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "id": {"key": "dataSourceCredentialId", "type": "str"},
+        "name": {"key": "dataSourceCredentialName", "type": "str"},
+        "description": {"key": "dataSourceCredentialDescription", "type": "str"},
+    }
+
     def __init__(self, name: str, credential_type: str, **kwargs: Any) -> None:
         super().__init__(name=name, credential_type=credential_type, id=id, **kwargs)
+        self.credential_type = credential_type
+        self.id = None
+        self.name = name
+        self.description = kwargs.pop("description", None)
+
 
     def __repr__(self):
         return "DatasourceCredential(id={}, credential_type={}, name={}, description={})".format(

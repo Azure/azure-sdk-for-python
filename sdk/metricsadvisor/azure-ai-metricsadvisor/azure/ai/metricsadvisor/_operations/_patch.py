@@ -96,17 +96,17 @@ UpdateHelperRetval = Tuple[str, Union[Any, models.DataFeed], Any]
 
 
 class OperationMixinHelpers:
-    @staticmethod
-    def _convert_to_sub_feedback(feedback) -> FeedbackUnion:
+    def _convert_to_sub_feedback(self, feedback) -> FeedbackUnion:
         feedback_type = feedback["feedbackType"]
         if feedback_type == "Anomaly":
-            return models.AnomalyFeedback.from_dict(feedback)
+            generated = self._deserialize(generated_models.AnomalyFeedback, feedback)
+            return models.AnomalyFeedback._from_generated(generated)
         if feedback_type == "ChangePoint":
-            return models.ChangePointFeedback.from_dict(feedback)  # type: ignore
+            return models.ChangePointFeedback._from_generated(feedback)  # type: ignore
         if feedback_type == "Comment":
-            return models.CommentFeedback.from_dict(feedback)  # type: ignore
+            return models.CommentFeedback._from_generated(feedback)  # type: ignore
         if feedback_type == "Period":
-            return models.PeriodFeedback.from_dict(feedback)  # type: ignore
+            return models.PeriodFeedback._from_generated(feedback)  # type: ignore
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
     @staticmethod
