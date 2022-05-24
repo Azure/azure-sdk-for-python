@@ -89,7 +89,7 @@ class BufferedProducer:
             new_events_len = len(events)
         except TypeError:
             new_events_len = 1
-        if self._buffered_queue.maxsize - self._cur_buffered_len < new_events_len:
+        if self._max_buffer_len - self._cur_buffered_len < new_events_len:
             _LOGGER.info(
                 "The buffer for partition %r is full. Attempting to flush before adding %r events.",
                 self.partition_id,
@@ -186,7 +186,6 @@ class BufferedProducer:
                 if (now_time - self._last_send_time > self._max_wait_time) or (self._cur_buffered_len >= self._max_buffer_len):
                     # in the worker, not raising error for flush, users can not handle this
                     self.flush(raise_error=False)
-
             time.sleep(min(self._max_wait_time, 5))
 
     @property
