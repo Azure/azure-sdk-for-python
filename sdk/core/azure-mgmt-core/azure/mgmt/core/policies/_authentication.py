@@ -24,9 +24,11 @@
 #
 # --------------------------------------------------------------------------
 import base64
+import time
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -60,6 +62,82 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
                 return True
 
         return False
+
+
+# pylint:disable=too-few-public-methods
+class _AuxiliaryAuthenticationPolicyBase(object):
+    """Adds auxiliary authorization token header to requests.
+
+    :param ~azure.core.credentials.TokenCredential auxiliary_credentials: auxiliary credential for authorizing requests
+    :param str scopes: required authentication scopes
+    """
+
+    def __init__(self,
+                 auxiliary_credentials,
+                 *scopes,
+                 **kwargs):  # pylint: disable=unused-argument
+        super().__init__()
+        self._auxiliary_credentials = auxiliary_credentials
+        self._scopes = scopes
+        self._aux_tokens = None
+
+    @staticmethod
+    def _enforce_https(request):
+        # type: (PipelineRequest) -> None
+
+        # move 'enforce_https' from options to context, so it persists
+        # across retries but isn't passed to transport implementation
+        option = request.context.options.pop("enforce_https", None)
+
+        # True is the default setting; we needn't preserve an explicit opt in to the default behavior
+        if option is False:
+            request.context["enforce_https"] = option
+
+        enforce_https = request.context.get("enforce_https", True)
+        if enforce_https and not request.http_request.url.lower().startswith("https"):
+            raise ServiceRequestError(
+                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+            )
+
+    def _update_headers(self, headers):
+        """Updates the Authorization header with the auxiliary token.
+
+        :param dict headers: The HTTP Request headers
+        """
+        if self._aux_tokens:
+            headers["x-ms-authorization-auxiliary"] = ', '.join(
+                "Bearer {}".format(token.token) for token in self._aux_tokens)
+
+    @property
+    def _need_new_aux_tokens(self):
+        if not self._aux_tokens:
+            return True
+        for token in self._aux_tokens:
+            if token.expires_on - time.time() < 300:
+                return True
+        return False
+
+
+class AuxiliaryAuthenticationPolicy(_AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy):
+    def _get_auxiliary_tokens(self, *scopes, **kwargs):
+        if self._auxiliary_credentials:
+            return [cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
+        return None
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        """Called before the policy sends a request.
+
+        The base implementation authorizes the request with an auxiliary authorization token.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+        self._enforce_https(request)
+
+        if self._need_new_aux_tokens:
+            self._aux_tokens = self._get_auxiliary_tokens(*self._scopes)
+
+        self._update_headers(request.http_request.headers)
 
 
 def _parse_claims_challenge(challenge):

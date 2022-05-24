@@ -29,7 +29,7 @@ from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
-from azure.mgmt.core.policies import AsyncARMChallengeAuthenticationPolicy
+from azure.mgmt.core.policies import AsyncARMChallengeAuthenticationPolicy, AsyncAuxiliaryAuthenticationPolicy
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -112,3 +112,44 @@ async def test_multiple_claims_challenges():
     # the policy should have returned the error response because it was unable to handle the challenge
     assert response.http_response.status_code == 401
     assert response.http_response.headers["WWW-Authenticate"] == expected_header
+
+
+async def test_auxiliary_authentication_policy():
+    """The auxiliary authentication policy should add a header containing a token from its credential"""
+    first_token = AccessToken("first", int(time.time()) + 3600)
+    second_token = AccessToken("second", int(time.time()) + 3600)
+
+    async def verify_authorization_header(request):
+        assert request.http_request.headers["x-ms-authorization-auxiliary"] ==\
+               ', '.join("Bearer {}".format(token.token) for token in [first_token, second_token])
+        return Mock()
+
+    get_token_calls1 = 0
+    get_token_calls2 = 0
+
+    async def get_token1(_):
+        nonlocal get_token_calls1
+        get_token_calls1 += 1
+        return first_token
+
+    async def get_token2(_):
+        nonlocal get_token_calls2
+        get_token_calls2 += 1
+        return second_token
+
+    fake_credential1 = Mock(get_token=get_token1)
+    fake_credential2 = Mock(get_token=get_token2)
+    policies = [AsyncAuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
+                Mock(send=verify_authorization_header)]
+
+    pipeline = AsyncPipeline(transport=Mock(), policies=policies)
+    await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+
+    assert get_token_calls1 == 1
+    assert get_token_calls2 == 1
+
+    await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+
+    # Didn't need a new token
+    assert get_token_calls1 == 1
+    assert get_token_calls2 == 1

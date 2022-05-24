@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 from azure.core.pipeline.policies import HttpLoggingPolicy
-from ._authentication import ARMChallengeAuthenticationPolicy
+from ._authentication import ARMChallengeAuthenticationPolicy, AuxiliaryAuthenticationPolicy
 from ._base import ARMAutoResourceProviderRegistrationPolicy
 
 
@@ -49,13 +49,18 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     ])
 
 
-__all__ = ["ARMAutoResourceProviderRegistrationPolicy", "ARMChallengeAuthenticationPolicy", "ARMHttpLoggingPolicy"]
+__all__ = ["ARMAutoResourceProviderRegistrationPolicy",
+           "ARMChallengeAuthenticationPolicy",
+           "ARMHttpLoggingPolicy",
+           "AuxiliaryAuthenticationPolicy"]
 
 try:
     # pylint: disable=unused-import
-    from ._authentication_async import AsyncARMChallengeAuthenticationPolicy
+    from ._authentication_async import AsyncARMChallengeAuthenticationPolicy, AsyncAuxiliaryAuthenticationPolicy
     from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
 
-    __all__.extend(["AsyncARMAutoResourceProviderRegistrationPolicy", "AsyncARMChallengeAuthenticationPolicy"])
+    __all__.extend(["AsyncARMAutoResourceProviderRegistrationPolicy",
+                    "AsyncARMChallengeAuthenticationPolicy",
+                    "AsyncAuxiliaryAuthenticationPolicy"])
 except (ImportError, SyntaxError):
     pass  # Async not supported
