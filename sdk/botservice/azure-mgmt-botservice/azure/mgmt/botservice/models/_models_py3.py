@@ -3203,8 +3203,6 @@ class Site(WebChatSite, DirectLineSite):
         self.key2 = None
         self.is_enabled = is_enabled
         self.is_webchat_preview_enabled = is_webchat_preview_enabled
-        self.is_token_enabled = is_token_enabled
-        self.e_tag = e_tag
 
 
 class SiteInfo(msrest.serialization.Model):
@@ -3524,7 +3522,6 @@ class SlackChannelProperties(msrest.serialization.Model):
     _validation = {
         'redirect_action': {'readonly': True},
         'last_submission_id': {'readonly': True},
-        'register_before_o_auth_flow': {'readonly': True},
         'is_validated': {'readonly': True},
         'is_enabled': {'required': True},
     }
@@ -3552,6 +3549,7 @@ class SlackChannelProperties(msrest.serialization.Model):
         verification_token: Optional[str] = None,
         scopes: Optional[str] = None,
         landing_page_url: Optional[str] = None,
+        register_before_o_auth_flow: Optional[bool] = None,
         signing_secret: Optional[str] = None,
         **kwargs
     ):
@@ -3568,6 +3566,9 @@ class SlackChannelProperties(msrest.serialization.Model):
         :paramtype scopes: str
         :keyword landing_page_url: The Slack landing page Url.
         :paramtype landing_page_url: str
+        :keyword register_before_o_auth_flow: Whether to register the settings before OAuth validation
+         is performed. Recommended to True.
+        :paramtype register_before_o_auth_flow: bool
         :keyword signing_secret: The Slack signing secret.
         :paramtype signing_secret: str
         :keyword is_enabled: Required. Whether this channel is enabled for the bot.
@@ -3581,7 +3582,7 @@ class SlackChannelProperties(msrest.serialization.Model):
         self.landing_page_url = landing_page_url
         self.redirect_action = None
         self.last_submission_id = None
-        self.register_before_o_auth_flow = None
+        self.register_before_o_auth_flow = register_before_o_auth_flow
         self.is_validated = None
         self.signing_secret = signing_secret
         self.is_enabled = is_enabled
