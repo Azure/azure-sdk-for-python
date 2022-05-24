@@ -1542,12 +1542,11 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         return self._client.delete_datasource_credential(*credential_id, **kwargs)
 
 
-def patch_sdk():  # pylint: disable=function-redefined
-    pass
-
-
 __all__ = [
     "MetricsAdvisorKeyCredential",
     "MetricsAdvisorClient",
     "MetricsAdvisorAdministrationClient",
 ]
+
+def patch_sdk():  # pylint: disable=function-redefined
+    pass
