@@ -151,7 +151,7 @@ class EventHubConsumer(
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
         
-        custom_endpoint_address = self._client._config.custom_endpoint_address
+        custom_endpoint_address = "{}:{}".format(self._client._config.custom_endpoint_hostname, self._client._config.connection_port)
         transport_type = self._client._config.transport_type # pylint:disable=protected-access
         hostname = urlparse(source.address).hostname
         if transport_type.name == 'AmqpOverWebsocket':

@@ -368,7 +368,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
             hostname = self._address.hostname
-            custom_endpoint_address = self._config.custom_endpoint_address
+            custom_endpoint_address = "{}:{}".format(self._config.custom_endpoint_hostname, self._config.connection_port)
             if self._config.transport_type.name == 'AmqpOverWebsocket':
                 hostname += '/$servicebus/websocket/'
                 if custom_endpoint_address:
