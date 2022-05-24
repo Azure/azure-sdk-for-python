@@ -8,14 +8,8 @@ from __future__ import division
 
 import functools
 import os
-import logging
 from devtools_testutils import PowerShellPreparer
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
-
-try:
-    from cStringIO import StringIO      # Python 2
-except ImportError:
-    from io import StringIO
 
 try:
     # Running locally - use configuration in settings_real.py
