@@ -6,13 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._custom_locations import CustomLocations
-from ._version import VERSION
+from ._custom_locations_operations import CustomLocationsOperations
+from ._resource_sync_rules_operations import ResourceSyncRulesOperations
 
-__version__ = VERSION
-__all__ = ['CustomLocations']
-
-# `._patch.py` is used for handwritten extensions to the generated code
-# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
-from ._patch import patch_sdk
-patch_sdk()
+__all__ = [
+    'CustomLocationsOperations',
+    'ResourceSyncRulesOperations',
+]

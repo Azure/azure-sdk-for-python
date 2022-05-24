@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import CustomLocationsConfiguration
-from .operations import CustomLocationsOperations
+from .operations import CustomLocationsOperations, ResourceSyncRulesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,15 +27,18 @@ class CustomLocations:
 
     :ivar custom_locations: CustomLocationsOperations operations
     :vartype custom_locations:
-     azure.mgmt.extendedlocation.v2021_08_15.aio.operations.CustomLocationsOperations
+     azure.mgmt.extendedlocation.v2021_08_31_preview.aio.operations.CustomLocationsOperations
+    :ivar resource_sync_rules: ResourceSyncRulesOperations operations
+    :vartype resource_sync_rules:
+     azure.mgmt.extendedlocation.v2021_08_31_preview.aio.operations.ResourceSyncRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-08-15". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-08-31-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -56,6 +59,7 @@ class CustomLocations:
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.custom_locations = CustomLocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_sync_rules = ResourceSyncRulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

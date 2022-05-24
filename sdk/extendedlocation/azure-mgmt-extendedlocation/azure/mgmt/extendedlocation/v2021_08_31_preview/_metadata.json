@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-08-15",
-    "total_api_version_list": ["2021-08-15"],
+    "chosen_version": "2021-08-31-preview",
+    "total_api_version_list": ["2021-08-31-preview"],
     "client": {
         "name": "CustomLocations",
         "filename": "_custom_locations",
@@ -97,6 +97,7 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "custom_locations": "CustomLocationsOperations"
+        "custom_locations": "CustomLocationsOperations",
+        "resource_sync_rules": "ResourceSyncRulesOperations"
     }
 }

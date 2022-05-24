@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._custom_locations_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_list_enabled_resource_types_request, build_list_operations_request, build_update_request
+from ...operations._custom_locations_operations import build_create_or_update_request_initial, build_delete_request_initial, build_find_target_resource_group_request, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_list_enabled_resource_types_request, build_list_operations_request, build_update_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -32,7 +32,7 @@ class CustomLocationsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.extendedlocation.v2021_08_15.models
+    :type models: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,10 +58,10 @@ class CustomLocationsOperations:
         :return: An iterator like instance of either CustomLocationOperationsList or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationOperationsList]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationOperationsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomLocationOperationsList"]
         error_map = {
@@ -133,10 +133,10 @@ class CustomLocationsOperations:
         :return: An iterator like instance of either CustomLocationListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomLocationListResult"]
         error_map = {
@@ -213,10 +213,10 @@ class CustomLocationsOperations:
         :return: An iterator like instance of either CustomLocationListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomLocationListResult"]
         error_map = {
@@ -295,7 +295,7 @@ class CustomLocationsOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomLocation, or the result of cls(response)
-        :rtype: ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocation
+        :rtype: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomLocation"]
@@ -304,7 +304,7 @@ class CustomLocationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
 
         
         request = build_get_request(
@@ -352,7 +352,7 @@ class CustomLocationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'CustomLocation')
@@ -411,7 +411,7 @@ class CustomLocationsOperations:
         :param resource_name: Custom Locations name.
         :type resource_name: str
         :param parameters: Parameters supplied to create or update a Custom Location.
-        :type parameters: ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocation
+        :type parameters: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -423,10 +423,10 @@ class CustomLocationsOperations:
         :return: An instance of AsyncLROPoller that returns either CustomLocation or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocation]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomLocation"]
@@ -481,7 +481,7 @@ class CustomLocationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -539,7 +539,7 @@ class CustomLocationsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -602,13 +602,13 @@ class CustomLocationsOperations:
         :param resource_name: Custom Locations name.
         :type resource_name: str
         :param identity: Identity for the resource. Default value is None.
-        :type identity: ~azure.mgmt.extendedlocation.v2021_08_15.models.Identity
+        :type identity: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.Identity
         :param tags: Resource tags. Default value is None.
         :type tags: dict[str, str]
         :param authentication: This is optional input that contains the authentication that should be
          used to generate the namespace. Default value is None.
         :type authentication:
-         ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocationPropertiesAuthentication
+         ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationPropertiesAuthentication
         :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
          deploy CRDs and operators. Default value is None.
         :type cluster_extension_ids: list[str]
@@ -619,7 +619,7 @@ class CustomLocationsOperations:
         :type host_resource_id: str
         :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
          Default value is None.
-        :type host_type: str or ~azure.mgmt.extendedlocation.v2021_08_15.models.HostType
+        :type host_type: str or ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.HostType
         :param namespace: Kubernetes namespace that will be created on the specified cluster. Default
          value is None.
         :type namespace: str
@@ -627,7 +627,7 @@ class CustomLocationsOperations:
         :type provisioning_state: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomLocation, or the result of cls(response)
-        :rtype: ~azure.mgmt.extendedlocation.v2021_08_15.models.CustomLocation
+        :rtype: ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomLocation"]
@@ -636,7 +636,7 @@ class CustomLocationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _parameters = _models.PatchableCustomLocations(identity=identity, tags=tags, authentication=authentication, cluster_extension_ids=cluster_extension_ids, display_name=display_name, host_resource_id=host_resource_id, host_type=host_type, namespace=namespace, provisioning_state=provisioning_state)
@@ -695,10 +695,10 @@ class CustomLocationsOperations:
         :return: An iterator like instance of either EnabledResourceTypesListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_15.models.EnabledResourceTypesListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.extendedlocation.v2021_08_31_preview.models.EnabledResourceTypesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-08-15")  # type: str
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EnabledResourceTypesListResult"]
         error_map = {
@@ -761,3 +761,77 @@ class CustomLocationsOperations:
             get_next, extract_data
         )
     list_enabled_resource_types.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ExtendedLocation/customLocations/{resourceName}/enabledResourceTypes"}  # type: ignore
+
+    @distributed_trace_async
+    async def find_target_resource_group(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        parameters: "_models.CustomLocationFindTargetResourceGroupProperties",
+        **kwargs: Any
+    ) -> Optional["_models.CustomLocationFindTargetResourceGroupResult"]:
+        """Gets matching target resource group for resource sync.
+
+        Returns the target resource group associated with the resource sync rules of the Custom
+        Location that match the rules passed in with the Find Target Resource Group Request.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param resource_name: Custom Locations name.
+        :type resource_name: str
+        :param parameters: Parameters of the find target resource group request.
+        :type parameters:
+         ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationFindTargetResourceGroupProperties
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CustomLocationFindTargetResourceGroupResult, or the result of cls(response)
+        :rtype:
+         ~azure.mgmt.extendedlocation.v2021_08_31_preview.models.CustomLocationFindTargetResourceGroupResult
+         or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CustomLocationFindTargetResourceGroupResult"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-08-31-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'CustomLocationFindTargetResourceGroupProperties')
+
+        request = build_find_target_resource_group_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.find_target_resource_group.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CustomLocationFindTargetResourceGroupResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    find_target_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ExtendedLocation/customLocations/{resourceName}/findTargetResourceGroup"}  # type: ignore
+

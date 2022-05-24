@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import CustomLocation
+from ._models_py3 import CustomLocationFindTargetResourceGroupProperties
+from ._models_py3 import CustomLocationFindTargetResourceGroupResult
 from ._models_py3 import CustomLocationListResult
 from ._models_py3 import CustomLocationOperation
 from ._models_py3 import CustomLocationOperationsList
@@ -17,9 +19,15 @@ from ._models_py3 import EnabledResourceTypesListResult
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import Identity
+from ._models_py3 import MatchExpressionsProperties
 from ._models_py3 import PatchableCustomLocations
+from ._models_py3 import PatchableResourceSyncRule
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
+from ._models_py3 import ResourceSyncRule
+from ._models_py3 import ResourceSyncRuleListResult
+from ._models_py3 import ResourceSyncRulePropertiesSelector
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 
@@ -27,10 +35,13 @@ from ._models_py3 import TrackedResource
 from ._custom_locations_enums import (
     CreatedByType,
     HostType,
+    ResourceIdentityType,
 )
 
 __all__ = [
     'CustomLocation',
+    'CustomLocationFindTargetResourceGroupProperties',
+    'CustomLocationFindTargetResourceGroupResult',
     'CustomLocationListResult',
     'CustomLocationOperation',
     'CustomLocationOperationsList',
@@ -41,11 +52,18 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'Identity',
+    'MatchExpressionsProperties',
     'PatchableCustomLocations',
+    'PatchableResourceSyncRule',
     'ProxyResource',
     'Resource',
+    'ResourceSyncRule',
+    'ResourceSyncRuleListResult',
+    'ResourceSyncRulePropertiesSelector',
     'SystemData',
     'TrackedResource',
     'CreatedByType',
     'HostType',
+    'ResourceIdentityType',
 ]
