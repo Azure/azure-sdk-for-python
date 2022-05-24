@@ -116,6 +116,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
 
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self._connection_verify = kwargs.get("connection_verify")
+
     async def __aenter__(self):
         if self._connection_sharing:
             await self._create_uamqp_connection()
@@ -253,6 +256,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -361,6 +366,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -402,6 +409,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -510,6 +519,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         except ValueError:
@@ -537,6 +548,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         self._handlers.add(handler)
