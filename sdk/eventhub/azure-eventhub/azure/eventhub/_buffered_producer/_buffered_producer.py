@@ -57,6 +57,7 @@ class BufferedProducer:
                 self._check_max_wait_time_future = self._executor.submit(self.check_max_wait_time_worker)
 
     def stop(self, flush=True, timeout_time=None, raise_error=False):
+        
         self._running = False
         if flush:
             with self._lock:
@@ -178,13 +179,14 @@ class BufferedProducer:
 
     def check_max_wait_time_worker(self):
         while self._running:
-            if not self._buffered_queue.empty():
+            if self._cur_buffered_len > 0:
                 now_time = time.time()
                 _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
                 #flush the partition if the producer is running beyond the waiting time or the buffer is at max capacity
                 if (now_time - self._last_send_time > self._max_wait_time) or (self._cur_buffered_len >= self._max_buffer_len):
                     # in the worker, not raising error for flush, users can not handle this
                     self.flush(raise_error=False)
+
             time.sleep(min(self._max_wait_time, 5))
 
     @property
