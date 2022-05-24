@@ -11,6 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
     RoomParticipant,
+    RoomJoinPolicy,
     RoleType
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier, UnknownIdentifier
@@ -30,6 +31,7 @@ class TestRoomsClient(unittest.TestCase):
     valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
     valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
     raw_id = "8:acs:abcd"
+    room_join_policy = RoomJoinPolicy.INVITE_ONLY
     room_participant = RoomParticipant(
         communication_identifier=CommunicationUserIdentifier(
             id=raw_id
@@ -53,6 +55,7 @@ class TestRoomsClient(unittest.TestCase):
                 "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
                 "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "roomJoinPolicy": self.room_join_policy,
                 "participants": [self.json_participant]
             })
 
@@ -62,6 +65,7 @@ class TestRoomsClient(unittest.TestCase):
             response = rooms_client.create_room(
                 valid_from=self.valid_from,
                 valid_until=self.valid_until,
+                room_join_policy=self.room_join_policy,
                 participants=[self.room_participant])
         except:
             raised = True
@@ -71,6 +75,7 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
+        self.assertEqual(self.room_join_policy, response.room_join_policy)
         self.assertListEqual([self.room_participant], response.participants)
 
     def test_update_room(self):
@@ -82,6 +87,7 @@ class TestRoomsClient(unittest.TestCase):
                 "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
                 "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "roomJoinPolicy": self.room_join_policy,
                 "participants": []
             })
 
@@ -91,7 +97,8 @@ class TestRoomsClient(unittest.TestCase):
             response = rooms_client.update_room(
                 room_id=self.room_id,
                 valid_from=self.valid_from,
-                valid_until=self.valid_until)
+                valid_until=self.valid_until,
+                room_join_policy=self.room_join_policy)
         except:
             raised = True
             raise
@@ -100,6 +107,7 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
+        self.assertEqual(self.room_join_policy, response.room_join_policy)
         self.assertListEqual(response.participants, [])
 
     def test_delete_room_raises_error(self):
@@ -118,6 +126,7 @@ class TestRoomsClient(unittest.TestCase):
                 "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
                 "validFrom": self.valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "validUntil": self.valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "roomJoinPolicy": self.room_join_policy,
                 "participants": []
             })
 
@@ -134,6 +143,7 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(self.room_id, response.id)
         self.assertEqual(self.valid_from, response.valid_from)
         self.assertEqual(self.valid_until, response.valid_until)
+        self.assertEqual(self.room_join_policy, response.room_join_policy)
         self.assertListEqual(response.participants, [])
 
     def test_get_room_raises_error(self):

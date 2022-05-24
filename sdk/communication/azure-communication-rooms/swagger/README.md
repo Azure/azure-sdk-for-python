@@ -30,4 +30,5 @@ title: Azure Communication Rooms Service
 add-credential: false
 v3: true
 no-async: false
+models-mode: msrest
 ```
