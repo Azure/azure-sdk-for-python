@@ -18,6 +18,7 @@ from .performatives import OpenFrame, CloseFrame
 from .constants import (
     PORT,
     SECURE_PORT,
+    WEBSOCKET_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
@@ -104,7 +105,8 @@ class Connection(object):
         custom_endpoint = None
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
-            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname,custom_parsed_url.port,custom_parsed_url.path)
+            custom_port = custom_parsed_url.port or WEBSOCKET_PORT
+            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname,custom_port,custom_parsed_url.path)
 
         transport = kwargs.get('transport')
         self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
