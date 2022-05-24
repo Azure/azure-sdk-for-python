@@ -102,7 +102,7 @@ class DataLakeDirectoryClient(PathClient):
             an instance of a AzureSasCredential from azure.core.credentials, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :returns: a DataLakeDirectoryClient
+        :return: a DataLakeDirectoryClient
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
@@ -162,7 +162,7 @@ class DataLakeDirectoryClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A dictionary of response headers.
+        :return: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
@@ -204,7 +204,7 @@ class DataLakeDirectoryClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A dictionary of response headers.
+        :return: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
@@ -327,7 +327,7 @@ class DataLakeDirectoryClient(PathClient):
             The source match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeDirectoryClient
+        :return: DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -421,7 +421,7 @@ class DataLakeDirectoryClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeDirectoryClient for the subdirectory.
+        :return: DataLakeDirectoryClient for the subdirectory.
         """
         subdir = self.get_sub_directory_client(sub_directory)
         subdir.create_directory(metadata=metadata, **kwargs)
@@ -460,7 +460,7 @@ class DataLakeDirectoryClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeDirectoryClient for the subdirectory
+        :return: DataLakeDirectoryClient for the subdirectory
         """
         subdir = self.get_sub_directory_client(sub_directory)
         subdir.delete_directory(**kwargs)
@@ -522,7 +522,7 @@ class DataLakeDirectoryClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeFileClient
+        :return: DataLakeFileClient
         """
         file_client = self.get_file_client(file)
         file_client.create_file(**kwargs)

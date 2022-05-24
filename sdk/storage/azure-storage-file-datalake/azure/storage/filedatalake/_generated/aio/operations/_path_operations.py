@@ -135,8 +135,8 @@ class PathOperations:
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :returns: None, or the result of cls(response)
-        :rtype: None or Dict[str, Union[str, datetime]]
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -990,8 +990,8 @@ class PathOperations:
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :returns: None, or the result of cls(response)
-        :rtype: None or Dict[str, Union[str, datetime]]
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]

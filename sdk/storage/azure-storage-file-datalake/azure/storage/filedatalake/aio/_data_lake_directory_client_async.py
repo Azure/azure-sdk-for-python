@@ -128,7 +128,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A dictionary of response headers.
+        :return: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
@@ -181,7 +181,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A dictionary of response headers.
+        :return: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
@@ -294,7 +294,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The source match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeDirectoryClient
+        :return: DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -388,7 +388,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeDirectoryClient for the subdirectory.
+        :return: DataLakeDirectoryClient for the subdirectory.
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.create_directory(metadata=metadata, **kwargs)
@@ -427,7 +427,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeDirectoryClient for the subdirectory
+        :return: DataLakeDirectoryClient for the subdirectory
         """
         subdir = self.get_sub_directory_client(sub_directory)
         await subdir.delete_directory(**kwargs)
@@ -489,7 +489,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: DataLakeFileClient
+        :return: DataLakeFileClient
         """
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)
