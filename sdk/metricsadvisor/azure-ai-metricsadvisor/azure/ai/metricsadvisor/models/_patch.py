@@ -10,9 +10,9 @@ import datetime
 from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 import msrest
+from azure.core import CaseInsensitiveEnumMeta
 from . import _models as generated_models
 from . import _enums as generated_enums
-from azure.core import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
     from .._operations._patch import DataFeedSourceUnion
@@ -372,7 +372,8 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             DataFeedRollupType._to_generated(rollup_type)
         retval = generated_models.DataFeed(
             data_source_parameter=kwargs.pop(
-                "dataSourceParameter", TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source)  # type: ignore
+                "dataSourceParameter",
+                TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source)  # type: ignore
             ),
             id=kwargs.pop("id", self.id),
             name=kwargs.pop("dataFeedName", None) or self.name,
