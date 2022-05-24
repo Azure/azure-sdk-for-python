@@ -59,7 +59,8 @@ class BufferedProducer:
     async def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
         if flush:
-            await self.flush(timeout_time=timeout_time, raise_error=raise_error)
+            async with self._lock:
+                await self.flush(timeout_time=timeout_time, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -88,14 +89,15 @@ class BufferedProducer:
         except TypeError:
             new_events_len = 1
 
-        if self._buffered_queue.maxsize - self._cur_buffered_len < new_events_len:
+        if self._max_buffer_len - self._cur_buffered_len < new_events_len:
             _LOGGER.info(
                 "The buffer for partition %r is full. Attempting to flush before adding %r events.",
                 self.partition_id,
                 new_events_len
             )
             # flush the buffer
-            await self.flush(timeout_time=timeout_time)
+            async with self._lock:
+                await self.flush(timeout_time=timeout_time)
 
         
         if timeout_time and time.time() > timeout_time:
@@ -181,7 +183,7 @@ class BufferedProducer:
 
     async def check_max_wait_time_worker(self):
         while self._running:
-            if not self._buffered_queue.empty():
+            if self._max_buffer_len > 0:
                 now_time = time.time()
                 _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
                 #flush the partition if its beyond the waiting time or the buffer is at max capacity
