@@ -31,7 +31,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.keep_alive = kwargs.get("keep_alive", 30)
         self.timeout = kwargs.get("timeout", 60)  # type: float
-    
+
         self.custom_endpoint_address = kwargs.get("custom_endpoint_address")  # type: Optional[str]
         self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
         self.connection_port = DEFAULT_AMQPS_PORT
