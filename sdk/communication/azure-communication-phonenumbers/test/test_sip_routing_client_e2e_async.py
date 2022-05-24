@@ -37,141 +37,131 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         loop.run_until_complete(coroutine)
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_retrieval_with_token_auth(self):
-        raised = False
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = async_create_token_credential()
-        client = SipRoutingClient(endpoint, credential)
-        
-        try:
-            await client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception" + ex + " was thrown"
+    async def test_get_trunks(self):
+        trunks = await self._sip_routing_client.get_trunks()
+        assert trunks is not None, "No trunks were returned."
+        self._trunks_are_equal(trunks,self.TRUNKS), "Trunks are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_get_trunks(self):
-        raised = False
-
-        try:
-            trunks = await self._sip_routing_client.get_trunks()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    async def test_get_trunks_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        trunks = await client.get_trunks()
         assert trunks is not None, "No trunks were returned."
         self._trunks_are_equal(trunks,self.TRUNKS), "Trunks are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_routes(self):
-        raised = False
         await self._sip_routing_client.set_routes(self.ROUTES)
-
-        try:
-            routes = await self._sip_routing_client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+        routes = await self._sip_routing_client.get_routes()
+        assert routes is not None, "No routes were returned."
+        self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_get_routes_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        await self._sip_routing_client.set_routes(self.ROUTES)
+        routes = await client.get_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_set_trunks(self):
-        raised = False
         new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
+        await self._sip_routing_client.set_trunks(new_trunks)
+        result_trunks = await self._sip_routing_client.get_trunks()
+        assert result_trunks is not None, "No trunks were returned."
+        self._trunks_are_equal(result_trunks,new_trunks), "Trunks are not equal."
 
-        try:
-            await self._sip_routing_client.set_trunks(new_trunks)
-            result_trunks = await self._sip_routing_client.get_trunks()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_set_trunks_from_managed_identity(self):
+        new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
+        client = self._get_sip_client_managed_identity()
+        await client.set_trunks(new_trunks)
+        result_trunks = await client.get_trunks()
         assert result_trunks is not None, "No trunks were returned."
         self._trunks_are_equal(result_trunks,new_trunks), "Trunks are not equal."
     
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_set_routes(self):
-        raised = False
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
+        await self._sip_routing_client.set_routes(self.ROUTES)
+        await self._sip_routing_client.set_routes(new_routes)
+        result_routes = await self._sip_routing_client.get_routes()
+        assert result_routes is not None, "No routes were returned."
+        self._routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
-        try:
-            await self._sip_routing_client.set_routes(self.ROUTES)
-            await self._sip_routing_client.set_routes(new_routes)
-            result_routes = await self._sip_routing_client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_set_routes_from_managed_identity(self):
+        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
+        client = self._get_sip_client_managed_identity()
+        await client.set_routes(self.ROUTES)
+        await client.set_routes(new_routes)
+        result_routes = await client.get_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_delete_trunk(self):
-        raised = False
         trunk_to_delete = self.TRUNKS[1].fqdn
-
-        try:
-            await self._sip_routing_client.delete_trunk(trunk_to_delete)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
+        await self._sip_routing_client.delete_trunk(trunk_to_delete)
         new_trunks = await self._sip_routing_client.get_trunks()
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0]]), "Trunk was not deleted."
 
-        assert raised is False, "Exception:" + ex + " was thrown."
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_delete_trunk_from_managed_identity(self):
+        trunk_to_delete = self.TRUNKS[1].fqdn
+        client = self._get_sip_client_managed_identity()
+        await client.delete_trunk(trunk_to_delete)
+        new_trunks = await client.get_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0]]), "Trunk was not deleted."
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_add_trunk(self):
-        raised = False
         new_trunk = SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)
-
-        try:
-            await self._sip_routing_client.set_trunk(new_trunk)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
+        await self._sip_routing_client.set_trunk(new_trunk)
         new_trunks = await self._sip_routing_client.get_trunks()
-        assert raised is False, "Exception:" + ex + " was thrown."
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_add_trunk_from_managed_identity(self):
+        new_trunk = SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)
+        client = self._get_sip_client_managed_identity()
+        await client.set_trunk(new_trunk)
+        new_trunks = await client.get_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
     
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_trunk(self):
-        raised = False
+        trunk = await self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
+        assert trunk is not None, "No trunk was returned."
+        self._trunks_are_equal([trunk],[self.TRUNKS[0]]), "Returned trunk does not match the required trunk."
 
-        try:
-            trunk = await self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_get_trunk_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        trunk = await client.get_trunk(self.TRUNKS[0].fqdn)
         assert trunk is not None, "No trunk was returned."
         self._trunks_are_equal([trunk],[self.TRUNKS[0]]), "Returned trunk does not match the required trunk."
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_set_trunk(self):
-        raised = False
         modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
-
-        try:
-            await self._sip_routing_client.set_trunk(modified_trunk)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
+        await self._sip_routing_client.set_trunk(modified_trunk)
         new_trunks = await self._sip_routing_client.get_trunks()
-        assert raised is False, "Exception:" + ex + " was thrown."
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_set_trunk_from_managed_identity(self):
+        modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
+        client = self._get_sip_client_managed_identity()
+        await client.set_trunk(modified_trunk)
+        new_trunks = await client.get_trunks()
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
+
+    def _get_sip_client_managed_identity(self):
+        endpoint, accesskey = parse_connection_str(self.connection_str)
+        credential = async_create_token_credential()
+        return SipRoutingClient(endpoint, credential)
 
     def _trunks_are_equal(self, response_trunks, request_trunks):
         assert len(response_trunks) == len(request_trunks)

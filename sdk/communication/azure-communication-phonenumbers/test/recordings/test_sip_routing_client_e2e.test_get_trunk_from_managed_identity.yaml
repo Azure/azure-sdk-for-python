@@ -4,6 +4,10 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '14'
       Content-Type:
@@ -11,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 23 May 2022 17:41:18 GMT
+      - Mon, 23 May 2022 12:01:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -20,26 +24,36 @@ interactions:
     body:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
-      content-type: application/json; charset=utf-8
-      date: Mon, 23 May 2022 17:41:17 GMT
-      ms-cv: 5dLeLfV6N0+qp68ERFlw2Q.0
-      strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 277ms
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 May 2022 12:01:08 GMT
+      ms-cv:
+      - rmW1g9yIfkKDrK4bQLvxQw.0
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 339ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
-    body: ''
+    body: null
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 23 May 2022 17:41:19 GMT
+      - Mon, 23 May 2022 12:01:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -48,22 +62,32 @@ interactions:
     body:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
-      content-type: application/json; charset=utf-8
-      date: Mon, 23 May 2022 17:41:17 GMT
-      ms-cv: YZFpybMfw0arS8W8GDeQeQ.0
-      strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 206ms
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 May 2022 12:01:09 GMT
+      ms-cv:
+      - 4HZVmbr6fEOXk4+s+Tww1g.0
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 253ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
     body: '{"trunks": {"sbs1.sipconfigtest.com": null, "sbs2.sipconfigtest.com": null}}'
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '76'
       Content-Type:
@@ -71,7 +95,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 23 May 2022 17:41:19 GMT
+      - Mon, 23 May 2022 12:01:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -80,23 +104,33 @@ interactions:
     body:
       string: '{"trunks":{},"routes":[]}'
     headers:
-      content-type: application/json; charset=utf-8
-      date: Mon, 23 May 2022 17:41:18 GMT
-      ms-cv: HRqC9h2tBE+9EpvhkGLbEA.0
-      strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 377ms
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 May 2022 12:01:09 GMT
+      ms-cv:
+      - 8Al9DThBEUa5JFIjuS941w.0
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 387ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
     body: '{"trunks": {"sbs1.sipconfigtest.com": {"sipSignalingPort": 1122}, "sbs2.sipconfigtest.com":
       {"sipSignalingPort": 1123}}}'
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '120'
       Content-Type:
@@ -104,7 +138,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 23 May 2022 17:41:19 GMT
+      - Mon, 23 May 2022 12:01:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -113,43 +147,55 @@ interactions:
     body:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
-      content-type: application/json; charset=utf-8
-      date: Mon, 23 May 2022 17:41:19 GMT
-      ms-cv: QobxS5cZkk68/pCiSoRSUQ.0
-      strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 963ms
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 May 2022 12:01:10 GMT
+      ms-cv:
+      - fLd9o2baBUCx0gzyQtLZ+A.0
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 615ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
-    body: ''
+    body: null
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Mon, 23 May 2022 17:41:20 GMT
-      x-ms-return-client-request-id:
-      - 'true'
     method: GET
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
-      content-type: application/json; charset=utf-8
-      date: Mon, 23 May 2022 17:41:19 GMT
-      ms-cv: TEPgXVyVdkGTQOmrWQrenQ.0
-      strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 224ms
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 May 2022 12:01:12 GMT
+      ms-cv:
+      - 5hgplNTEqkawK1xCt0IabQ.0
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 226ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 version: 1

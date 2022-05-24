@@ -27,134 +27,123 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         self.recording_processors.extend([URIReplacerProcessor()])
         self._sip_routing_client.set_routes([])
         self._sip_routing_client.set_trunks(self.TRUNKS)
-
-    def test_retrieval_with_token_auth(self):
-        raised = False
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        client = SipRoutingClient(endpoint, credential)
-        
-        try:
-            client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception" + ex + " was thrown"
+    
+    def test_get_trunks_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        trunks = client.get_trunks()
+        assert trunks is not None, "No trunks were returned."
+        self._trunks_are_equal(trunks,self.TRUNKS)
 
     def test_get_trunks(self):
-        raised = False
+        trunks = self._sip_routing_client.get_trunks()
+        assert trunks is not None, "No trunks were returned."
+        self._trunks_are_equal(trunks,self.TRUNKS)
 
-        try:
-            trunks = self._sip_routing_client.get_trunks()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_get_trunks_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        trunks = client.get_trunks()
         assert trunks is not None, "No trunks were returned."
         self._trunks_are_equal(trunks,self.TRUNKS)
 
     def test_get_routes(self):
-        raised = False
         self._sip_routing_client.set_routes(self.ROUTES)
+        routes = self._sip_routing_client.get_routes()
+        assert routes is not None, "No routes were returned."
+        self._routes_are_equal(routes,self.ROUTES)
 
-        try:
-            routes = self._sip_routing_client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_get_routes_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        client.set_routes(self.ROUTES)
+        routes = client.get_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
     def test_set_trunks(self):
-        raised = False
         new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
+        self._sip_routing_client.set_trunks(new_trunks)
+        result_trunks = self._sip_routing_client.get_trunks()
+        assert result_trunks is not None, "No trunks were returned."
+        self._trunks_are_equal(result_trunks,new_trunks)
 
-        try:
-            self._sip_routing_client.set_trunks(new_trunks)
-            result_trunks = self._sip_routing_client.get_trunks()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_set_trunks_from_managed_identity(self):
+        new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
+        client = self._get_sip_client_managed_identity()
+        client.set_trunks(new_trunks)
+        result_trunks = client.get_trunks()
         assert result_trunks is not None, "No trunks were returned."
         self._trunks_are_equal(result_trunks,new_trunks)
 
     def test_set_routes(self):
-        raised = False
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
+        self._sip_routing_client.set_routes(self.ROUTES)
+        self._sip_routing_client.set_routes(new_routes)
+        result_routes = self._sip_routing_client.get_routes()
+        assert result_routes is not None, "No routes were returned."
+        self._routes_are_equal(result_routes,new_routes)
 
-        try:
-            self._sip_routing_client.set_routes(self.ROUTES)
-            self._sip_routing_client.set_routes(new_routes)
-            result_routes = self._sip_routing_client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_set_routes_from_managed_identity(self):
+        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
+        client = self._get_sip_client_managed_identity()
+        client.set_routes(self.ROUTES)
+        client.set_routes(new_routes)
+        result_routes = client.get_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
 
     def test_delete_trunk(self):
-        raised = False
         trunk_to_delete = self.TRUNKS[1].fqdn
-
-        try:
-            self._sip_routing_client.delete_trunk(trunk_to_delete)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
+        self._sip_routing_client.delete_trunk(trunk_to_delete)
         new_trunks = self._sip_routing_client.get_trunks()
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0]])
 
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_delete_trunk_from_managed_identity(self):
+        trunk_to_delete = self.TRUNKS[1].fqdn
+        client = self._get_sip_client_managed_identity()
+        client.delete_trunk(trunk_to_delete)
+        new_trunks = client.get_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0]])
 
     def test_add_trunk(self):
-        raised = False
         new_trunk = SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)
-
-        try:
-            self._sip_routing_client.set_trunk(new_trunk)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
+        self._sip_routing_client.set_trunk(new_trunk)
         new_trunks = self._sip_routing_client.get_trunks()
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
 
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_add_trunk_from_managed_identity(self):
+        new_trunk = SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)
+        client = self._get_sip_client_managed_identity()
+        client.set_trunk(new_trunk)
+        new_trunks = client.get_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
 
     def test_get_trunk(self):
-        raised = False
-        try:
-            trunk = self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
-        except Exception as e:
-            raised = True
-            ex = str(e)
+        trunk = self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
+        assert trunk is not None, "No trunk was returned."
+        trunk == self.TRUNKS[0]
 
-        assert raised is False, "Exception:" + ex + " was thrown."
+    def test_get_trunk_from_managed_identity(self):
+        client = self._get_sip_client_managed_identity()
+        trunk = client.get_trunk(self.TRUNKS[0].fqdn)
         assert trunk is not None, "No trunk was returned."
         trunk == self.TRUNKS[0]
 
     def test_set_trunk(self):
-        raised = False
         modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
-        try:
-            self._sip_routing_client.set_trunk(modified_trunk)
-
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
+        self._sip_routing_client.set_trunk(modified_trunk)
         new_trunks = self._sip_routing_client.get_trunks()
-        assert raised is False, "Exception:" + ex + " was thrown."
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
+    
+    def test_set_trunk_from_managed_identity(self):
+        modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
+        client = self._get_sip_client_managed_identity()
+        client.set_trunk(modified_trunk)
+        new_trunks = client.get_trunks()
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
+
+    def _get_sip_client_managed_identity(self):
+        endpoint, accesskey = parse_connection_str(self.connection_str)
+        credential = create_token_credential()
+        return SipRoutingClient(endpoint, credential)
 
     def _trunks_are_equal(self, response_trunks, request_trunks):
         assert len(response_trunks) == len(request_trunks), "Trunks have different length."
