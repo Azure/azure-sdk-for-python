@@ -1,6 +1,6 @@
 # Release History
 
-## 10.0.0 (2022-05-19)
+## 10.0.0 (2022-05-24)
 
 **Breaking changes**
 
