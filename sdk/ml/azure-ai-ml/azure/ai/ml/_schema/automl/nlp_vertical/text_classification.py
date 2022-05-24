@@ -9,12 +9,10 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 from azure.ai.ml.constants import AutoMLConstants
 from azure.ai.ml._schema.core.fields import fields, StringTransformedEnum
 from azure.ai.ml._schema.automl.nlp_vertical.nlp_vertical import NlpVerticalSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from marshmallow import post_load
 
 
-@experimental
 class TextClassificationSchema(NlpVerticalSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.TEXT_CLASSIFICATION,

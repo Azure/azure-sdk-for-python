@@ -122,6 +122,7 @@ class ArmStr(Field):
         return schema
 
     def _serialize(self, value, attr, obj, **kwargs):
+        # TODO: (1795017) Improve pre-serialization checks
         if isinstance(value, str):
             return f"{ARM_ID_PREFIX}{value}"
         elif value is None and not self.required:
@@ -148,7 +149,10 @@ class ArmVersionedStr(ArmStr):
         super().__init__(**kwargs)
 
     def _serialize(self, value, attr, obj, **kwargs):
-        return super()._serialize(value, attr, obj, **kwargs)
+        if isinstance(value, str) and value.startswith(ARM_ID_PREFIX):
+            return value
+        else:
+            return super()._serialize(value, attr, obj, **kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
         arm_id = super()._deserialize(value, attr, data, **kwargs)
@@ -298,7 +302,7 @@ class UnionField(fields.Field):
 
             except ValidationError as e:
                 errors.extend(e.messages)
-            except (TypeError, ValueError, ValidationException) as e:
+            except (TypeError, ValueError, AttributeError, ValidationException) as e:
                 errors.extend([str(e)])
         raise ValidationError(message=errors, field_name=attr)
 
@@ -308,7 +312,18 @@ class UnionField(fields.Field):
             try:
                 return schema.deserialize(value, attr, data, **kwargs)
             except ValidationError as e:
-                if hasattr(schema, "schema") and isinstance(schema.schema, PathAwareSchema):
+                # Revert base path to original path when job schema fail to deserialize job. For example, when load
+                # parallel job with component file reference starting with FILE prefex, maybe first CommandSchema will
+                # load component yaml according to AnonymousCommandComponentSchema, and YamlFileSchema will update base
+                # path. When CommandSchema fail to load, then Parallelschema will load component yaml according to
+                # AnonymousParallelComponentSchema, but base path now is incorrect, and will raise path not found error
+                # when load component yaml file.
+                if (
+                    hasattr(schema, "name")
+                    and schema.name == "jobs"
+                    and hasattr(schema, "schema")
+                    and isinstance(schema.schema, PathAwareSchema)
+                ):
                     # use old base path to recover original base path
                     schema.schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.old_base_path
                     # recover base path of parent schema

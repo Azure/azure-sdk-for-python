@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ObjectDetectionPrimaryMetrics,
     TaskType,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 
 
@@ -25,7 +24,6 @@ class ImageObjectDetectionBaseSchema(ImageVerticalSchema):
     search_space = fields.List(NestedField(ImageModelDistributionSettingsObjectDetectionSchema()))
 
 
-@experimental
 class ImageObjectDetectionSchema(ImageObjectDetectionBaseSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.IMAGE_OBJECT_DETECTION,
@@ -58,7 +56,6 @@ class ImageObjectDetectionSchema(ImageObjectDetectionBaseSchema):
         return job
 
 
-@experimental
 class ImageInstanceSegmentationSchema(ImageObjectDetectionBaseSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.IMAGE_INSTANCE_SEGMENTATION,

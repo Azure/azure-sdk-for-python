@@ -19,8 +19,10 @@ from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimit
 from azure.ai.ml.entities._job.automl.training_settings import ClassificationTrainingSettings
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ClassificationJob(AutoMLTabular):
     """
     Configuration for AutoML Classification Job.

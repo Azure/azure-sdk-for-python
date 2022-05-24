@@ -22,8 +22,10 @@ from azure.ai.ml.entities._job.automl.image.automl_image_classification_base imp
 )
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
     """
     Configuration for AutoML multi-label Image Classification job.
@@ -178,7 +180,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         if inside_pipeline:
             schema_dict = ImageClassificationMultilabelNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         else:
-            schema_dict = ImageClassificationMultilabelSchema(scontext={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
         return schema_dict
 

@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
-from typing import Dict, Union
-
-from pydash import get
+from typing import Dict, Union, Optional
 
 from azure.ai.ml._schema.pipeline import PipelineJobSchema
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -24,6 +22,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     JobBaseData,
+    JobOutput as RestJobOutput,
     PipelineJob as RestPipelineJob,
     ManagedIdentity,
     UserIdentity,
@@ -50,6 +49,39 @@ from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, Error
 
 
 class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
+    """
+    Pipeline job. Please use @pipeline decorator to create a PipelineJob, not recommended instantiating it directly.
+
+    :param component: Pipeline component version. Used to validate given value against
+    :type component: _PipelineComponent
+    :param inputs: Inputs to the pipeline job.
+    :type inputs: dict[str, Union[Input, str, bool, int, float]]
+    :param outputs: Outputs the pipeline job.
+    :type outputs: dict[str, Output]
+    :param name: Name of the PipelineJob.
+    :type name: str
+    :param description: Description of the pipeline job.
+    :type description: str
+    :param display_name: Display name of the pipeline job.
+    :type display_name: str
+    :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
+    :type experiment_name: str
+    :param jobs: Pipeline component node name to component object.
+    :type jobs: dict[str, BaseNode]
+    :param settings: Setting of pipeline job.
+    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
+    :param identity: Identity that training job will use while running on compute.
+    :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
+    :param compute: Compute target name of the built pipeline.
+    :type compute: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param schedule: Schedule definition of job. If no schedule is provided, the job will run once immediately after it is submitted.
+    :type schedule: Union[~azure.ai.ml.entities.CronSchedule, ~azure.ai.ml.entities.RecurrenceSchedule]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    """
+
     def __init__(
         self,
         *,
@@ -68,34 +100,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
         schedule: Union[CronSchedule, RecurrenceSchedule] = None,
         **kwargs,
     ):
-        """
-        Initialize a PipelineJob instance. Not recommended to be created directly.
-
-        :param component: Pipeline component version. Used to validate given value against
-        :type component: _PipelineComponent
-        :param inputs: Inputs to the pipeline job.
-        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
-        :param outputs: Outputs the pipeline job.
-        :type outputs: Dict[str, Output]
-        :param name: Name of the PipelineJob.
-        :type name: str
-        :param jobs: Pipeline component node name to component object.
-        :type jobs: Dict[str, BaseNode]
-        :param compute: The compute target name of built pipeline.
-            The priority of compute target assignment goes like: module's run settings >
-            sub pipeline's default compute target > parent pipeline's default compute target.
-        :type compute: str
-        :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
-        :type experiment_name: str
-        :param identity: Identity that training job will use while running on compute.
-        :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
-        :param schedule: Schedule definition of job. If no schedule is provided, the job will run once immediately after it is submitted.
-        :type schedule:
-        :param tags: The tags of pipeline component.
-        :type tags: Dict[str, str]
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        """
         # initialize io
         inputs, outputs = inputs or {}, outputs or {}
         if isinstance(component, _PipelineComponent) and component._source == ComponentSource.DSL:
@@ -154,20 +158,56 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
                 )
         self._remove_pipeline_input()
         self.compute = compute
-        self.settings = settings if settings else PipelineJobSettings()
+        self._settings = settings if settings else PipelineJobSettings()
         self.identity = identity
-        self.schedule = schedule
+        self._schedule = schedule
         # TODO: remove default code & environment?
         self._default_code = None
         self._default_environment = None
 
     @property
     def inputs(self) -> InputsAttrDict:
+        """Inputs of the pipeline job.
+
+        :return: Inputs of the pipeline job.
+        :rtype: dict
+        """
         return self._inputs
 
     @property
     def outputs(self) -> OutputsAttrDict:
+        """Outputs of the pipeline job.
+
+        :return: Outputs of the pipeline job.
+        :rtype: dict
+        """
         return self._outputs
+
+    @property
+    def schedule(self) -> Optional[Union[CronSchedule, RecurrenceSchedule]]:
+        """Schedule of the pipeline job.
+
+        :return: Schedule of the pipeline job.
+        :rtype: Optional[Union[~azure.ai.ml.entities.CronSchedule, ~azure.ai.ml.entities.RecurrenceSchedule]]
+        """
+        return self._schedule
+
+    @schedule.setter
+    def schedule(self, value):
+        self._schedule = value
+
+    @property
+    def settings(self) -> PipelineJobSettings:
+        """Settings of the pipeline job.
+
+        :return: Settings of the pipeline job.
+        :rtype: ~azure.ai.ml.entities.PipelineJobSettings
+        """
+        return self._settings
+
+    @settings.setter
+    def settings(self, value):
+        self._settings = value
 
     def _validate(self, raise_error: bool = False) -> None:
         """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
@@ -320,9 +360,15 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
                 if "type" in node and node["type"] == NodeType.SWEEP:
                     sub_nodes[node_name] = Sweep._from_rest_object(node)
                 elif "type" in node and node["type"] == NodeType.AUTOML:
-                    # resolve outputs from rest
+                    # rest dict outputs -> Output objects
                     outputs = AutoMLJob._from_rest_outputs(node.get("outputs"))
-                    node["outputs"] = {key: val._to_dict() for key, val in outputs.items()}
+                    # Output objects -> yaml dict outputs
+                    parsed_outputs = {}
+                    for key, val in outputs.items():
+                        if isinstance(val, Output):
+                            val = val._to_dict()
+                        parsed_outputs[key] = val
+                    node["outputs"] = parsed_outputs
                     sub_nodes[node_name] = AutoMLJob._load_from_dict(
                         node,
                         context={BASE_PATH_CONTEXT_KEY: "./"},

@@ -690,3 +690,5 @@ class AutoMLNodeIOMixin(NodeIOMixin):
         # add a inputs field to align with other nodes
         self.inputs = {}
         super(AutoMLNodeIOMixin, self).__init__(**kwargs)
+        if getattr(self, "outputs", None):
+            self._outputs = self._build_outputs_dict_without_meta(self.outputs or {})

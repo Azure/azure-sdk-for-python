@@ -33,13 +33,19 @@ initialize_logger_info(module_logger, terminator="")
 
 
 def polling_wait(
-    poller: Union[LROPoller, Future], message: str = None, start_time: float = None, is_local=False
+    poller: Union[LROPoller, Future],
+    message: str = None,
+    start_time: float = None,
+    is_local=False,
+    timeout=LROConfigurations.POLLING_TIMEOUT,
 ) -> Any:
     """Print out status while polling and time of operation once completed.
 
     :param Union[LROPoller, concurrent.futures.Future] poller: An poller which will return status update via function done().
     :param (str, optional) message: Message to print out before starting operation write-out.
     :param (float, optional) start_time: Start time of operation.
+    :param (bool, optional) is_local: If poller is for a local endpoint, so the timeout is removed.
+    :param (int, optional) timeout: New value to overwrite the default timeout.
     """
     module_logger.info(f"{message}")
 
@@ -52,9 +58,12 @@ def polling_wait(
             module_logger.info(".")
             time.sleep(LROConfigurations.SLEEP_TIME)
     else:
-        poller.result(timeout=LROConfigurations.POLLING_TIMEOUT)
+        poller.result(timeout=timeout)
 
-    module_logger.info("Done ")
+    if poller.done():
+        module_logger.info("Done ")
+    else:
+        module_logger.warning("Timeout waiting for long running operation")
 
     if start_time:
         end_time = time.time()

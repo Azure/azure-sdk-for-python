@@ -32,22 +32,16 @@ from ..._schema import PathAwareSchema
 
 
 class ParallelComponent(Component, ParameterizedParallel):
-    """parallel component version, used to define an parallel component.
+    """Parallel component version, used to define a parallel component.
 
     :param name: Name of the component.
     :type name: str
     :param version: Version of the component.
     :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
-    :type id: str
-    :param type:  Type of the component, supported is 'parallel'.
-    :type type: str
     :param description: Description of the component.
     :type description: str
-    :param tags: Internal use only.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param properties: Internal use only.
-    :type properties: dict
     :param display_name: Display name of the component.
     :type display_name: str
     :param retry_settings: parallel component run failed retry
@@ -71,7 +65,7 @@ class ParallelComponent(Component, ParameterizedParallel):
     :param input_data: The input data.
     :type input_data: str
     :param resources: Compute Resource configuration for the component.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :type resources: Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
@@ -80,8 +74,6 @@ class ParallelComponent(Component, ParameterizedParallel):
     :type code: str
     :param instance_count: promoted property from resources.instance_count
     :type instance_count: int
-    :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
     """
 
     def __init__(
@@ -168,6 +160,12 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     @property
     def instance_count(self) -> int:
+        """
+        Return value of promoted property resources.instance_count.
+
+        :return: Value of resources.instance_count.
+        :rtype: Optional[int]
+        """
         return self.resources.instance_count if self.resources else None
 
     @instance_count.setter
@@ -181,6 +179,13 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     @property
     def code(self) -> str:
+        """
+        Return value of promoted property task.code,
+        which is a local or remote path pointing at source code.
+
+        :return: Value of task.code.
+        :rtype: Optional[str]
+        """
         return self.task.code if self.task else None
 
     @code.setter
@@ -194,6 +199,13 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     @property
     def environment(self) -> str:
+        """
+        Return value of promoted property task.environment,
+        indicate the environment that training job will run in.
+
+        :return: Value of task.environment.
+        :rtype: Optional[Environment, str]
+        """
         return self.task.environment if self.task else None
 
     @environment.setter

@@ -22,8 +22,10 @@ from azure.ai.ml.entities._job.automl.image.automl_image_classification_base imp
 )
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ImageClassificationJob(AutoMLImageClassificationBase):
     """
     Configuration for AutoML multi-class Image Classification job.

@@ -113,7 +113,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         number_of_workers: int = None,
         optimizer: Union[str, StochasticOptimizer] = None,
         random_seed: int = None,
-        split_ratio: float = None,
         step_lr_gamma: float = None,
         step_lr_step_size: int = None,
         training_batch_size: int = None,
@@ -196,7 +195,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         )
         self._image_model.optimizer = optimizer if optimizer is not None else self._image_model.optimizer
         self._image_model.random_seed = random_seed if random_seed is not None else self._image_model.random_seed
-        self._image_model.split_ratio = split_ratio if split_ratio is not None else self._image_model.split_ratio
         self._image_model.step_lr_gamma = (
             step_lr_gamma if step_lr_gamma is not None else self._image_model.step_lr_gamma
         )

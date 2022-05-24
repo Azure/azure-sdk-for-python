@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import os
 import json
 import logging
 from pathlib import Path
 import time
-from typing import Any, Dict, Iterable, Union
+from typing import Any, Dict, Iterable, Union, TYPE_CHECKING
 from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, resource_to_scopes
 from azure.core.polling import LROPoller
 from azure.identity import ChainedTokenCredential
@@ -21,14 +22,14 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 )
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
-from azure.ai.ml.entities._assets import Dataset
-from azure.ai.ml.entities import BatchDeployment
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
 from azure.ai.ml._utils._arm_id_utils import (
     generate_data_arm_id,
     get_datastore_arm_id,
     is_ARM_id_for_resource,
     parse_name_version,
+    remove_datastore_prefix,
 )
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
@@ -36,12 +37,15 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.constants import (
+    AssetTypes,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     AzureMLResourceType,
     EndpointInvokeFields,
     EndpointYamlFields,
+    HTTP_PREFIX,
     LROConfigurations,
+    ARM_ID_FULL_PREFIX,
 )
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
@@ -50,6 +54,10 @@ from .operation_orchestrator import OperationOrchestrator
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
+
+if TYPE_CHECKING:
+    from azure.ai.ml._operations import DatastoreOperations
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -76,6 +84,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
+
+    @property
+    def _datastore_operations(self) -> "DatastoreOperations":
+        return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(
@@ -193,7 +205,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         deployment_name: str = None,
-        input_data: Union[str, Dataset] = None,
+        input: Input = None,
         params_override=None,
         **kwargs,
     ) -> BatchJobResource:
@@ -201,7 +213,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         :param str endpoint_name: the endpoint name
         :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional. By default requests are routed to any of the deployments according to the traffic rules.
-        :param (Union[str, Dataset], optional) input_data: To use a pre-registered dataset asset, pass str in format "<dataset-name>:<dataset-version>". To use a new dataset asset, pass in a Dataset object, for batch endpoints only.
+        :param (Input, optional) input: To use a existing data asset, public uri file, or folder pass in a Input object, for batch endpoints only.
         :param (List, optional) params_override: Used to overwrite deployment configurations, for batch endpoints only.
         Returns:
             Union[str, BatchJobResource]: Prediction output for online endpoints or details of batch prediction job.
@@ -211,34 +223,19 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
 
-        if isinstance(input_data, str):
-            name, version = parse_name_version(input_data)
-            if name and version:
-                input_data_id = generate_data_arm_id(self._operation_scope, name, version)
-            else:
-                msg = 'Input data needs to be in format "azureml:<data-name>:<data-version>" or "<data-name>:<data-version>"'
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.BATCH_ENDPOINT,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-        elif isinstance(input_data, Dataset):
-            dataset_operations = self._all_operations.all_operations.get(AzureMLResourceType.DATASET)
-
-            # Since data was defined inline and it will be created, it will be registered as anonymous
-            input_data._is_anonymous = True
-            input_data_id = dataset_operations.create_or_update(input_data).id
+        if isinstance(input, Input):
+            if HTTP_PREFIX not in input.path:
+                self._resolve_input(input, os.getcwd())
+            # MFE expects a dictionary as input_data that's why we are using "input_data" as key before parsing it to JobInput
+            params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"input_data": input}})
         else:
-            msg = "Unsupported input data, please use either a string to reference a pre-registered data asset or a data object."
+            msg = "Unsupported input please use either a path on the datastore, public URI, a registered data asset, or a local folder path."
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.BATCH_ENDPOINT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-
-        params_override.append({EndpointYamlFields.BATCH_JOB_DATASET: input_data_id})
 
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent, PARAMS_OVERRIDE_KEY: params_override}
@@ -334,4 +331,65 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.DEPLOYMENT,
+            )
+
+    def _resolve_input(self, entry: Input, base_path: str) -> None:
+        # We should not verify anything that is not of type Input
+        if not isinstance(entry, Input):
+            return
+
+        # Input path should not be empty
+        if not entry.path:
+            raise Exception("Input path can't be empty for batch endpoint invoke")
+
+        try:
+            if entry.path.startswith(ARM_ID_FULL_PREFIX):
+                if not is_ARM_id_for_resource(entry.path, AzureMLResourceType.DATA):
+                    raise ValidationException(
+                        message="Invalid input path",
+                        target=ErrorTarget.BATCH_ENDPOINT,
+                        no_personal_data_message="Invalid input path",
+                    )
+            elif os.path.isabs(entry.path):  # absolute local path, upload, transform to remote url
+                if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):
+                    raise ValidationException(
+                        message="There is no folder on target path: {}".format(entry.path),
+                        target=ErrorTarget.BATCH_ENDPOINT,
+                        no_personal_data_message="There is no folder on target path",
+                    )
+                elif entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
+                    raise ValidationException(
+                        message="There is no file on target path: {}".format(entry.path),
+                        target=ErrorTarget.BATCH_ENDPOINT,
+                        no_personal_data_message="There is no file on target path",
+                    )
+                # absolute local path
+                entry.path = _upload_and_generate_remote_uri(
+                    self._operation_scope,
+                    self._datastore_operations,
+                    entry.path,
+                )
+                if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
+                    entry.path = entry.path + "/"
+            elif ":" in entry.path or "@" in entry.path:  # Check registered file or folder datastore
+                asset_type = AzureMLResourceType.DATASTORE
+                entry.path = remove_datastore_prefix(entry.path)
+                orchestrator = OperationOrchestrator(self._all_operations, self._operation_scope)
+                entry.path = orchestrator.get_asset_arm_id(entry.path, asset_type)
+            else:  # relative local path, upload, transform to remote url
+                local_path = Path(base_path, entry.path).resolve()
+                entry.path = _upload_and_generate_remote_uri(
+                    self._operation_scope,
+                    self._datastore_operations,
+                    local_path,
+                )
+                if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
+                    entry.path = entry.path + "/"
+        except Exception as e:
+            raise ValidationException(
+                message=f"Supported input path value are: path on the datastore, public URI, a registered data asset, or a local folder path.\n"
+                f"Met {type(e)}:\n{e}",
+                target=ErrorTarget.BATCH_ENDPOINT,
+                no_personal_data_message="Supported input path value are: path on the datastore, public URI, a registered data asset, or a local folder path.",
+                error=e,
             )

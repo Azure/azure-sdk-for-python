@@ -42,7 +42,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         number_of_workers: Union[int, SweepDistribution] = None,
         optimizer: Union[str, SweepDistribution] = None,
         random_seed: Union[int, SweepDistribution] = None,
-        split_ratio: Union[float, SweepDistribution] = None,
         step_lr_gamma: Union[float, SweepDistribution] = None,
         step_lr_step_size: Union[int, SweepDistribution] = None,
         training_batch_size: Union[int, SweepDistribution] = None,
@@ -76,7 +75,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         self.number_of_workers = number_of_workers
         self.optimizer = optimizer
         self.random_seed = random_seed
-        self.split_ratio = split_ratio
         self.step_lr_gamma = step_lr_gamma
         self.step_lr_step_size = step_lr_step_size
         self.training_batch_size = training_batch_size
@@ -138,7 +136,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             ),
             optimizer=_convert_to_rest_object(self.optimizer) if self.optimizer is not None else None,
             random_seed=_convert_to_rest_object(self.random_seed) if self.random_seed is not None else None,
-            split_ratio=_convert_to_rest_object(self.split_ratio) if self.split_ratio is not None else None,
             step_lr_gamma=_convert_to_rest_object(self.step_lr_gamma) if self.step_lr_gamma is not None else None,
             step_lr_step_size=(
                 _convert_to_rest_object(self.step_lr_step_size) if self.step_lr_step_size is not None else None
@@ -224,7 +221,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             ),
             optimizer=_convert_from_rest_object(obj.optimizer) if obj.optimizer is not None else None,
             random_seed=_convert_from_rest_object(obj.random_seed) if obj.random_seed is not None else None,
-            split_ratio=_convert_from_rest_object(obj.split_ratio) if obj.split_ratio is not None else None,
             step_lr_gamma=_convert_from_rest_object(obj.step_lr_gamma) if obj.step_lr_gamma is not None else None,
             step_lr_step_size=(
                 _convert_from_rest_object(obj.step_lr_step_size) if obj.step_lr_step_size is not None else None
@@ -286,7 +282,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             and self.number_of_workers == other.number_of_workers
             and self.optimizer == other.optimizer
             and self.random_seed == other.random_seed
-            and self.split_ratio == other.split_ratio
             and self.step_lr_gamma == other.step_lr_gamma
             and self.step_lr_step_size == other.step_lr_step_size
             and self.training_batch_size == other.training_batch_size

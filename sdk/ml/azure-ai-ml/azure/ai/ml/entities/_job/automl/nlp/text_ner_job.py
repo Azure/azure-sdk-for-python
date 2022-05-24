@@ -21,8 +21,10 @@ from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpF
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class TextNerJob(AutoMLNLPJob):
     """
     Configuration for AutoML Text NER Job.

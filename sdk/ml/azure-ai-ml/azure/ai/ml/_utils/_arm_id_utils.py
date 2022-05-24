@@ -14,6 +14,7 @@ from azure.ai.ml.constants import (
     DATA_ARM_TYPE,
     DATASET_ARM_TYPE,
     DATASTORE_RESOURCE_ID,
+    DATASTORE_SHORT_URI,
     REGISTRY_URI_REGEX_FORMAT,
     ASSET_ID_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
@@ -354,3 +355,13 @@ def is_arm_id_or_arm_string_or_object(asset: str, azureml_type: str) -> None:
                         no_personal_data_message="[asset]",
                     )
     return
+
+
+def remove_datastore_prefix(id: Optional[str]) -> Optional[str]:
+    if not id:
+        return None
+
+    if id.startswith(DATASTORE_SHORT_URI):
+        return id[len(DATASTORE_SHORT_URI) :]
+    else:
+        return id

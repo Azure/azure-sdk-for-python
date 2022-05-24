@@ -53,47 +53,45 @@ def pipeline(
 
     .. code-block:: python
 
-                # A pipeline defined with decorator
-                @dsl.pipeline(name='sample pipeline', description='pipeline description')
-                def pipeline(pipeline_parameter1, pipeline_parameter2):
-                        # component1 and component2 will be added into the current sub pipeline
-                        component1 = component1_func(input1=xxx, param1=xxx)
-                        component2 = component2_func(input1=xxx, param1=xxx)
+                # Define a pipeline with decorator
+                @pipeline(name='sample_pipeline', description='pipeline description')
+                def sample_pipeline_func(pipeline_input, pipeline_str_param):
+                        # component1 and component2 will be added into the current pipeline
+                        component1 = component1_func(input1=pipeline_input, param1='literal')
+                        component2 = component2_func(input1=dataset, param1=pipeline_str_param)
                         # A decorated pipeline function needs to return outputs.
-                        # In this case, the sub_pipeline has two outputs: component1's output1 and component2's output1, and
-                        # let's rename them to 'renamed_output1' and 'renamed_output2'
-                        return {'renamed_output1': component1.outputs.output1, 'renamed_output2': component2.outputs.output1}
+                        # In this case, the pipeline has two outputs: component1's output1 and component2's output1,
+                        # and let's rename them to 'pipeline_output1' and 'pipeline_output2'
+                        return {
+                            'pipeline_output1': component1.outputs.output1,
+                            'pipeline_output2': component2.outputs.output1
+                        }
 
-                # E.g.: This call returns a pipeline with nodes=[component1, component2],
-                # outputs={'renamed_output1': component1.outputs.output1, 'renamed_output2': component2.outputs.output1}
-                pipeline1 = pipeline(pipeline_parameter1=param1, pipeline_parameter2=param2)
-                pipeline1.submit(parameters={"pipeline_parameter1": changed_param})
+                # E.g.: This call returns a pipeline job with nodes=[component1, component2],
+                pipeline_job = sample_pipeline_func(
+                    pipeline_input=Input(type='uri_folder', path='./local-data'),
+                    pipeline_str_param='literal'
+                )
+                ml_client.jobs.create_or_update(pipeline_job, experiment_name="pipeline_samples")
 
-    .. remarks::
-
-        Parameters in pipeline decorator functions will be stored as a substitutable part of the pipeline,
-        which means you can change them directly in the re-submit or other operations in the future without
-        re-construct a new pipeline.
-        E.g.: change pipeline_parameter1 of pipeline when submit it.
-
-    :param name: The name of pipeline component, defaults to None
-    :type name: str, optional
-    :param version: The version of pipeline component, defaults to None
-    :type version: str, optional
-    :param display_name: The display name of pipeline component, defaults to None
-    :type display_name: str, optional
-    :param description: The description of the built pipeline, defaults to None
-    :type description: str, optional
-    :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory, defaults to None
-    :type experiment_name: str, optional
-    :param default_compute: The compute target of the built pipeline, defaults to None
-    :type default_compute: str, optional
-    :param default_datastore: The default datastore of pipeline, defaults to None
-    :type default_datastore: str, optional
-    :param tags: The tags of pipeline component, defaults to None
-    :type tags: Dict[str, str], optional
-    :param continue_on_step_failure: Flag when set, continue pipeline execution if a step fails, defaults to None
-    :type continue_on_step_failure: bool, optional
+    :param name: The name of pipeline component, defaults to function name.
+    :type name: str
+    :param version: The version of pipeline component, defaults to "1".
+    :type version: str
+    :param display_name: The display name of pipeline component, defaults to function name.
+    :type display_name: str
+    :param description: The description of the built pipeline.
+    :type description: str
+    :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
+    :type experiment_name: str
+    :param default_compute: The compute target of the built pipeline.
+    :type default_compute: str
+    :param default_datastore: The default datastore of pipeline.
+    :type default_datastore: str
+    :param tags: The tags of pipeline component.
+    :type tags: dict[str, str]
+    :param continue_on_step_failure: Flag when set, continue pipeline execution if a step fails.
+    :type continue_on_step_failure: bool
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -103,7 +101,7 @@ def pipeline(
         compute = kwargs.get("compute", None)
         default_compute_target = kwargs.get("default_compute_target", None)
         actual_compute = default_compute or compute or default_compute_target
-        force_rerun = kwargs.get("force_rerun", False)
+        force_rerun = kwargs.get("force_rerun", None)
 
         @wraps(func)
         def wrapper(*args, **kwargs) -> PipelineJob:

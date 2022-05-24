@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Optional, Tuple, Union
 from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, _get_default_cloud_name, _set_cloud
-import configparser
 
 from azure.identity import ChainedTokenCredential
 from azure.core.polling import LROPoller
@@ -84,7 +83,6 @@ class MLClient(object):
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str = None,
-        cloud_name: str = "AzureCloud",
         **kwargs,
     ):
         """Initiate Azure ML client
@@ -97,15 +95,13 @@ class MLClient(object):
         :type resource_group_name: str
         :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations., defaults to None
         :type workspace_name: str, optional
-        :param cloud: The name of the target cloud. If no cloud is specified, any configured default from the Azure CLI
-            is used. If no default is found, "AzureCloud" is used.
-        :type cloud: str
         """
+        cloud_name = kwargs.get("cloud_name", _get_default_cloud_name())
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
         _set_cloud(cloud_name)
         self._registry_name = kwargs.pop("registry_name", None)
         self._operation_scope = OperationScope(
-            subscription_id, resource_group_name, workspace_name, self._registry_name, cloud_name
+            subscription_id, resource_group_name, workspace_name, self._registry_name
         )
 
         self._add_user_agent(kwargs)
@@ -353,7 +349,7 @@ class MLClient(object):
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        subscription_id, resource_group, workspace_name, cloud_name = MLClient._get_workspace_info(found_path)
+        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(found_path)
 
         module_logger.info("Found the config file in: %s", found_path)
         return MLClient(
@@ -361,7 +357,6 @@ class MLClient(object):
             subscription_id=subscription_id,
             resource_group_name=resource_group,
             workspace_name=workspace_name,
-            cloud_name=cloud_name,
             **kwargs,
         )
 
@@ -525,7 +520,7 @@ class MLClient(object):
         )
 
     @classmethod
-    def _get_workspace_info(cls, found_path: str) -> Tuple[str, str, str, str]:
+    def _get_workspace_info(cls, found_path: str) -> Tuple[str, str, str]:
         with open(found_path, "r") as config_file:
             config = json.load(config_file)
 
@@ -546,29 +541,17 @@ class MLClient(object):
             subscription_id_from_config = config["subscription_id"]
             resource_group_from_config = config["resource_group"]
             workspace_name_from_config = config["workspace_name"]
-            cloud_name_from_config = config.get("cloud", None) or _get_default_cloud_name()
         else:
             pieces = scope.split("/")
             # User provided ARM parameters take precedence over values from config.json
             subscription_id_from_config = pieces[2]
             resource_group_from_config = pieces[4]
             workspace_name_from_config = pieces[8]
-            # Read cloud information from .azure/cloud file
-            cloud_name_from_config = self._get_cloud_name_from_config("config")
         return (
             subscription_id_from_config,
             resource_group_from_config,
             workspace_name_from_config,
-            cloud_name_from_config,
         )
-
-    def _get_cloud_name_from_config(self, cloud_config_file) -> str:
-        config = configparser.ConfigParser()
-        config.read(cloud_config_file)
-        try:
-            return config.get("cloud", "name")
-        except (configparser.NoOptionError, configparser.NoSectionError):
-            return _get_default_cloud_name()
 
     def _add_user_agent(self, kwargs) -> None:
         user_agent = kwargs.pop("user_agent", None)

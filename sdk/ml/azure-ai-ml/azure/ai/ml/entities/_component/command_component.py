@@ -33,44 +33,34 @@ from ..._utils.utils import get_all_data_binding_expressions
 
 
 class CommandComponent(Component, ParameterizedCommand):
-    """Command component version, used to define an command component.
+    """Command component version, used to define a command component.
 
     :param name: Name of the component.
     :type name: str
     :param version: Version of the component.
     :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
-    :type id: str
-    :param type:  Type of the component, supported is 'command_component'.
-    :type type: str
     :param description: Description of the component.
     :type description: str
-    :param tags: Internal use only.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param properties: Internal use only.
-    :type properties: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :param is_deterministic: Whether the component is deterministic. The default is True.
-    :type is_deterministic: bool
-    :param inputs: Inputs of the component.
-    :type inputs: dict
-    :param outputs: Outputs of the component.
-    :type outputs: dict
     :param command: Command to be executed in component.
     :type command: str
     :param code: Code file or folder that will be uploaded to the cloud for component execution.
     :type code: str
     :param environment: Environment that component will run in.
     :type environment: Union[Environment, str]
-    :param resources: Compute Resource configuration for the component.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.ResourceConfiguration]
     :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
+    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
+    :param resources: Compute Resource configuration for the component.
+    :type resources: Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :param inputs: Inputs of the component.
+    :type inputs: dict
+    :param outputs: Outputs of the component.
+    :type outputs: dict
     :param instance_count: promoted property from resources.instance_count
     :type instance_count: int
-    :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
     """
 
     def __init__(
@@ -136,6 +126,12 @@ class CommandComponent(Component, ParameterizedCommand):
 
     @property
     def instance_count(self) -> int:
+        """
+        Return value of promoted property resources.instance_count.
+
+        :return: Value of resources.instance_count.
+        :rtype: Optional[int]
+        """
         return self.resources.instance_count if self.resources else None
 
     @instance_count.setter
@@ -185,7 +181,7 @@ class CommandComponent(Component, ParameterizedCommand):
         if self.command:
             invalid_expressions = []
             for data_binding_expression in get_all_data_binding_expressions(self.command, is_singular=False):
-                if not self.is_valid_data_binding_expression(data_binding_expression):
+                if not self._is_valid_data_binding_expression(data_binding_expression):
                     invalid_expressions.append(data_binding_expression)
 
             if invalid_expressions:
@@ -202,7 +198,7 @@ class CommandComponent(Component, ParameterizedCommand):
 
         return validation_result
 
-    def is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
+    def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
         current_obj = self
         for item in data_binding_expression.split("."):
             if hasattr(current_obj, item):

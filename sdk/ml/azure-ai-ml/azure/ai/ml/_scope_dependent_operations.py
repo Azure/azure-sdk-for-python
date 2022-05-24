@@ -21,13 +21,11 @@ class OperationScope(object):
         resource_group_name: str,
         workspace_name: Optional[str],
         registry_name: Optional[str] = None,
-        cloud_name: Optional[str] = None,
     ):
         self._subscription_id = subscription_id
         self._resource_group_name = resource_group_name
         self._workspace_name = workspace_name
         self._registry_name = registry_name
-        self._cloud_name = cloud_name
 
     @property
     def subscription_id(self) -> str:
@@ -44,10 +42,6 @@ class OperationScope(object):
     @property
     def registry_name(self) -> Optional[str]:
         return self._registry_name
-
-    @property
-    def cloud_name(self) -> Optional[str]:
-        return self._cloud_name
 
     @workspace_name.setter
     def workspace_name(self, value: str) -> None:
@@ -111,10 +105,6 @@ class _ScopeDependentOperations(object):
     @property
     def _resource_group_name(self) -> str:
         return self._operation_scope.resource_group_name
-
-    @property
-    def _cloud_name(self) -> str:
-        return self._operation_scope.cloud_name
 
 
 class OperationsContainer(object):

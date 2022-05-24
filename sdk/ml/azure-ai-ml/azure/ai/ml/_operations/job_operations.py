@@ -366,6 +366,14 @@ class JobOperations(_ScopeDependentOperations):
         if experiment_name is not None:
             job.experiment_name = experiment_name
 
+        # Check compute for warning array
+        # TODO: Remove after 05/31/2022 (Task 1776012)
+        if job.compute and job.compute.lower() != LOCAL_COMPUTE_TARGET:
+            try:
+                self._compute_operations.get(job.compute)
+            except ResourceNotFoundError as e:
+                raise (e)
+
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(job)
         self._validate(job, raise_on_failure=True)

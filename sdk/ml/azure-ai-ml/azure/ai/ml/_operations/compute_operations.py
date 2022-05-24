@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import logging
 import time
 from typing import Any, Dict, Iterable
@@ -13,6 +14,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDepend
 from azure.ai.ml.constants import ComputeType, LROConfigurations, COMPUTE_UPDATE_ERROR
 from azure.ai.ml.entities import Compute, Usage, VmSize, AmlComputeNodeInfo
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
+from azure.ai.ml._utils.utils import get_http_response_and_deserialized_from_pipeline_response
 from azure.ai.ml._restclient.v2021_10_01.models import (
     AmlComputeNodeInformation,
 )
@@ -69,7 +71,21 @@ class ComputeOperations(_ScopeDependentOperations):
         :return: Compute object
         :rtype: Compute
         """
-        rest_obj = self._operation.get(self._operation_scope.resource_group_name, self._workspace_name, name)
+
+        response, rest_obj = self._operation.get(
+            self._operation_scope.resource_group_name,
+            self._workspace_name,
+            name,
+            cls=get_http_response_and_deserialized_from_pipeline_response,
+        )
+        # TODO: Remove warning logging after 05/31/2022 (Task 1776012)
+        response_json = json.loads(response.internal_response.text)
+        xds_error_code = "XDSRestartRequired"
+        warnings = response_json["properties"].get("warnings", [])
+        xds_warning = next((warning for warning in warnings if warning["code"] == xds_error_code), None)
+        if xds_warning:
+            logging.critical(xds_warning["message"])
+
         return Compute._from_rest_object(rest_obj)
 
     @monitor_with_activity(logger, "Compute.ListNodes", ActivityType.PUBLICAPI)

@@ -23,6 +23,7 @@ class PipelineJobSettingsSchema(Schema):
     default_datastore = ArmStr(azureml_type=AzureMLResourceType.DATASTORE)
     default_compute = ArmStr(azureml_type=AzureMLResourceType.COMPUTE)
     continue_on_step_failure = fields.Bool()
+    force_rerun = fields.Bool()
 
     @post_load
     def make(self, data, **kwargs) -> "PipelineJobSettings":

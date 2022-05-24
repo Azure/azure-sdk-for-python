@@ -39,7 +39,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
     :type type: str
     :param description: Description of the resource.
     :type description: str
-    :param tags: Internal use only.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
     :param properties: Internal use only.
     :type properties: dict
@@ -51,15 +51,17 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
     :type inputs: dict
     :param outputs: Outputs of the component.
     :type outputs: dict
+    :param yaml_str: The yaml string of the component.
+    :type yaml_str: str
+    :param _schema: Schema of the component.
+    :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: SystemData
     """
 
-    CODE_GEN_BY_KEY = "codegenBy"
-    DSL_COMPONENT = "dsl.component"
-
     def __init__(
         self,
+        *,
         name: str = None,
         version: str = None,
         id: str = None,
@@ -111,7 +113,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
 
     @property
     def type(self) -> str:
-        """Type of the component, supported is 'command'.
+        """Type of the component, default is 'command'.
 
         :return: Type of the component.
         :rtype: str
@@ -177,10 +179,6 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    @property
-    def auto_increment_version(self) -> bool:
-        return self._auto_increment_version
-
     def dump(self, path: Union[PathLike, str]) -> None:
         """Dump the component content into a file in yaml format.
 
@@ -235,7 +233,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         :type kwargs: dict
 
         :return: Loaded component object.
-        :rtype: component
+        :rtype: Component
         """
         params_override = params_override or []
         yaml_dict = load_yaml(path)

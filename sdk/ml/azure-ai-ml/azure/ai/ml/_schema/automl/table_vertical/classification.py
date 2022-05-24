@@ -9,7 +9,6 @@ from azure.ai.ml._schema import StringTransformedEnum
 from azure.ai.ml.constants import AutoMLConstants
 from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTableVerticalSchema
 from azure.ai.ml._schema.automl.training_settings import ClassificationTrainingSettingsSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ClassificationPrimaryMetrics,
@@ -17,7 +16,6 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 )
 
 
-@experimental
 class AutoMLClassificationSchema(AutoMLTableVerticalSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.CLASSIFICATION,

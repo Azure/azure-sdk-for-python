@@ -10,7 +10,6 @@ from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTableVerticalSchema
 from azure.ai.ml._schema.automl.forecasting_settings import ForecastingSettingsSchema
 from azure.ai.ml._schema.automl.training_settings import ForecastingTrainingSettingsSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ForecastingPrimaryMetrics,
@@ -18,7 +17,6 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 )
 
 
-@experimental
 class AutoMLForecastingSchema(AutoMLTableVerticalSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.FORECASTING,

@@ -51,7 +51,6 @@ def pipeline_node_decorator(func):
         if _is_inside_dsl_pipeline_func():
             # Build automl job to automl node if it's defined inside DSL pipeline func.
             automl_job._instance_id = str(uuid.uuid4())
-            automl_job._outputs = automl_job._build_outputs_dict_without_meta(automl_job.outputs)
             _add_component_to_current_definition_builder(automl_job)
         return automl_job
 

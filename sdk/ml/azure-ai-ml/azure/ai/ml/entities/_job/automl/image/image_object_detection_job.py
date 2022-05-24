@@ -24,8 +24,10 @@ from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base i
 )
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
     """
     Configuration for AutoML Image Object Detection job.

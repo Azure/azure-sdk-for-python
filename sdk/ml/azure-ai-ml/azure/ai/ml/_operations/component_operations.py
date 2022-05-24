@@ -275,7 +275,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     body=rest_component_resource,
                 ).result()
             else:
-                if component.auto_increment_version:
+                if component._auto_increment_version:
                     result = _create_or_update_autoincrement(
                         name=component.name,
                         body=rest_component_resource,

@@ -94,13 +94,10 @@ def _get_indentation_size(doc_string):
 def _should_skip_warning():
     skip_warning_msg = False
 
-    # suppress the cases that we don't want to show the warning
-    # 1. when use marshmallow schema to load data from yaml file (ExperimentalField should be used in this case)
-    # 2. when convert from REST object to SDK object
+    # Cases where we want to suppress the warning:
+    # 1. When converting from REST object to SDK object
     for frame in inspect.stack():
-        if (
-            "marshmallow\\schema" in frame.filename and frame.function == "load"
-        ) or frame.function == "_from_rest_object":
+        if frame.function == "_from_rest_object":
             skip_warning_msg = True
             break
 

@@ -46,7 +46,6 @@ class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[o.value for o in StochasticOptimizer],
     )
     random_seed = fields.Int()
-    split_ratio = fields.Float()
     step_lr_gamma = fields.Float()
     step_lr_step_size = fields.Int()
     training_batch_size = fields.Int()

@@ -186,7 +186,10 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             return delete_poller
         else:
             message = f"Deleting endpoint {name} \n"
-            polling_wait(poller=delete_poller, start_time=start_time, message=message)
+            module_logger.warning(
+                f" Delete request initiated. If you interrupt this command or it times out while waiting for deletion to complete, status can be checked using `az ml online-endpoint show -n {name}`\n"
+            )
+            polling_wait(poller=delete_poller, start_time=start_time, message=message, timeout=None)
 
     @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, local: bool = False, **kwargs: Any) -> LROPoller:

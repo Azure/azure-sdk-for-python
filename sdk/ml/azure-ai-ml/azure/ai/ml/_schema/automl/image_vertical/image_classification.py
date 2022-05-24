@@ -15,7 +15,6 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     TaskType,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 
 
@@ -24,7 +23,6 @@ class ImageClassificationBaseSchema(ImageVerticalSchema):
     search_space = fields.List(NestedField(ImageModelDistributionSettingsClassificationSchema()))
 
 
-@experimental
 class ImageClassificationSchema(ImageClassificationBaseSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.IMAGE_CLASSIFICATION,
@@ -57,7 +55,6 @@ class ImageClassificationSchema(ImageClassificationBaseSchema):
         return job
 
 
-@experimental
 class ImageClassificationMultilabelSchema(ImageClassificationBaseSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.IMAGE_CLASSIFICATION_MULTILABEL,

@@ -28,7 +28,6 @@ class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):
     number_of_workers = fields.Str()
     optimizer = fields.Str()
     random_seed = fields.Str()
-    split_ratio = fields.Str()
     step_lr_gamma = fields.Str()
     step_lr_step_size = fields.Str()
     training_batch_size = fields.Str()

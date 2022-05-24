@@ -128,7 +128,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 return poller
             else:
                 message = f"Creating/updating online deployment {deployment.name} "
-                polling_wait(poller=poller, start_time=start_time, message=message)
+                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
         except Exception as ex:
             raise ex

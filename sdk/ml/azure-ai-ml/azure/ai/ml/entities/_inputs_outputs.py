@@ -9,7 +9,7 @@
 
     .. code-block:: python
 
-        @dsl.pipeline()
+        @pipeline()
         def some_pipeline(
             input_param: Input(type="uri_folder", path="xxx", mode="ro_mount"),
             int_param0: Input(type="integer", default=0, min=-3, max=10),
