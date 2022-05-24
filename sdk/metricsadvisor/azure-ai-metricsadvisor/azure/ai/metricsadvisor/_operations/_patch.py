@@ -287,7 +287,7 @@ class OperationMixinHelpers:
         )
         return (
             operations.build_list_feedback_request(json=feedback_filter.serialize(), skip=kwargs.pop("skip", None)),
-            operations.build_list_feedback_request(),
+            operations.build_list_feedback_request(json=feedback_filter.serialize()),
             kwargs,
         )
 
@@ -491,7 +491,10 @@ class OperationMixinHelpers:
             json=metric_data_query_options.serialize(),
             content_type=kwargs.pop("content_type", "application/json"),
         )
-        next_request = operations.build_list_metric_series_data_request(metric_id=metric_id)
+        next_request = operations.build_list_metric_series_data_request(
+            metric_id=metric_id,
+            json=metric_data_query_options.serialize(),
+        )
         return initial_request, next_request, kwargs
 
     def _list_metric_enrichment_status_requests(
@@ -514,7 +517,10 @@ class OperationMixinHelpers:
             skip=skip,
             content_type=kwargs.pop("content_type", "application/json"),
         )
-        next_request = operations.build_list_metric_enrichment_status_request(metric_id=metric_id)
+        next_request = operations.build_list_metric_enrichment_status_request(
+            metric_id=metric_id,
+            json=enrichment_status_query_option.serialize()
+        )
         return initial_request, next_request, kwargs
 
     @staticmethod

@@ -2237,6 +2237,16 @@ class CommentFeedback(MetricFeedback):
     :type value: str
     """
 
+    _validation = {
+        "feedback_type": {"required": True},
+        "id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_key": {"required": True},
+        "value": {"required": True},
+    }
+
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
         "id": {"key": "feedbackId", "type": "str"},
@@ -2299,6 +2309,17 @@ class PeriodFeedback(MetricFeedback):
      "AutoDetect", "AssignValue".
     :type period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
     """
+
+    _validation = {
+        "feedback_type": {"required": True},
+        "id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_key": {"required": True},
+        "period_type": {"required": True},
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
