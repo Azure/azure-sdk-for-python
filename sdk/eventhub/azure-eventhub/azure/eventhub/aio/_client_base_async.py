@@ -247,7 +247,7 @@ class ClientBaseAsync(ClientBase):
         while retried_times <= self._config.max_retries:
             mgmt_auth = await self._create_auth_async()
             hostname = self._address.hostname
-            custom_endpoint_address = "{}:{}".format(self._config.custom_endpoint_hostname, self._config.connection_port)
+            custom_endpoint_address = self._config.custom_endpoint_address
             if self._config.transport_type.name == 'AmqpOverWebsocket':
                 hostname += '/$servicebus/websocket/'
                 if custom_endpoint_address:
