@@ -6,9 +6,19 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+import os
+from typing import Any, List, Union
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+from azure.core.credentials import TokenCredential
+from azure.core.pipeline import policies
+
+from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
+
+__all__: List[str] = [
+    "ConfidentialLedgerCertificateCredential",
+    "ConfidentialLedgerClient",
+]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -19,56 +29,58 @@ def patch_sdk():
     """
 
 
-# class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-#     """Configuration for ConfidentialLedgerClient.
+class ConfidentialLedgerCertificateCredential:
+    """A certificate-based credential for the ConfidentialLedgerClient.
 
-#     Note that all parameters used to create this instance are saved as instance
-#     attributes.
+    :param certificate_path: Path to the PEM certificate to use for authentication.
+    :type certificate_path: Union[bytes, str, os.PathLike]
+    """
 
-#     :param ledger_uri: The Confidential Ledger URL, for example
-#      https://contoso.confidentialledger.azure.com.
-#     :type ledger_uri: str
-#     :param credential: Credential needed for the client to connect to Azure.
-#     :type credential: ~azure.core.credentials.TokenCredential
-#     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
-#      default value may result in unsupported behavior.
-#     :paramtype api_version: str
-#     """
+    def __init__(self, certificate_path: Union[bytes, str, os.PathLike]):
+        self.certificate_path = certificate_path
 
-#     def __init__(
-#         self,
-#         ledger_uri: str,
-#         credential: "TokenCredential",
-#         **kwargs: Any
-#     ) -> None:
-#         super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
-#         api_version = kwargs.pop('api_version', "2022-05-13")  # type: str
 
-#         if ledger_uri is None:
-#             raise ValueError("Parameter 'ledger_uri' must not be None.")
-#         if credential is None:
-#             raise ValueError("Parameter 'credential' must not be None.")
+class ConfidentialLedgerClient(GeneratedClient):
+    """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
+    Ledger service.
 
-#         self.ledger_uri = ledger_uri
-#         self.credential = credential
-#         self.api_version = api_version
-#         self.credential_scopes = kwargs.pop('credential_scopes', ['https://confidential-ledger.azure.com/.default'])
-#         kwargs.setdefault('sdk_moniker', 'confidentialledger/{}'.format(VERSION))
-#         self._configure(**kwargs)
+    :ivar confidential_ledger: ConfidentialLedgerOperations operations
+    :vartype confidential_ledger: azure.confidentialledger.operations.ConfidentialLedgerOperations
+    :param ledger_uri: The Confidential Ledger URL, for example
+     https://contoso.confidentialledger.azure.com.
+    :type ledger_uri: str
+    :param credential: A credential object for authenticating with the Confidential Ledger.
+    :type credential: Union[~azure.confidentialledger.ConfidentialLedgerCertificateCredential, ~azure.core.credentials.TokenCredential]
+    :param ledger_certificate_path: The path to the Confidential Ledger's TLS certificate.
+    :type ledger_certificate_path: Union[bytes, str, os.PathLike]
+    :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
 
-#     def _configure(
-#         self,
-#         **kwargs  # type: Any
-#     ):
-#         # type: (...) -> None
-#         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-#         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-#         self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-#         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-#         self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-#         self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-#         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-#         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-#         self.authentication_policy = kwargs.get('authentication_policy')
-#         if self.credential and not self.authentication_policy:
-#             self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+    def __init__(self, ledger_uri: str, *, credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential], ledger_certificate_path: Union[bytes, str, os.PathLike], **kwargs: Any) -> None:
+        # The auto-generated client has authentication disabled so we can customize authentication.
+        # If the credential is the typical TokenCredential, then construct the authentication policy
+        # the normal way.
+        if isinstance(credential, TokenCredential):
+            credential_scopes = kwargs.pop(
+                "credential_scopes", ["https://confidential-ledger.azure.com/.default"]
+            )
+            kwargs["authentication_policy"] = kwargs.get(
+                "authentication_policy",
+                policies.BearerTokenCredentialPolicy(
+                    credential, *credential_scopes, **kwargs
+                ),
+            )
+
+        # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
+        # PipelineCLient.
+        elif isinstance(credential, ConfidentialLedgerCertificateCredential):
+            kwargs["connection_cert"] = credential.certificate_path
+        else:
+            raise TypeError(f"Unsupported credential type {type(credential)}")
+
+        # Customize the underlying client to use a self-signed TLS certificate.
+        kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
+
+        super().__init__(ledger_uri, **kwargs)
