@@ -3,10 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+from typing import Any, Dict, Optional, Union
+
 from azure.storage.blob._serialize import _get_match_headers  # pylint: disable=protected-access
 from ._shared import encode_base64
 from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
-    SourceModifiedAccessConditions, LeaseAccessConditions
+    SourceModifiedAccessConditions, LeaseAccessConditions, CpkInfo
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -18,7 +21,10 @@ _SUPPORTED_API_VERSIONS = [
     '2020-04-08',
     '2020-06-12',
     '2020-08-04',
-    '2020-10-02'
+    '2020-10-02',
+    '2021-02-12',
+    '2021-04-10',
+    '2021-06-08'
 ]
 
 
@@ -111,3 +117,17 @@ def get_lease_id(lease):
     except AttributeError:
         lease_id = lease
     return lease_id
+
+
+def get_cpk_info(scheme, kwargs):
+    # type: (str, Dict[str, Any]) -> CpkInfo
+    cpk = kwargs.pop('cpk', None)
+    if cpk:
+        if scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        return CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm)
+
+    return None

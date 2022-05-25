@@ -24,7 +24,7 @@ SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBaseAsync):
+class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accepts-api-version-keyword
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.

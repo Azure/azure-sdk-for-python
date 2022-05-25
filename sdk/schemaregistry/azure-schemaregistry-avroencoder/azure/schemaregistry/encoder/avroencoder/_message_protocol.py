@@ -24,9 +24,8 @@ class MessageType(Protocol):
     def from_message_content(
         cls, content: bytes, content_type: str, **kwargs: Any
     ) -> "MessageType":
-        """
-        Creates an object that is a subtype of MessageType given content type and
-         a content value to be set as body.
+        """Creates an object that is a subtype of MessageType, given content type and
+         a content value to be set on the object.
 
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
@@ -35,4 +34,9 @@ class MessageType(Protocol):
         ...
 
     def __message_content__(self) -> MessageContent:
+        """A MessageContent object, with `content` and `content_type` set to
+         the values of their respective properties on the MessageType object.
+
+        :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageContent
+        """
         ...

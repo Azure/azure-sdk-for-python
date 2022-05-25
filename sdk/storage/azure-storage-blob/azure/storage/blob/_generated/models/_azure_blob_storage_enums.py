@@ -75,6 +75,11 @@ class ArchiveStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
     REHYDRATE_PENDING_TO_COOL = "rehydrate-pending-to-cool"
 
+class BlobCopySourceTags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    REPLACE = "REPLACE"
+    COPY = "COPY"
+
 class BlobExpiryOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NEVER_EXPIRE = "NeverExpire"

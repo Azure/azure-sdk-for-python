@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._authorization_operations_operations import AuthorizationOperationsOperations
-from ._management_locks_operations import ManagementLocksOperations
+from ._operations import AuthorizationOperationsOperations
+from ._operations import ManagementLocksOperations
 
 __all__ = [
     'AuthorizationOperationsOperations',

@@ -1974,11 +1974,14 @@ class PageList(msrest.serialization.Model):
     :vartype page_range: list[~azure.storage.blob.models.PageRange]
     :ivar clear_range:
     :vartype clear_range: list[~azure.storage.blob.models.ClearRange]
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _attribute_map = {
         'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
         'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(
@@ -1990,10 +1993,13 @@ class PageList(msrest.serialization.Model):
         :paramtype page_range: list[~azure.storage.blob.models.PageRange]
         :keyword clear_range:
         :paramtype clear_range: list[~azure.storage.blob.models.ClearRange]
+        :keyword next_marker:
+        :paramtype next_marker: str
         """
         super(PageList, self).__init__(**kwargs)
         self.page_range = kwargs.get('page_range', None)
         self.clear_range = kwargs.get('clear_range', None)
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class PageRange(msrest.serialization.Model):

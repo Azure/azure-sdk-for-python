@@ -69,7 +69,7 @@ if TYPE_CHECKING:
 
 class MetricsAdvisorAdministrationClient(
     object
-):  # pylint:disable=too-many-public-methods
+):  # pylint:disable=too-many-public-methods, client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

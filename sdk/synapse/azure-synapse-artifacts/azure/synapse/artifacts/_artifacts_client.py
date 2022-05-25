@@ -9,21 +9,24 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ArtifactsClientConfiguration
-from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
+from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkConnectionOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ArtifactsClient:
+class ArtifactsClient:    # pylint: disable=too-many-instance-attributes
     """ArtifactsClient.
 
+    :ivar link_connection: LinkConnectionOperations operations
+    :vartype link_connection: azure.synapse.artifacts.operations.LinkConnectionOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -94,33 +97,80 @@ class ArtifactsClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.spark_configuration = SparkConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.big_data_pools = BigDataPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow = DataFlowOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow_debug_session = DataFlowDebugSessionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dataset = DatasetOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtimes = IntegrationRuntimesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.library = LibraryOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.linked_service = LinkedServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.notebook = NotebookOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.notebook_operation_result = NotebookOperationResultOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline = PipelineOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline_run = PipelineRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.spark_job_definition = SparkJobDefinitionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sql_pools = SqlPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sql_script = SqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trigger = TriggerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trigger_run = TriggerRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspace = WorkspaceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.link_connection = LinkConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.kql_scripts = KqlScriptsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.kql_script = KqlScriptOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.metastore = MetastoreOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.spark_configuration = SparkConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.big_data_pools = BigDataPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_flow = DataFlowOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_flow_debug_session = DataFlowDebugSessionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dataset = DatasetOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspace_git_repo_management = WorkspaceGitRepoManagementOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.library = LibraryOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.linked_service = LinkedServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.notebook = NotebookOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.notebook_operation_result = NotebookOperationResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pipeline = PipelineOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pipeline_run = PipelineRunOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.spark_job_definition = SparkJobDefinitionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_pools = SqlPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_script = SqlScriptOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trigger = TriggerOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trigger_run = TriggerRunOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspace = WorkspaceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

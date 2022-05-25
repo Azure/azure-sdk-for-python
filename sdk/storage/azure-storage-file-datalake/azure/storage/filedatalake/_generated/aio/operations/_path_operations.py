@@ -57,6 +57,7 @@ class PathOperations:
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
         **kwargs: Any
     ) -> None:
         """Create File | Create Directory | Rename File | Rename Directory.
@@ -131,6 +132,8 @@ class PathOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.filedatalake.models.SourceModifiedAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -156,6 +159,9 @@ class PathOperations:
         _source_if_none_match = None
         _source_if_modified_since = None
         _source_if_unmodified_since = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
             _content_encoding = path_http_headers.content_encoding
@@ -174,6 +180,10 @@ class PathOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
 
         request = build_create_request(
             url=self._config.url,
@@ -202,6 +212,9 @@ class PathOperations:
             source_if_none_match=_source_if_none_match,
             source_if_modified_since=_source_if_modified_since,
             source_if_unmodified_since=_source_if_unmodified_since,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
@@ -227,6 +240,8 @@ class PathOperations:
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['x-ms-continuation']=self._deserialize('str', response.headers.get('x-ms-continuation'))
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
 
 
         if cls:
@@ -649,6 +664,7 @@ class PathOperations:
         x_ms_range_get_content_md5: Optional[bool] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
         **kwargs: Any
     ) -> IO:
         """Read File.
@@ -681,6 +697,8 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -697,6 +715,9 @@ class PathOperations:
         _if_none_match = None
         _if_modified_since = None
         _if_unmodified_since = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -704,6 +725,10 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
 
         request = build_read_request(
             url=self._config.url,
@@ -717,6 +742,9 @@ class PathOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.read.metadata['url'],
         )
         request = _convert_request(request)
@@ -755,6 +783,8 @@ class PathOperations:
             response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
             response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
             response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
+            response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -779,6 +809,8 @@ class PathOperations:
             response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
             response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
             response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
+            response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -1266,6 +1298,7 @@ class PathOperations:
         path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
         **kwargs: Any
     ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
@@ -1315,6 +1348,8 @@ class PathOperations:
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword action: action. Default value is "flush". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype action: str
@@ -1342,6 +1377,9 @@ class PathOperations:
         _if_none_match = None
         _if_modified_since = None
         _if_unmodified_since = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if path_http_headers is not None:
             _content_md5 = path_http_headers.content_md5
         if lease_access_conditions is not None:
@@ -1357,6 +1395,10 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
 
         request = build_flush_data_request(
             url=self._config.url,
@@ -1379,6 +1421,9 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.flush_data.metadata['url'],
         )
         request = _convert_request(request)
@@ -1404,6 +1449,8 @@ class PathOperations:
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
 
 
         if cls:
@@ -1423,6 +1470,7 @@ class PathOperations:
         request_id_parameter: Optional[str] = None,
         path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
         **kwargs: Any
     ) -> None:
         """Append data to the file.
@@ -1458,6 +1506,8 @@ class PathOperations:
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword action: action. Default value is "append". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype action: str
@@ -1477,10 +1527,17 @@ class PathOperations:
 
         _transactional_content_hash = None
         _lease_id = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if path_http_headers is not None:
             _transactional_content_hash = path_http_headers.transactional_content_hash
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
         _content = body
 
         request = build_append_data_request(
@@ -1496,6 +1553,9 @@ class PathOperations:
             transactional_content_crc64=transactional_content_crc64,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.append_data.metadata['url'],
         )
         request = _convert_request(request)
@@ -1522,6 +1582,7 @@ class PathOperations:
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
         response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
 
 
         if cls:

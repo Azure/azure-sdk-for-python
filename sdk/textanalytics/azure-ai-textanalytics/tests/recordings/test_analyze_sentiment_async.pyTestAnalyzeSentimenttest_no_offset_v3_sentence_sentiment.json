@@ -8,20 +8,27 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "99",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d40e9043-5d10-11ec-9338-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022I like nature. I do not like being inside\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "0",
+            "text": "I like nature. I do not like being inside",
+            "language": "en"
+          }
+        ]
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "777a3f52-9f39-48b1-93cf-4fb83733364a",
+        "apim-request-id": "4989396b-9c1b-4dae-ab3b-373e8d075340",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:05:39 GMT",
+        "Date": "Tue, 03 May 2022 00:15:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "102"
+        "x-envoy-upstream-service-time": "18"
       },
       "ResponseBody": {
         "documents": [
@@ -29,28 +36,28 @@
             "id": "0",
             "sentiment": "mixed",
             "confidenceScores": {
-              "positive": 0.44,
-              "neutral": 0.27,
-              "negative": 0.29
+              "positive": 0.38,
+              "neutral": 0.14,
+              "negative": 0.48
             },
             "sentences": [
               {
                 "sentiment": "positive",
                 "confidenceScores": {
-                  "positive": 0.88,
-                  "neutral": 0.11,
-                  "negative": 0.01
+                  "positive": 0.74,
+                  "neutral": 0.23,
+                  "negative": 0.02
                 },
                 "offset": 0,
-                "length": 14,
-                "text": "I like nature."
+                "length": 15,
+                "text": "I like nature. "
               },
               {
                 "sentiment": "negative",
                 "confidenceScores": {
                   "positive": 0.01,
-                  "neutral": 0.43,
-                  "negative": 0.56
+                  "neutral": 0.04,
+                  "negative": 0.94
                 },
                 "offset": 15,
                 "length": 26,
@@ -61,7 +68,7 @@
           }
         ],
         "errors": [],
-        "modelVersion": "2020-04-01"
+        "modelVersion": "2021-10-01"
       }
     }
   ],

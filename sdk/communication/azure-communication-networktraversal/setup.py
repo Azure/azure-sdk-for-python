@@ -60,6 +60,10 @@ setup(
         'azure',
         'azure.communication'
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.6",
     install_requires=[
         "msrest>=0.6.21",

@@ -33,7 +33,7 @@
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
+/sdk/storage/                                                        @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
@@ -85,7 +85,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @simorenoh @gahl-levy

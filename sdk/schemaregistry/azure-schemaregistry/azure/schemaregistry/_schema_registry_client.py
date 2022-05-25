@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union, cast
 
 from ._utils import get_http_request_kwargs
 from ._common._constants import SchemaFormat, DEFAULT_VERSION
@@ -32,7 +32,7 @@ from ._common._response_handlers import (
     _parse_response_schema,
     _parse_response_schema_properties,
 )
-from ._generated._azure_schema_registry import AzureSchemaRegistry
+from ._generated._client import AzureSchemaRegistry
 from ._generated.rest import schema as schema_rest
 
 
@@ -122,6 +122,7 @@ class SchemaRegistryClient(object):
 
         """
         try:
+            format = cast(SchemaFormat, format)
             format = format.value
         except AttributeError:
             pass
@@ -184,9 +185,9 @@ class SchemaRegistryClient(object):
         as matched by schema definition comparison.
 
         :param str group_name: Schema group under which schema should be registered.
-        :param str name: Name of schema being registered.
-        :param str definition: String representation of the schema being registered.
-        :param format: Format for the schema being registered.
+        :param str name: Name of schema for which properties should be retrieved.
+        :param str definition: String representation of the schema for which properties should be retrieved.
+        :param format: Format for the schema for which properties should be retrieved.
         :type format: Union[str, SchemaFormat]
         :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -202,6 +203,7 @@ class SchemaRegistryClient(object):
 
         """
         try:
+            format = cast(SchemaFormat, format)
             format = format.value
         except AttributeError:
             pass

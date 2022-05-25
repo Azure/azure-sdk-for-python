@@ -10,7 +10,8 @@ import subprocess
 import sys
 import types
 import tempfile
-from typing import Dict, Any, Optional
+import re
+from typing import Dict, Any, Optional, List
 
 # Because I'm subprocessing myself, I need to do weird thing as import.
 try:
@@ -37,14 +38,20 @@ def parse_input(input_parameter):
 
 
 def create_empty_report():
-    return {"models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
+    return {"client": {}, "models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
 
 
 def create_report(module_name: str) -> Dict[str, Any]:
     module_to_generate = importlib.import_module(module_name)
+    client_name = getattr(module_to_generate, '__all__')
 
     report = create_empty_report()
 
+    try:
+        report["client"] = client_name
+    except:
+        report["client"] = []
+        
     # Look for models first
     model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
     for model_name in model_names:
@@ -119,6 +126,8 @@ def create_report_from_func(function_attr):
         func_content["parameters"].append(
             {
                 "name": parameter.name,
+                "type": str(parameter.kind),
+                "has_default_value": not (parameter.default is parameter.empty)
             }
         )
     return func_content
@@ -159,6 +168,18 @@ def merge_report(report_paths):
     return merged_report
 
 
+# find last version or last stable version
+def select_versions(versions: List[str], last_pypi_stable: bool) -> List[str]:
+    versions.reverse()
+    if last_pypi_stable:
+        for version in versions:
+            if not re.search('[a-zA-Z]', version):
+                return [version]
+        _LOGGER.info(f"Do not find stable version during {versions}")
+        return [versions[0]]
+    return [versions[0]]
+
+
 def main(
     input_parameter: str,
     version: Optional[str] = None,
@@ -167,6 +188,7 @@ def main(
     last_pypi: bool = False,
     output: Optional[str] = None,
     metadata_path: Optional[str] = None,
+    last_pypi_stable: bool = False
 ):
 
     output_msg = output if output else "default folder"
@@ -190,7 +212,7 @@ def main(
             _LOGGER.info(f"Got {versions}")
             if last_pypi:
                 _LOGGER.info(f"Only keep last PyPI version")
-                versions = [versions[-1]]
+                versions = select_versions(versions, last_pypi_stable)
 
         for version in versions:
             _LOGGER.info(f"Installing version {version} of {package_name} in a venv")
@@ -339,6 +361,12 @@ if __name__ == "__main__":
         action="store_true",
         help="If provided, build report for last version on pypi of this package.",
     )
+    parser.add_argument(
+        "--last-pypi-stable",
+        dest="last_pypi_stable",
+        action="store_true",
+        help="If provided, select last stable version on pypi",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
     parser.add_argument("--output", dest="output", help="Override output path.")
     parser.add_argument(
@@ -348,4 +376,5 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi, args.output, args.metadata)
+    main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi, args.output, args.metadata,
+         args.last_pypi_stable)

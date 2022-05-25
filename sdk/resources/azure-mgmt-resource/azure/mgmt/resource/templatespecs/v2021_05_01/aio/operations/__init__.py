@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._template_specs_operations import TemplateSpecsOperations
-from ._template_spec_versions_operations import TemplateSpecVersionsOperations
+from ._operations import TemplateSpecsOperations
+from ._operations import TemplateSpecVersionsOperations
 
 __all__ = [
     'TemplateSpecsOperations',

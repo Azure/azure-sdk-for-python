@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Any
+from typing import ( # pylint: disable=unused-import
+    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+    TYPE_CHECKING)
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -18,6 +21,10 @@ from .._serialize import convert_datetime_to_rfc1123
 from .._deserialize import process_storage_error, deserialize_file_properties
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from .._models import ContentSettings
 
 
 class DataLakeFileClient(PathClient, DataLakeFileClientBase):
@@ -45,6 +52,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -115,6 +125,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
@@ -208,6 +221,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: FileProperties
@@ -304,6 +321,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword int chunk_size:
@@ -339,6 +359,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Required if the file has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :return: dict of the response header
 
         .. admonition:: Example:
@@ -351,8 +374,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :caption: Append data to the file.
         """
         options = self._append_data_options(
-            data,
-            offset,
+            data=data,
+            offset=offset,
+            scheme=self.scheme,
             length=length,
             **kwargs)
         try:
@@ -408,6 +432,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :return: response header in dict
 
         .. admonition:: Example:
@@ -421,6 +448,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """
         options = self._flush_data_options(
             offset,
+            self.scheme,
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return await self._client.path.flush_data(**options)
@@ -460,6 +488,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a Customer-Provided Key.
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :keyword int timeout:

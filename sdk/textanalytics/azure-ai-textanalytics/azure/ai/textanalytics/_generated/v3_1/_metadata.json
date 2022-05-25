@@ -10,8 +10,8 @@
         "azure_arm": false,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"TextAnalyticsClientConfiguration\"], \"._operations_mixin\": [\"TextAnalyticsClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"TextAnalyticsClientConfiguration\"], \"._operations_mixin\": [\"TextAnalyticsClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"TextAnalyticsClientConfiguration\"], \"._operations_mixin\": [\"TextAnalyticsClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"TextAnalyticsClientConfiguration\"], \"._operations_mixin\": [\"TextAnalyticsClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -140,24 +140,24 @@
             },
             "_cancel_health_job_initial" : {
                 "sync": {
-                    "signature": "def _cancel_health_job_initial(\n    self,\n    job_id,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "signature": "def _cancel_health_job_initial(  # pylint: disable=inconsistent-return-statements\n    self,\n    job_id,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
                     "doc": "\"\"\"Cancel healthcare prediction job.\n\n:param job_id: Job ID.\n:type job_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def _cancel_health_job_initial(\n    self,\n    job_id: str,\n    **kwargs: Any\n) -\u003e None:\n",
+                    "signature": "async def _cancel_health_job_initial(  # pylint: disable=inconsistent-return-statements\n    self,\n    job_id: str,\n    **kwargs: Any\n) -\u003e None:\n",
                     "doc": "\"\"\"Cancel healthcare prediction job.\n\n:param job_id: Job ID.\n:type job_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "job_id"
             },
             "begin_cancel_health_job" : {
                 "sync": {
-                    "signature": "def begin_cancel_health_job(\n    self,\n    job_id,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e LROPoller[None]\n",
+                    "signature": "def begin_cancel_health_job(  # pylint: disable=inconsistent-return-statements\n    self,\n    job_id,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e LROPoller[None]\n",
                     "doc": "\"\"\"Cancel healthcare prediction job.\n\nCancel healthcare prediction job.\n\n:param job_id: Job ID.\n:type job_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be LROBasePolling. Pass in False for\n this operation to not poll, or pass in your own initialized polling object for a personal\n polling strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def begin_cancel_health_job(\n    self,\n    job_id: str,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
+                    "signature": "async def begin_cancel_health_job(  # pylint: disable=inconsistent-return-statements\n    self,\n    job_id: str,\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
                     "doc": "\"\"\"Cancel healthcare prediction job.\n\nCancel healthcare prediction job.\n\n:param job_id: Job ID.\n:type job_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False\n for this operation to not poll, or pass in your own initialized polling object for a personal\n polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "job_id"

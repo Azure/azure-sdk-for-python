@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/dev-cognitiveservices-Language-2022-03-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-03-01-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/d1716d13b0814a9d0785eda9a74529a315212f53/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 namespace: azure.ai.language.conversations
 package-name: azure-ai-language-conversations
@@ -29,26 +29,85 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: ConversationAnalysisClient
+tag: release_2022_05_01_preview
+openapi-type: data-plane
 version-tolerant: true
-models-mode: msrest
-package-version: 1.0.0b3
+package-version: 1.1.0b1
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key
 black: true
+modelerfour:
+  lenient-model-deduplication: true
 ```
 
-### Remove intermediary object from analyze operation call
+## Fix generation errors
+
+### Fix `duplicate-schema` errors in `TaskState`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["TaskState"]["properties"]
+      transform: >
+        $["status"]["x-ms-enum"]["name"] = "TaskStateEnum";
+```
+
+### Fix `duplicate-schema` errors in `JobState`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["JobState"]["properties"]
+      transform: >
+        $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
+```
+
+## Rename client operations 
+
+### Sync `analyze operation - POST`
 
 ```yaml
 directive:
     - from: swagger-document
       where: $["paths"]["/:analyze-conversations"]["post"]
       transform: >
-          $["operationId"] = "analyzeConversation";
+          $["operationId"] = "AnalyzeConversation";
 ```
 
-### Rename body to tasks
+### Async `analyze operation - POST`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+          $["operationId"] = "ConversationAnalysis";
+```
+
+### Remove unnecessary async GET operation status
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]
+      transform: >
+          delete $["/analyze-conversations/jobs/{jobId}"];
+```
+
+### Remove unnecessary async cancel operation
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]
+      transform: >
+          delete $["/analyze-conversations/jobs/{jobId}:cancel"];
+```
+
+## Sync API Directives
+
+### Rename `body` to `tasks`
 
 ```yaml
 directive:
@@ -58,7 +117,7 @@ directive:
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
 
-### Rename 'confidenceScore' in Qna intent result
+### Unify `confidenceScore` in Qna intent result
 
 ```yaml
 directive:
@@ -75,3 +134,94 @@ directive:
       transform: >
         $["x-ms-client-name"] = "confidence";
 ```
+
+### Set default values for `ParticipantID`, and `ConversationID`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["participantId"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["id"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+### Fix `enum` error
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["CustomConversationTaskParameters"]
+    transform: >
+        delete $.properties["stringIndexType"]
+```
+
+## Async APIs Directives
+
+### Make LRO poller for analyze operation get result
+```yaml
+directive:
+  - from: swagger-document
+    where: '$.paths["/analyze-conversations/jobs"].post'
+    transform: >
+      $["responses"]["200"] = {
+          "description": "dummy schema to get poller response when calling .result()",
+          "schema": {
+              "$ref": "#/definitions/AnalyzeConversationJobState"
+          }
+      };
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "jobs";
+```
+
+### Rename `body` to `tasks`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "task";
+```
+
+## Fix Swagger/API mismatch errors
+
+### Fix task types - `async POST analyze api`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationResultsKind"]
+      transform: >
+        $["enum"] = ["conversationalSummarizationResults", "conversationalPIIResults"];
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationSummarizationResult"]
+      transform: >
+        $["x-ms-discriminator-value"] = "conversationalSummarizationResults";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationConversationPIIResult"]
+      transform: >
+        $["x-ms-discriminator-value"] = "conversationalPIIResults";
+```
+

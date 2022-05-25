@@ -18,7 +18,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,11 +31,12 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_list_file_systems_request(
+    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "account")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     prefix = kwargs.pop('prefix', None)  # type: Optional[str]
     continuation = kwargs.pop('continuation', None)  # type: Optional[str]
     max_results = kwargs.pop('max_results', None)  # type: Optional[int]
@@ -44,7 +45,12 @@ def build_list_file_systems_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/")
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -150,6 +156,7 @@ class ServiceOperations(object):
             if not next_link:
                 
                 request = build_list_file_systems_request(
+                    url=self._config.url,
                     resource=resource,
                     version=self._config.version,
                     prefix=prefix,
@@ -165,6 +172,7 @@ class ServiceOperations(object):
             else:
                 
                 request = build_list_file_systems_request(
+                    url=self._config.url,
                     resource=resource,
                     version=self._config.version,
                     prefix=prefix,
@@ -207,4 +215,4 @@ class ServiceOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_file_systems.metadata = {'url': "/"}  # type: ignore
+    list_file_systems.metadata = {'url': "{url}"}  # type: ignore

@@ -441,6 +441,57 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         self.delete_time = delete_time
 
 
+class CpkInfo(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+     provided in the request. If not specified, encryption is performed with the root account
+     encryption key.  For more information, see Encryption at Rest for Azure Storage Services.
+    :vartype encryption_key: str
+    :ivar encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
+     if the x-ms-encryption-key header is provided.
+    :vartype encryption_key_sha256: str
+    :ivar encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+     the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
+     provided. The only acceptable values to pass in are None and "AES256". The default value is
+     None.
+    :vartype encryption_algorithm: str
+    """
+
+    _attribute_map = {
+        'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
+        'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+         provided in the request. If not specified, encryption is performed with the root account
+         encryption key.  For more information, see Encryption at Rest for Azure Storage Services.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the x-ms-encryption-key header is provided.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
+         Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
+         header is provided. The only acceptable values to pass in are None and "AES256". The default
+         value is None.
+        :paramtype encryption_algorithm: str
+        """
+        super(CpkInfo, self).__init__(**kwargs)
+        self.encryption_key = encryption_key
+        self.encryption_key_sha256 = encryption_key_sha256
+        self.encryption_algorithm = encryption_algorithm
+
+
 class FileSystem(msrest.serialization.Model):
     """FileSystem.
 
@@ -689,6 +740,10 @@ class Path(msrest.serialization.Model):
     :vartype permissions: str
     :ivar encryption_scope: The name of the encryption scope under which the blob is encrypted.
     :vartype encryption_scope: str
+    :ivar creation_time:
+    :vartype creation_time: str
+    :ivar expiry_time:
+    :vartype expiry_time: str
     """
 
     _attribute_map = {
@@ -701,6 +756,8 @@ class Path(msrest.serialization.Model):
         'group': {'key': 'group', 'type': 'str'},
         'permissions': {'key': 'permissions', 'type': 'str'},
         'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
+        'creation_time': {'key': 'creationTime', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
     }
 
     def __init__(
@@ -715,6 +772,8 @@ class Path(msrest.serialization.Model):
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         encryption_scope: Optional[str] = None,
+        creation_time: Optional[str] = None,
+        expiry_time: Optional[str] = None,
         **kwargs
     ):
         """
@@ -736,6 +795,10 @@ class Path(msrest.serialization.Model):
         :paramtype permissions: str
         :keyword encryption_scope: The name of the encryption scope under which the blob is encrypted.
         :paramtype encryption_scope: str
+        :keyword creation_time:
+        :paramtype creation_time: str
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         """
         super(Path, self).__init__(**kwargs)
         self.name = name
@@ -747,6 +810,8 @@ class Path(msrest.serialization.Model):
         self.group = group
         self.permissions = permissions
         self.encryption_scope = encryption_scope
+        self.creation_time = creation_time
+        self.expiry_time = expiry_time
 
 
 class PathHTTPHeaders(msrest.serialization.Model):

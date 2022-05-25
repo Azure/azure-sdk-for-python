@@ -9,9 +9,10 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import TextAnalyticsClientConfiguration
@@ -22,7 +23,12 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
+    """The Text Analytics API is a suite of text analytics web services built with best-in-class
+    Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
+    tasks such as sentiment analysis, key phrase extraction and language detection. No training
+    data is needed to use this API; just bring your text data. This API uses advanced natural
+    language processing techniques to deliver best in class predictions. Further documentation can
+    be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -38,7 +44,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         _base_url = '{Endpoint}/text/analytics/v3.0'
-        self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
+        self._config = TextAnalyticsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

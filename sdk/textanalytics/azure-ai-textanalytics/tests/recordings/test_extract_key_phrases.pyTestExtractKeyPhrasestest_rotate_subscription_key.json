@@ -1,77 +1,122 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "240",
+        "Content-Length": "308",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "34c067a9-5d11-11ec-8271-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {}
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d0cbc06d-fea9-443a-a354-895770c04962",
+        "apim-request-id": "72cdeaa1-bd59-4840-87c6-2eba72ae51e7",
+        "Content-Length": "263",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Tue, 14 Dec 2021 19:08:22 GMT",
+        "Date": "Tue, 03 May 2022 00:15:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
+        "x-envoy-upstream-service-time": "13"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "id": "1",
-            "keyPhrases": [
-              "park"
-            ],
-            "warnings": []
-          },
-          {
-            "id": "2",
-            "keyPhrases": [
-              "hotel"
-            ],
-            "warnings": []
-          },
-          {
-            "id": "3",
-            "keyPhrases": [
-              "good food",
-              "restaurant"
-            ],
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-06-01"
+        "kind": "KeyPhraseExtractionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "keyPhrases": [
+                "park"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "keyPhrases": [
+                "hotel"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "keyPhrases": [
+                "good food",
+                "restaurant"
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "240",
+        "Content-Length": "308",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "34d25f82-5d11-11ec-b003-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {}
+      },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "9123dde5-96ca-4c24-8087-f6dc7770f177",
+        "apim-request-id": "b37fce8a-fb21-496d-ae01-90f699a23473",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Tue, 14 Dec 2021 19:08:22 GMT"
+        "Date": "Tue, 03 May 2022 00:15:54 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -81,56 +126,80 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/keyPhrases",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "240",
+        "Content-Length": "308",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "34da6de7-5d11-11ec-91bf-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "kind": "KeyPhraseExtraction",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I will go to the park.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "I did not like the hotel we stayed at.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "The restaurant had really good food.",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {}
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "87635a60-2344-46cd-8a93-041e3a8a7966",
+        "apim-request-id": "c9286c8d-a2cc-413b-850c-5092581805ed",
+        "Content-Length": "263",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Tue, 14 Dec 2021 19:08:22 GMT",
+        "Date": "Tue, 03 May 2022 00:15:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "13"
+        "x-envoy-upstream-service-time": "16"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "id": "1",
-            "keyPhrases": [
-              "park"
-            ],
-            "warnings": []
-          },
-          {
-            "id": "2",
-            "keyPhrases": [
-              "hotel"
-            ],
-            "warnings": []
-          },
-          {
-            "id": "3",
-            "keyPhrases": [
-              "good food",
-              "restaurant"
-            ],
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-06-01"
+        "kind": "KeyPhraseExtractionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "keyPhrases": [
+                "park"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "keyPhrases": [
+                "hotel"
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "keyPhrases": [
+                "good food",
+                "restaurant"
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
       }
     }
   ],

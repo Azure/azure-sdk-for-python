@@ -6,42 +6,44 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import App
-    from ._models_py3 import AppAvailabilityInfo
-    from ._models_py3 import AppListResult
-    from ._models_py3 import AppPatch
-    from ._models_py3 import AppSkuInfo
-    from ._models_py3 import AppTemplate
-    from ._models_py3 import AppTemplateLocations
-    from ._models_py3 import AppTemplatesResult
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationInputs
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemAssignedServiceIdentity
-except (SyntaxError, ImportError):
-    from ._models import App  # type: ignore
-    from ._models import AppAvailabilityInfo  # type: ignore
-    from ._models import AppListResult  # type: ignore
-    from ._models import AppPatch  # type: ignore
-    from ._models import AppSkuInfo  # type: ignore
-    from ._models import AppTemplate  # type: ignore
-    from ._models import AppTemplateLocations  # type: ignore
-    from ._models import AppTemplatesResult  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationInputs  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemAssignedServiceIdentity  # type: ignore
+from ._models_py3 import App
+from ._models_py3 import AppAvailabilityInfo
+from ._models_py3 import AppListResult
+from ._models_py3 import AppPatch
+from ._models_py3 import AppSkuInfo
+from ._models_py3 import AppTemplate
+from ._models_py3 import AppTemplateLocations
+from ._models_py3 import AppTemplatesResult
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import NetworkRuleSetIpRule
+from ._models_py3 import NetworkRuleSets
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationInputs
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import Resource
+from ._models_py3 import SystemAssignedServiceIdentity
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+
 
 from ._iot_central_client_enums import (
     AppSku,
     AppState,
+    CreatedByType,
+    NetworkAction,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
+    ProvisioningState,
+    PublicNetworkAccess,
     SystemAssignedServiceIdentityType,
 )
 
@@ -54,14 +56,32 @@ __all__ = [
     'AppTemplate',
     'AppTemplateLocations',
     'AppTemplatesResult',
-    'CloudErrorBody',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse',
+    'NetworkRuleSetIpRule',
+    'NetworkRuleSets',
     'Operation',
     'OperationDisplay',
     'OperationInputs',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'Resource',
     'SystemAssignedServiceIdentity',
+    'SystemData',
+    'TrackedResource',
     'AppSku',
     'AppState',
+    'CreatedByType',
+    'NetworkAction',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
+    'ProvisioningState',
+    'PublicNetworkAccess',
     'SystemAssignedServiceIdentityType',
 ]

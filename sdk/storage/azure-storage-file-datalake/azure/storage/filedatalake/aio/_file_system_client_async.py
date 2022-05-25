@@ -65,6 +65,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
          shared access key, or an instance of a TokenCredentials class from azure.identity.
          If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
          - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+     :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -194,7 +197,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
