@@ -185,7 +185,8 @@ class BufferedProducer:
                 #flush the partition if the producer is running beyond the waiting time or the buffer is at max capacity
                 if (now_time - self._last_send_time > self._max_wait_time) or (self._cur_buffered_len >= self._max_buffer_len):
                     # in the worker, not raising error for flush, users can not handle this
-                    self.flush(raise_error=False)
+                    with self._lock:
+                        self.flush(raise_error=False)
             time.sleep(min(self._max_wait_time, 5))
 
     @property
