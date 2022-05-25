@@ -373,7 +373,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
         retval = generated_models.DataFeed(
             data_source_parameter=kwargs.pop(
                 "dataSourceParameter",
-                TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source)  # type: ignore
+                TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source),  # type: ignore
             ),
             id=kwargs.pop("id", self.id),
             name=kwargs.pop("dataFeedName", None) or self.name,
@@ -2083,20 +2083,13 @@ class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attri
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
         super(AnomalyFeedback, self).__init__(
-            feedback_type="Anomaly",
-            metric_id=metric_id,
-            dimension_key=dimension_key,
-            **kwargs
+            feedback_type="Anomaly", metric_id=metric_id, dimension_key=dimension_key, **kwargs
         )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
-        self.anomaly_detection_configuration_id = kwargs.get(
-            "anomaly_detection_configuration_id", None
-        )
-        self.anomaly_detection_configuration_snapshot = kwargs.get(
-            "anomaly_detection_configuration_snapshot", None
-        )
+        self.anomaly_detection_configuration_id = kwargs.get("anomaly_detection_configuration_id", None)
+        self.anomaly_detection_configuration_snapshot = kwargs.get("anomaly_detection_configuration_snapshot", None)
 
     @classmethod
     def _from_generated(cls, anomaly_feedback: generated_models.AnomalyFeedback) -> Optional["AnomalyFeedback"]:
@@ -2187,10 +2180,7 @@ class ChangePointFeedback(MetricFeedback):
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
         super(ChangePointFeedback, self).__init__(
-            feedback_type="ChangePoint",
-            metric_id=metric_id,
-            dimension_key=dimension_key,
-            **kwargs
+            feedback_type="ChangePoint", metric_id=metric_id, dimension_key=dimension_key, **kwargs
         )
         self.start_time = start_time
         self.end_time = end_time
@@ -2210,6 +2200,24 @@ class ChangePointFeedback(MetricFeedback):
                 self.end_time,
                 self.value,
             )[:1024]
+        )
+
+    @classmethod
+    def _from_generated(
+        cls, change_point_feedback: generated_models.ChangePointFeedback
+    ) -> Optional["ChangePointFeedback"]:
+        if not change_point_feedback:
+            return None
+        dimension_key = change_point_feedback.dimension_key
+        return cls(
+            id=change_point_feedback.id,
+            created_time=change_point_feedback.created_time,
+            user_principal=change_point_feedback.user_principal,
+            metric_id=change_point_feedback.metric_id,
+            dimension_key=dimension_key,
+            start_time=change_point_feedback.start_time,
+            end_time=change_point_feedback.end_time,
+            value=change_point_feedback.value,
         )
 
 
@@ -2262,10 +2270,7 @@ class CommentFeedback(MetricFeedback):
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
         super(CommentFeedback, self).__init__(
-            feedback_type="Comment",
-            metric_id=metric_id,
-            dimension_key=dimension_key,
-            **kwargs
+            feedback_type="Comment", metric_id=metric_id, dimension_key=dimension_key, **kwargs
         )
         self.start_time = start_time
         self.end_time = end_time
@@ -2285,6 +2290,22 @@ class CommentFeedback(MetricFeedback):
                 self.end_time,
                 self.value,
             )[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, comment_feedback: generated_models.CommentFeedback) -> Optional["CommentFeedback"]:
+        if not comment_feedback:
+            return None
+        dimension_key = comment_feedback.dimension_key
+        return cls(
+            id=comment_feedback.id,
+            created_time=comment_feedback.created_time,
+            user_principal=comment_feedback.user_principal,
+            metric_id=comment_feedback.metric_id,
+            dimension_key=dimension_key,
+            start_time=comment_feedback.start_time,
+            end_time=comment_feedback.end_time,
+            value=comment_feedback.value,
         )
 
 
@@ -2335,10 +2356,7 @@ class PeriodFeedback(MetricFeedback):
 
     def __init__(self, metric_id, dimension_key, value, period_type, **kwargs):
         super(PeriodFeedback, self).__init__(
-            feedback_type="Period",
-            metric_id=metric_id,
-            dimension_key=dimension_key,
-            **kwargs
+            feedback_type="Period", metric_id=metric_id, dimension_key=dimension_key, **kwargs
         )
         self.value = value
         self.period_type = period_type
@@ -2356,6 +2374,21 @@ class PeriodFeedback(MetricFeedback):
                 self.value,
                 self.period_type,
             )[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, period_feedback: generated_models.PeriodFeedback) -> Optional["PeriodFeedback"]:
+        if not period_feedback:
+            return None
+        dimension_key = period_feedback.dimension_key
+        return cls(
+            id=period_feedback.id,
+            created_time=period_feedback.created_time,
+            user_principal=period_feedback.user_principal,
+            metric_id=period_feedback.metric_id,
+            dimension_key=dimension_key,
+            value=period_feedback.value,
+            period_type=period_feedback.period_type,
         )
 
 
@@ -2393,7 +2426,6 @@ class DatasourceCredential(dict):
         self.id = None
         self.name = name
         self.description = kwargs.pop("description", None)
-
 
     def __repr__(self):
         return "DatasourceCredential(id={}, credential_type={}, name={}, description={})".format(
@@ -2805,7 +2837,7 @@ class DetectionAnomalyResultQuery(msrest.serialization.Model):
         *,
         start_time: datetime.datetime,
         end_time: datetime.datetime,
-        filter: Optional["DetectionAnomalyFilterCondition"] = None,
+        filter: Optional["DetectionAnomalyFilterCondition"] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         super(DetectionAnomalyResultQuery, self).__init__(**kwargs)
@@ -2838,7 +2870,14 @@ class DetectionIncidentResultQuery(msrest.serialization.Model):
         "filter": {"key": "filter", "type": "DetectionIncidentFilterCondition"},
     }
 
-    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, filter=None, **kwargs):
+    def __init__(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        filter=None,  # pylint: disable=redefined-builtin
+        **kwargs
+    ):
         super(DetectionIncidentResultQuery, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time

@@ -25,7 +25,7 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-from typing import List, Dict, Any, Union, overload, TYPE_CHECKING, cast
+from typing import List, Dict, Any, Union, overload, cast
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -941,7 +941,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         return await self._client.delete_datasource_credential(*credential_id, **kwargs)
 
 
-class MetricsAdvisorClient:
+class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keyword
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

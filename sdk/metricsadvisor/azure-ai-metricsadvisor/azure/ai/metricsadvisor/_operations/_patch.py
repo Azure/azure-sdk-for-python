@@ -99,14 +99,14 @@ class OperationMixinHelpers:
     def _convert_to_sub_feedback(self, feedback) -> FeedbackUnion:
         feedback_type = feedback["feedbackType"]
         if feedback_type == "Anomaly":
-            generated = self._deserialize(generated_models.AnomalyFeedback, feedback)
-            return models.AnomalyFeedback._from_generated(generated)
+            generated = self._deserialize(generated_models.AnomalyFeedback, feedback)  # pylint: disable=no-member
+            return models.AnomalyFeedback._from_generated(generated)  # pylint: disable=protected-access
         if feedback_type == "ChangePoint":
-            return models.ChangePointFeedback._from_generated(feedback)  # type: ignore
+            return models.ChangePointFeedback._from_generated(feedback)  # type: ignore  # pylint: disable=protected-access
         if feedback_type == "Comment":
-            return models.CommentFeedback._from_generated(feedback)  # type: ignore
+            return models.CommentFeedback._from_generated(feedback)  # type: ignore  # pylint: disable=protected-access
         if feedback_type == "Period":
-            return models.PeriodFeedback._from_generated(feedback)  # type: ignore
+            return models.PeriodFeedback._from_generated(feedback)  # type: ignore  # pylint: disable=protected-access
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
     @staticmethod
@@ -518,8 +518,7 @@ class OperationMixinHelpers:
             content_type=kwargs.pop("content_type", "application/json"),
         )
         next_request = operations.build_list_metric_enrichment_status_request(
-            metric_id=metric_id,
-            json=enrichment_status_query_option.serialize()
+            metric_id=metric_id, json=enrichment_status_query_option.serialize()
         )
         return initial_request, next_request, kwargs
 
@@ -866,7 +865,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self.get_data_feed(data_feed_id)
 
     @distributed_trace
-    def create_hook(  # type: ignore # pylint: disable=arguments-differ
+    def create_hook(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, hook: Union[models.EmailNotificationHook, models.WebNotificationHook], **kwargs: Any
     ) -> Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]:
         response_headers = super().create_hook(  # type: ignore
@@ -928,7 +927,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._deserialize_data_feed(response.json())
 
     @distributed_trace
-    def get_alert_configuration(  # type: ignore # pylint: disable=arguments-differ
+    def get_alert_configuration(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, alert_configuration_id: str, **kwargs: Any
     ) -> models.AnomalyAlertConfiguration:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1065,7 +1064,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_alert_configurations(  # type: ignore # pylint: disable=arguments-differ
+    def list_alert_configurations(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, detection_configuration_id: str, **kwargs: Any
     ) -> ItemPaged[models.AnomalyAlertConfiguration]:
         def _deserialize(deserializer, line):
@@ -1109,7 +1108,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def create_datasource_credential(  # type: ignore # pylint: disable=arguments-differ
+    def create_datasource_credential(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
         response_headers = super().create_datasource_credential(  # type: ignore
@@ -1152,7 +1151,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def list_feedback(  # type: ignore # pylint: disable=arguments-differ
+    def list_feedback(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, metric_id: str, **kwargs: Any
     ) -> ItemPaged[Union[models.MetricFeedback, FeedbackUnion]]:
         deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
@@ -1340,7 +1339,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_metric_dimension_values(  # type: ignore # pylint: disable=arguments-differ
+    def list_metric_dimension_values(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, metric_id: str, dimension_name: str, **kwargs: Any
     ) -> ItemPaged[str]:
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
@@ -1371,7 +1370,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_metric_series_definitions(  # type: ignore # pylint: disable=arguments-differ
+    def list_metric_series_definitions(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
     ) -> ItemPaged[models.MetricSeriesDefinition]:
         initial_request, next_request, kwargs = self._list_metric_series_definitions_requests(

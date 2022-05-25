@@ -88,8 +88,8 @@ class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
     """
 
     def __init__(
-        self, credential: MetricsAdvisorKeyCredential, **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+        self, credential: MetricsAdvisorKeyCredential, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         super(MetricsAdvisorKeyCredentialPolicy, self).__init__()
         self._credential = credential
 
@@ -113,7 +113,7 @@ def get_authentication_policy(credential):
     return authentication_policy
 
 
-class MetricsAdvisorClient:
+class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keyword
     """Represents an client that calls restful API of Azure Metrics Advisor service.
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
@@ -1547,6 +1547,7 @@ __all__ = [
     "MetricsAdvisorClient",
     "MetricsAdvisorAdministrationClient",
 ]
+
 
 def patch_sdk():  # pylint: disable=function-redefined
     pass

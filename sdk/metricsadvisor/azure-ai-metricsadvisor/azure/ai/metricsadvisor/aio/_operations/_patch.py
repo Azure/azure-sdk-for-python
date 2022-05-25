@@ -151,7 +151,7 @@ class MetricsAdvisorClientOperationsMixin(
         return await self.get_data_feed(data_feed_id)
 
     @distributed_trace_async
-    async def create_hook(  # type: ignore # pylint: disable=arguments-differ
+    async def create_hook(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, hook: Union[models.EmailNotificationHook, models.WebNotificationHook], **kwargs: Any
     ) -> Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]:
         response_headers = await super().create_hook(  # type: ignore
@@ -216,7 +216,7 @@ class MetricsAdvisorClientOperationsMixin(
         return self._deserialize_data_feed(json_response)
 
     @distributed_trace_async
-    async def get_alert_configuration(  # type: ignore # pylint: disable=arguments-differ
+    async def get_alert_configuration(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, alert_configuration_id: str, **kwargs: Any
     ) -> models.AnomalyAlertConfiguration:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -352,7 +352,7 @@ class MetricsAdvisorClientOperationsMixin(
         )
 
     @distributed_trace
-    def list_alert_configurations(  # type: ignore # pylint: disable=arguments-differ
+    def list_alert_configurations(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, detection_configuration_id: str, **kwargs: Any
     ) -> AsyncItemPaged[models.AnomalyAlertConfiguration]:
         def _deserialize(deserializer, line):
@@ -394,7 +394,7 @@ class MetricsAdvisorClientOperationsMixin(
         )
 
     @distributed_trace_async
-    async def create_datasource_credential(  # type: ignore # pylint: disable=arguments-differ
+    async def create_datasource_credential(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
         response_headers = await super().create_datasource_credential(  # type: ignore
@@ -437,7 +437,7 @@ class MetricsAdvisorClientOperationsMixin(
         return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def list_feedback(  # type: ignore # pylint: disable=arguments-differ
+    def list_feedback(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, metric_id: str, **kwargs: Any
     ) -> AsyncItemPaged[Union[models.MetricFeedback, FeedbackUnion]]:
         deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
@@ -625,7 +625,7 @@ class MetricsAdvisorClientOperationsMixin(
         return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_metric_dimension_values(  # type: ignore # pylint: disable=arguments-differ
+    def list_metric_dimension_values(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, metric_id: str, dimension_name: str, **kwargs: Any
     ) -> AsyncItemPaged[str]:
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
@@ -656,7 +656,7 @@ class MetricsAdvisorClientOperationsMixin(
         )
 
     @distributed_trace
-    def list_metric_series_definitions(  # type: ignore # pylint: disable=arguments-differ
+    def list_metric_series_definitions(  # type: ignore # pylint: disable=arguments-differ,arguments-renamed
         self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
     ) -> AsyncItemPaged[models.MetricSeriesDefinition]:
         initial_request, next_request, kwargs = self._list_metric_series_definitions_requests(

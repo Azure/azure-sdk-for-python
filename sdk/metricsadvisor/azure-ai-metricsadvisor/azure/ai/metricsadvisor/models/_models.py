@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14,7 +15,7 @@ import msrest.serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
@@ -142,7 +143,7 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
         name: str,
         hook_ids: List[str],
         metric_alert_configurations: List["_models.MetricAlertConfiguration"],
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         description: str = "",
         cross_metrics_operator: Optional[Union[str, "_models.MetricAnomalyAlertConfigurationsOperator"]] = None,
         dimensions_to_split_alert: Optional[List[str]] = None,
@@ -360,8 +361,8 @@ class AnomalyDimensionList(msrest.serialization.Model):
 class MetricFeedback(msrest.serialization.Model):
     """MetricFeedback.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -425,7 +426,7 @@ class MetricFeedback(msrest.serialization.Model):
         self.dimension_key = dimension_key
 
 
-class AnomalyFeedback(MetricFeedback):
+class AnomalyFeedback(MetricFeedback):  # pylint: disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -529,7 +530,7 @@ class AnomalyFeedback(MetricFeedback):
         self.value = value
 
 
-class AnomalyIncident(msrest.serialization.Model):
+class AnomalyIncident(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """AnomalyIncident.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -600,7 +601,7 @@ class AnomalyIncident(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         start_time: datetime.datetime,
         last_time: datetime.datetime,
         severity: Union[str, "_models.AnomalySeverity"],
@@ -1261,7 +1262,7 @@ class CommentFeedback(MetricFeedback):
         self.value = value
 
 
-class DataFeed(msrest.serialization.Model):
+class DataFeed(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """DataFeed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1398,7 +1399,7 @@ class DataFeed(msrest.serialization.Model):
         "data_source_parameter": {"key": "dataSourceParameter", "type": "object"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
@@ -1701,7 +1702,7 @@ class DataFeedMetric(msrest.serialization.Model):
         self.description = description
 
 
-class DataPointAnomaly(msrest.serialization.Model):
+class DataPointAnomaly(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """DataPointAnomaly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1805,8 +1806,9 @@ class DataPointAnomaly(msrest.serialization.Model):
 class DatasourceCredential(msrest.serialization.Model):
     """DatasourceCredential.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasourceSqlConnectionString, DatasourceDataLakeGen2SharedKey, DatasourceServicePrincipal, DatasourceServicePrincipalInKeyVault.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DatasourceSqlConnectionString, DatasourceDataLakeGen2SharedKey, DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2250,8 +2252,8 @@ class DimensionGroupIdentity(msrest.serialization.Model):
 class NotificationHook(msrest.serialization.Model):
     """NotificationHook.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EmailNotificationHook, WebNotificationHook.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EmailNotificationHook, WebNotificationHook
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3605,7 +3607,11 @@ class SeverityFilterCondition(msrest.serialization.Model):
     }
 
     def __init__(
-        self, *, min: Union[str, "_models.AnomalySeverity"], max: Union[str, "_models.AnomalySeverity"], **kwargs
+        self,
+        *,
+        min: Union[str, "_models.AnomalySeverity"],  # pylint: disable=redefined-builtin
+        max: Union[str, "_models.AnomalySeverity"],  # pylint: disable=redefined-builtin
+        **kwargs
     ):
         """
         :keyword min: min severity. Required. Known values are: "Low", "Medium", and "High".
@@ -3731,7 +3737,7 @@ class TopNGroupScope(msrest.serialization.Model):
         self.min_top_count = min_top_count
 
 
-class WebNotificationHook(NotificationHook):
+class WebNotificationHook(NotificationHook):  # pylint: disable=too-many-instance-attributes
     """WebNotificationHook.
 
     Variables are only populated by the server, and will be ignored when sending a request.

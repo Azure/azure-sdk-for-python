@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MetricsAdvisorClient(MetricsAdvisorClientOperationsMixin):
+class MetricsAdvisorClient(MetricsAdvisorClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
