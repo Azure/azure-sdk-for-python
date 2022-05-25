@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._action_rules_operations import ActionRulesOperations
+from ._alert_processing_rules_operations import AlertProcessingRulesOperations
 from ._operations import Operations
 from ._alerts_operations import AlertsOperations
 from ._smart_groups_operations import SmartGroupsOperations
-from ._smart_detector_alert_rules_operations import SmartDetectorAlertRulesOperations
 
 __all__ = [
-    'ActionRulesOperations',
+    'AlertProcessingRulesOperations',
     'Operations',
     'AlertsOperations',
     'SmartGroupsOperations',
-    'SmartDetectorAlertRulesOperations',
 ]

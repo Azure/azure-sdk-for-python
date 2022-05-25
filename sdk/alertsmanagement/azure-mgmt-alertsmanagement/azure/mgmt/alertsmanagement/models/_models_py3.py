@@ -15,187 +15,101 @@ import msrest.serialization
 from ._alerts_management_client_enums import *
 
 
-class ActionRuleProperties(msrest.serialization.Model):
-    """Action rule properties defining scope, conditions, suppression logic for action rule.
+class Action(msrest.serialization.Model):
+    """Action to be applied.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ActionGroup, Diagnostics, Suppression.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+    sub-classes are: AddActionGroups, RemoveAllActionGroups.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scope: scope on which action rule will apply.
-    :type scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :param conditions: conditions on which alerts will be filtered.
-    :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :param description: Description of action rule.
-    :type description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
-    :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
-    :vartype last_modified_by: str
-    :param status: Indicates if the given action rule is enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :param type: Required. Indicates type of action rule.Constant filled by server.  Possible
-     values include: "Suppression", "ActionGroup", "Diagnostics".
-    :type type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
+    :ivar action_type: Required. Action that should be applied.Constant filled by server. Possible
+     values include: "AddActionGroups", "RemoveAllActionGroups".
+    :vartype action_type: str or ~azure.mgmt.alertsmanagement.models.ActionType
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
+        'action_type': {'required': True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'type': {'ActionGroup': 'ActionGroup', 'Diagnostics': 'Diagnostics', 'Suppression': 'Suppression'}
+        'action_type': {'AddActionGroups': 'AddActionGroups', 'RemoveAllActionGroups': 'RemoveAllActionGroups'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Action, self).__init__(**kwargs)
+        self.action_type = None  # type: Optional[str]
+
+
+class ActionStatus(msrest.serialization.Model):
+    """Action status.
+
+    :ivar is_suppressed: Value indicating whether alert is suppressed.
+    :vartype is_suppressed: bool
+    """
+
+    _attribute_map = {
+        'is_suppressed': {'key': 'isSuppressed', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        scope: Optional["Scope"] = None,
-        conditions: Optional["Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "ActionRuleStatus"]] = None,
+        is_suppressed: Optional[bool] = None,
         **kwargs
     ):
-        super(ActionRuleProperties, self).__init__(**kwargs)
-        self.scope = scope
-        self.conditions = conditions
-        self.description = description
-        self.created_at = None
-        self.last_modified_at = None
-        self.created_by = None
-        self.last_modified_by = None
-        self.status = status
-        self.type = None  # type: Optional[str]
+        """
+        :keyword is_suppressed: Value indicating whether alert is suppressed.
+        :paramtype is_suppressed: bool
+        """
+        super(ActionStatus, self).__init__(**kwargs)
+        self.is_suppressed = is_suppressed
 
 
-class ActionGroup(ActionRuleProperties):
-    """Action rule with action group configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+class AddActionGroups(Action):
+    """Add action groups to alert processing rule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scope: scope on which action rule will apply.
-    :type scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :param conditions: conditions on which alerts will be filtered.
-    :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :param description: Description of action rule.
-    :type description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
-    :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
-    :vartype last_modified_by: str
-    :param status: Indicates if the given action rule is enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :param type: Required. Indicates type of action rule.Constant filled by server.  Possible
-     values include: "Suppression", "ActionGroup", "Diagnostics".
-    :type type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
-    :param action_group_id: Required. Action group to trigger if action rule matches.
-    :type action_group_id: str
+    :ivar action_type: Required. Action that should be applied.Constant filled by server. Possible
+     values include: "AddActionGroups", "RemoveAllActionGroups".
+    :vartype action_type: str or ~azure.mgmt.alertsmanagement.models.ActionType
+    :ivar action_group_ids: Required. List of action group Ids to add to alert processing rule.
+    :vartype action_group_ids: list[str]
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
-        'action_group_id': {'required': True},
+        'action_type': {'required': True},
+        'action_group_ids': {'required': True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+        'action_group_ids': {'key': 'actionGroupIds', 'type': '[str]'},
     }
 
     def __init__(
         self,
         *,
-        action_group_id: str,
-        scope: Optional["Scope"] = None,
-        conditions: Optional["Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "ActionRuleStatus"]] = None,
+        action_group_ids: List[str],
         **kwargs
     ):
-        super(ActionGroup, self).__init__(scope=scope, conditions=conditions, description=description, status=status, **kwargs)
-        self.type = 'ActionGroup'  # type: str
-        self.action_group_id = action_group_id
-
-
-class ActionGroupsInformation(msrest.serialization.Model):
-    """The Action Groups information, used by the alert rule.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param custom_email_subject: An optional custom email subject to use in email notifications.
-    :type custom_email_subject: str
-    :param custom_webhook_payload: An optional custom web-hook payload to use in web-hook
-     notifications.
-    :type custom_webhook_payload: str
-    :param group_ids: Required. The Action Group resource IDs.
-    :type group_ids: list[str]
-    """
-
-    _validation = {
-        'group_ids': {'required': True},
-    }
-
-    _attribute_map = {
-        'custom_email_subject': {'key': 'customEmailSubject', 'type': 'str'},
-        'custom_webhook_payload': {'key': 'customWebhookPayload', 'type': 'str'},
-        'group_ids': {'key': 'groupIds', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        group_ids: List[str],
-        custom_email_subject: Optional[str] = None,
-        custom_webhook_payload: Optional[str] = None,
-        **kwargs
-    ):
-        super(ActionGroupsInformation, self).__init__(**kwargs)
-        self.custom_email_subject = custom_email_subject
-        self.custom_webhook_payload = custom_webhook_payload
-        self.group_ids = group_ids
+        """
+        :keyword action_group_ids: Required. List of action group Ids to add to alert processing rule.
+        :paramtype action_group_ids: list[str]
+        """
+        super(AddActionGroups, self).__init__(**kwargs)
+        self.action_type = 'AddActionGroups'  # type: str
+        self.action_group_ids = action_group_ids
 
 
 class Resource(msrest.serialization.Model):
@@ -227,131 +141,12 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-
-
-class ManagedResource(Resource):
-    """An azure managed resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ManagedResource, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-
-
-class ActionRule(ManagedResource):
-    """Action rule object containing target scope, conditions and suppression logic.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param properties: action rule properties.
-    :type properties: ~azure.mgmt.alertsmanagement.models.ActionRuleProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ActionRuleProperties'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["ActionRuleProperties"] = None,
-        **kwargs
-    ):
-        super(ActionRule, self).__init__(location=location, tags=tags, **kwargs)
-        self.properties = properties
-
-
-class ActionRulesList(msrest.serialization.Model):
-    """List of action rules.
-
-    :param next_link: URL to fetch the next set of action rules.
-    :type next_link: str
-    :param value: List of action rules.
-    :type value: list[~azure.mgmt.alertsmanagement.models.ActionRule]
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ActionRule]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["ActionRule"]] = None,
-        **kwargs
-    ):
-        super(ActionRulesList, self).__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
 
 
 class Alert(Resource):
@@ -365,8 +160,8 @@ class Alert(Resource):
     :vartype type: str
     :ivar name: Azure resource name.
     :vartype name: str
-    :param properties: Alert property bag.
-    :type properties: ~azure.mgmt.alertsmanagement.models.AlertProperties
+    :ivar properties: Alert property bag.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertProperties
     """
 
     _validation = {
@@ -388,6 +183,10 @@ class Alert(Resource):
         properties: Optional["AlertProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Alert property bag.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertProperties
+        """
         super(Alert, self).__init__(**kwargs)
         self.properties = properties
 
@@ -403,8 +202,8 @@ class AlertModification(Resource):
     :vartype type: str
     :ivar name: Azure resource name.
     :vartype name: str
-    :param properties: Properties of the alert modification item.
-    :type properties: ~azure.mgmt.alertsmanagement.models.AlertModificationProperties
+    :ivar properties: Properties of the alert modification item.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertModificationProperties
     """
 
     _validation = {
@@ -426,6 +225,10 @@ class AlertModification(Resource):
         properties: Optional["AlertModificationProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the alert modification item.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertModificationProperties
+        """
         super(AlertModification, self).__init__(**kwargs)
         self.properties = properties
 
@@ -433,23 +236,22 @@ class AlertModification(Resource):
 class AlertModificationItem(msrest.serialization.Model):
     """Alert modification item.
 
-    :param modification_event: Reason for the modification. Possible values include:
-     "AlertCreated", "StateChange", "MonitorConditionChange", "SeverityChange",
-     "ActionRuleTriggered", "ActionRuleSuppressed", "ActionsTriggered", "ActionsSuppressed",
-     "ActionsFailed".
-    :type modification_event: str or ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
-    :param old_value: Old value.
-    :type old_value: str
-    :param new_value: New value.
-    :type new_value: str
-    :param modified_at: Modified date and time.
-    :type modified_at: str
-    :param modified_by: Modified user details (Principal client name).
-    :type modified_by: str
-    :param comments: Modification comments.
-    :type comments: str
-    :param description: Description of the modification.
-    :type description: str
+    :ivar modification_event: Reason for the modification. Possible values include: "AlertCreated",
+     "StateChange", "MonitorConditionChange", "SeverityChange", "ActionRuleTriggered",
+     "ActionRuleSuppressed", "ActionsTriggered", "ActionsSuppressed", "ActionsFailed".
+    :vartype modification_event: str or ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
+    :ivar old_value: Old value.
+    :vartype old_value: str
+    :ivar new_value: New value.
+    :vartype new_value: str
+    :ivar modified_at: Modified date and time.
+    :vartype modified_at: str
+    :ivar modified_by: Modified user details (Principal client name).
+    :vartype modified_by: str
+    :ivar comments: Modification comments.
+    :vartype comments: str
+    :ivar description: Description of the modification.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -474,6 +276,26 @@ class AlertModificationItem(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword modification_event: Reason for the modification. Possible values include:
+         "AlertCreated", "StateChange", "MonitorConditionChange", "SeverityChange",
+         "ActionRuleTriggered", "ActionRuleSuppressed", "ActionsTriggered", "ActionsSuppressed",
+         "ActionsFailed".
+        :paramtype modification_event: str or
+         ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
+        :keyword old_value: Old value.
+        :paramtype old_value: str
+        :keyword new_value: New value.
+        :paramtype new_value: str
+        :keyword modified_at: Modified date and time.
+        :paramtype modified_at: str
+        :keyword modified_by: Modified user details (Principal client name).
+        :paramtype modified_by: str
+        :keyword comments: Modification comments.
+        :paramtype comments: str
+        :keyword description: Description of the modification.
+        :paramtype description: str
+        """
         super(AlertModificationItem, self).__init__(**kwargs)
         self.modification_event = modification_event
         self.old_value = old_value
@@ -491,8 +313,8 @@ class AlertModificationProperties(msrest.serialization.Model):
 
     :ivar alert_id: Unique Id of the alert for which the history is being retrieved.
     :vartype alert_id: str
-    :param modifications: Modification details.
-    :type modifications: list[~azure.mgmt.alertsmanagement.models.AlertModificationItem]
+    :ivar modifications: Modification details.
+    :vartype modifications: list[~azure.mgmt.alertsmanagement.models.AlertModificationItem]
     """
 
     _validation = {
@@ -510,9 +332,226 @@ class AlertModificationProperties(msrest.serialization.Model):
         modifications: Optional[List["AlertModificationItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword modifications: Modification details.
+        :paramtype modifications: list[~azure.mgmt.alertsmanagement.models.AlertModificationItem]
+        """
         super(AlertModificationProperties, self).__init__(**kwargs)
         self.alert_id = None
         self.modifications = modifications
+
+
+class ManagedResource(Resource):
+    """An azure managed resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super(ManagedResource, self).__init__(**kwargs)
+        self.location = location
+        self.tags = tags
+
+
+class AlertProcessingRule(ManagedResource):
+    """Alert processing rule object containing target scopes, conditions and scheduling logic.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Alert processing rule properties.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertProcessingRuleProperties
+    :ivar system_data: Alert processing rule system data.
+    :vartype system_data: ~azure.mgmt.alertsmanagement.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+        'location': {'required': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'AlertProcessingRuleProperties'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["AlertProcessingRuleProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Alert processing rule properties.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertProcessingRuleProperties
+        """
+        super(AlertProcessingRule, self).__init__(location=location, tags=tags, **kwargs)
+        self.properties = properties
+        self.system_data = None
+
+
+class AlertProcessingRuleProperties(msrest.serialization.Model):
+    """Alert processing rule properties defining scopes, conditions and scheduling logic for alert processing rule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar scopes: Required. Scopes on which alert processing rule will apply.
+    :vartype scopes: list[str]
+    :ivar conditions: Conditions on which alerts will be filtered.
+    :vartype conditions: list[~azure.mgmt.alertsmanagement.models.Condition]
+    :ivar schedule: Scheduling for alert processing rule.
+    :vartype schedule: ~azure.mgmt.alertsmanagement.models.Schedule
+    :ivar actions: Required. Actions to be applied.
+    :vartype actions: list[~azure.mgmt.alertsmanagement.models.Action]
+    :ivar description: Description of alert processing rule.
+    :vartype description: str
+    :ivar enabled: Indicates if the given alert processing rule is enabled or disabled.
+    :vartype enabled: bool
+    """
+
+    _validation = {
+        'scopes': {'required': True},
+        'actions': {'required': True},
+    }
+
+    _attribute_map = {
+        'scopes': {'key': 'scopes', 'type': '[str]'},
+        'conditions': {'key': 'conditions', 'type': '[Condition]'},
+        'schedule': {'key': 'schedule', 'type': 'Schedule'},
+        'actions': {'key': 'actions', 'type': '[Action]'},
+        'description': {'key': 'description', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        scopes: List[str],
+        actions: List["Action"],
+        conditions: Optional[List["Condition"]] = None,
+        schedule: Optional["Schedule"] = None,
+        description: Optional[str] = None,
+        enabled: Optional[bool] = True,
+        **kwargs
+    ):
+        """
+        :keyword scopes: Required. Scopes on which alert processing rule will apply.
+        :paramtype scopes: list[str]
+        :keyword conditions: Conditions on which alerts will be filtered.
+        :paramtype conditions: list[~azure.mgmt.alertsmanagement.models.Condition]
+        :keyword schedule: Scheduling for alert processing rule.
+        :paramtype schedule: ~azure.mgmt.alertsmanagement.models.Schedule
+        :keyword actions: Required. Actions to be applied.
+        :paramtype actions: list[~azure.mgmt.alertsmanagement.models.Action]
+        :keyword description: Description of alert processing rule.
+        :paramtype description: str
+        :keyword enabled: Indicates if the given alert processing rule is enabled or disabled.
+        :paramtype enabled: bool
+        """
+        super(AlertProcessingRuleProperties, self).__init__(**kwargs)
+        self.scopes = scopes
+        self.conditions = conditions
+        self.schedule = schedule
+        self.actions = actions
+        self.description = description
+        self.enabled = enabled
+
+
+class AlertProcessingRulesList(msrest.serialization.Model):
+    """List of alert processing rules.
+
+    :ivar next_link: URL to fetch the next set of alert processing rules.
+    :vartype next_link: str
+    :ivar value: List of alert processing rules.
+    :vartype value: list[~azure.mgmt.alertsmanagement.models.AlertProcessingRule]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[AlertProcessingRule]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["AlertProcessingRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword next_link: URL to fetch the next set of alert processing rules.
+        :paramtype next_link: str
+        :keyword value: List of alert processing rules.
+        :paramtype value: list[~azure.mgmt.alertsmanagement.models.AlertProcessingRule]
+        """
+        super(AlertProcessingRulesList, self).__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
 
 
 class AlertProperties(msrest.serialization.Model):
@@ -520,12 +559,12 @@ class AlertProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param essentials: This object contains consistent fields across different monitor services.
-    :type essentials: ~azure.mgmt.alertsmanagement.models.Essentials
+    :ivar essentials: This object contains consistent fields across different monitor services.
+    :vartype essentials: ~azure.mgmt.alertsmanagement.models.Essentials
     :ivar context: Any object.
-    :vartype context: object
+    :vartype context: any
     :ivar egress_config: Any object.
-    :vartype egress_config: object
+    :vartype egress_config: any
     """
 
     _validation = {
@@ -545,247 +584,23 @@ class AlertProperties(msrest.serialization.Model):
         essentials: Optional["Essentials"] = None,
         **kwargs
     ):
+        """
+        :keyword essentials: This object contains consistent fields across different monitor services.
+        :paramtype essentials: ~azure.mgmt.alertsmanagement.models.Essentials
+        """
         super(AlertProperties, self).__init__(**kwargs)
         self.essentials = essentials
         self.context = None
         self.egress_config = None
 
 
-class AzureResource(msrest.serialization.Model):
-    """An Azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = "global",
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(AzureResource, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.location = location
-        self.tags = tags
-
-
-class AlertRule(AzureResource):
-    """The alert rule information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param description: The alert rule description.
-    :type description: str
-    :param state: The alert rule state. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.alertsmanagement.models.AlertRuleState
-    :param severity: The alert rule severity. Possible values include: "Sev0", "Sev1", "Sev2",
-     "Sev3", "Sev4".
-    :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-    :param frequency: The alert rule frequency in ISO8601 format. The time granularity must be in
-     minutes and minimum value is 5 minutes.
-    :type frequency: ~datetime.timedelta
-    :param detector: The alert rule's detector.
-    :type detector: ~azure.mgmt.alertsmanagement.models.Detector
-    :param scope: The alert rule resources scope.
-    :type scope: list[str]
-    :param action_groups: The alert rule actions.
-    :type action_groups: ~azure.mgmt.alertsmanagement.models.ActionGroupsInformation
-    :param throttling: The alert rule throttling information.
-    :type throttling: ~azure.mgmt.alertsmanagement.models.ThrottlingInformation
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'duration'},
-        'detector': {'key': 'properties.detector', 'type': 'Detector'},
-        'scope': {'key': 'properties.scope', 'type': '[str]'},
-        'action_groups': {'key': 'properties.actionGroups', 'type': 'ActionGroupsInformation'},
-        'throttling': {'key': 'properties.throttling', 'type': 'ThrottlingInformation'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = "global",
-        tags: Optional[Dict[str, str]] = None,
-        description: Optional[str] = None,
-        state: Optional[Union[str, "AlertRuleState"]] = None,
-        severity: Optional[Union[str, "Severity"]] = None,
-        frequency: Optional[datetime.timedelta] = None,
-        detector: Optional["Detector"] = None,
-        scope: Optional[List[str]] = None,
-        action_groups: Optional["ActionGroupsInformation"] = None,
-        throttling: Optional["ThrottlingInformation"] = None,
-        **kwargs
-    ):
-        super(AlertRule, self).__init__(location=location, tags=tags, **kwargs)
-        self.description = description
-        self.state = state
-        self.severity = severity
-        self.frequency = frequency
-        self.detector = detector
-        self.scope = scope
-        self.action_groups = action_groups
-        self.throttling = throttling
-
-
-class AlertRulePatchObject(msrest.serialization.Model):
-    """The alert rule patch information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param description: The alert rule description.
-    :type description: str
-    :param state: The alert rule state. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.alertsmanagement.models.AlertRuleState
-    :param severity: The alert rule severity. Possible values include: "Sev0", "Sev1", "Sev2",
-     "Sev3", "Sev4".
-    :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-    :param frequency: The alert rule frequency in ISO8601 format. The time granularity must be in
-     minutes and minimum value is 5 minutes.
-    :type frequency: ~datetime.timedelta
-    :param action_groups: The alert rule actions.
-    :type action_groups: ~azure.mgmt.alertsmanagement.models.ActionGroupsInformation
-    :param throttling: The alert rule throttling information.
-    :type throttling: ~azure.mgmt.alertsmanagement.models.ThrottlingInformation
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'duration'},
-        'action_groups': {'key': 'properties.actionGroups', 'type': 'ActionGroupsInformation'},
-        'throttling': {'key': 'properties.throttling', 'type': 'ThrottlingInformation'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        description: Optional[str] = None,
-        state: Optional[Union[str, "AlertRuleState"]] = None,
-        severity: Optional[Union[str, "Severity"]] = None,
-        frequency: Optional[datetime.timedelta] = None,
-        action_groups: Optional["ActionGroupsInformation"] = None,
-        throttling: Optional["ThrottlingInformation"] = None,
-        **kwargs
-    ):
-        super(AlertRulePatchObject, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.tags = tags
-        self.description = description
-        self.state = state
-        self.severity = severity
-        self.frequency = frequency
-        self.action_groups = action_groups
-        self.throttling = throttling
-
-
-class AlertRulesList(msrest.serialization.Model):
-    """List of Smart Detector alert rules.
-
-    :param value: List of Smart Detector alert rules.
-    :type value: list[~azure.mgmt.alertsmanagement.models.AlertRule]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AlertRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AlertRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(AlertRulesList, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class AlertsList(msrest.serialization.Model):
     """List the alerts.
 
-    :param next_link: URL to fetch the next set of alerts.
-    :type next_link: str
-    :param value: List of alerts.
-    :type value: list[~azure.mgmt.alertsmanagement.models.Alert]
+    :ivar next_link: URL to fetch the next set of alerts.
+    :vartype next_link: str
+    :ivar value: List of alerts.
+    :vartype value: list[~azure.mgmt.alertsmanagement.models.Alert]
     """
 
     _attribute_map = {
@@ -800,6 +615,12 @@ class AlertsList(msrest.serialization.Model):
         value: Optional[List["Alert"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: URL to fetch the next set of alerts.
+        :paramtype next_link: str
+        :keyword value: List of alerts.
+        :paramtype value: list[~azure.mgmt.alertsmanagement.models.Alert]
+        """
         super(AlertsList, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -808,8 +629,8 @@ class AlertsList(msrest.serialization.Model):
 class AlertsMetaData(msrest.serialization.Model):
     """alert meta data information.
 
-    :param properties: alert meta data property bag.
-    :type properties: ~azure.mgmt.alertsmanagement.models.AlertsMetaDataProperties
+    :ivar properties: alert meta data property bag.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertsMetaDataProperties
     """
 
     _attribute_map = {
@@ -822,6 +643,10 @@ class AlertsMetaData(msrest.serialization.Model):
         properties: Optional["AlertsMetaDataProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: alert meta data property bag.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertsMetaDataProperties
+        """
         super(AlertsMetaData, self).__init__(**kwargs)
         self.properties = properties
 
@@ -834,9 +659,9 @@ class AlertsMetaDataProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param metadata_identifier: Required. Identification of the information to be retrieved by API
-     call.Constant filled by server.  Possible values include: "MonitorServiceList".
-    :type metadata_identifier: str or ~azure.mgmt.alertsmanagement.models.MetadataIdentifier
+    :ivar metadata_identifier: Required. Identification of the information to be retrieved by API
+     call.Constant filled by server. Possible values include: "MonitorServiceList".
+    :vartype metadata_identifier: str or ~azure.mgmt.alertsmanagement.models.MetadataIdentifier
     """
 
     _validation = {
@@ -855,6 +680,8 @@ class AlertsMetaDataProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AlertsMetaDataProperties, self).__init__(**kwargs)
         self.metadata_identifier = None  # type: Optional[str]
 
@@ -870,8 +697,8 @@ class AlertsSummary(Resource):
     :vartype type: str
     :ivar name: Azure resource name.
     :vartype name: str
-    :param properties: Group the result set.
-    :type properties: ~azure.mgmt.alertsmanagement.models.AlertsSummaryGroup
+    :ivar properties: Group the result set.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertsSummaryGroup
     """
 
     _validation = {
@@ -893,6 +720,10 @@ class AlertsSummary(Resource):
         properties: Optional["AlertsSummaryGroup"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Group the result set.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertsSummaryGroup
+        """
         super(AlertsSummary, self).__init__(**kwargs)
         self.properties = properties
 
@@ -900,19 +731,19 @@ class AlertsSummary(Resource):
 class AlertsSummaryGroup(msrest.serialization.Model):
     """Group the result set.
 
-    :param total: Total count of the result set.
-    :type total: int
-    :param smart_groups_count: Total count of the smart groups.
-    :type smart_groups_count: int
-    :param groupedby: Name of the field aggregated.
-    :type groupedby: str
-    :param values: List of the items.
-    :type values: list[~azure.mgmt.alertsmanagement.models.AlertsSummaryGroupItem]
+    :ivar total: Total count of the result set.
+    :vartype total: long
+    :ivar smart_groups_count: Total count of the smart groups.
+    :vartype smart_groups_count: long
+    :ivar groupedby: Name of the field aggregated.
+    :vartype groupedby: str
+    :ivar values: List of the items.
+    :vartype values: list[~azure.mgmt.alertsmanagement.models.AlertsSummaryGroupItem]
     """
 
     _attribute_map = {
-        'total': {'key': 'total', 'type': 'int'},
-        'smart_groups_count': {'key': 'smartGroupsCount', 'type': 'int'},
+        'total': {'key': 'total', 'type': 'long'},
+        'smart_groups_count': {'key': 'smartGroupsCount', 'type': 'long'},
         'groupedby': {'key': 'groupedby', 'type': 'str'},
         'values': {'key': 'values', 'type': '[AlertsSummaryGroupItem]'},
     }
@@ -926,6 +757,16 @@ class AlertsSummaryGroup(msrest.serialization.Model):
         values: Optional[List["AlertsSummaryGroupItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword total: Total count of the result set.
+        :paramtype total: long
+        :keyword smart_groups_count: Total count of the smart groups.
+        :paramtype smart_groups_count: long
+        :keyword groupedby: Name of the field aggregated.
+        :paramtype groupedby: str
+        :keyword values: List of the items.
+        :paramtype values: list[~azure.mgmt.alertsmanagement.models.AlertsSummaryGroupItem]
+        """
         super(AlertsSummaryGroup, self).__init__(**kwargs)
         self.total = total
         self.smart_groups_count = smart_groups_count
@@ -936,19 +777,19 @@ class AlertsSummaryGroup(msrest.serialization.Model):
 class AlertsSummaryGroupItem(msrest.serialization.Model):
     """Alerts summary group item.
 
-    :param name: Value of the aggregated field.
-    :type name: str
-    :param count: Count of the aggregated field.
-    :type count: int
-    :param groupedby: Name of the field aggregated.
-    :type groupedby: str
-    :param values: List of the items.
-    :type values: list[~azure.mgmt.alertsmanagement.models.AlertsSummaryGroupItem]
+    :ivar name: Value of the aggregated field.
+    :vartype name: str
+    :ivar count: Count of the aggregated field.
+    :vartype count: long
+    :ivar groupedby: Name of the field aggregated.
+    :vartype groupedby: str
+    :ivar values: List of the items.
+    :vartype values: list[~azure.mgmt.alertsmanagement.models.AlertsSummaryGroupItem]
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        'count': {'key': 'count', 'type': 'long'},
         'groupedby': {'key': 'groupedby', 'type': 'str'},
         'values': {'key': 'values', 'type': '[AlertsSummaryGroupItem]'},
     }
@@ -962,6 +803,16 @@ class AlertsSummaryGroupItem(msrest.serialization.Model):
         values: Optional[List["AlertsSummaryGroupItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Value of the aggregated field.
+        :paramtype name: str
+        :keyword count: Count of the aggregated field.
+        :paramtype count: long
+        :keyword groupedby: Name of the field aggregated.
+        :paramtype groupedby: str
+        :keyword values: List of the items.
+        :paramtype values: list[~azure.mgmt.alertsmanagement.models.AlertsSummaryGroupItem]
+        """
         super(AlertsSummaryGroupItem, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -970,16 +821,21 @@ class AlertsSummaryGroupItem(msrest.serialization.Model):
 
 
 class Condition(msrest.serialization.Model):
-    """condition to trigger an action rule.
+    """Condition to trigger an alert processing rule.
 
-    :param operator: operator for a given condition. Possible values include: "Equals",
-     "NotEquals", "Contains", "DoesNotContain".
-    :type operator: str or ~azure.mgmt.alertsmanagement.models.Operator
-    :param values: list of values to match for a given condition.
-    :type values: list[str]
+    :ivar field: Field for a given condition. Possible values include: "Severity",
+     "MonitorService", "MonitorCondition", "SignalType", "TargetResourceType", "TargetResource",
+     "TargetResourceGroup", "AlertRuleId", "AlertRuleName", "Description", "AlertContext".
+    :vartype field: str or ~azure.mgmt.alertsmanagement.models.Field
+    :ivar operator: Operator for a given condition. Possible values include: "Equals", "NotEquals",
+     "Contains", "DoesNotContain".
+    :vartype operator: str or ~azure.mgmt.alertsmanagement.models.Operator
+    :ivar values: List of values to match for a given condition.
+    :vartype values: list[str]
     """
 
     _attribute_map = {
+        'field': {'key': 'field', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'str'},
         'values': {'key': 'values', 'type': '[str]'},
     }
@@ -987,189 +843,124 @@ class Condition(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        field: Optional[Union[str, "Field"]] = None,
         operator: Optional[Union[str, "Operator"]] = None,
         values: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword field: Field for a given condition. Possible values include: "Severity",
+         "MonitorService", "MonitorCondition", "SignalType", "TargetResourceType", "TargetResource",
+         "TargetResourceGroup", "AlertRuleId", "AlertRuleName", "Description", "AlertContext".
+        :paramtype field: str or ~azure.mgmt.alertsmanagement.models.Field
+        :keyword operator: Operator for a given condition. Possible values include: "Equals",
+         "NotEquals", "Contains", "DoesNotContain".
+        :paramtype operator: str or ~azure.mgmt.alertsmanagement.models.Operator
+        :keyword values: List of values to match for a given condition.
+        :paramtype values: list[str]
+        """
         super(Condition, self).__init__(**kwargs)
+        self.field = field
         self.operator = operator
         self.values = values
 
 
-class Conditions(msrest.serialization.Model):
-    """Conditions in alert instance to be matched for a given action rule. Default value is all. Multiple values could be provided with comma separation.
+class Recurrence(msrest.serialization.Model):
+    """Recurrence object.
 
-    :param severity: filter alerts by severity.
-    :type severity: ~azure.mgmt.alertsmanagement.models.Condition
-    :param monitor_service: filter alerts by monitor service.
-    :type monitor_service: ~azure.mgmt.alertsmanagement.models.Condition
-    :param monitor_condition: filter alerts by monitor condition.
-    :type monitor_condition: ~azure.mgmt.alertsmanagement.models.Condition
-    :param target_resource_type: filter alerts by target resource type.
-    :type target_resource_type: ~azure.mgmt.alertsmanagement.models.Condition
-    :param alert_rule_id: filter alerts by alert rule id.
-    :type alert_rule_id: ~azure.mgmt.alertsmanagement.models.Condition
-    :param description: filter alerts by alert rule description.
-    :type description: ~azure.mgmt.alertsmanagement.models.Condition
-    :param alert_context: filter alerts by alert context (payload).
-    :type alert_context: ~azure.mgmt.alertsmanagement.models.Condition
-    """
-
-    _attribute_map = {
-        'severity': {'key': 'severity', 'type': 'Condition'},
-        'monitor_service': {'key': 'monitorService', 'type': 'Condition'},
-        'monitor_condition': {'key': 'monitorCondition', 'type': 'Condition'},
-        'target_resource_type': {'key': 'targetResourceType', 'type': 'Condition'},
-        'alert_rule_id': {'key': 'alertRuleId', 'type': 'Condition'},
-        'description': {'key': 'description', 'type': 'Condition'},
-        'alert_context': {'key': 'alertContext', 'type': 'Condition'},
-    }
-
-    def __init__(
-        self,
-        *,
-        severity: Optional["Condition"] = None,
-        monitor_service: Optional["Condition"] = None,
-        monitor_condition: Optional["Condition"] = None,
-        target_resource_type: Optional["Condition"] = None,
-        alert_rule_id: Optional["Condition"] = None,
-        description: Optional["Condition"] = None,
-        alert_context: Optional["Condition"] = None,
-        **kwargs
-    ):
-        super(Conditions, self).__init__(**kwargs)
-        self.severity = severity
-        self.monitor_service = monitor_service
-        self.monitor_condition = monitor_condition
-        self.target_resource_type = target_resource_type
-        self.alert_rule_id = alert_rule_id
-        self.description = description
-        self.alert_context = alert_context
-
-
-class Detector(msrest.serialization.Model):
-    """The detector information. By default this is not populated, unless it's specified in expandDetector.
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DailyRecurrence, MonthlyRecurrence, WeeklyRecurrence.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The detector id.
-    :type id: str
-    :param parameters: The detector's parameters.'.
-    :type parameters: dict[str, object]
-    :param name: The Smart Detector name. By default this is not populated, unless it's specified
-     in expandDetector.
-    :type name: str
-    :param description: The Smart Detector description. By default this is not populated, unless
-     it's specified in expandDetector.
-    :type description: str
-    :param supported_resource_types: The Smart Detector supported resource types. By default this
-     is not populated, unless it's specified in expandDetector.
-    :type supported_resource_types: list[str]
-    :param image_paths: The Smart Detector image path. By default this is not populated, unless
-     it's specified in expandDetector.
-    :type image_paths: list[str]
+    :ivar recurrence_type: Required. Specifies when the recurrence should be applied.Constant
+     filled by server. Possible values include: "Daily", "Weekly", "Monthly".
+    :vartype recurrence_type: str or ~azure.mgmt.alertsmanagement.models.RecurrenceType
+    :ivar start_time: Start time for recurrence.
+    :vartype start_time: str
+    :ivar end_time: End time for recurrence.
+    :vartype end_time: str
     """
 
     _validation = {
-        'id': {'required': True},
+        'recurrence_type': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '{object}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'supported_resource_types': {'key': 'supportedResourceTypes', 'type': '[str]'},
-        'image_paths': {'key': 'imagePaths', 'type': '[str]'},
+        'recurrence_type': {'key': 'recurrenceType', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'recurrence_type': {'Daily': 'DailyRecurrence', 'Monthly': 'MonthlyRecurrence', 'Weekly': 'WeeklyRecurrence'}
     }
 
     def __init__(
         self,
         *,
-        id: str,
-        parameters: Optional[Dict[str, object]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        supported_resource_types: Optional[List[str]] = None,
-        image_paths: Optional[List[str]] = None,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
         **kwargs
     ):
-        super(Detector, self).__init__(**kwargs)
-        self.id = id
-        self.parameters = parameters
-        self.name = name
-        self.description = description
-        self.supported_resource_types = supported_resource_types
-        self.image_paths = image_paths
+        """
+        :keyword start_time: Start time for recurrence.
+        :paramtype start_time: str
+        :keyword end_time: End time for recurrence.
+        :paramtype end_time: str
+        """
+        super(Recurrence, self).__init__(**kwargs)
+        self.recurrence_type = None  # type: Optional[str]
+        self.start_time = start_time
+        self.end_time = end_time
 
 
-class Diagnostics(ActionRuleProperties):
-    """Action rule with diagnostics configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+class DailyRecurrence(Recurrence):
+    """Daily recurrence object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scope: scope on which action rule will apply.
-    :type scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :param conditions: conditions on which alerts will be filtered.
-    :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :param description: Description of action rule.
-    :type description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
-    :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
-    :vartype last_modified_by: str
-    :param status: Indicates if the given action rule is enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :param type: Required. Indicates type of action rule.Constant filled by server.  Possible
-     values include: "Suppression", "ActionGroup", "Diagnostics".
-    :type type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
+    :ivar recurrence_type: Required. Specifies when the recurrence should be applied.Constant
+     filled by server. Possible values include: "Daily", "Weekly", "Monthly".
+    :vartype recurrence_type: str or ~azure.mgmt.alertsmanagement.models.RecurrenceType
+    :ivar start_time: Start time for recurrence.
+    :vartype start_time: str
+    :ivar end_time: End time for recurrence.
+    :vartype end_time: str
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
+        'recurrence_type': {'required': True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'recurrence_type': {'key': 'recurrenceType', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        scope: Optional["Scope"] = None,
-        conditions: Optional["Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "ActionRuleStatus"]] = None,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
         **kwargs
     ):
-        super(Diagnostics, self).__init__(scope=scope, conditions=conditions, description=description, status=status, **kwargs)
-        self.type = 'Diagnostics'  # type: str
+        """
+        :keyword start_time: Start time for recurrence.
+        :paramtype start_time: str
+        :keyword end_time: End time for recurrence.
+        :paramtype end_time: str
+        """
+        super(DailyRecurrence, self).__init__(start_time=start_time, end_time=end_time, **kwargs)
+        self.recurrence_type = 'Daily'  # type: str
 
 
 class ErrorResponse(msrest.serialization.Model):
     """An error response from the service.
 
-    :param error: Details of error response.
-    :type error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
+    :ivar error: Details of error response.
+    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
     """
 
     _attribute_map = {
@@ -1182,6 +973,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorResponseBody"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Details of error response.
+        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -1189,8 +984,8 @@ class ErrorResponse(msrest.serialization.Model):
 class ErrorResponseAutoGenerated(msrest.serialization.Model):
     """An error response from the service.
 
-    :param error: Details of error response.
-    :type error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated
+    :ivar error: Details of error response.
+    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated
     """
 
     _attribute_map = {
@@ -1203,6 +998,10 @@ class ErrorResponseAutoGenerated(msrest.serialization.Model):
         error: Optional["ErrorResponseBodyAutoGenerated"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Details of error response.
+        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated
+        """
         super(ErrorResponseAutoGenerated, self).__init__(**kwargs)
         self.error = error
 
@@ -1210,8 +1009,8 @@ class ErrorResponseAutoGenerated(msrest.serialization.Model):
 class ErrorResponseAutoGenerated2(msrest.serialization.Model):
     """An error response from the service.
 
-    :param error: Details of error response.
-    :type error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2
+    :ivar error: Details of error response.
+    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2
     """
 
     _attribute_map = {
@@ -1224,6 +1023,10 @@ class ErrorResponseAutoGenerated2(msrest.serialization.Model):
         error: Optional["ErrorResponseBodyAutoGenerated2"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Details of error response.
+        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2
+        """
         super(ErrorResponseAutoGenerated2, self).__init__(**kwargs)
         self.error = error
 
@@ -1231,14 +1034,14 @@ class ErrorResponseAutoGenerated2(msrest.serialization.Model):
 class ErrorResponseBody(msrest.serialization.Model):
     """Details of error response.
 
-    :param code: Error code, intended to be consumed programmatically.
-    :type code: str
-    :param message: Description of the error, intended for display in user interface.
-    :type message: str
-    :param target: Target of the particular error, for example name of the property.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBody]
+    :ivar code: Error code, intended to be consumed programmatically.
+    :vartype code: str
+    :ivar message: Description of the error, intended for display in user interface.
+    :vartype message: str
+    :ivar target: Target of the particular error, for example name of the property.
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBody]
     """
 
     _attribute_map = {
@@ -1257,6 +1060,16 @@ class ErrorResponseBody(msrest.serialization.Model):
         details: Optional[List["ErrorResponseBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code, intended to be consumed programmatically.
+        :paramtype code: str
+        :keyword message: Description of the error, intended for display in user interface.
+        :paramtype message: str
+        :keyword target: Target of the particular error, for example name of the property.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBody]
+        """
         super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -1267,14 +1080,14 @@ class ErrorResponseBody(msrest.serialization.Model):
 class ErrorResponseBodyAutoGenerated(msrest.serialization.Model):
     """Details of error response.
 
-    :param code: Error code, intended to be consumed programmatically.
-    :type code: str
-    :param message: Description of the error, intended for display in user interface.
-    :type message: str
-    :param target: Target of the particular error, for example name of the property.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated]
+    :ivar code: Error code, intended to be consumed programmatically.
+    :vartype code: str
+    :ivar message: Description of the error, intended for display in user interface.
+    :vartype message: str
+    :ivar target: Target of the particular error, for example name of the property.
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated]
     """
 
     _attribute_map = {
@@ -1293,6 +1106,16 @@ class ErrorResponseBodyAutoGenerated(msrest.serialization.Model):
         details: Optional[List["ErrorResponseBodyAutoGenerated"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code, intended to be consumed programmatically.
+        :paramtype code: str
+        :keyword message: Description of the error, intended for display in user interface.
+        :paramtype message: str
+        :keyword target: Target of the particular error, for example name of the property.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated]
+        """
         super(ErrorResponseBodyAutoGenerated, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -1303,14 +1126,14 @@ class ErrorResponseBodyAutoGenerated(msrest.serialization.Model):
 class ErrorResponseBodyAutoGenerated2(msrest.serialization.Model):
     """Details of error response.
 
-    :param code: Error code, intended to be consumed programmatically.
-    :type code: str
-    :param message: Description of the error, intended for display in user interface.
-    :type message: str
-    :param target: Target of the particular error, for example name of the property.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2]
+    :ivar code: Error code, intended to be consumed programmatically.
+    :vartype code: str
+    :ivar message: Description of the error, intended for display in user interface.
+    :vartype message: str
+    :ivar target: Target of the particular error, for example name of the property.
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2]
     """
 
     _attribute_map = {
@@ -1329,6 +1152,16 @@ class ErrorResponseBodyAutoGenerated2(msrest.serialization.Model):
         details: Optional[List["ErrorResponseBodyAutoGenerated2"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code, intended to be consumed programmatically.
+        :paramtype code: str
+        :keyword message: Description of the error, intended for display in user interface.
+        :paramtype message: str
+        :keyword target: Target of the particular error, for example name of the property.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2]
+        """
         super(ErrorResponseBodyAutoGenerated2, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -1354,15 +1187,14 @@ class Essentials(msrest.serialization.Model):
      the underlying conditions have crossed the defined alert rule thresholds. Possible values
      include: "Fired", "Resolved".
     :vartype monitor_condition: str or ~azure.mgmt.alertsmanagement.models.MonitorCondition
-    :param target_resource: Target ARM resource, on which alert got created.
-    :type target_resource: str
-    :param target_resource_name: Name of the target ARM resource name, on which alert got created.
-    :type target_resource_name: str
-    :param target_resource_group: Resource group of target ARM resource, on which alert got
-     created.
-    :type target_resource_group: str
-    :param target_resource_type: Resource type of target ARM resource, on which alert got created.
-    :type target_resource_type: str
+    :ivar target_resource: Target ARM resource, on which alert got created.
+    :vartype target_resource: str
+    :ivar target_resource_name: Name of the target ARM resource name, on which alert got created.
+    :vartype target_resource_name: str
+    :ivar target_resource_group: Resource group of target ARM resource, on which alert got created.
+    :vartype target_resource_group: str
+    :ivar target_resource_type: Resource type of target ARM resource, on which alert got created.
+    :vartype target_resource_type: str
     :ivar monitor_service: Monitor service on which the rule(monitor) is set. Possible values
      include: "Application Insights", "ActivityLog Administrative", "ActivityLog Security",
      "ActivityLog Recommendation", "ActivityLog Policy", "ActivityLog Autoscale", "Log Analytics",
@@ -1390,6 +1222,10 @@ class Essentials(msrest.serialization.Model):
     :ivar last_modified_user_name: User who last modified the alert, in case of monitor service
      updates user would be 'system', otherwise name of the user.
     :vartype last_modified_user_name: str
+    :ivar action_status: Action status.
+    :vartype action_status: ~azure.mgmt.alertsmanagement.models.ActionStatus
+    :ivar description: Alert description.
+    :vartype description: str
     """
 
     _validation = {
@@ -1426,6 +1262,8 @@ class Essentials(msrest.serialization.Model):
         'last_modified_date_time': {'key': 'lastModifiedDateTime', 'type': 'iso-8601'},
         'monitor_condition_resolved_date_time': {'key': 'monitorConditionResolvedDateTime', 'type': 'iso-8601'},
         'last_modified_user_name': {'key': 'lastModifiedUserName', 'type': 'str'},
+        'action_status': {'key': 'actionStatus', 'type': 'ActionStatus'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(
@@ -1435,8 +1273,27 @@ class Essentials(msrest.serialization.Model):
         target_resource_name: Optional[str] = None,
         target_resource_group: Optional[str] = None,
         target_resource_type: Optional[str] = None,
+        action_status: Optional["ActionStatus"] = None,
+        description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target_resource: Target ARM resource, on which alert got created.
+        :paramtype target_resource: str
+        :keyword target_resource_name: Name of the target ARM resource name, on which alert got
+         created.
+        :paramtype target_resource_name: str
+        :keyword target_resource_group: Resource group of target ARM resource, on which alert got
+         created.
+        :paramtype target_resource_group: str
+        :keyword target_resource_type: Resource type of target ARM resource, on which alert got
+         created.
+        :paramtype target_resource_type: str
+        :keyword action_status: Action status.
+        :paramtype action_status: ~azure.mgmt.alertsmanagement.models.ActionStatus
+        :keyword description: Alert description.
+        :paramtype description: str
+        """
         super(Essentials, self).__init__(**kwargs)
         self.severity = None
         self.signal_type = None
@@ -1455,15 +1312,17 @@ class Essentials(msrest.serialization.Model):
         self.last_modified_date_time = None
         self.monitor_condition_resolved_date_time = None
         self.last_modified_user_name = None
+        self.action_status = action_status
+        self.description = description
 
 
 class MonitorServiceDetails(msrest.serialization.Model):
     """Details of a monitor service.
 
-    :param name: Monitor service name.
-    :type name: str
-    :param display_name: Monitor service display name.
-    :type display_name: str
+    :ivar name: Monitor service name.
+    :vartype name: str
+    :ivar display_name: Monitor service display name.
+    :vartype display_name: str
     """
 
     _attribute_map = {
@@ -1478,6 +1337,12 @@ class MonitorServiceDetails(msrest.serialization.Model):
         display_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Monitor service name.
+        :paramtype name: str
+        :keyword display_name: Monitor service display name.
+        :paramtype display_name: str
+        """
         super(MonitorServiceDetails, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -1488,11 +1353,11 @@ class MonitorServiceList(AlertsMetaDataProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param metadata_identifier: Required. Identification of the information to be retrieved by API
-     call.Constant filled by server.  Possible values include: "MonitorServiceList".
-    :type metadata_identifier: str or ~azure.mgmt.alertsmanagement.models.MetadataIdentifier
-    :param data: Required. Array of operations.
-    :type data: list[~azure.mgmt.alertsmanagement.models.MonitorServiceDetails]
+    :ivar metadata_identifier: Required. Identification of the information to be retrieved by API
+     call.Constant filled by server. Possible values include: "MonitorServiceList".
+    :vartype metadata_identifier: str or ~azure.mgmt.alertsmanagement.models.MetadataIdentifier
+    :ivar data: Required. Array of operations.
+    :vartype data: list[~azure.mgmt.alertsmanagement.models.MonitorServiceDetails]
     """
 
     _validation = {
@@ -1511,23 +1376,79 @@ class MonitorServiceList(AlertsMetaDataProperties):
         data: List["MonitorServiceDetails"],
         **kwargs
     ):
+        """
+        :keyword data: Required. Array of operations.
+        :paramtype data: list[~azure.mgmt.alertsmanagement.models.MonitorServiceDetails]
+        """
         super(MonitorServiceList, self).__init__(**kwargs)
         self.metadata_identifier = 'MonitorServiceList'  # type: str
         self.data = data
 
 
+class MonthlyRecurrence(Recurrence):
+    """Monthly recurrence object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar recurrence_type: Required. Specifies when the recurrence should be applied.Constant
+     filled by server. Possible values include: "Daily", "Weekly", "Monthly".
+    :vartype recurrence_type: str or ~azure.mgmt.alertsmanagement.models.RecurrenceType
+    :ivar start_time: Start time for recurrence.
+    :vartype start_time: str
+    :ivar end_time: End time for recurrence.
+    :vartype end_time: str
+    :ivar days_of_month: Required. Specifies the values for monthly recurrence pattern.
+    :vartype days_of_month: list[int]
+    """
+
+    _validation = {
+        'recurrence_type': {'required': True},
+        'days_of_month': {'required': True},
+    }
+
+    _attribute_map = {
+        'recurrence_type': {'key': 'recurrenceType', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'days_of_month': {'key': 'daysOfMonth', 'type': '[int]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        days_of_month: List[int],
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword start_time: Start time for recurrence.
+        :paramtype start_time: str
+        :keyword end_time: End time for recurrence.
+        :paramtype end_time: str
+        :keyword days_of_month: Required. Specifies the values for monthly recurrence pattern.
+        :paramtype days_of_month: list[int]
+        """
+        super(MonthlyRecurrence, self).__init__(start_time=start_time, end_time=end_time, **kwargs)
+        self.recurrence_type = 'Monthly'  # type: str
+        self.days_of_month = days_of_month
+
+
 class Operation(msrest.serialization.Model):
     """Operation provided by provider.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param display: Properties of the operation.
-    :type display: ~azure.mgmt.alertsmanagement.models.OperationDisplay
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar display: Properties of the operation.
+    :vartype display: ~azure.mgmt.alertsmanagement.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
     }
 
     def __init__(
@@ -1535,24 +1456,34 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
+        origin: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword display: Properties of the operation.
+        :paramtype display: ~azure.mgmt.alertsmanagement.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
+        self.origin = origin
 
 
 class OperationDisplay(msrest.serialization.Model):
     """Properties of the operation.
 
-    :param provider: Provider name.
-    :type provider: str
-    :param resource: Resource name.
-    :type resource: str
-    :param operation: Operation name.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Provider name.
+    :vartype provider: str
+    :ivar resource: Resource name.
+    :vartype resource: str
+    :ivar operation: Operation name.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -1571,6 +1502,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Provider name.
+        :paramtype provider: str
+        :keyword resource: Resource name.
+        :paramtype resource: str
+        :keyword operation: Operation name.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -1583,10 +1524,10 @@ class OperationsList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param next_link: URL to fetch the next set of alerts.
-    :type next_link: str
-    :param value: Required. Array of operations.
-    :type value: list[~azure.mgmt.alertsmanagement.models.Operation]
+    :ivar next_link: URL to fetch the next set of alerts.
+    :vartype next_link: str
+    :ivar value: Required. Array of operations.
+    :vartype value: list[~azure.mgmt.alertsmanagement.models.Operation]
     """
 
     _validation = {
@@ -1605,6 +1546,12 @@ class OperationsList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: URL to fetch the next set of alerts.
+        :paramtype next_link: str
+        :keyword value: Required. Array of operations.
+        :paramtype value: list[~azure.mgmt.alertsmanagement.models.Operation]
+        """
         super(OperationsList, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -1613,82 +1560,116 @@ class OperationsList(msrest.serialization.Model):
 class PatchObject(msrest.serialization.Model):
     """Data contract for patch.
 
-    :param tags: A set of tags. tags to be updated.
-    :type tags: object
-    :param status: Indicates if the given action rule is enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
+    :ivar tags: A set of tags. Tags to be updated.
+    :vartype tags: dict[str, str]
+    :ivar enabled: Indicates if the given alert processing rule is enabled or disabled.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'object'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[object] = None,
-        status: Optional[Union[str, "ActionRuleStatus"]] = None,
+        tags: Optional[Dict[str, str]] = None,
+        enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Tags to be updated.
+        :paramtype tags: dict[str, str]
+        :keyword enabled: Indicates if the given alert processing rule is enabled or disabled.
+        :paramtype enabled: bool
+        """
         super(PatchObject, self).__init__(**kwargs)
         self.tags = tags
-        self.status = status
+        self.enabled = enabled
 
 
-class Scope(msrest.serialization.Model):
-    """Target scope for a given action rule. By default scope will be the subscription. User can also provide list of resource groups or list of resources from the scope subscription as well.
+class RemoveAllActionGroups(Action):
+    """Indicates if all action groups should be removed.
 
-    :param scope_type: type of target scope. Possible values include: "ResourceGroup", "Resource",
-     "Subscription".
-    :type scope_type: str or ~azure.mgmt.alertsmanagement.models.ScopeType
-    :param values: list of ARM IDs of the given scope type which will be the target of the given
-     action rule.
-    :type values: list[str]
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar action_type: Required. Action that should be applied.Constant filled by server. Possible
+     values include: "AddActionGroups", "RemoveAllActionGroups".
+    :vartype action_type: str or ~azure.mgmt.alertsmanagement.models.ActionType
     """
 
+    _validation = {
+        'action_type': {'required': True},
+    }
+
     _attribute_map = {
-        'scope_type': {'key': 'scopeType', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(RemoveAllActionGroups, self).__init__(**kwargs)
+        self.action_type = 'RemoveAllActionGroups'  # type: str
+
+
+class Schedule(msrest.serialization.Model):
+    """Scheduling configuration for a given alert processing rule.
+
+    :ivar effective_from: Scheduling effective from time. Date-Time in ISO-8601 format without
+     timezone suffix.
+    :vartype effective_from: str
+    :ivar effective_until: Scheduling effective until time. Date-Time in ISO-8601 format without
+     timezone suffix.
+    :vartype effective_until: str
+    :ivar time_zone: Scheduling time zone.
+    :vartype time_zone: str
+    :ivar recurrences: List of recurrences.
+    :vartype recurrences: list[~azure.mgmt.alertsmanagement.models.Recurrence]
+    """
+
+    _validation = {
+        'effective_from': {'pattern': r'^(?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))$'},
+        'effective_until': {'pattern': r'^(?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))$'},
+    }
+
+    _attribute_map = {
+        'effective_from': {'key': 'effectiveFrom', 'type': 'str'},
+        'effective_until': {'key': 'effectiveUntil', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'recurrences': {'key': 'recurrences', 'type': '[Recurrence]'},
     }
 
     def __init__(
         self,
         *,
-        scope_type: Optional[Union[str, "ScopeType"]] = None,
-        values: Optional[List[str]] = None,
+        effective_from: Optional[str] = None,
+        effective_until: Optional[str] = None,
+        time_zone: Optional[str] = None,
+        recurrences: Optional[List["Recurrence"]] = None,
         **kwargs
     ):
-        super(Scope, self).__init__(**kwargs)
-        self.scope_type = scope_type
-        self.values = values
-
-
-class SmartDetectorErrorResponse(msrest.serialization.Model):
-    """Describe the format of an Error response.
-
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(SmartDetectorErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        """
+        :keyword effective_from: Scheduling effective from time. Date-Time in ISO-8601 format without
+         timezone suffix.
+        :paramtype effective_from: str
+        :keyword effective_until: Scheduling effective until time. Date-Time in ISO-8601 format without
+         timezone suffix.
+        :paramtype effective_until: str
+        :keyword time_zone: Scheduling time zone.
+        :paramtype time_zone: str
+        :keyword recurrences: List of recurrences.
+        :paramtype recurrences: list[~azure.mgmt.alertsmanagement.models.Recurrence]
+        """
+        super(Schedule, self).__init__(**kwargs)
+        self.effective_from = effective_from
+        self.effective_until = effective_until
+        self.time_zone = time_zone
+        self.recurrences = recurrences
 
 
 class SmartGroup(Resource):
@@ -1702,8 +1683,8 @@ class SmartGroup(Resource):
     :vartype type: str
     :ivar name: Azure resource name.
     :vartype name: str
-    :param alerts_count: Total number of alerts in smart group.
-    :type alerts_count: int
+    :ivar alerts_count: Total number of alerts in smart group.
+    :vartype alerts_count: long
     :ivar smart_group_state: Smart group state. Possible values include: "New", "Acknowledged",
      "Closed".
     :vartype smart_group_state: str or ~azure.mgmt.alertsmanagement.models.State
@@ -1716,24 +1697,27 @@ class SmartGroup(Resource):
     :vartype last_modified_date_time: ~datetime.datetime
     :ivar last_modified_user_name: Last modified by user name.
     :vartype last_modified_user_name: str
-    :param resources: Summary of target resources in the smart group.
-    :type resources: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param resource_types: Summary of target resource types in the smart group.
-    :type resource_types: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param resource_groups: Summary of target resource groups in the smart group.
-    :type resource_groups: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param monitor_services: Summary of monitorServices in the smart group.
-    :type monitor_services: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param monitor_conditions: Summary of monitorConditions in the smart group.
-    :type monitor_conditions:
+    :ivar resources: Summary of target resources in the smart group.
+    :vartype resources: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+    :ivar resource_types: Summary of target resource types in the smart group.
+    :vartype resource_types: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+    :ivar resource_groups: Summary of target resource groups in the smart group.
+    :vartype resource_groups:
      list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param alert_states: Summary of alertStates in the smart group.
-    :type alert_states: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param alert_severities: Summary of alertSeverities in the smart group.
-    :type alert_severities: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :param next_link: The URI to fetch the next page of alerts. Call ListNext() with this URI to
+    :ivar monitor_services: Summary of monitorServices in the smart group.
+    :vartype monitor_services:
+     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+    :ivar monitor_conditions: Summary of monitorConditions in the smart group.
+    :vartype monitor_conditions:
+     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+    :ivar alert_states: Summary of alertStates in the smart group.
+    :vartype alert_states: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+    :ivar alert_severities: Summary of alertSeverities in the smart group.
+    :vartype alert_severities:
+     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+    :ivar next_link: The URI to fetch the next page of alerts. Call ListNext() with this URI to
      fetch the next page alerts.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
@@ -1751,7 +1735,7 @@ class SmartGroup(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'alerts_count': {'key': 'properties.alertsCount', 'type': 'int'},
+        'alerts_count': {'key': 'properties.alertsCount', 'type': 'long'},
         'smart_group_state': {'key': 'properties.smartGroupState', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'start_date_time': {'key': 'properties.startDateTime', 'type': 'iso-8601'},
@@ -1781,6 +1765,32 @@ class SmartGroup(Resource):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword alerts_count: Total number of alerts in smart group.
+        :paramtype alerts_count: long
+        :keyword resources: Summary of target resources in the smart group.
+        :paramtype resources: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword resource_types: Summary of target resource types in the smart group.
+        :paramtype resource_types:
+         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword resource_groups: Summary of target resource groups in the smart group.
+        :paramtype resource_groups:
+         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword monitor_services: Summary of monitorServices in the smart group.
+        :paramtype monitor_services:
+         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword monitor_conditions: Summary of monitorConditions in the smart group.
+        :paramtype monitor_conditions:
+         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword alert_states: Summary of alertStates in the smart group.
+        :paramtype alert_states: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword alert_severities: Summary of alertSeverities in the smart group.
+        :paramtype alert_severities:
+         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
+        :keyword next_link: The URI to fetch the next page of alerts. Call ListNext() with this URI to
+         fetch the next page alerts.
+        :paramtype next_link: str
+        """
         super(SmartGroup, self).__init__(**kwargs)
         self.alerts_count = alerts_count
         self.smart_group_state = None
@@ -1801,15 +1811,15 @@ class SmartGroup(Resource):
 class SmartGroupAggregatedProperty(msrest.serialization.Model):
     """Aggregated property of each type.
 
-    :param name: Name of the type.
-    :type name: str
-    :param count: Total number of items of type.
-    :type count: int
+    :ivar name: Name of the type.
+    :vartype name: str
+    :ivar count: Total number of items of type.
+    :vartype count: long
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        'count': {'key': 'count', 'type': 'long'},
     }
 
     def __init__(
@@ -1819,6 +1829,12 @@ class SmartGroupAggregatedProperty(msrest.serialization.Model):
         count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the type.
+        :paramtype name: str
+        :keyword count: Total number of items of type.
+        :paramtype count: long
+        """
         super(SmartGroupAggregatedProperty, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -1835,8 +1851,8 @@ class SmartGroupModification(Resource):
     :vartype type: str
     :ivar name: Azure resource name.
     :vartype name: str
-    :param properties: Properties of the smartGroup modification item.
-    :type properties: ~azure.mgmt.alertsmanagement.models.SmartGroupModificationProperties
+    :ivar properties: Properties of the smartGroup modification item.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.SmartGroupModificationProperties
     """
 
     _validation = {
@@ -1858,6 +1874,10 @@ class SmartGroupModification(Resource):
         properties: Optional["SmartGroupModificationProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the smartGroup modification item.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.SmartGroupModificationProperties
+        """
         super(SmartGroupModification, self).__init__(**kwargs)
         self.properties = properties
 
@@ -1865,22 +1885,22 @@ class SmartGroupModification(Resource):
 class SmartGroupModificationItem(msrest.serialization.Model):
     """smartGroup modification item.
 
-    :param modification_event: Reason for the modification. Possible values include:
+    :ivar modification_event: Reason for the modification. Possible values include:
      "SmartGroupCreated", "StateChange", "AlertAdded", "AlertRemoved".
-    :type modification_event: str or
+    :vartype modification_event: str or
      ~azure.mgmt.alertsmanagement.models.SmartGroupModificationEvent
-    :param old_value: Old value.
-    :type old_value: str
-    :param new_value: New value.
-    :type new_value: str
-    :param modified_at: Modified date and time.
-    :type modified_at: str
-    :param modified_by: Modified user details (Principal client name).
-    :type modified_by: str
-    :param comments: Modification comments.
-    :type comments: str
-    :param description: Description of the modification.
-    :type description: str
+    :ivar old_value: Old value.
+    :vartype old_value: str
+    :ivar new_value: New value.
+    :vartype new_value: str
+    :ivar modified_at: Modified date and time.
+    :vartype modified_at: str
+    :ivar modified_by: Modified user details (Principal client name).
+    :vartype modified_by: str
+    :ivar comments: Modification comments.
+    :vartype comments: str
+    :ivar description: Description of the modification.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -1905,6 +1925,24 @@ class SmartGroupModificationItem(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword modification_event: Reason for the modification. Possible values include:
+         "SmartGroupCreated", "StateChange", "AlertAdded", "AlertRemoved".
+        :paramtype modification_event: str or
+         ~azure.mgmt.alertsmanagement.models.SmartGroupModificationEvent
+        :keyword old_value: Old value.
+        :paramtype old_value: str
+        :keyword new_value: New value.
+        :paramtype new_value: str
+        :keyword modified_at: Modified date and time.
+        :paramtype modified_at: str
+        :keyword modified_by: Modified user details (Principal client name).
+        :paramtype modified_by: str
+        :keyword comments: Modification comments.
+        :paramtype comments: str
+        :keyword description: Description of the modification.
+        :paramtype description: str
+        """
         super(SmartGroupModificationItem, self).__init__(**kwargs)
         self.modification_event = modification_event
         self.old_value = old_value
@@ -1922,10 +1960,10 @@ class SmartGroupModificationProperties(msrest.serialization.Model):
 
     :ivar smart_group_id: Unique Id of the smartGroup for which the history is being retrieved.
     :vartype smart_group_id: str
-    :param modifications: Modification details.
-    :type modifications: list[~azure.mgmt.alertsmanagement.models.SmartGroupModificationItem]
-    :param next_link: URL to fetch the next set of results.
-    :type next_link: str
+    :ivar modifications: Modification details.
+    :vartype modifications: list[~azure.mgmt.alertsmanagement.models.SmartGroupModificationItem]
+    :ivar next_link: URL to fetch the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -1945,6 +1983,12 @@ class SmartGroupModificationProperties(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword modifications: Modification details.
+        :paramtype modifications: list[~azure.mgmt.alertsmanagement.models.SmartGroupModificationItem]
+        :keyword next_link: URL to fetch the next set of results.
+        :paramtype next_link: str
+        """
         super(SmartGroupModificationProperties, self).__init__(**kwargs)
         self.smart_group_id = None
         self.modifications = modifications
@@ -1954,10 +1998,10 @@ class SmartGroupModificationProperties(msrest.serialization.Model):
 class SmartGroupsList(msrest.serialization.Model):
     """List the alerts.
 
-    :param next_link: URL to fetch the next set of alerts.
-    :type next_link: str
-    :param value: List of alerts.
-    :type value: list[~azure.mgmt.alertsmanagement.models.SmartGroup]
+    :ivar next_link: URL to fetch the next set of alerts.
+    :vartype next_link: str
+    :ivar value: List of alerts.
+    :vartype value: list[~azure.mgmt.alertsmanagement.models.SmartGroup]
     """
 
     _attribute_map = {
@@ -1972,170 +2016,125 @@ class SmartGroupsList(msrest.serialization.Model):
         value: Optional[List["SmartGroup"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: URL to fetch the next set of alerts.
+        :paramtype next_link: str
+        :keyword value: List of alerts.
+        :paramtype value: list[~azure.mgmt.alertsmanagement.models.SmartGroup]
+        """
         super(SmartGroupsList, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class Suppression(ActionRuleProperties):
-    """Action rule with suppression configuration.
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param scope: scope on which action rule will apply.
-    :type scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :param conditions: conditions on which alerts will be filtered.
-    :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :param description: Description of action rule.
-    :type description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
+    :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :param status: Indicates if the given action rule is enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :param type: Required. Indicates type of action rule.Constant filled by server.  Possible
-     values include: "Suppression", "ActionGroup", "Diagnostics".
-    :type type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
-    :param suppression_config: Required. suppression configuration for the action rule.
-    :type suppression_config: ~azure.mgmt.alertsmanagement.models.SuppressionConfig
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
-    _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
-        'suppression_config': {'required': True},
-    }
-
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
         'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'suppression_config': {'key': 'suppressionConfig', 'type': 'SuppressionConfig'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         *,
-        suppression_config: "SuppressionConfig",
-        scope: Optional["Scope"] = None,
-        conditions: Optional["Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "ActionRuleStatus"]] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(Suppression, self).__init__(scope=scope, conditions=conditions, description=description, status=status, **kwargs)
-        self.type = 'Suppression'  # type: str
-        self.suppression_config = suppression_config
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
-class SuppressionConfig(msrest.serialization.Model):
-    """Suppression logic for a given action rule.
+class WeeklyRecurrence(Recurrence):
+    """Weekly recurrence object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param recurrence_type: Required. Specifies when the suppression should be applied. Possible
-     values include: "Always", "Once", "Daily", "Weekly", "Monthly".
-    :type recurrence_type: str or ~azure.mgmt.alertsmanagement.models.SuppressionType
-    :param schedule: suppression schedule configuration.
-    :type schedule: ~azure.mgmt.alertsmanagement.models.SuppressionSchedule
+    :ivar recurrence_type: Required. Specifies when the recurrence should be applied.Constant
+     filled by server. Possible values include: "Daily", "Weekly", "Monthly".
+    :vartype recurrence_type: str or ~azure.mgmt.alertsmanagement.models.RecurrenceType
+    :ivar start_time: Start time for recurrence.
+    :vartype start_time: str
+    :ivar end_time: End time for recurrence.
+    :vartype end_time: str
+    :ivar days_of_week: Required. Specifies the values for weekly recurrence pattern.
+    :vartype days_of_week: list[str or ~azure.mgmt.alertsmanagement.models.DaysOfWeek]
     """
 
     _validation = {
         'recurrence_type': {'required': True},
+        'days_of_week': {'required': True},
     }
 
     _attribute_map = {
         'recurrence_type': {'key': 'recurrenceType', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'SuppressionSchedule'},
-    }
-
-    def __init__(
-        self,
-        *,
-        recurrence_type: Union[str, "SuppressionType"],
-        schedule: Optional["SuppressionSchedule"] = None,
-        **kwargs
-    ):
-        super(SuppressionConfig, self).__init__(**kwargs)
-        self.recurrence_type = recurrence_type
-        self.schedule = schedule
-
-
-class SuppressionSchedule(msrest.serialization.Model):
-    """Schedule for a given suppression configuration.
-
-    :param start_date: Start date for suppression.
-    :type start_date: str
-    :param end_date: End date for suppression.
-    :type end_date: str
-    :param start_time: Start time for suppression.
-    :type start_time: str
-    :param end_time: End date for suppression.
-    :type end_time: str
-    :param recurrence_values: Specifies the values for recurrence pattern.
-    :type recurrence_values: list[int]
-    """
-
-    _attribute_map = {
-        'start_date': {'key': 'startDate', 'type': 'str'},
-        'end_date': {'key': 'endDate', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'str'},
         'end_time': {'key': 'endTime', 'type': 'str'},
-        'recurrence_values': {'key': 'recurrenceValues', 'type': '[int]'},
+        'days_of_week': {'key': 'daysOfWeek', 'type': '[str]'},
     }
 
     def __init__(
         self,
         *,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        days_of_week: List[Union[str, "DaysOfWeek"]],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
-        recurrence_values: Optional[List[int]] = None,
         **kwargs
     ):
-        super(SuppressionSchedule, self).__init__(**kwargs)
-        self.start_date = start_date
-        self.end_date = end_date
-        self.start_time = start_time
-        self.end_time = end_time
-        self.recurrence_values = recurrence_values
-
-
-class ThrottlingInformation(msrest.serialization.Model):
-    """Optional throttling information for the alert rule.
-
-    :param duration: The required duration (in ISO8601 format) to wait before notifying on the
-     alert rule again. The time granularity must be in minutes and minimum value is 0 minutes.
-    :type duration: ~datetime.timedelta
-    """
-
-    _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'duration'},
-    }
-
-    def __init__(
-        self,
-        *,
-        duration: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
-        super(ThrottlingInformation, self).__init__(**kwargs)
-        self.duration = duration
+        """
+        :keyword start_time: Start time for recurrence.
+        :paramtype start_time: str
+        :keyword end_time: End time for recurrence.
+        :paramtype end_time: str
+        :keyword days_of_week: Required. Specifies the values for weekly recurrence pattern.
+        :paramtype days_of_week: list[str or ~azure.mgmt.alertsmanagement.models.DaysOfWeek]
+        """
+        super(WeeklyRecurrence, self).__init__(start_time=start_time, end_time=end_time, **kwargs)
+        self.recurrence_type = 'Weekly'  # type: str
+        self.days_of_week = days_of_week
