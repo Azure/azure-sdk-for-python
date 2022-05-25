@@ -21,12 +21,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._backup_policies_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_list_request, build_update_request_initial
+from ...operations._volume_quota_rules_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_list_by_volume_request, build_update_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class BackupPoliciesOperations:
-    """BackupPoliciesOperations async operations.
+class VolumeQuotaRulesOperations:
+    """VolumeQuotaRulesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -48,28 +48,35 @@ class BackupPoliciesOperations:
         self._config = config
 
     @distributed_trace
-    def list(
+    def list_by_volume(
         self,
         resource_group_name: str,
         account_name: str,
+        pool_name: str,
+        volume_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BackupPoliciesList"]:
-        """List backup policies.
+    ) -> AsyncIterable["_models.VolumeQuotaRulesList"]:
+        """Get all quota rules for a volume.
 
-        List backup policies for Netapp Account.
+        List all quota rules associated with the volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BackupPoliciesList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.BackupPoliciesList]
+        :return: An iterator like instance of either VolumeQuotaRulesList or the result of
+         cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.VolumeQuotaRulesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPoliciesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRulesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -77,22 +84,26 @@ class BackupPoliciesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_volume_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
+                    pool_name=pool_name,
+                    volume_name=volume_name,
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_volume.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_volume_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
+                    pool_name=pool_name,
+                    volume_name=volume_name,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -102,7 +113,7 @@ class BackupPoliciesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("BackupPoliciesList", pipeline_response)
+            deserialized = self._deserialize("VolumeQuotaRulesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -128,32 +139,38 @@ class BackupPoliciesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies"}  # type: ignore
+    list_by_volume.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules"}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
         **kwargs: Any
-    ) -> "_models.BackupPolicy":
-        """Get a backup Policy.
+    ) -> "_models.VolumeQuotaRule":
+        """Describe a quota rule.
 
-        Get a particular backup Policy.
+        Get details of the specified quota rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param backup_policy_name: Backup policy Name which uniquely identify backup policy.
-        :type backup_policy_name: str
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.BackupPolicy
+        :return: VolumeQuotaRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.VolumeQuotaRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -166,7 +183,9 @@ class BackupPoliciesOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            backup_policy_name=backup_policy_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -184,25 +203,27 @@ class BackupPoliciesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BackupPolicy', pipeline_response)
+        deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     async def _create_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
-        body: "_models.BackupPolicy",
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRule",
         **kwargs: Any
-    ) -> Optional["_models.BackupPolicy"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BackupPolicy"]]
+    ) -> "_models.VolumeQuotaRule":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -211,13 +232,15 @@ class BackupPoliciesOperations:
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'BackupPolicy')
+        _json = self._serialize.body(body, 'VolumeQuotaRule')
 
         request = build_create_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            backup_policy_name=backup_policy_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -233,23 +256,22 @@ class BackupPoliciesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BackupPolicy', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('BackupPolicy', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    _create_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -257,22 +279,28 @@ class BackupPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
-        body: "_models.BackupPolicy",
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRule",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.BackupPolicy"]:
-        """Create a backup policy.
+    ) -> AsyncLROPoller["_models.VolumeQuotaRule"]:
+        """Create a quota rule.
 
-        Create a backup policy for Netapp Account.
+        Create the specified quota rule within the given volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param backup_policy_name: Backup policy Name which uniquely identify backup policy.
-        :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicy
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
+        :param body: Quota rule object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -281,15 +309,15 @@ class BackupPoliciesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either BackupPolicy or the result of
+        :return: An instance of AsyncLROPoller that returns either VolumeQuotaRule or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.BackupPolicy]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -299,7 +327,9 @@ class BackupPoliciesOperations:
             raw_result = await self._create_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                backup_policy_name=backup_policy_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                volume_quota_rule_name=volume_quota_rule_name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -310,13 +340,13 @@ class BackupPoliciesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('BackupPolicy', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -328,17 +358,19 @@ class BackupPoliciesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    begin_create.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
     async def _update_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
-        body: "_models.BackupPolicyPatch",
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRulePatch",
         **kwargs: Any
-    ) -> "_models.BackupPolicy":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPolicy"]
+    ) -> Optional["_models.VolumeQuotaRule"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VolumeQuotaRule"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -347,13 +379,15 @@ class BackupPoliciesOperations:
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'BackupPolicyPatch')
+        _json = self._serialize.body(body, 'VolumeQuotaRulePatch')
 
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            backup_policy_name=backup_policy_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -373,18 +407,16 @@ class BackupPoliciesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BackupPolicy', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('BackupPolicy', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -392,22 +424,28 @@ class BackupPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
-        body: "_models.BackupPolicyPatch",
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRulePatch",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.BackupPolicy"]:
-        """Patch a backup policy.
+    ) -> AsyncLROPoller["_models.VolumeQuotaRule"]:
+        """Update a quota rule.
 
-        Patch a backup policy for Netapp Account.
+        Patch a quota rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param backup_policy_name: Backup policy Name which uniquely identify backup policy.
-        :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
+        :param body: Quota rule object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRulePatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -416,15 +454,15 @@ class BackupPoliciesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either BackupPolicy or the result of
+        :return: An instance of AsyncLROPoller that returns either VolumeQuotaRule or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.BackupPolicy]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -434,7 +472,9 @@ class BackupPoliciesOperations:
             raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                backup_policy_name=backup_policy_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                volume_quota_rule_name=volume_quota_rule_name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -445,13 +485,13 @@ class BackupPoliciesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('BackupPolicy', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -463,13 +503,15 @@ class BackupPoliciesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -485,7 +527,9 @@ class BackupPoliciesOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            backup_policy_name=backup_policy_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -499,14 +543,14 @@ class BackupPoliciesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -514,19 +558,25 @@ class BackupPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        backup_policy_name: str,
+        pool_name: str,
+        volume_name: str,
+        volume_quota_rule_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a backup policy.
+        """Delete a quota rule.
 
-        Delete backup policy.
+        Delete quota rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account.
         :type account_name: str
-        :param backup_policy_name: Backup policy Name which uniquely identify backup policy.
-        :type backup_policy_name: str
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -551,7 +601,9 @@ class BackupPoliciesOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                backup_policy_name=backup_policy_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                volume_quota_rule_name=volume_quota_rule_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -575,4 +627,4 @@ class BackupPoliciesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore

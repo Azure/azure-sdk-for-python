@@ -29,7 +29,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_list_by_volume_request(
     subscription_id: str,
     resource_group_name: str,
     account_name: str,
@@ -41,7 +41,7 @@ def build_list_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -75,21 +75,21 @@ def build_get_request(
     account_name: str,
     pool_name: str,
     volume_name: str,
-    snapshot_name: str,
+    volume_quota_rule_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str'),
         "poolName": _SERIALIZER.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         "volumeName": _SERIALIZER.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, 'str'),
+        "volumeQuotaRuleName": _SERIALIZER.url("volume_quota_rule_name", volume_quota_rule_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -117,7 +117,7 @@ def build_create_request_initial(
     account_name: str,
     pool_name: str,
     volume_name: str,
-    snapshot_name: str,
+    volume_quota_rule_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -128,14 +128,14 @@ def build_create_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str'),
         "poolName": _SERIALIZER.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         "volumeName": _SERIALIZER.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, 'str'),
+        "volumeQuotaRuleName": _SERIALIZER.url("volume_quota_rule_name", volume_quota_rule_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -167,7 +167,7 @@ def build_update_request_initial(
     account_name: str,
     pool_name: str,
     volume_name: str,
-    snapshot_name: str,
+    volume_quota_rule_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -178,14 +178,14 @@ def build_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str'),
         "poolName": _SERIALIZER.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         "volumeName": _SERIALIZER.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, 'str'),
+        "volumeQuotaRuleName": _SERIALIZER.url("volume_quota_rule_name", volume_quota_rule_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -217,20 +217,20 @@ def build_delete_request_initial(
     account_name: str,
     pool_name: str,
     volume_name: str,
-    snapshot_name: str,
+    volume_quota_rule_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str'),
         "poolName": _SERIALIZER.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         "volumeName": _SERIALIZER.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, 'str'),
+        "volumeQuotaRuleName": _SERIALIZER.url("volume_quota_rule_name", volume_quota_rule_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -246,56 +246,8 @@ def build_delete_request_initial(
         **kwargs
     )
 
-
-def build_restore_files_request_initial(
-    subscription_id: str,
-    resource_group_name: str,
-    account_name: str,
-    pool_name: str,
-    volume_name: str,
-    snapshot_name: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-        "accountName": _SERIALIZER.url("account_name", account_name, 'str'),
-        "poolName": _SERIALIZER.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
-        "volumeName": _SERIALIZER.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-class SnapshotsOperations(object):
-    """SnapshotsOperations operations.
+class VolumeQuotaRulesOperations(object):
+    """VolumeQuotaRulesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -317,17 +269,17 @@ class SnapshotsOperations(object):
         self._config = config
 
     @distributed_trace
-    def list(
+    def list_by_volume(
         self,
         resource_group_name: str,
         account_name: str,
         pool_name: str,
         volume_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.SnapshotsList"]:
-        """Describe all snapshots.
+    ) -> Iterable["_models.VolumeQuotaRulesList"]:
+        """Get all quota rules for a volume.
 
-        List all snapshots associated with the volume.
+        List all quota rules associated with the volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -338,13 +290,14 @@ class SnapshotsOperations(object):
         :param volume_name: The name of the volume.
         :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SnapshotsList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.SnapshotsList]
+        :return: An iterator like instance of either VolumeQuotaRulesList or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.VolumeQuotaRulesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRulesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -352,21 +305,21 @@ class SnapshotsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_volume_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     pool_name=pool_name,
                     volume_name=volume_name,
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_volume.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_volume_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
@@ -381,7 +334,7 @@ class SnapshotsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("SnapshotsList", pipeline_response)
+            deserialized = self._deserialize("VolumeQuotaRulesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -407,7 +360,7 @@ class SnapshotsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots"}  # type: ignore
+    list_by_volume.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -416,12 +369,12 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
+        volume_quota_rule_name: str,
         **kwargs: Any
-    ) -> "_models.Snapshot":
-        """Describe a snapshot.
+    ) -> "_models.VolumeQuotaRule":
+        """Describe a quota rule.
 
-        Get details of the specified snapshot.
+        Get details of the specified quota rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -431,14 +384,14 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Snapshot, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.Snapshot
+        :return: VolumeQuotaRule, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.VolumeQuotaRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -453,7 +406,7 @@ class SnapshotsOperations(object):
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -471,14 +424,14 @@ class SnapshotsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Snapshot', pipeline_response)
+        deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     def _create_initial(
@@ -487,11 +440,11 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: "_models.Snapshot",
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRule",
         **kwargs: Any
-    ) -> Optional["_models.Snapshot"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Snapshot"]]
+    ) -> "_models.VolumeQuotaRule":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -500,7 +453,7 @@ class SnapshotsOperations(object):
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'Snapshot')
+        _json = self._serialize.body(body, 'VolumeQuotaRule')
 
         request = build_create_request_initial(
             subscription_id=self._config.subscription_id,
@@ -508,7 +461,7 @@ class SnapshotsOperations(object):
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -524,20 +477,22 @@ class SnapshotsOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
+
         if response.status_code == 201:
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
+    _create_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     @distributed_trace
@@ -547,13 +502,13 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: "_models.Snapshot",
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRule",
         **kwargs: Any
-    ) -> LROPoller["_models.Snapshot"]:
-        """Create a snapshot.
+    ) -> LROPoller["_models.VolumeQuotaRule"]:
+        """Create a quota rule.
 
-        Create the specified snapshot within the given volume.
+        Create the specified quota rule within the given volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -563,10 +518,10 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.Snapshot
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
+        :param body: Quota rule object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -575,14 +530,15 @@ class SnapshotsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Snapshot]
+        :return: An instance of LROPoller that returns either VolumeQuotaRule or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -594,7 +550,7 @@ class SnapshotsOperations(object):
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
+                volume_quota_rule_name=volume_quota_rule_name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -605,7 +561,7 @@ class SnapshotsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -623,7 +579,7 @@ class SnapshotsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
+    begin_create.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
     def _update_initial(
         self,
@@ -631,11 +587,11 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: Any,
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRulePatch",
         **kwargs: Any
-    ) -> Optional["_models.Snapshot"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Snapshot"]]
+    ) -> Optional["_models.VolumeQuotaRule"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VolumeQuotaRule"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -644,7 +600,7 @@ class SnapshotsOperations(object):
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'object')
+        _json = self._serialize.body(body, 'VolumeQuotaRulePatch')
 
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -652,7 +608,7 @@ class SnapshotsOperations(object):
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -674,14 +630,14 @@ class SnapshotsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     @distributed_trace
@@ -691,13 +647,13 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: Any,
+        volume_quota_rule_name: str,
+        body: "_models.VolumeQuotaRulePatch",
         **kwargs: Any
-    ) -> LROPoller["_models.Snapshot"]:
-        """Update a snapshot.
+    ) -> LROPoller["_models.VolumeQuotaRule"]:
+        """Update a quota rule.
 
-        Patch a snapshot.
+        Patch a quota rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -707,10 +663,10 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation.
-        :type body: any
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
+        :param body: Quota rule object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRulePatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -719,14 +675,15 @@ class SnapshotsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Snapshot]
+        :return: An instance of LROPoller that returns either VolumeQuotaRule or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VolumeQuotaRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -738,7 +695,7 @@ class SnapshotsOperations(object):
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
+                volume_quota_rule_name=volume_quota_rule_name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -749,7 +706,7 @@ class SnapshotsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('VolumeQuotaRule', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -767,7 +724,7 @@ class SnapshotsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -775,7 +732,7 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
+        volume_quota_rule_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -793,7 +750,7 @@ class SnapshotsOperations(object):
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            volume_quota_rule_name=volume_quota_rule_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -807,14 +764,14 @@ class SnapshotsOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
 
 
     @distributed_trace
@@ -824,12 +781,12 @@ class SnapshotsOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
+        volume_quota_rule_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Delete a snapshot.
+        """Delete a quota rule.
 
-        Delete snapshot.
+        Delete quota rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -839,8 +796,8 @@ class SnapshotsOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
+        :param volume_quota_rule_name: The name of volume quota rule.
+        :type volume_quota_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -867,7 +824,7 @@ class SnapshotsOperations(object):
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
+                volume_quota_rule_name=volume_quota_rule_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -891,139 +848,4 @@ class SnapshotsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"}  # type: ignore
-
-    def _restore_files_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        pool_name: str,
-        volume_name: str,
-        snapshot_name: str,
-        body: "_models.SnapshotRestoreFiles",
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'SnapshotRestoreFiles')
-
-        request = build_restore_files_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            pool_name=pool_name,
-            volume_name=volume_name,
-            snapshot_name=snapshot_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self._restore_files_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _restore_files_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles"}  # type: ignore
-
-
-    @distributed_trace
-    def begin_restore_files(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        pool_name: str,
-        volume_name: str,
-        snapshot_name: str,
-        body: "_models.SnapshotRestoreFiles",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Create a new Snapshot Restore Files request.
-
-        Restore the specified files from the specified snapshot to the active filesystem.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account.
-        :type account_name: str
-        :param pool_name: The name of the capacity pool.
-        :type pool_name: str
-        :param volume_name: The name of the volume.
-        :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
-        :param body: Restore payload supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2022-01-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._restore_files_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                pool_name=pool_name,
-                volume_name=volume_name,
-                snapshot_name=snapshot_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_restore_files.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"}  # type: ignore
