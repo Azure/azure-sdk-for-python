@@ -286,6 +286,7 @@ def test_send_multiple_partitions_with_app_prop(connstr_receivers):
 
 @pytest.mark.liveTest
 def test_send_over_websocket_sync(connstr_receivers):
+    pytest.skip("websocket not supported")
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
 

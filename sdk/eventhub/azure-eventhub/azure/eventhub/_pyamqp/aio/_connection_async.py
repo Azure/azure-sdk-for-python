@@ -87,7 +87,7 @@ class Connection(object):
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
-            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname,custom_port,custom_parsed_url.path)
+            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname, custom_port, custom_parsed_url.path)
 
         transport = kwargs.get('transport')
         if transport:

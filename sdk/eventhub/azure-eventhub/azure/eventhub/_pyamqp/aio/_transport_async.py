@@ -149,7 +149,6 @@ class AsyncTransportMixin():
         await self.write(data)
         #_LOGGER.info("OCH%d -> %r", channel, frame)
 
-
 class AsyncTransport(AsyncTransportMixin):
     """Common superclass for TCP and SSL transports."""
 
@@ -163,6 +162,7 @@ class AsyncTransport(AsyncTransportMixin):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
+        
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout

@@ -123,7 +123,6 @@ class EventHubProducer(
         self._lock = threading.Lock()
         self._link_properties = {TIMEOUT_SYMBOL: pyamqp_utils.amqp_long_value(int(self._timeout * 1000))}
 
-
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
         transport_type = self._client._config.transport_type   # pylint:disable=protected-access

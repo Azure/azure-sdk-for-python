@@ -316,7 +316,6 @@ MESSAGE_DELIVERY_DONE_STATES = (
     MessageDeliveryState.Cancelled
 )
 
-
 class TransportType(Enum):
     """Transport type
     The underlying transport protocol type:

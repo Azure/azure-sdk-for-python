@@ -273,6 +273,7 @@ async def test_send_multiple_partition_with_app_prop_async(connstr_receivers):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_over_websocket_async(connstr_receivers):
+    pytest.skip("websocket unsupported")
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str,
                                                            transport_type=TransportType.AmqpOverWebsocket)
