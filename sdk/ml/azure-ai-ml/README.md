@@ -106,9 +106,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/azure/ai/ml
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml
 [ml_pypi]: https://pypi.org/project/azure-ai-ml/
-[ml_ref_docs]: https://review.docs.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml?view=azure-ml-py&branch=smoke-test-stable
+[ml_ref_docs]: https://docs.microsoft.com/python/api/azure-ai-ml/?view=azure-ml-py
 [ml_samples]: https://github.com/Azure/azureml-examples/tree/sdk-preview/sdk
 [product_documentation]: https://docs.microsoft.com/azure/machine-learning/
 [azure_subscription]: https://azure.microsoft.com/free/

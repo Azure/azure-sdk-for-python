@@ -1,4 +1,4 @@
 # Release History
 
-## 1.0.0b1 (unreleased)
+## 0.1.0b3 (2022-05-24)
 - First preview.

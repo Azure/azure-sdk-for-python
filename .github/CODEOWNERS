@@ -110,6 +110,9 @@
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
 
+# PRLabel: %Machine Learning
+/sdk/ml/                                                             @azureml-github
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
