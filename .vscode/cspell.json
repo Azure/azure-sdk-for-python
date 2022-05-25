@@ -11,6 +11,7 @@
   ],
   "ignorePaths": [
     "eng/**",
+    ".github/CODEOWNERS",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
