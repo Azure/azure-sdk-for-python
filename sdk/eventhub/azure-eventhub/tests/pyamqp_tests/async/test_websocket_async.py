@@ -6,8 +6,10 @@
 import pytest
 import asyncio
 import logging
-from uamqp.aio import ReceiveClientAsync, SASTokenAuthAsync
-from  uamqp.constants import TransportType
+import pytest
+
+from azure.eventhub._pyamqp.aio import authentication, ReceiveClientAsync
+from azure.eventhub._pyamqp.constants import TransportType
 
 @pytest.mark.asyncio
 async def test_event_hubs_client_web_socket(eventhub_config):
