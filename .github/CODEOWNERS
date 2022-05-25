@@ -56,6 +56,9 @@
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
 
+# PRLabel: %Communication - NetworkTraversal
+/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
+
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
 
