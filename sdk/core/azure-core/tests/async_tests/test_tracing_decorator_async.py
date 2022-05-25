@@ -17,6 +17,7 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from tracing_common import FakeSpan
@@ -80,6 +81,10 @@ class MockClient:
     async def tracing_attr(self):
         time.sleep(0.001)
 
+    @distributed_trace_async(kind=SpanKind.PRODUCER)
+    async def kind_override(self):
+        time.sleep(0.001)
+
     @distributed_trace_async
     async def raising_exception(self):
         raise ValueError("Something went horribly wrong here")
@@ -98,6 +103,7 @@ class TestAsyncDecorator(object):
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "MockClient.tracing_attr"
+        assert parent.children[1].kind == SpanKind.INTERNAL
         assert parent.children[1].attributes == {'foo': 'bar'}
 
 
@@ -110,7 +116,19 @@ class TestAsyncDecorator(object):
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "different name"
+        assert parent.children[1].kind == SpanKind.INTERNAL
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_kind_override(self, http_request):
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            await client.kind_override()
+
+        assert len(parent.children) == 2
+        assert parent.children[0].name == "MockClient.__init__"
+        assert parent.children[1].name == "MockClient.kind_override"
+        assert parent.children[1].kind == SpanKind.PRODUCER
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
