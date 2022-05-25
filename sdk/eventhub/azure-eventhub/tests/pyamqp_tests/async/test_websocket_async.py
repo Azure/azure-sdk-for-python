@@ -8,7 +8,8 @@ import asyncio
 import logging
 import pytest
 
-from azure.eventhub._pyamqp.aio import authentication, ReceiveClientAsync
+from azure.eventhub._pyamqp import authentication
+from azure.eventhub._pyamqp.aio import ReceiveClientAsync
 from azure.eventhub._pyamqp.constants import TransportType
 
 @pytest.mark.asyncio
