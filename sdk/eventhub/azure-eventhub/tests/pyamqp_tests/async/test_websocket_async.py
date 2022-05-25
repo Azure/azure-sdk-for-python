@@ -13,6 +13,7 @@ from azure.eventhub._pyamqp.aio import ReceiveClientAsync
 from azure.eventhub._pyamqp.constants import TransportType
 
 @pytest.mark.asyncio
+@pytest.skip()
 async def test_event_hubs_client_web_socket(eventhub_config):
     uri = "sb://{}/{}".format(eventhub_config['hostname'], eventhub_config['event_hub'])
     sas_auth = SASTokenAuthAsync(
