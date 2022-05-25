@@ -63,7 +63,7 @@ class EnvTest(unittest.TestCase):
                                                 connection_policy=cls.connectionPolicy)
         cls.created_db = cls.client.create_database_if_not_exists("Test_Env_DB")
         cls.created_collection = cls.created_db.create_container_if_not_exists(
-            cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
+            test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
 
     @classmethod
     def tearDownClass(cls):
