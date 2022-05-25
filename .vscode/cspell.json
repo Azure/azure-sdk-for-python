@@ -102,7 +102,7 @@
     "sdk/tables/azure-data-tables/**",
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
-    "src/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
