@@ -206,15 +206,34 @@ def test_send_and_receive_small_body(connstr_receivers, payload):
 def test_send_partition(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str)
+
+    with client:
+        batch = client.create_batch()
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
     with client:
         batch = client.create_batch(partition_id="1")
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
 
     partition_0 = receivers[0].receive_message_batch(timeout=5)
-    assert len(partition_0) == 0
     partition_1 = receivers[1].receive_message_batch(timeout=5)
-    assert len(partition_1) == 1
+    assert len(partition_0) + len(partition_1) == 2
+
+    with client:
+        batch = client.create_batch()
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
+    with client:
+        batch = client.create_batch(partition_id="1")
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
+    partition_0 = receivers[0].receive_message_batch(timeout=5)
+    partition_1 = receivers[1].receive_message_batch(timeout=5)
+    assert len(partition_0) + len(partition_1) == 2
 
 
 @pytest.mark.liveTest

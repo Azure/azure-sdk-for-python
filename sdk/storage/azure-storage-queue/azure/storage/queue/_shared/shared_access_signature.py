@@ -211,7 +211,9 @@ class _SharedAccessHelper(object):
              get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
              get_value_to_append(QueryStringConstants.SIGNED_IP) +
              get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
+             '\n'   # Signed Encryption Scope - always empty for queue
+             )
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))

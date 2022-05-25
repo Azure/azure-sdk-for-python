@@ -4,3 +4,5 @@ include azure/__init__.py
 include azure/schemaregistry/__init__.py
 recursive-include tests *.py
 recursive-include samples *.py
+include azure/schemaregistry/encoder/avroencoder/py.typed
+recursive-include doc *.rst

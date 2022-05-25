@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._policy_client import PolicyClient
-__all__ = ['PolicyClient']
+from ._resource_private_link_client import ResourcePrivateLinkClient
+__all__ = ['ResourcePrivateLinkClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

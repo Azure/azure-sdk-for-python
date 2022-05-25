@@ -15,10 +15,10 @@ These are code samples that show common scenario operations with the Schema Regi
 Several Schema Registry Avro Encoder Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry Avro Encoder:
 
 * [encode_and_decode_event_data_message.py][encode_and_decode_event_data_message_sample] ([async version][encode_and_decode_event_data_message_async_sample]) - Examples for common Schema Registry Avro Encoder tasks:
-    * Encode data according to the given schema and create EventData object
-    * Decode data given an EventData object with encoded data and corresponding content type
+    * Encode content according to the given schema and create EventData object
+    * Decode content given an EventData object with encoded content and corresponding content type
 * [eventhub_send_integration.py][eventhub_send_integration_sample] ([async version][eventhub_send_integration_async_sample]) - Examples for integration with EventHub in sending tasks:
-    * Encode data with the given schema and send `EventData` to Event Hubs.
+    * Encode content with the given schema and send `EventData` to Event Hubs.
 * [eventhub_receive_integration.py][eventhub_receive_integration_sample] ([async version][eventhub_receive_integration_async_sample]) - Examples for integration with EventHub in receiving tasks:
     * Receive `EventData` from Event Hubs and decode the received bytes.
 
@@ -35,10 +35,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 pip install azure-schemaregistry-avroencoder azure-identity
 ```
 
-Additionally, if using with `azure.eventhub.EventData`, install `azure-eventhub==5.9.0b1`:
+Additionally, if using with `azure.eventhub.EventData`, install `azure-eventhub>=5.9.0`:
 
 ```bash
-pip install azure-eventhub==5.9.0b1
+pip install azure-eventhub>=5.9.0
 ```
 
 2. Clone or download this sample repository

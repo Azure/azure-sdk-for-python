@@ -37,14 +37,20 @@ def parse_input(input_parameter):
 
 
 def create_empty_report():
-    return {"models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
+    return {"client": {}, "models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
 
 
 def create_report(module_name: str) -> Dict[str, Any]:
     module_to_generate = importlib.import_module(module_name)
+    client_name = getattr(module_to_generate, '__all__')
 
     report = create_empty_report()
 
+    try:
+        report["client"] = client_name
+    except:
+        report["client"] = []
+        
     # Look for models first
     model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
     for model_name in model_names:

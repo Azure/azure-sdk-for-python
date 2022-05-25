@@ -1270,9 +1270,9 @@ class EventSubscriptionsOperations:
         top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.EventSubscriptionsListResult"]:
-        """List all event subscriptions for a specific topic.
+        """List all event subscriptions.
 
-        List all event subscriptions that have been created for a specific topic.
+        List all event subscriptions that have been created for a specific resource.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str

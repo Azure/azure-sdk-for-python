@@ -84,23 +84,8 @@ class AdministrationTestCase(AzureTestCase):
             self.container_uri = "https://{}.blob.{}/{}".format(storage_name, storage_endpoint_suffix, container_name)
             self._scrub_url(real_url=self.container_uri, playback_url=container_playback_uri)
 
-            storage_account_key = os.environ.get("BLOB_PRIMARY_STORAGE_ACCOUNT_KEY")
-            if storage_account_key:
-                self.sas_token = generate_account_sas(
-                    account_name=storage_name,
-                    account_key=storage_account_key,
-                    resource_types=ResourceTypes(container=True, object=True),
-                    permission=AccountSasPermissions(
-                        create=True,
-                        list=True,
-                        write=True,
-                        read=True,
-                        add=True,
-                        delete=True,
-                        delete_previous_version=True,
-                    ),
-                    expiry=datetime.utcnow() + timedelta(minutes=30),
-                )
+            self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
+            if self.sas_token:
                 self.scrubber.register_name_pair(self.sas_token, playback_sas_token)
         else:
             self.managed_hsm_url = hsm_playback_url

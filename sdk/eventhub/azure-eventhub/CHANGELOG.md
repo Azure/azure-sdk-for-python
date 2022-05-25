@@ -4,6 +4,51 @@
 
 ### Features Added
 
+- Added support for connection using websocket and http proxy.
+
+## 5.8.0a3 (2022-03-08)
+
+### Other Changes
+
+- Improved the performance of async sending and receiving.
+
+## 5.8.0a2 (2022-02-09)
+
+### Features Added
+
+- Added support for async `EventHubProducerClient` and `EventHubConsumerClient`.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+## 5.8.0a1 (2022-01-13)
+
+Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out which will be added back in future previews as we work towards a stable release:
+  - Async is not supported.
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+### Other Changes
+
+- uAMQP dependency is removed.
+
+## 5.7.0 (2022-01-11)
+
+### Features Added
+
+- The classmethod `from_message_content` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `content` and `content_type` as positional parameters.
+
+### Other Changes
+
+- Features related to buffered sending of events are still in beta and will not be included in this release.
+
+### Features Added
+
 - Added suppport for connection using websocket and http proxy.
 
 ### Breaking Changes

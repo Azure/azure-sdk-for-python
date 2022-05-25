@@ -1,10 +1,23 @@
 # Release History
 
-## 5.2.0b3 (Unreleased)
+## 5.2.0b4 (Unreleased)
+
+This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
 
 ### Features Added
 
+- Added support for Healthcare Entities Analysis through the `begin_analyze_actions` API with the `AnalyzeHealthcareEntitiesAction` type.
+- Added keyword argument `fhir_version` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`. Use the keyword to indicate the version for the `fhir_bundle` contained on the `AnalyzeHealthcareEntitiesResult`.
+- Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
+- Added keyword argument `display_name` to `begin_analyze_healthcare_entities`.
+
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.2.0b3 (2022-03-08)
 
 ### Bugs Fixed
 - `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.

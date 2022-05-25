@@ -52,13 +52,12 @@ class CreateDeleteTable(object):
 
         # [START create_table_if_not_exists]
         with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
-            table_client = TableServiceClient.create_table_if_not_exists(table_name="myTable")
+            table_client = table_service_client.create_table_if_not_exists(table_name="myTable")
             print("Table name: {}".format(table_client.table_name))
         # [END create_table_if_not_exists]
 
     def delete_table(self):
         from azure.data.tables import TableServiceClient
-        from azure.core.exceptions import HttpResponseError
 
         # [START delete_table_from_tc]
         with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
@@ -81,7 +80,6 @@ class CreateDeleteTable(object):
 
     def delete_from_table_client(self):
         from azure.data.table import TableClient
-        from azure.core.exceptions import HttpResponseError
 
         # [START delete_table_from_table_client]
         with TableClient.from_connection_string(conn_str=self.connection_string, table_name="myTable") as table_client:

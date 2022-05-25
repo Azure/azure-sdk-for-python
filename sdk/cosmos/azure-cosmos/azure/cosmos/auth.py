@@ -25,13 +25,23 @@
 import base64
 from hashlib import sha256
 import hmac
+import warnings
 import urllib.parse
-
 from . import http_constants
 
 
 def GetAuthorizationHeader(
-    cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+):
+    warnings.warn("This method has been deprecated and will be removed from the SDK in a future release.",
+                  DeprecationWarning)
+
+    return get_authorization_header(
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
+
+
+def get_authorization_header(
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
 
@@ -42,7 +52,7 @@ def GetAuthorizationHeader(
     :param str resource_type:
     :param dict headers:
     :return: The authorization headers.
-    :rtype: dict
+    :rtype: str
     """
     # In the AuthorizationToken generation logic, lower casing of ResourceID is required
     # as rest of the fields are lower cased. Lower casing should not be done for named
@@ -51,18 +61,18 @@ def GetAuthorizationHeader(
         resource_id_or_fullname = resource_id_or_fullname.lower()
 
     if cosmos_client_connection.master_key:
-        return __GetAuthorizationTokenUsingMasterKey(
+        return __get_authorization_token_using_master_key(
             verb, resource_id_or_fullname, resource_type, headers, cosmos_client_connection.master_key
         )
     if cosmos_client_connection.resource_tokens:
-        return __GetAuthorizationTokenUsingResourceTokens(
+        return __get_authorization_token_using_resource_token(
             cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
         )
 
     return None
 
 
-def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resource_type, headers, master_key):
+def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, resource_type, headers, master_key):
     """Gets the authorization token using `master_key.
 
     :param str verb:
@@ -97,7 +107,7 @@ def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resourc
     return "type={type}&ver={ver}&sig={sig}".format(type=master_token, ver=token_version, sig=signature[:-1])
 
 
-def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_id_or_fullname):
+def __get_authorization_token_using_resource_token(resource_tokens, path, resource_id_or_fullname):
     """Get the authorization token using `resource_tokens`.
 
     :param dict resource_tokens:
@@ -138,7 +148,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
 
         # Get the last resource id or resource name from the path and get it's token from resource_tokens
         for i in range(len(path_parts), 1, -1):
-            segment = path_parts[i-1]
+            segment = path_parts[i - 1]
             sub_path = "/".join(path_parts[:i])
             if not segment in resource_types and sub_path in resource_tokens:
                 return resource_tokens[sub_path]

@@ -6,8 +6,131 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
+
+
+class QuantityResolution(msrest.serialization.Model):
+    """represents resolutions for quantities.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        """
+        super(QuantityResolution, self).__init__(**kwargs)
+        self.value = value
+
+
+class BaseResolution(msrest.serialization.Model):
+    """The abstract base class for entity resolutions.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AgeResolution, AreaResolution, BooleanResolution, CurrencyResolution, DateTimeResolution, InformationResolution, LengthResolution, NumberResolution, NumericRangeResolution, OrdinalResolution, SpeedResolution, TemperatureResolution, TemporalSpanResolution, VolumeResolution, WeightResolution.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'resolution_kind': {'Age': 'AgeResolution', 'Area': 'AreaResolution', 'Boolean': 'BooleanResolution', 'Currency': 'CurrencyResolution', 'DateTime': 'DateTimeResolution', 'Information': 'InformationResolution', 'Length': 'LengthResolution', 'Number': 'NumberResolution', 'NumericRange': 'NumericRangeResolution', 'Ordinal': 'OrdinalResolution', 'Speed': 'SpeedResolution', 'Temperature': 'TemperatureResolution', 'TemporalSpan': 'TemporalSpanResolution', 'Volume': 'VolumeResolution', 'Weight': 'WeightResolution'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(BaseResolution, self).__init__(**kwargs)
+        self.resolution_kind = None  # type: Optional[str]
+
+
+class AgeResolution(BaseResolution, QuantityResolution):
+    """Represents the Age entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The Age Unit of measurement. Known values are: "Unspecified", "Year",
+     "Month", "Week", "Day".
+    :vartype unit: str or ~azure.ai.language.conversations.models.AgeUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.AgeUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The Age Unit of measurement. Known values are: "Unspecified", "Year",
+         "Month", "Week", "Day".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.AgeUnit
+        """
+        super(AgeResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Age'  # type: str
+        self.unit = unit
 
 
 class AnalysisParameters(msrest.serialization.Model):
@@ -18,8 +141,8 @@ class AnalysisParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -40,6 +163,8 @@ class AnalysisParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api_version: Optional[str] = None,
         **kwargs
     ):
         """
@@ -48,7 +173,7 @@ class AnalysisParameters(msrest.serialization.Model):
         """
         super(AnalysisParameters, self).__init__(**kwargs)
         self.target_kind = None  # type: Optional[str]
-        self.api_version = kwargs.get('api_version', None)
+        self.api_version = api_version
 
 
 class AnalyzeConversationResult(msrest.serialization.Model):
@@ -58,7 +183,8 @@ class AnalyzeConversationResult(msrest.serialization.Model):
 
     :ivar query: Required. The conversation utterance given by the caller.
     :vartype query: str
-    :ivar detected_language: The system detected language for the query.
+    :ivar detected_language: The system detected language for the query in BCP 47 language
+     representation..
     :vartype detected_language: str
     :ivar prediction: Required. The prediction result of a conversation project.
     :vartype prediction: ~azure.ai.language.conversations.models.BasePrediction
@@ -77,44 +203,50 @@ class AnalyzeConversationResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        query: str,
+        prediction: "_models.BasePrediction",
+        detected_language: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword query: Required. The conversation utterance given by the caller.
         :paramtype query: str
-        :keyword detected_language: The system detected language for the query.
+        :keyword detected_language: The system detected language for the query in BCP 47 language
+         representation..
         :paramtype detected_language: str
         :keyword prediction: Required. The prediction result of a conversation project.
         :paramtype prediction: ~azure.ai.language.conversations.models.BasePrediction
         """
         super(AnalyzeConversationResult, self).__init__(**kwargs)
-        self.query = kwargs['query']
-        self.detected_language = kwargs.get('detected_language', None)
-        self.prediction = kwargs['prediction']
+        self.query = query
+        self.detected_language = detected_language
+        self.prediction = prediction
 
 
-class AnswerSpan(msrest.serialization.Model):
-    """Answer span object of QnA.
+class AnalyzeConversationTask(msrest.serialization.Model):
+    """The base class of a conversation input task.
 
-    :ivar text: Predicted text of answer span.
-    :vartype text: str
-    :ivar confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-    :vartype confidence_score: float
-    :ivar offset: The answer span offset from the start of answer.
-    :vartype offset: int
-    :ivar length: The length of the answer span.
-    :vartype length: int
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomConversationalTask.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
+     Known values are: "CustomConversation".
+    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
     """
 
     _validation = {
-        'confidence_score': {'maximum': 1, 'minimum': 0},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'CustomConversation': 'CustomConversationalTask'}
     }
 
     def __init__(
@@ -122,20 +254,184 @@ class AnswerSpan(msrest.serialization.Model):
         **kwargs
     ):
         """
+        """
+        super(AnalyzeConversationTask, self).__init__(**kwargs)
+        self.kind = None  # type: Optional[str]
+
+
+class AnalyzeConversationTaskResult(msrest.serialization.Model):
+    """The base class of a conversation task result.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomConversationalTaskResult.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
+     server. Known values are: "CustomConversationResult".
+    :vartype kind: str or
+     ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
+    """
+
+    _validation = {
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'CustomConversationResult': 'CustomConversationalTaskResult'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AnalyzeConversationTaskResult, self).__init__(**kwargs)
+        self.kind = None  # type: Optional[str]
+
+
+class AnswerSpan(msrest.serialization.Model):
+    """Answer span object of QnA.
+
+    :ivar text: Predicted text of answer span.
+    :vartype text: str
+    :ivar confidence: Predicted score of answer span, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar offset: The answer span offset from the start of answer.
+    :vartype offset: int
+    :ivar length: The length of the answer span.
+    :vartype length: int
+    """
+
+    _validation = {
+        'confidence': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
+        'offset': {'key': 'offset', 'type': 'int'},
+        'length': {'key': 'length', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        text: Optional[str] = None,
+        confidence: Optional[float] = None,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs
+    ):
+        """
         :keyword text: Predicted text of answer span.
         :paramtype text: str
-        :keyword confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-        :paramtype confidence_score: float
+        :keyword confidence: Predicted score of answer span, value ranges from 0 to 1.
+        :paramtype confidence: float
         :keyword offset: The answer span offset from the start of answer.
         :paramtype offset: int
         :keyword length: The length of the answer span.
         :paramtype length: int
         """
         super(AnswerSpan, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
+        self.text = text
+        self.confidence = confidence
+        self.offset = offset
+        self.length = length
+
+
+class AreaResolution(BaseResolution, QuantityResolution):
+    """Represents the area entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The area Unit of measurement. Known values are: "Unspecified",
+     "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
+     "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
+     "Acre".
+    :vartype unit: str or ~azure.ai.language.conversations.models.AreaUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.AreaUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The area Unit of measurement. Known values are: "Unspecified",
+         "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
+         "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
+         "Acre".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.AreaUnit
+        """
+        super(AreaResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Area'  # type: str
+        self.unit = unit
+
+
+class BaseExtraInformation(msrest.serialization.Model):
+    """The abstract base object for entity extra information.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: EntitySubtype, ListKey.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar extra_information_kind: Required. The extra information object kind.Constant filled by
+     server. Known values are: "EntitySubtype", "ListKey".
+    :vartype extra_information_kind: str or
+     ~azure.ai.language.conversations.models.ExtraInformationKind
+    """
+
+    _validation = {
+        'extra_information_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'extra_information_kind': {'key': 'extraInformationKind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'extra_information_kind': {'EntitySubtype': 'EntitySubtype', 'ListKey': 'ListKey'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(BaseExtraInformation, self).__init__(**kwargs)
+        self.extra_information_kind = None  # type: Optional[str]
 
 
 class BasePrediction(msrest.serialization.Model):
@@ -146,8 +442,8 @@ class BasePrediction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar project_kind: Required. The type of the project.Constant filled by server. Possible
-     values include: "conversation", "workflow".
+    :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
+     are: "conversation", "workflow".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -168,6 +464,8 @@ class BasePrediction(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        top_intent: Optional[str] = None,
         **kwargs
     ):
         """
@@ -176,76 +474,85 @@ class BasePrediction(msrest.serialization.Model):
         """
         super(BasePrediction, self).__init__(**kwargs)
         self.project_kind = None  # type: Optional[str]
-        self.top_intent = kwargs.get('top_intent', None)
+        self.top_intent = top_intent
 
 
-class ConversationAnalysisOptions(msrest.serialization.Model):
-    """The request body.
+class BooleanResolution(BaseResolution):
+    """A resolution for boolean expressions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar query: Required. The conversation utterance to be analyzed.
-    :vartype query: str
-    :ivar direct_target: The name of the target project this request is sending to directly.
-    :vartype direct_target: str
-    :ivar language: The language to use in this request. This will be the language setting when
-     communicating with all other target projects.
-    :vartype language: str
-    :ivar verbose: If true, the service will return more detailed information in the response.
-    :vartype verbose: bool
-    :ivar is_logging_enabled: If true, the query will be kept by the service for customers to
-     further review, to improve the model quality.
-    :vartype is_logging_enabled: bool
-    :ivar parameters: A dictionary representing the input for each target project.
-    :vartype parameters: dict[str, ~azure.ai.language.conversations.models.AnalysisParameters]
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar value: Required.
+    :vartype value: bool
     """
 
     _validation = {
-        'query': {'required': True},
+        'resolution_kind': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'direct_target': {'key': 'directTarget', 'type': 'str'},
-        'language': {'key': 'language', 'type': 'str'},
-        'verbose': {'key': 'verbose', 'type': 'bool'},
-        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
-        'parameters': {'key': 'parameters', 'type': '{AnalysisParameters}'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'bool'},
     }
 
     def __init__(
         self,
+        *,
+        value: bool,
         **kwargs
     ):
         """
-        :keyword query: Required. The conversation utterance to be analyzed.
-        :paramtype query: str
-        :keyword direct_target: The name of the target project this request is sending to directly.
-        :paramtype direct_target: str
-        :keyword language: The language to use in this request. This will be the language setting when
-         communicating with all other target projects.
-        :paramtype language: str
-        :keyword verbose: If true, the service will return more detailed information in the response.
-        :paramtype verbose: bool
-        :keyword is_logging_enabled: If true, the query will be kept by the service for customers to
-         further review, to improve the model quality.
-        :paramtype is_logging_enabled: bool
-        :keyword parameters: A dictionary representing the input for each target project.
-        :paramtype parameters: dict[str, ~azure.ai.language.conversations.models.AnalysisParameters]
+        :keyword value: Required.
+        :paramtype value: bool
+        """
+        super(BooleanResolution, self).__init__(**kwargs)
+        self.resolution_kind = 'Boolean'  # type: str
+        self.value = value
+
+
+class ConversationAnalysisOptions(msrest.serialization.Model):
+    """The input ConversationItem and its optional parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar conversation_item: Required. The abstract base for a user input formatted conversation
+     (e.g., Text, Transcript).
+    :vartype conversation_item: ~azure.ai.language.conversations.models.ConversationItemBase
+    """
+
+    _validation = {
+        'conversation_item': {'required': True},
+    }
+
+    _attribute_map = {
+        'conversation_item': {'key': 'conversationItem', 'type': 'ConversationItemBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        conversation_item: "_models.ConversationItemBase",
+        **kwargs
+    ):
+        """
+        :keyword conversation_item: Required. The abstract base for a user input formatted conversation
+         (e.g., Text, Transcript).
+        :paramtype conversation_item: ~azure.ai.language.conversations.models.ConversationItemBase
         """
         super(ConversationAnalysisOptions, self).__init__(**kwargs)
-        self.query = kwargs['query']
-        self.direct_target = kwargs.get('direct_target', None)
-        self.language = kwargs.get('language', None)
-        self.verbose = kwargs.get('verbose', None)
-        self.is_logging_enabled = kwargs.get('is_logging_enabled', None)
-        self.parameters = kwargs.get('parameters', None)
+        self.conversation_item = conversation_item
 
 
 class ConversationCallingOptions(msrest.serialization.Model):
     """The option to set to call a Conversation project.
 
-    :ivar language: The language of the query.
+    :ivar language: The language of the query in BCP 47 language representation..
     :vartype language: str
     :ivar verbose: If true, the service will return more detailed information.
     :vartype verbose: bool
@@ -262,10 +569,14 @@ class ConversationCallingOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        language: Optional[str] = None,
+        verbose: Optional[bool] = None,
+        is_logging_enabled: Optional[bool] = None,
         **kwargs
     ):
         """
-        :keyword language: The language of the query.
+        :keyword language: The language of the query in BCP 47 language representation..
         :paramtype language: str
         :keyword verbose: If true, the service will return more detailed information.
         :paramtype verbose: bool
@@ -274,9 +585,9 @@ class ConversationCallingOptions(msrest.serialization.Model):
         :paramtype is_logging_enabled: bool
         """
         super(ConversationCallingOptions, self).__init__(**kwargs)
-        self.language = kwargs.get('language', None)
-        self.verbose = kwargs.get('verbose', None)
-        self.is_logging_enabled = kwargs.get('is_logging_enabled', None)
+        self.language = language
+        self.verbose = verbose
+        self.is_logging_enabled = is_logging_enabled
 
 
 class ConversationEntity(msrest.serialization.Model):
@@ -292,10 +603,12 @@ class ConversationEntity(msrest.serialization.Model):
     :vartype offset: int
     :ivar length: Required. The length of the text.
     :vartype length: int
-    :ivar confidence_score: Required. The entity confidence score.
-    :vartype confidence_score: float
-    :ivar list_keys: List of keys.
-    :vartype list_keys: list[str]
+    :ivar confidence: Required. The entity confidence score.
+    :vartype confidence: float
+    :ivar resolutions: The collection of entity resolution objects.
+    :vartype resolutions: list[~azure.ai.language.conversations.models.BaseResolution]
+    :ivar extra_information: The collection of entity extra information objects.
+    :vartype extra_information: list[~azure.ai.language.conversations.models.BaseExtraInformation]
     """
 
     _validation = {
@@ -303,7 +616,7 @@ class ConversationEntity(msrest.serialization.Model):
         'text': {'required': True},
         'offset': {'required': True},
         'length': {'required': True},
-        'confidence_score': {'required': True},
+        'confidence': {'required': True},
     }
 
     _attribute_map = {
@@ -311,12 +624,21 @@ class ConversationEntity(msrest.serialization.Model):
         'text': {'key': 'text', 'type': 'str'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'list_keys': {'key': 'listKeys', 'type': '[str]'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
+        'resolutions': {'key': 'resolutions', 'type': '[BaseResolution]'},
+        'extra_information': {'key': 'extraInformation', 'type': '[BaseExtraInformation]'},
     }
 
     def __init__(
         self,
+        *,
+        category: str,
+        text: str,
+        offset: int,
+        length: int,
+        confidence: float,
+        resolutions: Optional[List["_models.BaseResolution"]] = None,
+        extra_information: Optional[List["_models.BaseExtraInformation"]] = None,
         **kwargs
     ):
         """
@@ -328,18 +650,22 @@ class ConversationEntity(msrest.serialization.Model):
         :paramtype offset: int
         :keyword length: Required. The length of the text.
         :paramtype length: int
-        :keyword confidence_score: Required. The entity confidence score.
-        :paramtype confidence_score: float
-        :keyword list_keys: List of keys.
-        :paramtype list_keys: list[str]
+        :keyword confidence: Required. The entity confidence score.
+        :paramtype confidence: float
+        :keyword resolutions: The collection of entity resolution objects.
+        :paramtype resolutions: list[~azure.ai.language.conversations.models.BaseResolution]
+        :keyword extra_information: The collection of entity extra information objects.
+        :paramtype extra_information:
+         list[~azure.ai.language.conversations.models.BaseExtraInformation]
         """
         super(ConversationEntity, self).__init__(**kwargs)
-        self.category = kwargs['category']
-        self.text = kwargs['text']
-        self.offset = kwargs['offset']
-        self.length = kwargs['length']
-        self.confidence_score = kwargs['confidence_score']
-        self.list_keys = kwargs.get('list_keys', None)
+        self.category = category
+        self.text = text
+        self.offset = offset
+        self.length = length
+        self.confidence = confidence
+        self.resolutions = resolutions
+        self.extra_information = extra_information
 
 
 class ConversationIntent(msrest.serialization.Model):
@@ -349,33 +675,95 @@ class ConversationIntent(msrest.serialization.Model):
 
     :ivar category: Required. A predicted class.
     :vartype category: str
-    :ivar confidence_score: Required. The confidence score of the class from 0.0 to 1.0.
-    :vartype confidence_score: float
+    :ivar confidence: Required. The confidence score of the class from 0.0 to 1.0.
+    :vartype confidence: float
     """
 
     _validation = {
         'category': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'category': {'key': 'category', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
     }
 
     def __init__(
         self,
+        *,
+        category: str,
+        confidence: float,
         **kwargs
     ):
         """
         :keyword category: Required. A predicted class.
         :paramtype category: str
-        :keyword confidence_score: Required. The confidence score of the class from 0.0 to 1.0.
-        :paramtype confidence_score: float
+        :keyword confidence: Required. The confidence score of the class from 0.0 to 1.0.
+        :paramtype confidence: float
         """
         super(ConversationIntent, self).__init__(**kwargs)
-        self.category = kwargs['category']
-        self.confidence_score = kwargs['confidence_score']
+        self.category = category
+        self.confidence = confidence
+
+
+class ConversationItemBase(msrest.serialization.Model):
+    """The abstract base for a user input formatted conversation (e.g., Text, Transcript).
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TextConversationItem.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar participant_id: Required. The participant Id of a ConversationItem.
+    :vartype participant_id: str
+    :ivar id: Required. The Id of a ConversationItem.
+    :vartype id: str
+    :ivar language: The input language of a ConversationItem in BCP 47 language representation.
+    :vartype language: str
+    :ivar modality: Required. The modality (format) of ConversationItem (e.g., Text,
+     Transcript).Constant filled by server. Known values are: "text".
+    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    """
+
+    _validation = {
+        'participant_id': {'required': True},
+        'id': {'required': True},
+        'modality': {'required': True},
+    }
+
+    _attribute_map = {
+        'participant_id': {'key': 'participantId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'language': {'key': 'language', 'type': 'str'},
+        'modality': {'key': 'modality', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'modality': {'text': 'TextConversationItem'}
+    }
+
+    def __init__(
+        self,
+        *,
+        participant_id: str = "1",
+        id: str = "1",
+        language: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword participant_id: Required. The participant Id of a ConversationItem.
+        :paramtype participant_id: str
+        :keyword id: Required. The Id of a ConversationItem.
+        :paramtype id: str
+        :keyword language: The input language of a ConversationItem in BCP 47 language representation.
+        :paramtype language: str
+        """
+        super(ConversationItemBase, self).__init__(**kwargs)
+        self.participant_id = participant_id
+        self.id = id
+        self.language = language
+        self.modality = None  # type: Optional[str]
 
 
 class ConversationParameters(AnalysisParameters):
@@ -383,8 +771,8 @@ class ConversationParameters(AnalysisParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -404,6 +792,9 @@ class ConversationParameters(AnalysisParameters):
 
     def __init__(
         self,
+        *,
+        api_version: Optional[str] = None,
+        calling_options: Optional["_models.ConversationCallingOptions"] = None,
         **kwargs
     ):
         """
@@ -412,9 +803,9 @@ class ConversationParameters(AnalysisParameters):
         :keyword calling_options: The option to set to call a Conversation project.
         :paramtype calling_options: ~azure.ai.language.conversations.models.ConversationCallingOptions
         """
-        super(ConversationParameters, self).__init__(**kwargs)
+        super(ConversationParameters, self).__init__(api_version=api_version, **kwargs)
         self.target_kind = 'conversation'  # type: str
-        self.calling_options = kwargs.get('calling_options', None)
+        self.calling_options = calling_options
 
 
 class ConversationPrediction(BasePrediction):
@@ -422,8 +813,8 @@ class ConversationPrediction(BasePrediction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar project_kind: Required. The type of the project.Constant filled by server. Possible
-     values include: "conversation", "workflow".
+    :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
+     are: "conversation", "workflow".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -448,6 +839,10 @@ class ConversationPrediction(BasePrediction):
 
     def __init__(
         self,
+        *,
+        intents: List["_models.ConversationIntent"],
+        entities: List["_models.ConversationEntity"],
+        top_intent: Optional[str] = None,
         **kwargs
     ):
         """
@@ -458,10 +853,10 @@ class ConversationPrediction(BasePrediction):
         :keyword entities: Required. The entity extraction results.
         :paramtype entities: list[~azure.ai.language.conversations.models.ConversationEntity]
         """
-        super(ConversationPrediction, self).__init__(**kwargs)
+        super(ConversationPrediction, self).__init__(top_intent=top_intent, **kwargs)
         self.project_kind = 'conversation'  # type: str
-        self.intents = kwargs['intents']
-        self.entities = kwargs['entities']
+        self.intents = intents
+        self.entities = entities
 
 
 class ConversationResult(msrest.serialization.Model):
@@ -471,7 +866,8 @@ class ConversationResult(msrest.serialization.Model):
 
     :ivar query: Required. The same query given in request.
     :vartype query: str
-    :ivar detected_language: The detected language from the query.
+    :ivar detected_language: The detected language from the query in BCP 47 language
+     representation..
     :vartype detected_language: str
     :ivar prediction: Required. The predicted result for the query.
     :vartype prediction: ~azure.ai.language.conversations.models.ConversationPrediction
@@ -490,20 +886,25 @@ class ConversationResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        query: str,
+        prediction: "_models.ConversationPrediction",
+        detected_language: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword query: Required. The same query given in request.
         :paramtype query: str
-        :keyword detected_language: The detected language from the query.
+        :keyword detected_language: The detected language from the query in BCP 47 language
+         representation..
         :paramtype detected_language: str
         :keyword prediction: Required. The predicted result for the query.
         :paramtype prediction: ~azure.ai.language.conversations.models.ConversationPrediction
         """
         super(ConversationResult, self).__init__(**kwargs)
-        self.query = kwargs['query']
-        self.detected_language = kwargs.get('detected_language', None)
-        self.prediction = kwargs['prediction']
+        self.query = query
+        self.detected_language = detected_language
+        self.prediction = prediction
 
 
 class TargetIntentResult(msrest.serialization.Model):
@@ -515,24 +916,24 @@ class TargetIntentResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :vartype confidence_score: float
+    :ivar confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :vartype confidence: float
     """
 
     _validation = {
         'target_kind': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
     }
 
     _subtype_map = {
@@ -541,18 +942,21 @@ class TargetIntentResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        confidence: float,
+        api_version: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword api_version: The API version used to call a target service.
         :paramtype api_version: str
-        :keyword confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-        :paramtype confidence_score: float
+        :keyword confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+        :paramtype confidence: float
         """
         super(TargetIntentResult, self).__init__(**kwargs)
         self.target_kind = None  # type: Optional[str]
-        self.api_version = kwargs.get('api_version', None)
-        self.confidence_score = kwargs['confidence_score']
+        self.api_version = api_version
+        self.confidence = confidence
 
 
 class ConversationTargetIntentResult(TargetIntentResult):
@@ -561,44 +965,371 @@ class ConversationTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :vartype confidence_score: float
+    :ivar confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :vartype confidence: float
     :ivar result: The actual response from a Conversation project.
     :vartype result: ~azure.ai.language.conversations.models.ConversationResult
     """
 
     _validation = {
         'target_kind': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'ConversationResult'},
     }
 
     def __init__(
         self,
+        *,
+        confidence: float,
+        api_version: Optional[str] = None,
+        result: Optional["_models.ConversationResult"] = None,
         **kwargs
     ):
         """
         :keyword api_version: The API version used to call a target service.
         :paramtype api_version: str
-        :keyword confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-        :paramtype confidence_score: float
+        :keyword confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+        :paramtype confidence: float
         :keyword result: The actual response from a Conversation project.
         :paramtype result: ~azure.ai.language.conversations.models.ConversationResult
         """
-        super(ConversationTargetIntentResult, self).__init__(**kwargs)
+        super(ConversationTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
         self.target_kind = 'conversation'  # type: str
-        self.result = kwargs.get('result', None)
+        self.result = result
+
+
+class CurrencyResolution(BaseResolution, QuantityResolution):
+    """Represents the currency entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
+     codes for country names. The first two letters of the ISO 4217 three-letter code are the same
+     as the code for the country name, and, where possible, the third letter corresponds to the
+     first letter of the currency name.
+    :vartype iso4217: str
+    :ivar unit: Required. The unit of the amount captured in the extracted entity.
+    :vartype unit: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'iso4217': {'key': 'ISO4217', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: str,
+        iso4217: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
+         codes for country names. The first two letters of the ISO 4217 three-letter code are the same
+         as the code for the country name, and, where possible, the third letter corresponds to the
+         first letter of the currency name.
+        :paramtype iso4217: str
+        :keyword unit: Required. The unit of the amount captured in the extracted entity.
+        :paramtype unit: str
+        """
+        super(CurrencyResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Currency'  # type: str
+        self.iso4217 = iso4217
+        self.unit = unit
+
+
+class CustomConversationalTask(AnalyzeConversationTask):
+    """The input for a custom conversation task.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
+     Known values are: "CustomConversation".
+    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
+    :ivar analysis_input: Required. The input ConversationItem and its optional parameters.
+    :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
+    :ivar parameters: Required. Input parameters necessary for a CustomConversation task.
+    :vartype parameters: ~azure.ai.language.conversations.models.CustomConversationTaskParameters
+    """
+
+    _validation = {
+        'kind': {'required': True},
+        'analysis_input': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+        'analysis_input': {'key': 'analysisInput', 'type': 'ConversationAnalysisOptions'},
+        'parameters': {'key': 'parameters', 'type': 'CustomConversationTaskParameters'},
+    }
+
+    def __init__(
+        self,
+        *,
+        analysis_input: "_models.ConversationAnalysisOptions",
+        parameters: "_models.CustomConversationTaskParameters",
+        **kwargs
+    ):
+        """
+        :keyword analysis_input: Required. The input ConversationItem and its optional parameters.
+        :paramtype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
+        :keyword parameters: Required. Input parameters necessary for a CustomConversation task.
+        :paramtype parameters: ~azure.ai.language.conversations.models.CustomConversationTaskParameters
+        """
+        super(CustomConversationalTask, self).__init__(**kwargs)
+        self.kind = 'CustomConversation'  # type: str
+        self.analysis_input = analysis_input
+        self.parameters = parameters
+
+
+class CustomConversationalTaskResult(AnalyzeConversationTaskResult):
+    """The results of a CustomConversation task.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
+     server. Known values are: "CustomConversationResult".
+    :vartype kind: str or
+     ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
+    :ivar results: Required. Represents a conversation analysis response.
+    :vartype results: ~azure.ai.language.conversations.models.AnalyzeConversationResult
+    """
+
+    _validation = {
+        'kind': {'required': True},
+        'results': {'required': True},
+    }
+
+    _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
+        'results': {'key': 'results', 'type': 'AnalyzeConversationResult'},
+    }
+
+    def __init__(
+        self,
+        *,
+        results: "_models.AnalyzeConversationResult",
+        **kwargs
+    ):
+        """
+        :keyword results: Required. Represents a conversation analysis response.
+        :paramtype results: ~azure.ai.language.conversations.models.AnalyzeConversationResult
+        """
+        super(CustomConversationalTaskResult, self).__init__(**kwargs)
+        self.kind = 'CustomConversationResult'  # type: str
+        self.results = results
+
+
+class CustomConversationTaskParameters(msrest.serialization.Model):
+    """Input parameters necessary for a CustomConversation task.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar project_name: Required. The name of the project to use.
+    :vartype project_name: str
+    :ivar deployment_name: Required. The name of the deployment to use.
+    :vartype deployment_name: str
+    :ivar verbose: If true, the service will return more detailed information in the response.
+    :vartype verbose: bool
+    :ivar is_logging_enabled: If true, the service will keep the query for further review.
+    :vartype is_logging_enabled: bool
+    :ivar direct_target: The name of a target project to forward the request to.
+    :vartype direct_target: str
+    :ivar target_project_parameters: A dictionary representing the parameters for each target
+     project.
+    :vartype target_project_parameters: dict[str,
+     ~azure.ai.language.conversations.models.AnalysisParameters]
+    """
+
+    _validation = {
+        'project_name': {'required': True},
+        'deployment_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'verbose': {'key': 'verbose', 'type': 'bool'},
+        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
+        'direct_target': {'key': 'directTarget', 'type': 'str'},
+        'target_project_parameters': {'key': 'targetProjectParameters', 'type': '{AnalysisParameters}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        verbose: Optional[bool] = None,
+        is_logging_enabled: Optional[bool] = None,
+        direct_target: Optional[str] = None,
+        target_project_parameters: Optional[Dict[str, "_models.AnalysisParameters"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword project_name: Required. The name of the project to use.
+        :paramtype project_name: str
+        :keyword deployment_name: Required. The name of the deployment to use.
+        :paramtype deployment_name: str
+        :keyword verbose: If true, the service will return more detailed information in the response.
+        :paramtype verbose: bool
+        :keyword is_logging_enabled: If true, the service will keep the query for further review.
+        :paramtype is_logging_enabled: bool
+        :keyword direct_target: The name of a target project to forward the request to.
+        :paramtype direct_target: str
+        :keyword target_project_parameters: A dictionary representing the parameters for each target
+         project.
+        :paramtype target_project_parameters: dict[str,
+         ~azure.ai.language.conversations.models.AnalysisParameters]
+        """
+        super(CustomConversationTaskParameters, self).__init__(**kwargs)
+        self.project_name = project_name
+        self.deployment_name = deployment_name
+        self.verbose = verbose
+        self.is_logging_enabled = is_logging_enabled
+        self.direct_target = direct_target
+        self.target_project_parameters = target_project_parameters
+
+
+class DateTimeResolution(BaseResolution):
+    """A resolution for datetime entity instances.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar timex: Required. An extended ISO 8601 date/time representation as described in
+     (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+    :vartype timex: str
+    :ivar date_time_sub_kind: Required. The DateTime SubKind. Known values are: "Time", "Date",
+     "DateTime", "Duration", "Set".
+    :vartype date_time_sub_kind: str or ~azure.ai.language.conversations.models.DateTimeSubKind
+    :ivar value: Required. The actual time that the extracted text denote.
+    :vartype value: str
+    :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
+     "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
+     "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid",
+     "More".
+    :vartype modifier: str or ~azure.ai.language.conversations.models.Modifier
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'timex': {'required': True},
+        'date_time_sub_kind': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'timex': {'key': 'timex', 'type': 'str'},
+        'date_time_sub_kind': {'key': 'dateTimeSubKind', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'modifier': {'key': 'modifier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timex: str,
+        date_time_sub_kind: Union[str, "_models.DateTimeSubKind"],
+        value: str,
+        modifier: Optional[Union[str, "_models.Modifier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword timex: Required. An extended ISO 8601 date/time representation as described in
+         (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+        :paramtype timex: str
+        :keyword date_time_sub_kind: Required. The DateTime SubKind. Known values are: "Time", "Date",
+         "DateTime", "Duration", "Set".
+        :paramtype date_time_sub_kind: str or ~azure.ai.language.conversations.models.DateTimeSubKind
+        :keyword value: Required. The actual time that the extracted text denote.
+        :paramtype value: str
+        :keyword modifier: An optional modifier of a date/time instance. Known values are:
+         "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
+         "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
+         "Mid", "More".
+        :paramtype modifier: str or ~azure.ai.language.conversations.models.Modifier
+        """
+        super(DateTimeResolution, self).__init__(**kwargs)
+        self.resolution_kind = 'DateTime'  # type: str
+        self.timex = timex
+        self.date_time_sub_kind = date_time_sub_kind
+        self.value = value
+        self.modifier = modifier
+
+
+class EntitySubtype(BaseExtraInformation):
+    """The concrete entity Subtype model of extra information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar extra_information_kind: Required. The extra information object kind.Constant filled by
+     server. Known values are: "EntitySubtype", "ListKey".
+    :vartype extra_information_kind: str or
+     ~azure.ai.language.conversations.models.ExtraInformationKind
+    :ivar value: The Subtype of an extracted entity type.
+    :vartype value: str
+    """
+
+    _validation = {
+        'extra_information_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'extra_information_kind': {'key': 'extraInformationKind', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The Subtype of an extracted entity type.
+        :paramtype value: str
+        """
+        super(EntitySubtype, self).__init__(**kwargs)
+        self.extra_information_kind = 'EntitySubtype'  # type: str
+        self.value = value
 
 
 class Error(msrest.serialization.Model):
@@ -606,7 +1337,10 @@ class Error(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar code: Required. One of a server-defined set of error codes. Known values are:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
      "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
      "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
@@ -629,6 +1363,7 @@ class Error(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
@@ -638,10 +1373,20 @@ class Error(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: Union[str, "_models.ErrorCode"],
+        message: str,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        target: Optional[str] = None,
+        details: Optional[List["_models.Error"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
-        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword code: Required. One of a server-defined set of error codes. Known values are:
          "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
          "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
          "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
@@ -658,19 +1403,26 @@ class Error(msrest.serialization.Model):
         :paramtype innererror: ~azure.ai.language.conversations.models.InnerErrorModel
         """
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
+        self.additional_properties = additional_properties
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
+        self.innererror = innererror
 
 
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :ivar error: The error object.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Required. The error object.
     :vartype error: ~azure.ai.language.conversations.models.Error
     """
+
+    _validation = {
+        'error': {'required': True},
+    }
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'Error'},
@@ -678,14 +1430,67 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        error: "_models.Error",
         **kwargs
     ):
         """
-        :keyword error: The error object.
+        :keyword error: Required. The error object.
         :paramtype error: ~azure.ai.language.conversations.models.Error
         """
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
+
+
+class InformationResolution(BaseResolution, QuantityResolution):
+    """Represents the information (data) entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The information (data) Unit of measurement. Known values are:
+     "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
+     "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte".
+    :vartype unit: str or ~azure.ai.language.conversations.models.InformationUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.InformationUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The information (data) Unit of measurement. Known values are:
+         "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
+         "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.InformationUnit
+        """
+        super(InformationResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Information'  # type: str
+        self.unit = unit
 
 
 class InnerErrorModel(msrest.serialization.Model):
@@ -693,9 +1498,12 @@ class InnerErrorModel(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: Required. One of a server-defined set of error codes. Known values are:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
-     "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
+     "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure",
+     "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputDocuments", "InvalidDocument",
+     "ModelVersionIncorrect", "InvalidDocumentBatch", "UnsupportedLanguageCode",
+     "InvalidCountryHint".
     :vartype code: str or ~azure.ai.language.conversations.models.InnerErrorCode
     :ivar message: Required. Error message.
     :vartype message: str
@@ -723,12 +1531,21 @@ class InnerErrorModel(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: Union[str, "_models.InnerErrorCode"],
+        message: str,
+        details: Optional[Dict[str, str]] = None,
+        target: Optional[str] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
-        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+        :keyword code: Required. One of a server-defined set of error codes. Known values are:
          "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
-         "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure".
+         "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure",
+         "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputDocuments", "InvalidDocument",
+         "ModelVersionIncorrect", "InvalidDocumentBatch", "UnsupportedLanguageCode",
+         "InvalidCountryHint".
         :paramtype code: str or ~azure.ai.language.conversations.models.InnerErrorCode
         :keyword message: Required. Error message.
         :paramtype message: str
@@ -741,11 +1558,11 @@ class InnerErrorModel(msrest.serialization.Model):
         :paramtype innererror: ~azure.ai.language.conversations.models.InnerErrorModel
         """
         super(InnerErrorModel, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.details = kwargs.get('details', None)
-        self.target = kwargs.get('target', None)
-        self.innererror = kwargs.get('innererror', None)
+        self.code = code
+        self.message = message
+        self.details = details
+        self.target = target
+        self.innererror = innererror
 
 
 class KnowledgeBaseAnswer(msrest.serialization.Model):
@@ -755,8 +1572,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
     :vartype questions: list[str]
     :ivar answer: Answer text.
     :vartype answer: str
-    :ivar confidence_score: Answer confidence score, value ranges from 0 to 1.
-    :vartype confidence_score: float
+    :ivar confidence: Answer confidence score, value ranges from 0 to 1.
+    :vartype confidence: float
     :ivar id: ID of the QnA result.
     :vartype id: int
     :ivar source: Source of QnA result.
@@ -771,13 +1588,13 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
     """
 
     _validation = {
-        'confidence_score': {'maximum': 1, 'minimum': 0},
+        'confidence': {'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'questions': {'key': 'questions', 'type': '[str]'},
         'answer': {'key': 'answer', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'id': {'key': 'id', 'type': 'int'},
         'source': {'key': 'source', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
@@ -787,6 +1604,15 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        questions: Optional[List[str]] = None,
+        answer: Optional[str] = None,
+        confidence: Optional[float] = None,
+        id: Optional[int] = None,
+        source: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
+        answer_span: Optional["_models.AnswerSpan"] = None,
         **kwargs
     ):
         """
@@ -794,8 +1620,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         :paramtype questions: list[str]
         :keyword answer: Answer text.
         :paramtype answer: str
-        :keyword confidence_score: Answer confidence score, value ranges from 0 to 1.
-        :paramtype confidence_score: float
+        :keyword confidence: Answer confidence score, value ranges from 0 to 1.
+        :paramtype confidence: float
         :keyword id: ID of the QnA result.
         :paramtype id: int
         :keyword source: Source of QnA result.
@@ -809,14 +1635,14 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         :paramtype answer_span: ~azure.ai.language.conversations.models.AnswerSpan
         """
         super(KnowledgeBaseAnswer, self).__init__(**kwargs)
-        self.questions = kwargs.get('questions', None)
-        self.answer = kwargs.get('answer', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
-        self.id = kwargs.get('id', None)
-        self.source = kwargs.get('source', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.dialog = kwargs.get('dialog', None)
-        self.answer_span = kwargs.get('answer_span', None)
+        self.questions = questions
+        self.answer = answer
+        self.confidence = confidence
+        self.id = id
+        self.source = source
+        self.metadata = metadata
+        self.dialog = dialog
+        self.answer_span = answer_span
 
 
 class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
@@ -841,6 +1667,9 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        is_context_only: Optional[bool] = None,
+        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
         **kwargs
     ):
         """
@@ -852,8 +1681,8 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         :paramtype prompts: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswerPrompt]
         """
         super(KnowledgeBaseAnswerDialog, self).__init__(**kwargs)
-        self.is_context_only = kwargs.get('is_context_only', None)
-        self.prompts = kwargs.get('prompts', None)
+        self.is_context_only = is_context_only
+        self.prompts = prompts
 
 
 class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
@@ -879,6 +1708,10 @@ class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        display_order: Optional[int] = None,
+        qna_id: Optional[int] = None,
+        display_text: Optional[str] = None,
         **kwargs
     ):
         """
@@ -890,9 +1723,9 @@ class KnowledgeBaseAnswerPrompt(msrest.serialization.Model):
         :paramtype display_text: str
         """
         super(KnowledgeBaseAnswerPrompt, self).__init__(**kwargs)
-        self.display_order = kwargs.get('display_order', None)
-        self.qna_id = kwargs.get('qna_id', None)
-        self.display_text = kwargs.get('display_text', None)
+        self.display_order = display_order
+        self.qna_id = qna_id
+        self.display_text = display_text
 
 
 class KnowledgeBaseAnswers(msrest.serialization.Model):
@@ -908,6 +1741,8 @@ class KnowledgeBaseAnswers(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None,
         **kwargs
     ):
         """
@@ -915,7 +1750,95 @@ class KnowledgeBaseAnswers(msrest.serialization.Model):
         :paramtype answers: list[~azure.ai.language.conversations.models.KnowledgeBaseAnswer]
         """
         super(KnowledgeBaseAnswers, self).__init__(**kwargs)
-        self.answers = kwargs.get('answers', None)
+        self.answers = answers
+
+
+class LengthResolution(BaseResolution, QuantityResolution):
+    """Represents the length entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The length Unit of measurement. Known values are: "Unspecified",
+     "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
+     "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", "Pt".
+    :vartype unit: str or ~azure.ai.language.conversations.models.LengthUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.LengthUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The length Unit of measurement. Known values are: "Unspecified",
+         "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
+         "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", "Pt".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.LengthUnit
+        """
+        super(LengthResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Length'  # type: str
+        self.unit = unit
+
+
+class ListKey(BaseExtraInformation):
+    """The list key extra data kind.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar extra_information_kind: Required. The extra information object kind.Constant filled by
+     server. Known values are: "EntitySubtype", "ListKey".
+    :vartype extra_information_kind: str or
+     ~azure.ai.language.conversations.models.ExtraInformationKind
+    :ivar key: The canonical form of the extracted entity.
+    :vartype key: str
+    """
+
+    _validation = {
+        'extra_information_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'extra_information_kind': {'key': 'extraInformationKind', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword key: The canonical form of the extracted entity.
+        :paramtype key: str
+        """
+        super(ListKey, self).__init__(**kwargs)
+        self.extra_information_kind = 'ListKey'  # type: str
+        self.key = key
 
 
 class LUISCallingOptions(msrest.serialization.Model):
@@ -947,6 +1870,13 @@ class LUISCallingOptions(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        verbose: Optional[bool] = None,
+        log: Optional[bool] = None,
+        show_all_intents: Optional[bool] = None,
+        timezone_offset: Optional[float] = None,
+        spell_check: Optional[bool] = None,
+        bing_spell_check_subscription_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -965,12 +1895,12 @@ class LUISCallingOptions(msrest.serialization.Model):
         :paramtype bing_spell_check_subscription_key: str
         """
         super(LUISCallingOptions, self).__init__(**kwargs)
-        self.verbose = kwargs.get('verbose', None)
-        self.log = kwargs.get('log', None)
-        self.show_all_intents = kwargs.get('show_all_intents', None)
-        self.timezone_offset = kwargs.get('timezone_offset', None)
-        self.spell_check = kwargs.get('spell_check', None)
-        self.bing_spell_check_subscription_key = kwargs.get('bing_spell_check_subscription_key', None)
+        self.verbose = verbose
+        self.log = log
+        self.show_all_intents = show_all_intents
+        self.timezone_offset = timezone_offset
+        self.spell_check = spell_check
+        self.bing_spell_check_subscription_key = bing_spell_check_subscription_key
 
 
 class LUISParameters(AnalysisParameters):
@@ -978,8 +1908,8 @@ class LUISParameters(AnalysisParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -1007,6 +1937,11 @@ class LUISParameters(AnalysisParameters):
 
     def __init__(
         self,
+        *,
+        api_version: Optional[str] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        query: Optional[str] = None,
+        calling_options: Optional["_models.LUISCallingOptions"] = None,
         **kwargs
     ):
         """
@@ -1021,11 +1956,11 @@ class LUISParameters(AnalysisParameters):
          projects.
         :paramtype calling_options: ~azure.ai.language.conversations.models.LUISCallingOptions
         """
-        super(LUISParameters, self).__init__(**kwargs)
+        super(LUISParameters, self).__init__(api_version=api_version, **kwargs)
         self.target_kind = 'luis'  # type: str
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.query = kwargs.get('query', None)
-        self.calling_options = kwargs.get('calling_options', None)
+        self.additional_properties = additional_properties
+        self.query = query
+        self.calling_options = calling_options
 
 
 class LUISTargetIntentResult(TargetIntentResult):
@@ -1034,44 +1969,48 @@ class LUISTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :vartype confidence_score: float
+    :ivar confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :vartype confidence: float
     :ivar result: The actual response from a LUIS Generally Available application.
     :vartype result: any
     """
 
     _validation = {
         'target_kind': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'object'},
     }
 
     def __init__(
         self,
+        *,
+        confidence: float,
+        api_version: Optional[str] = None,
+        result: Optional[Any] = None,
         **kwargs
     ):
         """
         :keyword api_version: The API version used to call a target service.
         :paramtype api_version: str
-        :keyword confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-        :paramtype confidence_score: float
+        :keyword confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+        :paramtype confidence: float
         :keyword result: The actual response from a LUIS Generally Available application.
         :paramtype result: any
         """
-        super(LUISTargetIntentResult, self).__init__(**kwargs)
+        super(LUISTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
         self.target_kind = 'luis'  # type: str
-        self.result = kwargs.get('result', None)
+        self.result = result
 
 
 class NoneLinkedTargetIntentResult(TargetIntentResult):
@@ -1080,44 +2019,156 @@ class NoneLinkedTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :vartype confidence_score: float
+    :ivar confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :vartype confidence: float
     :ivar result: The actual response from a Conversation project.
     :vartype result: ~azure.ai.language.conversations.models.ConversationResult
     """
 
     _validation = {
         'target_kind': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'ConversationResult'},
     }
 
     def __init__(
         self,
+        *,
+        confidence: float,
+        api_version: Optional[str] = None,
+        result: Optional["_models.ConversationResult"] = None,
         **kwargs
     ):
         """
         :keyword api_version: The API version used to call a target service.
         :paramtype api_version: str
-        :keyword confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-        :paramtype confidence_score: float
+        :keyword confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+        :paramtype confidence: float
         :keyword result: The actual response from a Conversation project.
         :paramtype result: ~azure.ai.language.conversations.models.ConversationResult
         """
-        super(NoneLinkedTargetIntentResult, self).__init__(**kwargs)
+        super(NoneLinkedTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
         self.target_kind = 'non_linked'  # type: str
-        self.result = kwargs.get('result', None)
+        self.result = result
+
+
+class NumberResolution(BaseResolution):
+    """A resolution for numeric entity instances.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar number_kind: Required. The type of the extracted number entity. Known values are:
+     "Integer", "Decimal", "Power", "Fraction", "Percent", "Unspecified".
+    :vartype number_kind: str or ~azure.ai.language.conversations.models.NumberKind
+    :ivar value: Required. A numeric representation of what the extracted text denotes.
+    :vartype value: str
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'number_kind': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'number_kind': {'key': 'numberKind', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        number_kind: Union[str, "_models.NumberKind"],
+        value: str,
+        **kwargs
+    ):
+        """
+        :keyword number_kind: Required. The type of the extracted number entity. Known values are:
+         "Integer", "Decimal", "Power", "Fraction", "Percent", "Unspecified".
+        :paramtype number_kind: str or ~azure.ai.language.conversations.models.NumberKind
+        :keyword value: Required. A numeric representation of what the extracted text denotes.
+        :paramtype value: str
+        """
+        super(NumberResolution, self).__init__(**kwargs)
+        self.resolution_kind = 'Number'  # type: str
+        self.number_kind = number_kind
+        self.value = value
+
+
+class NumericRangeResolution(BaseResolution):
+    """represents the resolution of numeric intervals.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar range_kind: Required. The kind of range that the resolution object represents. Known
+     values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+     "Temperature", "Currency".
+    :vartype range_kind: str or ~azure.ai.language.conversations.models.RangeKind
+    :ivar minimum: Required. The beginning value of  the interval.
+    :vartype minimum: float
+    :ivar maximum: Required. The ending value of the interval.
+    :vartype maximum: float
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'range_kind': {'required': True},
+        'minimum': {'required': True},
+        'maximum': {'required': True},
+    }
+
+    _attribute_map = {
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'range_kind': {'key': 'rangeKind', 'type': 'str'},
+        'minimum': {'key': 'minimum', 'type': 'float'},
+        'maximum': {'key': 'maximum', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        range_kind: Union[str, "_models.RangeKind"],
+        minimum: float,
+        maximum: float,
+        **kwargs
+    ):
+        """
+        :keyword range_kind: Required. The kind of range that the resolution object represents. Known
+         values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+         "Temperature", "Currency".
+        :paramtype range_kind: str or ~azure.ai.language.conversations.models.RangeKind
+        :keyword minimum: Required. The beginning value of  the interval.
+        :paramtype minimum: float
+        :keyword maximum: Required. The ending value of the interval.
+        :paramtype maximum: float
+        """
+        super(NumericRangeResolution, self).__init__(**kwargs)
+        self.resolution_kind = 'NumericRange'  # type: str
+        self.range_kind = range_kind
+        self.minimum = minimum
+        self.maximum = maximum
 
 
 class OrchestratorPrediction(BasePrediction):
@@ -1125,8 +2176,8 @@ class OrchestratorPrediction(BasePrediction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar project_kind: Required. The type of the project.Constant filled by server. Possible
-     values include: "conversation", "workflow".
+    :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
+     are: "conversation", "workflow".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -1149,6 +2200,9 @@ class OrchestratorPrediction(BasePrediction):
 
     def __init__(
         self,
+        *,
+        intents: Dict[str, "_models.TargetIntentResult"],
+        top_intent: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1159,9 +2213,68 @@ class OrchestratorPrediction(BasePrediction):
          actual response from the target project.
         :paramtype intents: dict[str, ~azure.ai.language.conversations.models.TargetIntentResult]
         """
-        super(OrchestratorPrediction, self).__init__(**kwargs)
+        super(OrchestratorPrediction, self).__init__(top_intent=top_intent, **kwargs)
         self.project_kind = 'workflow'  # type: str
-        self.intents = kwargs['intents']
+        self.intents = intents
+
+
+class OrdinalResolution(BaseResolution):
+    """A resolution for ordinal numbers entity instances.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar offset: Required. The offset With respect to the reference (e.g., offset = -1 in "show me
+     the second to last".
+    :vartype offset: str
+    :ivar relative_to: Required. The reference point that the ordinal number denotes. Known values
+     are: "Current", "End", "Start".
+    :vartype relative_to: str or ~azure.ai.language.conversations.models.RelativeTo
+    :ivar value: Required. A simple arithmetic expression that the ordinal denotes.
+    :vartype value: str
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+        'offset': {'required': True},
+        'relative_to': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'offset': {'key': 'offset', 'type': 'str'},
+        'relative_to': {'key': 'relativeTo', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        offset: str,
+        relative_to: Union[str, "_models.RelativeTo"],
+        value: str,
+        **kwargs
+    ):
+        """
+        :keyword offset: Required. The offset With respect to the reference (e.g., offset = -1 in "show
+         me the second to last".
+        :paramtype offset: str
+        :keyword relative_to: Required. The reference point that the ordinal number denotes. Known
+         values are: "Current", "End", "Start".
+        :paramtype relative_to: str or ~azure.ai.language.conversations.models.RelativeTo
+        :keyword value: Required. A simple arithmetic expression that the ordinal denotes.
+        :paramtype value: str
+        """
+        super(OrdinalResolution, self).__init__(**kwargs)
+        self.resolution_kind = 'Ordinal'  # type: str
+        self.offset = offset
+        self.relative_to = relative_to
+        self.value = value
 
 
 class QuestionAnsweringParameters(AnalysisParameters):
@@ -1169,8 +2282,8 @@ class QuestionAnsweringParameters(AnalysisParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -1190,6 +2303,9 @@ class QuestionAnsweringParameters(AnalysisParameters):
 
     def __init__(
         self,
+        *,
+        api_version: Optional[str] = None,
+        calling_options: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -1198,9 +2314,9 @@ class QuestionAnsweringParameters(AnalysisParameters):
         :keyword calling_options: The options sent to a Question Answering KB.
         :paramtype calling_options: any
         """
-        super(QuestionAnsweringParameters, self).__init__(**kwargs)
+        super(QuestionAnsweringParameters, self).__init__(api_version=api_version, **kwargs)
         self.target_kind = 'question_answering'  # type: str
-        self.calling_options = kwargs.get('calling_options', None)
+        self.calling_options = calling_options
 
 
 class QuestionAnsweringTargetIntentResult(TargetIntentResult):
@@ -1209,41 +2325,381 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-    :vartype confidence_score: float
+    :ivar confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+    :vartype confidence: float
     :ivar result: The generated answer by a Question Answering KB.
     :vartype result: ~azure.ai.language.conversations.models.KnowledgeBaseAnswers
     """
 
     _validation = {
         'target_kind': {'required': True},
-        'confidence_score': {'required': True, 'maximum': 1, 'minimum': 0},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'target_kind': {'key': 'targetKind', 'type': 'str'},
         'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'result': {'key': 'result', 'type': 'KnowledgeBaseAnswers'},
     }
 
     def __init__(
         self,
+        *,
+        confidence: float,
+        api_version: Optional[str] = None,
+        result: Optional["_models.KnowledgeBaseAnswers"] = None,
         **kwargs
     ):
         """
         :keyword api_version: The API version used to call a target service.
         :paramtype api_version: str
-        :keyword confidence_score: Required. The prediction score and it ranges from 0.0 to 1.0.
-        :paramtype confidence_score: float
+        :keyword confidence: Required. The prediction score and it ranges from 0.0 to 1.0.
+        :paramtype confidence: float
         :keyword result: The generated answer by a Question Answering KB.
         :paramtype result: ~azure.ai.language.conversations.models.KnowledgeBaseAnswers
         """
-        super(QuestionAnsweringTargetIntentResult, self).__init__(**kwargs)
+        super(QuestionAnsweringTargetIntentResult, self).__init__(api_version=api_version, confidence=confidence, **kwargs)
         self.target_kind = 'question_answering'  # type: str
-        self.result = kwargs.get('result', None)
+        self.result = result
+
+
+class SpeedResolution(BaseResolution, QuantityResolution):
+    """Represents the speed entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The speed Unit of measurement. Known values are: "Unspecified",
+     "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
+     "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
+     "MetersPerMillisecond", "CentimetersPerMillisecond", "KilometersPerMillisecond".
+    :vartype unit: str or ~azure.ai.language.conversations.models.SpeedUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.SpeedUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The speed Unit of measurement. Known values are: "Unspecified",
+         "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
+         "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
+         "MetersPerMillisecond", "CentimetersPerMillisecond", "KilometersPerMillisecond".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.SpeedUnit
+        """
+        super(SpeedResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Speed'  # type: str
+        self.unit = unit
+
+
+class TemperatureResolution(BaseResolution, QuantityResolution):
+    """Represents the temperature entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The temperature Unit of measurement. Known values are: "Unspecified",
+     "Fahrenheit", "Kelvin", "Rankine", "Celsius".
+    :vartype unit: str or ~azure.ai.language.conversations.models.TemperatureUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.TemperatureUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The temperature Unit of measurement. Known values are: "Unspecified",
+         "Fahrenheit", "Kelvin", "Rankine", "Celsius".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.TemperatureUnit
+        """
+        super(TemperatureResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Temperature'  # type: str
+        self.unit = unit
+
+
+class TemporalSpanResolution(BaseResolution):
+    """represents the resolution of a date and/or time span.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar begin: An extended ISO 8601 date/time representation as described in
+     (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+    :vartype begin: str
+    :ivar end: An extended ISO 8601 date/time representation as described in
+     (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+    :vartype end: str
+    :ivar duration: An optional duration value formatted based on the ISO 8601
+     (https://en.wikipedia.org/wiki/ISO_8601#Durations).
+    :vartype duration: str
+    :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
+     "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
+     "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid",
+     "More".
+    :vartype modifier: str or ~azure.ai.language.conversations.models.Modifier
+    """
+
+    _validation = {
+        'resolution_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'begin': {'key': 'begin', 'type': 'str'},
+        'end': {'key': 'end', 'type': 'str'},
+        'duration': {'key': 'duration', 'type': 'str'},
+        'modifier': {'key': 'modifier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        begin: Optional[str] = None,
+        end: Optional[str] = None,
+        duration: Optional[str] = None,
+        modifier: Optional[Union[str, "_models.Modifier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword begin: An extended ISO 8601 date/time representation as described in
+         (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+        :paramtype begin: str
+        :keyword end: An extended ISO 8601 date/time representation as described in
+         (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
+        :paramtype end: str
+        :keyword duration: An optional duration value formatted based on the ISO 8601
+         (https://en.wikipedia.org/wiki/ISO_8601#Durations).
+        :paramtype duration: str
+        :keyword modifier: An optional modifier of a date/time instance. Known values are:
+         "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
+         "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
+         "Mid", "More".
+        :paramtype modifier: str or ~azure.ai.language.conversations.models.Modifier
+        """
+        super(TemporalSpanResolution, self).__init__(**kwargs)
+        self.resolution_kind = 'TemporalSpan'  # type: str
+        self.begin = begin
+        self.end = end
+        self.duration = duration
+        self.modifier = modifier
+
+
+class TextConversationItem(ConversationItemBase):
+    """The text modality of an input conversation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar participant_id: Required. The participant Id of a ConversationItem.
+    :vartype participant_id: str
+    :ivar id: Required. The Id of a ConversationItem.
+    :vartype id: str
+    :ivar language: The input language of a ConversationItem in BCP 47 language representation.
+    :vartype language: str
+    :ivar modality: Required. The modality (format) of ConversationItem (e.g., Text,
+     Transcript).Constant filled by server. Known values are: "text".
+    :vartype modality: str or ~azure.ai.language.conversations.models.Modality
+    :ivar text: Required. The single input query.
+    :vartype text: str
+    """
+
+    _validation = {
+        'participant_id': {'required': True},
+        'id': {'required': True},
+        'modality': {'required': True},
+        'text': {'required': True},
+    }
+
+    _attribute_map = {
+        'participant_id': {'key': 'participantId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'language': {'key': 'language', 'type': 'str'},
+        'modality': {'key': 'modality', 'type': 'str'},
+        'text': {'key': 'text', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        participant_id: str = "1",
+        id: str = "1",
+        text: str,
+        language: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword participant_id: Required. The participant Id of a ConversationItem.
+        :paramtype participant_id: str
+        :keyword id: Required. The Id of a ConversationItem.
+        :paramtype id: str
+        :keyword language: The input language of a ConversationItem in BCP 47 language representation.
+        :paramtype language: str
+        :keyword text: Required. The single input query.
+        :paramtype text: str
+        """
+        super(TextConversationItem, self).__init__(participant_id=participant_id, id=id, language=language, **kwargs)
+        self.modality = 'text'  # type: str
+        self.text = text
+
+
+class VolumeResolution(BaseResolution, QuantityResolution):
+    """Represents the volume entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The Volume Unit of measurement. Known values are: "Unspecified",
+     "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
+     "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
+     "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
+     "Minim", "Cord", "Peck", "Bushel", "Hogshead".
+    :vartype unit: str or ~azure.ai.language.conversations.models.VolumeUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.VolumeUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The Volume Unit of measurement. Known values are: "Unspecified",
+         "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
+         "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
+         "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
+         "Minim", "Cord", "Peck", "Bushel", "Hogshead".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.VolumeUnit
+        """
+        super(VolumeResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Volume'  # type: str
+        self.unit = unit
+
+
+class WeightResolution(BaseResolution, QuantityResolution):
+    """Represents the weight entity resolution model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The numeric value that the extracted text denotes.
+    :vartype value: float
+    :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     "TemporalSpan".
+    :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
+    :ivar unit: Required. The weight Unit of measurement. Known values are: "Unspecified",
+     "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
+     "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", "Dram".
+    :vartype unit: str or ~azure.ai.language.conversations.models.WeightUnit
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'resolution_kind': {'required': True},
+        'unit': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'float'},
+        'resolution_kind': {'key': 'resolutionKind', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: float,
+        unit: Union[str, "_models.WeightUnit"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The numeric value that the extracted text denotes.
+        :paramtype value: float
+        :keyword unit: Required. The weight Unit of measurement. Known values are: "Unspecified",
+         "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
+         "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", "Dram".
+        :paramtype unit: str or ~azure.ai.language.conversations.models.WeightUnit
+        """
+        super(WeightResolution, self).__init__(value=value, **kwargs)
+        self.value = value
+        self.resolution_kind = 'Weight'  # type: str
+        self.unit = unit

@@ -15,6 +15,8 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
 - [Recordings not being produced](#recordings-not-being-produced)
 - [KeyError during container startup](#keyerror-during-container-startup)
 - [ConnectionError during test startup](#connectionerror-during-test-startup)
+- [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
+- [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
 
 ## General troubleshooting tip
 
@@ -60,9 +62,7 @@ the wrong repo.
 ## KeyError during container startup
 
 Try updating your machine's version of Docker. Older versions of Docker may not return a status to indicate whether or
-not the proxy container is running, which the
-[proxy_startup.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py)
-script needs to determine.
+not the proxy container is running, which the [proxy_startup.py][proxy_startup] script needs to determine.
 
 ## ConnectionError during test startup
 
@@ -70,9 +70,43 @@ For example, you may see a `requests.exceptions.ConnectionError` when trying to 
 means that the test proxy tool wasn't started up properly, so requests to the tool are failing. Make sure Docker is
 installed and is up to date, and ensure that Linux containers are being used.
 
+## Different error than expected when using proxy
+
+Some tests intentionally trigger exceptions in order to validate error behavior. There are a few known cases where
+the exception returned will be different when using the test proxy vs. when sending requests to the service directly.
+
+One such instance is in the case of a DNS lookup failure, which can occur when trying to contact a nonexistent
+endpoint. [This issue][wrong_exception] describes an instance of this behavior. As described in the issue, the best
+way to work around this for the time being is to have tests expect either of two potential errors, to cover both
+cases. For example:
+
+```python
+with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
+    # This request will raise a ServiceRequestError when sent directly
+    # When using the test proxy, we get an HttpResponseError instead
+    ...  # Request that triggers DNS lookup failure
+
+# Make sure the HttpResponseError is raised for the same reason: DNS lookup failure
+if exc_info.type is HttpResponseError:
+    response_content = json.loads(exc_info.value.response.content)
+    assert "Name does not resolve" in response_content["Message"]
+```
+
+## Test setup failure in test pipeline
+
+If the test proxy isn't configured correctly for pipeline tests, you may see each test fail with an error message
+of `test setup failure`. To resolve this, follow the instructions in the
+[Enable the test proxy in pipelines][proxy_pipelines] section of the [migration guide][migration_guide]. The test
+proxy should be enabled for playback test pipelines and disabled for live test pipelines, since recordings are only
+involved in the former scenario.
+
+
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[proxy_pipelines]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#enable-the-test-proxy-in-pipelines
+[proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
+[wrong_exception]: https://github.com/Azure/azure-sdk-tools/issues/2907

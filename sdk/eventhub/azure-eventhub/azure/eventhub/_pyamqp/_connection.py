@@ -78,7 +78,7 @@ class Connection(object):
      Default value is `0.1`.
     :keyword bool network_trace: Whether to log the network traffic. Default value is `False`. If enabled, frames
      will be logged at the logging.INFO level.
-    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
+    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket. 
      Defaults to TransportType.Amqp. It will be AmqpOverWebSocket if using http_proxy.
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
@@ -105,7 +105,7 @@ class Connection(object):
             self._transport = transport
         elif 'sasl_credential' in kwargs:
             sasl_transport = SASLTransport
-            if self._transport_type.name is 'AmqpOverWebsocket' or kwargs.get("http_proxy"):
+            if self._transport_type.name == 'AmqpOverWebsocket' or kwargs.get("http_proxy"):
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
@@ -114,7 +114,7 @@ class Connection(object):
                 **kwargs
             )
         else:
-            self._transport = Transport(parsed_url.netloc, self._transport_type, **kwargs)
+            self._transport = Transport(parsed_url.netloc, transport_type=self._transport_type, **kwargs)
 
         self._container_id = kwargs.pop('container_id', None) or str(uuid.uuid4())  # type: str
         self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)  # type: int

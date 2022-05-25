@@ -99,6 +99,21 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @DataLakePreparer()
+    def test_create_file_extra_backslashes(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_client = self._create_file_and_return_client()
+
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
+                                             file_client.file_system_name + '/',
+                                             '/' + file_client.path_name,
+                                             credential=datalake_storage_account_key, logging_enable=True)
+        response = new_file_client.create_file()
+
+        # Assert
+        self.assertIsNotNone(response)
+
+    @DataLakePreparer()
     def test_file_exists(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange

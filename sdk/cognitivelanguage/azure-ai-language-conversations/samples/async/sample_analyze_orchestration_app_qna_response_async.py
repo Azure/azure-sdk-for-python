@@ -17,9 +17,10 @@ USAGE:
     python sample_analyze_orchestration_app_qna_response_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
-    2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
+    1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
+    2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME     - project name for your CLU orchestration project.
+    4) AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
 import asyncio
@@ -31,43 +32,55 @@ async def sample_analyze_orchestration_app_qna_response_async():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations.aio import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
-
-    # get secrets
-    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
-
-    # prepare data
-    query = "How do you make sushi rice?",
-    input = ConversationAnalysisOptions(
-        query=query
+    from azure.ai.language.conversations.models import (
+        CustomConversationalTask,
+        ConversationAnalysisOptions,
+        CustomConversationTaskParameters,
+        TextConversationItem
     )
 
+    # get secrets
+    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
+
     # analyze query
-    client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
-        result = await client.analyze_conversations(
-            input,
-            project_name=orchestration_project,
-            deployment_name='production',
-        )
+        query = "How are you?"
+        result = await client.analyze_conversation(
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=project_name,
+                        deployment_name=deployment_name
+                    )
+                )
+            )
 
         # view result
-        print("query: {}".format(result.query))
-        print("project kind: {}\n".format(result.prediction.project_kind))
+        print("query: {}".format(result.results.query))
+        print("project kind: {}\n".format(result.results.prediction.project_kind))
 
-        print("view top intent:")
-        top_intent = result.prediction.top_intent
-        print("\ttop intent: {}".format(top_intent))
+        # top intent
+        top_intent = result.results.prediction.top_intent
+        print("top intent: {}".format(top_intent))
+        top_intent_object = result.results.prediction.intents[top_intent]
+        print("confidence score: {}".format(top_intent_object.confidence))
+        print("project kind: {}".format(top_intent_object.target_kind))
 
-        top_intent_object = result.prediction.intents[top_intent]
-        print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
+        if top_intent_object.target_kind == "question_answering":
+            print("\nview qna result:")
+            qna_result = top_intent_object.result
+            for answer in qna_result.answers:
+                print("\nanswer: {}".format(answer.answer))
+                print("answer: {}".format(answer.confidence))
 
-        print("view qna result:")
-        qna_result = result.prediction.intents[top_intent].result
-        for answer in qna_result.answers:
-            print("\tanswer: {}\n".format(answer.answer))
     # [END analyze_orchestration_app_qna_response_async]
 
 

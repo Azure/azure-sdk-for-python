@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3
   response:
     body:
       string: ''
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -42,7 +42,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3
   response:
     body:
       string: '{"attributes":{"created":1631924671,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1631924671},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/26598a48f98801c3b8d3d533e13e2cf6","kty":"RSA-HSM","n":"6PGl7rPTxnJYEJd__las2X3Kx7LJEyr5z4kJTG8jmy9S5OnlhoKlgXQswZHki1Z5Kt3y3sLlbf5FTLwxyo0SwDBxEur3Pm1IGSksyimQmQkVtIms2-CseXqaaRb3yOKgQtaJ53qWPAFY_Y10cYEltnKgLauF81hCD5QJZk40QLWjspsLgpq0iAj-4wZebZqaoV3h4uZqAGiXQ4LhJBw39NB2eqp_waAjcnk8b9DK4IIZsfEDw8hFKLHFk5Cgxr2h-yPaFtlYy2MPgDHC4Bf3neiR8uZEHNFk_5dPuvUZzxKB1Hy8wLiSdkB5llaELdRh2kzZtxfGmsijZit_wpFpkw"}}'
@@ -60,7 +60,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634/create?api-version=7.3
 - request:
     body: null
     headers:
@@ -228,7 +228,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3
   response:
     body:
       string: '{"error":{"code":"Conflict","message":"User triggered Restore operation
@@ -245,7 +245,7 @@ interactions:
     status:
       code: 409
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3
 - request:
     body: null
     headers:
@@ -254,7 +254,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3
   response:
     body:
       string: '{"attributes":{"created":1631924671,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1631924671},"deletedDate":1631924705,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/26598a48f98801c3b8d3d533e13e2cf6","kty":"RSA-HSM","n":"6PGl7rPTxnJYEJd__las2X3Kx7LJEyr5z4kJTG8jmy9S5OnlhoKlgXQswZHki1Z5Kt3y3sLlbf5FTLwxyo0SwDBxEur3Pm1IGSksyimQmQkVtIms2-CseXqaaRb3yOKgQtaJ53qWPAFY_Y10cYEltnKgLauF81hCD5QJZk40QLWjspsLgpq0iAj-4wZebZqaoV3h4uZqAGiXQ4LhJBw39NB2eqp_waAjcnk8b9DK4IIZsfEDw8hFKLHFk5Cgxr2h-yPaFtlYy2MPgDHC4Bf3neiR8uZEHNFk_5dPuvUZzxKB1Hy8wLiSdkB5llaELdRh2kzZtxfGmsijZit_wpFpkw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634","scheduledPurgeDate":1632529505}'
@@ -272,7 +272,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key782a1634?api-version=7.3
 - request:
     body: null
     headers:
@@ -281,7 +281,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3
   response:
     body:
       string: '{"attributes":{"created":1631924671,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1631924671},"deletedDate":1631924705,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key782a1634/26598a48f98801c3b8d3d533e13e2cf6","kty":"RSA-HSM","n":"6PGl7rPTxnJYEJd__las2X3Kx7LJEyr5z4kJTG8jmy9S5OnlhoKlgXQswZHki1Z5Kt3y3sLlbf5FTLwxyo0SwDBxEur3Pm1IGSksyimQmQkVtIms2-CseXqaaRb3yOKgQtaJ53qWPAFY_Y10cYEltnKgLauF81hCD5QJZk40QLWjspsLgpq0iAj-4wZebZqaoV3h4uZqAGiXQ4LhJBw39NB2eqp_waAjcnk8b9DK4IIZsfEDw8hFKLHFk5Cgxr2h-yPaFtlYy2MPgDHC4Bf3neiR8uZEHNFk_5dPuvUZzxKB1Hy8wLiSdkB5llaELdRh2kzZtxfGmsijZit_wpFpkw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634","scheduledPurgeDate":1632529505}'
@@ -300,7 +300,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3
 - request:
     body: null
     headers:
@@ -309,7 +309,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3
   response:
     body:
       string: ''
@@ -327,5 +327,5 @@ interactions:
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key782a1634?api-version=7.3
 version: 1

@@ -9,6 +9,8 @@
 from ._operations import Operations
 from ._signal_r_operations import SignalROperations
 from ._usages_operations import UsagesOperations
+from ._signal_rcustom_certificates_operations import SignalRCustomCertificatesOperations
+from ._signal_rcustom_domains_operations import SignalRCustomDomainsOperations
 from ._signal_rprivate_endpoint_connections_operations import SignalRPrivateEndpointConnectionsOperations
 from ._signal_rprivate_link_resources_operations import SignalRPrivateLinkResourcesOperations
 from ._signal_rshared_private_link_resources_operations import SignalRSharedPrivateLinkResourcesOperations
@@ -17,6 +19,8 @@ __all__ = [
     'Operations',
     'SignalROperations',
     'UsagesOperations',
+    'SignalRCustomCertificatesOperations',
+    'SignalRCustomDomainsOperations',
     'SignalRPrivateEndpointConnectionsOperations',
     'SignalRPrivateLinkResourcesOperations',
     'SignalRSharedPrivateLinkResourcesOperations',

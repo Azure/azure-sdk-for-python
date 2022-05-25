@@ -19,16 +19,19 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
     async def test_passing_enum_content_type(self, client):
         with open(self.business_card_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         async with client:
             poller = await client.begin_recognize_business_cards(
-                myfile,
+                my_file,
                 content_type=FormContentType.IMAGE_PNG
             )
             result = await poller.result()
@@ -62,11 +65,11 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_content_type_param_passed(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.business_card_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             async with client:
                 poller = await client.begin_recognize_business_cards(
-                    myfile,
+                    my_file,
                     content_type="application/jpeg"
                 )
 

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3
   response:
     body:
       string: ''
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -42,7 +42,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.5.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3
   response:
     body:
       string: '{"attributes":{"created":1631926596,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1631926596},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/5fdefcb919674c5008aa2c003638ce86","kty":"RSA-HSM","n":"jA3GgSGs_Um_VcxDoL-7Zjdb0cGmrH8XCPTSN6IcwiXegymVihucsScbzIwL3J0hzklepsWkSNaj5KQRvZhJbcWoXBzUgFRRfYKl8INv3BmZky3HLr4IE-m6y3SL3VPG-c2ICNZBgKHz6764oZgBRePGzVNx46OXOKhrBjicVmpKUcpo2RwM8_29r8ziOE87yPKE8VxALphUmbHorG_1PmfFNtRs6t6mR8hr0EuVNa-YHunFFE9nIGe_ck0FqF6A2cg2ieKQhG8i0FxhOv7uMzB3wx1TjNkHAwRQExYRJJYvLG4DnZRaDRmVru6ziFGCivX4HTUYaArGBerMiVQFPQ"}}'
@@ -60,7 +60,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/selective-restore-test-key61071dcf/create?api-version=7.3
 - request:
     body: null
     headers:

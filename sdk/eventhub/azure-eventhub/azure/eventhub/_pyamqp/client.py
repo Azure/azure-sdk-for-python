@@ -6,9 +6,7 @@
 
 # pylint: disable=too-many-lines
 
-from collections import namedtuple
 import logging
-import threading
 import time
 import uuid
 import certifi

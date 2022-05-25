@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.8 (Windows-10-10.0.22000)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,18 +17,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Mar 2022 03:01:18 GMT",
+        "Date": "Tue, 22 Mar 2022 05:45:59 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=fpc; expires=Fri, 01-Apr-2022 03:01:18 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrilfC6CpFwDCJp8MIo2nsY9jI-Ybt0tJt9Mf-4XVVzWyk0bFIOjFyUEApw_1aUdn7h-vmu1G4x5f-S2UohO-6JzVazFIynY00BvV6yUYRArAlba-MbOSMMWedRzh9NbWDAj3XpFC-XdF6miHzamKvna5p68QfLwh8Yoew2-h7mLkgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
+        "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12507.17 - NCUS ProdSlices",
-        "x-ms-request-id": "9460e8b4-3927-46ea-8c0a-3c12e7410300"
+        "x-ms-ests-server": "2.1.12559.10 - NCUS ProdSlices",
+        "x-ms-request-id": "12e870bd-f478-42d2-bfa1-5f9bf777b900"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -105,8 +100,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=fpc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.8 (Windows-10-10.0.22000)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -116,17 +111,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Mar 2022 03:01:18 GMT",
+        "Date": "Tue, 22 Mar 2022 05:45:59 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=fpc; expires=Fri, 01-Apr-2022 03:01:19 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
+        "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12529.16 - SEASLR2 ProdSlices",
-        "x-ms-request-id": "d2d17ebf-f1d8-4d7c-a1de-669105642800"
+        "x-ms-ests-server": "2.1.12559.10 - KRSLR1 ProdSlices",
+        "x-ms-request-id": "73d18b3a-4b48-4c45-8542-8b0809860200"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -181,41 +172,37 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "d284d3f8-045d-498b-9190-7395a9b6279e",
+        "client-request-id": "bb1e5576-75ed-4ff0-85a8-8ddd6c7bcaef",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=fpc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.8 (Windows-10-10.0.22000)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
         "x-client-os": "win32",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.16.0",
+        "x-client-ver": "1.17.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
       "RequestBody": "client_id=a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=0vj7Q~IsFayrD0V_8oyOfygU-GE3ELOabq95a\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "d284d3f8-045d-498b-9190-7395a9b6279e",
+        "client-request-id": "bb1e5576-75ed-4ff0-85a8-8ddd6c7bcaef",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Mar 2022 03:01:19 GMT",
+        "Date": "Tue, 22 Mar 2022 05:45:59 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
-        "Set-Cookie": [
-          "fpc=fpc; expires=Fri, 01-Apr-2022 03:01:19 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
+        "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12507.17 - NCUS ProdSlices",
-        "x-ms-request-id": "9460e8b4-3927-46ea-8c0a-3c12f4410300"
+        "x-ms-ests-server": "2.1.12559.10 - NCUS ProdSlices",
+        "x-ms-request-id": "12e870bd-f478-42d2-bfa1-5f9b0d78b900"
       },
       "ResponseBody": {
         "token_type": "Bearer",
@@ -234,8 +221,8 @@
         "Connection": "keep-alive",
         "Content-Length": "102",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "07a079d8-99d5-11ec-93ab-70b5e82527ff"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.9.8 (Windows-10-10.0.22000)",
+        "x-ms-client-request-id": "5952bafa-a9a3-11ec-9a83-c809a8c836e6"
       },
       "RequestBody": {
         "location": "eastus",
@@ -249,7 +236,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Mar 2022 03:01:27 GMT",
+        "Date": "Tue, 22 Mar 2022 05:46:04 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -260,11 +247,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "650b737e-1f45-4a4d-8652-a373ef065bdf",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;745,Microsoft.Compute/PutVM30Min;3725",
+        "x-ms-correlation-request-id": "229607d0-2670-443d-a69a-4564c8bdb71a",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;745,Microsoft.Compute/PutVM30Min;3727",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-request-id": "1533d5df-402d-4d68-b571-28dc827bf3fe",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220302T030128Z:650b737e-1f45-4a4d-8652-a373ef065bdf"
+        "x-ms-request-id": "ba1147e6-e085-4f4e-a59b-96989fda2b5e",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220322T054604Z:229607d0-2670-443d-a69a-4564c8bdb71a"
       },
       "ResponseBody": {
         "name": "availabilitysetse8d12c44",
@@ -288,8 +275,8 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0e25621e-99d5-11ec-af46-70b5e82527ff"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.9.8 (Windows-10-10.0.22000)",
+        "x-ms-client-request-id": "5cca2acc-a9a3-11ec-bf78-c809a8c836e6"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -297,7 +284,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Mar 2022 03:01:27 GMT",
+        "Date": "Tue, 22 Mar 2022 05:46:04 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -308,11 +295,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e5132b27-1d92-47ab-885d-4a208b2f9a6c",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;3999,Microsoft.Compute/LowCostGet30Min;31993",
+        "x-ms-correlation-request-id": "948dbf29-3471-4424-bda8-0d1d1e430086",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;3999,Microsoft.Compute/LowCostGet30Min;31997",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-request-id": "95480f69-14ce-401b-ade0-b94e29eb650d",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220302T030128Z:e5132b27-1d92-47ab-885d-4a208b2f9a6c"
+        "x-ms-request-id": "206975c1-2f96-446f-a56e-97d77a9dd215",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220322T054605Z:948dbf29-3471-4424-bda8-0d1d1e430086"
       },
       "ResponseBody": {
         "name": "availabilitysetse8d12c44",
@@ -339,8 +326,8 @@
         "Connection": "keep-alive",
         "Content-Length": "80",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0f089796-99d5-11ec-bf23-70b5e82527ff"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.9.8 (Windows-10-10.0.22000)",
+        "x-ms-client-request-id": "5d054bd3-a9a3-11ec-863f-c809a8c836e6"
       },
       "RequestBody": {
         "properties": {
@@ -353,7 +340,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Mar 2022 03:01:28 GMT",
+        "Date": "Tue, 22 Mar 2022 05:46:05 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -364,11 +351,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9c375c91-9324-4475-b02f-cbf407a93642",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;744,Microsoft.Compute/PutVM30Min;3724",
+        "x-ms-correlation-request-id": "7e525bd4-e9a0-4b31-a46f-2a586a4bd5e2",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;744,Microsoft.Compute/PutVM30Min;3726",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
-        "x-ms-request-id": "526eb979-78bc-4fa7-8d75-6779f2d2dc75",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220302T030129Z:9c375c91-9324-4475-b02f-cbf407a93642"
+        "x-ms-request-id": "e4da9e19-b916-43b5-8526-ae15007a38fc",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220322T054605Z:7e525bd4-e9a0-4b31-a46f-2a586a4bd5e2"
       },
       "ResponseBody": {
         "name": "availabilitysetse8d12c44",
@@ -393,15 +380,15 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0f42b815-99d5-11ec-96ce-70b5e82527ff"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/26.1.0 Python/3.9.8 (Windows-10-10.0.22000)",
+        "x-ms-client-request-id": "5d48ce37-a9a3-11ec-a7ff-c809a8c836e6"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Wed, 02 Mar 2022 03:01:35 GMT",
+        "Date": "Tue, 22 Mar 2022 05:46:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -410,11 +397,11 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9bafbac0-5aba-42fc-8acd-c6cd4b883d84",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteVM3Min;239,Microsoft.Compute/DeleteVM30Min;1197",
+        "x-ms-correlation-request-id": "a480ec9d-c350-4aff-92b1-ae39c0388dd9",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteVM3Min;239,Microsoft.Compute/DeleteVM30Min;1198",
         "x-ms-ratelimit-remaining-subscription-deletes": "14999",
-        "x-ms-request-id": "dd5da8bc-7015-4d1e-ad99-dd1297c484cc",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220302T030136Z:9bafbac0-5aba-42fc-8acd-c6cd4b883d84"
+        "x-ms-request-id": "67bb7af0-3d5f-4584-bf55-8314a7c0ad0c",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220322T054612Z:a480ec9d-c350-4aff-92b1-ae39c0388dd9"
       },
       "ResponseBody": null
     }

@@ -7,9 +7,16 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AuthInfoBase
+from ._models_py3 import AzureKeyVaultProperties
+from ._models_py3 import AzureResource
+from ._models_py3 import AzureResourcePropertiesBase
+from ._models_py3 import ConfluentBootstrapServer
+from ._models_py3 import ConfluentSchemaRegistry
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import KeyVaultSecretReferenceSecretInfo
+from ._models_py3 import KeyVaultSecretUriSecretInfo
 from ._models_py3 import LinkerList
 from ._models_py3 import LinkerPatch
 from ._models_py3 import LinkerResource
@@ -19,6 +26,7 @@ from ._models_py3 import OperationListResult
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import SecretAuthInfo
+from ._models_py3 import SecretInfoBase
 from ._models_py3 import SecretStore
 from ._models_py3 import ServicePrincipalCertificateAuthInfo
 from ._models_py3 import ServicePrincipalSecretAuthInfo
@@ -26,26 +34,38 @@ from ._models_py3 import SourceConfiguration
 from ._models_py3 import SourceConfigurationResult
 from ._models_py3 import SystemAssignedIdentityAuthInfo
 from ._models_py3 import SystemData
+from ._models_py3 import TargetServiceBase
 from ._models_py3 import UserAssignedIdentityAuthInfo
 from ._models_py3 import VNetSolution
 from ._models_py3 import ValidateResult
+from ._models_py3 import ValidationResultItem
+from ._models_py3 import ValueSecretInfo
 
 
-from ._microsoft_service_linker_enums import (
+from ._service_linker_management_client_enums import (
     ActionType,
     AuthType,
     ClientType,
     CreatedByType,
-    LinkerStatus,
     Origin,
+    SecretType,
+    Type,
     VNetSolutionType,
+    ValidationResultStatus,
 )
 
 __all__ = [
     'AuthInfoBase',
+    'AzureKeyVaultProperties',
+    'AzureResource',
+    'AzureResourcePropertiesBase',
+    'ConfluentBootstrapServer',
+    'ConfluentSchemaRegistry',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'KeyVaultSecretReferenceSecretInfo',
+    'KeyVaultSecretUriSecretInfo',
     'LinkerList',
     'LinkerPatch',
     'LinkerResource',
@@ -55,6 +75,7 @@ __all__ = [
     'ProxyResource',
     'Resource',
     'SecretAuthInfo',
+    'SecretInfoBase',
     'SecretStore',
     'ServicePrincipalCertificateAuthInfo',
     'ServicePrincipalSecretAuthInfo',
@@ -62,14 +83,19 @@ __all__ = [
     'SourceConfigurationResult',
     'SystemAssignedIdentityAuthInfo',
     'SystemData',
+    'TargetServiceBase',
     'UserAssignedIdentityAuthInfo',
     'VNetSolution',
     'ValidateResult',
+    'ValidationResultItem',
+    'ValueSecretInfo',
     'ActionType',
     'AuthType',
     'ClientType',
     'CreatedByType',
-    'LinkerStatus',
     'Origin',
+    'SecretType',
+    'Type',
     'VNetSolutionType',
+    'ValidationResultStatus',
 ]

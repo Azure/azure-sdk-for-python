@@ -6,16 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import functools
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-
+from ..._vendor import _convert_request
+from ...operations._baseline_operations import build_get_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -41,6 +45,7 @@ class BaselineOperations:
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace_async
     async def get(
         self,
         resource_uri: str,
@@ -92,47 +97,29 @@ class BaselineOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_request(
+            resource_uri=resource_uri,
+            metricnames=metricnames,
+            timespan=timespan,
+            interval=interval,
+            aggregation=aggregation,
+            sensitivities=sensitivities,
+            result_type=result_type,
+            metricnamespace=metricnamespace,
+            filter=filter,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if metricnames is not None:
-            query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
-        if timespan is not None:
-            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-        if interval is not None:
-            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if aggregation is not None:
-            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-        if sensitivities is not None:
-            query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
-        if result_type is not None:
-            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if metricnamespace is not None:
-            query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
@@ -141,4 +128,6 @@ class BaselineOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline'}  # type: ignore
+

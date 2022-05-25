@@ -32,10 +32,6 @@ class ManagedIdentityCredential(object):
 
     :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
         AD app registration. This argument is supported in all hosting environments.
-    :keyword str resource_id: The resource ID to authenticate for a user-assigned managed identity.
-        See `Managed identity types
-        <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview#managed-identity-types>`_
-        for more information about user-assigned managed identities.
     :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
         learn what values it expects.
@@ -45,30 +41,34 @@ class ManagedIdentityCredential(object):
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self._credential = None  # type: Optional[TokenCredential]
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            if os.environ.get(EnvironmentVariables.MSI_SECRET):
-                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-                from .app_service import AppServiceCredential
+        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
+            if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
+                if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
+                    _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                    from .service_fabric import ServiceFabricCredential
 
-                self._credential = AppServiceCredential(**kwargs)
-            else:
-                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
-                from .cloud_shell import CloudShellCredential
+                    self._credential = ServiceFabricCredential(**kwargs)
+                else:
+                    _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                    from .app_service import AppServiceCredential
 
-                self._credential = CloudShellCredential(**kwargs)
-        elif os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
-            if os.environ.get(EnvironmentVariables.IDENTITY_HEADER) and os.environ.get(
-                EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT
-            ):
-                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
-                from .service_fabric import ServiceFabricCredential
-
-                self._credential = ServiceFabricCredential(**kwargs)
+                    self._credential = AppServiceCredential(**kwargs)
             elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
                 _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(**kwargs)
+        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            if os.environ.get(EnvironmentVariables.MSI_SECRET):
+                _LOGGER.info("%s will use Azure ML managed identity", self.__class__.__name__)
+                from .azure_ml import AzureMLCredential
+
+                self._credential = AzureMLCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                from .cloud_shell import CloudShellCredential
+
+                self._credential = CloudShellCredential(**kwargs)
         elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
             _LOGGER.info("%s will use token exchange", self.__class__.__name__)
             from .token_exchange import TokenExchangeCredential

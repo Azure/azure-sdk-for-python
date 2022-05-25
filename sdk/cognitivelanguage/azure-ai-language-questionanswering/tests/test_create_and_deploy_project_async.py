@@ -51,13 +51,19 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
         # create deployable project
         project_name = "IssacNewton"
-        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, is_deployable=True)
+        await QnaAuthoringAsyncHelper.create_test_project(
+            client,
+            project_name=project_name,
+            is_deployable=True,
+            **self.kwargs_for_polling
+        )
 
         # test deploy
         deployment_name = "production"
         deployment_poller = await client.begin_deploy_project(
             project_name=project_name,
-            deployment_name=deployment_name
+            deployment_name=deployment_name,
+            **self.kwargs_for_polling
         )
         await deployment_poller.result()
 
@@ -70,7 +76,7 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
             if ("deploymentName" in d) and d["deploymentName"] == deployment_name:
                 deployment_found = True
         assert deployment_found
-            
+
 
 
 

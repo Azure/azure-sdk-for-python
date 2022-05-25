@@ -4,36 +4,39 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any
-try:
-    from typing import Protocol, TypedDict
-except ImportError:
-    from typing_extensions import Protocol, TypedDict
+from typing_extensions import Protocol, TypedDict  # type: ignore
 
 
-class MessageMetadataDict(TypedDict):
+class MessageContent(TypedDict):
     """A dict with required keys:
-        - `data`: bytes
-        - `content_type`: str
+    - `content`: bytes
+    - `content_type`: str
     """
 
-    data: bytes
+    content: bytes
     content_type: str
 
+
 class MessageType(Protocol):
-    """Message Types that set and get data and content type values internally.
-    """
+    """Message Types that set and get content and content type values internally."""
 
     @classmethod
-    def from_message_data(cls, data: bytes, content_type: str, **kwargs: Any) -> "MessageType":
-        """
-        Creates an object that is a subtype of MessageType given content type and
-         a data value to be set as body.
+    def from_message_content(
+        cls, content: bytes, content_type: str, **kwargs: Any
+    ) -> "MessageType":
+        """Creates an object that is a subtype of MessageType, given content type and
+         a content value to be set on the object.
 
-        :param bytes data: The data value to be set as the body of the message.
+        :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
         :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageType
         """
         ...
 
-    def __message_data__(self) -> MessageMetadataDict:
+    def __message_content__(self) -> MessageContent:
+        """A MessageContent object, with `content` and `content_type` set to
+         the values of their respective properties on the MessageType object.
+
+        :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageContent
+        """
         ...

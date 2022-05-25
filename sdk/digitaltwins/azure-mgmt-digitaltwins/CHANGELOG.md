@@ -1,5 +1,17 @@
 # Release History
 
+## 6.1.0 (2022-03-21)
+
+**Features**
+
+  - Added operation group TimeSeriesDatabaseConnectionsOperations
+  - Model DigitalTwinsDescription has a new parameter system_data
+  - Model DigitalTwinsEndpointResource has a new parameter system_data
+  - Model DigitalTwinsResource has a new parameter system_data
+  - Model ExternalResource has a new parameter system_data
+  - Model Operation has a new parameter properties
+  - Model PrivateEndpointConnection has a new parameter system_data
+
 ## 6.0.0 (2021-05-18)
 
 - GA release

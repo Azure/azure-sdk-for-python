@@ -87,6 +87,7 @@ AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b'AMQP')
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
+TIMEOUT_INTERVAL = 1
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r'\[([\.0-9a-f:]+)\](?::(\d+))?')
@@ -148,7 +149,7 @@ class _AbstractTransport(object):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-        self.connect_timeout = connect_timeout
+        self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
@@ -411,7 +412,7 @@ class _AbstractTransport(object):
                 read_frame_buffer.write(read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
             else:
                 read_frame_buffer.write(read(payload_size, buffer=payload))
-        except socket.timeout:
+        except (socket.timeout, TimeoutError):
             read_frame_buffer.write(self._read_buffer.getvalue())
             self._read_buffer = read_frame_buffer
             self._read_buffer.seek(0)
@@ -439,14 +440,14 @@ class _AbstractTransport(object):
 
     def receive_frame(self, *args, **kwargs):
         try:
-            header, channel, payload = self.read(**kwargs) 
+            header, channel, payload = self.read(**kwargs)
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
             # TODO: Catch decode error and return amqp:decode-error
             return channel, decoded
-        except socket.timeout:
+        except (socket.timeout, TimeoutError):
             return None, None
 
     def send_frame(self, channel, frame, **kwargs):
@@ -645,7 +646,6 @@ class TCPTransport(_AbstractTransport):
         result, self._read_buffer = rbuf[:n], rbuf[n:]
         return result
 
-
 def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     """Create transport.
 
@@ -659,10 +659,9 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
-        ):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
-        self._connect_timeout = connect_timeout
+        self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._host = host
         super().__init__(
             host, port, connect_timeout, **kwargs
@@ -694,25 +693,29 @@ class WebSocketTransport(_AbstractTransport):
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
-    def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
+    def _read(self, n, initial=False, buffer=None, **kwargs):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
-        
+        from websocket import WebSocketTimeoutException
+
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        while n:
-            data = self.ws.recv()
+        try:
+            while n:
+                data = self.ws.recv()
 
-            if len(data) <= n:
-                view[length: length + len(data)] = data
-                n -= len(data)
-            else:
-                view[length: length + n] = data[0:n]
-                self._read_buffer = BytesIO(data[n:])
-                n = 0
-        return view
+                if len(data) <= n:
+                    view[length: length + len(data)] = data
+                    n -= len(data)
+                else:
+                    view[length: length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
+            return view
+        except WebSocketTimeoutException:
+            raise TimeoutError()
 
     def _shutdown_transport(self):
         """Do any preliminary work in shutting down the connection."""

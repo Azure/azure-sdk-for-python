@@ -23,7 +23,7 @@ pip install azure-schemaregistry
 ### Prerequisites:
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* [Azure Schema Registry][schemaregistry_service]
+* [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
 * Python 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
@@ -236,3 +236,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
+[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

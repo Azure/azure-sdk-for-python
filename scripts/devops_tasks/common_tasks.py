@@ -21,6 +21,7 @@ import io
 import re
 import fnmatch
 import platform
+from typing import Tuple, Iterable
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -138,8 +139,21 @@ def str_to_bool(input_string):
         return False
 
 
-def parse_setup(setup_path):
-    setup_filename = os.path.join(setup_path, "setup.py")
+def parse_setup(setup_path: str) -> Tuple[str, str, Iterable[str], str]:
+    """
+    This function is used for getting metadata about a package from its setup.py.
+
+    Tuple index:
+      * 0 = name
+      * 1 = version
+      * 2 = array of dependencies
+      * 3 = python_requires value
+    """
+
+    setup_filename = setup_path
+    if not setup_path.endswith("setup.py"):
+        setup_filename = os.path.join(setup_path, "setup.py")
+
     mock_setup = textwrap.dedent(
         """\
     def setup(*args, **kwargs):
@@ -343,16 +357,17 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
         return False
 
 
-def parse_require(req):
+def parse_require(req) -> Tuple[str, str]:
     """
     Parses the incoming version specification and returns a tuple of the requirement name and specifier.
 
     "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
     """
+
     req_object = Requirement.parse(req.split(";")[0])
     pkg_name = req_object.key
     spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
-    return [pkg_name, spec]
+    return (pkg_name, spec)
 
 
 def find_whl(package_name, version, whl_directory):
@@ -436,7 +451,14 @@ def extend_dev_requirements(dev_req_path, packages_to_include):
         dev_req_file.writelines(requirements)
 
 
-def is_required_version_on_pypi(package_name, spec):
+def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
+    """
+    This function evaluates a package name and version specifier combination and returns the versions on pypi
+    that satisfy the provided version specifier.
+
+    Import dependency on azure-sdk-tools.
+    """
+
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
@@ -448,7 +470,13 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def find_packages_missing_on_pypi(path):
+def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
+    """
+    Given a setup path, evaluate all dependencies and return a list of packages whos specifier can NOT be matched against PyPI releases.
+
+    Import dependency on pkginfo.
+    """
+
     import pkginfo
 
     requires = []

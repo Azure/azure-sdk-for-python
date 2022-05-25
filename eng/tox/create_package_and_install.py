@@ -87,7 +87,8 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
                 "bdist_wheel",
                 "-d",
                 dist_dir,
-            ]
+            ],
+            cwd = os.path.dirname(setuppy_path)
         )
     else:
         check_call(
@@ -99,7 +100,8 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
                 "zip",
                 "-d",
                 dist_dir,
-            ]
+            ],
+            cwd = os.path.dirname(setuppy_path)
         )
 
     prebuilt_packages = [
@@ -179,8 +181,13 @@ if __name__ == "__main__":
     built_pkg_path = ""
     setup_py_path = os.path.join(args.target_setup, "setup.py")
     additional_downloaded_reqs = []
+
+    if not os.path.exists(args.distribution_directory):
+        os.mkdir(args.distribution_directory)
+
     tmp_dl_folder = os.path.join(args.distribution_directory, "dl")
-    os.mkdir(tmp_dl_folder)
+    if not os.path.exists(tmp_dl_folder):
+        os.mkdir(tmp_dl_folder)
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
     if os.getenv("SetDevVersion", 'false') == 'true':

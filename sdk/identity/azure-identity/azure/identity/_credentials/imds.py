@@ -54,7 +54,7 @@ class ImdsCredential(GetTokenMixin):
         else:
             self._endpoint_available = None
         self._error_message = None  # type: Optional[str]
-        self._user_assigned_identity = "client_id" in kwargs or "resource_id" in kwargs or "identity_config" in kwargs
+        self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
     def __enter__(self):
         self._client.__enter__()

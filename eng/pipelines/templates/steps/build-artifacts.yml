@@ -36,21 +36,6 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python 2.7'
-    inputs:
-      versionSpec: '2.7'
-
-  - script: |
-      pip install -r eng/ci_tools.txt
-    displayName: 'Prep Py2 Environment'
-
-  - task: PythonScript@0
-    displayName: 'Generate Python2 Applicable Namespace Packages'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
-
-  - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
       versionSpec: $(PythonVersion)
@@ -95,9 +80,9 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
 
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+#  - template: /eng/pipelines/templates/steps/run_apistub.yml
+#    parameters:
+#      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 

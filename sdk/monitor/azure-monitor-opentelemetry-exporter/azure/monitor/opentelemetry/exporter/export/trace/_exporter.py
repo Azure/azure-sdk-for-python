@@ -2,44 +2,46 @@
 # Licensed under the MIT License.
 import json
 import logging
-import platform
 from typing import Sequence, Any
 from urllib.parse import urlparse
 
-from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
+    MessageData,
     MonitorBase,
     RemoteDependencyData,
     RequestData,
+    TelemetryExceptionData,
+    TelemetryExceptionDetails,
     TelemetryItem
 )
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
-    get_trace_export_result,
 )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
-    """Azure Monitor base exporter for OpenTelemetry."""
+    """Azure Monitor Trace exporter for OpenTelemetry."""
 
     def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
-        """Export data
+        """Export span data
         :param spans: Open Telemetry Spans to export.
         :type spans: Sequence[~opentelemetry.trace.Span]
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
-        envelopes = [self._span_to_envelope(span) for span in spans]
+        envelopes = []
+        for span in spans:
+            envelopes.append(self._span_to_envelope(span))
+            envelopes.extend(self._span_events_to_envelopes(span))
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
@@ -48,10 +50,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             if result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
-            return get_trace_export_result(result)
+            return _get_trace_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            logger.exception("Exception occurred while exporting the data.")
-            return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
+            _logger.exception("Exception occurred while exporting the data.")
+            return _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
         """Shuts down the exporter.
@@ -66,6 +68,14 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope = _convert_span_to_envelope(span)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
+
+    def _span_events_to_envelopes(self, span: Span) -> Sequence[TelemetryItem]:
+        if not span or len(span.events) == 0:
+            return []
+        envelopes = _convert_span_events_to_envelopes(span)
+        for envelope in envelopes:
+            envelope.instrumentation_key = self._instrumentation_key
+        return envelopes
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
@@ -85,28 +95,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-locals
+# pylint: disable=protected-access
 def _convert_span_to_envelope(span: Span) -> TelemetryItem:
-    envelope = TelemetryItem(
-        name="",
-        instrumentation_key="",
-        tags=dict(_utils.azure_monitor_context),
-        time=ns_to_iso_str(span.start_time),
-    )
-    if span.resource and span.resource.attributes:
-        service_name = span.resource.attributes.get(ResourceAttributes.SERVICE_NAME)
-        service_namespace = span.resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
-        service_instance_id = span.resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-        if service_name:
-            if service_namespace:
-                envelope.tags["ai.cloud.role"] = service_namespace + \
-                    "." + service_name
-            else:
-                envelope.tags["ai.cloud.role"] = service_name
-        if service_instance_id:
-            envelope.tags["ai.cloud.roleInstance"] = service_instance_id
-        else:
-            envelope.tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
-        envelope.tags["ai.internal.nodeName"] = envelope.tags["ai.cloud.roleInstance"]
+    envelope = _utils._create_telemetry_item(span.start_time)
+    envelope.tags.update(_utils._populate_part_a_fields(span.resource))
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags["ai.user.id"] = span.attributes[SpanAttributes.ENDUSER_ID]
@@ -317,7 +309,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                             else:
                                 target = host
                         except Exception:  # pylint: disable=broad-except
-                            logger.warning("Error while parsing hostname.")
+                            _logger.warning("Error while parsing hostname.")
                     elif target_from_url:
                         target = target_from_url
                 # data is url
@@ -396,6 +388,52 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         data.properties["_MS.links"] = json.dumps(links)
     return envelope
 
+# pylint: disable=protected-access
+def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
+    envelopes = []
+    for event in span.events:
+        envelope = _utils._create_telemetry_item(event.timestamp)
+        envelope.tags.update(_utils._populate_part_a_fields(span.resource))
+        envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
+        if span.parent and span.parent.span_id:
+            envelope.tags["ai.operation.parentId"] = "{:016x}".format(
+                span.parent.span_id
+            )
+        properties = {}
+        if event.name == "exception":
+            envelope.name = 'Microsoft.ApplicationInsights.Exception'
+            exc_type = event.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+            exc_message = event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+            if exc_message is None or not exc_message:
+                exc_message = "Exception"
+            stack_trace = event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
+            escaped = event.attributes.get(SpanAttributes.EXCEPTION_ESCAPED)
+            properties[SpanAttributes.EXCEPTION_ESCAPED] = escaped
+            has_full_stack = stack_trace is not None
+            exc_details = TelemetryExceptionDetails(
+                type_name=exc_type,
+                message=exc_message,
+                has_full_stack=has_full_stack,
+                stack=stack_trace,
+            )
+            data = TelemetryExceptionData(
+                properties=properties,
+                exceptions=[exc_details],
+            )
+            # pylint: disable=line-too-long
+            envelope.data = MonitorBase(base_data=data, base_type='ExceptionData')
+        else:
+            envelope.name = 'Microsoft.ApplicationInsights.Message'
+            properties.update(event.attributes)
+            data = MessageData(
+                message=event.name,
+                properties=properties,
+            )
+            envelope.data = MonitorBase(base_data=data, base_type='MessageData')
+
+        envelopes.append(envelope)
+
+    return envelopes
 
 # pylint:disable=too-many-return-statements
 def _get_default_port_db(dbsystem):
@@ -443,3 +481,14 @@ def _is_sql_db(dbsystem):
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
       )
+
+
+def _get_trace_export_result(result: ExportResult) -> SpanExportResult:
+    if result == ExportResult.SUCCESS:
+        return SpanExportResult.SUCCESS
+    if result in (
+        ExportResult.FAILED_RETRYABLE,
+        ExportResult.FAILED_NOT_RETRYABLE,
+    ):
+        return SpanExportResult.FAILURE
+    return None

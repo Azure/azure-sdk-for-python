@@ -18,8 +18,6 @@ from typing import (
     Awaitable,
 )
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
@@ -37,7 +35,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBaseAsync):
+class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -122,14 +120,6 @@ class EventHubConsumerClient(ClientBaseAsync):
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
     :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
-     the Event Hubs service, allowing network requests to be routed through any application gateways or
-     other paths needed for the host environment. Default is None.
-     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
-     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -146,7 +136,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: "CredentialTypes",
         **kwargs
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
@@ -288,14 +278,6 @@ class EventHubConsumerClient(ClientBaseAsync):
          evaluation regardless of the load balancing strategy.
          Greedy strategy is used by default.
         :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
-         the Event Hubs service, allowing network requests to be routed through any application gateways or
-         other paths needed for the host environment. Default is None.
-         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-         If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-         authenticate the identity of the connection endpoint.
-         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:

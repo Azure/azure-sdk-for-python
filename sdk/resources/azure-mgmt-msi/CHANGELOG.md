@@ -1,5 +1,25 @@
 # Release History
 
+## 6.0.1 (2022-05-05)
+
+**Other Changes**
+
+  - Change the internal folder name from `v2019_09_01_preview` to `v2021_09_30_preview` 
+
+
+## 6.0.0 (2022-03-29)
+
+**Breaking changes**
+
+  - Change from single-api package to multiple-api package which permits users to pass in different api version in client.
+
+
+## 6.0.0b2 (2022-03-24)
+
+**Features**
+
+  - Added operation UserAssignedIdentitiesOperations.list_associated_resources
+
 ## 6.0.0b1 (2021-05-19)
 
 This is beta preview version.

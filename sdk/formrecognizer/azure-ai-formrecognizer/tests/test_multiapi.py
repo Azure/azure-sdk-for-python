@@ -25,6 +25,10 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestMultiapi(FormRecognizerTest):
+
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_default_api_version_form_recognizer_client(self, **kwargs):
@@ -143,31 +147,31 @@ class TestMultiapi(FormRecognizerTest):
         label_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         label_result = label_poller.result()
 
-        unlabel_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
-        unlabel_result = unlabel_poller.result()
+        unlabelled_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
+        unlabelled_result = unlabelled_poller.result()
 
         assert label_result.properties is None
         assert label_result.model_name is None
-        assert unlabel_result.properties is None
-        assert unlabel_result.properties is None
+        assert unlabelled_result.properties is None
+        assert unlabelled_result.properties is None
         assert label_result.training_documents[0].model_id is None
-        assert unlabel_result.training_documents[0].model_id is None
+        assert unlabelled_result.training_documents[0].model_id is None
 
         form_client = client.get_form_recognizer_client()
         label_poller = form_client.begin_recognize_custom_forms_from_url(label_result.model_id, self.form_url_jpg, include_field_elements=True)
-        unlabel_poller = form_client.begin_recognize_custom_forms_from_url(unlabel_result.model_id, self.form_url_jpg, include_field_elements=True)
+        unlabelled_poller = form_client.begin_recognize_custom_forms_from_url(unlabelled_result.model_id, self.form_url_jpg, include_field_elements=True)
 
 
         label_form_result = label_poller.result()
-        unlabel_form_result = unlabel_poller.result()
+        unlabelled_form_result = unlabelled_poller.result()
 
-        assert unlabel_form_result[0].form_type_confidence is None
+        assert unlabelled_form_result[0].form_type_confidence is None
         assert label_form_result[0].form_type_confidence is None
-        assert unlabel_form_result[0].pages[0].selection_marks is None
+        assert unlabelled_form_result[0].pages[0].selection_marks is None
         assert label_form_result[0].pages[0].selection_marks is None
-        assert unlabel_form_result[0].pages[0].tables[0].bounding_box is None
+        assert unlabelled_form_result[0].pages[0].tables[0].bounding_box is None
         assert label_form_result[0].pages[0].tables[0].bounding_box is None
-        assert unlabel_form_result[0].pages[0].lines[0].appearance is None
+        assert unlabelled_form_result[0].pages[0].lines[0].appearance is None
         assert label_form_result[0].pages[0].lines[0].appearance is None
 
         models = client.list_custom_models()

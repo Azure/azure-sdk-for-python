@@ -15,11 +15,6 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import (
-        TokenCredential,
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-    )
     from typing import (  # pylint: disable=ungrouped-imports
         Any,
         Union,
@@ -31,11 +26,12 @@ if TYPE_CHECKING:
     )
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
+    from ._client_base import CredentialTypes
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBase):
+class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -128,7 +124,7 @@ class EventHubConsumerClient(ClientBase):
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
         consumer_group,  # type: str
-        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
+        credential,  # type: CredentialTypes
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -232,6 +228,14 @@ class EventHubConsumerClient(ClientBase):
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no furthur activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+         If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+         be used instead which uses port 443 for communication.
+        :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
          when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
          or a single partition. In the latter case load-balancing does not apply.

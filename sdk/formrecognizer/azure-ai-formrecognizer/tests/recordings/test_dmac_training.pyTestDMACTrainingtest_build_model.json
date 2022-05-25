@@ -20,7 +20,7 @@
           "containerUrl": "https://blob_sas_url"
         },
         "tags": {
-          "frtests": "testvalue"
+          "testkey": "testvalue"
         }
       },
       "StatusCode": 202,
@@ -143,11 +143,11 @@
           "apiVersion": "2022-01-30-preview",
           "description": "a v3 model",
           "tags": {
-            "frtests": "testvalue"
+            "testkey": "testvalue"
           }
         },
         "tags": {
-          "frtests": "testvalue"
+          "testkey": "testvalue"
         }
       }
     }
