@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Declare method level span as INTERNAL by default  #24492
+
 ### Other Changes
 
 ## 1.24.0 (2022-05-06)
