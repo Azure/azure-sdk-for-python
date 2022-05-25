@@ -3,7 +3,7 @@
 ## 1.1.0b1 (Unreleased)
 
 ### Features Added
-* Conversation issue summarization task (Long-running operation)
+* Conversation summarization task (Long-running operation)
 * Conversation PII extraction task (Long-running operation)
 
 ### Breaking Changes

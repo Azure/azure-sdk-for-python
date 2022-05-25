@@ -8,20 +8,20 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
+from testcase import (
+    ConversationTest,
+    GlobalConversationAccountPreparer
+)
+from azure.ai.language.conversations import ConversationAnalysisClient
 
-from testcase import GlobalConversationAccountPreparer
-from asynctestcase import AsyncConversationTest
-from azure.ai.language.conversations.aio import ConversationAnalysisClient
-
-
-class ConversationalIssueSummarizationAsyncTests(AsyncConversationTest):
+class ConversationalSummarizationTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_conversational_issue_summarization(self, endpoint, key):
+    def test_conversational_summarization(self, endpoint, key):
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
-        async with client:
-            poller = await client.begin_conversation_analysis(
+        with client:
+            poller = client.begin_conversation_analysis(
                 task={
                     "displayName": "Analyze conversations from xxx",
                     "analysisInput": {
@@ -66,7 +66,7 @@ class ConversationalIssueSummarizationAsyncTests(AsyncConversationTest):
             )
         
             # assert - main object
-            result = await poller.result()
+            result = poller.result()
             assert not result is None
             assert result["status"] == "succeeded"
             
