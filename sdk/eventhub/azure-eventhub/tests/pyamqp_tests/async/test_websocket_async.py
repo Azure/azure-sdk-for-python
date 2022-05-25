@@ -6,7 +6,6 @@
 import pytest
 import asyncio
 import logging
-import pytest
 
 from azure.eventhub._pyamqp import authentication
 from azure.eventhub._pyamqp.aio import ReceiveClientAsync
