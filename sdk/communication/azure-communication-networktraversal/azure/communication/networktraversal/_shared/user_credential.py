@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from threading import Lock, Condition, Timer, TIMEOUT_MAX
+from threading import Lock, Condition, Timer, TIMEOUT_MAX, Event
 from datetime import timedelta
 from typing import Any
 import six
@@ -40,6 +40,7 @@ class CommunicationTokenCredential(object):
         self._timer = None
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
+        self._is_closed = Event()
 
     def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
@@ -86,6 +87,8 @@ class CommunicationTokenCredential(object):
         return self._token
 
     def _schedule_refresh(self):
+        if self._is_closed.is_set():
+            return
         if self._timer is not None:
             self._timer.cancel()
 
@@ -100,6 +103,7 @@ class CommunicationTokenCredential(object):
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
         if timespan <= TIMEOUT_MAX:
             self._timer = Timer(timespan, self._update_token_and_reschedule)
+            self._timer.daemon = True
             self._timer.start()
 
     def _wait_till_lock_owner_finishes_refreshing(self):
@@ -121,6 +125,8 @@ class CommunicationTokenCredential(object):
         return get_current_utc_as_int() < token.expires_on
 
     def __enter__(self):
+        if self._is_closed.is_set():
+            raise RuntimeError("An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
         if self._proactive_refresh:
             self._schedule_refresh()
         return self
@@ -132,3 +138,4 @@ class CommunicationTokenCredential(object):
         if self._timer is not None:
             self._timer.cancel()
         self._timer = None
+        self._is_closed.set()

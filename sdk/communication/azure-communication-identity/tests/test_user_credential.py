@@ -135,7 +135,6 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This test takes too long for pypy")
     def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_minutes = 10
         token_validity_minutes = 60
@@ -201,13 +200,34 @@ class TestCommunicationTokenCredential(TestCase):
         assert generated_token == access_token.token
 
     def test_exit_cancels_timer(self):
-        refresher = MagicMock(return_value=self.sample_token)
+        refreshed_token = create_access_token(
+            generate_token_with_custom_expiry(30 * 60))
+        refresher = MagicMock(return_value=refreshed_token)
         credential = CommunicationTokenCredential(
              self.expired_token,token_refresher=refresher, proactive_refresh=True)
         with credential:
             assert credential._timer is not None
         assert credential._timer is None
+        
+        credential = CommunicationTokenCredential(
+             self.expired_token,token_refresher=refresher, proactive_refresh=True)
+        credential.close()
+        assert credential._timer is None
+     
+    def test_exit_enter_scenario_throws_exception(self):
+        refreshed_token = create_access_token(
+            generate_token_with_custom_expiry(30 * 60))
+        refresher = MagicMock(return_value=refreshed_token)
+        credential = CommunicationTokenCredential(
+             self.expired_token,token_refresher=refresher, proactive_refresh=True)
         with credential:
             assert credential._timer is not None
-            credential.close()
-            assert credential._timer is None
+        assert credential._timer is None
+
+        with pytest.raises(RuntimeError) as err:
+            with credential:
+                assert credential._timer is not None
+        assert str(err.value) == "An instance of CommunicationTokenCredential cannot be reused once it has been closed."
+        
+
+    
