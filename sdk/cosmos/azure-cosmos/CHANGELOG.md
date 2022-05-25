@@ -1,6 +1,18 @@
 ## Release History
 
-### 4.3.0b5 (Unreleased)
+### 4.3.1 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.3.0 (2022-05-23)
+#### Features Added
+- GA release of Async I/O APIs, including all changes from 4.3.0b1 to 4.3.0b4.
 
 #### Breaking Changes
 - Method signatures have been updated to use keyword arguments instead of positional arguments for most method options in the async client.

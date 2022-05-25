@@ -1,6 +1,16 @@
 # Release History
 
-## 5.2.0b4 (Unreleased)
+## 5.2.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.2.0b4 (2022-05-18)
 
 Note that this is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
 In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`. Support for `v3.2-preview.2` is removed, however, all functionalities are included in the latest version.

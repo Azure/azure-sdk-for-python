@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
 
 ### Other Changes
 
