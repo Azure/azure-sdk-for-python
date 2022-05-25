@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-ai-language-understanding
+  - azure-language-service"
 urlFragment: conversationslanguageunderstanding-samples
 ---
 
