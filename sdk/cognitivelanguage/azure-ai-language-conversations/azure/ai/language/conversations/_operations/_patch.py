@@ -32,57 +32,37 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperat
             Example:
                 .. code-block:: python
 
-                    kind = 'Conversation'
-
                     # JSON input template you can fill out and use as your body input.
                     task = {
-                        "kind": "Conversation",
+                        "kind": "str", # Required. Enumeration of supported Conversation tasks. Known values are: "Conversation",
                         "analysisInput": {
                             "conversationItem": {
-                                "id": "",
-                                "participantId": "",
-                                "modality": "text",
-                                "language": "",
-                                "text": ""
+                                "id": "str", # Required. The ID of a conversation item.,
+                                "participantId": "str", # Required. The participant ID of a conversation item.,
+                                "role": "str", # Optional. The role of the participant. Known values are: "agent", "cutomer", and "generic".
+                                "modality": "string", # Required, Enumeration of supported conversational modalities. Known values are: "text", and "transcript".,
+                                "language": "str", # Optional. The override language of a conversation item in BCP 47 language representation.,
+                                "text": "str", # Required. The text input. 
                             }
                         },
                         "parameters": {
-                            "projectName": "",
-                            "deploymentName": "",
+                            "projectName": "str", # Required. The name of the project to use.,
+                            "deploymentName": "str", # Required. The name of the deployment to use.,
+                            "verbose": "bool", # Optional. If true, the service will return more detailed information in the response.,
+                            "isLoggingEnabled": "bool", # Optional. If true, the service will keep the query for further review.,
+                            "directTarget": "str", # Optional. The name of a target project to forward the request to.
                         }
                     }
 
                     # response body for status code(s): 200
                     response.json() == {
-                        "kind": "ConversationResult",
+                        "kind": "str", # Required. Enumeration of supported conversational task results. Known values are: "ConversationResult",
                         "result": {
-                        "query": "",
+                            "query": "str", # Required. The conversation utterance given by the caller., 
+                            "detectedLanguage": "str", # Optional. The system detected language for the query in BCP 47 language representation.,
                             "prediction": {
-                                "topIntent": "",
-                                "projectKind": "Conversation",
-                                "intents": [
-                                    {
-                                        "category": "",
-                                        "confidenceScore": 1
-                                    },
-                                    {
-                                        "category": "",
-                                        "confidenceScore": 0
-                                    },
-                                    {
-                                        "category": "",
-                                        "confidenceScore": 0
-                                    }
-                                ],
-                                "entities": [
-                                    {
-                                        "category": "",
-                                        "text": "",
-                                        "offset": 29,
-                                        "length": 12,
-                                        "confidenceScore": 1
-                                    }
-                                ]
+                                "topIntent": "str", # Required. The intent with the highest score.,
+                                "projectKind": "str", # Required. The type of the project. Known values are: "Conversation", and "Orchestration",
                             }
                         }
                     }
