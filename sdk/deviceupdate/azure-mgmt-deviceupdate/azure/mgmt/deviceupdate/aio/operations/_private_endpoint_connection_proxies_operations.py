@@ -21,12 +21,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._instances_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_head_request, build_list_by_account_request, build_update_request
+from ...operations._private_endpoint_connection_proxies_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_account_request, build_update_private_endpoint_properties_request, build_validate_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class InstancesOperations:
-    """InstancesOperations async operations.
+class PrivateEndpointConnectionProxiesOperations:
+    """PrivateEndpointConnectionProxiesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -53,21 +53,24 @@ class InstancesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.InstanceList"]:
-        """Returns instances for the given account name.
+    ) -> AsyncIterable["_models.PrivateEndpointConnectionProxyListResult"]:
+        """(INTERNAL - DO NOT USE) List all private endpoint connection proxies in a device update
+        account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either InstanceList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~device_update.models.InstanceList]
+        :return: An iterator like instance of either PrivateEndpointConnectionProxyListResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~device_update.models.PrivateEndpointConnectionProxyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InstanceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -76,8 +79,8 @@ class InstancesOperations:
             if not next_link:
                 
                 request = build_list_by_account_request(
-                    resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     account_name=account_name,
                     api_version=api_version,
                     template_url=self.list_by_account.metadata['url'],
@@ -88,8 +91,8 @@ class InstancesOperations:
             else:
                 
                 request = build_list_by_account_request(
-                    resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     account_name=account_name,
                     api_version=api_version,
                     template_url=next_link,
@@ -100,11 +103,11 @@ class InstancesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("InstanceList", pipeline_response)
+            deserialized = self._deserialize("PrivateEndpointConnectionProxyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -127,90 +130,32 @@ class InstancesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_account.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances"}  # type: ignore
+    list_by_account.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
+    async def validate(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         account_name: str,
-        instance_name: str,
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_connection_proxy: "_models.PrivateEndpointConnectionProxy",
         **kwargs: Any
-    ) -> "_models.Instance":
-        """Returns instance details for the given instance and account name.
+    ) -> None:
+        """(INTERNAL - DO NOT USE) Validates a private endpoint connection proxy object.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
-        :param instance_name: Instance name.
-        :type instance_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
+         connection proxy.
+        :type private_endpoint_connection_proxy: ~device_update.models.PrivateEndpointConnectionProxy
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Instance, or the result of cls(response)
-        :rtype: ~device_update.models.Instance
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Instance"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
-
-        
-        request = build_get_request(
-            resource_group_name=resource_group_name,
-            subscription_id=self._config.subscription_id,
-            account_name=account_name,
-            instance_name=instance_name,
-            api_version=api_version,
-            template_url=self.get.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('Instance', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def head(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        instance_name: str,
-        **kwargs: Any
-    ) -> bool:
-        """Checks whether instance exists.
-
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param account_name: Account name.
-        :type account_name: str
-        :param instance_name: Instance name.
-        :type instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: bool, or the result of cls(response)
-        :rtype: bool
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -220,15 +165,19 @@ class InstancesOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        
-        request = build_head_request(
-            resource_group_name=resource_group_name,
+        _json = self._serialize.body(private_endpoint_connection_proxy, 'PrivateEndpointConnectionProxy')
+
+        request = build_validate_request(
             subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             account_name=account_name,
-            instance_name=instance_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
             api_version=api_version,
-            template_url=self.head.metadata['url'],
+            content_type=content_type,
+            json=_json,
+            template_url=self.validate.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -247,20 +196,38 @@ class InstancesOperations:
 
         if cls:
             return cls(pipeline_response, None, {})
-        return 200 <= response.status_code <= 299
 
-    head.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
+    validate.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}/validate"}  # type: ignore
 
 
-    async def _create_initial(
+    @distributed_trace_async
+    async def update_private_endpoint_properties(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         account_name: str,
-        instance_name: str,
-        instance: "_models.Instance",
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_update: "_models.PrivateEndpointUpdate",
         **kwargs: Any
-    ) -> "_models.Instance":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Instance"]
+    ) -> None:
+        """(INTERNAL - DO NOT USE) Updates a private endpoint inside the private endpoint connection proxy
+        object.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param account_name: Account name.
+        :type account_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :param private_endpoint_update: The parameters for updating a private endpoint connection
+         proxy.
+        :type private_endpoint_update: ~device_update.models.PrivateEndpointUpdate
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,17 +236,132 @@ class InstancesOperations:
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(instance, 'Instance')
+        _json = self._serialize.body(private_endpoint_update, 'PrivateEndpointUpdate')
 
-        request = build_create_request_initial(
-            resource_group_name=resource_group_name,
+        request = build_update_private_endpoint_properties_request(
             subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             account_name=account_name,
-            instance_name=instance_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_initial.metadata['url'],
+            template_url=self.update_private_endpoint_properties.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update_private_endpoint_properties.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}/updatePrivateEndpointProperties"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def get(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        private_endpoint_connection_proxy_id: str,
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnectionProxy":
+        """(INTERNAL - DO NOT USE) Get the specified private endpoint connection proxy associated with the
+        device update account.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param account_name: Account name.
+        :type account_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PrivateEndpointConnectionProxy, or the result of cls(response)
+        :rtype: ~device_update.models.PrivateEndpointConnectionProxy
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxy"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+
+        
+        request = build_get_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
+            api_version=api_version,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PrivateEndpointConnectionProxy', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
+
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_connection_proxy: "_models.PrivateEndpointConnectionProxy",
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnectionProxy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxy"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(private_endpoint_connection_proxy, 'PrivateEndpointConnectionProxy')
+
+        request = build_create_or_update_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._create_or_update_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -295,35 +377,38 @@ class InstancesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Instance', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionProxy', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         account_name: str,
-        instance_name: str,
-        instance: "_models.Instance",
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_connection_proxy: "_models.PrivateEndpointConnectionProxy",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.Instance"]:
-        """Creates or updates instance.
+    ) -> AsyncLROPoller["_models.PrivateEndpointConnectionProxy"]:
+        """(INTERNAL - DO NOT USE) Creates or updates the specified private endpoint connection proxy
+        resource associated with the device update account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
-        :param instance_name: Instance name.
-        :type instance_name: str
-        :param instance: Instance details.
-        :type instance: ~device_update.models.Instance
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
+         connection proxy.
+        :type private_endpoint_connection_proxy: ~device_update.models.PrivateEndpointConnectionProxy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -332,26 +417,27 @@ class InstancesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Instance or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~device_update.models.Instance]
+        :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionProxy or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~device_update.models.PrivateEndpointConnectionProxy]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Instance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._create_initial(
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                instance_name=instance_name,
-                instance=instance,
+                private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
+                private_endpoint_connection_proxy=private_endpoint_connection_proxy,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -361,7 +447,7 @@ class InstancesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('Instance', pipeline_response)
+            deserialized = self._deserialize('PrivateEndpointConnectionProxy', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -379,13 +465,13 @@ class InstancesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         account_name: str,
-        instance_name: str,
+        private_endpoint_connection_proxy_id: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -398,10 +484,10 @@ class InstancesOperations:
 
         
         request = build_delete_request_initial(
-            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             account_name=account_name,
-            instance_name=instance_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -422,7 +508,7 @@ class InstancesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -430,17 +516,19 @@ class InstancesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        instance_name: str,
+        private_endpoint_connection_proxy_id: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes instance.
+        """(INTERNAL - DO NOT USE) Deletes the specified private endpoint connection proxy associated with
+        the device update account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
-        :param instance_name: Instance name.
-        :type instance_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -465,7 +553,7 @@ class InstancesOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                instance_name=instance_name,
+                private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -489,74 +577,4 @@ class InstancesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
-
-    @distributed_trace_async
-    async def update(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        instance_name: str,
-        tag_update_payload: "_models.TagUpdate",
-        **kwargs: Any
-    ) -> "_models.Instance":
-        """Updates instance's tags.
-
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param account_name: Account name.
-        :type account_name: str
-        :param instance_name: Instance name.
-        :type instance_name: str
-        :param tag_update_payload: Updated tags.
-        :type tag_update_payload: ~device_update.models.TagUpdate
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Instance, or the result of cls(response)
-        :rtype: ~device_update.models.Instance
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Instance"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(tag_update_payload, 'TagUpdate')
-
-        request = build_update_request(
-            resource_group_name=resource_group_name,
-            subscription_id=self._config.subscription_id,
-            account_name=account_name,
-            instance_name=instance_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.update.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('Instance', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/instances/{instanceName}"}  # type: ignore
-
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
