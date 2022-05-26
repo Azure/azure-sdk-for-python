@@ -170,7 +170,8 @@ class BufferedProducer:
                     self._cur_buffered_len >= self._max_buffer_len and self._running
                 ):
                     # in the worker, not raising error for flush, users can not handle this
-                    await self.flush(raise_error=False)
+                    async with self._lock:
+                        await self.flush(raise_error=False)
             await asyncio.sleep(min(self._max_wait_time, 5))
 
     @property

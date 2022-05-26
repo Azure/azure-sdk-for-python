@@ -191,7 +191,6 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
         self._executor = kwargs.get("buffer_concurrency")
-        self._max_worker = None
 
         if self._buffered_mode:
             setattr(self, "send_batch", self._buffered_send_batch)
@@ -236,9 +235,8 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
-                executor=self._executor,
-                max_worker=self._max_worker,
-            )
+                executor=self._executor
+                )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
     def _batch_preparer(self, event_data_batch, **kwargs):

@@ -31,8 +31,7 @@ class BufferedProducerDispatcher:
             *,
             max_buffer_length: int = 1500,
             max_wait_time: float = 1,
-            executor: Optional[Union[ThreadPoolExecutor, int]] = None,
-            max_worker: Optional[int] = None
+            executor: Optional[Union[ThreadPoolExecutor, int]] = None
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
@@ -48,11 +47,11 @@ class BufferedProducerDispatcher:
         self._existing_executor = False
 
         if not executor:
-            self._executor = ThreadPoolExecutor(max_worker)
+            self._executor = ThreadPoolExecutor()
         elif isinstance(executor, ThreadPoolExecutor):
+            self._existing_executor = True
             self._executor = executor
         elif isinstance(executor, int):
-            self._existing_executor = True
             self._executor = ThreadPoolExecutor(executor)
 
     def _get_partition_id(self, partition_id, partition_key):
