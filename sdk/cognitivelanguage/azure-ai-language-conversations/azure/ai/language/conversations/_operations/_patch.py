@@ -13,7 +13,7 @@ JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 
 from azure.core.tracing.decorator import distributed_trace
 
-from _operations import ConversationAnalysisClientOperationsMixin as ConversationAnalysisClientOperationsMixinGenerated
+from ._operations import ConversationAnalysisClientOperationsMixin as ConversationAnalysisClientOperationsMixinGenerated
 
 class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperationsMixinGenerated):
         @distributed_trace
