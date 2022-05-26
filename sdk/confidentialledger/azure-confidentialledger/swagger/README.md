@@ -23,10 +23,9 @@ package-version: 1.0.0
 These settings apply only when `--tag=identity-service` is specified on the command line.
 ```yaml $(tag) == 'identity-service'
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/confidentialledger/data-plane/Microsoft.ConfidentialLedger/stable/2022-05-13/identityservice.json
-output-folder: ../azure/confidentialledger/identity_service
-namespace: azure.confidentialledger.identity_service
-package-name: azure-confidentialledger
-module-name: identityservice
+output-folder: ../azure/acl_identity_service
+namespace: azure.acl_identity_service
+package-name: azure-acl-identity-service
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
