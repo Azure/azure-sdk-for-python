@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -33,11 +34,11 @@ class FileSystemOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -72,34 +73,41 @@ class FileSystemOperations:
          None.
         :type properties: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_create_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
+            resource=self._config.resource,
+            version=self._config.version,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -128,7 +136,7 @@ class FileSystemOperations:
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         properties: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Set FileSystem Properties.
@@ -158,15 +166,19 @@ class FileSystemOperations:
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -176,23 +188,26 @@ class FileSystemOperations:
 
         request = build_set_properties_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
+            resource=self._config.resource,
+            version=self._config.version,
             template_url=self.set_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -235,33 +250,40 @@ class FileSystemOperations:
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_get_properties_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
+            resource=self._config.resource,
+            version=self._config.version,
             template_url=self.get_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -290,7 +312,7 @@ class FileSystemOperations:
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete FileSystem.
@@ -317,15 +339,19 @@ class FileSystemOperations:
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -335,22 +361,25 @@ class FileSystemOperations:
 
         request = build_delete_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
+            resource=self._config.resource,
+            version=self._config.version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -381,12 +410,12 @@ class FileSystemOperations:
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
         **kwargs: Any
-    ) -> "_models.PathList":
+    ) -> _models.PathList:
         """List Paths.
 
         List FileSystem paths and their properties.
 
-        :param recursive: Required.
+        :param recursive: Required. Required.
         :type recursive: bool
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -415,24 +444,26 @@ class FileSystemOperations:
          headers will be transformed from Azure Active Directory Object IDs to User Principal Names.  If
          "false", the values will be returned as Azure Active Directory Object IDs. The default value is
          false. Note that group and application Object IDs are not translated because they do not have
-         unique friendly names.
+         unique friendly names. Default value is None.
         :type upn: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PathList, or the result of cls(response)
+        :return: PathList or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.PathList
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PathList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PathList]
 
         
         request = build_list_paths_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             recursive=recursive,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
@@ -440,16 +471,21 @@ class FileSystemOperations:
             path=path,
             max_results=max_results,
             upn=upn,
+            resource=self._config.resource,
+            version=self._config.version,
             template_url=self.list_paths.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -483,11 +519,11 @@ class FileSystemOperations:
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
         include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
-        showonly: Optional[str] = "deleted",
+        showonly: str = "deleted",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.ListBlobsHierarchySegmentResponse":
+    ) -> _models.ListBlobsHierarchySegmentResponse:
         """The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters results to filesystems within the specified prefix. Default value is
@@ -513,7 +549,7 @@ class FileSystemOperations:
          response. Default value is None.
         :type include: list[str or ~azure.storage.filedatalake.models.ListBlobsIncludeItem]
         :param showonly: Include this parameter to specify one or more datasets to include in the
-         response. Possible values are "deleted" or None. Default value is "deleted".
+         response. Known values are "deleted" and None. Default value is "deleted".
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -531,25 +567,25 @@ class FileSystemOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListBlobsHierarchySegmentResponse, or the result of cls(response)
+        :return: ListBlobsHierarchySegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.ListBlobsHierarchySegmentResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListBlobsHierarchySegmentResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "container")  # type: str
-        comp = kwargs.pop('comp', "list")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListBlobsHierarchySegmentResponse]
 
         
         request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             prefix=prefix,
             delimiter=delimiter,
             marker=marker,
@@ -558,16 +594,22 @@ class FileSystemOperations:
             showonly=showonly,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.list_blob_hierarchy_segment.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

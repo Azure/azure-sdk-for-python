@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ListBlobsIncludeItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ListBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ListBlobsIncludeItem.
+    """
 
     COPY = "copy"
     DELETED = "deleted"
@@ -21,43 +22,57 @@ class ListBlobsIncludeItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VERSIONS = "versions"
     TAGS = "tags"
 
-class PathExpiryOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathExpiryOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathExpiryOptions.
+    """
 
     NEVER_EXPIRE = "NeverExpire"
     RELATIVE_TO_CREATION = "RelativeToCreation"
     RELATIVE_TO_NOW = "RelativeToNow"
     ABSOLUTE = "Absolute"
 
-class PathGetPropertiesAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathGetPropertiesAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathGetPropertiesAction.
+    """
 
     GET_ACCESS_CONTROL = "getAccessControl"
     GET_STATUS = "getStatus"
 
-class PathLeaseAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathLeaseAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathLeaseAction.
+    """
 
     ACQUIRE = "acquire"
-    BREAK_ENUM = "break"
+    BREAK = "break"
     CHANGE = "change"
     RENEW = "renew"
     RELEASE = "release"
 
-class PathRenameMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathRenameMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathRenameMode.
+    """
 
     LEGACY = "legacy"
     POSIX = "posix"
 
-class PathResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathResourceType.
+    """
 
     DIRECTORY = "directory"
     FILE = "file"
 
-class PathSetAccessControlRecursiveMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathSetAccessControlRecursiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathSetAccessControlRecursiveMode.
+    """
 
     SET = "set"
     MODIFY = "modify"
     REMOVE = "remove"
 
-class PathUpdateAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PathUpdateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PathUpdateAction.
+    """
 
     APPEND = "append"
     FLUSH = "flush"

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -24,8 +24,12 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     attributes.
 
     :param url: The URL of the service account, container, or blob that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
+    :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
+     the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
+     -1 for infinite lease. Default value is None.
+    :type x_ms_lease_duration: int
     :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
@@ -37,6 +41,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     def __init__(
         self,
         url,  # type: str
+        x_ms_lease_duration=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -48,6 +53,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
             raise ValueError("Parameter 'url' must not be None.")
 
         self.url = url
+        self.x_ms_lease_duration = x_ms_lease_duration
         self.resource = resource
         self.version = version
         kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
