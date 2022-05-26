@@ -235,8 +235,8 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        kwargs["interval"] = kwargs.get("interval", 0.5)
-        kwargs["max_tries"] = kwargs.get("max_tries", 3)
+        interval = kwargs.get("interval", 0.5)
+        max_tries = kwargs.get("max_tries", 3)
 
         post_result = await self.post_ledger_entry(
             entry, collection_id=collection_id, **kwargs
@@ -244,6 +244,8 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         transaction_id = post_result["transactionId"]
 
         try:
+            kwargs["interval"] = interval
+            kwargs["max_tries"] = max_tries
             await self.wait_until_durable(transaction_id, **kwargs)
         except TimeoutError as e:
             raise TimeoutError(

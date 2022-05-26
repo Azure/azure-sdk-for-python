@@ -29,4 +29,4 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
             cert_recv = network_identity.ledger_tls_certificate
             self.assertEqual(cert_recv, NETWORK_CERTIFICATE)
         finally:
-            await client.identity_service.close()
+            await client.close()
