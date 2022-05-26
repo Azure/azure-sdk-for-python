@@ -235,7 +235,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
                 {} if modulus == 0 else {"sub_ledger_id": "{0}".format(i % modulus)}
             )
             append_result = await client.confidential_ledger.post_ledger_entry(
-                entry_contents=message, api_version="0.1-preview", **kwargs
+                {"contents": message}, api_version="0.1-preview", **kwargs
             )
 
             messages[i % modulus].append(
