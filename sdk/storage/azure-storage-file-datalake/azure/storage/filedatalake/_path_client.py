@@ -234,7 +234,8 @@ class PathClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Dict[str, Union[str, datetime]]
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._create_path_options(
             resource_type,
@@ -289,7 +290,8 @@ class PathClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: None
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._delete_path_options(**kwargs)
         try:
