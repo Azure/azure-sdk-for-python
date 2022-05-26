@@ -10,7 +10,7 @@ from .constants import NETWORK_CERTIFICATE, USER_CERTIFICATE
 ConfidentialLedgerPreparer = functools.partial(
     PowerShellPreparer,
     "confidentialledger",
-    confidentialledger_endpoint="fake.confidential-ledger.azure.com",
+    confidentialledger_endpoint="https://fake.confidential-ledger.azure.com",
     confidentialledger_group="fakegroup",
 )
 
