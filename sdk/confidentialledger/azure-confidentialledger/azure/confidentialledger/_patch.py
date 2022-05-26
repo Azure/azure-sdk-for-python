@@ -70,7 +70,7 @@ class ConfidentialLedgerClient(GeneratedClient):
         # PipelineCLient.
         if isinstance(credential, ConfidentialLedgerCertificateCredential):
             kwargs["connection_cert"] = credential.certificate_path
-        
+
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.

@@ -17,7 +17,9 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
         )
 
         ledger_id = confidentialledger_endpoint.replace("https://", "").split(".")[0]
-        network_identity = client.identity_service.get_ledger_identity(ledger_id=ledger_id)
+        network_identity = client.identity_service.get_ledger_identity(
+            ledger_id=ledger_id
+        )
 
         self.assertEqual(network_identity.ledger_id, ledger_id)
 
