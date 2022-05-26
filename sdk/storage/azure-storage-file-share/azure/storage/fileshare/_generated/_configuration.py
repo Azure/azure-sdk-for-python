@@ -24,7 +24,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     attributes.
 
     :param url: The URL of the service account, share, directory or file that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2021-06-08". Note that overriding this default value may result in unsupported behavior.

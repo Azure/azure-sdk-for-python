@@ -18,7 +18,7 @@ from .. import models
 from ._configuration import AzureFileStorageConfiguration
 from .operations import DirectoryOperations, FileOperations, ServiceOperations, ShareOperations
 
-class AzureFileStorage:
+class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     """AzureFileStorage.
 
     :ivar service: ServiceOperations operations
@@ -30,9 +30,9 @@ class AzureFileStorage:
     :ivar file: FileOperations operations
     :vartype file: azure.storage.fileshare.aio.operations.FileOperations
     :param url: The URL of the service account, share, directory or file that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
-    :param base_url: Service URL. Default value is "".
+    :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
@@ -56,10 +56,18 @@ class AzureFileStorage:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.share = ShareOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.directory = DirectoryOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.share = ShareOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.directory = DirectoryOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.file = FileOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

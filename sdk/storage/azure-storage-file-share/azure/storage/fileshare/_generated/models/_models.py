@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
@@ -22,9 +22,9 @@ class AccessPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
-        'permission': {'key': 'Permission', 'type': 'str'},
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
     }
 
     def __init__(
@@ -51,9 +51,9 @@ class ClearRange(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar start: Required.
-    :vartype start: long
+    :vartype start: int
     :ivar end: Required.
-    :vartype end: long
+    :vartype end: int
     """
 
     _validation = {
@@ -62,8 +62,8 @@ class ClearRange(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
-        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+        "start": {"key": "Start", "type": "int", 'xml': {'name': 'Start'}},
+        "end": {"key": "End", "type": "int", 'xml': {'name': 'End'}},
     }
     _xml_map = {
         'name': 'ClearRange'
@@ -75,9 +75,9 @@ class ClearRange(msrest.serialization.Model):
     ):
         """
         :keyword start: Required.
-        :paramtype start: long
+        :paramtype start: int
         :keyword end: Required.
-        :paramtype end: long
+        :paramtype end: int
         """
         super(ClearRange, self).__init__(**kwargs)
         self.start = kwargs['start']
@@ -104,8 +104,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
     :vartype file_change_time: str
     :ivar file_permission_copy_mode: Specifies the option to copy file security descriptor from
      source file or to set it using the value which is defined by the header value of
-     x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
-     "override".
+     x-ms-file-permission or x-ms-file-permission-key. Known values are: "source" and "override".
     :vartype file_permission_copy_mode: str or
      ~azure.storage.fileshare.models.PermissionCopyModeType
     :ivar ignore_read_only: Specifies the option to overwrite the target file if it already exists
@@ -118,13 +117,13 @@ class CopyFileSmbInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'file_attributes': {'key': 'fileAttributes', 'type': 'str'},
-        'file_creation_time': {'key': 'fileCreationTime', 'type': 'str'},
-        'file_last_write_time': {'key': 'fileLastWriteTime', 'type': 'str'},
-        'file_change_time': {'key': 'fileChangeTime', 'type': 'str'},
-        'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
-        'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
-        'set_archive_attribute': {'key': 'setArchiveAttribute', 'type': 'bool'},
+        "file_attributes": {"key": "fileAttributes", "type": "str"},
+        "file_creation_time": {"key": "fileCreationTime", "type": "str"},
+        "file_last_write_time": {"key": "fileLastWriteTime", "type": "str"},
+        "file_change_time": {"key": "fileChangeTime", "type": "str"},
+        "file_permission_copy_mode": {"key": "filePermissionCopyMode", "type": "str"},
+        "ignore_read_only": {"key": "ignoreReadOnly", "type": "bool"},
+        "set_archive_attribute": {"key": "setArchiveAttribute", "type": "bool"},
     }
 
     def __init__(
@@ -149,8 +148,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         :paramtype file_change_time: str
         :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
          source file or to set it using the value which is defined by the header value of
-         x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
-         "override".
+         x-ms-file-permission or x-ms-file-permission-key. Known values are: "source" and "override".
         :paramtype file_permission_copy_mode: str or
          ~azure.storage.fileshare.models.PermissionCopyModeType
         :keyword ignore_read_only: Specifies the option to overwrite the target file if it already
@@ -176,23 +174,23 @@ class CorsRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar allowed_origins: Required. The origin domains that are permitted to make a request
-     against the storage service via CORS. The origin domain is the domain from which the request
-     originates. Note that the origin must be an exact case-sensitive match with the origin that the
-     user age sends to the service. You can also use the wildcard character '*' to allow all origin
-     domains to make requests via CORS.
+    :ivar allowed_origins: The origin domains that are permitted to make a request against the
+     storage service via CORS. The origin domain is the domain from which the request originates.
+     Note that the origin must be an exact case-sensitive match with the origin that the user age
+     sends to the service. You can also use the wildcard character '*' to allow all origin domains
+     to make requests via CORS. Required.
     :vartype allowed_origins: str
-    :ivar allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
-     use for a CORS request. (comma separated).
+    :ivar allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
+     CORS request. (comma separated). Required.
     :vartype allowed_methods: str
-    :ivar allowed_headers: Required. The request headers that the origin domain may specify on the
-     CORS request.
+    :ivar allowed_headers: The request headers that the origin domain may specify on the CORS
+     request. Required.
     :vartype allowed_headers: str
-    :ivar exposed_headers: Required. The response headers that may be sent in the response to the
-     CORS request and exposed by the browser to the request issuer.
+    :ivar exposed_headers: The response headers that may be sent in the response to the CORS
+     request and exposed by the browser to the request issuer. Required.
     :vartype exposed_headers: str
-    :ivar max_age_in_seconds: Required. The maximum amount time that a browser should cache the
-     preflight OPTIONS request.
+    :ivar max_age_in_seconds: The maximum amount time that a browser should cache the preflight
+     OPTIONS request. Required.
     :vartype max_age_in_seconds: int
     """
 
@@ -205,11 +203,11 @@ class CorsRule(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
     }
 
     def __init__(
@@ -217,23 +215,23 @@ class CorsRule(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword allowed_origins: Required. The origin domains that are permitted to make a request
-         against the storage service via CORS. The origin domain is the domain from which the request
-         originates. Note that the origin must be an exact case-sensitive match with the origin that the
-         user age sends to the service. You can also use the wildcard character '*' to allow all origin
-         domains to make requests via CORS.
+        :keyword allowed_origins: The origin domains that are permitted to make a request against the
+         storage service via CORS. The origin domain is the domain from which the request originates.
+         Note that the origin must be an exact case-sensitive match with the origin that the user age
+         sends to the service. You can also use the wildcard character '*' to allow all origin domains
+         to make requests via CORS. Required.
         :paramtype allowed_origins: str
-        :keyword allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
-         use for a CORS request. (comma separated).
+        :keyword allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
+         CORS request. (comma separated). Required.
         :paramtype allowed_methods: str
-        :keyword allowed_headers: Required. The request headers that the origin domain may specify on
-         the CORS request.
+        :keyword allowed_headers: The request headers that the origin domain may specify on the CORS
+         request. Required.
         :paramtype allowed_headers: str
-        :keyword exposed_headers: Required. The response headers that may be sent in the response to
-         the CORS request and exposed by the browser to the request issuer.
+        :keyword exposed_headers: The response headers that may be sent in the response to the CORS
+         request and exposed by the browser to the request issuer. Required.
         :paramtype exposed_headers: str
-        :keyword max_age_in_seconds: Required. The maximum amount time that a browser should cache the
-         preflight OPTIONS request.
+        :keyword max_age_in_seconds: The maximum amount time that a browser should cache the preflight
+         OPTIONS request. Required.
         :paramtype max_age_in_seconds: int
         """
         super(CorsRule, self).__init__(**kwargs)
@@ -257,7 +255,7 @@ class DestinationLeaseAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'destination_lease_id': {'key': 'destinationLeaseId', 'type': 'str'},
+        "destination_lease_id": {"key": "destinationLeaseId", "type": "str"},
     }
 
     def __init__(
@@ -299,11 +297,11 @@ class DirectoryItem(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'file_id': {'key': 'FileId', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'FileProperty'},
-        'attributes': {'key': 'Attributes', 'type': 'str'},
-        'permission_key': {'key': 'PermissionKey', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "file_id": {"key": "FileId", "type": "str"},
+        "properties": {"key": "Properties", "type": "FileProperty"},
+        "attributes": {"key": "Attributes", "type": "str"},
+        "permission_key": {"key": "PermissionKey", "type": "str"},
     }
     _xml_map = {
         'name': 'Directory'
@@ -347,18 +345,18 @@ class FileHTTPHeaders(msrest.serialization.Model):
      does not use or modify it.
     :vartype file_cache_control: str
     :ivar file_content_md5: Sets the file's MD5 hash.
-    :vartype file_content_md5: bytearray
+    :vartype file_content_md5: bytes
     :ivar file_content_disposition: Sets the file's Content-Disposition header.
     :vartype file_content_disposition: str
     """
 
     _attribute_map = {
-        'file_content_type': {'key': 'fileContentType', 'type': 'str'},
-        'file_content_encoding': {'key': 'fileContentEncoding', 'type': 'str'},
-        'file_content_language': {'key': 'fileContentLanguage', 'type': 'str'},
-        'file_cache_control': {'key': 'fileCacheControl', 'type': 'str'},
-        'file_content_md5': {'key': 'fileContentMD5', 'type': 'bytearray'},
-        'file_content_disposition': {'key': 'fileContentDisposition', 'type': 'str'},
+        "file_content_type": {"key": "fileContentType", "type": "str"},
+        "file_content_encoding": {"key": "fileContentEncoding", "type": "str"},
+        "file_content_language": {"key": "fileContentLanguage", "type": "str"},
+        "file_cache_control": {"key": "fileCacheControl", "type": "str"},
+        "file_content_md5": {"key": "fileContentMD5", "type": "bytearray"},
+        "file_content_disposition": {"key": "fileContentDisposition", "type": "str"},
     }
 
     def __init__(
@@ -378,7 +376,7 @@ class FileHTTPHeaders(msrest.serialization.Model):
          but does not use or modify it.
         :paramtype file_cache_control: str
         :keyword file_content_md5: Sets the file's MD5 hash.
-        :paramtype file_content_md5: bytearray
+        :paramtype file_content_md5: bytes
         :keyword file_content_disposition: Sets the file's Content-Disposition header.
         :paramtype file_content_disposition: str
         """
@@ -400,7 +398,7 @@ class FileItem(msrest.serialization.Model):
     :vartype name: str
     :ivar file_id:
     :vartype file_id: str
-    :ivar properties: Required. File properties.
+    :ivar properties: File properties. Required.
     :vartype properties: ~azure.storage.fileshare.models.FileProperty
     :ivar attributes:
     :vartype attributes: str
@@ -414,11 +412,11 @@ class FileItem(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'file_id': {'key': 'FileId', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'FileProperty'},
-        'attributes': {'key': 'Attributes', 'type': 'str'},
-        'permission_key': {'key': 'PermissionKey', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "file_id": {"key": "FileId", "type": "str"},
+        "properties": {"key": "Properties", "type": "FileProperty"},
+        "attributes": {"key": "Attributes", "type": "str"},
+        "permission_key": {"key": "PermissionKey", "type": "str"},
     }
     _xml_map = {
         'name': 'File'
@@ -433,7 +431,7 @@ class FileItem(msrest.serialization.Model):
         :paramtype name: str
         :keyword file_id:
         :paramtype file_id: str
-        :keyword properties: Required. File properties.
+        :keyword properties: File properties. Required.
         :paramtype properties: ~azure.storage.fileshare.models.FileProperty
         :keyword attributes:
         :paramtype attributes: str
@@ -453,11 +451,11 @@ class FileProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar content_length: Required. Content length of the file. This value may not be up-to-date
-     since an SMB client may have modified the file locally. The value of Content-Length may not
-     reflect that fact until the handle is closed or the op-lock is broken. To retrieve current
-     property values, call Get File Properties.
-    :vartype content_length: long
+    :ivar content_length: Content length of the file. This value may not be up-to-date since an SMB
+     client may have modified the file locally. The value of Content-Length may not reflect that
+     fact until the handle is closed or the op-lock is broken. To retrieve current property values,
+     call Get File Properties. Required.
+    :vartype content_length: int
     :ivar creation_time:
     :vartype creation_time: ~datetime.datetime
     :ivar last_access_time:
@@ -477,13 +475,13 @@ class FileProperty(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'content_length': {'key': 'Content-Length', 'type': 'long'},
-        'creation_time': {'key': 'CreationTime', 'type': 'iso-8601'},
-        'last_access_time': {'key': 'LastAccessTime', 'type': 'iso-8601'},
-        'last_write_time': {'key': 'LastWriteTime', 'type': 'iso-8601'},
-        'change_time': {'key': 'ChangeTime', 'type': 'iso-8601'},
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
+        "content_length": {"key": "Content-Length", "type": "int"},
+        "creation_time": {"key": "CreationTime", "type": "iso-8601"},
+        "last_access_time": {"key": "LastAccessTime", "type": "iso-8601"},
+        "last_write_time": {"key": "LastWriteTime", "type": "iso-8601"},
+        "change_time": {"key": "ChangeTime", "type": "iso-8601"},
+        "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
+        "etag": {"key": "Etag", "type": "str"},
     }
 
     def __init__(
@@ -491,11 +489,11 @@ class FileProperty(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword content_length: Required. Content length of the file. This value may not be up-to-date
-         since an SMB client may have modified the file locally. The value of Content-Length may not
-         reflect that fact until the handle is closed or the op-lock is broken. To retrieve current
-         property values, call Get File Properties.
-        :paramtype content_length: long
+        :keyword content_length: Content length of the file. This value may not be up-to-date since an
+         SMB client may have modified the file locally. The value of Content-Length may not reflect that
+         fact until the handle is closed or the op-lock is broken. To retrieve current property values,
+         call Get File Properties. Required.
+        :paramtype content_length: int
         :keyword creation_time:
         :paramtype creation_time: ~datetime.datetime
         :keyword last_access_time:
@@ -524,10 +522,10 @@ class FileRange(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start: Required. Start of the range.
-    :vartype start: long
-    :ivar end: Required. End of the range.
-    :vartype end: long
+    :ivar start: Start of the range. Required.
+    :vartype start: int
+    :ivar end: End of the range. Required.
+    :vartype end: int
     """
 
     _validation = {
@@ -536,8 +534,8 @@ class FileRange(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long'},
-        'end': {'key': 'End', 'type': 'long'},
+        "start": {"key": "Start", "type": "int"},
+        "end": {"key": "End", "type": "int"},
     }
     _xml_map = {
         'name': 'Range'
@@ -548,10 +546,10 @@ class FileRange(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start: Required. Start of the range.
-        :paramtype start: long
-        :keyword end: Required. End of the range.
-        :paramtype end: long
+        :keyword start: Start of the range. Required.
+        :paramtype start: int
+        :keyword end: End of the range. Required.
+        :paramtype end: int
         """
         super(FileRange, self).__init__(**kwargs)
         self.start = kwargs['start']
@@ -575,8 +573,8 @@ class FilesAndDirectoriesListSegment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'directory_items': {'key': 'DirectoryItems', 'type': '[DirectoryItem]'},
-        'file_items': {'key': 'FileItems', 'type': '[FileItem]'},
+        "directory_items": {"key": "DirectoryItems", "type": "[DirectoryItem]", 'xml': {'itemsName': 'Directory'}},
+        "file_items": {"key": "FileItems", "type": "[FileItem]", 'xml': {'itemsName': 'File'}},
     }
     _xml_map = {
         'name': 'Entries'
@@ -602,20 +600,20 @@ class HandleItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar handle_id: Required. XSMB service handle ID.
+    :ivar handle_id: XSMB service handle ID. Required.
     :vartype handle_id: str
-    :ivar path: Required. File or directory name including full path starting from share root.
+    :ivar path: File or directory name including full path starting from share root. Required.
     :vartype path: str
-    :ivar file_id: Required. FileId uniquely identifies the file or directory.
+    :ivar file_id: FileId uniquely identifies the file or directory. Required.
     :vartype file_id: str
     :ivar parent_id: ParentId uniquely identifies the parent directory of the object.
     :vartype parent_id: str
-    :ivar session_id: Required. SMB session ID in context of which the file handle was opened.
+    :ivar session_id: SMB session ID in context of which the file handle was opened. Required.
     :vartype session_id: str
-    :ivar client_ip: Required. Client IP that opened the handle.
+    :ivar client_ip: Client IP that opened the handle. Required.
     :vartype client_ip: str
-    :ivar open_time: Required. Time when the session that previously opened the handle has last
-     been reconnected. (UTC).
+    :ivar open_time: Time when the session that previously opened the handle has last been
+     reconnected. (UTC). Required.
     :vartype open_time: ~datetime.datetime
     :ivar last_reconnect_time: Time handle was last connected to (UTC).
     :vartype last_reconnect_time: ~datetime.datetime
@@ -631,14 +629,14 @@ class HandleItem(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'handle_id': {'key': 'HandleId', 'type': 'str'},
-        'path': {'key': 'Path', 'type': 'str'},
-        'file_id': {'key': 'FileId', 'type': 'str'},
-        'parent_id': {'key': 'ParentId', 'type': 'str'},
-        'session_id': {'key': 'SessionId', 'type': 'str'},
-        'client_ip': {'key': 'ClientIp', 'type': 'str'},
-        'open_time': {'key': 'OpenTime', 'type': 'rfc-1123'},
-        'last_reconnect_time': {'key': 'LastReconnectTime', 'type': 'rfc-1123'},
+        "handle_id": {"key": "HandleId", "type": "str"},
+        "path": {"key": "Path", "type": "str"},
+        "file_id": {"key": "FileId", "type": "str"},
+        "parent_id": {"key": "ParentId", "type": "str"},
+        "session_id": {"key": "SessionId", "type": "str"},
+        "client_ip": {"key": "ClientIp", "type": "str"},
+        "open_time": {"key": "OpenTime", "type": "rfc-1123"},
+        "last_reconnect_time": {"key": "LastReconnectTime", "type": "rfc-1123"},
     }
     _xml_map = {
         'name': 'Handle'
@@ -649,20 +647,20 @@ class HandleItem(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword handle_id: Required. XSMB service handle ID.
+        :keyword handle_id: XSMB service handle ID. Required.
         :paramtype handle_id: str
-        :keyword path: Required. File or directory name including full path starting from share root.
+        :keyword path: File or directory name including full path starting from share root. Required.
         :paramtype path: str
-        :keyword file_id: Required. FileId uniquely identifies the file or directory.
+        :keyword file_id: FileId uniquely identifies the file or directory. Required.
         :paramtype file_id: str
         :keyword parent_id: ParentId uniquely identifies the parent directory of the object.
         :paramtype parent_id: str
-        :keyword session_id: Required. SMB session ID in context of which the file handle was opened.
+        :keyword session_id: SMB session ID in context of which the file handle was opened. Required.
         :paramtype session_id: str
-        :keyword client_ip: Required. Client IP that opened the handle.
+        :keyword client_ip: Client IP that opened the handle. Required.
         :paramtype client_ip: str
-        :keyword open_time: Required. Time when the session that previously opened the handle has last
-         been reconnected. (UTC).
+        :keyword open_time: Time when the session that previously opened the handle has last been
+         reconnected. (UTC). Required.
         :paramtype open_time: ~datetime.datetime
         :keyword last_reconnect_time: Time handle was last connected to (UTC).
         :paramtype last_reconnect_time: ~datetime.datetime
@@ -687,7 +685,7 @@ class LeaseAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lease_id': {'key': 'leaseId', 'type': 'str'},
+        "lease_id": {"key": "leaseId", "type": "str"},
     }
 
     def __init__(
@@ -722,7 +720,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
     :vartype marker: str
     :ivar max_results:
     :vartype max_results: int
-    :ivar segment: Required. Abstract for entries that can be listed from Directory.
+    :ivar segment: Abstract for entries that can be listed from Directory. Required.
     :vartype segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
     :ivar next_marker: Required.
     :vartype next_marker: str
@@ -740,16 +738,16 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'share_name': {'key': 'ShareName', 'type': 'str', 'xml': {'attr': True}},
-        'share_snapshot': {'key': 'ShareSnapshot', 'type': 'str', 'xml': {'attr': True}},
-        'directory_path': {'key': 'DirectoryPath', 'type': 'str', 'xml': {'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
-        'directory_id': {'key': 'DirectoryId', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", 'xml': {'attr': True}},
+        "share_name": {"key": "ShareName", "type": "str", 'xml': {'attr': True}},
+        "share_snapshot": {"key": "ShareSnapshot", "type": "str", 'xml': {'attr': True}},
+        "directory_path": {"key": "DirectoryPath", "type": "str", 'xml': {'attr': True}},
+        "prefix": {"key": "Prefix", "type": "str"},
+        "marker": {"key": "Marker", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "int"},
+        "segment": {"key": "Segment", "type": "FilesAndDirectoriesListSegment"},
+        "next_marker": {"key": "NextMarker", "type": "str"},
+        "directory_id": {"key": "DirectoryId", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -774,7 +772,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         :paramtype marker: str
         :keyword max_results:
         :paramtype max_results: int
-        :keyword segment: Required. Abstract for entries that can be listed from Directory.
+        :keyword segment: Abstract for entries that can be listed from Directory. Required.
         :paramtype segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
         :keyword next_marker: Required.
         :paramtype next_marker: str
@@ -810,8 +808,8 @@ class ListHandlesResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'handle_list': {'key': 'HandleList', 'type': '[HandleItem]', 'xml': {'name': 'Entries', 'wrapped': True, 'itemsName': 'Handle'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "handle_list": {"key": "HandleList", "type": "[HandleItem]", 'xml': {'name': 'Entries', 'wrapped': True, 'itemsName': 'Handle'}},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -857,12 +855,12 @@ class ListSharesResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'share_items': {'key': 'ShareItems', 'type': '[ShareItemInternal]', 'xml': {'name': 'Shares', 'wrapped': True, 'itemsName': 'Share'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", 'xml': {'attr': True}},
+        "prefix": {"key": "Prefix", "type": "str"},
+        "marker": {"key": "Marker", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "int"},
+        "share_items": {"key": "ShareItems", "type": "[ShareItemInternal]", 'xml': {'name': 'Shares', 'wrapped': True, 'itemsName': 'Share'}},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -900,9 +898,9 @@ class Metrics(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar version: Required. The version of Storage Analytics to configure.
+    :ivar version: The version of Storage Analytics to configure. Required.
     :vartype version: str
-    :ivar enabled: Required. Indicates whether metrics are enabled for the File service.
+    :ivar enabled: Indicates whether metrics are enabled for the File service. Required.
     :vartype enabled: bool
     :ivar include_apis: Indicates whether metrics should generate summary statistics for called API
      operations.
@@ -917,10 +915,10 @@ class Metrics(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
     }
 
     def __init__(
@@ -928,9 +926,9 @@ class Metrics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword version: Required. The version of Storage Analytics to configure.
+        :keyword version: The version of Storage Analytics to configure. Required.
         :paramtype version: str
-        :keyword enabled: Required. Indicates whether metrics are enabled for the File service.
+        :keyword enabled: Indicates whether metrics are enabled for the File service. Required.
         :paramtype enabled: bool
         :keyword include_apis: Indicates whether metrics should generate summary statistics for called
          API operations.
@@ -950,8 +948,8 @@ class RetentionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Indicates whether a retention policy is enabled for the File service.
-     If false, metrics data is retained, and the user is responsible for deleting it.
+    :ivar enabled: Indicates whether a retention policy is enabled for the File service. If false,
+     metrics data is retained, and the user is responsible for deleting it. Required.
     :vartype enabled: bool
     :ivar days: Indicates the number of days that metrics data should be retained. All data older
      than this value will be deleted. Metrics data is deleted on a best-effort basis after the
@@ -965,8 +963,8 @@ class RetentionPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'days': {'key': 'Days', 'type': 'int'},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
     }
 
     def __init__(
@@ -974,8 +972,8 @@ class RetentionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword enabled: Required. Indicates whether a retention policy is enabled for the File
-         service. If false, metrics data is retained, and the user is responsible for deleting it.
+        :keyword enabled: Indicates whether a retention policy is enabled for the File service. If
+         false, metrics data is retained, and the user is responsible for deleting it. Required.
         :paramtype enabled: bool
         :keyword days: Indicates the number of days that metrics data should be retained. All data
          older than this value will be deleted. Metrics data is deleted on a best-effort basis after the
@@ -997,8 +995,8 @@ class ShareFileRangeList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ranges': {'key': 'Ranges', 'type': '[FileRange]'},
-        'clear_ranges': {'key': 'ClearRanges', 'type': '[ClearRange]'},
+        "ranges": {"key": "Ranges", "type": "[FileRange]", 'xml': {'itemsName': 'Range'}},
+        "clear_ranges": {"key": "ClearRanges", "type": "[ClearRange]", 'xml': {'itemsName': 'ClearRange'}},
     }
 
     def __init__(
@@ -1029,7 +1027,7 @@ class ShareItemInternal(msrest.serialization.Model):
     :vartype deleted: bool
     :ivar version:
     :vartype version: str
-    :ivar properties: Required. Properties of a share.
+    :ivar properties: Properties of a share. Required.
     :vartype properties: ~azure.storage.fileshare.models.SharePropertiesInternal
     :ivar metadata: Dictionary of :code:`<string>`.
     :vartype metadata: dict[str, str]
@@ -1041,12 +1039,12 @@ class ShareItemInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'snapshot': {'key': 'Snapshot', 'type': 'str'},
-        'deleted': {'key': 'Deleted', 'type': 'bool'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'SharePropertiesInternal'},
-        'metadata': {'key': 'Metadata', 'type': '{str}'},
+        "name": {"key": "Name", "type": "str"},
+        "snapshot": {"key": "Snapshot", "type": "str"},
+        "deleted": {"key": "Deleted", "type": "bool"},
+        "version": {"key": "Version", "type": "str"},
+        "properties": {"key": "Properties", "type": "SharePropertiesInternal"},
+        "metadata": {"key": "Metadata", "type": "{str}"},
     }
     _xml_map = {
         'name': 'Share'
@@ -1065,7 +1063,7 @@ class ShareItemInternal(msrest.serialization.Model):
         :paramtype deleted: bool
         :keyword version:
         :paramtype version: str
-        :keyword properties: Required. Properties of a share.
+        :keyword properties: Properties of a share. Required.
         :paramtype properties: ~azure.storage.fileshare.models.SharePropertiesInternal
         :keyword metadata: Dictionary of :code:`<string>`.
         :paramtype metadata: dict[str, str]
@@ -1084,8 +1082,8 @@ class SharePermission(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar permission: Required. The permission in the Security Descriptor Definition Language
-     (SDDL).
+    :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
+     Required.
     :vartype permission: str
     """
 
@@ -1094,7 +1092,7 @@ class SharePermission(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'permission': {'key': 'permission', 'type': 'str'},
+        "permission": {"key": "permission", "type": "str"},
     }
 
     def __init__(
@@ -1102,15 +1100,15 @@ class SharePermission(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword permission: Required. The permission in the Security Descriptor Definition Language
-         (SDDL).
+        :keyword permission: The permission in the Security Descriptor Definition Language (SDDL).
+         Required.
         :paramtype permission: str
         """
         super(SharePermission, self).__init__(**kwargs)
         self.permission = kwargs['permission']
 
 
-class SharePropertiesInternal(msrest.serialization.Model):
+class SharePropertiesInternal(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a share.
 
     All required parameters must be populated in order to send to Azure.
@@ -1141,18 +1139,18 @@ class SharePropertiesInternal(msrest.serialization.Model):
     :vartype access_tier_change_time: ~datetime.datetime
     :ivar access_tier_transition_state:
     :vartype access_tier_transition_state: str
-    :ivar lease_status: The current lease status of the share. Possible values include: "locked",
+    :ivar lease_status: The current lease status of the share. Known values are: "locked" and
      "unlocked".
     :vartype lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
-    :ivar lease_state: Lease state of the share. Possible values include: "available", "leased",
-     "expired", "breaking", "broken".
+    :ivar lease_state: Lease state of the share. Known values are: "available", "leased",
+     "expired", "breaking", and "broken".
     :vartype lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
     :ivar lease_duration: When a share is leased, specifies whether the lease is of infinite or
-     fixed duration. Possible values include: "infinite", "fixed".
+     fixed duration. Known values are: "infinite" and "fixed".
     :vartype lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
     :ivar enabled_protocols:
     :vartype enabled_protocols: str
-    :ivar root_squash: Possible values include: "NoRootSquash", "RootSquash", "AllSquash".
+    :ivar root_squash: Known values are: "NoRootSquash", "RootSquash", and "AllSquash".
     :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
     """
 
@@ -1163,24 +1161,24 @@ class SharePropertiesInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
-        'quota': {'key': 'Quota', 'type': 'int'},
-        'provisioned_iops': {'key': 'ProvisionedIops', 'type': 'int'},
-        'provisioned_ingress_m_bps': {'key': 'ProvisionedIngressMBps', 'type': 'int'},
-        'provisioned_egress_m_bps': {'key': 'ProvisionedEgressMBps', 'type': 'int'},
-        'provisioned_bandwidth_mi_bps': {'key': 'ProvisionedBandwidthMiBps', 'type': 'int'},
-        'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123'},
-        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
-        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'access_tier': {'key': 'AccessTier', 'type': 'str'},
-        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123'},
-        'access_tier_transition_state': {'key': 'AccessTierTransitionState', 'type': 'str'},
-        'lease_status': {'key': 'LeaseStatus', 'type': 'str'},
-        'lease_state': {'key': 'LeaseState', 'type': 'str'},
-        'lease_duration': {'key': 'LeaseDuration', 'type': 'str'},
-        'enabled_protocols': {'key': 'EnabledProtocols', 'type': 'str'},
-        'root_squash': {'key': 'RootSquash', 'type': 'str'},
+        "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
+        "etag": {"key": "Etag", "type": "str"},
+        "quota": {"key": "Quota", "type": "int"},
+        "provisioned_iops": {"key": "ProvisionedIops", "type": "int"},
+        "provisioned_ingress_m_bps": {"key": "ProvisionedIngressMBps", "type": "int"},
+        "provisioned_egress_m_bps": {"key": "ProvisionedEgressMBps", "type": "int"},
+        "provisioned_bandwidth_mi_bps": {"key": "ProvisionedBandwidthMiBps", "type": "int"},
+        "next_allowed_quota_downgrade_time": {"key": "NextAllowedQuotaDowngradeTime", "type": "rfc-1123"},
+        "deleted_time": {"key": "DeletedTime", "type": "rfc-1123"},
+        "remaining_retention_days": {"key": "RemainingRetentionDays", "type": "int"},
+        "access_tier": {"key": "AccessTier", "type": "str"},
+        "access_tier_change_time": {"key": "AccessTierChangeTime", "type": "rfc-1123"},
+        "access_tier_transition_state": {"key": "AccessTierTransitionState", "type": "str"},
+        "lease_status": {"key": "LeaseStatus", "type": "str"},
+        "lease_state": {"key": "LeaseState", "type": "str"},
+        "lease_duration": {"key": "LeaseDuration", "type": "str"},
+        "enabled_protocols": {"key": "EnabledProtocols", "type": "str"},
+        "root_squash": {"key": "RootSquash", "type": "str"},
     }
 
     def __init__(
@@ -1214,18 +1212,18 @@ class SharePropertiesInternal(msrest.serialization.Model):
         :paramtype access_tier_change_time: ~datetime.datetime
         :keyword access_tier_transition_state:
         :paramtype access_tier_transition_state: str
-        :keyword lease_status: The current lease status of the share. Possible values include:
-         "locked", "unlocked".
+        :keyword lease_status: The current lease status of the share. Known values are: "locked" and
+         "unlocked".
         :paramtype lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
-        :keyword lease_state: Lease state of the share. Possible values include: "available", "leased",
-         "expired", "breaking", "broken".
+        :keyword lease_state: Lease state of the share. Known values are: "available", "leased",
+         "expired", "breaking", and "broken".
         :paramtype lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
         :keyword lease_duration: When a share is leased, specifies whether the lease is of infinite or
-         fixed duration. Possible values include: "infinite", "fixed".
+         fixed duration. Known values are: "infinite" and "fixed".
         :paramtype lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
         :keyword enabled_protocols:
         :paramtype enabled_protocols: str
-        :keyword root_squash: Possible values include: "NoRootSquash", "RootSquash", "AllSquash".
+        :keyword root_squash: Known values are: "NoRootSquash", "RootSquash", and "AllSquash".
         :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         """
         super(SharePropertiesInternal, self).__init__(**kwargs)
@@ -1257,7 +1255,7 @@ class ShareProtocolSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings'},
+        "smb": {"key": "Smb", "type": "ShareSmbSettings"},
     }
     _xml_map = {
         'name': 'ProtocolSettings'
@@ -1283,7 +1281,7 @@ class ShareSmbSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel'},
+        "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
     }
     _xml_map = {
         'name': 'SMB'
@@ -1306,8 +1304,8 @@ class ShareStats(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar share_usage_bytes: Required. The approximate size of the data stored in bytes. Note that
-     this value may not include all recently created or recently resized files.
+    :ivar share_usage_bytes: The approximate size of the data stored in bytes. Note that this value
+     may not include all recently created or recently resized files. Required.
     :vartype share_usage_bytes: int
     """
 
@@ -1316,7 +1314,7 @@ class ShareStats(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'share_usage_bytes': {'key': 'ShareUsageBytes', 'type': 'int'},
+        "share_usage_bytes": {"key": "ShareUsageBytes", "type": "int"},
     }
 
     def __init__(
@@ -1324,8 +1322,8 @@ class ShareStats(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword share_usage_bytes: Required. The approximate size of the data stored in bytes. Note
-         that this value may not include all recently created or recently resized files.
+        :keyword share_usage_bytes: The approximate size of the data stored in bytes. Note that this
+         value may not include all recently created or recently resized files. Required.
         :paramtype share_usage_bytes: int
         """
         super(ShareStats, self).__init__(**kwargs)
@@ -1337,7 +1335,7 @@ class SignedIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. A unique id.
+    :ivar id: A unique id. Required.
     :vartype id: str
     :ivar access_policy: The access policy.
     :vartype access_policy: ~azure.storage.fileshare.models.AccessPolicy
@@ -1348,8 +1346,8 @@ class SignedIdentifier(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
+        "id": {"key": "Id", "type": "str"},
+        "access_policy": {"key": "AccessPolicy", "type": "AccessPolicy"},
     }
 
     def __init__(
@@ -1357,7 +1355,7 @@ class SignedIdentifier(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. A unique id.
+        :keyword id: A unique id. Required.
         :paramtype id: str
         :keyword access_policy: The access policy.
         :paramtype access_policy: ~azure.storage.fileshare.models.AccessPolicy
@@ -1375,7 +1373,7 @@ class SmbMultichannel(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
+        "enabled": {"key": "Enabled", "type": "bool"},
     }
     _xml_map = {
         'name': 'Multichannel'
@@ -1401,7 +1399,7 @@ class SourceLeaseAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_lease_id': {'key': 'sourceLeaseId', 'type': 'str'},
+        "source_lease_id": {"key": "sourceLeaseId", "type": "str"},
     }
 
     def __init__(
@@ -1421,15 +1419,15 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
 
     :ivar source_if_match_crc64: Specify the crc64 value to operate only on range with a matching
      crc64 checksum.
-    :vartype source_if_match_crc64: bytearray
+    :vartype source_if_match_crc64: bytes
     :ivar source_if_none_match_crc64: Specify the crc64 value to operate only on range without a
      matching crc64 checksum.
-    :vartype source_if_none_match_crc64: bytearray
+    :vartype source_if_none_match_crc64: bytes
     """
 
     _attribute_map = {
-        'source_if_match_crc64': {'key': 'sourceIfMatchCrc64', 'type': 'bytearray'},
-        'source_if_none_match_crc64': {'key': 'sourceIfNoneMatchCrc64', 'type': 'bytearray'},
+        "source_if_match_crc64": {"key": "sourceIfMatchCrc64", "type": "bytearray"},
+        "source_if_none_match_crc64": {"key": "sourceIfNoneMatchCrc64", "type": "bytearray"},
     }
 
     def __init__(
@@ -1439,10 +1437,10 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
         """
         :keyword source_if_match_crc64: Specify the crc64 value to operate only on range with a
          matching crc64 checksum.
-        :paramtype source_if_match_crc64: bytearray
+        :paramtype source_if_match_crc64: bytes
         :keyword source_if_none_match_crc64: Specify the crc64 value to operate only on range without a
          matching crc64 checksum.
-        :paramtype source_if_none_match_crc64: bytearray
+        :paramtype source_if_none_match_crc64: bytes
         """
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
         self.source_if_match_crc64 = kwargs.get('source_if_match_crc64', None)
@@ -1457,7 +1455,7 @@ class StorageError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        "message": {"key": "Message", "type": "str"},
     }
 
     def __init__(
@@ -1488,10 +1486,10 @@ class StorageServiceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'wrapped': True}},
-        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings'},
+        "hour_metrics": {"key": "HourMetrics", "type": "Metrics"},
+        "minute_metrics": {"key": "MinuteMetrics", "type": "Metrics"},
+        "cors": {"key": "Cors", "type": "[CorsRule]", 'xml': {'wrapped': True}},
+        "protocol": {"key": "Protocol", "type": "ShareProtocolSettings"},
     }
 
     def __init__(

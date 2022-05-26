@@ -7,40 +7,47 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CopyStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CopyStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CopyStatusType.
+    """
 
     PENDING = "pending"
     SUCCESS = "success"
     ABORTED = "aborted"
     FAILED = "failed"
 
-class DeleteSnapshotsOptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeleteSnapshotsOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DeleteSnapshotsOptionType.
+    """
 
     INCLUDE = "include"
     INCLUDE_LEASED = "include-leased"
 
-class FileLastWrittenMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FileLastWrittenMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FileLastWrittenMode.
+    """
 
     NOW = "Now"
     PRESERVE = "Preserve"
 
-class FileRangeWriteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FileRangeWriteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FileRangeWriteType.
+    """
 
     UPDATE = "update"
     CLEAR = "clear"
 
-class LeaseDurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseDurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When a share is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
     INFINITE = "infinite"
     FIXED = "fixed"
 
-class LeaseStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Lease state of the share.
     """
 
@@ -50,45 +57,55 @@ class LeaseStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BREAKING = "breaking"
     BROKEN = "broken"
 
-class LeaseStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current lease status of the share.
     """
 
     LOCKED = "locked"
     UNLOCKED = "unlocked"
 
-class ListFilesIncludeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ListFilesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ListFilesIncludeType.
+    """
 
     TIMESTAMPS = "Timestamps"
     ETAG = "Etag"
     ATTRIBUTES = "Attributes"
     PERMISSION_KEY = "PermissionKey"
 
-class ListSharesIncludeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ListSharesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ListSharesIncludeType.
+    """
 
     SNAPSHOTS = "snapshots"
     METADATA = "metadata"
     DELETED = "deleted"
 
-class PermissionCopyModeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PermissionCopyModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PermissionCopyModeType.
+    """
 
     SOURCE = "source"
     OVERRIDE = "override"
 
-class ShareAccessTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ShareAccessTier.
+    """
 
     TRANSACTION_OPTIMIZED = "TransactionOptimized"
     HOT = "Hot"
     COOL = "Cool"
 
-class ShareRootSquash(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ShareRootSquash.
+    """
 
     NO_ROOT_SQUASH = "NoRootSquash"
     ROOT_SQUASH = "RootSquash"
     ALL_SQUASH = "AllSquash"
 
-class StorageErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Error codes returned by the service
+class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error codes returned by the service.
     """
 
     ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"

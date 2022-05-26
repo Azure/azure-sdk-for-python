@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -33,11 +34,11 @@ class DirectoryOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -45,11 +46,11 @@ class DirectoryOperations:
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
-        file_permission: Optional[str] = "inherit",
+        file_permission: str = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
-        file_creation_time: Optional[str] = "now",
-        file_last_write_time: Optional[str] = "now",
+        file_creation_time: str = "now",
+        file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -90,23 +91,24 @@ class DirectoryOperations:
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_create_request(
             url=self._config.url,
-            restype=restype,
-            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
@@ -115,16 +117,21 @@ class DirectoryOperations:
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
+            restype=restype,
+            version=self._config.version,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -177,35 +184,41 @@ class DirectoryOperations:
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_get_properties_request(
             url=self._config.url,
-            restype=restype,
-            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
+            restype=restype,
+            version=self._config.version,
             template_url=self.get_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -254,34 +267,40 @@ class DirectoryOperations:
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
             url=self._config.url,
+            timeout=timeout,
             restype=restype,
             version=self._config.version,
-            timeout=timeout,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -305,11 +324,11 @@ class DirectoryOperations:
     async def set_properties(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        file_permission: Optional[str] = "inherit",
+        file_permission: str = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
-        file_creation_time: Optional[str] = "now",
-        file_last_write_time: Optional[str] = "now",
+        file_creation_time: str = "now",
+        file_last_write_time: str = "now",
         file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -350,25 +369,25 @@ class DirectoryOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_set_properties_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             file_permission=file_permission,
             file_permission_key=file_permission_key,
@@ -376,16 +395,22 @@ class DirectoryOperations:
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.set_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -439,37 +464,43 @@ class DirectoryOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
-        comp = kwargs.pop('comp', "metadata")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "metadata"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_set_metadata_request(
             url=self._config.url,
+            timeout=timeout,
+            metadata=metadata,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            timeout=timeout,
-            metadata=metadata,
             template_url=self.set_metadata.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -502,7 +533,7 @@ class DirectoryOperations:
         include: Optional[List[Union[str, "_models.ListFilesIncludeType"]]] = None,
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
-    ) -> "_models.ListFilesAndDirectoriesSegmentResponse":
+    ) -> _models.ListFilesAndDirectoriesSegmentResponse:
         """Returns a list of files or directories under the specified share or directory. It lists the
         contents only for a single level of the directory hierarchy.
 
@@ -538,25 +569,25 @@ class DirectoryOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListFilesAndDirectoriesSegmentResponse, or the result of cls(response)
+        :return: ListFilesAndDirectoriesSegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListFilesAndDirectoriesSegmentResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
-        comp = kwargs.pop('comp', "list")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListFilesAndDirectoriesSegmentResponse]
 
         
         request = build_list_files_and_directories_segment_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             prefix=prefix,
             sharesnapshot=sharesnapshot,
             marker=marker,
@@ -564,16 +595,22 @@ class DirectoryOperations:
             timeout=timeout,
             include=include,
             include_extended_info=include_extended_info,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.list_files_and_directories_segment.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -606,7 +643,7 @@ class DirectoryOperations:
         sharesnapshot: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> "_models.ListHandlesResponse":
+    ) -> _models.ListHandlesResponse:
         """Lists handles for directory.
 
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -633,38 +670,44 @@ class DirectoryOperations:
          may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListHandlesResponse, or the result of cls(response)
+        :return: ListHandlesResponse or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListHandlesResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "listhandles")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "listhandles"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListHandlesResponse]
 
         
         request = build_list_handles_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             marker=marker,
             maxresults=maxresults,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             recursive=recursive,
+            comp=comp,
+            version=self._config.version,
             template_url=self.list_handles.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -701,7 +744,7 @@ class DirectoryOperations:
         """Closes all handles open for given directory.
 
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
-         (‘*’) is a wildcard that specifies all handles.
+         (‘*’) is a wildcard that specifies all handles. Required.
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -723,38 +766,44 @@ class DirectoryOperations:
          value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "forceclosehandles")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "forceclosehandles"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_force_close_handles_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             handle_id=handle_id,
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
             recursive=recursive,
+            comp=comp,
+            version=self._config.version,
             template_url=self.force_close_handles.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -784,18 +833,18 @@ class DirectoryOperations:
         timeout: Optional[int] = None,
         replace_if_exists: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
-        file_permission: Optional[str] = "inherit",
+        file_permission: str = "inherit",
         file_permission_key: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        source_lease_access_conditions: Optional["_models.SourceLeaseAccessConditions"] = None,
-        destination_lease_access_conditions: Optional["_models.DestinationLeaseAccessConditions"] = None,
-        copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
+        source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
+        destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
+        copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
         **kwargs: Any
     ) -> None:
         """Renames a directory.
 
         :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
-         length.
+         length. Required.
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -842,18 +891,21 @@ class DirectoryOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        restype = kwargs.pop('restype', "directory")  # type: str
-        comp = kwargs.pop('comp', "rename")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype = kwargs.pop('restype', _params.pop('restype', "directory"))  # type: str
+        comp = kwargs.pop('comp', _params.pop('comp', "rename"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _source_lease_id = None
         _destination_lease_id = None
@@ -867,15 +919,12 @@ class DirectoryOperations:
             _destination_lease_id = destination_lease_access_conditions.destination_lease_id
         if copy_file_smb_info is not None:
             _file_attributes = copy_file_smb_info.file_attributes
+            _file_change_time = copy_file_smb_info.file_change_time
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
-            _file_change_time = copy_file_smb_info.file_change_time
 
         request = build_rename_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             rename_source=rename_source,
             timeout=timeout,
             replace_if_exists=replace_if_exists,
@@ -889,16 +938,22 @@ class DirectoryOperations:
             file_permission=file_permission,
             file_permission_key=file_permission_key,
             metadata=metadata,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.rename.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
