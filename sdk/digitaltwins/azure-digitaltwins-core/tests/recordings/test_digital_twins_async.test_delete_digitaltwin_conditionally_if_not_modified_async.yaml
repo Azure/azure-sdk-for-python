@@ -5,65 +5,68 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:28.620676+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:06.3356126+00:00"}],"nextLink":null}'
     headers:
-      content-length: '186'
+      content-length: '190'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:28 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
+      mise-correlation-id: a7a9e607-18db-4e2f-a64f-ae3cbc7ac5f8
       strict-transport-security: max-age=2592000
-      traceresponse: 00-e3e4c57f9011e449b688b6156baac556-d1d0421fef03044a-01
+      traceresponse: 00-0e60c93fe3baa04e99bc954cf35d5c88-5d9963e75df3144d-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:samples:DTTestBuilding;1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:DTTestBuilding;1?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:04:28 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
+      mise-correlation-id: b04cd94d-7e9d-4b11-8123-6fb060e58c17
       strict-transport-security: max-age=2592000
-      traceresponse: 00-e1b798385246404ca6c6ff46da82dede-2bfc7b16d7519e42-01
+      traceresponse: 00-9ed635e34385b545a038d0ef13647149-ebc016daee8de947-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:samples:DTTestBuilding;1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:DTTestBuilding;1?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"value":[],"nextLink":null}'
     headers:
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:30 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
+      mise-correlation-id: c41e58b8-e3f3-49b6-9e9c-7885de206513
       strict-transport-security: max-age=2592000
-      traceresponse: 00-2c9e7429d5e58648ba444884ff15a2b5-4ff9ef0b9188cb4b-01
+      traceresponse: 00-b24c2774c77f7540a675af75d43fdd54-0d98243ea174774d-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: '[{"@id": "dtmi:samples:DTTestBuilding;1", "@type": "Interface", "@context":
       "dtmi:dtdl:context;2", "displayName": "Building", "contents": [{"@type": "Property",
@@ -77,31 +80,32 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:30.1062619+00:00"}]'
+      string: '[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:07.1010444+00:00"}]'
     headers:
-      content-length: '161'
+      content-length: '164'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:30 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
+      mise-correlation-id: 262af52d-1186-476b-a154-8d8fc15223dc
       strict-transport-security: max-age=2592000
-      traceresponse: 00-af07cf6d86382649b27c1b0038aa575d-355e9958555bac47-01
+      traceresponse: 00-1a501f936b186540ad350547f181b964-71ddf8b62f43714c-01
     status:
       code: 201
       message: Created
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -111,13 +115,13 @@ interactions:
     headers:
       content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:30 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a58a29718952be4e968fd9943ac4d6ae-e5f5176d06932941-01
+      traceresponse: 00-5d8ef531cc2f6940b2926dd0e5987ae6-34cbc86ab7b42b48-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
 - request:
     body: '{"$metadata": {"$model": "dtmi:samples:DTTestBuilding;1"}, "AverageTemperature":
       68, "TemperatureUnit": "Celsius"}'
@@ -129,23 +133,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
   response:
     body:
-      string: '{"$dtId":"digitalTwin-c13122a1","$etag":"W/\"e84f80fd-a30c-4ffd-a925-8b81f2037d00\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:04:30.3571898Z"},"TemperatureUnit":{"lastUpdateTime":"2022-03-28T15:04:30.3571898Z"}}}'
+      string: '{"$dtId":"digitalTwin-c13122a1","$etag":"W/\"0d2de6cf-4d98-4af4-b140-5697e1f82aa2\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","$lastUpdateTime":"2022-05-26T07:28:07.2194919Z","AverageTemperature":{"lastUpdateTime":"2022-05-26T07:28:07.2194919Z"},"TemperatureUnit":{"lastUpdateTime":"2022-05-26T07:28:07.2194919Z"}}}'
     headers:
-      content-length: '331'
+      content-length: '380'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:30 GMT
-      etag: W/"e84f80fd-a30c-4ffd-a925-8b81f2037d00"
+      date: Thu, 26 May 2022 07:28:06 GMT
+      etag: W/"0d2de6cf-4d98-4af4-b140-5697e1f82aa2"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-7a8e16a817dd93468ab564795f093843-a4649993eec53e46-01
+      traceresponse: 00-49741d8b6fe78b4c8c630b008a9bf448-d912ca6c8cedf74d-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
 - request:
     body: null
     headers:
@@ -154,9 +158,9 @@ interactions:
       If-Match:
       - W/"7e67a355-f19c-4c19-8a10-2d69b2d2253f"
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"PreconditionFailed","message":"The provided etag
@@ -166,45 +170,45 @@ interactions:
     headers:
       content-length: '300'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:30 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-9ed6cfb68e329e4db071a9d41899347e-6c43030ed1b2c640-01
+      traceresponse: 00-668d73987719f44a980c789cb9cd2b9f-c8fecb7978812942-01
     status:
       code: 412
       message: Precondition Failed
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       If-Match:
-      - W/"e84f80fd-a30c-4ffd-a925-8b81f2037d00"
+      - W/"0d2de6cf-4d98-4af4-b140-5697e1f82aa2"
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:04:30 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-354fc40fdc45744abfa8fd038eaaf7d2-01f201d3be149841-01
+      traceresponse: 00-1778a5eabde6a44cba3004f770bbdcdc-1791227efdfd7140-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -214,11 +218,11 @@ interactions:
     headers:
       content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:30 GMT
+      date: Thu, 26 May 2022 07:28:06 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-38ec86d0bb5ffb4d8908c564cd9e916f-05469230bd34674f-01
+      traceresponse: 00-7b633a17d719a442b030988ac1941f59-4b517619a6690b49-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-c13122a1?api-version=2022-05-31
 version: 1

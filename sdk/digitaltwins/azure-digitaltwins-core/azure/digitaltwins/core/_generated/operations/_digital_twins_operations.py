@@ -35,7 +35,7 @@ def build_get_by_id_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -74,7 +74,7 @@ def build_add_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -119,7 +119,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
@@ -161,7 +161,7 @@ def build_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -207,7 +207,7 @@ def build_get_relationship_by_id_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -248,7 +248,7 @@ def build_add_relationship_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -295,7 +295,7 @@ def build_delete_relationship_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
     if_match = kwargs.pop('if_match', None)  # type: Optional[str]
@@ -339,7 +339,7 @@ def build_update_relationship_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -385,7 +385,7 @@ def build_list_relationships_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
     relationship_name = kwargs.pop('relationship_name', None)  # type: Optional[str]
@@ -427,7 +427,7 @@ def build_list_incoming_relationships_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -466,7 +466,7 @@ def build_send_telemetry_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     message_id = kwargs.pop('message_id')  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
@@ -514,7 +514,7 @@ def build_send_component_telemetry_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     message_id = kwargs.pop('message_id')  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
@@ -563,7 +563,7 @@ def build_get_component_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -604,7 +604,7 @@ def build_update_component_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -702,7 +702,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -787,7 +787,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -880,7 +880,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -966,7 +966,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None
@@ -1056,7 +1056,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -1152,7 +1152,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -1249,7 +1249,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -1345,7 +1345,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None
@@ -1428,7 +1428,7 @@ class DigitalTwinsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.RelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelationshipCollection"]
         error_map = {
@@ -1538,7 +1538,7 @@ class DigitalTwinsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.IncomingRelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IncomingRelationshipCollection"]
         error_map = {
@@ -1661,7 +1661,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -1756,7 +1756,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -1840,7 +1840,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -1935,7 +1935,7 @@ class DigitalTwinsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None

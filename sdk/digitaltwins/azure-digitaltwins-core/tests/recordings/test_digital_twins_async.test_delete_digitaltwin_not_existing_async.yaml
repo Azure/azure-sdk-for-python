@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-ad961bc5?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ad961bc5?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -17,11 +17,11 @@ interactions:
     headers:
       content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:32 GMT
+      date: Thu, 26 May 2022 07:28:08 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a5c8e1d67ae0ca4381ca41e15b76f4ec-f7b194e8d3d8784a-01
+      traceresponse: 00-7e3a90e6c401da4e8bb2d49386247d1d-4b7a3370cdb8244a-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-ad961bc5?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ad961bc5?api-version=2022-05-31
 version: 1

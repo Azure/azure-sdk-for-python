@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela654124b%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela654124b%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,11 +23,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:10 GMT
+      - Thu, 26 May 2022 07:28:27 GMT
+      mise-correlation-id:
+      - 124e40b8-8d51-47e2-b644-d7b592586b0b
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-1fbce3fd5d4f0b4d8e131760f7cd1f1b-d8e5314a85607a40-01
+      - 00-08886aba16a65d41ac9b2b1f60806eca-f19628454bef1646-01
     status:
       code: 404
       message: Not Found
@@ -48,23 +50,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModela654124b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:11.1801006+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModela654124b;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:29.026692+00:00"}]'
     headers:
       content-length:
-      - '175'
+      - '177'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:10 GMT
+      - Thu, 26 May 2022 07:28:29 GMT
+      mise-correlation-id:
+      - a314cbd1-cb09-4027-9c0f-40ee7cdd65dd
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-0db48ccddf0ae140a52edecb694329e8-3b39b00b50f66d45-01
+      - 00-04a753b1ce5b3c409bf5d75fbf653a65-4c8bb723ad13fd45-01
     status:
       code: 201
       message: Created
@@ -80,9 +84,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela654124b%3B1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela654124b%3B1?api-version=2022-05-31
   response:
     body:
       string: ''
@@ -90,11 +94,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Mar 2022 15:05:10 GMT
+      - Thu, 26 May 2022 07:28:29 GMT
+      mise-correlation-id:
+      - b3f3414c-b1cb-4cb9-ab33-1e6e21c0bd3c
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-aafcb2ad9fc5b247b6f590e6ee51c916-24928e7aefc5ee42-01
+      - 00-1e6157882f09a548bc46a87e2768a7cd-53f09f97b79baa40-01
     status:
       code: 204
       message: No Content
@@ -110,9 +116,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela654124b%3B1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela654124b%3B1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -124,11 +130,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:10 GMT
+      - Thu, 26 May 2022 07:28:29 GMT
+      mise-correlation-id:
+      - ede014ca-6962-4e8e-9416-7ba241b9950b
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-9f22eacbe929ac46bb7906f8a58e7ad0-770eced20c6fdb40-01
+      - 00-74e4d5fefcddc045980680b1480eb9ac-cc449ef046bd1a40-01
     status:
       code: 404
       message: Not Found

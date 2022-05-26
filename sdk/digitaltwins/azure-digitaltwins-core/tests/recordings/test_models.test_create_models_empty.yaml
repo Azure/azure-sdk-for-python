@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"InvalidArgument","message":"Operation failed as models
@@ -28,11 +28,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:04 GMT
+      - Thu, 26 May 2022 07:28:25 GMT
+      mise-correlation-id:
+      - 5942bec7-f270-49af-a353-43643ce0b841
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-77f624efa193204289a3623466a871c0-d0ee54c8455f2246-01
+      - 00-ea4681c3497dcb49ba6de43dea0efee8-cd6d4c1390ada547-01
     status:
       code: 400
       message: Bad Request
@@ -50,27 +52,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DTDLParserError","message":"None of the models in
-        this request could be created due to a problem with one or more models: No
-        @context specifier in top-level JSON object. Add a ''@context'' property whose
-        value is a valid DTDL context specifier, such as ''dtmi:dtdl:context;2''..
+        this request could be created due to a problem with one or more models: In
+        source, top-level JSON object has no @context specifier. Add a ''@context''
+        property whose value is a valid DTDL context specifier, such as ''dtmi:dtdl:context;2''..
         See model documentation(https://aka.ms/ADTv2Models) for supported format."}}'
     headers:
       content-length:
-      - '369'
+      - '381'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:04 GMT
+      - Thu, 26 May 2022 07:28:25 GMT
+      mise-correlation-id:
+      - 7218e221-4a62-4277-9c1b-ff8f4e8a5559
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-6744fff5532eb040828cef23e1495d04-6821ab00f2b5d443-01
+      - 00-c004dd835179bd4b8ea547817a5036b4-dc5dce3fff8f184b-01
     status:
       code: 400
       message: Bad Request
@@ -88,9 +92,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"BadRequest","message":"A non-empty request body is
@@ -101,11 +105,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:04 GMT
+      - Thu, 26 May 2022 07:28:25 GMT
+      mise-correlation-id:
+      - 1f1efb7d-1c28-477c-b467-f0ac4a2b2617
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-520490b463ec54439c6f2af13f1d7f82-bb89773867fc4641-01
+      - 00-d8956046bc4c034081dedf7b702fd5f3-c7f7d4dd77fc974c-01
     status:
       code: 400
       message: Bad Request

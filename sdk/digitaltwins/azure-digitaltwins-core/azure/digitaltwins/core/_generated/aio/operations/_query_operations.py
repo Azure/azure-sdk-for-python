@@ -76,7 +76,7 @@ class QueryOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None

@@ -5,257 +5,262 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:06:40.4318558+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en":"Floor"},"decommissioned":false,"uploadTime":"2022-03-28T15:06:40.431882+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en":"Room"},"decommissioned":false,"uploadTime":"2022-03-28T15:06:40.4319008+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:29:20.9619107+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en-US":"Floor"},"decommissioned":false,"uploadTime":"2022-05-26T07:29:20.9619385+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en-US":"Room"},"decommissioned":false,"uploadTime":"2022-05-26T07:29:20.9619522+00:00"}],"nextLink":null}'
     headers:
-      content-length: '522'
+      content-length: '532'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
+      mise-correlation-id: e9a3e41c-0153-4ca7-8df9-a45a3ef07999
       strict-transport-security: max-age=2592000
-      traceresponse: 00-d51d52e72b4a7d48bd034b39c4583b9a-507ef186f1402542-01
+      traceresponse: 00-c17f07cc5c346542a364bf0df68a815c-b5df37ba0933be4b-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestBuilding;1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestBuilding;1?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
+      mise-correlation-id: 4da16041-7368-4b4a-9487-408684d7c0fe
       strict-transport-security: max-age=2592000
-      traceresponse: 00-d93f918eb388a24daf6c5d1587579c23-ace6d0e2808b9849-01
+      traceresponse: 00-d8f65bcb53d9f64e84a857535647ac3f-5ecd30a1f1575f4b-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestBuilding;1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestBuilding;1?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestFloor;1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestFloor;1?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
+      mise-correlation-id: 26143e8d-21e8-43e3-8776-bda89c12849b
       strict-transport-security: max-age=2592000
-      traceresponse: 00-9c1869b11be7af4aa9b2124a2ecaed99-12419f00e0b0c246-01
+      traceresponse: 00-347cfb34cc836a4aac6ef7df1ef179c9-ce2cf3fbcb0f9c4a-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestFloor;1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestFloor;1?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestRoom;1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestRoom;1?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
+      mise-correlation-id: 3c685e53-e1ca-4552-98e8-6b391c8e3d4f
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a211052026384546b4ce7a71565653f5-c78e33a84b121743-01
+      traceresponse: 00-8fd2df903d32504dbfd733e523ada26e-ca038654edeb3a49-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestRoom;1?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:RelationshipTestRoom;1?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"value":[],"nextLink":null}'
     headers:
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
+      mise-correlation-id: 9491212a-2e63-4bd6-9027-339d6680ba2a
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a9bfd59069fc30449b9c55750f936659-37f34686530ac545-01
+      traceresponse: 00-6f7e1c72e68c114f826fdc7349ce4a72-d731d8acd7ebc44f-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin/relationships?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin/relationships?api-version=2022-05-31
   response:
     body:
       string: '{"nextLink":null,"value":[]}'
     headers:
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-84aa21c56e4f284e94e97fa93b3829f7-9dc76e6a9cf67e49-01
+      traceresponse: 00-1f46afa6e8309d4a82fc566c68f0303d-ca9023f67cc93344-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin/relationships?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin/relationships?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships?api-version=2022-05-31
   response:
     body:
-      string: '{"nextLink":null,"value":[{"$relationshipId":"FloorContainsRoom","$etag":"W/\"e09b4ff7-2d3a-41f3-8411-ac1a7db4acba\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}]}'
+      string: '{"nextLink":null,"value":[{"$relationshipId":"FloorContainsRoom","$etag":"W/\"b29c9267-bd19-45ca-8320-d53cd1609364\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}]}'
     headers:
       content-length: '236'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-e74a2c5254b3bb46b96df9a6ea71537e-45622d79f892f449-01
+      traceresponse: 00-2a384c2c3632454e8556074743fc0f71-de94ff2ac818ef40-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-95df3ee22c8cb444b0df475d61894452-949c5e0412064445-01
+      traceresponse: 00-6bfbe978ef0ab644afe3d81396509076-7bca06e6f0ed1e43-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships?api-version=2022-05-31
   response:
     body:
       string: '{"nextLink":null,"value":[]}'
     headers:
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-ea6f216e7362ab47b3a4e9aa54ccf20a-28caf315b80add4c-01
+      traceresponse: 00-843804bf50eb544cbb3ec5d78074d54a-68dc2dbfc5dd5049-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:41 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-4250dca72caed14ab760568d8addaefa-9eff3b7ca47fcf4b-01
+      traceresponse: 00-2b96f75dac303f49936765b86f14c74f-58c90edae8eb2b40-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:42 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-c17f67fef0100a419aab5c0325ba3b6f-8f1d5f89ad970342-01
+      traceresponse: 00-4b12b6ab254f3e4195d5611efa9afbeb-f2732033e0b67841-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Mar 2022 15:06:42 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-09be2e4cc8a662488edb1d166eb1466b-562c914d60c52545-01
+      traceresponse: 00-e1d3e3e7a7705e4b83cea90638f3262e-41552917ca0dc94f-01
     status:
       code: 204
       message: No Content
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2022-05-31
 - request:
     body: '[{"@id": "dtmi:samples:RelationshipTestBuilding;1", "@type": "Interface",
       "@context": "dtmi:dtdl:context;2", "displayName": "Building", "contents": [{"@type":
@@ -277,22 +282,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:06:42.8606935+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en":"Floor"},"decommissioned":false,"uploadTime":"2022-03-28T15:06:42.8607153+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en":"Room"},"decommissioned":false,"uploadTime":"2022-03-28T15:06:42.8607313+00:00"}]'
+      string: '[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:29:22.3987319+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en-US":"Floor"},"decommissioned":false,"uploadTime":"2022-05-26T07:29:22.3987533+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en-US":"Room"},"decommissioned":false,"uploadTime":"2022-05-26T07:29:22.3987655+00:00"}]'
     headers:
-      content-length: '497'
+      content-length: '506'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
+      date: Thu, 26 May 2022 07:29:21 GMT
+      mise-correlation-id: 5a2a1fa5-e8f5-42c7-87b4-b5aafe4624b3
       strict-transport-security: max-age=2592000
-      traceresponse: 00-cc02e9272aeeb74daf41fd90915d8449-7c4ac2788d2fd94b-01
+      traceresponse: 00-2c4096340b584f4694989cdd2115ebdb-eeafa87a8c18c744-01
     status:
       code: 201
       message: Created
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 - request:
     body: '{"$metadata": {"$model": "dtmi:samples:RelationshipTestBuilding;1"}, "AverageTemperature":
       68}'
@@ -304,23 +310,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2022-05-31
   response:
     body:
-      string: '{"$dtId":"DTRelationshipTestsBuildingTwin","$etag":"W/\"60b55903-ac5b-4b4c-976a-9e3d5744da06\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:RelationshipTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:06:42.9724881Z"}}}'
+      string: '{"$dtId":"DTRelationshipTestsBuildingTwin","$etag":"W/\"41029413-680c-4420-ac7e-6759b5025a6f\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:RelationshipTestBuilding;1","$lastUpdateTime":"2022-05-26T07:29:22.4655881Z","AverageTemperature":{"lastUpdateTime":"2022-05-26T07:29:22.4655881Z"}}}'
     headers:
-      content-length: '256'
+      content-length: '305'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
-      etag: W/"60b55903-ac5b-4b4c-976a-9e3d5744da06"
+      date: Thu, 26 May 2022 07:29:21 GMT
+      etag: W/"41029413-680c-4420-ac7e-6759b5025a6f"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-6b9b6cadfa808a48aee4d70e964fc75c-e183daab93b0114a-01
+      traceresponse: 00-3fcefef72286a44e855a29b7c10dfc6f-bc93f6d553344249-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2022-05-31
 - request:
     body: '{"$metadata": {"$model": "dtmi:samples:RelationshipTestFloor;1"}, "AverageTemperature":
       75}'
@@ -332,23 +338,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2022-05-31
   response:
     body:
-      string: '{"$dtId":"DTRelationshipTestsFloorTwin","$etag":"W/\"7c750522-e475-469a-8293-7b5f0cae0243\"","AverageTemperature":75,"$metadata":{"$model":"dtmi:samples:RelationshipTestFloor;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:06:43.0833597Z"}}}'
+      string: '{"$dtId":"DTRelationshipTestsFloorTwin","$etag":"W/\"1a5101ad-e2cb-4d47-a91e-d918f8b101f3\"","AverageTemperature":75,"$metadata":{"$model":"dtmi:samples:RelationshipTestFloor;1","$lastUpdateTime":"2022-05-26T07:29:22.5239069Z","AverageTemperature":{"lastUpdateTime":"2022-05-26T07:29:22.5239069Z"}}}'
     headers:
-      content-length: '250'
+      content-length: '299'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
-      etag: W/"7c750522-e475-469a-8293-7b5f0cae0243"
+      date: Thu, 26 May 2022 07:29:22 GMT
+      etag: W/"1a5101ad-e2cb-4d47-a91e-d918f8b101f3"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-6ebbc88bfd928a4897328f6241c267f7-62d8d052417bf64a-01
+      traceresponse: 00-3e2779e63590f14182ec5ae0995ba8d6-df7f20df42d4f146-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2022-05-31
 - request:
     body: '{"$metadata": {"$model": "dtmi:samples:RelationshipTestRoom;1"}, "Temperature":
       80, "IsOccupied": true}'
@@ -360,23 +366,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2022-05-31
   response:
     body:
-      string: '{"$dtId":"DTRelationshipTestsRoomTwin","$etag":"W/\"9196daaa-a300-4e1f-a0b7-d9d03d5e32b7\"","Temperature":80,"IsOccupied":true,"$metadata":{"$model":"dtmi:samples:RelationshipTestRoom;1","Temperature":{"lastUpdateTime":"2022-03-28T15:06:43.1897560Z"},"IsOccupied":{"lastUpdateTime":"2022-03-28T15:06:43.1897560Z"}}}'
+      string: '{"$dtId":"DTRelationshipTestsRoomTwin","$etag":"W/\"5ab216cb-426c-4979-9bdb-35a34af9f7cc\"","Temperature":80,"IsOccupied":true,"$metadata":{"$model":"dtmi:samples:RelationshipTestRoom;1","$lastUpdateTime":"2022-05-26T07:29:22.5853993Z","Temperature":{"lastUpdateTime":"2022-05-26T07:29:22.5853993Z"},"IsOccupied":{"lastUpdateTime":"2022-05-26T07:29:22.5853993Z"}}}'
     headers:
-      content-length: '315'
+      content-length: '364'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
-      etag: W/"9196daaa-a300-4e1f-a0b7-d9d03d5e32b7"
+      date: Thu, 26 May 2022 07:29:22 GMT
+      etag: W/"5ab216cb-426c-4979-9bdb-35a34af9f7cc"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-5ab5373a14e13945a13c6caffdcb3710-f55b01e4b5c8db4e-01
+      traceresponse: 00-0d2e7691871983499095661f32335689-495661d2a20b7c42-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2022-05-31
 - request:
     body: '{"$relationshipId": "FloorContainsRoom", "$sourceId": "DTRelationshipTestsFloorTwin",
       "$relationshipName": "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
@@ -388,9 +394,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -400,13 +406,13 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
+      date: Thu, 26 May 2022 07:29:22 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-15375c13de9f2e40a9afb1cb915f57db-7d2183d5b660d944-01
+      traceresponse: 00-2b70fbf4f046be4e89b7f11ba9dec11b-ec4a96c7e10bbb42-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: '{"$relationshipId": "FloorContainsRoom", "$sourceId": "DTRelationshipTestsFloorTwin",
       "$relationshipName": "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
@@ -418,23 +424,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/foo?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/foo?api-version=2022-05-31
   response:
     body:
-      string: '{"$relationshipId":"foo","$etag":"W/\"5d30a67f-25b4-4d32-b0b7-b2333261058c\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
+      string: '{"$relationshipId":"foo","$etag":"W/\"5829a14b-0cb2-4cad-9863-148d9ad3fcf3\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
     headers:
       content-length: '194'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
-      etag: W/"5d30a67f-25b4-4d32-b0b7-b2333261058c"
+      date: Thu, 26 May 2022 07:29:22 GMT
+      etag: W/"5829a14b-0cb2-4cad-9863-148d9ad3fcf3"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-6a8b411c7b8fc5458d75a2ee98d85ad4-777445641cf06f44-01
+      traceresponse: 00-cce09720466d9f46bec8be2d8e52b694-be9eea97343f0448-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/foo?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/foo?api-version=2022-05-31
 - request:
     body: '{"$relationshipId": "FloorContainsRoom", "$sourceId": "DTRelationshipTestsFloorTwin",
       "$relationshipName": "contains", "$targetId": "foo"}'
@@ -446,9 +452,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"TargetDigitalTwinNotFound","message":"The target
@@ -458,13 +464,13 @@ interactions:
     headers:
       content-length: '268'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:42 GMT
+      date: Thu, 26 May 2022 07:29:22 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-1f0594261e30394ebc69a6eeb213264f-dd5c8854fb4bf24b-01
+      traceresponse: 00-4e4d4009b21ece4a90b34589903ffd3d-cb152bc749036544-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: '{"$relationshipId": "FloorContainsRoom", "$sourceId": "foo", "$relationshipName":
       "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
@@ -476,23 +482,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
-      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"c88652e8-5bca-4291-881e-4b64ce2c6681\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
+      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"2e2cc9d2-61ce-4cde-a98e-0877ccd914cf\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
     headers:
       content-length: '208'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:43 GMT
-      etag: W/"c88652e8-5bca-4291-881e-4b64ce2c6681"
+      date: Thu, 26 May 2022 07:29:22 GMT
+      etag: W/"2e2cc9d2-61ce-4cde-a98e-0877ccd914cf"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-9c4cb42ae5247c4c8588f8c9144afc69-8037ac870269274a-01
+      traceresponse: 00-371e87f3ea6da841808d1983b78c39b1-2b5784edb3227341-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: '{"$relationshipName": "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
     headers:
@@ -503,23 +509,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
-      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"9d09ff6d-52c6-4092-a199-4911366647bb\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
+      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"8f3401d6-1032-4677-87bc-0b94312a0432\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
     headers:
       content-length: '208'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:43 GMT
-      etag: W/"9d09ff6d-52c6-4092-a199-4911366647bb"
+      date: Thu, 26 May 2022 07:29:22 GMT
+      etag: W/"8f3401d6-1032-4677-87bc-0b94312a0432"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-69d2579895d4f34483ae1d318cbad508-c68ebc47c8b27643-01
+      traceresponse: 00-50507f1f4c3e754088986ebc09580cb0-c08498c72a2f6045-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: '{"$relationshipId": "foo", "$sourceId": "DTRelationshipTestsFloorTwin",
       "$relationshipName": "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
@@ -531,23 +537,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
-      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"7a8844cc-e439-4af1-b0a4-820b495efb2d\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
+      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"4d3871dc-f373-4165-b2fc-0418819f4e00\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
     headers:
       content-length: '208'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:43 GMT
-      etag: W/"7a8844cc-e439-4af1-b0a4-820b495efb2d"
+      date: Thu, 26 May 2022 07:29:22 GMT
+      etag: W/"4d3871dc-f373-4165-b2fc-0418819f4e00"
       strict-transport-security: max-age=2592000
-      traceresponse: 00-56d481f5b6dbe64ca810081297042e16-e329f502723e7e4d-01
+      traceresponse: 00-d36d3953f8a29c47a704078e27ba11dd-551b085d122ed94b-01
     status:
       code: 200
       message: OK
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: '{"$targetId": "DTRelationshipTestsRoomTwin"}'
     headers:
@@ -558,9 +564,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"InvalidArgument","message":"Could not deserialize
@@ -568,13 +574,13 @@ interactions:
     headers:
       content-length: '96'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:43 GMT
+      date: Thu, 26 May 2022 07:29:22 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-1cd696583ac1d74eae4aef5e7ed56746-038c883c37157843-01
+      traceresponse: 00-022c747e64760c4f895f647cb44a2539-c81c1b796a27e744-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 - request:
     body: '{}'
     headers:
@@ -585,9 +591,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"InvalidArgument","message":"Could not deserialize
@@ -595,11 +601,11 @@ interactions:
     headers:
       content-length: '96'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:06:43 GMT
+      date: Thu, 26 May 2022 07:29:22 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-211b0fed301a1b4f85c98b7012b55c4e-edb5d527b934354a-01
+      traceresponse: 00-3b6ca0dc5ffacc46b2d753a13420f0c3-aa833d6ffb25084d-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2022-05-31
 version: 1

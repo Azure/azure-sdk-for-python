@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"EventRouteEndpointInvalid","message":"The endpoint
@@ -21,11 +21,12 @@ interactions:
     headers:
       content-length: '224'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:55 GMT
+      date: Thu, 26 May 2022 07:28:20 GMT
+      mise-correlation-id: 20829269-8a30-42f2-bc33-1225f98f3ed5
       strict-transport-security: max-age=2592000
-      traceresponse: 00-0453bd2f68c4a444ae4ae0d62ec84be6-95226755d9050a42-01
+      traceresponse: 00-03afb70563b6e343bb9c8ebd90d5942c-fb33b97d077e1c4e-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2022-05-31
 version: 1

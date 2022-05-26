@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"RelationshipNotFound","message":"Relationship foo
@@ -21,13 +21,13 @@ interactions:
     headers:
       content-length: '303'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:07:22 GMT
+      date: Thu, 26 May 2022 07:29:43 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-73b3f3813d68f64ea4de4d06323d0553-130334821b66dc48-01
+      traceresponse: 00-1a178876903feb4e8192c123d22d300c-f31b4f8817ac3c44-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2022-05-31
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
@@ -38,9 +38,9 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -50,11 +50,11 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:07:23 GMT
+      date: Thu, 26 May 2022 07:29:44 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-208742c6b439774f89b8d4fad6ef17a8-23f9c03befe83646-01
+      traceresponse: 00-d7d3b7b3716a58499e6a46f44c2e7989-5b174f387fef7642-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2022-05-31
 version: 1

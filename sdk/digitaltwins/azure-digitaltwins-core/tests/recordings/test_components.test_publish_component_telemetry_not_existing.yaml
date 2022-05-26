@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - a1312435-558d-47e8-84e0-1062591cc23d
+      - e3e8ac2e-2904-4a0e-a451-e16755e3fdb2
       Telemetry-Source-Time:
-      - '2022-03-28T15:03:08.628234Z'
+      - '2022-05-26T07:27:17.382225Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -32,11 +32,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:09 GMT
+      - Thu, 26 May 2022 07:27:18 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-d1f2ada7f4d73e4aa582954296cea07d-14a616bd43c3c348-01
+      - 00-71e78be42415a04b816ca036bd6c11ab-5a7eacfb8db17740-01
     status:
       code: 404
       message: Not Found
@@ -54,13 +54,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - b14e119b-72f3-4bf7-bd00-5121b040b7ca
+      - 39a8bf0d-3cbb-44fb-b755-23fb8c76b893
       Telemetry-Source-Time:
-      - '2022-03-28T15:03:09.463963Z'
+      - '2022-05-26T07:27:18.142958Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -73,11 +73,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:09 GMT
+      - Thu, 26 May 2022 07:27:18 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-9b234b3e94daaf46914c8f01719b93a6-3a84c370460e3042-01
+      - 00-88f8645c25f89b439fb5d5b49b0df7af-bef72b10ead6f54f-01
     status:
       code: 404
       message: Not Found

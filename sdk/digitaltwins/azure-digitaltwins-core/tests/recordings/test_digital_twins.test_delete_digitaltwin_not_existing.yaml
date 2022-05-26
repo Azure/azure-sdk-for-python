@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-7b3016cb?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-7b3016cb?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -26,11 +26,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:59 GMT
+      - Thu, 26 May 2022 07:27:49 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-24ff0ca67bd0824a95d367ab207bbdb4-0e9a466b22363843-01
+      - 00-886d193aa7e20044b4385e876ef09c89-ee3aaab1bccc7746-01
     status:
       code: 404
       message: Not Found

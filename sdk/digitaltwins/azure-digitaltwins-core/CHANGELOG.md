@@ -1,14 +1,7 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+## 1.2.0 (2022-05-31)
+ - GA release
 
 ## 1.2.0b1 (2022-03-31)
 

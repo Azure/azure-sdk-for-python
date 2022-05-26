@@ -9,23 +9,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:54.5754734+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:27:46.6988664+00:00"}],"nextLink":null}'
     headers:
       content-length:
-      - '187'
+      - '190'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:55 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
+      mise-correlation-id:
+      - 6f3cf5d3-a7a9-4f11-87c8-2592a8b2389b
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-60ff63e8cfc690418129080df45e891f-289b7a40b131a647-01
+      - 00-817393c81d28ab45b0411d787fe25c3f-4b881e0369d0f04a-01
     status:
       code: 200
       message: OK
@@ -41,9 +43,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Asamples%3ADTTestBuilding%3B1?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Asamples%3ADTTestBuilding%3B1?api-version=2022-05-31
   response:
     body:
       string: ''
@@ -51,11 +53,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Mar 2022 15:03:55 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
+      mise-correlation-id:
+      - 8338baa0-0449-4be4-bde9-c8f9a432b3a6
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-93eba1f24f918140b3711e3af00090cc-45da7edcd7231b49-01
+      - 00-41ff6de0a5a52641a2ca6fdc411cd849-fa624ec9046f6c4d-01
     status:
       code: 204
       message: No Content
@@ -69,9 +73,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -81,11 +85,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:55 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
+      mise-correlation-id:
+      - 335afffa-767b-4726-84ec-a9efaa15a18c
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e4e2479897bc7d40bde07109b7e71fd8-e5db0e6ea012a342-01
+      - 00-47f33a91e5f3774ea494109bda1ec5b4-01f9bfb41ada2643-01
     status:
       code: 200
       message: OK
@@ -106,23 +112,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:56.265704+00:00"}]'
+      string: '[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:27:47.704363+00:00"}]'
     headers:
       content-length:
-      - '160'
+      - '163'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:56 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
+      mise-correlation-id:
+      - f79d4c59-a985-4ad3-9509-0eabdddbb6d6
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-dc86d597fb65e441becad707439d92cf-bac291f0f0569b45-01
+      - 00-8a2d3a0d668fbd489c6abf6683de7b60-3e4ad08f4c5b7b49-01
     status:
       code: 201
       message: Created
@@ -138,9 +146,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -153,11 +161,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:56 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-04e72ebf854ca34e998c3ca5b3c9fd63-2818c3dac74e3445-01
+      - 00-53288c12f67d974c9238e3cbb7848e66-df028f49fa09f146-01
     status:
       code: 404
       message: Not Found
@@ -176,25 +184,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2022-05-31
   response:
     body:
-      string: '{"$dtId":"digitalTwin-3b561da7","$etag":"W/\"b5e60b3d-166f-4a42-935b-8ec05368e9ad\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:03:56.4924880Z"},"TemperatureUnit":{"lastUpdateTime":"2022-03-28T15:03:56.4924880Z"}}}'
+      string: '{"$dtId":"digitalTwin-3b561da7","$etag":"W/\"5a847785-11b3-4319-b457-439b4085f157\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","$lastUpdateTime":"2022-05-26T07:27:47.8420415Z","AverageTemperature":{"lastUpdateTime":"2022-05-26T07:27:47.8420415Z"},"TemperatureUnit":{"lastUpdateTime":"2022-05-26T07:27:47.8420415Z"}}}'
     headers:
       content-length:
-      - '331'
+      - '380'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:56 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
       etag:
-      - W/"b5e60b3d-166f-4a42-935b-8ec05368e9ad"
+      - W/"5a847785-11b3-4319-b457-439b4085f157"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-78bb965a55c13143b9ab1457beed87b5-d3ab34a33893b742-01
+      - 00-d70d405d16495a449797606d4c0c953c-d9b6845b0b87444e-01
     status:
       code: 200
       message: OK
@@ -212,9 +220,9 @@ interactions:
       If-Match:
       - W/"7e67a355-f19c-4c19-8a10-2d69b2d2253f"
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"PreconditionFailed","message":"The provided etag
@@ -227,11 +235,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:56 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8ed875db37ca14469602ae4723dd63e4-081329469580f248-01
+      - 00-ddf341fca479834b8bf64cdcae6a9011-e7d5d83459d68349-01
     status:
       code: 412
       message: Precondition Failed
@@ -247,11 +255,11 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - W/"b5e60b3d-166f-4a42-935b-8ec05368e9ad"
+      - W/"5a847785-11b3-4319-b457-439b4085f157"
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2022-05-31
   response:
     body:
       string: ''
@@ -259,11 +267,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Mar 2022 15:03:56 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-baa5ef3cfa57ef46842d6c333db5d90a-6d9f28b050034e41-01
+      - 00-200c4aa2eaa71a42a73294685ca129c9-0490c5bcc40a7543-01
     status:
       code: 204
       message: No Content
@@ -277,9 +285,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-3b561da7?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -292,11 +300,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:03:56 GMT
+      - Thu, 26 May 2022 07:27:47 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-fa3596922c08aa469f60160c21bda8de-1cb86f339519d741-01
+      - 00-188cc7f4c5af2941a8e92989a30523c6-01b471bd441b864a-01
     status:
       code: 404
       message: Not Found

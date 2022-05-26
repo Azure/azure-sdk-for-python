@@ -9,13 +9,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 695875a1-6c2b-4050-b277-382a260cb329
+      - 8c732efc-d89a-4feb-8bcb-de04a4e171a6
       Telemetry-Source-Time:
-      - '2022-03-28T15:03:30.710096Z'
+      - '2022-05-26T07:27:31.947035Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -25,13 +25,13 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:03:31 GMT
+      date: Thu, 26 May 2022 07:27:32 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-43beabaacdc58f448d8145d1a95c04a0-6009e8576558d74b-01
+      traceresponse: 00-9cb5a6cc95ab3645b2febffe4393bfb7-1264ed8df61f454d-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2022-05-31
 - request:
     body: '{"ComponentTelemetry1": 5}'
     headers:
@@ -42,13 +42,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 6d06e3e5-5984-43fe-9dba-1a2ec655d8d7
+      - b2649adf-d0a6-44cc-bc3a-c0bda7746134
       Telemetry-Source-Time:
-      - '2022-03-28T15:03:31.279643Z'
+      - '2022-05-26T07:27:32.380072Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -58,11 +58,11 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:03:31 GMT
+      date: Thu, 26 May 2022 07:27:32 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-6fdf6d17ab64614a99cdf9f39b54b336-56c5322af045844d-01
+      traceresponse: 00-f70542b5fb9ccd4a8bc59bf457c8e141-0a6564144fda4941-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2022-05-31
 version: 1

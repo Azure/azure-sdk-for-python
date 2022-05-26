@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"JsonPatchInvalid","message":"Could not resolve path
@@ -20,13 +20,13 @@ interactions:
     headers:
       content-length: '214'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:03:42 GMT
+      date: Thu, 26 May 2022 07:27:40 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-bda87f1fea6479499022b7528fbb0ba2-28a5ddbc3d3c2e44-01
+      traceresponse: 00-dc91b162cce3c1438115ed9be7040a83-d1925e2be688804f-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2022-05-31
 - request:
     body: '[{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]'
     headers:
@@ -37,9 +37,9 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -49,11 +49,11 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:03:42 GMT
+      date: Thu, 26 May 2022 07:27:40 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-163f8ffb2c14cb44af0e9c54c00bff74-95b1db670ab41446-01
+      traceresponse: 00-1a6ba49e5c5d8a4591ff99419613f23e-dccfcae513dc9342-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2022-05-31
 version: 1

@@ -97,7 +97,7 @@ class DigitalTwinsPreparer(AzureMgmtPreparer):
             self.resource = FakeResource(
                 name=name,
                 id=name,
-                host_name= self.resource_moniker + ".api.wus2.digitaltwins.azure.net")
+                host_name= self.resource_moniker + ".api.wcus.digitaltwins.azure.net")
 
         return {self.parameter_name: self.resource}
 

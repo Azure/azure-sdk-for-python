@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-6abd168c?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-6abd168c?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"EventRouteNotFound","message":"There is no route
@@ -25,11 +25,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:04:53 GMT
+      - Thu, 26 May 2022 07:28:19 GMT
+      mise-correlation-id:
+      - 2ac6fcf1-d72b-454c-88df-1adbaf99102a
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-73366f131b7c6d459e9e2bbbbd690e82-752344cbcaa1874b-01
+      - 00-a832e01e9d4bcf42a74e7b6abe9102db-b320e3e73f1b864f-01
     status:
       code: 404
       message: Not Found

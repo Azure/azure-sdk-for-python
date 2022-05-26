@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel988f1233%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel988f1233%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,11 +23,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:19 GMT
+      - Thu, 26 May 2022 07:28:33 GMT
+      mise-correlation-id:
+      - 3469a48d-4701-4eee-b710-b1f335c9ccca
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-007e3dcf00b53646b92bab583afc5607-0d117030d9129448-01
+      - 00-5e9947c00a0cb64bbc9d0bd589871183-d30c633a7f82a447-01
     status:
       code: 404
       message: Not Found
@@ -48,23 +50,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:19.9686021+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:34.6513627+00:00"}]'
     headers:
       content-length:
-      - '175'
+      - '178'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:19 GMT
+      - Thu, 26 May 2022 07:28:33 GMT
+      mise-correlation-id:
+      - e4550079-5181-4e40-9214-8b12d0717661
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-ad11fbf6bfb3f04aa48c5a465633376c-23a2a57d3c87ae46-01
+      - 00-d64cb72b6dfed54a924c0b6477777a48-29ca6ba0ac58fb49-01
     status:
       code: 201
       message: Created
@@ -78,23 +82,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=true&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=true&api-version=2022-05-31
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:51.4089828+00:00","model":{"@id":"dtmi:samples:DTTestBuilding;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Building","contents":[{"@type":"Property","name":"AverageTemperature","schema":"double"},{"@type":"Property","name":"TemperatureUnit","schema":"string"}]}},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:59.6848013+00:00","model":{"@id":"dtmi:com:samples:TempModel2fc70f9f;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:03.1450839+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbeb90c48;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:03.145114+00:00","model":{"@id":"dtmi:com:samples:TempModelbeb90c48;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Component","name":"Component1","schema":"dtmi:com:samples:ComponentModelbeb90c48;1"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:05.9693739+00:00","model":{"@id":"dtmi:com:samples:ComponentModel3510e6b;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:07.3571109+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbf2f17de;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:15.4948954+00:00","model":{"@id":"dtmi:com:samples:ComponentModel90490aa1;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:17.5132348+00:00","model":{"@id":"dtmi:com:samples:ComponentModel72641144;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:18.7555071+00:00","model":{"@id":"dtmi:com:samples:ComponentModela7840b90;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:19.9686021+00:00","model":{"@id":"dtmi:com:samples:ComponentModel988f1233;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en-US":"Building"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:18.0725301+00:00","model":{"@id":"dtmi:samples:DTTestBuilding;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"Building","contents":[{"@type":"Property","name":"AverageTemperature","schema":"double"},{"@type":"Property","name":"TemperatureUnit","schema":"string"}]}},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en-US":"TempModel"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:22.8180695+00:00","model":{"@id":"dtmi:com:samples:TempModel2fc70f9f;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:24.8731908+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbeb90c48;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en-US":"TempModel"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:24.8732165+00:00","model":{"@id":"dtmi:com:samples:TempModelbeb90c48;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Component","name":"Component1","schema":"dtmi:com:samples:ComponentModelbeb90c48;1"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":true,"uploadTime":"2022-05-26T07:28:26.2368318+00:00","model":{"@id":"dtmi:com:samples:ComponentModel3510e6b;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":true,"uploadTime":"2022-05-26T07:28:27.0914286+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbf2f17de;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:31.3096291+00:00","model":{"@id":"dtmi:com:samples:ComponentModel90490aa1;1","@type":"Interface","@context":"dtmi:dtdl:context;2","displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:32.540778+00:00","model":{"@id":"dtmi:com:samples:ComponentModel72641144;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:33.1789596+00:00","model":{"@id":"dtmi:com:samples:ComponentModela7840b90;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:34.6513627+00:00","model":{"@id":"dtmi:com:samples:ComponentModel988f1233;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}],"nextLink":null}'
     headers:
       content-length:
-      - '4647'
+      - '4663'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:05:19 GMT
+      - Thu, 26 May 2022 07:28:33 GMT
+      mise-correlation-id:
+      - d6f68fcc-218f-4308-8a30-85e65d38cc8a
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-04c2181e551c9441a6caccd32d9e97e2-60ec889360f0e548-01
+      - 00-e2342cd0dea54b499880e790aeb9a7d7-504d7c2ead56144b-01
     status:
       code: 200
       message: OK

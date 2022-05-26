@@ -82,7 +82,7 @@ class DigitalTwinModelsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -167,7 +167,7 @@ class DigitalTwinModelsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.PagedDigitalTwinsModelDataCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedDigitalTwinsModelDataCollection"]
         error_map = {
@@ -290,7 +290,7 @@ class DigitalTwinModelsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -377,7 +377,7 @@ class DigitalTwinModelsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
 
         _traceparent = None
@@ -458,7 +458,7 @@ class DigitalTwinModelsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None

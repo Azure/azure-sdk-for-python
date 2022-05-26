@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 3ba69e0b-7cf9-482b-abe3-2e11295ea119
+      - 94af41e5-0108-41a4-b6e8-80bba0ab6d04
       Telemetry-Source-Time:
-      - '2022-03-28T15:04:02.713965Z'
+      - '2022-05-26T07:27:50.611267Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
@@ -32,11 +32,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:04:03 GMT
+      - Thu, 26 May 2022 07:27:51 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-fd84972ab2204043a9517ac91ec5d7ef-974e100609431940-01
+      - 00-203da4432f146141a87c338902b5f1bb-b1ef342e601e7141-01
     status:
       code: 404
       message: Not Found

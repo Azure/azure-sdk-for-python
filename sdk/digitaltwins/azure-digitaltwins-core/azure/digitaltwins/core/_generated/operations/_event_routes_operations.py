@@ -34,7 +34,7 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
     max_items_per_page = kwargs.pop('max_items_per_page', None)  # type: Optional[int]
@@ -71,7 +71,7 @@ def build_get_by_id_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -110,7 +110,7 @@ def build_add_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -152,7 +152,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
 
@@ -227,7 +227,7 @@ class EventRoutesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.EventRouteCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventRouteCollection"]
         error_map = {
@@ -337,7 +337,7 @@ class EventRoutesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None
@@ -415,7 +415,7 @@ class EventRoutesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None
@@ -490,7 +490,7 @@ class EventRoutesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         _traceparent = None
         _tracestate = None

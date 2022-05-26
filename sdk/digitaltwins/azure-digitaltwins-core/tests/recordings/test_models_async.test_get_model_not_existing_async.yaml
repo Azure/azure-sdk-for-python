@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -16,11 +16,12 @@ interactions:
     headers:
       content-length: '220'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:33 GMT
+      date: Thu, 26 May 2022 07:28:41 GMT
+      mise-correlation-id: 9a0957fe-e7d9-4f32-b63e-0bebe0fe48a7
       strict-transport-security: max-age=2592000
-      traceresponse: 00-3fbcd15b71cee348928f9c1c2a237e3b-550da3918eaf994e-01
+      traceresponse: 00-fac5600787283e42882ededdb0f0824b-39cb4c60e12d5944-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?includeModelDefinition=false&api-version=2022-05-31
 version: 1

@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"InvalidArgument","message":"Operation failed as models
@@ -21,13 +21,14 @@ interactions:
     headers:
       content-length: '267'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:24 GMT
+      date: Thu, 26 May 2022 07:28:36 GMT
+      mise-correlation-id: f20b1699-3278-45fb-9967-1d1f591fd698
       strict-transport-security: max-age=2592000
-      traceresponse: 00-bc915d91899e134d8fdb723227ec64c0-97df3ba9ce305d4a-01
+      traceresponse: 00-3cfb9b77d42ba841a401da749863d295-6ac6dfe15154724d-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 - request:
     body: '[{}]'
     headers:
@@ -38,26 +39,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DTDLParserError","message":"None of the models in
-        this request could be created due to a problem with one or more models: No
-        @context specifier in top-level JSON object. Add a ''@context'' property whose
-        value is a valid DTDL context specifier, such as ''dtmi:dtdl:context;2''..
+        this request could be created due to a problem with one or more models: In
+        source, top-level JSON object has no @context specifier. Add a ''@context''
+        property whose value is a valid DTDL context specifier, such as ''dtmi:dtdl:context;2''..
         See model documentation(https://aka.ms/ADTv2Models) for supported format."}}'
     headers:
-      content-length: '369'
+      content-length: '381'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:24 GMT
+      date: Thu, 26 May 2022 07:28:36 GMT
+      mise-correlation-id: a65cc86a-a24f-4134-8626-1f856333cece
       strict-transport-security: max-age=2592000
-      traceresponse: 00-fc1040c217d92944b4d673a74295cf44-37797862c6049d48-01
+      traceresponse: 00-45ca35bc6e83b9479980ef09e4ee85f0-70f9b402e8bb484e-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 - request:
     body: null
     headers:
@@ -66,9 +68,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"BadRequest","message":"A non-empty request body is
@@ -76,11 +78,12 @@ interactions:
     headers:
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:24 GMT
+      date: Thu, 26 May 2022 07:28:37 GMT
+      mise-correlation-id: 311db777-bd49-4362-b273-17d722addc51
       strict-transport-security: max-age=2592000
-      traceresponse: 00-6c39cf071678274a8d284606ed74553d-91222835e50b4b45-01
+      traceresponse: 00-c6e38d08e3b6084cb43bbadfda1de22c-25411e3dec4af046-01
     status:
       code: 400
       message: Bad Request
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 version: 1

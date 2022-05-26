@@ -28,7 +28,7 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-m
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-06-30-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -40,7 +40,7 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-m
     ):
         # type: (...) -> None
         super(AzureDigitalTwinsAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

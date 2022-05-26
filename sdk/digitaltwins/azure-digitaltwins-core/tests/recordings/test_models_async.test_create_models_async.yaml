@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:TempModel73af1142;1?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModel73af1142;1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -16,22 +16,23 @@ interactions:
     headers:
       content-length: '221'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:22 GMT
+      date: Thu, 26 May 2022 07:28:36 GMT
+      mise-correlation-id: 01b9dc05-024e-48c0-99ae-08e01b1b1724
       strict-transport-security: max-age=2592000
-      traceresponse: 00-5d11f9d4a024a949aba5f4070564972e-c4b37282051d9d44-01
+      traceresponse: 00-8b8c315a5a6b20418bf0adfaebd54aea-3ed60b0b66942643-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:TempModel73af1142;1?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModel73af1142;1?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel73af1142;1?includeModelDefinition=false&api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel73af1142;1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -40,13 +41,14 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:22 GMT
+      date: Thu, 26 May 2022 07:28:36 GMT
+      mise-correlation-id: 33532399-790e-4276-a0f2-c6bb4c4f8240
       strict-transport-security: max-age=2592000
-      traceresponse: 00-01e3ffd12c5694439e650a3947a8606e-310fdddbdbd24940-01
+      traceresponse: 00-a7378b1e06a1f545a540c840e6f0f63c-7d70f8908ca5764f-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel73af1142;1?includeModelDefinition=false&api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel73af1142;1?includeModelDefinition=false&api-version=2022-05-31
 - request:
     body: '[{"@id": "dtmi:com:samples:ComponentModel73af1142;1", "@type": "Interface",
       "@context": "dtmi:dtdl:context;2", "displayName": "Component1", "contents":
@@ -65,20 +67,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel73af1142;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:23.6839055+00:00"},{"id":"dtmi:com:samples:TempModel73af1142;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:23.6839536+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel73af1142;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:36.6220251+00:00"},{"id":"dtmi:com:samples:TempModel73af1142;1","description":{},"displayName":{"en-US":"TempModel"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:36.6220475+00:00"}]'
     headers:
-      content-length: '343'
+      content-length: '349'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:05:23 GMT
+      date: Thu, 26 May 2022 07:28:36 GMT
+      mise-correlation-id: 7816b9e0-a172-4c5d-996a-9c0b2b674efe
       strict-transport-security: max-age=2592000
-      traceresponse: 00-3ccd20f88a9ec44999fd19032754d404-7b8e81cb26548047-01
+      traceresponse: 00-c35879ad10499945862773249c1d11c2-4a33debfb2d4e445-01
     status:
       code: 201
       message: Created
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
 version: 1

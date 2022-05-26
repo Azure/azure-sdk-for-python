@@ -33,7 +33,7 @@ def build_query_twins_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
     tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
@@ -125,7 +125,7 @@ class QueryOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-06-30-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _traceparent = None

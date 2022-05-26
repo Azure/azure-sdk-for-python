@@ -39,7 +39,7 @@ class AzureDigitalTwinsAPI(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://digitaltwins-hostname".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-06-30-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """

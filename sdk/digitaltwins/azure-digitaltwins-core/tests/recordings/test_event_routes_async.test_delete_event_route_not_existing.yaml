@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-faf51909?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-faf51909?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"EventRouteNotFound","message":"There is no route
@@ -16,11 +16,12 @@ interactions:
     headers:
       content-length: '223'
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Mar 2022 15:04:56 GMT
+      date: Thu, 26 May 2022 07:28:20 GMT
+      mise-correlation-id: 2ca4db79-b46f-4581-9228-f0b12619e550
       strict-transport-security: max-age=2592000
-      traceresponse: 00-6aaa6b56c124e24b969d52d93e08107c-42a5469570a3e042-01
+      traceresponse: 00-c208a9110d8d0149a5837407a80610a1-e40207f0471ede47-01
     status:
       code: 404
       message: Not Found
-    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-faf51909?api-version=2021-06-30-preview
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-faf51909?api-version=2022-05-31
 version: 1

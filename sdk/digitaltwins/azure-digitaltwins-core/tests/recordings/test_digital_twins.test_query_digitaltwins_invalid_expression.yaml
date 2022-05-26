@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/query?api-version=2021-06-30-preview
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/query?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"SqlQueryError","message":"SQL query parse failed:
@@ -25,11 +25,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Mar 2022 15:04:07 GMT
+      - Thu, 26 May 2022 07:27:54 GMT
+      mise-correlation-id:
+      - c3ce0ca5-39de-4470-bcc8-591a12c7dbb2
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-0e79d235f42c024f999f30cca4fe7871-a40d11294f865946-01
+      - 00-6e9215d959ebac42ba17fc5ce84d983b-a388dda09c2afe42-01
       transfer-encoding:
       - chunked
     status:
