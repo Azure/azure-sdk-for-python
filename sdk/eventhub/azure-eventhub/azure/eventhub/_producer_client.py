@@ -55,8 +55,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
     :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
      then publish. Default is False.
     :keyword Union[ThreadPoolExecutor, int] buffer_concurrency: The ThreadPoolExecutor to be used for publishing events
-     or the number of workers for the ThreadPoolExecutor. Default is none and a ThreadPoolExecutor with the default number of workers
-     will be created https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+     or the number of workers for the ThreadPoolExecutor. 
+     Default is none and a ThreadPoolExecutor with the default number of workers will be created
+     per https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
     :keyword on_success: The callback to be called once a batch has been successfully published.
      The callback takes two parameters:
         - `events`: The list of events that have been successfully published
