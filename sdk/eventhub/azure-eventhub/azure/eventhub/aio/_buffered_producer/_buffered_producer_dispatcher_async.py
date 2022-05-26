@@ -31,7 +31,6 @@ class BufferedProducerDispatcher:
             *,
             max_buffer_length: int = 1500,
             max_wait_time: float = 1,
-            max_concurrent_sends: int = 1
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
@@ -44,7 +43,6 @@ class BufferedProducerDispatcher:
         self._partition_resolver = PartitionResolver(self._partition_ids)
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
-        self._max_concurrent_sends = max_concurrent_sends
 
     async def _get_partition_id(self, partition_id, partition_key):
         if partition_id:
@@ -72,7 +70,6 @@ class BufferedProducerDispatcher:
                     self._on_error,
                     self._max_message_size_on_link,
                     max_wait_time=self._max_wait_time,
-                    max_concurrent_sends=self._max_concurrent_sends,
                     max_buffer_length=self._max_buffer_length
                 )
                 await buffered_producer.start()

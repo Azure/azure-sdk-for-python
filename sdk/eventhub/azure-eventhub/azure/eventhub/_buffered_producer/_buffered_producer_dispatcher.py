@@ -5,7 +5,7 @@
 import logging
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, Optional, List, Callable, TYPE_CHECKING
+from typing import Dict, Optional, List, Callable, Union, TYPE_CHECKING
 
 from ._partition_resolver import PartitionResolver
 from ._buffered_producer import BufferedProducer
@@ -31,9 +31,7 @@ class BufferedProducerDispatcher:
             *,
             max_buffer_length: int = 1500,
             max_wait_time: float = 1,
-            max_concurrent_sends: int = 1,
-            executor: Optional[ThreadPoolExecutor] = None,
-            max_worker: Optional[int] = None
+            executor: Optional[Union[ThreadPoolExecutor, int]] = None
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
@@ -46,9 +44,15 @@ class BufferedProducerDispatcher:
         self._partition_resolver = PartitionResolver(self._partition_ids)
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
-        self._max_concurrent_sends = max_concurrent_sends
-        self._existing_executor = bool(executor)
-        self._executor = executor or ThreadPoolExecutor(max_worker)
+        self._existing_executor = False
+
+        if not executor:
+            self._executor = ThreadPoolExecutor()
+        elif isinstance(executor, ThreadPoolExecutor):
+            self._existing_executor = True
+            self._executor = executor
+        elif isinstance(executor, int):
+            self._executor = ThreadPoolExecutor(executor)
 
     def _get_partition_id(self, partition_id, partition_key):
         if partition_id:
@@ -77,7 +81,6 @@ class BufferedProducerDispatcher:
                     self._max_message_size_on_link,
                     executor=self._executor,
                     max_wait_time=self._max_wait_time,
-                    max_concurrent_sends=self._max_concurrent_sends,
                     max_buffer_length=self._max_buffer_length
                 )
                 buffered_producer.start()
