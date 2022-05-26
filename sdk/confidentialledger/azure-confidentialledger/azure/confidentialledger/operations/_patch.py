@@ -9,8 +9,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import time
 from typing import Any, List, Optional
 
-from azure.core.tracing.decorator import distributed_trace
-
 from azure.confidentialledger.operations._operations import (
     ConfidentialLedgerOperations as GeneratedOperations,
 )
@@ -152,7 +150,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         ready_const = "Ready"  # Value of 'state' field when the receipt is available.
         most_recent_state = None
         for _ in range(max_tries):
-            result = self._client.confidential_ledger.get_receipt(
+            result = super().get_receipt(
                 transaction_id=transaction_id, **kwargs
             )
             if result["state"] == ready_const:
@@ -214,7 +212,6 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         )
         return super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)
 
-    @distributed_trace
     def post_ledger_entry_and_wait_for_commit(
         self, entry: JSON, *, collection_id: Optional[str] = None, **kwargs: Any
     ):
@@ -255,7 +252,6 @@ class ConfidentialLedgerOperations(GeneratedOperations):
 
         return post_result
 
-    @distributed_trace
     def wait_until_durable(
         self,
         transaction_id,  # type: str
