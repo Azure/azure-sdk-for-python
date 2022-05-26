@@ -1,4 +1,4 @@
-from azure.confidentialledger["id"]entity_service import (
+from azure.identity_service import (
     ConfidentialLedgerIdentityServiceClient,
 )
 from devtools_testutils import AzureTestCase
@@ -16,8 +16,8 @@ class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
             identity_service_url="https://identity.confidential-ledger.core.azure.com",
         )
 
-        ledger_id = confidentialledger_endpoint.split(".")[0]
-        network_identity = client.get_ledger_identity(ledger_id=ledger_id)
+        ledger_id = confidentialledger_endpoint.replace("https://", "").split(".")[0]
+        network_identity = client.identity_service.get_ledger_identity(ledger_id=ledger_id)
 
         self.assertEqual(network_identity.ledger_id, ledger_id)
 
