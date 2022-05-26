@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b1 (2022-05-26)
 
 ### Features Added
 * Conversation summarization task (Long-running operation)
