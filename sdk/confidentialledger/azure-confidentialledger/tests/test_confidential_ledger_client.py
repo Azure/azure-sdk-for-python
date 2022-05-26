@@ -265,7 +265,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.verification_methods_actions(client)
 
     def verification_methods_actions(self, client):
-        consortium = client.confidential_ledger.get_consortium()
+        consortium = client.confidential_ledger.get_consortium_members()
         self.assertEqual(len(consortium["members"]), 1)
         for member in consortium["members"]:
             self.assertTrue(member["certificate"])
