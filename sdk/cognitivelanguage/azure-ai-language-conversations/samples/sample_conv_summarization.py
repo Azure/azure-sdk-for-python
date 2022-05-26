@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_conv_issue_summarization_async.py
+FILE: sample_conv_summarization.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze a conversation for issue resolution.
@@ -13,22 +13,20 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_conv_issue_summarization_async.py
+    python sample_conv_summarization.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
     2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
 """
 
-import asyncio
-
-async def sample_conv_issue_summarization_async():
+def sample_conv_summarization():
     # [START analyze_conversation_app]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
 
-    from azure.ai.language.conversations.aio import ConversationAnalysisClient
+    from azure.ai.language.conversations import ConversationAnalysisClient
 
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -36,8 +34,8 @@ async def sample_conv_issue_summarization_async():
 
     # analyze quey
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
-    async with client:
-        poller = await client.begin_conversation_analysis(
+    with client:
+        poller = client.begin_conversation_analysis(
             task={
                 "displayName": "Analyze conversations from xxx",
                 "analysisInput": {
@@ -82,17 +80,17 @@ async def sample_conv_issue_summarization_async():
         )
 
         # view result
-        result = await poller.result()
+        result = poller.result()
         task_result = result["tasks"]["items"][0]
         print("... view task status ...")
         print("status: {}".format(task_result["status"]))
-        issue_resolution_result = task_result["results"]
-        if issue_resolution_result["errors"]:
+        resolution_result = task_result["results"]
+        if resolution_result["errors"]:
             print("... errors occured ...")
-            for error in issue_resolution_result["errors"]:
+            for error in resolution_result["errors"]:
                 print(error)
         else:
-            conversation_result = issue_resolution_result["conversations"][0]
+            conversation_result = resolution_result["conversations"][0]
             if conversation_result["warnings"]:
                 print("... view warnings ...")
                 for warning in conversation_result["warnings"]:
@@ -106,9 +104,5 @@ async def sample_conv_issue_summarization_async():
     # [END analyze_conversation_app]
 
 
-async def main():
-    await sample_conv_issue_summarization_async()
-
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    sample_conv_summarization()
