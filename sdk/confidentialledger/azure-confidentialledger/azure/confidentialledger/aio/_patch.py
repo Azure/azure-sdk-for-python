@@ -17,7 +17,8 @@ from azure.confidentialledger.aio._client import (
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [
-    "ConfidentialLedgerCertificateCredential", "ConfidentialLedgerClient"
+    "ConfidentialLedgerCertificateCredential",
+    "ConfidentialLedgerClient",
 ]  # Add all objects you want publicly available to users at this package level
 
 

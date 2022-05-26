@@ -150,9 +150,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         ready_const = "Ready"  # Value of 'state' field when the receipt is available.
         most_recent_state = None
         for _ in range(max_tries):
-            result = super().get_receipt(
-                transaction_id=transaction_id, **kwargs
-            )
+            result = super().get_receipt(transaction_id=transaction_id, **kwargs)
             if result["state"] == ready_const:
                 return result
 

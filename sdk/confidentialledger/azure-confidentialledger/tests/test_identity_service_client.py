@@ -1,4 +1,4 @@
-from azure.confidentialledger.identity_service import (
+from azure.confidentialledger["id"]entity_service import (
     ConfidentialLedgerIdentityServiceClient,
 )
 from devtools_testutils import AzureTestCase

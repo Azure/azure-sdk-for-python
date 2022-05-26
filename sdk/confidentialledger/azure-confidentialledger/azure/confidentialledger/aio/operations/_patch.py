@@ -9,12 +9,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 from typing import Any, List, Optional
 
-from azure.confidentialledger.aio.operations._operations import ConfidentialLedgerOperations as GeneratedOperations
+from azure.confidentialledger.aio.operations._operations import (
+    ConfidentialLedgerOperations as GeneratedOperations,
+)
 from azure.confidentialledger.aio.operations._operations import JSON
 
-__all__: List[
-    str
-] = ["ConfidentialLedgerOperations"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "ConfidentialLedgerOperations"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -148,9 +150,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         ready_const = "Ready"  # Value of 'state' field when the receipt is available.
         most_recent_state = None
         for _ in range(max_tries):
-            result = await super().get_receipt(
-                transaction_id=transaction_id, **kwargs
-            )
+            result = await super().get_receipt(transaction_id=transaction_id, **kwargs)
             if result["state"] == ready_const:
                 return result
 
@@ -208,7 +208,9 @@ class ConfidentialLedgerOperations(GeneratedOperations):
                 "transactionId": headers["x-ms-ccf-transaction-id"],
             },
         )
-        return await super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)
+        return await super().post_ledger_entry(
+            entry, collection_id=collection_id, **kwargs
+        )
 
     async def post_ledger_entry_and_wait_for_commit(
         self, entry: JSON, *, collection_id: Optional[str] = None, **kwargs: Any
