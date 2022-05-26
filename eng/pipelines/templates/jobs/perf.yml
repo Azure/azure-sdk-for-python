@@ -35,6 +35,8 @@ variables:
     value: 'azsdk-pool-mms-ubuntu-2004-perf'
   - name: OSVmImage
     value: 'MMSUbuntu20.04'
+  - name: PythonVersion
+    value: '3.7'
 
 resources:
   repositories:
@@ -61,10 +63,10 @@ jobs:
       parameters:
         AgentImage: $(OSVmImage)
 
-    - task: UsePythonVersion@0
-      displayName: "Use Python $(PythonVersion)"
-      inputs:
-        versionSpec: $(PythonVersion)
+  - task: UsePythonVersion@0
+    displayName: "Use Python $(PythonVersion)"
+    inputs:
+      versionSpec: $(PythonVersion)
 
     - template: ../../../common/TestResources/deploy-test-resources.yml
       parameters:
