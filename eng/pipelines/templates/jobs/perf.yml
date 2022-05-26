@@ -63,10 +63,10 @@ jobs:
       parameters:
         AgentImage: $(OSVmImage)
 
-  - task: UsePythonVersion@0
-    displayName: "Use Python $(PythonVersion)"
-    inputs:
-      versionSpec: $(PythonVersion)
+    - task: UsePythonVersion@0
+      displayName: "Use Python $(PythonVersion)"
+      inputs:
+        versionSpec: $(PythonVersion)
 
     - template: ../../../common/TestResources/deploy-test-resources.yml
       parameters:
