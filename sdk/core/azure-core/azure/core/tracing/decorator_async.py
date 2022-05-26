@@ -30,7 +30,7 @@ import functools
 from typing import Awaitable, Callable, Any, TypeVar, overload
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
-from . import SpanKind
+from . import SpanKind as _SpanKind
 from ..settings import settings
 
 P = ParamSpec("P")
@@ -66,7 +66,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
     """
     name_of_span = kwargs.pop("name_of_span", None)
     tracing_attributes = kwargs.pop("tracing_attributes", {})
-    kind = kwargs.pop("kind", SpanKind.INTERNAL)
+    kind = kwargs.pop("kind", _SpanKind.INTERNAL)
 
     def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         @functools.wraps(func)
