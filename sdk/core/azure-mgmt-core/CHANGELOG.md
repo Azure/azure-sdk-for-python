@@ -1,5 +1,11 @@
 # Release History
 
+## 1.4.0 (Unreleased)
+
+### Features
+
+- Added AuxiliaryAuthenticationPolicy
+
 ## 1.3.0 (2021-07-01)
 
 ### Features
