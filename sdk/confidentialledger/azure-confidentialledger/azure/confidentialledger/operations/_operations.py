@@ -359,7 +359,7 @@ def build_confidential_ledger_delete_user_request(
     # Construct URL
     _url = "/app/users/{userId}"
     path_format_arguments = {
-        "userId": _SERIALIZER.url("user_id", user_id, "str"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -389,7 +389,7 @@ def build_confidential_ledger_get_user_request(
     # Construct URL
     _url = "/app/users/{userId}"
     path_format_arguments = {
-        "userId": _SERIALIZER.url("user_id", user_id, "str"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -422,7 +422,7 @@ def build_confidential_ledger_create_or_update_user_request(
     # Construct URL
     _url = "/app/users/{userId}"
     path_format_arguments = {
-        "userId": _SERIALIZER.url("user_id", user_id, "str"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)

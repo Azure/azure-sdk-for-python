@@ -14,7 +14,9 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 
-class ConfidentialLedgerIdentityServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ConfidentialLedgerIdentityServiceClientConfiguration(
+    Configuration
+):  # pylint: disable=too-many-instance-attributes
     """Configuration for ConfidentialLedgerIdentityServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,33 +30,42 @@ class ConfidentialLedgerIdentityServiceClientConfiguration(Configuration):  # py
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        identity_service_uri: str,
-        **kwargs: Any
-    ) -> None:
-        super(ConfidentialLedgerIdentityServiceClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-05-13")  # type: str
+    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
+        super(ConfidentialLedgerIdentityServiceClientConfiguration, self).__init__(
+            **kwargs
+        )
+        api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
 
         if identity_service_uri is None:
             raise ValueError("Parameter 'identity_service_uri' must not be None.")
 
         self.identity_service_uri = identity_service_uri
         self.api_version = api_version
-        kwargs.setdefault('sdk_moniker', 'acl-identity-service/{}'.format(VERSION))
+        kwargs.setdefault("sdk_moniker", "acl-identity-service/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+        self.user_agent_policy = kwargs.get(
+            "user_agent_policy"
+        ) or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(
+            **kwargs
+        )
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get(
+            "logging_policy"
+        ) or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get(
+            "http_logging_policy"
+        ) or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get(
+            "custom_hook_policy"
+        ) or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(
+            **kwargs
+        )
+        self.authentication_policy = kwargs.get("authentication_policy")

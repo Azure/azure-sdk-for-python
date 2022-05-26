@@ -11,7 +11,13 @@ from typing import Any, Callable, Dict, Optional, TypeVar, cast
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,48 +25,50 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._vendor import _format_url_section
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_confidential_ledger_identity_service_get_ledger_identity_request(
-    ledger_id: str,
-    **kwargs: Any
+    ledger_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-05-13")
+    )  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/ledgerIdentity/{ledgerId}"
     path_format_arguments = {
-        "ledgerId": _SERIALIZER.url("ledger_id", ledger_id, 'str'),
+        "ledgerId": _SERIALIZER.url("ledger_id", ledger_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
     )
+
 
 class ConfidentialLedgerIdentityServiceOperations:
     """
@@ -77,15 +85,12 @@ class ConfidentialLedgerIdentityServiceOperations:
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
+        self._deserialize = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
-    def get_ledger_identity(
-        self,
-        ledger_id: str,
-        **kwargs: Any
-    ) -> JSON:
+    def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.
 
         Gets identity information for a Confidential Ledger instance.
@@ -107,37 +112,47 @@ class ConfidentialLedgerIdentityServiceOperations:
                 }
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-13"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-13")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
-        request = build_confidential_ledger_identity_service_get_ledger_identity_request(
-            ledger_id=ledger_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
+        request = (
+            build_confidential_ledger_identity_service_get_ledger_identity_request(
+                ledger_id=ledger_id,
+                api_version=api_version,
+                headers=_headers,
+                params=_params,
+            )
         )
         path_format_arguments = {
-            "identityServiceUri": self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
+            "identityServiceUri": self._serialize.url(
+                "self._config.identity_service_uri",
+                self._config.identity_service_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -149,5 +164,3 @@ class ConfidentialLedgerIdentityServiceOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-

@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
+
 class ConfidentialLedgerIdentityServiceClient:
     """The ConfidentialLedgerIdentityServiceClient is used to retrieve the TLS certificate required
     for connecting to a Confidential Ledger.
@@ -37,28 +38,23 @@ class ConfidentialLedgerIdentityServiceClient:
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        identity_service_uri: str,
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{identityServiceUri}'
-        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(identity_service_uri=identity_service_uri, **kwargs)
+    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
+        _endpoint = "{identityServiceUri}"
+        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
+            identity_service_uri=identity_service_uri, **kwargs
+        )
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.confidential_ledger_identity_service = ConfidentialLedgerIdentityServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.confidential_ledger_identity_service = (
+            ConfidentialLedgerIdentityServiceOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -78,10 +74,17 @@ class ConfidentialLedgerIdentityServiceClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "identityServiceUri": self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
+            "identityServiceUri": self._serialize.url(
+                "self._config.identity_service_uri",
+                self._config.identity_service_uri,
+                "str",
+                skip_quote=True,
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
