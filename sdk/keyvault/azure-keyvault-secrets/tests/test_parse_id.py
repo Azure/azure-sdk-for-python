@@ -55,3 +55,15 @@ def test_parse_deleted_secret_id():
     assert parsed_secret_id.vault_url == "https://keyvault-name.vault.azure.net"
     assert parsed_secret_id.version is None
     assert parsed_secret_id.source_id == "https://keyvault-name.vault.azure.net/deletedsecrets/deleted-secret"
+
+
+def test_parse_secret_id_with_port():
+    """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/24446"""
+
+    source_id = "https://localhost:8443/secrets/secret-name/version"
+    parsed_key_id = KeyVaultSecretIdentifier(source_id)
+
+    assert parsed_key_id.name == "secret-name"
+    assert parsed_key_id.vault_url == "https://localhost:8443"
+    assert parsed_key_id.version == "version"
+    assert parsed_key_id.source_id == "https://localhost:8443/secrets/secret-name/version"
