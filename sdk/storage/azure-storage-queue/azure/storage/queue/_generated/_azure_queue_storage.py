@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureQueueStorage(object):
+class AzureQueueStorage(object):  # pylint: disable=client-accepts-api-version-keyword
     """AzureQueueStorage.
 
     :ivar service: ServiceOperations operations
@@ -35,9 +35,9 @@ class AzureQueueStorage(object):
     :ivar message_id: MessageIdOperations operations
     :vartype message_id: azure.storage.queue.operations.MessageIdOperations
     :param url: The URL of the service account, queue or message that is the target of the desired
-     operation.
+     operation. Required.
     :type url: str
-    :param base_url: Service URL. Default value is "".
+    :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2018-03-28". Note that overriding this default value may result in unsupported behavior.
@@ -58,10 +58,18 @@ class AzureQueueStorage(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.queue = QueueOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.message_id = MessageIdOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.queue = QueueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.messages = MessagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.message_id = MessageIdOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

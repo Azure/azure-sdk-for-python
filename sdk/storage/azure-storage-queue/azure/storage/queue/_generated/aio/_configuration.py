@@ -20,7 +20,7 @@ class AzureQueueStorageConfiguration(Configuration):  # pylint: disable=too-many
     attributes.
 
     :param url: The URL of the service account, queue or message that is the target of the desired
-     operation.
+     operation. Required.
     :type url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2018-03-28". Note that overriding this default value may result in unsupported behavior.

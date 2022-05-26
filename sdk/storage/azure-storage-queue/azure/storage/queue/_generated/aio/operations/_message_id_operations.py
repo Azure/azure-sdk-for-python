@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -33,11 +34,11 @@ class MessageIdOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -47,7 +48,7 @@ class MessageIdOperations:
         visibilitytimeout: int,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        queue_message: Optional["_models.QueueMessage"] = None,
+        queue_message: Optional[_models.QueueMessage] = None,
         **kwargs: Any
     ) -> None:
         """The Update operation was introduced with version 2011-08-18 of the Queue service API. The
@@ -57,13 +58,13 @@ class MessageIdOperations:
         size.
 
         :param pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
-         call to the Get Messages or Update Message operation.
+         call to the Get Messages or Update Message operation. Required.
         :type pop_receipt: str
         :param visibilitytimeout: Optional. Specifies the new visibility timeout value, in seconds,
          relative to server time. The default value is 30 seconds. A specified value must be larger than
          or equal to 1 second, and cannot be larger than 7 days, or larger than 2 hours on REST protocol
          versions prior to version 2011-08-18. The visibility timeout of a message can be set to a value
-         later than the expiry time.
+         later than the expiry time. Required.
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
@@ -76,17 +77,20 @@ class MessageIdOperations:
         :param queue_message: A Message object which can be stored in a Queue. Default value is None.
         :type queue_message: ~azure.storage.queue.models.QueueMessage
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         if queue_message is not None:
             _content = self._serialize.body(queue_message, 'QueueMessage', is_xml=True)
@@ -95,23 +99,26 @@ class MessageIdOperations:
 
         request = build_update_request(
             url=self._config.url,
-            version=self._config.version,
-            content_type=content_type,
             pop_receipt=pop_receipt,
             visibilitytimeout=visibilitytimeout,
-            content=_content,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -144,7 +151,7 @@ class MessageIdOperations:
         """The Delete operation deletes the specified message.
 
         :param pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
-         call to the Get Messages or Update Message operation.
+         call to the Get Messages or Update Message operation. Required.
         :type pop_receipt: str
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
@@ -155,33 +162,40 @@ class MessageIdOperations:
          value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
             url=self._config.url,
-            version=self._config.version,
             pop_receipt=pop_receipt,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            version=self._config.version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:

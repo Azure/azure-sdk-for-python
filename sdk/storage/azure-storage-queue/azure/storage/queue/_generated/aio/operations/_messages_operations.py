@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -33,11 +34,11 @@ class MessagesOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -48,7 +49,7 @@ class MessagesOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> List["_models.DequeuedMessageItem"]:
+    ) -> List[_models.DequeuedMessageItem]:
         """The Dequeue operation retrieves one or more messages from the front of the queue.
 
         :param number_of_messages: Optional. A nonzero integer value that specifies the number of
@@ -60,7 +61,7 @@ class MessagesOperations:
          relative to server time. The default value is 30 seconds. A specified value must be larger than
          or equal to 1 second, and cannot be larger than 7 days, or larger than 2 hours on REST protocol
          versions prior to version 2011-08-18. The visibility timeout of a message can be set to a value
-         later than the expiry time.
+         later than the expiry time. Default value is None.
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
@@ -71,34 +72,41 @@ class MessagesOperations:
          value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of DequeuedMessageItem, or the result of cls(response)
+        :return: list of DequeuedMessageItem or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.DequeuedMessageItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.DequeuedMessageItem"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.DequeuedMessageItem]]
 
         
         request = build_dequeue_request(
             url=self._config.url,
-            version=self._config.version,
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            version=self._config.version,
             template_url=self.dequeue.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -139,32 +147,39 @@ class MessagesOperations:
          value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_clear_request(
             url=self._config.url,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            version=self._config.version,
             template_url=self.clear.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -187,27 +202,27 @@ class MessagesOperations:
     @distributed_trace_async
     async def enqueue(
         self,
-        queue_message: "_models.QueueMessage",
+        queue_message: _models.QueueMessage,
         visibilitytimeout: Optional[int] = None,
         message_time_to_live: Optional[int] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> List["_models.EnqueuedMessage"]:
+    ) -> List[_models.EnqueuedMessage]:
         """The Enqueue operation adds a new message to the back of the message queue. A visibility timeout
         can also be specified to make the message invisible until the visibility timeout expires. A
         message must be in a format that can be included in an XML request with UTF-8 encoding. The
         encoded message can be up to 64 KB in size for versions 2011-08-18 and newer, or 8 KB in size
         for previous versions.
 
-        :param queue_message: A Message object which can be stored in a Queue.
+        :param queue_message: A Message object which can be stored in a Queue. Required.
         :type queue_message: ~azure.storage.queue.models.QueueMessage
         :param visibilitytimeout: Optional. If specified, the request must be made using an
          x-ms-version of 2011-08-18 or later. If not specified, the default value is 0. Specifies the
          new visibility timeout value, in seconds, relative to server time. The new value must be larger
          than or equal to 0, and cannot be larger than 7 days. The visibility timeout of a message
          cannot be set to a value later than the expiry time. visibilitytimeout should be set to a value
-         smaller than the time-to-live value.
+         smaller than the time-to-live value. Default value is None.
         :type visibilitytimeout: int
         :param message_time_to_live: Optional. Specifies the time-to-live interval for the message, in
          seconds. Prior to version 2017-07-29, the maximum time-to-live allowed is 7 days. For version
@@ -224,39 +239,45 @@ class MessagesOperations:
          value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of EnqueuedMessage, or the result of cls(response)
+        :return: list of EnqueuedMessage or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.EnqueuedMessage]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.EnqueuedMessage"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.EnqueuedMessage]]
 
         _content = self._serialize.body(queue_message, 'QueueMessage', is_xml=True)
 
         request = build_enqueue_request(
             url=self._config.url,
-            version=self._config.version,
-            content_type=content_type,
-            content=_content,
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
             template_url=self.enqueue.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -286,7 +307,7 @@ class MessagesOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> List["_models.PeekedMessageItem"]:
+    ) -> List[_models.PeekedMessageItem]:
         """The Peek operation retrieves one or more messages from the front of the queue, but does not
         alter the visibility of the message.
 
@@ -307,36 +328,42 @@ class MessagesOperations:
          value may result in unsupported behavior.
         :paramtype peekonly: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of PeekedMessageItem, or the result of cls(response)
+        :return: list of PeekedMessageItem or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.PeekedMessageItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.PeekedMessageItem"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        peekonly = kwargs.pop('peekonly', "true")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        peekonly = kwargs.pop('peekonly', _params.pop('peekonly', "true"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.PeekedMessageItem]]
 
         
         request = build_peek_request(
             url=self._config.url,
-            peekonly=peekonly,
-            version=self._config.version,
             number_of_messages=number_of_messages,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            peekonly=peekonly,
+            version=self._config.version,
             template_url=self.peek.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
