@@ -751,6 +751,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         data = open(path, "rb")
         digest = client.upload_blob(repo, data)
         
+        import time
+        time.sleep(10)
+        
         # Assert
         res = client.download_blob(repo, digest)
         assert len(res.data.read()) == len(data.read())
