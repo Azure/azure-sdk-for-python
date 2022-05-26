@@ -58,7 +58,14 @@ class ConfidentialLedgerClient(GeneratedClient):
     :paramtype api_version: str
     """
 
-    def __init__(self, ledger_uri: str, *, credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential], ledger_certificate_path: Union[bytes, str, os.PathLike], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        ledger_uri: str,
+        *,
+        credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential],
+        ledger_certificate_path: Union[bytes, str, os.PathLike],
+        **kwargs: Any,
+    ) -> None:
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
@@ -81,6 +88,8 @@ class ConfidentialLedgerClient(GeneratedClient):
             raise TypeError(f"Unsupported credential type {type(credential)}")
 
         # Customize the underlying client to use a self-signed TLS certificate.
-        kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
+        kwargs["connection_verify"] = kwargs.get(
+            "connection_verify", ledger_certificate_path
+        )
 
         super().__init__(ledger_uri, **kwargs)
