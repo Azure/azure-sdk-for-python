@@ -132,7 +132,9 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         collection_id = "132"
         entry_contents = "Test sub-ledger entry from Python SDK"
         append_result = client.confidential_ledger.post_ledger_entry(
-            {"contents": entry_contents}, sub_ledger_id=collection_id
+            {"contents": entry_contents},
+            sub_ledger_id=collection_id,
+            api_version="0.1-preview",
         )
         self.assertTrue(append_result["transactionId"])
         self.assertEqual(append_result["subLedgerId"], collection_id)
@@ -141,23 +143,23 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         append_result_transaction_id = append_result["transactionId"]
 
         client.confidential_ledger.wait_until_durable(
-            transaction_id=append_result_transaction_id
+            transaction_id=append_result_transaction_id, api_version="0.1-preview"
         )
 
         transaction_status = client.confidential_ledger.get_transaction_status(
-            transaction_id=append_result_transaction_id
+            transaction_id=append_result_transaction_id, api_version="0.1-preview"
         )
         self.assertIsNotNone(transaction_status)
         self.assertIs(transaction_status, "Committed")
 
         receipt = client.confidential_ledger.get_receipt(
-            transaction_id=append_result_transaction_id
+            transaction_id=append_result_transaction_id, api_version="0.1-preview"
         )
         self.assertEqual(receipt["transactionId"], append_result_transaction_id)
         self.assertTrue(receipt["contents"])
 
         latest_entry = client.confidential_ledger.get_ledger_entry(
-            sub_ledger_id=collection_id
+            sub_ledger_id=collection_id, api_version="0.1-preview"
         )
         # The transaction ids may not be equal in the unfortunate edge case where a governance
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
@@ -171,17 +173,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
             "Test sub-ledger entry 2 from Python SDK",
             sub_ledger_id=collection_id,
+            api_version="0.1-preview",
         )
 
         latest_entry = client.confidential_ledger.get_ledger_entry(
-            sub_ledger_id=collection_id
+            sub_ledger_id=collection_id, api_version="0.1-preview"
         )
         self.assertNotEqual(latest_entry["transactionId"], append_result_transaction_id)
         self.assertNotEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["subLedgerId"], collection_id)
 
         original_entry = client.confidential_ledger.get_ledger_entry(
-            transaction_id=append_result_transaction_id, sub_ledger_id=collection_id
+            transaction_id=append_result_transaction_id,
+            sub_ledger_id=collection_id,
+            api_version="0.1-preview",
         )
         self.assertEqual(original_entry["transactionId"], append_result_transaction_id)
         self.assertEqual(original_entry["contents"], entry_contents)
@@ -212,7 +217,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
                 {} if modulus == 0 else {"sub_ledger_id": "{0}".format(i % modulus)}
             )
             append_result = client.confidential_ledger.post_ledger_entry(
-                entry_contents=message, **kwargs
+                entry_contents=message, api_version="0.1-preview", **kwargs
             )
 
             messages[i % modulus].append(
@@ -221,14 +226,17 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
         num_matched = 0
         for i in range(modulus):
-            query_result = client.confidential_ledger.get_ledger_entries(
-                from_transaction_id=messages[i][0][0], **messages[i][0][2]
+            query_result = client.confidential_ledger.list_ledger_entries(
+                from_transaction_id=messages[i][0][0],
+                api_version="0.1-preview",
+                **messages[i][0][2]
             )
             for index, historical_entry in enumerate(query_result):
                 self.assertEqual(
                     historical_entry["transactionId"], messages[i][index][0]
                 )
                 self.assertEqual(historical_entry["contents"], messages[i][index][1])
+                # TODO check collection id
                 num_matched += 1
 
         # Due to replication delay, it's possible not all messages are matched.
