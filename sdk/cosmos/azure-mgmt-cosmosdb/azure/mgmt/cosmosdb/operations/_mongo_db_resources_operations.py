@@ -341,7 +341,7 @@ def build_migrate_mongo_db_database_to_manual_throughput_request_initial(
     )
 
 
-def build_sql_container_retrieve_throughput_distribution_request_initial(
+def build_mongo_db_container_retrieve_throughput_distribution_request_initial(
     subscription_id: str,
     resource_group_name: str,
     account_name: str,
@@ -2022,7 +2022,7 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
 
     begin_migrate_mongo_db_database_to_manual_throughput.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/throughputSettings/default/migrateToManualThroughput"}  # type: ignore
 
-    def _sql_container_retrieve_throughput_distribution_initial(  # pylint: disable=inconsistent-return-statements
+    def _mongo_db_container_retrieve_throughput_distribution_initial(
         self,
         resource_group_name: str,
         account_name: str,
@@ -2030,8 +2030,8 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         collection_name: str,
         retrieve_throughput_parameters: "_models.RetrieveThroughputParameters",
         **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+    ) -> Optional["_models.PhysicalPartitionThroughputInfoResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionThroughputInfoResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2042,7 +2042,7 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
 
         _json = self._serialize.body(retrieve_throughput_parameters, 'RetrieveThroughputParameters')
 
-        request = build_sql_container_retrieve_throughput_distribution_request_initial(
+        request = build_mongo_db_container_retrieve_throughput_distribution_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
@@ -2051,7 +2051,7 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._sql_container_retrieve_throughput_distribution_initial.metadata['url'],
+            template_url=self._mongo_db_container_retrieve_throughput_distribution_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -2063,18 +2063,24 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
 
-    _sql_container_retrieve_throughput_distribution_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _mongo_db_container_retrieve_throughput_distribution_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
 
 
     @distributed_trace
-    def begin_sql_container_retrieve_throughput_distribution(  # pylint: disable=inconsistent-return-statements
+    def begin_mongo_db_container_retrieve_throughput_distribution(
         self,
         resource_group_name: str,
         account_name: str,
@@ -2082,7 +2088,7 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         collection_name: str,
         retrieve_throughput_parameters: "_models.RetrieveThroughputParameters",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller["_models.PhysicalPartitionThroughputInfoResult"]:
         """Retrieve throughput distribution for an Azure Cosmos DB MongoDB container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2104,21 +2110,23 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionThroughputInfoResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._sql_container_retrieve_throughput_distribution_initial(
+            raw_result = self._mongo_db_container_retrieve_throughput_distribution_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 database_name=database_name,
@@ -2132,8 +2140,11 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
@@ -2148,9 +2159,9 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_sql_container_retrieve_throughput_distribution.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
+    begin_mongo_db_container_retrieve_throughput_distribution.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/retrieveThroughputDistribution"}  # type: ignore
 
-    def _mongo_db_container_redistribute_throughput_initial(  # pylint: disable=inconsistent-return-statements
+    def _mongo_db_container_redistribute_throughput_initial(
         self,
         resource_group_name: str,
         account_name: str,
@@ -2158,8 +2169,8 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         collection_name: str,
         redistribute_throughput_parameters: "_models.RedistributeThroughputParameters",
         **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+    ) -> Optional["_models.PhysicalPartitionThroughputInfoResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionThroughputInfoResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2191,18 +2202,24 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
 
     _mongo_db_container_redistribute_throughput_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default/redistributeThroughput"}  # type: ignore
 
 
     @distributed_trace
-    def begin_mongo_db_container_redistribute_throughput(  # pylint: disable=inconsistent-return-statements
+    def begin_mongo_db_container_redistribute_throughput(
         self,
         resource_group_name: str,
         account_name: str,
@@ -2210,7 +2227,7 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         collection_name: str,
         redistribute_throughput_parameters: "_models.RedistributeThroughputParameters",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller["_models.PhysicalPartitionThroughputInfoResult"]:
         """Redistribute throughput for an Azure Cosmos DB MongoDB container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2233,14 +2250,16 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-15-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionThroughputInfoResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -2261,8 +2280,11 @@ class MongoDBResourcesOperations(object):  # pylint: disable=too-many-public-met
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('PhysicalPartitionThroughputInfoResult', pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
