@@ -61,8 +61,8 @@ class ConfidentialLedgerClient(GeneratedClient):
     def __init__(
         self,
         ledger_uri: str,
-        *,
         credential: Union[ConfidentialLedgerCertificateCredential, TokenCredential],
+        *,
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
     ) -> None:
