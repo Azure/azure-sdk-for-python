@@ -21,31 +21,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 4e0cbfac-fbbb-4492-adf8-dd7f6c8111ba
+      - 8a219bab-2e4d-423f-ae5b-eb851f954f28
       content-length:
       - '0'
       date:
-      - Mon, 23 May 2022 20:34:40 GMT
+      - Thu, 26 May 2022 16:34:46 GMT
       operation-location:
-      - https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/174e9c27-aab2-4d8c-b584-c561af6efb93?api-version=2022-05-15-preview
-      server:
-      - istio-envoy
+      - https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/9ee38eb3-b839-420b-905a-030fb0671e3a?api-version=2022-05-15-preview
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '235'
-      x-http2-stream-id:
-      - '3'
+      - '513'
     status:
       code: 202
       message: Accepted
@@ -59,35 +55,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/174e9c27-aab2-4d8c-b584-c561af6efb93?api-version=2022-05-15-preview
+    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/9ee38eb3-b839-420b-905a-030fb0671e3a?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"jobId":"174e9c27-aab2-4d8c-b584-c561af6efb93","lastUpdatedDateTime":"2022-05-23T20:34:43Z","createdDateTime":"2022-05-23T20:34:41Z","expirationDateTime":"2022-05-24T20:34:41Z","status":"succeeded","errors":[],"displayName":"Analyze
+      string: '{"jobId":"9ee38eb3-b839-420b-905a-030fb0671e3a","lastUpdatedDateTime":"2022-05-26T16:34:51Z","createdDateTime":"2022-05-26T16:34:46Z","expirationDateTime":"2022-05-27T16:34:46Z","status":"succeeded","errors":[],"displayName":"Analyze
         conversations from xxx","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalSummarizationResults","taskName":"analyze
-        1","lastUpdateDateTime":"2022-05-23T20:34:43.9150918Z","status":"succeeded","results":{"conversations":[{"id":"conversation1","summaries":[{"aspect":"issue","text":"Customer
+        1","lastUpdateDateTime":"2022-05-26T16:34:51.352861Z","status":"succeeded","results":{"conversations":[{"id":"conversation1","summaries":[{"aspect":"issue","text":"Customer
         wants to upgrade Office"},{"aspect":"resolution","text":"Asked for the error
         message | Asked for help to upgrade Office"}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
     headers:
       apim-request-id:
-      - 1c4c3bf6-25e6-4fe5-84e1-0a5158da6384
+      - f94f7ee3-e7a7-485e-ab44-af5f73e9ea16
       content-length:
-      - '756'
+      - '755'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 May 2022 20:35:12 GMT
-      server:
-      - istio-envoy
+      - Thu, 26 May 2022 16:35:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '250'
-      x-http2-stream-id:
-      - '3'
+      - '105'
     status:
       code: 200
       message: OK
