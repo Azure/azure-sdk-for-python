@@ -5,11 +5,11 @@
 
 import astroid
 import pylint.testutils
+import requests
 
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
 from pylint_custom_plugin import pylint_guidelines_checker as checker
-
 
 class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodsHaveTracingDecorators
@@ -1733,7 +1733,25 @@ class TestAsyncClientCorrectNaming(pylint.testutils.CheckerTestCase):
 class TestFileHasCopyrightHeader(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.FileHasCopyrightHeader
 
-    # Unable to use the astroid for this testcase.
+    def test_copyright_header_acceptable(self):
+        file = open("./test_files/copyright_header_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_module(node)
+
+    def test_copyright_header_violation(self):
+        file = open("./test_files/copyright_header_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="file-needs-copyright-header", node=node
+                )
+        ):
+            self.checker.visit_module(node)
 
     def test_guidelines_link_active(self):
         url = "https://azure.github.io/azure-sdk/policies_opensource.html"
@@ -2158,6 +2176,89 @@ class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.Che
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
 
+class TestPackageNameDoesNotUseUnderscoreOrPeriod(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.PackageNameDoesNotUseUnderscoreOrPeriod
+
+    def test_package_name_acceptable(self):
+
+        package_name =  astroid.extract_node(
+        """
+        PACKAGE_NAME = "correct-package-name"        
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="setup.py", doc = """ """)
+        module_node.body = [package_name]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+
+    def test_package_name_violation(self):
+
+        package_name =  astroid.extract_node(
+        """
+        PACKAGE_NAME = "incorrect.package-name"        
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="setup.py", doc = """ """)
+        module_node.body = [package_name]
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="package-name-incorrect", node=module_node
+                )
+        ):
+            self.checker.visit_module(module_node)
+    
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#packaging"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+class TestServiceClientUsesNameWithClientSuffix(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ServiceClientUsesNameWithClientSuffix
+
+    def test_client_suffix_acceptable(self):
+        client_node =  astroid.extract_node(
+        """
+        class MyClient():
+            def __init__(self):
+                pass       
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="_my_client.py", doc = """ """)
+        module_node.body = [client_node]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+    
+    def test_client_suffix_violation(self):
+        client_node =  astroid.extract_node(
+        """
+        class Violation():
+            def __init__(self):
+                pass       
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="_my_client.py", doc = """ """)
+        module_node.body = [client_node]
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-suffix-needed", node=module_node
+                )
+        ):
+            self.checker.visit_module(module_node)
+    
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#service-client"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
 
 class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodNamesDoNotUseDoubleUnderscorePrefix
@@ -2341,7 +2442,6 @@ class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.Check
         request = client.get(url)
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
-
 
 class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckDocstringAdmonitionNewline
@@ -2568,4 +2668,303 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
                     msg_id="docstring-admonition-needs-newline", node=class_node
                 )
         ):
+            self.checker.visit_classdef(class_node)        
+    
+    
+class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckNamingMismatchGeneratedCode
+
+    def test_import_naming_mismatch_violation(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'import Something2 as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "SomethingTwo", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        for name in module_node.body[-1].assigned_stmts():
+            err_node = name.elts[1]
+     
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="naming-mismatch", node=err_node ,confidence=None
+                )
+        ):
+            self.checker.visit_module(module_node)
+
+    def test_import_from_naming_mismatch_violation(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'from Something2 import SomethingToo as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "SomethingTwo", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        for name in module_node.body[-1].assigned_stmts():
+            err_node = name.elts[1]
+     
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="naming-mismatch", node=err_node ,confidence=None
+                )
+        ):
+            self.checker.visit_module(module_node)
+
+    def test_naming_mismatch_acceptable(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'import Something2 as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "Something2", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+    
+    def test_naming_mismatch_pylint_disable(self):
+
+        file = open("./test_files/__init__.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_module(node)
+
+    def test_guidelines_link_active(self):
+        url = "https://github.com/Azure/autorest/blob/main/docs/generate/built-in-directives.md"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+class TestCheckEnum(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckEnum
+
+    def test_ignore_normal_class(self):
+        class_node = astroid.extract_node(
+            """
+               class SomeClient(object):
+                    my_list = []
+            """
+        )
+
+        with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
+
+    def test_enum_capitalized_violation_python_two(self):
+        class_node = astroid.extract_node(
+            """
+            from enum import Enum
+            from six import with_metaclass
+            from azure.core import CaseInsensitiveEnumMeta
+
+            class MyBadEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)): 
+                One = "one"
+              """
+        )
+
+        with self.assertAddsMessages(
+             pylint.testutils.Message(
+                msg_id="enum-must-be-uppercase", node=class_node.body[0].targets[0]
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+    
+    def test_enum_capitalized_violation_python_three(self):
+        class_node = astroid.extract_node(
+            """
+            from enum import Enum
+            from azure.core import CaseInsensitiveEnumMeta
+
+            class MyBadEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta): 
+                One = "one"
+            
+            """
+        )
+ 
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="enum-must-be-uppercase", node=class_node.body[0].targets[0]
+            )
+        ):
+            self.checker.visit_classdef(class_node)
+    
+    def test_inheriting_case_insensitive_violation(self):
+        class_node = astroid.extract_node(
+            """
+            from enum import Enum
+
+            class MyGoodEnum(str, Enum): 
+                ONE = "one"
+            """
+        )
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="enum-must-inherit-case-insensitive-enum-meta", node=class_node )
+        ):
+            self.checker.visit_classdef(class_node)
+
+    def test_acceptable_python_three(self):
+        class_node = astroid.extract_node(
+            """
+            from enum import Enum
+            from azure.core import CaseInsensitiveEnumMeta
+
+            class MyGoodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta): 
+                ONE = "one"
+            """
+        )         
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)   
+
+    def test_enum_file_acceptable_python_two(self):
+        file = open("./test_files/enum_checker_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+        
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node.body[3])        
+    
+    def test_enum_file_both_violation(self):
+        file = open("./test_files/enum_checker_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="enum-must-inherit-case-insensitive-enum-meta", node=node.body[1]
+            ),
+            pylint.testutils.Message(
+                msg_id="enum-must-be-uppercase", node=node.body[1].body[0].targets[0]
+            )
+        ):
+
+            self.checker.visit_classdef(node.body[1])
+
+    def test_guidelines_link_active(self):
+        self._create_url_pipeline("https://azure.github.io/azure-sdk/python_design.html#enumerations")
+        self._create_url_pipeline("https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations")
+        
+    
+    def _create_url_pipeline(self,url):
+        resp = requests.get(url)
+        assert resp.status_code == 200
+        
+        
+            
+class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckAPIVersion
+
+    def test_api_version_violation(self):
+        class_node = astroid.extract_node(
+            """
+            class SomeClient(object):
+                '''
+                   :param str something: something
+                '''
+                def __init__(self, something, **kwargs):
+                    pass
+            """
+        )
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-accepts-api-version-keyword", node=class_node
+                )
+        ):
+            self.checker.visit_classdef(class_node)
+
+    def test_api_version_acceptable(self):
+        class_node = astroid.extract_node(
+            """
+            class SomeClient(object):
+                '''
+                   :param str something: something 
+                   :keyword str api_version: api_version
+                '''
+                def __init__(self, something, **kwargs):
+                    pass
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+    
+    def test_api_version_file_class_acceptable(self):
+        file = open("./test_files/api_version_checker_acceptable_class.py")
+        node = astroid.parse(file.read())
+        file.close()
+    
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node.body[0])
+
+    def test_api_version_file_init_acceptable(self):
+        file = open("./test_files/api_version_checker_acceptable_init.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node.body[0])
+
+
+    def test_api_version_file_violation(self):
+        file = open("./test_files/api_version_checker_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-accepts-api-version-keyword", node=node.body[0]
+                )
+        ):
+            self.checker.visit_classdef(node.body[0])
+
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200

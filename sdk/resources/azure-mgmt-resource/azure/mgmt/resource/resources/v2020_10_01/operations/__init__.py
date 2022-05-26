@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._deployments_operations import DeploymentsOperations
-from ._providers_operations import ProvidersOperations
-from ._provider_resource_types_operations import ProviderResourceTypesOperations
-from ._resources_operations import ResourcesOperations
-from ._resource_groups_operations import ResourceGroupsOperations
-from ._tags_operations import TagsOperations
-from ._deployment_operations_operations import DeploymentOperationsOperations
+from ._operations import DeploymentsOperations
+from ._operations import ProvidersOperations
+from ._operations import ProviderResourceTypesOperations
+from ._operations import ResourcesOperations
+from ._operations import ResourceGroupsOperations
+from ._operations import TagsOperations
+from ._operations import DeploymentOperationsOperations
 
 __all__ = [
     'Operations',

@@ -22,6 +22,7 @@ from azure_devtools.ci_tools.github_tools import get_files, GithubLink
 _LOGGER = logging.getLogger(__name__)
 
 CONFIG_FILE = "swagger_to_sdk_config_autorest.json"
+CONFIG_FILE_DPG = "swagger_to_sdk_config_dpg.json"
 
 DEFAULT_COMMIT_MESSAGE = "Generated from {hexsha}"
 

@@ -6,13 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._web_pub_sub_service_client import WebPubSubServiceClient
+from ._client import WebPubSubServiceClient
 from ._version import VERSION
 
 __version__ = VERSION
 
-from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = ["WebPubSubServiceClient"]

@@ -5,10 +5,11 @@
 # THE VALUES IN THE ENUM ARE AUTO-GENERATED. DO NOT EDIT THIS MANUALLY.
 # --------------------------------------------------------------------------------------------
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 # pylint: disable=line-too-long
-
-class SystemEventNames(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     This enum represents the names of the various event types for the system events published to
     Azure Event Grid. To check the list of recognizable system topics,

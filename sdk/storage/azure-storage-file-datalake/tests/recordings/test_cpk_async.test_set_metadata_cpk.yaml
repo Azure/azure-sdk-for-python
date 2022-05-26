@@ -1,0 +1,191 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Mar 2022 00:05:31 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utfilesystem11550eb1?restype=container&timeout=5
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 22 Mar 2022 00:05:31 GMT
+      etag: '"0x8DA0B97AE613999"'
+      last-modified: Tue, 22 Mar 2022 00:05:31 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanaryadls.blob.core.windows.net/utfilesystem11550eb1?restype=container&timeout=5
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Mar 2022 00:05:32 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-encryption-key:
+      - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
+      x-ms-encryption-key-sha256:
+      - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/utfilesystem11550eb1/directory11550eb1?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 22 Mar 2022 00:05:31 GMT
+      etag: '"0x8DA0B97AE961FFD"'
+      last-modified: Tue, 22 Mar 2022 00:05:32 GMT
+      server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanaryadls.dfs.core.windows.net/utfilesystem11550eb1/directory11550eb1?resource=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Mar 2022 00:05:32 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-encryption-key:
+      - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
+      x-ms-encryption-key-sha256:
+      - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/utfilesystem11550eb1/directory11550eb1%2Ffile11550eb1?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 22 Mar 2022 00:05:31 GMT
+      etag: '"0x8DA0B97AEA2514E"'
+      last-modified: Tue, 22 Mar 2022 00:05:32 GMT
+      server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanaryadls.dfs.core.windows.net/utfilesystem11550eb1/directory11550eb1%2Ffile11550eb1?resource=file
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Mar 2022 00:05:32 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-encryption-key:
+      - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
+      x-ms-encryption-key-sha256:
+      - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '42'
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utfilesystem11550eb1/directory11550eb1/file11550eb1?comp=metadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 22 Mar 2022 00:05:32 GMT
+      etag: '"0x8DA0B97AEACD820"'
+      last-modified: Tue, 22 Mar 2022 00:05:32 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanaryadls.blob.core.windows.net/utfilesystem11550eb1/directory11550eb1/file11550eb1?comp=metadata
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Mar 2022 00:05:32 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-encryption-key:
+      - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
+      x-ms-encryption-key-sha256:
+      - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-version:
+      - '2021-06-08'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utfilesystem11550eb1/directory11550eb1/file11550eb1
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '0'
+      content-type: application/octet-stream
+      date: Tue, 22 Mar 2022 00:05:32 GMT
+      etag: '"0x8DA0B97AEACD820"'
+      last-modified: Tue, 22 Mar 2022 00:05:32 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 22 Mar 2022 00:05:32 GMT
+      x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-group: $superuser
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-hello: world
+      x-ms-meta-number: '42'
+      x-ms-owner: $superuser
+      x-ms-permissions: rw-r-----
+      x-ms-resource-type: file
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanaryadls.blob.core.windows.net/utfilesystem11550eb1/directory11550eb1/file11550eb1
+version: 1

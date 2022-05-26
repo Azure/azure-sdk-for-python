@@ -1,45 +1,38 @@
 interactions:
 - request:
-    body: '{"kind": "CustomConversation", "analysisInput": {"conversationItem": {"participantId":
-      "1", "id": "1", "modality": "text", "text": "How are you?"}}, "parameters":
-      {"projectName": "orch_test", "deploymentName": "dep_test"}}'
+    body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
+      "1", "id": "1", "modality": "text", "language": "en", "text": "How are you?"},
+      "isLoggingEnabled": false}, "parameters": {"projectName": "orch_test", "deploymentName":
+      "dep_test", "verbose": true}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '235'
+      - '291'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b3 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-03-01-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"kind":"CustomConversationResult","results":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"workflow","intents":{"ChitChat-QnA":{"confidenceScore":0.99826396,"targetKind":"question_answering","result":{"answers":[{"questions":["How''d
-        you sleep last night?","Are you doing good?","Are you feeling well?","How
-        are you doing?","How is the day treating you?","Are you feeling OK?","How
-        are you?","How''s it hangin?","How''s tricks?","Are you doing OK?","Hey, how
-        are you?","How are you feeling?","How are ya?","How are things?","How are
-        you going?","How art thou?","Greetings, Bot. How are you doing?","Are you
-        feeling good?","Are you doing well?","How are things going?","How''s it going?","Say,
-        how are you doing?","How''s the day treating you?","How''s life?","How''s
-        life treating you?","How are you today?","Yo, how are you?","How you doing?","How
-        you doing bot?","How ya doing?","How is the day treating ya?","How''s it hanging?"],"answer":"I''m
-        doing great, thanks for asking!","confidenceScore":1.0,"id":72,"source":"qna_chitchat_friendly.tsv","metadata":{"editorial":"chitchat"},"dialog":{"isContextOnly":false,"prompts":[]}}]}},"EmailIntent":{"confidenceScore":0.7892474,"targetKind":"conversation"},"RestaurantIntent":{"confidenceScore":0.53074795,"targetKind":"luis"},"None":{"confidenceScore":0.16826314,"targetKind":"non_linked"}}}}}'
+      string: '{"kind":"ConversationResult","result":{"query":"How are you?","prediction":{"topIntent":"ChitChat-QnA","projectKind":"Orchestration","intents":{"ChitChat-QnA":{"confidenceScore":0.98765355,"targetProjectKind":"QuestionAnswering","result":{"answers":[{"questions":[],"answer":"No
+        answer found","confidenceScore":0.0,"id":-1,"metadata":{}}]}},"RestaurantIntent":{"confidenceScore":0.52488893,"targetProjectKind":"Luis"},"EmailIntent":{"confidenceScore":0.20137206,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.16740133,"targetProjectKind":"NonLinked"}}}}}'
     headers:
-      apim-request-id: 819c9fef-eeee-43e3-a0c7-8f9cd9d5f217
+      apim-request-id: e9777a32-3762-4b97-9319-592fb04d95f1
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Mar 2022 15:04:00 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
+      date: Mon, 23 May 2022 20:27:47 GMT
       pragma: no-cache
-      request-id: 819c9fef-eeee-43e3-a0c7-8f9cd9d5f217
+      request-id: e9777a32-3762-4b97-9319-592fb04d95f1
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '370'
+      x-envoy-upstream-service-time: '319'
     status:
       code: 200
       message: OK
-    url: https://westeurope.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-03-01-preview
+    url: https://language-dev-frontend-westus2-qna.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2022-05-15-preview
 version: 1

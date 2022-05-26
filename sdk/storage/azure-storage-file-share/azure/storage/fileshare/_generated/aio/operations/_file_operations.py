@@ -49,8 +49,9 @@ class FileOperations:
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
-        file_creation_time: str = "now",
-        file_last_write_time: str = "now",
+        file_creation_time: Optional[str] = "now",
+        file_last_write_time: Optional[str] = "now",
+        file_change_time: Optional[str] = None,
         file_http_headers: Optional["_models.FileHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
@@ -87,6 +88,9 @@ class FileOperations:
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
          Default value is "now".
         :type file_last_write_time: str
+        :param file_change_time: Change time for the file/directory. Default value: Now. Default value
+         is None.
+        :type file_change_time: str
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -142,6 +146,7 @@ class FileOperations:
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
             lease_id=_lease_id,
             template_url=self.create.metadata['url'],
         )
@@ -500,8 +505,9 @@ class FileOperations:
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
-        file_creation_time: str = "now",
-        file_last_write_time: str = "now",
+        file_creation_time: Optional[str] = "now",
+        file_last_write_time: Optional[str] = "now",
+        file_change_time: Optional[str] = None,
         file_http_headers: Optional["_models.FileHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
@@ -537,6 +543,9 @@ class FileOperations:
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
          Default value is "now".
         :type file_last_write_time: str
+        :param file_change_time: Change time for the file/directory. Default value: Now. Default value
+         is None.
+        :type file_change_time: str
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -591,6 +600,7 @@ class FileOperations:
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
             lease_id=_lease_id,
             template_url=self.set_http_headers.metadata['url'],
         )
@@ -1069,6 +1079,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
         content_md5: Optional[bytearray] = None,
+        file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
         optionalbody: Optional[IO] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
@@ -1101,6 +1112,9 @@ class FileOperations:
          the hash of the content that has arrived with the header value that was sent. If the two hashes
          do not match, the operation will fail with error code 400 (Bad Request). Default value is None.
         :type content_md5: bytearray
+        :param file_last_written_mode: If the file last write time should be preserved or overwritten.
+         Default value is None.
+        :type file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
         :param optionalbody: Initial data. Default value is None.
         :type optionalbody: IO
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1139,6 +1153,7 @@ class FileOperations:
             file_range_write=file_range_write,
             content_md5=content_md5,
             lease_id=_lease_id,
+            file_last_written_mode=file_last_written_mode,
             template_url=self.upload_range.metadata['url'],
         )
         request = _convert_request(request)
@@ -1164,6 +1179,7 @@ class FileOperations:
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-file-last-write-time']=self._deserialize('str', response.headers.get('x-ms-file-last-write-time'))
 
 
         if cls:
@@ -1182,6 +1198,7 @@ class FileOperations:
         source_range: Optional[str] = None,
         source_content_crc64: Optional[bytearray] = None,
         copy_source_authorization: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, "_models.FileLastWrittenMode"]] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
@@ -1214,6 +1231,9 @@ class FileOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_last_written_mode: If the file last write time should be preserved or overwritten.
+         Default value is None.
+        :type file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.fileshare.models.SourceModifiedAccessConditions
@@ -1259,6 +1279,7 @@ class FileOperations:
             source_if_none_match_crc64=_source_if_none_match_crc64,
             lease_id=_lease_id,
             copy_source_authorization=copy_source_authorization,
+            file_last_written_mode=file_last_written_mode,
             template_url=self.upload_range_from_url.metadata['url'],
         )
         request = _convert_request(request)
@@ -1284,6 +1305,7 @@ class FileOperations:
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-file-last-write-time']=self._deserialize('str', response.headers.get('x-ms-file-last-write-time'))
 
 
         if cls:
@@ -1444,6 +1466,7 @@ class FileOperations:
         _file_attributes = None
         _file_creation_time = None
         _file_last_write_time = None
+        _file_change_time = None
         _set_archive_attribute = None
         _lease_id = None
         if copy_file_smb_info is not None:
@@ -1452,6 +1475,7 @@ class FileOperations:
             _file_attributes = copy_file_smb_info.file_attributes
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
+            _file_change_time = copy_file_smb_info.file_change_time
             _set_archive_attribute = copy_file_smb_info.set_archive_attribute
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -1469,6 +1493,7 @@ class FileOperations:
             file_attributes=_file_attributes,
             file_creation_time=_file_creation_time,
             file_last_write_time=_file_last_write_time,
+            file_change_time=_file_change_time,
             set_archive_attribute=_set_archive_attribute,
             lease_id=_lease_id,
             template_url=self.start_copy.metadata['url'],
@@ -1769,6 +1794,7 @@ class FileOperations:
         source_lease_access_conditions: Optional["_models.SourceLeaseAccessConditions"] = None,
         destination_lease_access_conditions: Optional["_models.DestinationLeaseAccessConditions"] = None,
         copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
+        file_http_headers: Optional["_models.FileHTTPHeaders"] = None,
         **kwargs: Any
     ) -> None:
         """Renames a file.
@@ -1814,6 +1840,8 @@ class FileOperations:
          ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
         :param copy_file_smb_info: Parameter group. Default value is None.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
+        :param file_http_headers: Parameter group. Default value is None.
+        :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :keyword comp: comp. Default value is "rename". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
@@ -1835,6 +1863,8 @@ class FileOperations:
         _file_attributes = None
         _file_creation_time = None
         _file_last_write_time = None
+        _file_change_time = None
+        _file_content_type = None
         if source_lease_access_conditions is not None:
             _source_lease_id = source_lease_access_conditions.source_lease_id
         if destination_lease_access_conditions is not None:
@@ -1843,6 +1873,9 @@ class FileOperations:
             _file_attributes = copy_file_smb_info.file_attributes
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
+            _file_change_time = copy_file_smb_info.file_change_time
+        if file_http_headers is not None:
+            _file_content_type = file_http_headers.file_content_type
 
         request = build_rename_request(
             url=self._config.url,
@@ -1857,9 +1890,11 @@ class FileOperations:
             file_attributes=_file_attributes,
             file_creation_time=_file_creation_time,
             file_last_write_time=_file_last_write_time,
+            file_change_time=_file_change_time,
             file_permission=file_permission,
             file_permission_key=file_permission_key,
             metadata=metadata,
+            file_content_type=_file_content_type,
             template_url=self.rename.metadata['url'],
         )
         request = _convert_request(request)

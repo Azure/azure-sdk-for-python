@@ -2,59 +2,51 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
+import os
 
 from azure.keyvault.certificates import ApiVersion
-from azure.keyvault.certificates._shared import HttpChallengeCache
 from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-from parameterized import parameterized, param
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
-
-def client_setup(testcase_func):
-    """decorator that creates a client to be passed in to a test method"""
-    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
-    @functools.wraps(testcase_func)
-    def wrapper(test_class_instance, azure_keyvault_url, api_version, **kwargs):
-        test_class_instance._skip_if_not_configured(api_version)
-        client = test_class_instance.create_client(azure_keyvault_url, api_version=api_version, **kwargs)
-
-        if kwargs.get("is_async"):
-            import asyncio
-
-            coroutine = testcase_func(test_class_instance, client)
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(coroutine)
-        else:
-            testcase_func(test_class_instance, client)
-    return wrapper
 
 
 def get_decorator(**kwargs):
     """returns a test decorator for test parameterization"""
     versions = kwargs.pop("api_versions", None) or ApiVersion
-    params = [param(api_version=api_version, **kwargs) for api_version in versions]
-    return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
+    params = [pytest.param(api_version) for api_version in versions]
+    return params
 
 
-def suffixed_test_name(testcase_func, param_num, param):
-    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
+class CertificatesClientPreparer(AzureRecordedTestCase):
+    def __init__(self, **kwargs) -> None:
+        self.azure_keyvault_url = "https://vaultname.vault.azure.net"
 
+        self.is_logging_enabled = kwargs.pop("logging_enable", True)
+        
+        if is_live():
+            self.azure_keyvault_url = os.environ["AZURE_KEYVAULT_URL"]
+            os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
+            os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
+            
+    def __call__(self, fn):
+        def _preparer(test_class, api_version, **kwargs):
 
-class CertificatesTestCase(AzureTestCase):
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(CertificatesTestCase, self).tearDown()
+            self._skip_if_not_configured(api_version)
+            if not self.is_logging_enabled:
+                kwargs.update({"logging_enable": False})
+            client = self.create_client(self.azure_keyvault_url, api_version=api_version, **kwargs)
 
+            with client:
+                fn(test_class, client)
+        return _preparer
+        
     def create_client(self, vault_uri, **kwargs):
-        if kwargs.pop("is_async", False):
-            from azure.keyvault.certificates.aio import CertificateClient
-            credential = self.get_credential(CertificateClient, is_async=True)
-        else:
-            from azure.keyvault.certificates import CertificateClient
-            credential = self.get_credential(CertificateClient)
+        from azure.keyvault.certificates import CertificateClient
+        
+        credential = self.get_credential(CertificateClient)
+        
         return self.create_client_from_credential(
             CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )

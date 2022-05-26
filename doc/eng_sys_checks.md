@@ -98,6 +98,10 @@ This is the most useful skip, but the following skip variables are also supporte
   - Don't verify if a changeset includes breaking changes.
 - `Skip.MyPy`
   - Omit `mypy` checks in `analyze` job.
+- `Skip.AnalyzeDependencies`
+  - Omit 'Analyze Dependencies' step in `analyze` job.
+- `Skip.VerifyDependencies`
+  - Omit checking that a package's dependencies are on PyPI before releasing.
 
 ## Environment variables important to CI
 
@@ -343,7 +347,7 @@ extends:
 To run autorest automation locally run the following command from the home of `azure-sdk-for-python`
 
 ```bash
-azure-sdk-for-python> python scripts/devop_tasks/verify_autorest.py --service_directory <your_service_directory>
+azure-sdk-for-python> python scripts/devops_tasks/verify_autorest.py --service_directory <your_service_directory>
 ```
 
 ## Nightly Live Checks

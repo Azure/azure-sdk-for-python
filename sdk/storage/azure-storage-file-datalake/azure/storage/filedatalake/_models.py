@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
-from datetime import datetime
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -18,11 +17,13 @@ from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
+from azure.storage.blob import CustomerProvidedEncryptionKey as BlobCustomerProvidedEncryptionKey
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
 
 from ._shared.models import DictMixin
+from ._shared.parser import _filetime_to_datetime, _rfc_1123_to_datetime
 
 
 class FileSystemProperties(DictMixin):
@@ -191,19 +192,21 @@ class FileProperties(DictMixin):
 class PathProperties(DictMixin):
     """Path properties listed by get_paths api.
 
-    :ivar str name: the full path for a file or directory.
+    :ivar str name: The full path for a file or directory.
     :ivar str owner: The owner of the file or directory.
-    :ivar str group: he owning group of the file or directory.
+    :ivar str group: The owning group of the file or directory.
     :ivar str permissions: Sets POSIX access permissions for the file
          owner, the file owning group, and others. Each class may be granted
          read, write, or execute permission.  The sticky bit is also supported.
          Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
          supported.
     :ivar datetime last_modified:  A datetime object representing the last time the directory/file was modified.
-    :ivar bool is_directory: is the path a directory or not.
+    :ivar bool is_directory: Is the path a directory or not.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
-    :ivar content_length: the size of file if the path is a file.
+    :ivar int content_length: The size of file if the path is a file.
+    :ivar datetime creation_time: The creation time of the file/directory.
+    :ivar datetime expiry_time: The expiry time of the file/directory.
     """
 
     def __init__(self, **kwargs):
@@ -215,6 +218,8 @@ class PathProperties(DictMixin):
         self.is_directory = kwargs.get('is_directory', False)
         self.etag = kwargs.get('etag', None)
         self.content_length = kwargs.get('content_length', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.expiry_time = kwargs.get('expiry_time', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -223,10 +228,12 @@ class PathProperties(DictMixin):
         path_prop.owner = generated.owner
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
-        path_prop.last_modified = datetime.strptime(generated.last_modified, "%a, %d %b %Y %H:%M:%S %Z")
+        path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
+        path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
+        path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
         return path_prop
 
 
@@ -742,6 +749,30 @@ class ArrowDialect(BlobArrowDialect):
     :keyword str name: The name of the field.
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
+    """
+
+
+class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
+    """
+    All data in Azure Storage is encrypted at-rest using an account-level encryption key.
+    In versions 2021-06-08 and newer, you can manage the key used to encrypt file contents
+    and application metadata per-file by providing an AES-256 encryption key in requests to the storage service.
+
+    When you use a customer-provided key, Azure Storage does not manage or persist your key.
+    When writing data to a file, the provided key is used to encrypt your data before writing it to disk.
+    A SHA-256 hash of the encryption key is written alongside the file contents,
+    and is used to verify that all subsequent operations against the file use the same encryption key.
+    This hash cannot be used to retrieve the encryption key or decrypt the contents of the file.
+    When reading a file, the provided key is used to decrypt your data after reading it from disk.
+    In both cases, the provided encryption key is securely discarded
+    as soon as the encryption or decryption process completes.
+
+    :param str key_value:
+        Base64-encoded AES-256 encryption key value.
+    :param str key_hash:
+        Base64-encoded SHA256 of the encryption key.
+    :ivar str algorithm:
+        Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
     """
 
 

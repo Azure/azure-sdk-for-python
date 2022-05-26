@@ -5,7 +5,9 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 from datetime import datetime
-from typing import Any, Dict, Union
+from typing import ( # pylint: disable=unused-import
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING)
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob.aio import BlobClient
@@ -18,6 +20,10 @@ from .._generated.aio import AzureDataLakeStorageRESTAPI
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
+
+if TYPE_CHECKING:
+    from .._models import ContentSettings
+    from .._models import FileProperties
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
@@ -146,9 +152,13 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Dict[str, Union[str, datetime]]
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._create_path_options(
             resource_type,
@@ -188,7 +198,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: None
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._delete_path_options(**kwargs)
         try:
@@ -607,6 +618,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file/directory was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties or FileProperties
@@ -658,6 +673,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).
