@@ -13,7 +13,7 @@ from pytest_mock import MockFixture
 from unittest.mock import Mock
 from azure.identity import DefaultAzureCredential, ClientSecretCredential
 from azure.ai.ml import MLClient
-from test_utilities.constants import Test_Subscription, Test_Resource_Group, Test_Workspace_Name
+from tests.test_utilities.constants import Test_Subscription, Test_Resource_Group, Test_Workspace_Name
 from datetime import datetime
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.mgmt.storage import StorageManagementClient
