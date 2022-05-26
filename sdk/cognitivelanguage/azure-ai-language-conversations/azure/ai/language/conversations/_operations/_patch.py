@@ -88,6 +88,7 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperat
                         }
                     }
             """
+            task["parameters"]["stringIndexType"] = "UnicodeCodePoint"
             return super().analyze_conversation(task, **kwargs)
 
 
