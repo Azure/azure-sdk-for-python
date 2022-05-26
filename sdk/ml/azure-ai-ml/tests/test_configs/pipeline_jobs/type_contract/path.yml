@@ -1,0 +1,50 @@
+type: pipeline
+
+name: simplePipelineJobWithPathInputOutput
+description: The hello world pipeline job with input/output type of path
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_in_file:
+    type: uri_file
+    path: azureml://datastores/mydatastore/paths/data/iris.csv
+  job_in_folder:
+    type: uri_folder
+    path: azureml://datastores/mydatastore/paths/data/
+outputs:
+  job_out_file:
+    type: uri_file
+  job_out_folder:
+    type: uri_folder
+
+jobs:
+  hello_world_component:
+    type: command
+    component: file:../../components/type_contract/path.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_file:
+        type: uri_file
+        path: azureml://datastores/mydatastore/paths/data/iris.csv
+      component_in_folder:
+        type: uri_folder
+        path: azureml://datastores/mydatastore/paths/data/
+      component_in_path:
+        type: uri_file
+        path: azureml://datastores/mydatastore/paths/data/iris.csv
+
+  hello_world_component_2:
+    type: command
+    component: file:../../components/type_contract/path.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_file: ${{parent.jobs.outputs.component_out_file}}
+      component_in_folder: ${{parent.jobs.outputs.component_out_folder}}
+      component_in_path: ${{parent.jobs.outputs.component_out_folder}}
+    outputs:
+      component_out_file: ${{parent.outputs.job_out_file}}
+      component_out_folder: ${{parent.outputs.job_out_folder}}

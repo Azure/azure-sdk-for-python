@@ -1,0 +1,18 @@
+# model: azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/static_sdk_cli_v2_test_e2e/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/models/sklearn_regression_model/versions/4
+#model: azureml:sklearn_regression_model:4
+name: etblue
+endpoint_name: ept-1
+model:
+    name: sklearn_regression_model
+    version: 10
+    path: ./sklearn_regression_model.pkl
+code_configuration:
+    # code: azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/static_sdk_cli_v2_test_e2e/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/codes/851fd513-ab82-482c-aa33-86bd2c4a57bb/versions/2
+    code: ../endpoint_scoring
+    scoring_script: main.py
+environment:
+    name: aks-env
+    version: 3
+    image: mcr.microsoft.com/azureml/intelmpi2018.3-ubuntu16.04:20210301.v1
+    conda_file: ../../environment/endpoint_conda.yml
+instance_type: cpuInstance

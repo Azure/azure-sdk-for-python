@@ -102,6 +102,9 @@ sdk/storage/azure-storage-queue/tests/settings/settings_real.py
 sdk/storage/azure-storage-file-share/tests/settings/settings_real.py
 sdk/storage/azure-storage-file-datalake/tests/settings/settings_real.py
 
+# azure-ai-ml test configs
+!sdk/ml/azure-ai-ml/tests/test_configs/environment/*
+
 
 # The locations below are deprecated - keep to prevent any accidental secrets leakage ==========
 sdk/storage/azure-storage-blob/tests/_shared/settings_real.py

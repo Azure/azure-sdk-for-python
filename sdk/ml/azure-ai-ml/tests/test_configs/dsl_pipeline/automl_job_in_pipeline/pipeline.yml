@@ -1,0 +1,52 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+name: automl_node_in_pipeline
+description: Example of using automl function inside pipeline
+
+experiment_name: sdk-cli-v2
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  automl_train_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/house_pricing/train
+  automl_validate_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/house_pricing/validate
+  automl_test_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/house_pricing/test
+
+outputs:
+  best_model:
+    type: uri_folder
+
+jobs:
+  hello_automl_regression:
+    type: automl
+    task: regression
+    primary_metric: r2_score
+    limits:
+      max_trials: 1
+      max_concurrent_trials: 1
+    target_column_name: SalePrice
+    training_data: ${{parent.inputs.automl_train_data}}
+    validation_data: ${{parent.inputs.automl_validate_data}}
+    test_data: ${{parent.inputs.automl_test_data}}
+    featurization:
+      mode: "off" # In YAML 1.1, literal off equals boolean false, ref: https://yaml.org/type/bool.html
+    training:
+      enable_stack_ensemble: false
+      enable_vote_ensemble: false
+      enable_model_explainability: true
+    outputs:
+       best_model: ${{parent.outputs.best_model}}
+  show_output:
+    type: command
+    inputs:
+      automl_output: ${{parent.jobs.hello_automl_regression.outputs.best_model}}
+    command: ls ${{inputs.automl_output}}
+    environment: azureml:AzureML-Minimal:1
