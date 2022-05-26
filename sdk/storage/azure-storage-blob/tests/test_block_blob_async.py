@@ -21,7 +21,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
-from test_helpers import NonSeekableStream, ProgressTracker
+from test_helpers_async import NonSeekableStream, ProgressTracker
 
 from azure.storage.blob import (
     BlobType,

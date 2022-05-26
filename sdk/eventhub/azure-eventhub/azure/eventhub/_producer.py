@@ -34,7 +34,6 @@ from ._utils import (
     transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
-from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -185,12 +184,12 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data,  # type: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
         span,  # type: Optional[AbstractSpan]
         partition_key,  # type: Optional[AnyStr]
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
-        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
+        if isinstance(event_data, EventData):
             outgoing_event_data = transform_outbound_single_message(event_data, EventData)
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)
@@ -200,8 +199,6 @@ class EventHubProducer(
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
-                if not event_data:
-                    return event_data
                 if (
                     partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
                 ):
@@ -221,7 +218,7 @@ class EventHubProducer(
 
     def send(
         self,
-        event_data,  # type: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
         partition_key=None,  # type: Optional[AnyStr]
         timeout=None,  # type: Optional[float]
     ):
@@ -254,10 +251,6 @@ class EventHubProducer(
             with send_context_manager() as child:
                 self._check_closed()
                 wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-
-                if not wrapper_event_data:
-                    return
-
                 self._unsent_events = [wrapper_event_data.message]
 
                 if child:

@@ -30,9 +30,3 @@ class TestMultiApi(TextAnalyticsTest):
     def test_v3_1_api_version(self, **kwargs):
         client = kwargs.pop("client")
         assert "v3.1" in client._client._client._base_url
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_2_PREVIEW})
-    def test_v3_2_api_version(self, **kwargs):
-        client = kwargs.pop("client")
-        assert "v3.2-preview.2" in client._client._client._base_url

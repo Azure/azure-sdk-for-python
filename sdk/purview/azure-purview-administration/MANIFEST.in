@@ -6,3 +6,4 @@ include azure/__init__.py
 include azure/purview/__init__.py
 include azure/purview/administration/account/py.typed
 include azure/purview/administration/metadatapolicies/py.typed
+include azure/purview/administration/py.typed

@@ -187,8 +187,13 @@ from ._models_py3 import PercentileMetricValue
 from ._models_py3 import PeriodicModeBackupPolicy
 from ._models_py3 import PeriodicModeProperties
 from ._models_py3 import Permission
+from ._models_py3 import PhysicalPartitionId
 from ._models_py3 import PhysicalPartitionStorageInfo
 from ._models_py3 import PhysicalPartitionStorageInfoCollection
+from ._models_py3 import PhysicalPartitionThroughputInfoProperties
+from ._models_py3 import PhysicalPartitionThroughputInfoResource
+from ._models_py3 import PhysicalPartitionThroughputInfoResult
+from ._models_py3 import PhysicalPartitionThroughputInfoResultPropertiesResource
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateEndpointProperty
@@ -198,6 +203,8 @@ from ._models_py3 import PrivateLinkServiceConnectionStateProperty
 from ._models_py3 import Privilege
 from ._models_py3 import PrivilegeResource
 from ._models_py3 import ProxyResource
+from ._models_py3 import RedistributeThroughputParameters
+from ._models_py3 import RedistributeThroughputPropertiesResource
 from ._models_py3 import RegionForOnlineOffline
 from ._models_py3 import RegionalServiceResource
 from ._models_py3 import Resource
@@ -232,6 +239,8 @@ from ._models_py3 import RestorableTablePropertiesResource
 from ._models_py3 import RestorableTableResourcesListResult
 from ._models_py3 import RestorableTablesListResult
 from ._models_py3 import RestoreParameters
+from ._models_py3 import RetrieveThroughputParameters
+from ._models_py3 import RetrieveThroughputPropertiesResource
 from ._models_py3 import Role
 from ._models_py3 import SeedNode
 from ._models_py3 import ServiceResource
@@ -335,6 +344,7 @@ from ._cosmos_db_management_client_enums import (
     ServiceStatus,
     ServiceType,
     SpatialType,
+    ThroughputPolicyType,
     TriggerOperation,
     TriggerType,
     UnitType,
@@ -522,8 +532,13 @@ __all__ = [
     'PeriodicModeBackupPolicy',
     'PeriodicModeProperties',
     'Permission',
+    'PhysicalPartitionId',
     'PhysicalPartitionStorageInfo',
     'PhysicalPartitionStorageInfoCollection',
+    'PhysicalPartitionThroughputInfoProperties',
+    'PhysicalPartitionThroughputInfoResource',
+    'PhysicalPartitionThroughputInfoResult',
+    'PhysicalPartitionThroughputInfoResultPropertiesResource',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointProperty',
@@ -533,6 +548,8 @@ __all__ = [
     'Privilege',
     'PrivilegeResource',
     'ProxyResource',
+    'RedistributeThroughputParameters',
+    'RedistributeThroughputPropertiesResource',
     'RegionForOnlineOffline',
     'RegionalServiceResource',
     'Resource',
@@ -567,6 +584,8 @@ __all__ = [
     'RestorableTableResourcesListResult',
     'RestorableTablesListResult',
     'RestoreParameters',
+    'RetrieveThroughputParameters',
+    'RetrieveThroughputPropertiesResource',
     'Role',
     'SeedNode',
     'ServiceResource',
@@ -667,6 +686,7 @@ __all__ = [
     'ServiceStatus',
     'ServiceType',
     'SpatialType',
+    'ThroughputPolicyType',
     'TriggerOperation',
     'TriggerType',
     'UnitType',

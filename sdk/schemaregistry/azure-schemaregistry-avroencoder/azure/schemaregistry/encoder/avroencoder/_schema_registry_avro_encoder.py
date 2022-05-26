@@ -40,7 +40,7 @@ from ._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
-    MessageType
+    MessageType,
 )
 
 from ._apache_avro_encoder import (  # pylint: disable=import-error
@@ -59,14 +59,14 @@ _LOGGER = logging.getLogger(__name__)
 class AvroEncoder(object):
     """
     AvroEncoder provides the ability to encode and decode content according
-    to the given avro schema. It would automatically register, get and cache the schema.
+    to the given Avro schema. It would automatically register, get, and cache the schema.
 
     :keyword client: Required. The schema registry client which is used to register schema
      and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
-    :keyword Optional[str] group_name: Required for encoding. Not used for decoding.
+    :keyword Optional[str] group_name: Required for encoding. Not used when decoding.
      Schema group under which schema should be registered.
-    :keyword bool auto_register: When true, register new schemas passed to encode.
+    :keyword bool auto_register: When true, registers new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
 
     """
@@ -171,8 +171,7 @@ class AvroEncoder(object):
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageContent]:
-        """
-        Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
+        """Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
          and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content
          and content type will be passed to create message object. If not provided, the following dict will be returned:
          {"content": Avro encoded value, "content_type": Avro mime type string + schema ID}.
@@ -240,8 +239,7 @@ class AvroEncoder(object):
         request_options: Dict[str, Any] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """
-        Decode bytes content using schema ID in the content type field. `message` must be one of the following:
+        """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
             1) An object of subtype of the MessageType protocol.
             2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
         Content must follow format of associated Avro RecordSchema:

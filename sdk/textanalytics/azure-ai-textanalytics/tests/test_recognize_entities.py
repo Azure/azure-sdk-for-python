@@ -599,22 +599,6 @@ class TestRecognizeEntities(TextAnalyticsTest):
         assert entities[2].offset is None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy
-    def test_string_index_type_not_fail_v3(self, client):
-        # make sure that the addition of the string_index_type kwarg for v3.1-preview doesn't
-        # cause v3.0 calls to fail
-        client.recognize_entities(["please don't fail"])
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy
-    def test_string_index_type_explicit_fails_v3(self, client):
-        with pytest.raises(ValueError) as excinfo:
-            client.recognize_entities(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
     def test_default_string_index_type_is_UnicodeCodePoint(self, client):
@@ -627,7 +611,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
     @recorded_by_proxy
     def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
@@ -652,7 +636,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
     @recorded_by_proxy
     def test_explicit_set_string_index_type_body_param(self, client):
         def callback(response):
@@ -677,7 +661,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
     @recorded_by_proxy
     def test_disable_service_logs_body_param(self, client):
         def callback(resp):
@@ -687,3 +671,20 @@ class TestRecognizeEntities(TextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    def test_entities_multiapi_validate_args_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            res = client.recognize_entities(["I'm tired"], string_index_type="UnicodeCodePoint")
+        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = client.recognize_entities(["I'm tired"], disable_service_logs=True)
+        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+
+        with pytest.raises(ValueError) as e:
+            res = client.recognize_entities(["I'm tired"], string_index_type="UnicodeCodePoint", disable_service_logs=True)
+        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n"

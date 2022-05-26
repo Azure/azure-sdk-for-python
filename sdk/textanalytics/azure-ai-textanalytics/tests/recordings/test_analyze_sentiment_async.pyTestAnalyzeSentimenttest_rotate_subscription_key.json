@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -37,11 +37,11 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "23188df2-8334-4ba8-affd-d0a45b1bc349",
+        "apim-request-id": "eb96e841-1332-434d-9fea-07db2036bca3",
         "Content-Length": "959",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 13 Apr 2022 00:05:36 GMT",
+        "Date": "Tue, 03 May 2022 00:15:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "21"
@@ -126,7 +126,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -162,10 +162,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "c8e459ea-b597-4d2f-a8b7-b6e697e33abf",
+        "apim-request-id": "69e71a36-93ee-4b38-adc6-e2ca8c202c1e",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Wed, 13 Apr 2022 00:05:36 GMT"
+        "Date": "Tue, 03 May 2022 00:15:08 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -175,7 +175,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -211,14 +211,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c1d7a8c9-7c15-4aeb-b005-2242339f959e",
+        "apim-request-id": "39422f34-89b2-4517-ae8f-e9e4e9e080c5",
         "Content-Length": "959",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 13 Apr 2022 00:05:36 GMT",
+        "Date": "Tue, 03 May 2022 00:15:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "24"
+        "x-envoy-upstream-service-time": "15"
       },
       "ResponseBody": {
         "kind": "SentimentAnalysisResults",

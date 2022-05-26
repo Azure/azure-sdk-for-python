@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "940",
+        "Content-Length": "938",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
@@ -36,26 +36,26 @@
             "taskName": "0",
             "kind": "CustomMultiLabelClassification",
             "parameters": {
-              "project-name": "multi_category_classify_project_name",
-              "deployment-name": "multi_category_classify_project_name"
+              "projectName": "multi_category_classify_project_name",
+              "deploymentName": "multi_category_classify_project_name"
             }
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "dc62faf1-9658-4aed-bc53-9f6b24c0a6f4",
+        "apim-request-id": "61d82c69-d6ee-4593-80f6-11d04a0e9fdb",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:40:30 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bdba8ff6-67ee-4e2e-b624-e737de3d739a?api-version=2022-03-01-preview",
+        "Date": "Thu, 12 May 2022 22:35:50 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e5d6e584-30f9-48e0-91cf-1c8ad12e67ff?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "341"
+        "x-envoy-upstream-service-time": "232"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bdba8ff6-67ee-4e2e-b624-e737de3d739a?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e5d6e584-30f9-48e0-91cf-1c8ad12e67ff?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -66,19 +66,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b3a0aac2-d6cf-43af-acad-db27ce3ebba1",
+        "apim-request-id": "6c2de9f4-0855-4fcc-8653-ac90ba18bddf",
         "Content-Length": "1012",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:40:35 GMT",
+        "Date": "Thu, 12 May 2022 22:35:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "58"
+        "x-envoy-upstream-service-time": "52"
       },
       "ResponseBody": {
-        "jobId": "bdba8ff6-67ee-4e2e-b624-e737de3d739a",
-        "lastUpdateDateTime": "2022-04-20T23:40:31Z",
-        "createdDateTime": "2022-04-20T23:40:30Z",
-        "expirationDateTime": "2022-04-21T23:40:30Z",
+        "jobId": "e5d6e584-30f9-48e0-91cf-1c8ad12e67ff",
+        "lastUpdateDateTime": "2022-05-12T22:35:52Z",
+        "createdDateTime": "2022-05-12T22:35:51Z",
+        "expirationDateTime": "2022-05-13T22:35:51Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -90,7 +90,7 @@
             {
               "kind": "CustomMultiLabelClassificationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:40:31.3316696Z",
+              "lastUpdateDateTime": "2022-05-12T22:35:52.1546251Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

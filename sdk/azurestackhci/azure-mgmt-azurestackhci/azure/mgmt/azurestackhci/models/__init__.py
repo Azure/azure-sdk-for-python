@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ArcConnectivityProperties
+from ._models_py3 import ArcIdentityResponse
 from ._models_py3 import ArcSetting
 from ._models_py3 import ArcSettingList
+from ._models_py3 import ArcSettingsPatch
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterDesiredProperties
+from ._models_py3 import ClusterIdentityResponse
 from ._models_py3 import ClusterList
 from ._models_py3 import ClusterNode
 from ._models_py3 import ClusterPatch
@@ -22,11 +26,14 @@ from ._models_py3 import ExtensionList
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PasswordCredential
 from ._models_py3 import PerNodeExtensionState
 from ._models_py3 import PerNodeState
 from ._models_py3 import ProxyResource
+from ._models_py3 import RawCertificateData
 from ._models_py3 import Resource
 from ._models_py3 import TrackedResource
+from ._models_py3 import UploadCertificateRequest
 
 
 from ._azure_stack_hci_client_enums import (
@@ -45,10 +52,14 @@ from ._azure_stack_hci_client_enums import (
 )
 
 __all__ = [
+    'ArcConnectivityProperties',
+    'ArcIdentityResponse',
     'ArcSetting',
     'ArcSettingList',
+    'ArcSettingsPatch',
     'Cluster',
     'ClusterDesiredProperties',
+    'ClusterIdentityResponse',
     'ClusterList',
     'ClusterNode',
     'ClusterPatch',
@@ -61,11 +72,14 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PasswordCredential',
     'PerNodeExtensionState',
     'PerNodeState',
     'ProxyResource',
+    'RawCertificateData',
     'Resource',
     'TrackedResource',
+    'UploadCertificateRequest',
     'ActionType',
     'ArcSettingAggregateState',
     'CreatedByType',

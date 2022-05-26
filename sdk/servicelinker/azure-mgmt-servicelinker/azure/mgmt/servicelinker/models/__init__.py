@@ -37,7 +37,7 @@ from ._models_py3 import SystemData
 from ._models_py3 import TargetServiceBase
 from ._models_py3 import UserAssignedIdentityAuthInfo
 from ._models_py3 import VNetSolution
-from ._models_py3 import ValidateResult
+from ._models_py3 import ValidateOperationResult
 from ._models_py3 import ValidationResultItem
 from ._models_py3 import ValueSecretInfo
 
@@ -45,11 +45,12 @@ from ._models_py3 import ValueSecretInfo
 from ._service_linker_management_client_enums import (
     ActionType,
     AuthType,
+    AzureResourceType,
     ClientType,
     CreatedByType,
     Origin,
     SecretType,
-    Type,
+    TargetServiceType,
     VNetSolutionType,
     ValidationResultStatus,
 )
@@ -86,16 +87,17 @@ __all__ = [
     'TargetServiceBase',
     'UserAssignedIdentityAuthInfo',
     'VNetSolution',
-    'ValidateResult',
+    'ValidateOperationResult',
     'ValidationResultItem',
     'ValueSecretInfo',
     'ActionType',
     'AuthType',
+    'AzureResourceType',
     'ClientType',
     'CreatedByType',
     'Origin',
     'SecretType',
-    'Type',
+    'TargetServiceType',
     'VNetSolutionType',
     'ValidationResultStatus',
 ]

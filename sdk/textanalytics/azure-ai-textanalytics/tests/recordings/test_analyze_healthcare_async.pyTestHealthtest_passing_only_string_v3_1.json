@@ -31,18 +31,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "e573074f-fb4e-46e8-b264-22a418f332af",
-        "Date": "Tue, 26 Apr 2022 00:31:08 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/e20f3a66-6bae-4dea-bc96-3913e2779961",
+        "apim-request-id": "d537f791-d45e-4c56-b4bb-82d1e56c2f13",
+        "Date": "Tue, 03 May 2022 00:12:45 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/25b607c3-fe0f-46f5-8ccf-cf4ca20633d3",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "295"
+        "x-envoy-upstream-service-time": "197"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/e20f3a66-6bae-4dea-bc96-3913e2779961",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/25b607c3-fe0f-46f5-8ccf-cf4ca20633d3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -52,19 +52,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f28e1cb4-99ab-424b-8c5c-506d4a3565fb",
+        "apim-request-id": "8067912a-88c6-4064-9592-5e48c91cf22f",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 00:31:13 GMT",
+        "Date": "Tue, 03 May 2022 00:12:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "55"
+        "x-envoy-upstream-service-time": "1235"
       },
       "ResponseBody": {
-        "jobId": "e20f3a66-6bae-4dea-bc96-3913e2779961",
-        "lastUpdateDateTime": "2022-04-26T00:31:10Z",
-        "createdDateTime": "2022-04-26T00:31:09Z",
-        "expirationDateTime": "2022-04-27T00:31:09Z",
+        "jobId": "25b607c3-fe0f-46f5-8ccf-cf4ca20633d3",
+        "lastUpdateDateTime": "2022-05-03T00:12:45Z",
+        "createdDateTime": "2022-05-03T00:12:45Z",
+        "expirationDateTime": "2022-05-04T00:12:45Z",
         "status": "succeeded",
         "errors": [],
         "results": {
@@ -457,7 +457,7 @@
               "id": "2",
               "error": {
                 "code": "InvalidArgument",
-                "message": "Invalid document in request.",
+                "message": "Invalid Document in request.",
                 "innererror": {
                   "code": "InvalidDocument",
                   "message": "Document text is empty."

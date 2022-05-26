@@ -1,6 +1,6 @@
 # Release History
 
-## 1.23.2 (Unreleased)
+## 1.24.1 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,16 @@
 
 ### Bugs Fixed
 
+- Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
+
 ### Other Changes
+
+## 1.24.0 (2022-05-06)
+
+### Features Added
+
+- Add `SerializationError` and `DeserializationError` in `azure.core.exceptions` for errors raised during serialization / deserialization  #24312
 
 ## 1.23.1 (2022-03-31)
 

@@ -21,6 +21,7 @@ def get_request_headers():
 
 # flask returns these response headers, which we don't really need for these following tests
 RESPONSE_HEADERS_TO_IGNORE = [
+    "Connection",
     "Content-Type",
     "Content-Length",
     "Server",
@@ -33,7 +34,7 @@ def get_response_headers(client):
         response = client.send_request(request)
         response.raise_for_status
         for header in RESPONSE_HEADERS_TO_IGNORE:
-            response.headers.pop(header)
+            response.headers.pop(header, None)
         return response.headers
     return _get_response_headers
 

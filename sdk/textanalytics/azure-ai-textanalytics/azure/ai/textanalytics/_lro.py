@@ -18,7 +18,7 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
-from ._generated.v2022_03_01_preview.models import JobMetadata
+from ._generated.v2022_04_01_preview.models import JobMetadata
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -216,7 +216,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
         :return: Display name of the healthcare entities job.
         :rtype: str
 
-        .. versionadded:: 2022-03-01-preview
+        .. versionadded:: 2022-04-01-preview
             *display_name* property.
         """
         return self.polling_method().display_name
@@ -265,7 +265,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
 
         try:
             # Join the thread so we no longer have to wait for a result from it.
-            getattr(self, "_thread").join()
+            getattr(self, "_thread").join(timeout=0)
 
             # Get a final status update.
             getattr(self._polling_method, "update_status")()

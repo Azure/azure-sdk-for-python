@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -47,18 +47,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "75644b00-e0ef-435d-be15-4f4c8442e099",
+        "apim-request-id": "3172f92b-27f6-4d50-b69e-784ab908a588",
         "Content-Length": "0",
-        "Date": "Tue, 26 Apr 2022 00:32:56 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9b42ecbd-caa9-46db-b2dc-214cc99c456a?api-version=2022-03-01-preview",
+        "Date": "Tue, 03 May 2022 00:14:24 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1a2d66fa-66a1-466c-9006-c14085220e71?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "228"
+        "x-envoy-upstream-service-time": "221"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9b42ecbd-caa9-46db-b2dc-214cc99c456a?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1a2d66fa-66a1-466c-9006-c14085220e71?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -68,19 +68,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "39845163-5521-4429-b547-b2ef2fa0f01b",
-        "Content-Length": "13583",
+        "apim-request-id": "958069e1-58c5-4b59-9c7e-d3d8763b29fd",
+        "Content-Length": "13582",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 00:33:01 GMT",
+        "Date": "Tue, 03 May 2022 00:14:28 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "67"
+        "x-envoy-upstream-service-time": "90"
       },
       "ResponseBody": {
-        "jobId": "9b42ecbd-caa9-46db-b2dc-214cc99c456a",
-        "lastUpdateDateTime": "2022-04-26T00:32:56Z",
-        "createdDateTime": "2022-04-26T00:32:55Z",
-        "expirationDateTime": "2022-04-27T00:32:55Z",
+        "jobId": "1a2d66fa-66a1-466c-9006-c14085220e71",
+        "lastUpdateDateTime": "2022-05-03T00:14:24Z",
+        "createdDateTime": "2022-05-03T00:14:24Z",
+        "expirationDateTime": "2022-05-04T00:14:24Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -92,7 +92,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-26T00:32:56.7307995Z",
+              "lastUpdateDateTime": "2022-05-03T00:14:24.878797Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1403,7 +1403,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -1419,7 +1419,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9b42ecbd-caa9-46db-b2dc-214cc99c456a?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1a2d66fa-66a1-466c-9006-c14085220e71?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -1429,19 +1429,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "70ff0a14-d732-43ee-97b4-1c36476887e6",
-        "Content-Length": "13583",
+        "apim-request-id": "75ecb598-92b3-454d-9925-b66575c664a9",
+        "Content-Length": "13582",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 26 Apr 2022 00:33:06 GMT",
+        "Date": "Tue, 03 May 2022 00:14:34 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "76"
+        "x-envoy-upstream-service-time": "68"
       },
       "ResponseBody": {
-        "jobId": "9b42ecbd-caa9-46db-b2dc-214cc99c456a",
-        "lastUpdateDateTime": "2022-04-26T00:32:56Z",
-        "createdDateTime": "2022-04-26T00:32:55Z",
-        "expirationDateTime": "2022-04-27T00:32:55Z",
+        "jobId": "1a2d66fa-66a1-466c-9006-c14085220e71",
+        "lastUpdateDateTime": "2022-05-03T00:14:24Z",
+        "createdDateTime": "2022-05-03T00:14:24Z",
+        "expirationDateTime": "2022-05-04T00:14:24Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -1453,7 +1453,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-26T00:32:56.7307995Z",
+              "lastUpdateDateTime": "2022-05-03T00:14:24.878797Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2764,7 +2764,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."

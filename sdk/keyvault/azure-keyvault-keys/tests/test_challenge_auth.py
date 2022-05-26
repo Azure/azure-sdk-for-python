@@ -11,11 +11,14 @@ import os
 import time
 from uuid import uuid4
 
+from devtools_testutils import recorded_by_proxy
+
 try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
+import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
@@ -26,25 +29,20 @@ from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 
-import pytest
-
-from _shared.helpers import mock_response, Request, validating_transport
+from _shared.helpers import Request, mock_response, validating_transport
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
-
+from _test_case import KeysClientPreparer, get_decorator
+from _keys_test_case import KeysTestCase
 
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
-
-class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        super(ChallengeAuthTests, self).__init__(*args, match_body=False, **kwargs)
-
-    @only_default_version()
-    @client_setup
+class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_multitenant_authentication(self, client, is_hsm, **kwargs):
         if not self.is_live:
-            pytest.skip("This test is incompatible with vcrpy in playback")
+            pytest.skip("This test is incompatible with test proxy in playback")
 
         client_id = os.environ.get("KEYVAULT_CLIENT_ID")
         client_secret = os.environ.get("KEYVAULT_CLIENT_SECRET")
@@ -54,7 +52,9 @@ class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
         # we set up a client for this method to align with the async test, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
         credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
-        vault_url = self.managed_hsm_url if is_hsm else self.vault_url
+        managed_hsm_url = kwargs.pop("managed_hsm_url", None)
+        keyvault_url = kwargs.pop("vault_url", None)
+        vault_url = managed_hsm_url if is_hsm else keyvault_url
         client = KeyClient(vault_url=vault_url, credential=credential)
 
         if self.is_live:
@@ -68,7 +68,6 @@ class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
         client._client._config.authentication_policy._token = None
         fetched_key = client.get_key(key_name)
         assert key.id == fetched_key.id
-
 
 def empty_challenge_cache(fn):
     @functools.wraps(fn)
@@ -86,7 +85,6 @@ def get_random_url():
     return "https://{}/{}".format(uuid4(), uuid4()).replace("-", "")
 
 
-@empty_challenge_cache
 def test_enforces_tls():
     url = "http://not.secure"
     HttpChallengeCache.set_challenge_for_url(url, HttpChallenge(url, "Bearer authorization=_, resource=_"))
@@ -97,7 +95,7 @@ def test_enforces_tls():
         pipeline.run(HttpRequest("GET", url))
 
 
-@empty_challenge_cache
+
 def test_challenge_cache():
     url_a = get_random_url()
     challenge_a = HttpChallenge(url_a, "Bearer authorization=authority A, resource=resource A")
@@ -238,7 +236,6 @@ def test_tenant():
     test_with_challenge(challenge, tenant)
 
 
-@empty_challenge_cache
 def test_policy_updates_cache():
     """
     It's possible for the challenge returned for a request to change, e.g. when a vault is moved to a new tenant.
@@ -293,7 +290,7 @@ def test_policy_updates_cache():
         assert credential.get_token.call_count == 2
 
 
-@empty_challenge_cache
+
 def test_token_expiration():
     """policy should not use a cached token which has expired"""
 

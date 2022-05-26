@@ -1,12 +1,12 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "975",
+        "Content-Length": "969",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
@@ -40,7 +40,7 @@
             "taskName": "0",
             "kind": "EntityRecognition",
             "parameters": {
-              "model-version": "latest",
+              "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -48,14 +48,14 @@
             "taskName": "1",
             "kind": "KeyPhraseExtraction",
             "parameters": {
-              "model-version": "latest"
+              "modelVersion": "latest"
             }
           },
           {
             "taskName": "2",
             "kind": "PiiEntityRecognition",
             "parameters": {
-              "model-version": "latest",
+              "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -63,7 +63,7 @@
             "taskName": "3",
             "kind": "EntityLinking",
             "parameters": {
-              "model-version": "latest",
+              "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -71,7 +71,7 @@
             "taskName": "4",
             "kind": "SentimentAnalysis",
             "parameters": {
-              "model-version": "latest",
+              "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
           },
@@ -79,7 +79,7 @@
             "taskName": "5",
             "kind": "ExtractiveSummarization",
             "parameters": {
-              "model-version": "latest",
+              "modelVersion": "latest",
               "stringIndexType": "UnicodeCodePoint"
             }
           }
@@ -87,18 +87,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "5a5ccd3b-68c5-48e9-bd9b-dfb7d63c8a98",
+        "apim-request-id": "3e6ad7b6-9156-407c-9ca5-3bef7c671fa4",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:53:02 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/97cdd6c0-4f14-40bd-b4e4-4cb0a7cc8c5f?api-version=2022-03-01-preview",
+        "Date": "Thu, 12 May 2022 22:45:39 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/94d40b47-f70d-48ad-9054-3797b222def2?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "392"
+        "x-envoy-upstream-service-time": "518"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/97cdd6c0-4f14-40bd-b4e4-4cb0a7cc8c5f?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/94d40b47-f70d-48ad-9054-3797b222def2?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -108,19 +108,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ca05b980-5c51-48f1-8fe6-ce2919a2a025",
-        "Content-Length": "3904",
+        "apim-request-id": "d39ccca6-9edb-4e1a-a273-38cd3cab0c49",
+        "Content-Length": "3041",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:53:07 GMT",
+        "Date": "Thu, 12 May 2022 22:45:45 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "243"
+        "x-envoy-upstream-service-time": "222"
       },
       "ResponseBody": {
-        "jobId": "97cdd6c0-4f14-40bd-b4e4-4cb0a7cc8c5f",
-        "lastUpdateDateTime": "2022-04-20T23:53:07Z",
-        "createdDateTime": "2022-04-20T23:53:02Z",
-        "expirationDateTime": "2022-04-21T23:53:02Z",
+        "jobId": "94d40b47-f70d-48ad-9054-3797b222def2",
+        "lastUpdateDateTime": "2022-05-12T22:45:44Z",
+        "createdDateTime": "2022-05-12T22:45:40Z",
+        "expirationDateTime": "2022-05-13T22:45:40Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -130,9 +130,63 @@
           "total": 6,
           "items": [
             {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-05-12T22:45:42.6505159Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 4,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 4
+                },
+                "documents": [
+                  {
+                    "id": "56",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "0",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 2,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-04-20T23:53:04.8647436Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:43.7926578Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -186,7 +240,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-04-20T23:53:05.0844915Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:42.5749462Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -238,135 +292,9 @@
               }
             },
             {
-              "kind": "SentimentAnalysisLROResults",
-              "taskName": "4",
-              "lastUpdateDateTime": "2022-04-20T23:53:05.0478676Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "sentiment": "positive",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.89,
-                      "neutral": 0.1,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "positive",
-                        "confidenceScores": {
-                          "positive": 0.89,
-                          "neutral": 0.1,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 2,
-                        "text": ":)"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "sentiment": "negative",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.02,
-                      "negative": 0.98
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.02,
-                          "negative": 0.98
-                        },
-                        "offset": 0,
-                        "length": 2,
-                        "text": ":("
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.3,
-                      "neutral": 0.67,
-                      "negative": 0.03
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.3,
-                          "neutral": 0.67,
-                          "negative": 0.03
-                        },
-                        "offset": 0,
-                        "length": 2,
-                        "text": ":P"
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "sentiment": "positive",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.89,
-                      "neutral": 0.1,
-                      "negative": 0.01
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "positive",
-                        "confidenceScores": {
-                          "positive": 0.89,
-                          "neutral": 0.1,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 2,
-                        "text": ":D"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2020-04-01"
-              }
-            },
-            {
               "kind": "ExtractiveSummarizationLROResults",
               "taskName": "5",
-              "lastUpdateDateTime": "2022-04-20T23:53:07.1682442Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:44.792522Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -422,7 +350,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/97cdd6c0-4f14-40bd-b4e4-4cb0a7cc8c5f?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/94d40b47-f70d-48ad-9054-3797b222def2?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -432,19 +360,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0ffe5773-87d6-4b51-a38c-52d9ad18916c",
-        "Content-Length": "5363",
+        "apim-request-id": "727ac1ce-cf2a-4b32-9d12-c7383c91d2c0",
+        "Content-Length": "5362",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:53:13 GMT",
+        "Date": "Thu, 12 May 2022 22:45:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "328"
+        "x-envoy-upstream-service-time": "336"
       },
       "ResponseBody": {
-        "jobId": "97cdd6c0-4f14-40bd-b4e4-4cb0a7cc8c5f",
-        "lastUpdateDateTime": "2022-04-20T23:53:11Z",
-        "createdDateTime": "2022-04-20T23:53:02Z",
-        "expirationDateTime": "2022-04-21T23:53:02Z",
+        "jobId": "94d40b47-f70d-48ad-9054-3797b222def2",
+        "lastUpdateDateTime": "2022-05-12T22:45:49Z",
+        "createdDateTime": "2022-05-12T22:45:40Z",
+        "expirationDateTime": "2022-05-13T22:45:40Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -456,7 +384,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:53:10.8407477Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:42.6505159Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -510,7 +438,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-04-20T23:53:04.8647436Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:43.7926578Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -564,7 +492,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-04-20T23:53:11.1386229Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:49.9042181Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -622,7 +550,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-04-20T23:53:05.0844915Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:42.5749462Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -676,7 +604,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-04-20T23:53:05.0478676Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:48.8065741Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -802,7 +730,7 @@
             {
               "kind": "ExtractiveSummarizationLROResults",
               "taskName": "5",
-              "lastUpdateDateTime": "2022-04-20T23:53:07.1682442Z",
+              "lastUpdateDateTime": "2022-05-12T22:45:44.792522Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
