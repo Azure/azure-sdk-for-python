@@ -1,5 +1,15 @@
 # Release History
 
+## 7.0.0b6 (2022-05-23)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+
+**Breaking changes**
+
+  - Removed operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+
 ## 7.0.0b5 (2022-04-28)
 
 **Features**

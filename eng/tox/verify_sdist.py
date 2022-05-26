@@ -148,7 +148,7 @@ if __name__ == "__main__":
             logging.info("Failed to verify sdist for package [%s]", pkg_name)
             exit(1)
 
-    if pkg_name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_name:
+    if pkg_name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_name and "-mgmt" not in pkg_name:
         logging.info("Verifying presence of py.typed: [%s]", pkg_name)
         if verify_sdist_pytyped(pkg_dir, namespace, package_data, include_package_data):
             logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_name)
