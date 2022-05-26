@@ -243,7 +243,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     x, repository_name=repository, registry=self._endpoint
                 )
                 for x in objs
-            ],
+            ] if objs is not None else [],
         )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -452,7 +452,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             lambda objs: [
                 ArtifactTagProperties._from_generated(o, repository=repository)  # pylint: disable=protected-access
                 for o in objs
-            ],
+            ] if objs is not None else [],
         )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
