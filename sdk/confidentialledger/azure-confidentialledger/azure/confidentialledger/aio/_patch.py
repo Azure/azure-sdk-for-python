@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import os
 from typing import Any, List, Union
 
 from azure.core.credentials import TokenCredential
@@ -57,10 +58,18 @@ class ConfidentialLedgerClient(GeneratedClient):
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
     ) -> None:
+        # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
+        # PipelineCLient.
+        if isinstance(credential, ConfidentialLedgerCertificateCredential):
+            # The async version of the client seems to expect a sequence of filenames.
+            # azure/core/pipeline/transport/_aiohttp.py:163
+            # > ssl_ctx.load_cert_chain(*cert)
+            kwargs["connection_cert"] = (credential.certificate_path,)
+
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
-        if isinstance(credential, TokenCredential):
+        else:
             credential_scopes = kwargs.pop(
                 "credential_scopes", ["https://confidential-ledger.azure.com/.default"]
             )
@@ -70,16 +79,6 @@ class ConfidentialLedgerClient(GeneratedClient):
                     credential, *credential_scopes, **kwargs
                 ),
             )
-
-        # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
-        # PipelineCLient.
-        elif isinstance(credential, ConfidentialLedgerCertificateCredential):
-            # The async version of the client seems to expect a sequence of filenames.
-            # azure/core/pipeline/transport/_aiohttp.py:163
-            # > ssl_ctx.load_cert_chain(*cert)
-            kwargs["connection_cert"] = (credential.certificate_path,)
-        else:
-            raise TypeError(f"Unsupported credential type {type(credential)}")
 
         # Customize the underlying client to use a self-signed TLS certificate.
         kwargs["connection_verify"] = kwargs.get(
