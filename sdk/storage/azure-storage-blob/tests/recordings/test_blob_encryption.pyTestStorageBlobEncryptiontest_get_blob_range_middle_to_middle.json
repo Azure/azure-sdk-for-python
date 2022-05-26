@@ -1,0 +1,103 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer75b03376?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.12.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 31 May 2022 22:41:48 GMT",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 31 May 2022 22:41:47 GMT",
+        "ETag": "\u00220x8DA4356BF91D3F0\u0022",
+        "Last-Modified": "Tue, 31 May 2022 22:41:48 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer75b03376/encryption_block_blob75b03376",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "144",
+        "Content-Type": "application/octet-stream",
+        "If-None-Match": "*",
+        "User-Agent": "azsdk-python-storage-blob/12.12.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-date": "Tue, 31 May 2022 22:41:48 GMT",
+        "x-ms-meta-encryptiondata": "{\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022WaMEZTn70G32lx9ssRMGxYRU7RSkRr9XPbvqIomN1246IVfFaTeVuQ==\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00221.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_CBC_256\u0022}, \u0022ContentEncryptionIV\u0022: \u0022NK9ddc05mO0Gu3IPILM9eA==\u0022, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python 12.12.1\u0022}, \u0022EncryptionMode\u0022: \u0022FullBlob\u0022}",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": "zsfPhjpcyJU3DyZk2IvKUGCalMM9MQzRcRWqfqHmMyGNIdhOL/bocHfQWRTHnzN/q/Oh0KdPvO6uFSI0gKu3CDA0vRuaprUMpB7DmluTqk9EvF\u002BLyefppFGDQgxsHkM87nQ51qK7peQ65mI1KCqVTMVdf80MotUFLrnADorLsQIBA3/npVcIVHVN30/\u002BoIg5",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Content-MD5": "H6GFYRdYeXqMMs/sZ6z1ZQ==",
+        "Date": "Tue, 31 May 2022 22:41:47 GMT",
+        "ETag": "\u00220x8DA4356BF9592CB\u0022",
+        "Last-Modified": "Tue, 31 May 2022 22:41:48 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "1G/xjA5KX4A=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer75b03376/encryption_block_blob75b03376",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.12.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Tue, 31 May 2022 22:41:48 GMT",
+        "x-ms-range": "bytes=0-111",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "112",
+        "Content-Range": "bytes 0-111/144",
+        "Content-Type": "application/octet-stream",
+        "Date": "Tue, 31 May 2022 22:41:47 GMT",
+        "ETag": "\u00220x8DA4356BF9592CB\u0022",
+        "Last-Modified": "Tue, 31 May 2022 22:41:48 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-blob-content-md5": "H6GFYRdYeXqMMs/sZ6z1ZQ==",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Tue, 31 May 2022 22:41:48 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-encryptiondata": "{\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022WaMEZTn70G32lx9ssRMGxYRU7RSkRr9XPbvqIomN1246IVfFaTeVuQ==\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00221.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_CBC_256\u0022}, \u0022ContentEncryptionIV\u0022: \u0022NK9ddc05mO0Gu3IPILM9eA==\u0022, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python 12.12.1\u0022}, \u0022EncryptionMode\u0022: \u0022FullBlob\u0022}",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": "zsfPhjpcyJU3DyZk2IvKUGCalMM9MQzRcRWqfqHmMyGNIdhOL/bocHfQWRTHnzN/q/Oh0KdPvO6uFSI0gKu3CDA0vRuaprUMpB7DmluTqk9EvF\u002BLyefppFGDQgxsHkM87nQ51qK7peQ65mI1KCqVTA=="
+    }
+  ],
+  "Variables": {}
+}
