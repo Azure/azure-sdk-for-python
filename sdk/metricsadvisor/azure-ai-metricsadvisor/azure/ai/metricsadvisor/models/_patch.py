@@ -390,8 +390,10 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
                 "minRetryIntervalInSeconds", self.ingestion_settings.ingestion_retry_delay
             ),
             stop_retry_after_in_seconds=kwargs.pop("stopRetryAfterInSeconds", self.ingestion_settings.stop_retry_after),
-            need_rollup=rollup_type or self.rollup_settings.rollup_type if self.rollup_settings else None,
-            roll_up_method=kwargs.pop("rollUpMethod", None) or self.rollup_settings.rollup_method
+            need_rollup=rollup_type or self.rollup_settings.rollup_type  # type: ignore
+            if self.rollup_settings
+            else None,
+            roll_up_method=kwargs.pop("rollUpMethod", None) or self.rollup_settings.rollup_method  # type: ignore
             if self.rollup_settings
             else None,
             roll_up_columns=kwargs.pop("rollUpColumns", None) or self.rollup_settings.auto_rollup_group_by_column_names
@@ -401,7 +403,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             or self.rollup_settings.rollup_identification_value
             if self.rollup_settings
             else None,
-            fill_missing_point_type=kwargs.pop("fillMissingPointType", None)
+            fill_missing_point_type=kwargs.pop("fillMissingPointType", None)  # type: ignore
             or self.missing_data_point_fill_settings.fill_type
             if self.missing_data_point_fill_settings
             else None,
@@ -1369,14 +1371,17 @@ class NotificationHook(generated_models.NotificationHook):
         super().__init__(name=name, **kwargs)
 
     def __repr__(self):
-        return "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, " "hook_type={})".format(
-            self.id,
-            self.name,
-            self.description,
-            self.external_link,
-            self.admins,
-            self.hook_type,
-        )[:1024]
+        return (
+            "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, "
+            "hook_type={})".format(
+                self.id,
+                self.name,
+                self.description,
+                self.external_link,
+                self.admins,
+                self.hook_type,
+            )[:1024]
+        )
 
 
 class EmailNotificationHook(NotificationHook, generated_models.EmailNotificationHook):
@@ -2433,7 +2438,9 @@ class DatasourceCredential(dict):
         )[:1024]
 
 
-class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionString, DatasourceCredential):
+class DatasourceSqlConnectionString(  # type: ignore
+    generated_models.DatasourceSqlConnectionString, DatasourceCredential
+):
     """DatasourceSqlConnectionString.
 
     All required parameters must be populated in order to send to Azure.
@@ -2468,7 +2475,9 @@ class DatasourceSqlConnectionString(generated_models.DatasourceSqlConnectionStri
         )
 
 
-class DatasourceDataLakeGen2SharedKey(generated_models.DatasourceDataLakeGen2SharedKey, DatasourceCredential):
+class DatasourceDataLakeGen2SharedKey(  # type: ignore
+    generated_models.DatasourceDataLakeGen2SharedKey, DatasourceCredential
+):
     """DatasourceDataLakeGen2SharedKey.
 
     All required parameters must be populated in order to send to Azure.
@@ -2503,7 +2512,7 @@ class DatasourceDataLakeGen2SharedKey(generated_models.DatasourceDataLakeGen2Sha
         )
 
 
-class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, DatasourceCredential):
+class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, DatasourceCredential):  # type: ignore
     """DatasourceServicePrincipal.
 
     All required parameters must be populated in order to send to Azure.
@@ -2544,7 +2553,9 @@ class DatasourceServicePrincipal(generated_models.DatasourceServicePrincipal, Da
         )
 
 
-class DatasourceServicePrincipalInKeyVault(generated_models.DatasourceServicePrincipalInKeyVault, DatasourceCredential):
+class DatasourceServicePrincipalInKeyVault(  # type: ignore
+    generated_models.DatasourceServicePrincipalInKeyVault, DatasourceCredential
+):
     """DatasourceServicePrincipalInKeyVault.
 
     All required parameters must be populated in order to send to Azure.
@@ -3180,7 +3191,6 @@ __all__ = [
     "AlertQueryTimeMode",
     "FeedbackQueryTimeMode",
     "SeriesIdentity",
-    "AlertQueryTimeMode",
 ]
 
 

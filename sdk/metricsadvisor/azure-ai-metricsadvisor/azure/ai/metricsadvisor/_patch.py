@@ -1519,7 +1519,9 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :dedent: 4
                 :caption: Update an existing datasource credential
         """
-        return self._client.update_datasource_credential(datasource_credential=datasource_credential, **kwargs)
+        return self._client.update_datasource_credential(
+            datasource_credential=cast(DatasourceCredentialUnion, datasource_credential), **kwargs
+        )
 
     @distributed_trace
     def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:

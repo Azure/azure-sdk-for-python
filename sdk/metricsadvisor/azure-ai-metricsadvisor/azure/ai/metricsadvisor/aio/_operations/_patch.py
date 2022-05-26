@@ -108,7 +108,8 @@ class MetricsAdvisorClientOperationsMixin(
             models.AnomalyAlertConfiguration(
                 name=name,
                 metric_alert_configurations=[
-                    m._to_generated() for m in metric_alert_configurations  # pylint: disable=protected-access
+                    m._to_generated()  # type: ignore # pylint: disable=protected-access
+                    for m in metric_alert_configurations
                 ],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
@@ -147,7 +148,7 @@ class MetricsAdvisorClientOperationsMixin(
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
-        data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
+        data_feed_id = cast(Dict[str, Any], response_headers)["Location"].split("dataFeeds/")[1]
         return await self.get_data_feed(data_feed_id)
 
     @distributed_trace_async
@@ -157,7 +158,7 @@ class MetricsAdvisorClientOperationsMixin(
         response_headers = await super().create_hook(  # type: ignore
             hook, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
         )
-        hook_id = response_headers["Location"].split("hooks/")[1]
+        hook_id = cast(Dict[str, Any], response_headers)["Location"].split("hooks/")[1]
         return await self.get_hook(hook_id)
 
     @distributed_trace_async
@@ -409,7 +410,8 @@ class MetricsAdvisorClientOperationsMixin(
     async def update_datasource_credential(  # type: ignore # pylint: disable=arguments-differ
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
-        response = await super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
+        datasource_credential_id = cast(str, datasource_credential.id)
+        response = await super().update_datasource_credential(datasource_credential_id, datasource_credential, **kwargs)
         return self._deserialize_datasource_credential(response)
 
     @distributed_trace

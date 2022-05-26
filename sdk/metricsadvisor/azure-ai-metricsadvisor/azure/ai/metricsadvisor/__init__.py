@@ -6,19 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import MetricsAdvisorClient
+from ._patch import MetricsAdvisorClient
 from ._version import VERSION
 
 __version__ = VERSION
 
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
-except ImportError:
-    _patch_all = []
+
+from ._patch import MetricsAdvisorKeyCredential
+from ._patch import MetricsAdvisorAdministrationClient
 from ._patch import patch_sdk as _patch_sdk
 
-__all__ = ["MetricsAdvisorClient"]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__ = ["MetricsAdvisorKeyCredential", "MetricsAdvisorAdministrationClient", "MetricsAdvisorClient"]
+
 
 _patch_sdk()

@@ -99,8 +99,10 @@ class OperationMixinHelpers:
     def _convert_to_sub_feedback(self, feedback) -> FeedbackUnion:
         feedback_type = feedback["feedbackType"]
         if feedback_type == "Anomaly":
-            generated = self._deserialize(generated_models.AnomalyFeedback, feedback)  # pylint: disable=no-member
-            return models.AnomalyFeedback._from_generated(generated)  # pylint: disable=protected-access
+            generated = self._deserialize(  # type: ignore # pylint: disable=no-member
+                generated_models.AnomalyFeedback, feedback
+            )
+            return models.AnomalyFeedback._from_generated(generated)  # type: ignore # pylint: disable=protected-access
         if feedback_type == "ChangePoint":
             return models.ChangePointFeedback._from_generated(feedback)  # type: ignore  # pylint: disable=protected-access
         if feedback_type == "Comment":
@@ -153,7 +155,7 @@ class OperationMixinHelpers:
             "ServicePrincipalInKV": models.DatasourceServicePrincipalInKeyVault,
         }
         datasource_class = type_to_datasource_credential[response["dataSourceCredentialType"]]
-        return datasource_class.from_dict(response)
+        return datasource_class.from_dict(response)  # type: ignore
 
     @staticmethod
     def _update_detection_configuration_helper(
@@ -229,7 +231,7 @@ class OperationMixinHelpers:
             data_feed_patch = update
 
         else:
-            data_feed_id = data_feed.id
+            data_feed_id = cast(str, data_feed.id)
             data_feed_patch = data_feed._to_generated(**update).serialize()  # pylint: disable=protected-access
         return data_feed_id, data_feed_patch, kwargs
 
@@ -612,7 +614,7 @@ class OperationMixinHelpers:
             alert_configuration_patch = update
 
         else:
-            alert_configuration_id = alert_configuration.id
+            alert_configuration_id = cast(str, alert_configuration.id)
             alert_configuration_patch = alert_configuration._to_generated(  # pylint: disable=protected-access
                 **update
             ).serialize()
@@ -705,10 +707,10 @@ class OperationMixinHelpers:
             if hook_type is None:
                 raise ValueError("hook_type must be passed with a hook ID.")
             hook_class = models.EmailNotificationHook if hook_type.lower() == "email" else models.WebNotificationHook
-            hook_patch = hook_class.from_dict(passed_kwargs).serialize()
+            hook_patch = hook_class.from_dict(passed_kwargs).serialize()  # type: ignore
 
         else:
-            hook_id = hook.id
+            hook_id = cast(str, hook.id)
             hook_patch = hook.serialize()
         if hook_patch["hookType"] == "Email" and "emails_to_alert" in passed_kwargs:
             specific_kwargs = {"toList": "emails_to_alert"}
@@ -822,7 +824,8 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             models.AnomalyAlertConfiguration(
                 name=name,
                 metric_alert_configurations=[
-                    m._to_generated() for m in metric_alert_configurations  # pylint: disable=protected-access
+                    m._to_generated()  # type: ignore # pylint: disable=protected-access
+                    for m in metric_alert_configurations
                 ],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
@@ -832,7 +835,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             **kwargs
         )
 
-        config_id = response_headers["Location"].split("configurations/")[1]
+        config_id = cast(Dict[str, Any], response_headers)["Location"].split("configurations/")[1]
         return self.get_alert_configuration(config_id)
 
     @distributed_trace
@@ -861,7 +864,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
-        data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
+        data_feed_id = cast(Dict[str, Any], response_headers)["Location"].split("dataFeeds/")[1]
         return self.get_data_feed(data_feed_id)
 
     @distributed_trace
@@ -871,7 +874,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         response_headers = super().create_hook(  # type: ignore
             hook, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
         )
-        hook_id = response_headers["Location"].split("hooks/")[1]
+        hook_id = cast(Dict[str, Any], response_headers)["Location"].split("hooks/")[1]
         return self.get_hook(hook_id)
 
     @distributed_trace
@@ -895,7 +898,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         response_headers = super().create_detection_configuration(  # type: ignore
             config, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
         )
-        config_id = response_headers["Location"].split("configurations/")[1]
+        config_id = cast(Dict[str, Any], response_headers)["Location"].split("configurations/")[1]
         return self.get_detection_configuration(config_id)
 
     @distributed_trace
@@ -1116,7 +1119,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
-        credential_id = response_headers["Location"].split("credentials/")[1]
+        credential_id = cast(Dict[str, Any], response_headers)["Location"].split("credentials/")[1]
         return self.get_datasource_credential(credential_id)
 
     @distributed_trace
@@ -1128,7 +1131,8 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
     def update_datasource_credential(  # type: ignore # pylint: disable=arguments-differ
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
-        response = super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
+        datasource_credential_id = cast(str, datasource_credential.id)
+        response = super().update_datasource_credential(datasource_credential_id, datasource_credential, **kwargs)
         return self._deserialize_datasource_credential(response)
 
     @distributed_trace

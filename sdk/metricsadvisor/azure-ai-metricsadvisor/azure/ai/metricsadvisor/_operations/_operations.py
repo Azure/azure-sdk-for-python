@@ -1105,7 +1105,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type configuration_id: str
         :return: AnomalyAlertConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1157,7 +1157,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: AnomalyAlertConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1214,7 +1214,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type configuration_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1263,7 +1263,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -1281,7 +1281,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -1299,7 +1299,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1371,7 +1371,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyAlert
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlert]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -1475,7 +1475,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of DataPointAnomaly
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -1574,7 +1574,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyIncident
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -1661,7 +1661,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type detection_configuration_id: str
         :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1713,7 +1713,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1770,7 +1770,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type configuration_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1819,7 +1819,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -1837,7 +1837,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -1855,7 +1855,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1919,7 +1919,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyAlertConfiguration
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2006,7 +2006,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: An iterator like instance of MetricEnrichedSeriesData
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2108,7 +2108,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of DataPointAnomaly
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2212,7 +2212,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2308,7 +2308,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyIncident
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2403,7 +2403,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype token: str
         :return: An iterator like instance of AnomalyIncident
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2490,7 +2490,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type incident_id: str
         :return: An iterator like instance of IncidentRootCause
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2578,7 +2578,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -2596,7 +2596,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -2615,7 +2615,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2677,7 +2677,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of DatasourceCredential
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DatasourceCredential]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2760,7 +2760,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: any
         :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2817,7 +2817,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type credential_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2861,7 +2861,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type credential_id: str
         :return: any
         :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2937,7 +2937,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of DataFeed
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeed]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -3028,7 +3028,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -3046,7 +3046,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -3064,7 +3064,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3122,7 +3122,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type data_feed_id: str
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3172,7 +3172,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: any
         :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3229,7 +3229,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type data_feed_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3273,7 +3273,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type feedback_id: str
         :return: MetricFeedback
         :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3327,7 +3327,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of MetricFeedback
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricFeedback]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -3420,7 +3420,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -3438,7 +3438,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -3456,7 +3456,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3525,7 +3525,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of NotificationHook
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.NotificationHook]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -3612,7 +3612,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -3630,7 +3630,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
@@ -3648,7 +3648,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype content_type: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3706,7 +3706,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type hook_id: str
         :return: NotificationHook
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3756,7 +3756,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: NotificationHook
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3811,7 +3811,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type hook_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3869,7 +3869,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of DataFeedIngestionStatus
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeedIngestionStatus]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -3963,7 +3963,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -4012,7 +4012,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type data_feed_id: str
         :return: DataFeedIngestionProgress
         :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -4062,7 +4062,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :return: An iterator like instance of MetricSeriesData
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -4158,7 +4158,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of MetricSeriesDefinition
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -4256,7 +4256,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -4353,7 +4353,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :return: An iterator like instance of AnomalyDetectionConfiguration
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -4444,7 +4444,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :return: An iterator like instance of EnrichmentStatus
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
