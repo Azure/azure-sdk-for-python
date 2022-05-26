@@ -4,7 +4,7 @@
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
 - Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
-- Conversational Issue Summarization: Used to summarize conversations in the form of issues, and final resolutions
+- Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
 - Conversational PII: Used to extract and redact personally-identifiable info (PII) 
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
@@ -200,7 +200,7 @@ if top_intent_object["targetProjectKind"] == "Luis":
 
 ```
 
-### Conversational Issue Summarization
+### Conversational Summarization
 
 You can use this sample if you need to summarize a conversation in the form of an issue, and final resolution. For example, a dialog from tech support:
 
@@ -267,13 +267,13 @@ with client:
     task_result = result["tasks"]["items"][0]
     print("... view task status ...")
     print("status: {}".format(task_result["status"]))
-    issue_resolution_result = task_result["results"]
-    if issue_resolution_result["errors"]:
+    resolution_result = task_result["results"]
+    if resolution_result["errors"]:
         print("... errors occured ...")
-        for error in issue_resolution_result["errors"]:
+        for error in resolution_result["errors"]:
             print(error)
     else:
-        conversation_result = issue_resolution_result["conversations"][0]
+        conversation_result = resolution_result["conversations"][0]
         if conversation_result["warnings"]:
             print("... view warnings ...")
             for warning in conversation_result["warnings"]:
