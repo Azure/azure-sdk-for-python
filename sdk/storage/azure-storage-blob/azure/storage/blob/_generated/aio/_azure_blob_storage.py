@@ -18,7 +18,7 @@ from .. import models
 from ._configuration import AzureBlobStorageConfiguration
 from .operations import AppendBlobOperations, BlobOperations, BlockBlobOperations, ContainerOperations, PageBlobOperations, ServiceOperations
 
-class AzureBlobStorage:
+class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     """AzureBlobStorage.
 
     :ivar service: ServiceOperations operations
@@ -34,9 +34,9 @@ class AzureBlobStorage:
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
     :param url: The URL of the service account, container, or blob that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
-    :param base_url: Service URL. Default value is "".
+    :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2021-04-10". Note that overriding this default value may result in unsupported behavior.
@@ -56,12 +56,24 @@ class AzureBlobStorage:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container = ContainerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.page_blob = PageBlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.append_blob = AppendBlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.block_blob = BlockBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.container = ContainerOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob = BlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.page_blob = PageBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.append_blob = AppendBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.block_blob = BlockBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

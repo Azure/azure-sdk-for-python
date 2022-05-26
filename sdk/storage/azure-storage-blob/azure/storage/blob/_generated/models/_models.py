@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
@@ -22,9 +22,9 @@ class AccessPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
-        'permission': {'key': 'Permission', 'type': 'str'},
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
     }
 
     def __init__(
@@ -52,17 +52,17 @@ class AppendPositionAccessConditions(msrest.serialization.Model):
      blob. If the Append Block operation would cause the blob to exceed that limit or if the blob
      size is already greater than the value specified in this header, the request will fail with
      MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-    :vartype max_size: long
+    :vartype max_size: int
     :ivar append_position: Optional conditional header, used only for the Append Block operation. A
      number indicating the byte offset to compare. Append Block will succeed only if the append
      position is equal to this number. If it is not, the request will fail with the
      AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed).
-    :vartype append_position: long
+    :vartype append_position: int
     """
 
     _attribute_map = {
-        'max_size': {'key': 'maxSize', 'type': 'long'},
-        'append_position': {'key': 'appendPosition', 'type': 'long'},
+        "max_size": {"key": "maxSize", "type": "int"},
+        "append_position": {"key": "appendPosition", "type": "int"},
     }
 
     def __init__(
@@ -74,12 +74,12 @@ class AppendPositionAccessConditions(msrest.serialization.Model):
          append blob. If the Append Block operation would cause the blob to exceed that limit or if the
          blob size is already greater than the value specified in this header, the request will fail
          with MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :paramtype max_size: long
+        :paramtype max_size: int
         :keyword append_position: Optional conditional header, used only for the Append Block
          operation. A number indicating the byte offset to compare. Append Block will succeed only if
          the append position is equal to this number. If it is not, the request will fail with the
          AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :paramtype append_position: long
+        :paramtype append_position: int
         """
         super(AppendPositionAccessConditions, self).__init__(**kwargs)
         self.max_size = kwargs.get('max_size', None)
@@ -100,7 +100,7 @@ class ArrowConfiguration(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'schema': {'key': 'Schema', 'type': '[ArrowField]', 'xml': {'name': 'Schema', 'wrapped': True, 'itemsName': 'Field'}},
+        "schema": {"key": "Schema", "type": "[ArrowField]", 'xml': {'name': 'Schema', 'wrapped': True, 'itemsName': 'Field'}},
     }
     _xml_map = {
         'name': 'ArrowConfiguration'
@@ -138,10 +138,10 @@ class ArrowField(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'precision': {'key': 'Precision', 'type': 'int'},
-        'scale': {'key': 'Scale', 'type': 'int'},
+        "type": {"key": "Type", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "precision": {"key": "Precision", "type": "int"},
+        "scale": {"key": "Scale", "type": "int"},
     }
     _xml_map = {
         'name': 'Field'
@@ -182,7 +182,7 @@ class BlobFlatListSegment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]'},
+        "blob_items": {"key": "BlobItems", "type": "[BlobItemInternal]", 'xml': {'itemsName': 'Blob'}},
     }
     _xml_map = {
         'name': 'Blobs'
@@ -216,8 +216,8 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefix'}},
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]', 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
+        "blob_prefixes": {"key": "BlobPrefixes", "type": "[BlobPrefix]", 'xml': {'name': 'BlobPrefix'}},
+        "blob_items": {"key": "BlobItems", "type": "[BlobItemInternal]", 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
     }
     _xml_map = {
         'name': 'Blobs'
@@ -249,7 +249,7 @@ class BlobHTTPHeaders(msrest.serialization.Model):
     :vartype blob_content_type: str
     :ivar blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is not
      validated, as the hashes for the individual blocks were validated when each was uploaded.
-    :vartype blob_content_md5: bytearray
+    :vartype blob_content_md5: bytes
     :ivar blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
      property is stored with the blob and returned with a read request.
     :vartype blob_content_encoding: str
@@ -261,12 +261,12 @@ class BlobHTTPHeaders(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'blob_cache_control': {'key': 'blobCacheControl', 'type': 'str'},
-        'blob_content_type': {'key': 'blobContentType', 'type': 'str'},
-        'blob_content_md5': {'key': 'blobContentMD5', 'type': 'bytearray'},
-        'blob_content_encoding': {'key': 'blobContentEncoding', 'type': 'str'},
-        'blob_content_language': {'key': 'blobContentLanguage', 'type': 'str'},
-        'blob_content_disposition': {'key': 'blobContentDisposition', 'type': 'str'},
+        "blob_cache_control": {"key": "blobCacheControl", "type": "str"},
+        "blob_content_type": {"key": "blobContentType", "type": "str"},
+        "blob_content_md5": {"key": "blobContentMD5", "type": "bytearray"},
+        "blob_content_encoding": {"key": "blobContentEncoding", "type": "str"},
+        "blob_content_language": {"key": "blobContentLanguage", "type": "str"},
+        "blob_content_disposition": {"key": "blobContentDisposition", "type": "str"},
     }
 
     def __init__(
@@ -282,7 +282,7 @@ class BlobHTTPHeaders(msrest.serialization.Model):
         :paramtype blob_content_type: str
         :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
          not validated, as the hashes for the individual blocks were validated when each was uploaded.
-        :paramtype blob_content_md5: bytearray
+        :paramtype blob_content_md5: bytes
         :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
          property is stored with the blob and returned with a read request.
         :paramtype blob_content_encoding: str
@@ -316,7 +316,7 @@ class BlobItemInternal(msrest.serialization.Model):
     :vartype version_id: str
     :ivar is_current_version:
     :vartype is_current_version: bool
-    :ivar properties: Required. Properties of a blob.
+    :ivar properties: Properties of a blob. Required.
     :vartype properties: ~azure.storage.blob.models.BlobPropertiesInternal
     :ivar metadata:
     :vartype metadata: ~azure.storage.blob.models.BlobMetadata
@@ -336,16 +336,16 @@ class BlobItemInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'BlobName'},
-        'deleted': {'key': 'Deleted', 'type': 'bool'},
-        'snapshot': {'key': 'Snapshot', 'type': 'str'},
-        'version_id': {'key': 'VersionId', 'type': 'str'},
-        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool'},
-        'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
-        'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
-        'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
-        'has_versions_only': {'key': 'HasVersionsOnly', 'type': 'bool'},
-        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
+        "name": {"key": "Name", "type": "BlobName"},
+        "deleted": {"key": "Deleted", "type": "bool"},
+        "snapshot": {"key": "Snapshot", "type": "str"},
+        "version_id": {"key": "VersionId", "type": "str"},
+        "is_current_version": {"key": "IsCurrentVersion", "type": "bool"},
+        "properties": {"key": "Properties", "type": "BlobPropertiesInternal"},
+        "metadata": {"key": "Metadata", "type": "BlobMetadata"},
+        "blob_tags": {"key": "BlobTags", "type": "BlobTags"},
+        "has_versions_only": {"key": "HasVersionsOnly", "type": "bool"},
+        "object_replication_metadata": {"key": "OrMetadata", "type": "{str}"},
     }
     _xml_map = {
         'name': 'Blob'
@@ -366,7 +366,7 @@ class BlobItemInternal(msrest.serialization.Model):
         :paramtype version_id: str
         :keyword is_current_version:
         :paramtype is_current_version: bool
-        :keyword properties: Required. Properties of a blob.
+        :keyword properties: Properties of a blob. Required.
         :paramtype properties: ~azure.storage.blob.models.BlobPropertiesInternal
         :keyword metadata:
         :paramtype metadata: ~azure.storage.blob.models.BlobMetadata
@@ -401,8 +401,8 @@ class BlobMetadata(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{str}'},
-        'encrypted': {'key': 'Encrypted', 'type': 'str', 'xml': {'attr': True}},
+        "additional_properties": {"key": "", "type": "{str}"},
+        "encrypted": {"key": "Encrypted", "type": "str", 'xml': {'attr': True}},
     }
     _xml_map = {
         'name': 'Metadata'
@@ -434,8 +434,8 @@ class BlobName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'encoded': {'key': 'Encoded', 'type': 'bool', 'xml': {'name': 'Encoded', 'attr': True}},
-        'content': {'key': 'content', 'type': 'str', 'xml': {'text': True}},
+        "encoded": {"key": "Encoded", "type": "bool", 'xml': {'name': 'Encoded', 'attr': True}},
+        "content": {"key": "content", "type": "str", 'xml': {'text': True}},
     }
 
     def __init__(
@@ -467,7 +467,7 @@ class BlobPrefix(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'BlobName'},
+        "name": {"key": "Name", "type": "BlobName"},
     }
 
     def __init__(
@@ -482,7 +482,7 @@ class BlobPrefix(msrest.serialization.Model):
         self.name = kwargs['name']
 
 
-class BlobPropertiesInternal(msrest.serialization.Model):
+class BlobPropertiesInternal(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a blob.
 
     All required parameters must be populated in order to send to Azure.
@@ -494,7 +494,7 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :ivar etag: Required.
     :vartype etag: str
     :ivar content_length: Size in bytes.
-    :vartype content_length: long
+    :vartype content_length: int
     :ivar content_type:
     :vartype content_type: str
     :ivar content_encoding:
@@ -502,25 +502,25 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :ivar content_language:
     :vartype content_language: str
     :ivar content_md5:
-    :vartype content_md5: bytearray
+    :vartype content_md5: bytes
     :ivar content_disposition:
     :vartype content_disposition: str
     :ivar cache_control:
     :vartype cache_control: str
     :ivar blob_sequence_number:
-    :vartype blob_sequence_number: long
-    :ivar blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+    :vartype blob_sequence_number: int
+    :ivar blob_type: Known values are: "BlockBlob", "PageBlob", and "AppendBlob".
     :vartype blob_type: str or ~azure.storage.blob.models.BlobType
-    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :ivar lease_status: Known values are: "locked" and "unlocked".
     :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
+    :ivar lease_state: Known values are: "available", "leased", "expired", "breaking", and
      "broken".
     :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :ivar lease_duration: Known values are: "infinite" and "fixed".
     :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
     :ivar copy_id:
     :vartype copy_id: str
-    :ivar copy_status: Possible values include: "pending", "success", "aborted", "failed".
+    :ivar copy_status: Known values are: "pending", "success", "aborted", and "failed".
     :vartype copy_status: str or ~azure.storage.blob.models.CopyStatusType
     :ivar copy_source:
     :vartype copy_source: str
@@ -540,12 +540,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :vartype deleted_time: ~datetime.datetime
     :ivar remaining_retention_days:
     :vartype remaining_retention_days: int
-    :ivar access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
-     "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+    :ivar access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
+     "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Premium".
     :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred:
     :vartype access_tier_inferred: bool
-    :ivar archive_status: Possible values include: "rehydrate-pending-to-hot",
+    :ivar archive_status: Known values are: "rehydrate-pending-to-hot" and
      "rehydrate-pending-to-cool".
     :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :ivar customer_provided_key_sha256:
@@ -561,14 +561,14 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :ivar is_sealed:
     :vartype is_sealed: bool
     :ivar rehydrate_priority: If an object is in rehydrate pending state then this header is
-     returned with priority of rehydrate. Valid values are High and Standard. Possible values
-     include: "High", "Standard".
+     returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+     "High" and "Standard".
     :vartype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :ivar last_accessed_on:
     :vartype last_accessed_on: ~datetime.datetime
     :ivar immutability_policy_expires_on:
     :vartype immutability_policy_expires_on: ~datetime.datetime
-    :ivar immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+    :ivar immutability_policy_mode: Known values are: "Mutable", "Unlocked", and "Locked".
     :vartype immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
     :ivar legal_hold:
     :vartype legal_hold: bool
@@ -580,52 +580,52 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'creation_time': {'key': 'Creation-Time', 'type': 'rfc-1123'},
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
-        'content_length': {'key': 'Content-Length', 'type': 'long'},
-        'content_type': {'key': 'Content-Type', 'type': 'str'},
-        'content_encoding': {'key': 'Content-Encoding', 'type': 'str'},
-        'content_language': {'key': 'Content-Language', 'type': 'str'},
-        'content_md5': {'key': 'Content-MD5', 'type': 'bytearray'},
-        'content_disposition': {'key': 'Content-Disposition', 'type': 'str'},
-        'cache_control': {'key': 'Cache-Control', 'type': 'str'},
-        'blob_sequence_number': {'key': 'x-ms-blob-sequence-number', 'type': 'long'},
-        'blob_type': {'key': 'BlobType', 'type': 'str'},
-        'lease_status': {'key': 'LeaseStatus', 'type': 'str'},
-        'lease_state': {'key': 'LeaseState', 'type': 'str'},
-        'lease_duration': {'key': 'LeaseDuration', 'type': 'str'},
-        'copy_id': {'key': 'CopyId', 'type': 'str'},
-        'copy_status': {'key': 'CopyStatus', 'type': 'str'},
-        'copy_source': {'key': 'CopySource', 'type': 'str'},
-        'copy_progress': {'key': 'CopyProgress', 'type': 'str'},
-        'copy_completion_time': {'key': 'CopyCompletionTime', 'type': 'rfc-1123'},
-        'copy_status_description': {'key': 'CopyStatusDescription', 'type': 'str'},
-        'server_encrypted': {'key': 'ServerEncrypted', 'type': 'bool'},
-        'incremental_copy': {'key': 'IncrementalCopy', 'type': 'bool'},
-        'destination_snapshot': {'key': 'DestinationSnapshot', 'type': 'str'},
-        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
-        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'access_tier': {'key': 'AccessTier', 'type': 'str'},
-        'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool'},
-        'archive_status': {'key': 'ArchiveStatus', 'type': 'str'},
-        'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str'},
-        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
-        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123'},
-        'tag_count': {'key': 'TagCount', 'type': 'int'},
-        'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123'},
-        'is_sealed': {'key': 'Sealed', 'type': 'bool'},
-        'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str'},
-        'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
-        'immutability_policy_expires_on': {'key': 'ImmutabilityPolicyUntilDate', 'type': 'rfc-1123'},
-        'immutability_policy_mode': {'key': 'ImmutabilityPolicyMode', 'type': 'str'},
-        'legal_hold': {'key': 'LegalHold', 'type': 'bool'},
+        "creation_time": {"key": "Creation-Time", "type": "rfc-1123"},
+        "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
+        "etag": {"key": "Etag", "type": "str"},
+        "content_length": {"key": "Content-Length", "type": "int"},
+        "content_type": {"key": "Content-Type", "type": "str"},
+        "content_encoding": {"key": "Content-Encoding", "type": "str"},
+        "content_language": {"key": "Content-Language", "type": "str"},
+        "content_md5": {"key": "Content-MD5", "type": "bytearray"},
+        "content_disposition": {"key": "Content-Disposition", "type": "str"},
+        "cache_control": {"key": "Cache-Control", "type": "str"},
+        "blob_sequence_number": {"key": "x-ms-blob-sequence-number", "type": "int"},
+        "blob_type": {"key": "BlobType", "type": "str"},
+        "lease_status": {"key": "LeaseStatus", "type": "str"},
+        "lease_state": {"key": "LeaseState", "type": "str"},
+        "lease_duration": {"key": "LeaseDuration", "type": "str"},
+        "copy_id": {"key": "CopyId", "type": "str"},
+        "copy_status": {"key": "CopyStatus", "type": "str"},
+        "copy_source": {"key": "CopySource", "type": "str"},
+        "copy_progress": {"key": "CopyProgress", "type": "str"},
+        "copy_completion_time": {"key": "CopyCompletionTime", "type": "rfc-1123"},
+        "copy_status_description": {"key": "CopyStatusDescription", "type": "str"},
+        "server_encrypted": {"key": "ServerEncrypted", "type": "bool"},
+        "incremental_copy": {"key": "IncrementalCopy", "type": "bool"},
+        "destination_snapshot": {"key": "DestinationSnapshot", "type": "str"},
+        "deleted_time": {"key": "DeletedTime", "type": "rfc-1123"},
+        "remaining_retention_days": {"key": "RemainingRetentionDays", "type": "int"},
+        "access_tier": {"key": "AccessTier", "type": "str"},
+        "access_tier_inferred": {"key": "AccessTierInferred", "type": "bool"},
+        "archive_status": {"key": "ArchiveStatus", "type": "str"},
+        "customer_provided_key_sha256": {"key": "CustomerProvidedKeySha256", "type": "str"},
+        "encryption_scope": {"key": "EncryptionScope", "type": "str"},
+        "access_tier_change_time": {"key": "AccessTierChangeTime", "type": "rfc-1123"},
+        "tag_count": {"key": "TagCount", "type": "int"},
+        "expires_on": {"key": "Expiry-Time", "type": "rfc-1123"},
+        "is_sealed": {"key": "Sealed", "type": "bool"},
+        "rehydrate_priority": {"key": "RehydratePriority", "type": "str"},
+        "last_accessed_on": {"key": "LastAccessTime", "type": "rfc-1123"},
+        "immutability_policy_expires_on": {"key": "ImmutabilityPolicyUntilDate", "type": "rfc-1123"},
+        "immutability_policy_mode": {"key": "ImmutabilityPolicyMode", "type": "str"},
+        "legal_hold": {"key": "LegalHold", "type": "bool"},
     }
     _xml_map = {
         'name': 'Properties'
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         **kwargs
     ):
@@ -637,7 +637,7 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :keyword etag: Required.
         :paramtype etag: str
         :keyword content_length: Size in bytes.
-        :paramtype content_length: long
+        :paramtype content_length: int
         :keyword content_type:
         :paramtype content_type: str
         :keyword content_encoding:
@@ -645,25 +645,25 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :keyword content_language:
         :paramtype content_language: str
         :keyword content_md5:
-        :paramtype content_md5: bytearray
+        :paramtype content_md5: bytes
         :keyword content_disposition:
         :paramtype content_disposition: str
         :keyword cache_control:
         :paramtype cache_control: str
         :keyword blob_sequence_number:
-        :paramtype blob_sequence_number: long
-        :keyword blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+        :paramtype blob_sequence_number: int
+        :keyword blob_type: Known values are: "BlockBlob", "PageBlob", and "AppendBlob".
         :paramtype blob_type: str or ~azure.storage.blob.models.BlobType
-        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :keyword lease_status: Known values are: "locked" and "unlocked".
         :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
+        :keyword lease_state: Known values are: "available", "leased", "expired", "breaking", and
          "broken".
         :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :keyword lease_duration: Known values are: "infinite" and "fixed".
         :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
         :keyword copy_id:
         :paramtype copy_id: str
-        :keyword copy_status: Possible values include: "pending", "success", "aborted", "failed".
+        :keyword copy_status: Known values are: "pending", "success", "aborted", and "failed".
         :paramtype copy_status: str or ~azure.storage.blob.models.CopyStatusType
         :keyword copy_source:
         :paramtype copy_source: str
@@ -683,12 +683,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :paramtype deleted_time: ~datetime.datetime
         :keyword remaining_retention_days:
         :paramtype remaining_retention_days: int
-        :keyword access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
-         "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+        :keyword access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
+         "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Premium".
         :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword access_tier_inferred:
         :paramtype access_tier_inferred: bool
-        :keyword archive_status: Possible values include: "rehydrate-pending-to-hot",
+        :keyword archive_status: Known values are: "rehydrate-pending-to-hot" and
          "rehydrate-pending-to-cool".
         :paramtype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
         :keyword customer_provided_key_sha256:
@@ -704,14 +704,14 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :keyword is_sealed:
         :paramtype is_sealed: bool
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
-         returned with priority of rehydrate. Valid values are High and Standard. Possible values
-         include: "High", "Standard".
+         returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+         "High" and "Standard".
         :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :keyword last_accessed_on:
         :paramtype last_accessed_on: ~datetime.datetime
         :keyword immutability_policy_expires_on:
         :paramtype immutability_policy_expires_on: ~datetime.datetime
-        :keyword immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+        :keyword immutability_policy_mode: Known values are: "Mutable", "Unlocked", and "Locked".
         :paramtype immutability_policy_mode: str or
          ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :keyword legal_hold:
@@ -777,8 +777,8 @@ class BlobTag(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
     }
     _xml_map = {
         'name': 'Tag'
@@ -813,7 +813,7 @@ class BlobTags(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'blob_tag_set': {'key': 'BlobTagSet', 'type': '[BlobTag]', 'xml': {'name': 'TagSet', 'wrapped': True, 'itemsName': 'Tag'}},
+        "blob_tag_set": {"key": "BlobTagSet", "type": "[BlobTag]", 'xml': {'name': 'TagSet', 'wrapped': True, 'itemsName': 'Tag'}},
     }
     _xml_map = {
         'name': 'Tags'
@@ -836,10 +836,10 @@ class Block(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The base64 encoded block ID.
+    :ivar name: The base64 encoded block ID. Required.
     :vartype name: str
-    :ivar size: Required. The block size in bytes.
-    :vartype size: long
+    :ivar size: The block size in bytes. Required.
+    :vartype size: int
     """
 
     _validation = {
@@ -848,8 +848,8 @@ class Block(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'size': {'key': 'Size', 'type': 'long'},
+        "name": {"key": "Name", "type": "str"},
+        "size": {"key": "Size", "type": "int"},
     }
 
     def __init__(
@@ -857,10 +857,10 @@ class Block(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The base64 encoded block ID.
+        :keyword name: The base64 encoded block ID. Required.
         :paramtype name: str
-        :keyword size: Required. The block size in bytes.
-        :paramtype size: long
+        :keyword size: The block size in bytes. Required.
+        :paramtype size: int
         """
         super(Block, self).__init__(**kwargs)
         self.name = kwargs['name']
@@ -877,8 +877,8 @@ class BlockList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'committed_blocks': {'key': 'CommittedBlocks', 'type': '[Block]', 'xml': {'wrapped': True}},
-        'uncommitted_blocks': {'key': 'UncommittedBlocks', 'type': '[Block]', 'xml': {'wrapped': True}},
+        "committed_blocks": {"key": "CommittedBlocks", "type": "[Block]", 'xml': {'wrapped': True}},
+        "uncommitted_blocks": {"key": "UncommittedBlocks", "type": "[Block]", 'xml': {'wrapped': True}},
     }
 
     def __init__(
@@ -908,9 +908,9 @@ class BlockLookupList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'committed': {'key': 'Committed', 'type': '[str]', 'xml': {'itemsName': 'Committed'}},
-        'uncommitted': {'key': 'Uncommitted', 'type': '[str]', 'xml': {'itemsName': 'Uncommitted'}},
-        'latest': {'key': 'Latest', 'type': '[str]', 'xml': {'itemsName': 'Latest'}},
+        "committed": {"key": "Committed", "type": "[str]", 'xml': {'itemsName': 'Committed'}},
+        "uncommitted": {"key": "Uncommitted", "type": "[str]", 'xml': {'itemsName': 'Uncommitted'}},
+        "latest": {"key": "Latest", "type": "[str]", 'xml': {'itemsName': 'Latest'}},
     }
     _xml_map = {
         'name': 'BlockList'
@@ -940,9 +940,9 @@ class ClearRange(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar start: Required.
-    :vartype start: long
+    :vartype start: int
     :ivar end: Required.
-    :vartype end: long
+    :vartype end: int
     """
 
     _validation = {
@@ -951,8 +951,8 @@ class ClearRange(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
-        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+        "start": {"key": "Start", "type": "int", 'xml': {'name': 'Start'}},
+        "end": {"key": "End", "type": "int", 'xml': {'name': 'End'}},
     }
     _xml_map = {
         'name': 'ClearRange'
@@ -964,9 +964,9 @@ class ClearRange(msrest.serialization.Model):
     ):
         """
         :keyword start: Required.
-        :paramtype start: long
+        :paramtype start: int
         :keyword end: Required.
-        :paramtype end: long
+        :paramtype end: int
         """
         super(ClearRange, self).__init__(**kwargs)
         self.start = kwargs['start']
@@ -986,8 +986,8 @@ class ContainerCpkScopeInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str'},
-        'prevent_encryption_scope_override': {'key': 'PreventEncryptionScopeOverride', 'type': 'bool'},
+        "default_encryption_scope": {"key": "DefaultEncryptionScope", "type": "str"},
+        "prevent_encryption_scope_override": {"key": "PreventEncryptionScopeOverride", "type": "bool"},
     }
 
     def __init__(
@@ -1019,7 +1019,7 @@ class ContainerItem(msrest.serialization.Model):
     :vartype deleted: bool
     :ivar version:
     :vartype version: str
-    :ivar properties: Required. Properties of a container.
+    :ivar properties: Properties of a container. Required.
     :vartype properties: ~azure.storage.blob.models.ContainerProperties
     :ivar metadata: Dictionary of :code:`<string>`.
     :vartype metadata: dict[str, str]
@@ -1031,11 +1031,11 @@ class ContainerItem(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'deleted': {'key': 'Deleted', 'type': 'bool'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'ContainerProperties'},
-        'metadata': {'key': 'Metadata', 'type': '{str}'},
+        "name": {"key": "Name", "type": "str"},
+        "deleted": {"key": "Deleted", "type": "bool"},
+        "version": {"key": "Version", "type": "str"},
+        "properties": {"key": "Properties", "type": "ContainerProperties"},
+        "metadata": {"key": "Metadata", "type": "{str}"},
     }
     _xml_map = {
         'name': 'Container'
@@ -1052,7 +1052,7 @@ class ContainerItem(msrest.serialization.Model):
         :paramtype deleted: bool
         :keyword version:
         :paramtype version: str
-        :keyword properties: Required. Properties of a container.
+        :keyword properties: Properties of a container. Required.
         :paramtype properties: ~azure.storage.blob.models.ContainerProperties
         :keyword metadata: Dictionary of :code:`<string>`.
         :paramtype metadata: dict[str, str]
@@ -1065,7 +1065,7 @@ class ContainerItem(msrest.serialization.Model):
         self.metadata = kwargs.get('metadata', None)
 
 
-class ContainerProperties(msrest.serialization.Model):
+class ContainerProperties(msrest.serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a container.
 
     All required parameters must be populated in order to send to Azure.
@@ -1074,14 +1074,14 @@ class ContainerProperties(msrest.serialization.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar etag: Required.
     :vartype etag: str
-    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :ivar lease_status: Known values are: "locked" and "unlocked".
     :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
+    :ivar lease_state: Known values are: "available", "leased", "expired", "breaking", and
      "broken".
     :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :ivar lease_duration: Known values are: "infinite" and "fixed".
     :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-    :ivar public_access: Possible values include: "container", "blob".
+    :ivar public_access: Known values are: "container" and "blob".
     :vartype public_access: str or ~azure.storage.blob.models.PublicAccessType
     :ivar has_immutability_policy:
     :vartype has_immutability_policy: bool
@@ -1106,19 +1106,19 @@ class ContainerProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
-        'etag': {'key': 'Etag', 'type': 'str'},
-        'lease_status': {'key': 'LeaseStatus', 'type': 'str'},
-        'lease_state': {'key': 'LeaseState', 'type': 'str'},
-        'lease_duration': {'key': 'LeaseDuration', 'type': 'str'},
-        'public_access': {'key': 'PublicAccess', 'type': 'str'},
-        'has_immutability_policy': {'key': 'HasImmutabilityPolicy', 'type': 'bool'},
-        'has_legal_hold': {'key': 'HasLegalHold', 'type': 'bool'},
-        'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str'},
-        'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
-        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
-        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'is_immutable_storage_with_versioning_enabled': {'key': 'ImmutableStorageWithVersioningEnabled', 'type': 'bool'},
+        "last_modified": {"key": "Last-Modified", "type": "rfc-1123"},
+        "etag": {"key": "Etag", "type": "str"},
+        "lease_status": {"key": "LeaseStatus", "type": "str"},
+        "lease_state": {"key": "LeaseState", "type": "str"},
+        "lease_duration": {"key": "LeaseDuration", "type": "str"},
+        "public_access": {"key": "PublicAccess", "type": "str"},
+        "has_immutability_policy": {"key": "HasImmutabilityPolicy", "type": "bool"},
+        "has_legal_hold": {"key": "HasLegalHold", "type": "bool"},
+        "default_encryption_scope": {"key": "DefaultEncryptionScope", "type": "str"},
+        "prevent_encryption_scope_override": {"key": "DenyEncryptionScopeOverride", "type": "bool"},
+        "deleted_time": {"key": "DeletedTime", "type": "rfc-1123"},
+        "remaining_retention_days": {"key": "RemainingRetentionDays", "type": "int"},
+        "is_immutable_storage_with_versioning_enabled": {"key": "ImmutableStorageWithVersioningEnabled", "type": "bool"},
     }
 
     def __init__(
@@ -1130,14 +1130,14 @@ class ContainerProperties(msrest.serialization.Model):
         :paramtype last_modified: ~datetime.datetime
         :keyword etag: Required.
         :paramtype etag: str
-        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :keyword lease_status: Known values are: "locked" and "unlocked".
         :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
+        :keyword lease_state: Known values are: "available", "leased", "expired", "breaking", and
          "broken".
         :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :keyword lease_duration: Known values are: "infinite" and "fixed".
         :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-        :keyword public_access: Possible values include: "container", "blob".
+        :keyword public_access: Known values are: "container" and "blob".
         :paramtype public_access: str or ~azure.storage.blob.models.PublicAccessType
         :keyword has_immutability_policy:
         :paramtype has_immutability_policy: bool
@@ -1176,23 +1176,23 @@ class CorsRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar allowed_origins: Required. The origin domains that are permitted to make a request
-     against the storage service via CORS. The origin domain is the domain from which the request
-     originates. Note that the origin must be an exact case-sensitive match with the origin that the
-     user age sends to the service. You can also use the wildcard character '*' to allow all origin
-     domains to make requests via CORS.
+    :ivar allowed_origins: The origin domains that are permitted to make a request against the
+     storage service via CORS. The origin domain is the domain from which the request originates.
+     Note that the origin must be an exact case-sensitive match with the origin that the user age
+     sends to the service. You can also use the wildcard character '*' to allow all origin domains
+     to make requests via CORS. Required.
     :vartype allowed_origins: str
-    :ivar allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
-     use for a CORS request. (comma separated).
+    :ivar allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
+     CORS request. (comma separated). Required.
     :vartype allowed_methods: str
-    :ivar allowed_headers: Required. the request headers that the origin domain may specify on the
-     CORS request.
+    :ivar allowed_headers: the request headers that the origin domain may specify on the CORS
+     request. Required.
     :vartype allowed_headers: str
-    :ivar exposed_headers: Required. The response headers that may be sent in the response to the
-     CORS request and exposed by the browser to the request issuer.
+    :ivar exposed_headers: The response headers that may be sent in the response to the CORS
+     request and exposed by the browser to the request issuer. Required.
     :vartype exposed_headers: str
-    :ivar max_age_in_seconds: Required. The maximum amount time that a browser should cache the
-     preflight OPTIONS request.
+    :ivar max_age_in_seconds: The maximum amount time that a browser should cache the preflight
+     OPTIONS request. Required.
     :vartype max_age_in_seconds: int
     """
 
@@ -1205,11 +1205,11 @@ class CorsRule(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'allowed_origins': {'key': 'AllowedOrigins', 'type': 'str'},
-        'allowed_methods': {'key': 'AllowedMethods', 'type': 'str'},
-        'allowed_headers': {'key': 'AllowedHeaders', 'type': 'str'},
-        'exposed_headers': {'key': 'ExposedHeaders', 'type': 'str'},
-        'max_age_in_seconds': {'key': 'MaxAgeInSeconds', 'type': 'int'},
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
     }
 
     def __init__(
@@ -1217,23 +1217,23 @@ class CorsRule(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword allowed_origins: Required. The origin domains that are permitted to make a request
-         against the storage service via CORS. The origin domain is the domain from which the request
-         originates. Note that the origin must be an exact case-sensitive match with the origin that the
-         user age sends to the service. You can also use the wildcard character '*' to allow all origin
-         domains to make requests via CORS.
+        :keyword allowed_origins: The origin domains that are permitted to make a request against the
+         storage service via CORS. The origin domain is the domain from which the request originates.
+         Note that the origin must be an exact case-sensitive match with the origin that the user age
+         sends to the service. You can also use the wildcard character '*' to allow all origin domains
+         to make requests via CORS. Required.
         :paramtype allowed_origins: str
-        :keyword allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
-         use for a CORS request. (comma separated).
+        :keyword allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
+         CORS request. (comma separated). Required.
         :paramtype allowed_methods: str
-        :keyword allowed_headers: Required. the request headers that the origin domain may specify on
-         the CORS request.
+        :keyword allowed_headers: the request headers that the origin domain may specify on the CORS
+         request. Required.
         :paramtype allowed_headers: str
-        :keyword exposed_headers: Required. The response headers that may be sent in the response to
-         the CORS request and exposed by the browser to the request issuer.
+        :keyword exposed_headers: The response headers that may be sent in the response to the CORS
+         request and exposed by the browser to the request issuer. Required.
         :paramtype exposed_headers: str
-        :keyword max_age_in_seconds: Required. The maximum amount time that a browser should cache the
-         preflight OPTIONS request.
+        :keyword max_age_in_seconds: The maximum amount time that a browser should cache the preflight
+         OPTIONS request. Required.
         :paramtype max_age_in_seconds: int
         """
         super(CorsRule, self).__init__(**kwargs)
@@ -1256,14 +1256,14 @@ class CpkInfo(msrest.serialization.Model):
     :vartype encryption_key_sha256: str
     :ivar encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
      the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-     provided. Possible values include: "None", "AES256".
+     provided. Known values are: "None" and "AES256".
     :vartype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
-        'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
-        'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
-        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
+        "encryption_key": {"key": "encryptionKey", "type": "str"},
+        "encryption_key_sha256": {"key": "encryptionKeySha256", "type": "str"},
+        "encryption_algorithm": {"key": "encryptionAlgorithm", "type": "str"},
     }
 
     def __init__(
@@ -1280,7 +1280,7 @@ class CpkInfo(msrest.serialization.Model):
         :paramtype encryption_key_sha256: str
         :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
-         header is provided. Possible values include: "None", "AES256".
+         header is provided. Known values are: "None" and "AES256".
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         """
         super(CpkInfo, self).__init__(**kwargs)
@@ -1300,7 +1300,7 @@ class CpkScopeInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'encryption_scope': {'key': 'encryptionScope', 'type': 'str'},
+        "encryption_scope": {"key": "encryptionScope", "type": "str"},
     }
 
     def __init__(
@@ -1334,11 +1334,11 @@ class DelimitedTextConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'column_separator': {'key': 'ColumnSeparator', 'type': 'str', 'xml': {'name': 'ColumnSeparator'}},
-        'field_quote': {'key': 'FieldQuote', 'type': 'str', 'xml': {'name': 'FieldQuote'}},
-        'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
-        'escape_char': {'key': 'EscapeChar', 'type': 'str', 'xml': {'name': 'EscapeChar'}},
-        'headers_present': {'key': 'HeadersPresent', 'type': 'bool', 'xml': {'name': 'HasHeaders'}},
+        "column_separator": {"key": "ColumnSeparator", "type": "str", 'xml': {'name': 'ColumnSeparator'}},
+        "field_quote": {"key": "FieldQuote", "type": "str", 'xml': {'name': 'FieldQuote'}},
+        "record_separator": {"key": "RecordSeparator", "type": "str", 'xml': {'name': 'RecordSeparator'}},
+        "escape_char": {"key": "EscapeChar", "type": "str", 'xml': {'name': 'EscapeChar'}},
+        "headers_present": {"key": "HeadersPresent", "type": "bool", 'xml': {'name': 'HasHeaders'}},
     }
     _xml_map = {
         'name': 'DelimitedTextConfiguration'
@@ -1377,7 +1377,7 @@ class FilterBlobItem(msrest.serialization.Model):
     :vartype name: str
     :ivar container_name: Required.
     :vartype container_name: str
-    :ivar tags: A set of tags. Blob tags.
+    :ivar tags: Blob tags.
     :vartype tags: ~azure.storage.blob.models.BlobTags
     """
 
@@ -1387,9 +1387,9 @@ class FilterBlobItem(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
-        'tags': {'key': 'Tags', 'type': 'BlobTags'},
+        "name": {"key": "Name", "type": "str"},
+        "container_name": {"key": "ContainerName", "type": "str"},
+        "tags": {"key": "Tags", "type": "BlobTags"},
     }
     _xml_map = {
         'name': 'Blob'
@@ -1404,7 +1404,7 @@ class FilterBlobItem(msrest.serialization.Model):
         :paramtype name: str
         :keyword container_name: Required.
         :paramtype container_name: str
-        :keyword tags: A set of tags. Blob tags.
+        :keyword tags: Blob tags.
         :paramtype tags: ~azure.storage.blob.models.BlobTags
         """
         super(FilterBlobItem, self).__init__(**kwargs)
@@ -1435,10 +1435,10 @@ class FilterBlobSegment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'where': {'key': 'Where', 'type': 'str'},
-        'blobs': {'key': 'Blobs', 'type': '[FilterBlobItem]', 'xml': {'name': 'Blobs', 'wrapped': True, 'itemsName': 'Blob'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", 'xml': {'attr': True}},
+        "where": {"key": "Where", "type": "str"},
+        "blobs": {"key": "Blobs", "type": "[FilterBlobItem]", 'xml': {'name': 'Blobs', 'wrapped': True, 'itemsName': 'Blob'}},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -1470,12 +1470,12 @@ class GeoReplication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. The status of the secondary location. Possible values include: "live",
-     "bootstrap", "unavailable".
+    :ivar status: The status of the secondary location. Required. Known values are: "live",
+     "bootstrap", and "unavailable".
     :vartype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
-    :ivar last_sync_time: Required. A GMT date/time value, to the second. All primary writes
-     preceding this value are guaranteed to be available for read operations at the secondary.
-     Primary writes after this point in time may or may not be available for reads.
+    :ivar last_sync_time: A GMT date/time value, to the second. All primary writes preceding this
+     value are guaranteed to be available for read operations at the secondary. Primary writes after
+     this point in time may or may not be available for reads. Required.
     :vartype last_sync_time: ~datetime.datetime
     """
 
@@ -1485,8 +1485,8 @@ class GeoReplication(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'status': {'key': 'Status', 'type': 'str'},
-        'last_sync_time': {'key': 'LastSyncTime', 'type': 'rfc-1123'},
+        "status": {"key": "Status", "type": "str"},
+        "last_sync_time": {"key": "LastSyncTime", "type": "rfc-1123"},
     }
 
     def __init__(
@@ -1494,12 +1494,12 @@ class GeoReplication(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword status: Required. The status of the secondary location. Possible values include:
-         "live", "bootstrap", "unavailable".
+        :keyword status: The status of the secondary location. Required. Known values are: "live",
+         "bootstrap", and "unavailable".
         :paramtype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
-        :keyword last_sync_time: Required. A GMT date/time value, to the second. All primary writes
-         preceding this value are guaranteed to be available for read operations at the secondary.
-         Primary writes after this point in time may or may not be available for reads.
+        :keyword last_sync_time: A GMT date/time value, to the second. All primary writes preceding
+         this value are guaranteed to be available for read operations at the secondary. Primary writes
+         after this point in time may or may not be available for reads. Required.
         :paramtype last_sync_time: ~datetime.datetime
         """
         super(GeoReplication, self).__init__(**kwargs)
@@ -1515,7 +1515,7 @@ class JsonTextConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'record_separator': {'key': 'RecordSeparator', 'type': 'str', 'xml': {'name': 'RecordSeparator'}},
+        "record_separator": {"key": "RecordSeparator", "type": "str", 'xml': {'name': 'RecordSeparator'}},
     }
     _xml_map = {
         'name': 'JsonTextConfiguration'
@@ -1538,9 +1538,9 @@ class KeyInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start: Required. The date-time the key is active in ISO 8601 UTC time.
+    :ivar start: The date-time the key is active in ISO 8601 UTC time. Required.
     :vartype start: str
-    :ivar expiry: Required. The date-time the key expires in ISO 8601 UTC time.
+    :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
     :vartype expiry: str
     """
 
@@ -1550,8 +1550,8 @@ class KeyInfo(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
     }
 
     def __init__(
@@ -1559,9 +1559,9 @@ class KeyInfo(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start: Required. The date-time the key is active in ISO 8601 UTC time.
+        :keyword start: The date-time the key is active in ISO 8601 UTC time. Required.
         :paramtype start: str
-        :keyword expiry: Required. The date-time the key expires in ISO 8601 UTC time.
+        :keyword expiry: The date-time the key expires in ISO 8601 UTC time. Required.
         :paramtype expiry: str
         """
         super(KeyInfo, self).__init__(**kwargs)
@@ -1578,7 +1578,7 @@ class LeaseAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lease_id': {'key': 'leaseId', 'type': 'str'},
+        "lease_id": {"key": "leaseId", "type": "str"},
     }
 
     def __init__(
@@ -1622,13 +1622,13 @@ class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'segment': {'key': 'Segment', 'type': 'BlobFlatListSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", 'xml': {'attr': True}},
+        "container_name": {"key": "ContainerName", "type": "str", 'xml': {'attr': True}},
+        "prefix": {"key": "Prefix", "type": "str"},
+        "marker": {"key": "Marker", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "int"},
+        "segment": {"key": "Segment", "type": "BlobFlatListSegment"},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -1694,14 +1694,14 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'delimiter': {'key': 'Delimiter', 'type': 'str'},
-        'segment': {'key': 'Segment', 'type': 'BlobHierarchyListSegment'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", 'xml': {'attr': True}},
+        "container_name": {"key": "ContainerName", "type": "str", 'xml': {'attr': True}},
+        "prefix": {"key": "Prefix", "type": "str"},
+        "marker": {"key": "Marker", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "int"},
+        "delimiter": {"key": "Delimiter", "type": "str"},
+        "segment": {"key": "Segment", "type": "BlobHierarchyListSegment"},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -1765,12 +1765,12 @@ class ListContainersSegmentResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'attr': True}},
-        'prefix': {'key': 'Prefix', 'type': 'str'},
-        'marker': {'key': 'Marker', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'int'},
-        'container_items': {'key': 'ContainerItems', 'type': '[ContainerItem]', 'xml': {'name': 'Containers', 'wrapped': True, 'itemsName': 'Container'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", 'xml': {'attr': True}},
+        "prefix": {"key": "Prefix", "type": "str"},
+        "marker": {"key": "Marker", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "int"},
+        "container_items": {"key": "ContainerItems", "type": "[ContainerItem]", 'xml': {'name': 'Containers', 'wrapped': True, 'itemsName': 'Container'}},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -1808,16 +1808,16 @@ class Logging(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar version: Required. The version of Storage Analytics to configure.
+    :ivar version: The version of Storage Analytics to configure. Required.
     :vartype version: str
-    :ivar delete: Required. Indicates whether all delete requests should be logged.
+    :ivar delete: Indicates whether all delete requests should be logged. Required.
     :vartype delete: bool
-    :ivar read: Required. Indicates whether all read requests should be logged.
+    :ivar read: Indicates whether all read requests should be logged. Required.
     :vartype read: bool
-    :ivar write: Required. Indicates whether all write requests should be logged.
+    :ivar write: Indicates whether all write requests should be logged. Required.
     :vartype write: bool
-    :ivar retention_policy: Required. the retention policy which determines how long the associated
-     data should persist.
+    :ivar retention_policy: the retention policy which determines how long the associated data
+     should persist. Required.
     :vartype retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
@@ -1830,11 +1830,11 @@ class Logging(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'delete': {'key': 'Delete', 'type': 'bool'},
-        'read': {'key': 'Read', 'type': 'bool'},
-        'write': {'key': 'Write', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
     }
 
     def __init__(
@@ -1842,16 +1842,16 @@ class Logging(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword version: Required. The version of Storage Analytics to configure.
+        :keyword version: The version of Storage Analytics to configure. Required.
         :paramtype version: str
-        :keyword delete: Required. Indicates whether all delete requests should be logged.
+        :keyword delete: Indicates whether all delete requests should be logged. Required.
         :paramtype delete: bool
-        :keyword read: Required. Indicates whether all read requests should be logged.
+        :keyword read: Indicates whether all read requests should be logged. Required.
         :paramtype read: bool
-        :keyword write: Required. Indicates whether all write requests should be logged.
+        :keyword write: Indicates whether all write requests should be logged. Required.
         :paramtype write: bool
-        :keyword retention_policy: Required. the retention policy which determines how long the
-         associated data should persist.
+        :keyword retention_policy: the retention policy which determines how long the associated data
+         should persist. Required.
         :paramtype retention_policy: ~azure.storage.blob.models.RetentionPolicy
         """
         super(Logging, self).__init__(**kwargs)
@@ -1869,7 +1869,7 @@ class Metrics(msrest.serialization.Model):
 
     :ivar version: The version of Storage Analytics to configure.
     :vartype version: str
-    :ivar enabled: Required. Indicates whether metrics are enabled for the Blob service.
+    :ivar enabled: Indicates whether metrics are enabled for the Blob service. Required.
     :vartype enabled: bool
     :ivar include_apis: Indicates whether metrics should generate summary statistics for called API
      operations.
@@ -1884,10 +1884,10 @@ class Metrics(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
     }
 
     def __init__(
@@ -1897,7 +1897,7 @@ class Metrics(msrest.serialization.Model):
         """
         :keyword version: The version of Storage Analytics to configure.
         :paramtype version: str
-        :keyword enabled: Required. Indicates whether metrics are enabled for the Blob service.
+        :keyword enabled: Indicates whether metrics are enabled for the Blob service. Required.
         :paramtype enabled: bool
         :keyword include_apis: Indicates whether metrics should generate summary statistics for called
          API operations.
@@ -1932,11 +1932,11 @@ class ModifiedAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'if_modified_since': {'key': 'ifModifiedSince', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'ifUnmodifiedSince', 'type': 'rfc-1123'},
-        'if_match': {'key': 'ifMatch', 'type': 'str'},
-        'if_none_match': {'key': 'ifNoneMatch', 'type': 'str'},
-        'if_tags': {'key': 'ifTags', 'type': 'str'},
+        "if_modified_since": {"key": "ifModifiedSince", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "ifUnmodifiedSince", "type": "rfc-1123"},
+        "if_match": {"key": "ifMatch", "type": "str"},
+        "if_none_match": {"key": "ifNoneMatch", "type": "str"},
+        "if_tags": {"key": "ifTags", "type": "str"},
     }
 
     def __init__(
@@ -1979,9 +1979,9 @@ class PageList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
-        'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
-        'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        "page_range": {"key": "PageRange", "type": "[PageRange]", 'xml': {'itemsName': 'PageRange'}},
+        "clear_range": {"key": "ClearRange", "type": "[ClearRange]", 'xml': {'itemsName': 'ClearRange'}},
+        "next_marker": {"key": "NextMarker", "type": "str"},
     }
 
     def __init__(
@@ -2008,9 +2008,9 @@ class PageRange(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar start: Required.
-    :vartype start: long
+    :vartype start: int
     :ivar end: Required.
-    :vartype end: long
+    :vartype end: int
     """
 
     _validation = {
@@ -2019,8 +2019,8 @@ class PageRange(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
-        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+        "start": {"key": "Start", "type": "int", 'xml': {'name': 'Start'}},
+        "end": {"key": "End", "type": "int", 'xml': {'name': 'End'}},
     }
     _xml_map = {
         'name': 'PageRange'
@@ -2032,9 +2032,9 @@ class PageRange(msrest.serialization.Model):
     ):
         """
         :keyword start: Required.
-        :paramtype start: long
+        :paramtype start: int
         :keyword end: Required.
-        :paramtype end: long
+        :paramtype end: int
         """
         super(PageRange, self).__init__(**kwargs)
         self.start = kwargs['start']
@@ -2046,8 +2046,8 @@ class QueryFormat(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The quick query format type. Possible values include: "delimited",
-     "json", "arrow", "parquet".
+    :ivar type: The quick query format type. Required. Known values are: "delimited", "json",
+     "arrow", and "parquet".
     :vartype type: str or ~azure.storage.blob.models.QueryFormatType
     :ivar delimited_text_configuration: Groups the settings used for interpreting the blob data if
      the blob is delimited text formatted.
@@ -2057,8 +2057,8 @@ class QueryFormat(msrest.serialization.Model):
     :ivar arrow_configuration: Groups the settings used for formatting the response if the response
      should be Arrow formatted.
     :vartype arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
-    :ivar parquet_text_configuration: Any object.
-    :vartype parquet_text_configuration: any
+    :ivar parquet_text_configuration: parquet configuration.
+    :vartype parquet_text_configuration: JSON
     """
 
     _validation = {
@@ -2066,11 +2066,11 @@ class QueryFormat(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str', 'xml': {'name': 'Type'}},
-        'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration'},
-        'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration'},
-        'arrow_configuration': {'key': 'ArrowConfiguration', 'type': 'ArrowConfiguration'},
-        'parquet_text_configuration': {'key': 'ParquetTextConfiguration', 'type': 'object'},
+        "type": {"key": "Type", "type": "str", 'xml': {'name': 'Type'}},
+        "delimited_text_configuration": {"key": "DelimitedTextConfiguration", "type": "DelimitedTextConfiguration"},
+        "json_text_configuration": {"key": "JsonTextConfiguration", "type": "JsonTextConfiguration"},
+        "arrow_configuration": {"key": "ArrowConfiguration", "type": "ArrowConfiguration"},
+        "parquet_text_configuration": {"key": "ParquetTextConfiguration", "type": "object"},
     }
 
     def __init__(
@@ -2078,8 +2078,8 @@ class QueryFormat(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. The quick query format type. Possible values include: "delimited",
-         "json", "arrow", "parquet".
+        :keyword type: The quick query format type. Required. Known values are: "delimited", "json",
+         "arrow", and "parquet".
         :paramtype type: str or ~azure.storage.blob.models.QueryFormatType
         :keyword delimited_text_configuration: Groups the settings used for interpreting the blob data
          if the blob is delimited text formatted.
@@ -2089,8 +2089,8 @@ class QueryFormat(msrest.serialization.Model):
         :keyword arrow_configuration: Groups the settings used for formatting the response if the
          response should be Arrow formatted.
         :paramtype arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
-        :keyword parquet_text_configuration: Any object.
-        :paramtype parquet_text_configuration: any
+        :keyword parquet_text_configuration: parquet configuration.
+        :paramtype parquet_text_configuration: JSON
         """
         super(QueryFormat, self).__init__(**kwargs)
         self.type = kwargs['type']
@@ -2107,11 +2107,11 @@ class QueryRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar query_type: Required. The type of the provided query expression. Has constant value:
-     "SQL".
+    :ivar query_type: Required. The type of the provided query expression. Required. Default value
+     is "SQL".
     :vartype query_type: str
-    :ivar expression: Required. The query expression in SQL. The maximum size of the query
-     expression is 256KiB.
+    :ivar expression: The query expression in SQL. The maximum size of the query expression is
+     256KiB. Required.
     :vartype expression: str
     :ivar input_serialization:
     :vartype input_serialization: ~azure.storage.blob.models.QuerySerialization
@@ -2125,10 +2125,10 @@ class QueryRequest(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'query_type': {'key': 'QueryType', 'type': 'str', 'xml': {'name': 'QueryType'}},
-        'expression': {'key': 'Expression', 'type': 'str', 'xml': {'name': 'Expression'}},
-        'input_serialization': {'key': 'InputSerialization', 'type': 'QuerySerialization'},
-        'output_serialization': {'key': 'OutputSerialization', 'type': 'QuerySerialization'},
+        "query_type": {"key": "QueryType", "type": "str", 'xml': {'name': 'QueryType'}},
+        "expression": {"key": "Expression", "type": "str", 'xml': {'name': 'Expression'}},
+        "input_serialization": {"key": "InputSerialization", "type": "QuerySerialization"},
+        "output_serialization": {"key": "OutputSerialization", "type": "QuerySerialization"},
     }
     _xml_map = {
         'name': 'QueryRequest'
@@ -2141,8 +2141,8 @@ class QueryRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword expression: Required. The query expression in SQL. The maximum size of the query
-         expression is 256KiB.
+        :keyword expression: The query expression in SQL. The maximum size of the query expression is
+         256KiB. Required.
         :paramtype expression: str
         :keyword input_serialization:
         :paramtype input_serialization: ~azure.storage.blob.models.QuerySerialization
@@ -2169,7 +2169,7 @@ class QuerySerialization(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'format': {'key': 'Format', 'type': 'QueryFormat'},
+        "format": {"key": "Format", "type": "QueryFormat"},
     }
 
     def __init__(
@@ -2189,8 +2189,8 @@ class RetentionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Indicates whether a retention policy is enabled for the storage
-     service.
+    :ivar enabled: Indicates whether a retention policy is enabled for the storage service.
+     Required.
     :vartype enabled: bool
     :ivar days: Indicates the number of days that metrics or logging or soft-deleted data should be
      retained. All data older than this value will be deleted.
@@ -2206,9 +2206,9 @@ class RetentionPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'days': {'key': 'Days', 'type': 'int'},
-        'allow_permanent_delete': {'key': 'AllowPermanentDelete', 'type': 'bool'},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+        "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
     }
 
     def __init__(
@@ -2216,8 +2216,8 @@ class RetentionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword enabled: Required. Indicates whether a retention policy is enabled for the storage
-         service.
+        :keyword enabled: Indicates whether a retention policy is enabled for the storage service.
+         Required.
         :paramtype enabled: bool
         :keyword days: Indicates the number of days that metrics or logging or soft-deleted data should
          be retained. All data older than this value will be deleted.
@@ -2237,19 +2237,19 @@ class SequenceNumberAccessConditions(msrest.serialization.Model):
 
     :ivar if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on a
      blob if it has a sequence number less than or equal to the specified.
-    :vartype if_sequence_number_less_than_or_equal_to: long
+    :vartype if_sequence_number_less_than_or_equal_to: int
     :ivar if_sequence_number_less_than: Specify this header value to operate only on a blob if it
      has a sequence number less than the specified.
-    :vartype if_sequence_number_less_than: long
+    :vartype if_sequence_number_less_than: int
     :ivar if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
      has the specified sequence number.
-    :vartype if_sequence_number_equal_to: long
+    :vartype if_sequence_number_equal_to: int
     """
 
     _attribute_map = {
-        'if_sequence_number_less_than_or_equal_to': {'key': 'ifSequenceNumberLessThanOrEqualTo', 'type': 'long'},
-        'if_sequence_number_less_than': {'key': 'ifSequenceNumberLessThan', 'type': 'long'},
-        'if_sequence_number_equal_to': {'key': 'ifSequenceNumberEqualTo', 'type': 'long'},
+        "if_sequence_number_less_than_or_equal_to": {"key": "ifSequenceNumberLessThanOrEqualTo", "type": "int"},
+        "if_sequence_number_less_than": {"key": "ifSequenceNumberLessThan", "type": "int"},
+        "if_sequence_number_equal_to": {"key": "ifSequenceNumberEqualTo", "type": "int"},
     }
 
     def __init__(
@@ -2259,13 +2259,13 @@ class SequenceNumberAccessConditions(msrest.serialization.Model):
         """
         :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
          a blob if it has a sequence number less than or equal to the specified.
-        :paramtype if_sequence_number_less_than_or_equal_to: long
+        :paramtype if_sequence_number_less_than_or_equal_to: int
         :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
          it has a sequence number less than the specified.
-        :paramtype if_sequence_number_less_than: long
+        :paramtype if_sequence_number_less_than: int
         :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
          has the specified sequence number.
-        :paramtype if_sequence_number_equal_to: long
+        :paramtype if_sequence_number_equal_to: int
         """
         super(SequenceNumberAccessConditions, self).__init__(**kwargs)
         self.if_sequence_number_less_than_or_equal_to = kwargs.get('if_sequence_number_less_than_or_equal_to', None)
@@ -2278,7 +2278,7 @@ class SignedIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. a unique id.
+    :ivar id: a unique id. Required.
     :vartype id: str
     :ivar access_policy: An Access policy.
     :vartype access_policy: ~azure.storage.blob.models.AccessPolicy
@@ -2289,8 +2289,8 @@ class SignedIdentifier(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'access_policy': {'key': 'AccessPolicy', 'type': 'AccessPolicy'},
+        "id": {"key": "Id", "type": "str"},
+        "access_policy": {"key": "AccessPolicy", "type": "AccessPolicy"},
     }
     _xml_map = {
         'name': 'SignedIdentifier'
@@ -2301,7 +2301,7 @@ class SignedIdentifier(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. a unique id.
+        :keyword id: a unique id. Required.
         :paramtype id: str
         :keyword access_policy: An Access policy.
         :paramtype access_policy: ~azure.storage.blob.models.AccessPolicy
@@ -2331,11 +2331,11 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_if_modified_since': {'key': 'sourceIfModifiedSince', 'type': 'rfc-1123'},
-        'source_if_unmodified_since': {'key': 'sourceIfUnmodifiedSince', 'type': 'rfc-1123'},
-        'source_if_match': {'key': 'sourceIfMatch', 'type': 'str'},
-        'source_if_none_match': {'key': 'sourceIfNoneMatch', 'type': 'str'},
-        'source_if_tags': {'key': 'sourceIfTags', 'type': 'str'},
+        "source_if_modified_since": {"key": "sourceIfModifiedSince", "type": "rfc-1123"},
+        "source_if_unmodified_since": {"key": "sourceIfUnmodifiedSince", "type": "rfc-1123"},
+        "source_if_match": {"key": "sourceIfMatch", "type": "str"},
+        "source_if_none_match": {"key": "sourceIfNoneMatch", "type": "str"},
+        "source_if_tags": {"key": "sourceIfTags", "type": "str"},
     }
 
     def __init__(
@@ -2371,7 +2371,7 @@ class StaticWebsite(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Indicates whether this account is hosting a static website.
+    :ivar enabled: Indicates whether this account is hosting a static website. Required.
     :vartype enabled: bool
     :ivar index_document: The default name of the index page under each directory.
     :vartype index_document: str
@@ -2386,10 +2386,10 @@ class StaticWebsite(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'enabled': {'key': 'Enabled', 'type': 'bool'},
-        'index_document': {'key': 'IndexDocument', 'type': 'str'},
-        'error_document404_path': {'key': 'ErrorDocument404Path', 'type': 'str'},
-        'default_index_document_path': {'key': 'DefaultIndexDocumentPath', 'type': 'str'},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
     }
 
     def __init__(
@@ -2397,7 +2397,7 @@ class StaticWebsite(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword enabled: Required. Indicates whether this account is hosting a static website.
+        :keyword enabled: Indicates whether this account is hosting a static website. Required.
         :paramtype enabled: bool
         :keyword index_document: The default name of the index page under each directory.
         :paramtype index_document: str
@@ -2421,7 +2421,7 @@ class StorageError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        "message": {"key": "Message", "type": "str"},
     }
 
     def __init__(
@@ -2461,13 +2461,13 @@ class StorageServiceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'logging': {'key': 'Logging', 'type': 'Logging'},
-        'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
-        'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'wrapped': True}},
-        'default_service_version': {'key': 'DefaultServiceVersion', 'type': 'str'},
-        'delete_retention_policy': {'key': 'DeleteRetentionPolicy', 'type': 'RetentionPolicy'},
-        'static_website': {'key': 'StaticWebsite', 'type': 'StaticWebsite'},
+        "logging": {"key": "Logging", "type": "Logging"},
+        "hour_metrics": {"key": "HourMetrics", "type": "Metrics"},
+        "minute_metrics": {"key": "MinuteMetrics", "type": "Metrics"},
+        "cors": {"key": "Cors", "type": "[CorsRule]", 'xml': {'wrapped': True}},
+        "default_service_version": {"key": "DefaultServiceVersion", "type": "str"},
+        "delete_retention_policy": {"key": "DeleteRetentionPolicy", "type": "RetentionPolicy"},
+        "static_website": {"key": "StaticWebsite", "type": "StaticWebsite"},
     }
 
     def __init__(
@@ -2513,7 +2513,7 @@ class StorageServiceStats(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
+        "geo_replication": {"key": "GeoReplication", "type": "GeoReplication"},
     }
 
     def __init__(
@@ -2533,19 +2533,19 @@ class UserDelegationKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar signed_oid: Required. The Azure Active Directory object ID in GUID format.
+    :ivar signed_oid: The Azure Active Directory object ID in GUID format. Required.
     :vartype signed_oid: str
-    :ivar signed_tid: Required. The Azure Active Directory tenant ID in GUID format.
+    :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
     :vartype signed_tid: str
-    :ivar signed_start: Required. The date-time the key is active.
+    :ivar signed_start: The date-time the key is active. Required.
     :vartype signed_start: ~datetime.datetime
-    :ivar signed_expiry: Required. The date-time the key expires.
+    :ivar signed_expiry: The date-time the key expires. Required.
     :vartype signed_expiry: ~datetime.datetime
-    :ivar signed_service: Required. Abbreviation of the Azure Storage service that accepts the key.
+    :ivar signed_service: Abbreviation of the Azure Storage service that accepts the key. Required.
     :vartype signed_service: str
-    :ivar signed_version: Required. The service version that created the key.
+    :ivar signed_version: The service version that created the key. Required.
     :vartype signed_version: str
-    :ivar value: Required. The key as a base64 string.
+    :ivar value: The key as a base64 string. Required.
     :vartype value: str
     """
 
@@ -2560,13 +2560,13 @@ class UserDelegationKey(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'signed_oid': {'key': 'SignedOid', 'type': 'str'},
-        'signed_tid': {'key': 'SignedTid', 'type': 'str'},
-        'signed_start': {'key': 'SignedStart', 'type': 'iso-8601'},
-        'signed_expiry': {'key': 'SignedExpiry', 'type': 'iso-8601'},
-        'signed_service': {'key': 'SignedService', 'type': 'str'},
-        'signed_version': {'key': 'SignedVersion', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        "signed_oid": {"key": "SignedOid", "type": "str"},
+        "signed_tid": {"key": "SignedTid", "type": "str"},
+        "signed_start": {"key": "SignedStart", "type": "iso-8601"},
+        "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
+        "signed_service": {"key": "SignedService", "type": "str"},
+        "signed_version": {"key": "SignedVersion", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
     }
 
     def __init__(
@@ -2574,20 +2574,20 @@ class UserDelegationKey(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword signed_oid: Required. The Azure Active Directory object ID in GUID format.
+        :keyword signed_oid: The Azure Active Directory object ID in GUID format. Required.
         :paramtype signed_oid: str
-        :keyword signed_tid: Required. The Azure Active Directory tenant ID in GUID format.
+        :keyword signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
         :paramtype signed_tid: str
-        :keyword signed_start: Required. The date-time the key is active.
+        :keyword signed_start: The date-time the key is active. Required.
         :paramtype signed_start: ~datetime.datetime
-        :keyword signed_expiry: Required. The date-time the key expires.
+        :keyword signed_expiry: The date-time the key expires. Required.
         :paramtype signed_expiry: ~datetime.datetime
-        :keyword signed_service: Required. Abbreviation of the Azure Storage service that accepts the
-         key.
+        :keyword signed_service: Abbreviation of the Azure Storage service that accepts the key.
+         Required.
         :paramtype signed_service: str
-        :keyword signed_version: Required. The service version that created the key.
+        :keyword signed_version: The service version that created the key. Required.
         :paramtype signed_version: str
-        :keyword value: Required. The key as a base64 string.
+        :keyword value: The key as a base64 string. Required.
         :paramtype value: str
         """
         super(UserDelegationKey, self).__init__(**kwargs)

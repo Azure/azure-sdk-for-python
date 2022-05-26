@@ -14,6 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -34,11 +35,11 @@ class PageBlobOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -49,32 +50,33 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         tier: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        blob_sequence_number: Optional[int] = 0,
+        blob_sequence_number: int = 0,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Create operation creates a new page blob.
 
-        :param content_length: The length of the request.
-        :type content_length: long
+        :param content_length: The length of the request. Required.
+        :type content_length: int
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
-         TB. The page blob size must be aligned to a 512-byte boundary.
-        :type blob_content_length: long
+         TB. The page blob size must be aligned to a 512-byte boundary. Required.
+        :type blob_content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param tier: Optional. Indicates the tier to be set on the page blob. Default value is None.
+        :param tier: Optional. Indicates the tier to be set on the page blob. Known values are: "P4",
+         "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80". Default value is None.
         :type tier: str or ~azure.storage.blob.models.PremiumPageBlobAccessTier
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -87,7 +89,7 @@ class PageBlobOperations:
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1. Default value is 0.
-        :type blob_sequence_number: long
+        :type blob_sequence_number: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -99,7 +101,7 @@ class PageBlobOperations:
          is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Default value is None.
+         Known values are: "Mutable", "Unlocked", and "Locked". Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
@@ -118,17 +120,20 @@ class PageBlobOperations:
          unsupported behavior.
         :paramtype blob_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        blob_type = kwargs.pop('blob_type', "PageBlob")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "PageBlob"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -147,32 +152,29 @@ class PageBlobOperations:
         _if_none_match = None
         _if_tags = None
         if blob_http_headers is not None:
-            _blob_content_type = blob_http_headers.blob_content_type
+            _blob_cache_control = blob_http_headers.blob_cache_control
+            _blob_content_disposition = blob_http_headers.blob_content_disposition
             _blob_content_encoding = blob_http_headers.blob_content_encoding
             _blob_content_language = blob_http_headers.blob_content_language
             _blob_content_md5 = blob_http_headers.blob_content_md5
-            _blob_cache_control = blob_http_headers.blob_cache_control
+            _blob_content_type = blob_http_headers.blob_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
-        if blob_http_headers is not None:
-            _blob_content_disposition = blob_http_headers.blob_content_disposition
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_create_request(
             url=self._config.url,
-            blob_type=blob_type,
-            version=self._config.version,
             content_length=content_length,
             blob_content_length=blob_content_length,
             timeout=timeout,
@@ -200,16 +202,21 @@ class PageBlobOperations:
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
+            blob_type=blob_type,
+            version=self._config.version,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -242,30 +249,30 @@ class PageBlobOperations:
         self,
         content_length: int,
         body: IO,
-        transactional_content_md5: Optional[bytearray] = None,
-        transactional_content_crc64: Optional[bytearray] = None,
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob.
 
-        :param content_length: The length of the request.
-        :type content_length: long
-        :param body: Initial data.
+        :param content_length: The length of the request. Required.
+        :type content_length: int
+        :param body: Initial data. Required.
         :type body: IO
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service. Default value is None.
-        :type transactional_content_md5: bytearray
+        :type transactional_content_md5: bytes
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
-        :type transactional_content_crc64: bytearray
+        :type transactional_content_crc64: bytes
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -302,19 +309,22 @@ class PageBlobOperations:
          overriding this default value may result in unsupported behavior.
         :paramtype page_write: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "page")  # type: str
-        page_write = kwargs.pop('page_write', "update")  # type: str
-        content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "page"))  # type: str
+        page_write = kwargs.pop('page_write', _headers.pop('x-ms-page-write', "update"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -332,30 +342,25 @@ class PageBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if sequence_number_access_conditions is not None:
-            _if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
-            _if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
             _if_sequence_number_equal_to = sequence_number_access_conditions.if_sequence_number_equal_to
+            _if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
+            _if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         _content = body
 
         request = build_upload_pages_request(
             url=self._config.url,
-            comp=comp,
-            page_write=page_write,
-            version=self._config.version,
-            content_type=content_type,
-            content=_content,
             content_length=content_length,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
@@ -375,16 +380,24 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            page_write=page_write,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
             template_url=self.upload_pages.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -397,7 +410,7 @@ class PageBlobOperations:
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
+        response_headers['x-ms-blob-sequence-number']=self._deserialize('int', response.headers.get('x-ms-blob-sequence-number'))
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
@@ -420,17 +433,17 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Clear Pages operation clears a set of pages from a page blob.
 
-        :param content_length: The length of the request.
-        :type content_length: long
+        :param content_length: The length of the request. Required.
+        :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -467,18 +480,21 @@ class PageBlobOperations:
          overriding this default value may result in unsupported behavior.
         :paramtype page_write: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "page")  # type: str
-        page_write = kwargs.pop('page_write', "clear")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "page"))  # type: str
+        page_write = kwargs.pop('page_write', _headers.pop('x-ms-page-write', "clear"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -496,27 +512,24 @@ class PageBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if sequence_number_access_conditions is not None:
-            _if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
-            _if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
             _if_sequence_number_equal_to = sequence_number_access_conditions.if_sequence_number_equal_to
+            _if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
+            _if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_clear_pages_request(
             url=self._config.url,
-            comp=comp,
-            page_write=page_write,
-            version=self._config.version,
             content_length=content_length,
             timeout=timeout,
             range=range,
@@ -534,16 +547,22 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            page_write=page_write,
+            version=self._config.version,
             template_url=self.clear_pages.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -556,7 +575,7 @@ class PageBlobOperations:
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
+        response_headers['x-ms-blob-sequence-number']=self._deserialize('int', response.headers.get('x-ms-blob-sequence-number'))
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
@@ -576,38 +595,38 @@ class PageBlobOperations:
         source_range: str,
         content_length: int,
         range: str,
-        source_content_md5: Optional[bytearray] = None,
-        source_contentcrc64: Optional[bytearray] = None,
+        source_content_md5: Optional[bytes] = None,
+        source_contentcrc64: Optional[bytes] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        sequence_number_access_conditions: Optional[_models.SequenceNumberAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
-        :param source_url: Specify a URL to the copy source.
+        :param source_url: Specify a URL to the copy source. Required.
         :type source_url: str
         :param source_range: Bytes of source data in the specified range. The length of this range
-         should match the ContentLength header and x-ms-range/Range destination range header.
+         should match the ContentLength header and x-ms-range/Range destination range header. Required.
         :type source_range: str
-        :param content_length: The length of the request.
-        :type content_length: long
+        :param content_length: The length of the request. Required.
+        :type content_length: int
         :param range: The range of bytes to which the source range would be written. The range should
-         be 512 aligned and range-end is required.
+         be 512 aligned and range-end is required. Required.
         :type range: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source. Default value is None.
-        :type source_content_md5: bytearray
+        :type source_content_md5: bytes
         :param source_contentcrc64: Specify the crc64 calculated for the range of bytes that must be
          read from the copy source. Default value is None.
-        :type source_contentcrc64: bytearray
+        :type source_contentcrc64: bytes
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -648,18 +667,21 @@ class PageBlobOperations:
          overriding this default value may result in unsupported behavior.
         :paramtype page_write: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "page")  # type: str
-        page_write = kwargs.pop('page_write', "update")  # type: str
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "page"))  # type: str
+        page_write = kwargs.pop('page_write', _headers.pop('x-ms-page-write', "update"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -679,34 +701,31 @@ class PageBlobOperations:
         _source_if_match = None
         _source_if_none_match = None
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if sequence_number_access_conditions is not None:
-            _if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
-            _if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
             _if_sequence_number_equal_to = sequence_number_access_conditions.if_sequence_number_equal_to
+            _if_sequence_number_less_than = sequence_number_access_conditions.if_sequence_number_less_than
+            _if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if source_modified_access_conditions is not None:
-            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
-            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
             _source_if_match = source_modified_access_conditions.source_if_match
+            _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
+            _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
 
         request = build_upload_pages_from_url_request(
             url=self._config.url,
-            comp=comp,
-            page_write=page_write,
-            version=self._config.version,
             source_url=source_url,
             source_range=source_range,
             content_length=content_length,
@@ -733,16 +752,22 @@ class PageBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            comp=comp,
+            page_write=page_write,
+            version=self._config.version,
             template_url=self.upload_pages_from_url.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -755,7 +780,7 @@ class PageBlobOperations:
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
+        response_headers['x-ms-blob-sequence-number']=self._deserialize('int', response.headers.get('x-ms-blob-sequence-number'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
@@ -779,10 +804,10 @@ class PageBlobOperations:
         request_id_parameter: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
-    ) -> "_models.PageList":
+    ) -> _models.PageList:
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
@@ -825,17 +850,20 @@ class PageBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PageList, or the result of cls(response)
+        :return: PageList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.PageList
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PageList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "pagelist")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "pagelist"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PageList]
 
         _lease_id = None
         _if_modified_since = None
@@ -846,16 +874,14 @@ class PageBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_get_page_ranges_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             range=range,
@@ -868,16 +894,21 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             marker=marker,
             maxresults=maxresults,
+            comp=comp,
+            version=self._config.version,
             template_url=self.get_page_ranges.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -888,7 +919,7 @@ class PageBlobOperations:
         response_headers = {}
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['x-ms-blob-content-length']=self._deserialize('long', response.headers.get('x-ms-blob-content-length'))
+        response_headers['x-ms-blob-content-length']=self._deserialize('int', response.headers.get('x-ms-blob-content-length'))
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
@@ -915,10 +946,10 @@ class PageBlobOperations:
         request_id_parameter: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
-    ) -> "_models.PageList":
+    ) -> _models.PageList:
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
@@ -973,17 +1004,20 @@ class PageBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PageList, or the result of cls(response)
+        :return: PageList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.PageList
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PageList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "pagelist")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "pagelist"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PageList]
 
         _lease_id = None
         _if_modified_since = None
@@ -994,16 +1028,14 @@ class PageBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_get_page_ranges_diff_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             prevsnapshot=prevsnapshot,
@@ -1018,16 +1050,21 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             marker=marker,
             maxresults=maxresults,
+            comp=comp,
+            version=self._config.version,
             template_url=self.get_page_ranges_diff.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1038,7 +1075,7 @@ class PageBlobOperations:
         response_headers = {}
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['x-ms-blob-content-length']=self._deserialize('long', response.headers.get('x-ms-blob-content-length'))
+        response_headers['x-ms-blob-content-length']=self._deserialize('int', response.headers.get('x-ms-blob-content-length'))
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
@@ -1060,17 +1097,17 @@ class PageBlobOperations:
         blob_content_length: int,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
-        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
+        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
-         TB. The page blob size must be aligned to a 512-byte boundary.
-        :type blob_content_length: long
+         TB. The page blob size must be aligned to a 512-byte boundary. Required.
+        :type blob_content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1092,17 +1129,20 @@ class PageBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -1117,22 +1157,20 @@ class PageBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
-            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_resize_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             blob_content_length=blob_content_length,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1146,16 +1184,21 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            version=self._config.version,
             template_url=self.resize.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1166,7 +1209,7 @@ class PageBlobOperations:
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
+        response_headers['x-ms-blob-sequence-number']=self._deserialize('int', response.headers.get('x-ms-blob-sequence-number'))
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
@@ -1184,17 +1227,18 @@ class PageBlobOperations:
         self,
         sequence_number_action: Union[str, "_models.SequenceNumberActionType"],
         timeout: Optional[int] = None,
-        blob_sequence_number: Optional[int] = 0,
+        blob_sequence_number: int = 0,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Update the sequence number of the blob.
 
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
          request. This property applies to page blobs only. This property indicates how the service
-         should modify the blob's sequence number.
+         should modify the blob's sequence number. Known values are: "max", "update", and "increment".
+         Required.
         :type sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1204,7 +1248,7 @@ class PageBlobOperations:
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1. Default value is 0.
-        :type blob_sequence_number: long
+        :type blob_sequence_number: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -1217,17 +1261,20 @@ class PageBlobOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -1238,16 +1285,14 @@ class PageBlobOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_update_sequence_number_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             sequence_number_action=sequence_number_action,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1258,16 +1303,21 @@ class PageBlobOperations:
             if_tags=_if_tags,
             blob_sequence_number=blob_sequence_number,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            version=self._config.version,
             template_url=self.update_sequence_number.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1278,7 +1328,7 @@ class PageBlobOperations:
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-blob-sequence-number']=self._deserialize('long', response.headers.get('x-ms-blob-sequence-number'))
+        response_headers['x-ms-blob-sequence-number']=self._deserialize('int', response.headers.get('x-ms-blob-sequence-number'))
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
@@ -1297,7 +1347,7 @@ class PageBlobOperations:
         copy_source: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
@@ -1309,7 +1359,7 @@ class PageBlobOperations:
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
-         via a shared access signature.
+         via a shared access signature. Required.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -1326,17 +1376,20 @@ class PageBlobOperations:
          value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "incrementalcopy")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "incrementalcopy"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1344,16 +1397,14 @@ class PageBlobOperations:
         _if_none_match = None
         _if_tags = None
         if modified_access_conditions is not None:
-            _if_modified_since = modified_access_conditions.if_modified_since
-            _if_unmodified_since = modified_access_conditions.if_unmodified_since
             _if_match = modified_access_conditions.if_match
+            _if_modified_since = modified_access_conditions.if_modified_since
             _if_none_match = modified_access_conditions.if_none_match
             _if_tags = modified_access_conditions.if_tags
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_copy_incremental_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             copy_source=copy_source,
             timeout=timeout,
             if_modified_since=_if_modified_since,
@@ -1362,16 +1413,21 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            version=self._config.version,
             template_url=self.copy_incremental.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:

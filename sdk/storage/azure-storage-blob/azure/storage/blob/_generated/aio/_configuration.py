@@ -20,7 +20,7 @@ class AzureBlobStorageConfiguration(Configuration):  # pylint: disable=too-many-
     attributes.
 
     :param url: The URL of the service account, container, or blob that is the target of the
-     desired operation.
+     desired operation. Required.
     :type url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2021-04-10". Note that overriding this default value may result in unsupported behavior.
