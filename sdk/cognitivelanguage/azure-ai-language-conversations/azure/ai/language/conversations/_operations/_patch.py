@@ -6,7 +6,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from ctypes import cast
 from typing import List, MutableMapping
 from async_timeout import Any
 JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
