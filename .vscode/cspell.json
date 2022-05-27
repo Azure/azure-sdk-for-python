@@ -494,7 +494,8 @@
         "nlocals",
         "kwonlyargcount",
         "dcid",
-        "startf"
+        "startf",
+        "dpkg"
       ]
     }
   ],
