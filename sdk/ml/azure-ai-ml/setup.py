@@ -87,6 +87,7 @@ setup(
         "docker>=2.0.0",
         "typing-extensions>=4.0.1",
         "applicationinsights<=0.11.10",
+        # temp fix for mltable validation
         "knack"
     ],
     extras_require={
