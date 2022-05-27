@@ -10,7 +10,6 @@ ARG PYTHON_VERSION=3.9
 
 # docker can't tell when the repo has changed and will therefore cache this layer
 FROM ${REGISTRY}alpine:3.14 as repo
-
 RUN apk --no-cache add git
 RUN git clone https://github.com/Azure/azure-sdk-for-python --single-branch --depth 1 /azure-sdk-for-python
 
