@@ -149,6 +149,7 @@ class _AbstractTransport(object):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
+        
         self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
@@ -663,6 +664,7 @@ class WebSocketTransport(_AbstractTransport):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._host = host
+        self._custom_endpoint = kwargs.get("custom_endpoint")
         super().__init__(
             host, port, connect_timeout, **kwargs
             )
@@ -681,7 +683,7 @@ class WebSocketTransport(_AbstractTransport):
         try:
             from websocket import create_connection
             self.ws = create_connection(
-                url="wss://{}".format(self._host),
+                url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
@@ -690,6 +692,7 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth
             )
+
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 

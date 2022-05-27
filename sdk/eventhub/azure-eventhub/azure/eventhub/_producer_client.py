@@ -58,6 +58,22 @@ class EventHubProducerClient(ClientBase):
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~azure.eventhub.TransportType
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -187,6 +203,22 @@ class EventHubProducerClient(ClientBase):
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+         If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+         be used instead which uses port 443 for communication.
+        :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Event Hubs service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:

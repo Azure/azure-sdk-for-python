@@ -26,6 +26,7 @@ from ..constants import (
     MAX_FRAME_SIZE_BYTES,
     MAX_CHANNELS,
     HEADER_FRAME,
+    WEBSOCKET_PORT,
     ConnectionState,
     EMPTY_FRAME,
     TransportType
@@ -79,6 +80,15 @@ class Connection(object):
         else:
             self.port = PORT
         self.state = None
+
+        # Custom Endpoint
+        custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        custom_endpoint = None
+        if custom_endpoint_address:
+            custom_parsed_url = urlparse(custom_endpoint_address)
+            custom_port = custom_parsed_url.port or WEBSOCKET_PORT
+            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname, custom_port, custom_parsed_url.path)
+
         transport = kwargs.get('transport')
         if transport:
             self.transport = transport
@@ -90,6 +100,7 @@ class Connection(object):
             self.transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs['sasl_credential'],
+                custom_endpoint=custom_endpoint,
                 **kwargs
             )
         else:

@@ -150,10 +150,13 @@ class EventHubConsumer(
             )
         desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
+        custom_endpoint_address = self._client._config.custom_endpoint_address # pylint:disable=protected-access
         transport_type = self._client._config.transport_type # pylint:disable=protected-access
         hostname = urlparse(source.address).hostname
         if transport_type.name == 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
+            if custom_endpoint_address:
+                custom_endpoint_address += '/$servicebus/websocket/'
 
         self._handler = ReceiveClient(
             hostname,
@@ -171,7 +174,9 @@ class EventHubConsumer(
             properties=create_properties(self._client._config.user_agent),  # pylint:disable=protected-access
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
-            message_received_callback=self._message_received
+            message_received_callback=self._message_received,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=self._client._config.connection_verify,
         )
 
     def _open_with_retry(self):

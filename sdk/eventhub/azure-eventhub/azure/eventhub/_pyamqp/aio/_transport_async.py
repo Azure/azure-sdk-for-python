@@ -162,6 +162,7 @@ class AsyncTransport(AsyncTransportMixin):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
+        
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
@@ -424,6 +425,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host = host
         self.ws = None
         self._http_proxy = kwargs.get('http_proxy', None)
@@ -440,7 +442,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         try:
             from websocket import create_connection
             self.ws = create_connection(
-                url="wss://{}".format(self.host),
+                url="wss://{}".format(self._custom_endpoint or self.host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
