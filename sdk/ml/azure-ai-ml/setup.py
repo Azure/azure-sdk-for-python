@@ -87,6 +87,7 @@ setup(
         "docker>=2.0.0",
         "typing-extensions>=4.0.1",
         "applicationinsights<=0.11.10",
+        "knack"
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
