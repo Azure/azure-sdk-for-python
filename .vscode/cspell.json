@@ -111,6 +111,10 @@
     ".gitignore"
   ],
   "words": [
+    "pyyaml",
+    "CONLL",
+    "pyjwt",
+    "conll",
     "aad",
     "aadclient",
     "AADSTS",
