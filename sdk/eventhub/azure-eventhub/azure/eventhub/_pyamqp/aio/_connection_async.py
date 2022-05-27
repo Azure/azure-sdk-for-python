@@ -26,6 +26,7 @@ from ..constants import (
     MAX_FRAME_SIZE_BYTES,
     MAX_CHANNELS,
     HEADER_FRAME,
+    WEBSOCKET_PORT,
     ConnectionState,
     EMPTY_FRAME,
     TransportType
@@ -91,6 +92,7 @@ class Connection(object):
             self.transport = sasl_transport(
                 host=endpoint,
                 credential=kwargs['sasl_credential'],
+                custom_endpoint=custom_endpoint,
                 **kwargs
             )
         else:
