@@ -285,7 +285,6 @@ class TestMachineLearningClient:
         for i in range(5):
             start = start / f"sub{i}"
             start.mkdir()
-        print(start)
         with pytest.raises(Exception) as e:
             MLClient.from_config(start)
         assert "could not find config.json in:" in str(e)
