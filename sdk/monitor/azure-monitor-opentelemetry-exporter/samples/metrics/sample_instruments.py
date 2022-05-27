@@ -7,10 +7,10 @@ AzureMonitorMetricsExporter.
 """
 import os
 
-from opentelemetry import _metrics
-from opentelemetry._metrics.measurement import Measurement
-from opentelemetry.sdk._metrics import MeterProvider
-from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
+from opentelemetry import metrics
+from opentelemetry.metrics import Observation
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
@@ -18,22 +18,22 @@ exporter = AzureMonitorMetricExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
-_metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
+metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
 
 # Create a namespaced meter
-meter = _metrics.get_meter_provider().get_meter("sample")
+meter = metrics.get_meter_provider().get_meter("sample")
 
 # Callback functions for observable instruments
 def observable_counter_func():
-    yield Measurement(1, {})
+    yield Observation(1, {})
 
 
 def observable_up_down_counter_func():
-    yield Measurement(-10, {})
+    yield Observation(-10, {})
 
 
 def observable_gauge_func():
-    yield Measurement(9, {})
+    yield Observation(9, {})
 
 # Counter
 counter = meter.create_counter("counter")
