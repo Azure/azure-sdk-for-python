@@ -2017,11 +2017,11 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_account_info_to_dict(self):
-        model = _models.AccountInfo(model_limit=5000, model_count=10)
+        model = _models.AccountInfo(document_model_limit=5000, document_model_count=10)
 
         d = model.to_dict()
 
-        final = {"model_limit": 5000, "model_count": 10}
+        final = {"document_model_limit": 5000, "document_model_count": 10}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

@@ -1,5 +1,45 @@
 # Release History
 
+## 12.12.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.12.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.12.0b1.
+- Added support for progress tracking to `upload_blob()` and `download_blob()` via a new optional callback,`progress_hook`.
+
+### Bugs Fixed:
+- Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
+message if they pass an incorrect URL without a full `/container/blob` path.
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.12.0b1 (2022-04-14)
+
+### Features Added
+- Added support for service version 2021-06-08.
+- Added a new paginated method for listing page ranges, `list_page_ranges()`. This replaces `get_page_ranges()` which has been deprecated.
+- Added support for copying source blob tags with `start_copy_from_url()` by specifying `"COPY"` for the `tags` keyword.
+
+## 12.11.0 (2022-03-29)
+
+**Warning** This release involves a bug fix that may change the behavior for some users. In previous versions,
+the `tag` parameter on`BlobSasPermissions` defaulted to `True` meaning a Blob SAS URL would include the `t` permission
+by default. This was not the intended behavior. This release adjusts `BlobSasPermission` so the `tag` permission will
+default to `False`, like all other permissions.
+
+### Bugs Fixed
+- Fixed a bug in `BlobSasPermissions` where the `tag` permission had a default value of `True` and
+therefore was being added to the SAS token by default.
+
 ## 12.10.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
+      - Wed, 23 Mar 2022 18:20:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,64 +25,16 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
+      - Wed, 23 Mar 2022 18:20:54 GMT
       ms-cv:
-      - iJRPb4Tcnk2GvbW8by19lQ.0
-      request-context:
-      - appId=
-      strict-transport-security:
-      - max-age=2592000
-      x-cache:
-      - CONFIG_NOCACHE
-      x-processing-time:
-      - 31ms
-    status:
-      code: 201
-      message: Created
-- request:
-    body: '{"id": "sanitized", "routeType": "nearest"}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '113'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
-      x-ms-date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: POST
-    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-02-01
-  response:
-    body:
-      string: '{"iceServers": [{"routeType": "nearest", "urls": ["turn.skype.com",
-        "turn:13.107.17.41:3478"], "username": "sanitized", "credential": "sanitized"}],
-        "expiresOn": "2022-02-05T18:48:53.374684+00:00"}'
-    headers:
-      api-supported-versions:
-      - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-02-01
-      content-length:
-      - '304'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
-      ms-cv:
-      - YIorLMmk/0iaxtfX+8xlXw.0
+      - wOkdwvKYGkmvZAaAZdi3nQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -91,6 +43,54 @@ interactions:
       - CONFIG_NOCACHE
       x-processing-time:
       - 26ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"id": "sanitized", "routeType": "nearest", "ttl": 172800}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '128'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      x-ms-date:
+      - Wed, 23 Mar 2022 18:20:55 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
+  response:
+    body:
+      string: '{"iceServers": [{"routeType": "nearest", "urls": ["turn.skype.com",
+        "turn:13.107.17.41:3478"], "username": "sanitized", "credential": "sanitized"}],
+        "expiresOn": "2022-03-25T18:20:55.1811157+00:00"}'
+    headers:
+      api-supported-versions:
+      - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview
+      content-length:
+      - '329'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 23 Mar 2022 18:20:54 GMT
+      ms-cv:
+      - LZMSJbinQE6eSLt70sV9mQ.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 56ms
     status:
       code: 200
       message: OK

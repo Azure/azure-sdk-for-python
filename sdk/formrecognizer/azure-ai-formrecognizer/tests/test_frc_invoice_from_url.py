@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -27,7 +27,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
@@ -42,7 +45,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_invoice_bad_url(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
@@ -50,7 +56,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_invoice_url_multipage_transform_pdf(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         responses = []
 
         def callback(raw_response, _, headers):
@@ -113,7 +122,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_invoice_locale_specified(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
         assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
         result = poller.result()
@@ -123,7 +135,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_invoice_locale_error(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="not a locale")
         assert "locale" in e.value.error.message
@@ -132,7 +147,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_pages_kwarg_specified(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
@@ -142,7 +160,10 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_invoice_no_sub_line_items(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         
         poller = client.begin_recognize_invoices_from_url(
             invoice_url=self.invoice_no_sub_line_item,

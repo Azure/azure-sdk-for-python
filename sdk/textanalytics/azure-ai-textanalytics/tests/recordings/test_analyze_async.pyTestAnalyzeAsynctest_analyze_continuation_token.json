@@ -1,89 +1,105 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1342",
+        "Content-Length": "1171",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f33e63c3-5d0f-11ec-929b-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022entityRecognitionPiiTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00221\u0022}], \u0022keyPhraseExtractionTasks\u0022: [{\u0022parameters\u0022: {}, \u0022taskName\u0022: \u00223\u0022}], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00222\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "",
+              "language": "en"
+            },
+            {
+              "id": "4",
+              "text": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "2",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "3",
+            "kind": "KeyPhraseExtraction",
+            "parameters": {}
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "bb7c3585-07d0-4083-9026-1795385cf796",
-        "Date": "Tue, 14 Dec 2021 18:59:22 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2a09c1d0-55fa-4a06-bfad-aebb5122cc3f",
+        "apim-request-id": "a5042fee-38f2-4740-9aef-fb6b99513a79",
+        "Content-Length": "0",
+        "Date": "Tue, 03 May 2022 00:10:00 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e23b8b21-046f-4961-b2b5-2390206011f8?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "422"
+        "x-envoy-upstream-service-time": "407"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2a09c1d0-55fa-4a06-bfad-aebb5122cc3f?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e23b8b21-046f-4961-b2b5-2390206011f8?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f33e63c3-5d0f-11ec-929b-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "7c81036c-53bd-43e5-ae75-e7677c1bb76e",
+        "apim-request-id": "4ebff46e-472b-4547-8418-91d6d793202a",
+        "Content-Length": "5055",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:59:27 GMT",
+        "Date": "Tue, 03 May 2022 00:10:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "64"
+        "x-envoy-upstream-service-time": "139"
       },
       "ResponseBody": {
-        "jobId": "2a09c1d0-55fa-4a06-bfad-aebb5122cc3f",
-        "lastUpdateDateTime": "2021-12-14T18:59:23Z",
-        "createdDateTime": "2021-12-14T18:59:22Z",
-        "expirationDateTime": "2021-12-15T18:59:22Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 4,
-          "total": 4
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2a09c1d0-55fa-4a06-bfad-aebb5122cc3f?showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f33e63c3-5d0f-11ec-929b-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "918853e9-b66c-4206-bc0b-d4cded24a6d2",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:59:33 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "190"
-      },
-      "ResponseBody": {
-        "jobId": "2a09c1d0-55fa-4a06-bfad-aebb5122cc3f",
-        "lastUpdateDateTime": "2021-12-14T18:59:33Z",
-        "createdDateTime": "2021-12-14T18:59:22Z",
-        "expirationDateTime": "2021-12-15T18:59:22Z",
+        "jobId": "e23b8b21-046f-4961-b2b5-2390206011f8",
+        "lastUpdateDateTime": "2022-05-03T00:10:04Z",
+        "createdDateTime": "2022-05-03T00:10:00Z",
+        "expirationDateTime": "2022-05-04T00:10:00Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -91,11 +107,12 @@
           "failed": 0,
           "inProgress": 2,
           "total": 4,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:33.1157703Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.1935127Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 4,
@@ -111,6 +128,14 @@
                       "transactionsCount": 1
                     },
                     "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
                       {
                         "text": "Government Accountability Office",
                         "category": "Organization",
@@ -264,7 +289,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -274,367 +299,12 @@
                 ],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "sentimentAnalysisTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:31.1960386Z",
-              "taskName": "2",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 3,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 3
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 158,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
-                      "negative": 0.0
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
-                          "negative": 0.0
-                        },
-                        "offset": 0,
-                        "length": 158,
-                        "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "positive",
-                    "statistics": {
-                      "charactersCount": 121,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
-                      },
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
-                        },
-                        "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
-                      },
-                      {
-                        "sentiment": "positive",
-                        "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
-                        },
-                        "offset": 85,
-                        "length": 36,
-                        "text": "Play music and add it to my playlist"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "3",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2020-04-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2a09c1d0-55fa-4a06-bfad-aebb5122cc3f?showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f33e63c3-5d0f-11ec-929b-b831b58100e8"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "ab923617-b826-4c7a-b48c-7a39d59490dc",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:59:38 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "234"
-      },
-      "ResponseBody": {
-        "jobId": "2a09c1d0-55fa-4a06-bfad-aebb5122cc3f",
-        "lastUpdateDateTime": "2021-12-14T18:59:37Z",
-        "createdDateTime": "2021-12-14T18:59:22Z",
-        "expirationDateTime": "2021-12-15T18:59:22Z",
-        "status": "succeeded",
-        "errors": [],
-        "tasks": {
-          "completed": 4,
-          "failed": 0,
-          "inProgress": 0,
-          "total": 4,
-          "entityRecognitionTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:59:33.1157703Z",
-              "taskName": "0",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 3,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 3
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "entities": [
-                      {
-                        "text": "Government Accountability Office",
-                        "category": "Organization",
-                        "offset": 23,
-                        "length": 32,
-                        "confidenceScore": 0.99
-                      },
-                      {
-                        "text": "GAO",
-                        "category": "Organization",
-                        "offset": 57,
-                        "length": 3,
-                        "confidenceScore": 0.94
-                      },
-                      {
-                        "text": "oil",
-                        "category": "Product",
-                        "offset": 98,
-                        "length": 3,
-                        "confidenceScore": 0.67
-                      },
-                      {
-                        "text": "natural",
-                        "category": "Product",
-                        "offset": 106,
-                        "length": 7,
-                        "confidenceScore": 0.68
-                      },
-                      {
-                        "text": "gas",
-                        "category": "Skill",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.57
-                      },
-                      {
-                        "text": "development",
-                        "category": "Skill",
-                        "offset": 118,
-                        "length": 11,
-                        "confidenceScore": 0.48
-                      },
-                      {
-                        "text": "past six years",
-                        "category": "DateTime",
-                        "subcategory": "DateRange",
-                        "offset": 156,
-                        "length": 14,
-                        "confidenceScore": 0.8
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "Organization",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.96
-                      },
-                      {
-                        "text": "environmental protection",
-                        "category": "Skill",
-                        "offset": 253,
-                        "length": 24,
-                        "confidenceScore": 0.79
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "statistics": {
-                      "charactersCount": 158,
-                      "transactionsCount": 1
-                    },
-                    "entities": [
-                      {
-                        "text": "David Schmidt",
-                        "category": "Person",
-                        "offset": 0,
-                        "length": 13,
-                        "confidenceScore": 1.0
-                      },
-                      {
-                        "text": "senior vice president",
-                        "category": "PersonType",
-                        "offset": 15,
-                        "length": 21,
-                        "confidenceScore": 0.86
-                      },
-                      {
-                        "text": "International Food Information Council",
-                        "category": "Organization",
-                        "offset": 51,
-                        "length": 38,
-                        "confidenceScore": 0.95
-                      },
-                      {
-                        "text": "IFIC",
-                        "category": "Organization",
-                        "offset": 91,
-                        "length": 4,
-                        "confidenceScore": 0.82
-                      },
-                      {
-                        "text": "Washington, D.C.",
-                        "category": "Location",
-                        "subcategory": "GPE",
-                        "offset": 98,
-                        "length": 16,
-                        "confidenceScore": 0.89
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "statistics": {
-                      "charactersCount": 121,
-                      "transactionsCount": 1
-                    },
-                    "entities": [
-                      {
-                        "text": "indoor",
-                        "category": "Location",
-                        "subcategory": "Structural",
-                        "offset": 28,
-                        "length": 6,
-                        "confidenceScore": 0.5
-                      },
-                      {
-                        "text": "restaurant",
-                        "category": "Location",
-                        "subcategory": "Structural",
-                        "offset": 35,
-                        "length": 10,
-                        "confidenceScore": 0.5
-                      },
-                      {
-                        "text": "China",
-                        "category": "Location",
-                        "subcategory": "GPE",
-                        "offset": 49,
-                        "length": 5,
-                        "confidenceScore": 1.0
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "3",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:59:37.437396Z",
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.2512028Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 4,
@@ -738,7 +408,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -749,267 +419,47 @@
                 "modelVersion": "2021-01-15"
               }
             }
-          ],
-          "keyPhraseExtractionTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:59:37.3940628Z",
-              "taskName": "3",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 3,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 3
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "keyPhrases": [
-                      "International Food Information Council",
-                      "senior vice president",
-                      "physical activity component",
-                      "Food Safety",
-                      "David Schmidt",
-                      "D.C.",
-                      "IFIC",
-                      "Washington"
-                    ],
-                    "statistics": {
-                      "charactersCount": 158,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "keyPhrases": [
-                      "indoor restaurant",
-                      "reservation",
-                      "China",
-                      "music",
-                      "playlist"
-                    ],
-                    "statistics": {
-                      "charactersCount": 121,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "3",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ],
-          "sentimentAnalysisTasks": [
-            {
-              "lastUpdateDateTime": "2021-12-14T18:59:31.1960386Z",
-              "taskName": "2",
-              "state": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 3,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 3
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 158,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
-                      "negative": 0.0
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
-                          "negative": 0.0
-                        },
-                        "offset": 0,
-                        "length": 158,
-                        "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "positive",
-                    "statistics": {
-                      "charactersCount": 121,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
-                      },
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
-                        },
-                        "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
-                      },
-                      {
-                        "sentiment": "positive",
-                        "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
-                        },
-                        "offset": 85,
-                        "length": 36,
-                        "text": "Play music and add it to my playlist"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "3",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2020-04-01"
-              }
-            }
           ]
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/2a09c1d0-55fa-4a06-bfad-aebb5122cc3f?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e23b8b21-046f-4961-b2b5-2390206011f8?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f33e63c3-5d0f-11ec-929b-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "fa4553a5-416a-46e7-9bad-881cc6d40a82",
+        "apim-request-id": "e5daa206-01e0-45a3-93b3-297e6273439d",
+        "Content-Length": "6238",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:59:43 GMT",
+        "Date": "Tue, 03 May 2022 00:10:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "252"
+        "x-envoy-upstream-service-time": "197"
       },
       "ResponseBody": {
-        "jobId": "2a09c1d0-55fa-4a06-bfad-aebb5122cc3f",
-        "lastUpdateDateTime": "2021-12-14T18:59:37Z",
-        "createdDateTime": "2021-12-14T18:59:22Z",
-        "expirationDateTime": "2021-12-15T18:59:22Z",
-        "status": "succeeded",
+        "jobId": "e23b8b21-046f-4961-b2b5-2390206011f8",
+        "lastUpdateDateTime": "2022-05-03T00:10:09Z",
+        "createdDateTime": "2022-05-03T00:10:00Z",
+        "expirationDateTime": "2022-05-04T00:10:00Z",
+        "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 4,
+          "completed": 3,
           "failed": 0,
-          "inProgress": 0,
+          "inProgress": 1,
           "total": 4,
-          "entityRecognitionTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:33.1157703Z",
+              "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.1935127Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 4,
@@ -1025,6 +475,14 @@
                       "transactionsCount": 1
                     },
                     "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
                       {
                         "text": "Government Accountability Office",
                         "category": "Organization",
@@ -1178,7 +636,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -1188,13 +646,12 @@
                 ],
                 "modelVersion": "2021-06-01"
               }
-            }
-          ],
-          "entityRecognitionPiiTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:37.437396Z",
+              "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.2512028Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 4,
@@ -1298,7 +755,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -1308,13 +765,12 @@
                 ],
                 "modelVersion": "2021-01-15"
               }
-            }
-          ],
-          "keyPhraseExtractionTasks": [
+            },
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:37.3940628Z",
+              "kind": "KeyPhraseExtractionLROResults",
               "taskName": "3",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:10:09.8417596Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 4,
@@ -1384,7 +840,7 @@
                     "id": "3",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."
@@ -1395,12 +851,358 @@
                 "modelVersion": "2021-06-01"
               }
             }
-          ],
-          "sentimentAnalysisTasks": [
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e23b8b21-046f-4961-b2b5-2390206011f8?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "61c2e56f-10bd-46e0-bf1a-301658bc7fd6",
+        "Content-Length": "8463",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 May 2022 00:10:16 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "300"
+      },
+      "ResponseBody": {
+        "jobId": "e23b8b21-046f-4961-b2b5-2390206011f8",
+        "lastUpdateDateTime": "2022-05-03T00:10:15Z",
+        "createdDateTime": "2022-05-03T00:10:00Z",
+        "expirationDateTime": "2022-05-04T00:10:00Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 4,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 4,
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:59:31.1960386Z",
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.1935127Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "David Schmidt",
+                        "category": "Person",
+                        "offset": 0,
+                        "length": 13,
+                        "confidenceScore": 1.0
+                      },
+                      {
+                        "text": "senior vice president",
+                        "category": "PersonType",
+                        "offset": 15,
+                        "length": 21,
+                        "confidenceScore": 0.86
+                      },
+                      {
+                        "text": "International Food Information Council",
+                        "category": "Organization",
+                        "offset": 51,
+                        "length": 38,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "Organization",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.82
+                      },
+                      {
+                        "text": "Washington, D.C.",
+                        "category": "Location",
+                        "subcategory": "GPE",
+                        "offset": 98,
+                        "length": 16,
+                        "confidenceScore": 0.89
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "indoor",
+                        "category": "Location",
+                        "subcategory": "Structural",
+                        "offset": 28,
+                        "length": 6,
+                        "confidenceScore": 0.5
+                      },
+                      {
+                        "text": "restaurant",
+                        "category": "Location",
+                        "subcategory": "Structural",
+                        "offset": 35,
+                        "length": 10,
+                        "confidenceScore": 0.5
+                      },
+                      {
+                        "text": "China",
+                        "category": "Location",
+                        "subcategory": "GPE",
+                        "offset": 49,
+                        "length": 5,
+                        "confidenceScore": 1.0
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.2512028Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "redactedText": "A recent report by the ******************************** (***) found that the dramatic increase in oil and natural gas development on federal lands over the ************** has stretched the staff of the *** to a point that it has been unable to meet its environmental protection responsibilities.",
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.9
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.87
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "*************, *********************--Food Safety, ************************************** (****), Washington, D.C., discussed the physical activity component.",
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "David Schmidt",
+                        "category": "Person",
+                        "offset": 0,
+                        "length": 13,
+                        "confidenceScore": 1.0
+                      },
+                      {
+                        "text": "senior vice president",
+                        "category": "PersonType",
+                        "offset": 15,
+                        "length": 21,
+                        "confidenceScore": 0.71
+                      },
+                      {
+                        "text": "International Food Information Council",
+                        "category": "Organization",
+                        "offset": 51,
+                        "length": 38,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "Organization",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.92
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
+                    "id": "4",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "2",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:10:15.3208624Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 4,
@@ -1527,6 +1329,656 @@
                   }
                 ],
                 "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:10:09.8417596Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "keyPhrases": [
+                      "International Food Information Council",
+                      "senior vice president",
+                      "physical activity component",
+                      "Food Safety",
+                      "David Schmidt",
+                      "D.C.",
+                      "IFIC",
+                      "Washington"
+                    ],
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "keyPhrases": [
+                      "indoor restaurant",
+                      "reservation",
+                      "China",
+                      "music",
+                      "playlist"
+                    ],
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e23b8b21-046f-4961-b2b5-2390206011f8?api-version=2022-04-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "7c2372ff-1453-420d-9429-3077e1a74c2b",
+        "Content-Length": "8463",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 May 2022 00:10:21 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "309"
+      },
+      "ResponseBody": {
+        "jobId": "e23b8b21-046f-4961-b2b5-2390206011f8",
+        "lastUpdateDateTime": "2022-05-03T00:10:15Z",
+        "createdDateTime": "2022-05-03T00:10:00Z",
+        "expirationDateTime": "2022-05-04T00:10:00Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 4,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 4,
+          "items": [
+            {
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.1935127Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "cent",
+                        "category": "Quantity",
+                        "subcategory": "Percentage",
+                        "offset": 4,
+                        "length": 4,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.94
+                      },
+                      {
+                        "text": "oil",
+                        "category": "Product",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.67
+                      },
+                      {
+                        "text": "natural",
+                        "category": "Product",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.68
+                      },
+                      {
+                        "text": "gas",
+                        "category": "Skill",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "development",
+                        "category": "Skill",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "environmental protection",
+                        "category": "Skill",
+                        "offset": 253,
+                        "length": 24,
+                        "confidenceScore": 0.79
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "David Schmidt",
+                        "category": "Person",
+                        "offset": 0,
+                        "length": 13,
+                        "confidenceScore": 1.0
+                      },
+                      {
+                        "text": "senior vice president",
+                        "category": "PersonType",
+                        "offset": 15,
+                        "length": 21,
+                        "confidenceScore": 0.86
+                      },
+                      {
+                        "text": "International Food Information Council",
+                        "category": "Organization",
+                        "offset": 51,
+                        "length": 38,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "Organization",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.82
+                      },
+                      {
+                        "text": "Washington, D.C.",
+                        "category": "Location",
+                        "subcategory": "GPE",
+                        "offset": 98,
+                        "length": 16,
+                        "confidenceScore": 0.89
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "indoor",
+                        "category": "Location",
+                        "subcategory": "Structural",
+                        "offset": 28,
+                        "length": 6,
+                        "confidenceScore": 0.5
+                      },
+                      {
+                        "text": "restaurant",
+                        "category": "Location",
+                        "subcategory": "Structural",
+                        "offset": 35,
+                        "length": 10,
+                        "confidenceScore": 0.5
+                      },
+                      {
+                        "text": "China",
+                        "category": "Location",
+                        "subcategory": "GPE",
+                        "offset": 49,
+                        "length": 5,
+                        "confidenceScore": 1.0
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
+              }
+            },
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:10:04.2512028Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "redactedText": "A recent report by the ******************************** (***) found that the dramatic increase in oil and natural gas development on federal lands over the ************** has stretched the staff of the *** to a point that it has been unable to meet its environmental protection responsibilities.",
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "Government Accountability Office",
+                        "category": "Organization",
+                        "offset": 23,
+                        "length": 32,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "Organization",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.9
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "DateTime",
+                        "subcategory": "DateRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "Organization",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.87
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "*************, *********************--Food Safety, ************************************** (****), Washington, D.C., discussed the physical activity component.",
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "David Schmidt",
+                        "category": "Person",
+                        "offset": 0,
+                        "length": 13,
+                        "confidenceScore": 1.0
+                      },
+                      {
+                        "text": "senior vice president",
+                        "category": "PersonType",
+                        "offset": 15,
+                        "length": 21,
+                        "confidenceScore": 0.71
+                      },
+                      {
+                        "text": "International Food Information Council",
+                        "category": "Organization",
+                        "offset": 51,
+                        "length": 38,
+                        "confidenceScore": 0.96
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "Organization",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.92
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "redactedText": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
+                    "id": "4",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-01-15"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-05-03T00:10:15.3208624Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.23,
+                      "neutral": 0.61,
+                      "negative": 0.16
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.23,
+                          "neutral": 0.61,
+                          "negative": 0.16
+                        },
+                        "offset": 0,
+                        "length": 295,
+                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.0,
+                      "neutral": 1.0,
+                      "negative": 0.0
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.0,
+                          "neutral": 1.0,
+                          "negative": 0.0
+                        },
+                        "offset": 0,
+                        "length": 158,
+                        "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "sentiment": "positive",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.57,
+                      "neutral": 0.41,
+                      "negative": 0.02
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.03,
+                          "neutral": 0.96,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 55,
+                        "text": "I need a reservation for an indoor restaurant in China."
+                      },
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.12,
+                          "neutral": 0.78,
+                          "negative": 0.1
+                        },
+                        "offset": 56,
+                        "length": 28,
+                        "text": "Please don\u0027t stop the music."
+                      },
+                      {
+                        "sentiment": "positive",
+                        "confidenceScores": {
+                          "positive": 0.57,
+                          "neutral": 0.41,
+                          "negative": 0.02
+                        },
+                        "offset": 85,
+                        "length": 36,
+                        "text": "Play music and add it to my playlist"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2020-04-01"
+              }
+            },
+            {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "3",
+              "lastUpdateDateTime": "2022-05-03T00:10:09.8417596Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 4,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "keyPhrases": [
+                      "International Food Information Council",
+                      "senior vice president",
+                      "physical activity component",
+                      "Food Safety",
+                      "David Schmidt",
+                      "D.C.",
+                      "IFIC",
+                      "Washington"
+                    ],
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "keyPhrases": [
+                      "indoor restaurant",
+                      "reservation",
+                      "China",
+                      "music",
+                      "playlist"
+                    ],
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "3",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-06-01"
               }
             }
           ]

@@ -35,10 +35,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 pip install azure-schemaregistry-avroencoder azure-identity
 ```
 
-Additionally, if using with `azure.eventhub.EventData`, install `azure-eventhub==5.9.0b2`:
+Additionally, if using with `azure.eventhub.EventData`, install `azure-eventhub>=5.9.0`:
 
 ```bash
-pip install azure-eventhub==5.9.0b2
+pip install azure-eventhub>=5.9.0
 ```
 
 2. Clone or download this sample repository

@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import NetAppManagementClientConfiguration
-from .operations import AccountBackupsOperations, AccountsOperations, BackupPoliciesOperations, BackupsOperations, NetAppResourceOperations, NetAppResourceQuotaLimitsOperations, Operations, PoolsOperations, SnapshotPoliciesOperations, SnapshotsOperations, VaultsOperations, VolumeGroupsOperations, VolumesOperations
+from .operations import AccountBackupsOperations, AccountsOperations, BackupPoliciesOperations, BackupsOperations, NetAppResourceOperations, NetAppResourceQuotaLimitsOperations, Operations, PoolsOperations, SnapshotPoliciesOperations, SnapshotsOperations, SubvolumesOperations, VaultsOperations, VolumeGroupsOperations, VolumesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -51,6 +51,8 @@ class NetAppManagementClient:
     :vartype vaults: azure.mgmt.netapp.operations.VaultsOperations
     :ivar volume_groups: VolumeGroupsOperations operations
     :vartype volume_groups: azure.mgmt.netapp.operations.VolumeGroupsOperations
+    :ivar subvolumes: SubvolumesOperations operations
+    :vartype subvolumes: azure.mgmt.netapp.operations.SubvolumesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
@@ -89,6 +91,7 @@ class NetAppManagementClient:
         self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

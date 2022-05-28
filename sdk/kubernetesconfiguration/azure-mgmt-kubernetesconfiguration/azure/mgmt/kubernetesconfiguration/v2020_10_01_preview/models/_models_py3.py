@@ -24,13 +24,13 @@ class ComplianceStatus(msrest.serialization.Model):
      "Pending", "Compliant", "Noncompliant", "Installed", "Failed".
     :vartype compliance_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.ComplianceStateType
-    :param last_config_applied: Datetime the configuration was last applied.
-    :type last_config_applied: ~datetime.datetime
-    :param message: Message from when the configuration was applied.
-    :type message: str
-    :param message_level: Level of the message. Possible values include: "Error", "Warning",
+    :ivar last_config_applied: Datetime the configuration was last applied.
+    :vartype last_config_applied: ~datetime.datetime
+    :ivar message: Message from when the configuration was applied.
+    :vartype message: str
+    :ivar message_level: Level of the message. Possible values include: "Error", "Warning",
      "Information".
-    :type message_level: str or
+    :vartype message_level: str or
      ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.MessageLevelType
     """
 
@@ -53,6 +53,16 @@ class ComplianceStatus(msrest.serialization.Model):
         message_level: Optional[Union[str, "MessageLevelType"]] = None,
         **kwargs
     ):
+        """
+        :keyword last_config_applied: Datetime the configuration was last applied.
+        :paramtype last_config_applied: ~datetime.datetime
+        :keyword message: Message from when the configuration was applied.
+        :paramtype message: str
+        :keyword message_level: Level of the message. Possible values include: "Error", "Warning",
+         "Information".
+        :paramtype message_level: str or
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.MessageLevelType
+        """
         super(ComplianceStatus, self).__init__(**kwargs)
         self.compliance_state = None
         self.last_config_applied = last_config_applied
@@ -65,11 +75,11 @@ class ErrorDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Service specific error code which serves as the substatus for the HTTP
+    :ivar code: Required. Service specific error code which serves as the substatus for the HTTP
      error code.
-    :type code: str
-    :param message: Required. Description of the error.
-    :type message: str
+    :vartype code: str
+    :ivar message: Required. Description of the error.
+    :vartype message: str
     """
 
     _validation = {
@@ -89,6 +99,13 @@ class ErrorDefinition(msrest.serialization.Model):
         message: str,
         **kwargs
     ):
+        """
+        :keyword code: Required. Service specific error code which serves as the substatus for the HTTP
+         error code.
+        :paramtype code: str
+        :keyword message: Required. Description of the error.
+        :paramtype message: str
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -115,6 +132,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = None
 
@@ -122,10 +141,10 @@ class ErrorResponse(msrest.serialization.Model):
 class HelmOperatorProperties(msrest.serialization.Model):
     """Properties for Helm operator.
 
-    :param chart_version: Version of the operator Helm chart.
-    :type chart_version: str
-    :param chart_values: Values override for the operator Helm chart.
-    :type chart_values: str
+    :ivar chart_version: Version of the operator Helm chart.
+    :vartype chart_version: str
+    :ivar chart_values: Values override for the operator Helm chart.
+    :vartype chart_values: str
     """
 
     _attribute_map = {
@@ -140,6 +159,12 @@ class HelmOperatorProperties(msrest.serialization.Model):
         chart_values: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword chart_version: Version of the operator Helm chart.
+        :paramtype chart_version: str
+        :keyword chart_values: Values override for the operator Helm chart.
+        :paramtype chart_values: str
+        """
         super(HelmOperatorProperties, self).__init__(**kwargs)
         self.chart_version = chart_version
         self.chart_values = chart_values
@@ -156,9 +181,9 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: Top level metadata
+    :ivar system_data: Top level metadata
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
-    :type system_data: ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
     """
 
     _validation = {
@@ -180,6 +205,12 @@ class Resource(msrest.serialization.Model):
         system_data: Optional["SystemData"] = None,
         **kwargs
     ):
+        """
+        :keyword system_data: Top level metadata
+         https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
+        :paramtype system_data:
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -198,9 +229,9 @@ class ProxyResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: Top level metadata
+    :ivar system_data: Top level metadata
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
-    :type system_data: ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
     """
 
     _validation = {
@@ -222,6 +253,12 @@ class ProxyResource(Resource):
         system_data: Optional["SystemData"] = None,
         **kwargs
     ):
+        """
+        :keyword system_data: Top level metadata
+         https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
+        :paramtype system_data:
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
+        """
         super(ProxyResource, self).__init__(system_data=system_data, **kwargs)
 
 
@@ -230,10 +267,10 @@ class ResourceProviderOperation(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: Operation name, in format of {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display:
+    :ivar name: Operation name, in format of {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: Display metadata associated with the operation.
+    :vartype display:
      ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.ResourceProviderOperationDisplay
     :ivar is_data_action: The flag that indicates whether the operation applies to data plane.
     :vartype is_data_action: bool
@@ -256,6 +293,13 @@ class ResourceProviderOperation(msrest.serialization.Model):
         display: Optional["ResourceProviderOperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: Display metadata associated with the operation.
+        :paramtype display:
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.ResourceProviderOperationDisplay
+        """
         super(ResourceProviderOperation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -265,14 +309,14 @@ class ResourceProviderOperation(msrest.serialization.Model):
 class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """Display metadata associated with the operation.
 
-    :param provider: Resource provider: Microsoft KubernetesConfiguration.
-    :type provider: str
-    :param resource: Resource on which the operation is performed.
-    :type resource: str
-    :param operation: Type of operation: get, read, delete, etc.
-    :type operation: str
-    :param description: Description of this operation.
-    :type description: str
+    :ivar provider: Resource provider: Microsoft KubernetesConfiguration.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: Type of operation: get, read, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of this operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -291,6 +335,16 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Resource provider: Microsoft KubernetesConfiguration.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: Type of operation: get, read, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of this operation.
+        :paramtype description: str
+        """
         super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -303,8 +357,8 @@ class ResourceProviderOperationList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of operations supported by this resource provider.
-    :type value:
+    :ivar value: List of operations supported by this resource provider.
+    :vartype value:
      list[~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.ResourceProviderOperation]
     :ivar next_link: URL to the next set of results, if any.
     :vartype next_link: str
@@ -325,6 +379,11 @@ class ResourceProviderOperationList(msrest.serialization.Model):
         value: Optional[List["ResourceProviderOperation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of operations supported by this resource provider.
+        :paramtype value:
+         list[~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.ResourceProviderOperation]
+        """
         super(ResourceProviderOperationList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -333,8 +392,8 @@ class ResourceProviderOperationList(msrest.serialization.Model):
 class Result(msrest.serialization.Model):
     """Sample result definition.
 
-    :param sample_property: Sample property of type string.
-    :type sample_property: str
+    :ivar sample_property: Sample property of type string.
+    :vartype sample_property: str
     """
 
     _attribute_map = {
@@ -347,6 +406,10 @@ class Result(msrest.serialization.Model):
         sample_property: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword sample_property: Sample property of type string.
+        :paramtype sample_property: str
+        """
         super(Result, self).__init__(**kwargs)
         self.sample_property = sample_property
 
@@ -362,39 +425,39 @@ class SourceControlConfiguration(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param system_data: Top level metadata
+    :ivar system_data: Top level metadata
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
-    :type system_data: ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
-    :param repository_url: Url of the SourceControl Repository.
-    :type repository_url: str
-    :param operator_namespace: The namespace to which this operator is installed to. Maximum of 253
+    :vartype system_data: ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
+    :ivar repository_url: Url of the SourceControl Repository.
+    :vartype repository_url: str
+    :ivar operator_namespace: The namespace to which this operator is installed to. Maximum of 253
      lower case alphanumeric characters, hyphen and period only.
-    :type operator_namespace: str
-    :param operator_instance_name: Instance name of the operator - identifying the specific
+    :vartype operator_namespace: str
+    :ivar operator_instance_name: Instance name of the operator - identifying the specific
      configuration.
-    :type operator_instance_name: str
-    :param operator_type: Type of the operator. Possible values include: "Flux".
-    :type operator_type: str or
+    :vartype operator_instance_name: str
+    :ivar operator_type: Type of the operator. Possible values include: "Flux".
+    :vartype operator_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.OperatorType
-    :param operator_params: Any Parameters for the Operator instance in string format.
-    :type operator_params: str
-    :param configuration_protected_settings: Name-value pairs of protected configuration settings
+    :ivar operator_params: Any Parameters for the Operator instance in string format.
+    :vartype operator_params: str
+    :ivar configuration_protected_settings: Name-value pairs of protected configuration settings
      for the configuration.
-    :type configuration_protected_settings: dict[str, str]
-    :param operator_scope: Scope at which the operator will be installed. Possible values include:
+    :vartype configuration_protected_settings: dict[str, str]
+    :ivar operator_scope: Scope at which the operator will be installed. Possible values include:
      "cluster", "namespace". Default value: "cluster".
-    :type operator_scope: str or
+    :vartype operator_scope: str or
      ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.OperatorScopeType
     :ivar repository_public_key: Public Key associated with this SourceControl configuration
      (either generated within the cluster or provided by the user).
     :vartype repository_public_key: str
-    :param ssh_known_hosts_contents: Base64-encoded known_hosts contents containing public SSH keys
+    :ivar ssh_known_hosts_contents: Base64-encoded known_hosts contents containing public SSH keys
      required to access private Git instances.
-    :type ssh_known_hosts_contents: str
-    :param enable_helm_operator: Option to enable Helm Operator for this git configuration.
-    :type enable_helm_operator: bool
-    :param helm_operator_properties: Properties for Helm operator.
-    :type helm_operator_properties:
+    :vartype ssh_known_hosts_contents: str
+    :ivar enable_helm_operator: Option to enable Helm Operator for this git configuration.
+    :vartype enable_helm_operator: bool
+    :ivar helm_operator_properties: Properties for Helm operator.
+    :vartype helm_operator_properties:
      ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.HelmOperatorProperties
     :ivar provisioning_state: The provisioning state of the resource provider. Possible values
      include: "Accepted", "Deleting", "Running", "Succeeded", "Failed".
@@ -450,6 +513,40 @@ class SourceControlConfiguration(ProxyResource):
         helm_operator_properties: Optional["HelmOperatorProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword system_data: Top level metadata
+         https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
+        :paramtype system_data:
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.SystemData
+        :keyword repository_url: Url of the SourceControl Repository.
+        :paramtype repository_url: str
+        :keyword operator_namespace: The namespace to which this operator is installed to. Maximum of
+         253 lower case alphanumeric characters, hyphen and period only.
+        :paramtype operator_namespace: str
+        :keyword operator_instance_name: Instance name of the operator - identifying the specific
+         configuration.
+        :paramtype operator_instance_name: str
+        :keyword operator_type: Type of the operator. Possible values include: "Flux".
+        :paramtype operator_type: str or
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.OperatorType
+        :keyword operator_params: Any Parameters for the Operator instance in string format.
+        :paramtype operator_params: str
+        :keyword configuration_protected_settings: Name-value pairs of protected configuration settings
+         for the configuration.
+        :paramtype configuration_protected_settings: dict[str, str]
+        :keyword operator_scope: Scope at which the operator will be installed. Possible values
+         include: "cluster", "namespace". Default value: "cluster".
+        :paramtype operator_scope: str or
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.OperatorScopeType
+        :keyword ssh_known_hosts_contents: Base64-encoded known_hosts contents containing public SSH
+         keys required to access private Git instances.
+        :paramtype ssh_known_hosts_contents: str
+        :keyword enable_helm_operator: Option to enable Helm Operator for this git configuration.
+        :paramtype enable_helm_operator: bool
+        :keyword helm_operator_properties: Properties for Helm operator.
+        :paramtype helm_operator_properties:
+         ~azure.mgmt.kubernetesconfiguration.v2020_10_01_preview.models.HelmOperatorProperties
+        """
         super(SourceControlConfiguration, self).__init__(system_data=system_data, **kwargs)
         self.repository_url = repository_url
         self.operator_namespace = operator_namespace
@@ -492,6 +589,8 @@ class SourceControlConfigurationList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SourceControlConfigurationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -540,6 +639,8 @@ class SystemData(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = None
         self.created_by_type = None

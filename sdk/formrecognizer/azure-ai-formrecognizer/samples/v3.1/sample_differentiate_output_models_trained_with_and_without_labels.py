@@ -24,7 +24,7 @@ USAGE:
     python sample_differentiate_output_models_trained_with_and_without_labels.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) ID_OF_MODEL_TRAINED_WITH_LABELS - the ID of your custom model trained with labels
         -OR-

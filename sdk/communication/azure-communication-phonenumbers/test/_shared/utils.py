@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
 
-from azure.core.pipeline.policies import HttpLoggingPolicy
+from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy 
 
 def create_token_credential():
     # type: () -> FakeTokenCredential or DefaultAzureCredential
@@ -32,3 +33,12 @@ def get_http_logging_policy(**kwargs):
         }
     )
     return http_logging_policy
+
+def get_header_policy(**kwargs):
+    header_policy = HeadersPolicy(**kwargs)
+    
+    useragent = os.getenv("AZURE_USERAGENT_OVERRIDE")
+    if useragent:
+        header_policy.add_header("x-ms-useragent", useragent)
+
+    return header_policy

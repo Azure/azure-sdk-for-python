@@ -5,3 +5,4 @@ include azure/monitor/opentelemetry/__init__.py
 include LICENSE
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/monitor/opentelemetry/exporter/py.typed

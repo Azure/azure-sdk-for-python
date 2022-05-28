@@ -1,103 +1,120 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?opinionMining=true\u0026stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "90",
+        "Content-Length": "216",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d0db7cfe-5d10-11ec-a019-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022The food and service is not good\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "The food and service is not good",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "opinionMining": true,
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "2ad09dfa-b80e-4d71-aeb2-1b802e4f0d2f",
+        "apim-request-id": "e6aa188a-5aaa-49e1-a374-c238fc101710",
+        "Content-Length": "957",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:05:34 GMT",
+        "Date": "Tue, 03 May 2022 00:15:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "87"
+        "x-envoy-upstream-service-time": "46"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "id": "0",
-            "sentiment": "negative",
-            "confidenceScores": {
-              "positive": 0.0,
-              "neutral": 0.0,
-              "negative": 1.0
-            },
-            "sentences": [
-              {
-                "sentiment": "negative",
-                "confidenceScores": {
-                  "positive": 0.0,
-                  "neutral": 0.0,
-                  "negative": 1.0
-                },
-                "offset": 0,
-                "length": 32,
-                "text": "The food and service is not good",
-                "targets": [
-                  {
-                    "sentiment": "negative",
-                    "confidenceScores": {
-                      "positive": 0.01,
-                      "negative": 0.99
-                    },
-                    "offset": 4,
-                    "length": 4,
-                    "text": "food",
-                    "relations": [
-                      {
-                        "relationType": "assessment",
-                        "ref": "#/documents/0/sentences/0/assessments/0"
-                      }
-                    ]
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "0",
+              "sentiment": "negative",
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.0,
+                "negative": 0.99
+              },
+              "sentences": [
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.0,
+                    "negative": 0.99
                   },
-                  {
-                    "sentiment": "negative",
-                    "confidenceScores": {
-                      "positive": 0.01,
-                      "negative": 0.99
+                  "offset": 0,
+                  "length": 32,
+                  "text": "The food and service is not good",
+                  "targets": [
+                    {
+                      "sentiment": "negative",
+                      "confidenceScores": {
+                        "positive": 0.0,
+                        "negative": 1.0
+                      },
+                      "offset": 4,
+                      "length": 4,
+                      "text": "food",
+                      "relations": [
+                        {
+                          "relationType": "assessment",
+                          "ref": "#/documents/0/sentences/0/assessments/0"
+                        }
+                      ]
                     },
-                    "offset": 13,
-                    "length": 7,
-                    "text": "service",
-                    "relations": [
-                      {
-                        "relationType": "assessment",
-                        "ref": "#/documents/0/sentences/0/assessments/0"
-                      }
-                    ]
-                  }
-                ],
-                "assessments": [
-                  {
-                    "sentiment": "negative",
-                    "confidenceScores": {
-                      "positive": 0.01,
-                      "negative": 0.99
-                    },
-                    "offset": 28,
-                    "length": 4,
-                    "text": "good",
-                    "isNegated": true
-                  }
-                ]
-              }
-            ],
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2020-04-01"
+                    {
+                      "sentiment": "positive",
+                      "confidenceScores": {
+                        "positive": 1.0,
+                        "negative": 0.0
+                      },
+                      "offset": 13,
+                      "length": 7,
+                      "text": "service",
+                      "relations": [
+                        {
+                          "relationType": "assessment",
+                          "ref": "#/documents/0/sentences/0/assessments/0"
+                        }
+                      ]
+                    }
+                  ],
+                  "assessments": [
+                    {
+                      "sentiment": "negative",
+                      "confidenceScores": {
+                        "positive": 0.0,
+                        "negative": 1.0
+                      },
+                      "offset": 28,
+                      "length": 4,
+                      "text": "good",
+                      "isNegated": true
+                    }
+                  ]
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
       }
     }
   ],

@@ -3,4 +3,4 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-VERSION = "4.4.0b4"
+VERSION = "4.4.1"

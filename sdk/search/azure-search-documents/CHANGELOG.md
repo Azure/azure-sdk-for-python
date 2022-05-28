@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
 
 ### Other Changes
 

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.communication.networktraversal import RouteType
 
 
-class CommunicationRelayClient:
+class CommunicationRelayClient: # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Network Traversal client.
 
     :param str endpoint:
@@ -87,6 +87,7 @@ class CommunicationRelayClient:
             *,
             user: 'CommunicationUserIdentifier' = None,
             route_type: Optional[Union[str, "RouteType"]] = None,
+            ttl: Optional[int] = 172800,
             **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration.
@@ -99,10 +100,11 @@ class CommunicationRelayClient:
         """
         if user is None:
             return await self._network_traversal_service_client.communication_network_traversal. \
-                issue_relay_configuration(None, route_type, **kwargs)
+                issue_relay_configuration(route_type=route_type, ttl=ttl, **kwargs)
         return await self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-            user.properties['id'],
-            route_type,
+            id=user.properties['id'],
+            route_type=route_type,
+            ttl=ttl,
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationRelayClient":

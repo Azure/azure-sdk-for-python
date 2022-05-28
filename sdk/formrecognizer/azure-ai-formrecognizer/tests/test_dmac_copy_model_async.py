@@ -28,14 +28,14 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     async def test_copy_model_none_model_id(self, client):
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_copy_model(model_id=None, target={})
+                await client.begin_copy_model_to(model_id=None, target={})
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_empty_model_id(self, client):
         with pytest.raises(ValueError):
             async with client:
-                await client.begin_copy_model(model_id="", target={})
+                await client.begin_copy_model_to(model_id="", target={})
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -48,7 +48,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
             target = await client.get_copy_authorization(tags={"testkey": "testvalue"})
 
-            copy_poller = await client.begin_copy_model(model.model_id, target=target)
+            copy_poller = await client.begin_copy_model_to(model.model_id, target=target)
             copy = await copy_poller.result()
 
             assert copy.model_id == target["targetModelId"]
@@ -75,7 +75,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             description = "this is my copied model"
             target = await client.get_copy_authorization(model_id=model_id, description=description)
 
-            poller = await client.begin_copy_model(model.model_id, target=target)
+            poller = await client.begin_copy_model_to(model.model_id, target=target)
             copy = await poller.result()
             if self.is_live:
                 assert copy.model_id == model_id
@@ -102,7 +102,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
             with pytest.raises(HttpResponseError):
                 # give bad model_id
-                poller = await client.begin_copy_model("00000000-0000-0000-0000-000000000000", target=target)
+                poller = await client.begin_copy_model_to("00000000-0000-0000-0000-000000000000", target=target)
                 copy = await poller.result()
 
     @FormRecognizerPreparer()
@@ -124,7 +124,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             model = await training_poller.result()
 
             target = await client.get_copy_authorization()
-            poller = await client.begin_copy_model(model.model_id, target=target, cls=callback)
+            poller = await client.begin_copy_model_to(model.model_id, target=target, cls=callback)
             copy = await poller.result()
 
             generated = raw_response[0]
@@ -162,7 +162,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
             target = await client.get_copy_authorization()
 
-            poller = await client.begin_copy_model(composed_model.model_id, target=target)
+            poller = await client.begin_copy_model_to(composed_model.model_id, target=target)
             copy = await poller.result()
 
             assert target["targetModelId"] == copy.model_id
@@ -190,9 +190,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
             target = await client.get_copy_authorization()
 
-            initial_poller = await client.begin_copy_model(model.model_id, target=target)
+            initial_poller = await client.begin_copy_model_to(model.model_id, target=target)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_copy_model(model.model_id, None, continuation_token=cont_token)
+            poller = await client.begin_copy_model_to(model.model_id, None, continuation_token=cont_token)
             result = await poller.result()
             assert result
 
@@ -209,7 +209,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
             target = await client.get_copy_authorization()
 
-            poller = await client.begin_copy_model(model.model_id, target=target)
+            poller = await client.begin_copy_model_to(model.model_id, target=target)
             assert poller.operation_id
             assert poller.percent_completed is not None
             await poller.result()

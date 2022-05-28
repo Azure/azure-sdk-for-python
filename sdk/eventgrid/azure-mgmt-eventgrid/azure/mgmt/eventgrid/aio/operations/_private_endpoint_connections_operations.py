@@ -52,22 +52,22 @@ class PrivateEndpointConnectionsOperations:
     async def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum18"],
+        parent_type: Union[str, "_models.ParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Get a specific private endpoint connection.
 
-        Get a specific private endpoint connection under a topic or domain.
+        Get a specific private endpoint connection under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum18
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -115,7 +115,7 @@ class PrivateEndpointConnectionsOperations:
     async def _update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum19"],
+        parent_type: Union[str, "_models.ParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
@@ -169,7 +169,7 @@ class PrivateEndpointConnectionsOperations:
     async def begin_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum19"],
+        parent_type: Union[str, "_models.ParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
@@ -177,15 +177,15 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Update a specific private endpoint connection.
 
-        Update a specific private endpoint connection under a topic or domain.
+        Update a specific private endpoint connection under a topic, domain or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum19
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -253,7 +253,7 @@ class PrivateEndpointConnectionsOperations:
     async def _delete_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum20"],
+        parent_type: Union[str, "_models.ParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -293,22 +293,22 @@ class PrivateEndpointConnectionsOperations:
     async def begin_delete(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum20"],
+        parent_type: Union[str, "_models.ParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a specific private endpoint connection.
 
-        Delete a specific private endpoint connection under a topic or domain.
+        Delete a specific private endpoint connection under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum20
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -367,7 +367,7 @@ class PrivateEndpointConnectionsOperations:
     def list_by_resource(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum21"],
+        parent_type: Union[str, "_models.ParentType"],
         parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
@@ -375,15 +375,15 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Lists all private endpoint connections under a resource.
 
-        Get all private endpoint connections under a topic or domain.
+        Get all private endpoint connections under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum21
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These

@@ -8,7 +8,7 @@ import pytest
 import functools
 import uuid
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_custom_default_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from preparers import FormRecognizerPreparer
@@ -28,7 +28,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
     async def test_copy_model_successful_v2(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
@@ -51,7 +54,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
     async def test_copy_model_with_labeled_model_name_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="mymodel")
             model = await poller.result()
@@ -75,7 +81,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
     async def test_copy_model_with_unlabeled_model_name_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False, model_name="mymodel")
             model = await poller.result()
@@ -99,7 +108,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
     async def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
@@ -117,7 +129,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
     async def test_copy_model_case_insensitive_region_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()
@@ -138,7 +153,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
     async def test_copy_authorization_v2(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             target = await client.get_copy_authorization(resource_region="eastus", resource_id=formrecognizer_resource_id)
 
@@ -152,7 +170,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
     async def test_copy_authorization_v21(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             target = await client.get_copy_authorization(resource_region="eastus", resource_id=formrecognizer_resource_id)
 
@@ -166,7 +187,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
     async def test_copy_model_with_composed_model_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         async with client:
             poller_1 = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="model1")
             model_1 = await poller_1.result()

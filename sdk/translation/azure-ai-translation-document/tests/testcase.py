@@ -9,7 +9,7 @@ import datetime
 import uuid
 from devtools_testutils import (
     AzureRecordedTestCase,
-    set_bodiless_matcher
+    set_custom_default_matcher
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
@@ -78,7 +78,10 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         return self.generate_sas_url(variables[var_key], "wl")
 
     def generate_sas_url(self, container_name, permission):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         sas_token = self.generate_sas(
             generate_container_sas,
             account_name=self.storage_name,

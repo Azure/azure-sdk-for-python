@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from uuid import UUID
 import pytest
 
 from datetime import datetime, timedelta
@@ -37,6 +38,8 @@ from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
+
+TEST_GUID = UUID("c8924069-90ee-4726-83b5-45ff92496126")
 
 class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
@@ -1986,5 +1989,45 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     row_key=entity['RowKey'])
                 assert get_entity == entity1
 
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_entity_with_edmtypes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            "bool": ("false", EdmType.BOOLEAN),
+            "text": (42, EdmType.STRING),
+            "number": ("23", EdmType.INT32),
+            "bigNumber": (64, EdmType.INT64),
+            "bytes": ("test", EdmType.BINARY),
+            "amount": ("0", EdmType.DOUBLE),
+            "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
+            "guid": (TEST_GUID, EdmType.GUID)
+        }
+        try:
+            await self.table.upsert_entity(entity)
+            result = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            assert result['bool'] == False
+            assert result['text'] == "42"
+            assert result['number'] == 23
+            assert result['bigNumber'][0] == 64
+            assert result['bytes'] == b"test"
+            assert result['amount'] == 0.0
+            assert str(result['since']) == "2008-07-10 00:00:00+00:00"
+            assert result['guid'] == entity["guid"][0]
+
+            with pytest.raises(HttpResponseError) as e:
+                entity = {
+                    'PartitionKey': partition,
+                    'RowKey': row,
+                    "bool": ("not a bool", EdmType.BOOLEAN)
+                }
+                await self.table.upsert_entity(entity)
         finally:
             await self._tear_down()

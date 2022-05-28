@@ -335,6 +335,11 @@ async for certificate in certificates:
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-certificates`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a key that doesn't exist in the vault, [CertificateClient][certificate_client_docs]

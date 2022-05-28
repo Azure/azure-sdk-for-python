@@ -33,7 +33,7 @@ class DataNetworksOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -168,7 +168,7 @@ class DataNetworksOperations:
         :type data_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataNetwork, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.DataNetwork
+        :rtype: ~azure.mgmt.mobilenetwork.models.DataNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataNetwork"]
@@ -276,7 +276,7 @@ class DataNetworksOperations:
         :type data_network_name: str
         :param parameters: Parameters supplied to the create or update mobile network dataNetwork
          operation.
-        :type parameters: ~mobile_network_management_client.models.DataNetwork
+        :type parameters: ~azure.mgmt.mobilenetwork.models.DataNetwork
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -287,8 +287,7 @@ class DataNetworksOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataNetwork or the result of
          cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~mobile_network_management_client.models.DataNetwork]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.DataNetwork]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -352,10 +351,10 @@ class DataNetworksOperations:
         :param data_network_name: The name of the mobile network dataNetwork.
         :type data_network_name: str
         :param parameters: Parameters supplied to update data network tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataNetwork, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.DataNetwork
+        :rtype: ~azure.mgmt.mobilenetwork.models.DataNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataNetwork"]
@@ -415,7 +414,7 @@ class DataNetworksOperations:
         :return: An iterator like instance of either DataNetworkListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.DataNetworkListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.DataNetworkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataNetworkListResult"]

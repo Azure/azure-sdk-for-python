@@ -1,0 +1,169 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01
+  response:
+    body:
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "library/alpine", "Action": "metadata_read"}]}]}'
+    headers:
+      access-control-expose-headers:
+      - Docker-Content-Digest
+      - WWW-Authenticate
+      - Link
+      - X-Ms-Correlation-Request-Id
+      connection:
+      - keep-alive
+      content-length:
+      - '217'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Mar 2022 13:08:48 GMT
+      docker-distribution-api-version:
+      - registry/2.0
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      - max-age=31536000; includeSubDomains
+      www-authenticate:
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1379'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
+  response:
+    body:
+      string: '{"refresh_token": "REDACTED"}'
+    headers:
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Mar 2022 13:08:48 GMT
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '166.65'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: service=fake_url.azurecr.io&scope=repository%3Alibrary%2Falpine%3Ametadata_read&refresh_token=REDACTED&grant_type=refresh_token
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1156'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Mar 2022 13:08:49 GMT
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '166.633333'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Falpine?api-version=2021-07-01
+  response:
+    body:
+      string: '{"registry": "yallacrtests.azurecr.io", "imageName": "library/alpine",
+        "createdTime": "2022-03-17T12:20:47.2455348Z", "lastUpdateTime": "2022-03-17T12:20:45.8750709Z",
+        "manifestCount": 8, "tagCount": 1, "changeableAttributes": {"deleteEnabled":
+        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}'
+    headers:
+      access-control-expose-headers:
+      - Docker-Content-Digest
+      - WWW-Authenticate
+      - Link
+      - X-Ms-Correlation-Request-Id
+      connection:
+      - keep-alive
+      content-length:
+      - '296'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 17 Mar 2022 13:08:49 GMT
+      docker-distribution-api-version:
+      - registry/2.0
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,340 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 11 Mar 2022 16:34:36 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AuTGA0UGvnJPjytarsQ6xUqlEE-xAQAAABhxvdkOAAAA; expires=Sun, 10-Apr-2022 16:34:36 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12529.18 - EUS ProdSlices",
+        "x-ms-request-id": "09468a0d-da48-4527-93c6-5c75a7121900"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AuTGA0UGvnJPjytarsQ6xUqlEE-xAQAAABhxvdkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 11 Mar 2022 16:34:36 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AuTGA0UGvnJPjytarsQ6xUqlEE-xAQAAABhxvdkOAAAA; expires=Sun, 10-Apr-2022 16:34:36 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12559.4 - SCUS ProdSlices",
+        "x-ms-request-id": "e785887f-5c79-4937-b182-deaba7ac3700"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update92272d8a?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "201",
+        "Content-Type": "application/json; serialization=Avro",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "23f5f0cd-a159-11ec-a15f-9c2976df0bde"
+      },
+      "RequestBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "favorite_number",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "favorite_color",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 11 Mar 2022 16:34:36 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update92272d8a/versions/3?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "79a4e4672c8b4468a29dc2bb3160dc43",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/79a4e4672c8b4468a29dc2bb3160dc43?api-version=2021-10",
+        "Schema-Name": "test-schema-update92272d8a",
+        "Schema-Version": "3",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update92272d8a/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update92272d8a?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "200",
+        "Content-Type": "application/json; serialization=Avro",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "24b5bf96-a159-11ec-9531-9c2976df0bde"
+      },
+      "RequestBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "favorite_number",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "favorite_food",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 11 Mar 2022 16:34:37 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update92272d8a/versions/4?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "114aeeb4f80a43859a6c37976c2c465e",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/114aeeb4f80a43859a6c37976c2c465e?api-version=2021-10",
+        "Schema-Name": "test-schema-update92272d8a",
+        "Schema-Version": "4",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update92272d8a/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/114aeeb4f80a43859a6c37976c2c465e?api-version=2021-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "250e85f9-a159-11ec-ad11-9c2976df0bde"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; serialization=Avro",
+        "Date": "Fri, 11 Mar 2022 16:34:38 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update92272d8a/versions/4?api-version=2021-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "114aeeb4f80a43859a6c37976c2c465e",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/114aeeb4f80a43859a6c37976c2c465e?api-version=2021-10",
+        "Schema-Name": "test-schema-update92272d8a",
+        "Schema-Version": "4",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update92272d8a/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "favorite_number",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "favorite_food",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

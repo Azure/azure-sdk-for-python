@@ -11,6 +11,7 @@ import datetime
 from typing import Any, Union, List, Dict, TYPE_CHECKING
 from enum import Enum
 import msrest
+from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
     MetricAlertingConfiguration as _MetricAlertingConfiguration,
     SeverityCondition as _SeverityCondition,
@@ -90,13 +91,12 @@ from .._generated.models import (
     ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
     DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
 )
+from .._generated import models as generated_models
 
 if TYPE_CHECKING:
     from . import (
-        AnomalySeverity,
         SnoozeScope,
         AnomalyDetectorDirection,
-        DataFeedGranularityType,
     )
     from .._generated.models import (
         AnomalyResult,
@@ -106,7 +106,7 @@ if TYPE_CHECKING:
     from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
 
-class MetricAnomalyAlertScopeType(str, Enum):
+class MetricAnomalyAlertScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Anomaly scope"""
 
     WHOLE_SERIES = "WholeSeries"
@@ -138,7 +138,7 @@ class MetricAnomalyAlertScopeType(str, Enum):
         return alert
 
 
-class DataFeedRollupType(str, Enum):
+class DataFeedRollupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data feed rollup type"""
 
     NO_ROLLUP = "NoRollup"
@@ -166,7 +166,7 @@ class DataFeedRollupType(str, Enum):
         return rollup
 
 
-class MetricAnomalyAlertConfigurationsOperator(str, Enum):
+class MetricAnomalyAlertConfigurationsOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cross metrics operator"""
 
     AND = "AND"
@@ -174,7 +174,7 @@ class MetricAnomalyAlertConfigurationsOperator(str, Enum):
     XOR = "XOR"
 
 
-class DetectionConditionOperator(str, Enum):
+class DetectionConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AND = "AND"
     OR = "OR"
@@ -4102,3 +4102,120 @@ class DetectionAnomalyFilterCondition(msrest.serialization.Model):
         return _DetectionAnomalyFilterCondition(
             dimension_filter=dimension_filter, severity_filter=self.severity_filter
         )
+
+################# ADDED GENERATED MODELS ########################
+
+class AnomalySeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """min alert severity
+    """
+
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+
+class DatasourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """data source type
+    """
+
+    AZURE_APPLICATION_INSIGHTS = "AzureApplicationInsights"
+    AZURE_BLOB = "AzureBlob"
+    AZURE_COSMOS_DB = "AzureCosmosDB"
+    AZURE_DATA_EXPLORER = "AzureDataExplorer"
+    AZURE_DATA_LAKE_STORAGE_GEN2 = "AzureDataLakeStorageGen2"
+    AZURE_EVENT_HUBS = "AzureEventHubs"
+    AZURE_LOG_ANALYTICS = "AzureLogAnalytics"
+    AZURE_TABLE = "AzureTable"
+    INFLUX_DB = "InfluxDB"
+    MONGO_DB = "MongoDB"
+    MY_SQL = "MySql"
+    POSTGRE_SQL = "PostgreSql"
+    SQL_SERVER = "SqlServer"
+
+class DataFeedAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """data feed access mode, default is Private
+    """
+
+    PRIVATE = "Private"
+    PUBLIC = "Public"
+
+class DataFeedAutoRollupMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """roll up method
+    """
+
+    NONE = "None"
+    SUM = "Sum"
+    MAX = "Max"
+    MIN = "Min"
+    AVG = "Avg"
+    COUNT = "Count"
+
+class DatasourceMissingDataPointFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the type of fill missing point for anomaly detection
+    """
+
+    SMART_FILLING = "SmartFilling"
+    PREVIOUS_VALUE = "PreviousValue"
+    CUSTOM_VALUE = "CustomValue"
+    NO_FILLING = "NoFilling"
+
+class AnomalyIncidentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """incident status
+
+    only return for alerting incident result
+    """
+
+    ACTIVE = "Active"
+    RESOLVED = "Resolved"
+
+class DataFeedGranularityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """granularity of the time series
+    """
+
+    YEARLY = "Yearly"
+    MONTHLY = "Monthly"
+    WEEKLY = "Weekly"
+    DAILY = "Daily"
+    HOURLY = "Hourly"
+    MINUTELY = "Minutely"
+    CUSTOM = "Custom"
+
+class DataFeedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """data feed status
+    """
+
+    ACTIVE = "Active"
+    PAUSED = "Paused"
+
+class AlertQueryTimeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """time mode
+    """
+
+    ANOMALY_TIME = "AnomalyTime"
+    CREATED_TIME = "CreatedTime"
+    MODIFIED_TIME = "ModifiedTime"
+
+class DatasourceCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of data source credential
+    """
+
+    AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
+    DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
+
+class DatasourceAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """authentication type for corresponding data source
+    """
+
+    BASIC = "Basic"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
+    DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
+
+class MetricSeriesDefinition(generated_models.MetricSeriesItem):
+    ...
+
+class DataFeedIngestionStatus(generated_models.IngestionStatus):
+    ...

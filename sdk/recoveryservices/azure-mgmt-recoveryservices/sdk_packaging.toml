@@ -1,5 +1,5 @@
 [packaging]
 package_name = "azure-mgmt-recoveryservices"
 package_pprint_name = "Recovery Services"
-package_doc_id = "recoveryservices"
+package_doc_id = ""
 is_stable = false

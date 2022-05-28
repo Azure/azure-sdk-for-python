@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, TypeVar, Union, Optional
+from typing import BinaryIO, TypeVar, Union, Any
 from abc import abstractmethod
 
 ObjectType = TypeVar("ObjectType")
+
 
 class AbstractAvroObjectEncoder(object):
     """
@@ -28,7 +29,6 @@ class AbstractAvroObjectEncoder(object):
         :rtype: str
         """
 
-
     @abstractmethod
     def encode(
         self,
@@ -48,13 +48,7 @@ class AbstractAvroObjectEncoder(object):
         """
 
     @abstractmethod
-    def decode(
-        self,
-        content: Union[bytes, BinaryIO],
-        schema: str,
-        *,
-        readers_schema: Optional[str]
-    ):
+    def decode(self, content: Union[bytes, BinaryIO], reader: Any):
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly

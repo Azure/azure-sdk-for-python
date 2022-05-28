@@ -31,3 +31,14 @@ def test_unknown_connection_error():
     assert isinstance(sb_error,ServiceBusError)
     assert not sb_error._retryable
     assert sb_error._shutdown_handler
+
+def test_internal_server_error():
+    logger = logging.getLogger("testlogger")
+    amqp_error = AMQPErrors.LinkDetach(
+        description="The service was unable to process the request; please retry the operation.",
+        condition=AMQPConstants.ErrorCodes.InternalServerError
+    )
+    sb_error = _create_servicebus_exception(logger, amqp_error)
+    assert isinstance(sb_error, ServiceBusError)
+    assert sb_error._retryable
+    assert sb_error._shutdown_handler

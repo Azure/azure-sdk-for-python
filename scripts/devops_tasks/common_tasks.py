@@ -21,6 +21,7 @@ import io
 import re
 import fnmatch
 import platform
+from typing import Tuple, Iterable
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -88,6 +89,165 @@ def str_to_bool(input_string):
         return False
 
 
+def parse_setup(setup_path: str) -> Tuple[str, str, Iterable[str], str]:
+    """
+    This function is used for getting metadata about a package from its setup.py.
+
+    Tuple index:
+      * 0 = name
+      * 1 = version
+      * 2 = array of dependencies
+      * 3 = python_requires value
+    """
+
+    setup_filename = setup_path
+    if not setup_path.endswith("setup.py"):
+        setup_filename = os.path.join(setup_path, "setup.py")
+
+    mock_setup = textwrap.dedent(
+        """\
+    def setup(*args, **kwargs):
+        __setup_calls__.append((args, kwargs))
+    """
+    )
+    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
+    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
+        parsed = ast.parse(setup_file.read())
+        for index, node in enumerate(parsed.body[:]):
+            if (
+                not isinstance(node, ast.Expr)
+                or not isinstance(node.value, ast.Call)
+                or not hasattr(node.value.func, "id")
+                or node.value.func.id != "setup"
+            ):
+                continue
+            parsed.body[index:index] = parsed_mock_setup.body
+            break
+
+    fixed = ast.fix_missing_locations(parsed)
+    codeobj = compile(fixed, setup_filename, "exec")
+    local_vars = {}
+    global_vars = {"__setup_calls__": []}
+    current_dir = os.getcwd()
+    working_dir = os.path.dirname(setup_filename)
+    os.chdir(working_dir)
+    exec(codeobj, global_vars, local_vars)
+    os.chdir(current_dir)
+    _, kwargs = global_vars["__setup_calls__"][0]
+
+    try:
+        python_requires = kwargs["python_requires"]
+    # most do not define this, fall back to what we define as universal
+    except KeyError as e:
+        python_requires = ">=2.7"
+
+    version = kwargs["version"]
+    name = kwargs["name"]
+
+    requires = []
+    if "install_requires" in kwargs:
+        requires = kwargs["install_requires"]
+
+    return name, version, python_requires, requires
+
+
+def parse_requirements_file(file_location):
+    with open(file_location, "r") as f:
+        reqs = f.read()
+
+    return dict((req.name, req) for req in parse_requirements(reqs))
+
+
+def parse_setup_requires(setup_path):
+    _, _, python_requires, _ = parse_setup(setup_path)
+
+    return python_requires
+
+
+def get_name_from_specifier(version):
+    return re.split(r"[><=]", version)[0]
+
+
+def filter_for_compatibility(package_set):
+    collected_packages = []
+    v = sys.version_info
+    running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
+
+    for pkg in package_set:
+        spec_set = SpecifierSet(parse_setup_requires(pkg))
+
+        if running_major_version in spec_set:
+            collected_packages.append(pkg)
+
+    return collected_packages
+
+
+def compare_python_version(version_spec):
+    current_sys_version = parse(platform.python_version())
+    spec_set = SpecifierSet(version_spec)
+
+    return current_sys_version in spec_set
+
+
+def filter_packages_by_compatibility_override(package_set, resolve_basename=True):
+    return [
+        p
+        for p in package_set
+        if compare_python_version(TEST_COMPATIBILITY_MAP.get(os.path.basename(p) if resolve_basename else p, ">=2.7"))
+    ]
+
+
+# this function is where a glob string gets translated to a list of packages
+# It is called by both BUILD (package) and TEST. In the future, this function will be the central location
+# for handling targeting of release packages
+def process_glob_string(
+    glob_string,
+    target_root_dir,
+    additional_contains_filter="",
+    filter_type="Build",
+):
+    if glob_string:
+        individual_globs = glob_string.split(",")
+    else:
+        individual_globs = "azure-*"
+    collected_top_level_directories = []
+
+    for glob_string in individual_globs:
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
+            os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
+        )
+        collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
+
+    # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
+    collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
+
+    # if we have individually queued this specific package, it's obvious that we want to build it specifically
+    # in this case, do not honor the omission list
+    if len(collected_directories) == 1:
+        pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
+    # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
+    # packages
+    else:
+        allowed_package_set = remove_omitted_packages(collected_directories)
+        pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
+
+    # Apply filter based on filter type. for e.g. Docs, Regression, Management
+    pkg_set_ci_filtered = list(filter(omit_funct_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
+    logging.info("Target packages after filtering by CI: {}".format(pkg_set_ci_filtered))
+    logging.info(
+        "Package(s) omitted by CI filter: {}".format(list(set(collected_directories) - set(pkg_set_ci_filtered)))
+    )
+    return sorted(pkg_set_ci_filtered)
+
+
+def remove_omitted_packages(collected_directories):
+    packages = [
+        package_dir for package_dir in collected_directories if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
+    ]
+
+    return packages
+
+
 def run_check_call(
     command_array,
     working_directory,
@@ -145,6 +305,20 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
         return True
     else:
         return False
+
+
+def parse_require(req) -> Tuple[str, str]:
+    """
+    Parses the incoming version specification and returns a tuple of the requirement name and specifier.
+
+    "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
+    """
+
+    req_object = Requirement.parse(req.split(";")[0])
+    pkg_name = req_object.key
+    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
+    return (pkg_name, spec)
+
 
 def find_whl(package_name, version, whl_directory):
     if not os.path.exists(whl_directory):
@@ -226,7 +400,14 @@ def extend_dev_requirements(dev_req_path, packages_to_include):
         dev_req_file.writelines(requirements)
 
 
-def is_required_version_on_pypi(package_name, spec):
+def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
+    """
+    This function evaluates a package name and version specifier combination and returns the versions on pypi
+    that satisfy the provided version specifier.
+
+    Import dependency on azure-sdk-tools.
+    """
+
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
@@ -238,7 +419,13 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def find_packages_missing_on_pypi(path):
+def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
+    """
+    Given a setup path, evaluate all dependencies and return a list of packages whos specifier can NOT be matched against PyPI releases.
+
+    Import dependency on pkginfo.
+    """
+
     import pkginfo
 
     requires = []

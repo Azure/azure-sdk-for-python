@@ -564,9 +564,9 @@ class TestRepr():
 
     def test_account_info(self):
         model = _models.AccountInfo(
-            model_limit=5000, model_count=10
+            document_model_limit=5000, document_model_count=10
         )
-        model_repr = "AccountInfo(model_count={}, model_limit={})".format(
+        model_repr = "AccountInfo(document_model_count={}, document_model_limit={})".format(
             10, 5000
         )
         assert repr(model) == model_repr

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -22,24 +22,19 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    scope,  # type: str
-    event_subscription_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    scope: str,
+    event_subscription_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}')
@@ -68,14 +63,16 @@ def build_get_request(
 
 
 def build_create_or_update_request_initial(
-    scope,  # type: str
-    event_subscription_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    scope: str,
+    event_subscription_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}')
@@ -101,17 +98,18 @@ def build_create_or_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    scope,  # type: str
-    event_subscription_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    scope: str,
+    event_subscription_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}')
     path_format_arguments = {
@@ -134,14 +132,16 @@ def build_delete_request_initial(
 
 
 def build_update_request_initial(
-    scope,  # type: str
-    event_subscription_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    scope: str,
+    event_subscription_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}')
@@ -167,17 +167,18 @@ def build_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_full_url_request(
-    scope,  # type: str
-    event_subscription_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    scope: str,
+    event_subscription_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}/getFullUrl')
@@ -206,14 +207,13 @@ def build_get_full_url_request(
 
 
 def build_list_global_by_subscription_request(
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/eventSubscriptions')
@@ -245,15 +245,14 @@ def build_list_global_by_subscription_request(
 
 
 def build_list_global_by_subscription_for_topic_type_request(
-    subscription_id,  # type: str
-    topic_type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    topic_type_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventSubscriptions')
@@ -286,15 +285,14 @@ def build_list_global_by_subscription_for_topic_type_request(
 
 
 def build_list_global_by_resource_group_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/eventSubscriptions')
@@ -327,16 +325,15 @@ def build_list_global_by_resource_group_request(
 
 
 def build_list_global_by_resource_group_for_topic_type_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    topic_type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    topic_type_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventSubscriptions')
@@ -370,15 +367,14 @@ def build_list_global_by_resource_group_for_topic_type_request(
 
 
 def build_list_regional_by_subscription_request(
-    subscription_id,  # type: str
-    location,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    location: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/locations/{location}/eventSubscriptions')
@@ -411,16 +407,15 @@ def build_list_regional_by_subscription_request(
 
 
 def build_list_regional_by_resource_group_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    location,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    location: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/locations/{location}/eventSubscriptions')
@@ -454,16 +449,15 @@ def build_list_regional_by_resource_group_request(
 
 
 def build_list_regional_by_subscription_for_topic_type_request(
-    subscription_id,  # type: str
-    location,  # type: str
-    topic_type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    location: str,
+    topic_type_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/locations/{location}/topicTypes/{topicTypeName}/eventSubscriptions')
@@ -497,17 +491,16 @@ def build_list_regional_by_subscription_for_topic_type_request(
 
 
 def build_list_regional_by_resource_group_for_topic_type_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    location,  # type: str
-    topic_type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    location: str,
+    topic_type_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/locations/{location}/topicTypes/{topicTypeName}/eventSubscriptions')
@@ -542,18 +535,17 @@ def build_list_regional_by_resource_group_for_topic_type_request(
 
 
 def build_list_by_resource_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    provider_namespace,  # type: str
-    resource_type_name,  # type: str
-    resource_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    provider_namespace: str,
+    resource_type_name: str,
+    resource_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerNamespace}/{resourceTypeName}/{resourceName}/providers/Microsoft.EventGrid/eventSubscriptions')
@@ -589,17 +581,16 @@ def build_list_by_resource_request(
 
 
 def build_list_by_domain_topic_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    topic_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{topicName}/providers/Microsoft.EventGrid/eventSubscriptions')
@@ -634,12 +625,11 @@ def build_list_by_domain_topic_request(
 
 
 def build_get_delivery_attributes_request(
-    scope,  # type: str
-    event_subscription_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    scope: str,
+    event_subscription_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes')
@@ -666,7 +656,6 @@ def build_get_delivery_attributes_request(
         **kwargs
     )
 
-# fmt: on
 class EventSubscriptionsOperations(object):
     """EventSubscriptionsOperations operations.
 
@@ -692,11 +681,10 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def get(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.EventSubscription"
+        scope: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> "_models.EventSubscription":
         """Get an event subscription.
 
         Get properties of an event subscription.
@@ -751,12 +739,11 @@ class EventSubscriptionsOperations(object):
 
     def _create_or_update_initial(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        event_subscription_info,  # type: "_models.EventSubscription"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.EventSubscription"
+        scope: str,
+        event_subscription_name: str,
+        event_subscription_info: "_models.EventSubscription",
+        **kwargs: Any
+    ) -> "_models.EventSubscription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -797,12 +784,11 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def begin_create_or_update(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        event_subscription_info,  # type: "_models.EventSubscription"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.EventSubscription"]
+        scope: str,
+        event_subscription_name: str,
+        event_subscription_info: "_models.EventSubscription",
+        **kwargs: Any
+    ) -> LROPoller["_models.EventSubscription"]:
         """Create or update an event subscription.
 
         Asynchronously creates a new event subscription or updates an existing event subscription based
@@ -881,11 +867,10 @@ class EventSubscriptionsOperations(object):
 
     def _delete_initial(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        scope: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -917,11 +902,10 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        scope: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete an event subscription.
 
         Delete an existing event subscription.
@@ -987,12 +971,11 @@ class EventSubscriptionsOperations(object):
 
     def _update_initial(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        event_subscription_update_parameters,  # type: "_models.EventSubscriptionUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.EventSubscription"
+        scope: str,
+        event_subscription_name: str,
+        event_subscription_update_parameters: "_models.EventSubscriptionUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.EventSubscription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1033,12 +1016,11 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def begin_update(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        event_subscription_update_parameters,  # type: "_models.EventSubscriptionUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.EventSubscription"]
+        scope: str,
+        event_subscription_name: str,
+        event_subscription_update_parameters: "_models.EventSubscriptionUpdateParameters",
+        **kwargs: Any
+    ) -> LROPoller["_models.EventSubscription"]:
         """Update an event subscription.
 
         Asynchronously updates an existing event subscription.
@@ -1115,11 +1097,10 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def get_full_url(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.EventSubscriptionFullUrl"
+        scope: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> "_models.EventSubscriptionFullUrl":
         """Get full URL of an event subscription.
 
         Get the full endpoint URL for an event subscription.
@@ -1175,11 +1156,10 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_global_by_subscription(
         self,
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """Get an aggregated list of all global event subscriptions under an Azure subscription.
 
         List all aggregated global event subscriptions under a specific Azure subscription.
@@ -1259,12 +1239,11 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_global_by_subscription_for_topic_type(
         self,
-        topic_type_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        topic_type_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all global event subscriptions for a topic type.
 
         List all global event subscriptions under an Azure subscription for a topic type.
@@ -1348,12 +1327,11 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_global_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all global event subscriptions under an Azure subscription and resource group.
 
         List all global event subscriptions under a specific Azure subscription and resource group.
@@ -1437,13 +1415,12 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_global_by_resource_group_for_topic_type(
         self,
-        resource_group_name,  # type: str
-        topic_type_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        resource_group_name: str,
+        topic_type_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all global event subscriptions under a resource group for a topic type.
 
         List all global event subscriptions under a resource group for a specific topic type.
@@ -1531,12 +1508,11 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_regional_by_subscription(
         self,
-        location,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        location: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription.
 
         List all event subscriptions from the given location under a specific Azure subscription.
@@ -1620,13 +1596,12 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_regional_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        location,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        resource_group_name: str,
+        location: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription and resource group.
 
         List all event subscriptions from the given location under a specific Azure subscription and
@@ -1715,13 +1690,12 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_regional_by_subscription_for_topic_type(
         self,
-        location,  # type: str
-        topic_type_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        location: str,
+        topic_type_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription for a topic type.
 
         List all event subscriptions from the given location under a specific Azure subscription and
@@ -1810,14 +1784,13 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_regional_by_resource_group_for_topic_type(
         self,
-        resource_group_name,  # type: str
-        location,  # type: str
-        topic_type_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        resource_group_name: str,
+        location: str,
+        topic_type_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all regional event subscriptions under an Azure subscription and resource group for a
         topic type.
 
@@ -1911,18 +1884,17 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_by_resource(
         self,
-        resource_group_name,  # type: str
-        provider_namespace,  # type: str
-        resource_type_name,  # type: str
-        resource_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
-        """List all event subscriptions for a specific topic.
+        resource_group_name: str,
+        provider_namespace: str,
+        resource_type_name: str,
+        resource_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
+        """List all event subscriptions.
 
-        List all event subscriptions that have been created for a specific topic.
+        List all event subscriptions that have been created for a specific resource.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
@@ -2015,14 +1987,13 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def list_by_domain_topic(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        topic_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventSubscriptionsListResult"]
+        resource_group_name: str,
+        domain_name: str,
+        topic_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EventSubscriptionsListResult"]:
         """List all event subscriptions for a specific domain topic.
 
         List all event subscriptions that have been created for a specific domain topic.
@@ -2114,11 +2085,10 @@ class EventSubscriptionsOperations(object):
     @distributed_trace
     def get_delivery_attributes(
         self,
-        scope,  # type: str
-        event_subscription_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DeliveryAttributeListResult"
+        scope: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> "_models.DeliveryAttributeListResult":
         """Get delivery attributes for an event subscription.
 
         Get all delivery attributes for an event subscription.

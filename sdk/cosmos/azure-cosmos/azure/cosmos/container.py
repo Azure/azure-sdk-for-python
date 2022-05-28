@@ -22,15 +22,17 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
 
+from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload  # pylint: disable=unused-import
+
+import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
+from ._base import build_options, validate_cache_staleness_value
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
-from .offer import Offer
+from .offer import ThroughputProperties
 from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue
 
@@ -44,8 +46,8 @@ class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
 
     This class should not be instantiated directly. Instead, use the
-    :func:`DatabaseProxy.get_container_client` method to get an existing
-    container, or the :func:`Database.create_container` method to create a
+    :func:`~azure.cosmos.database.DatabaseProxy.get_container_client` method to get an existing
+    container, or the :func:`~azure.cosmos.database.DatabaseProxy.create_container` method to create a
     new container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of
@@ -108,21 +110,29 @@ class ContainerProxy(object):
             return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
         return partition_key
 
+    @overload
+    def read(
+        self,
+        *,
+        populate_partition_key_range_statistics: Optional[bool] = None,
+        populate_quota_info: Optional[bool] = None,
+        **kwargs
+    ):
+        ...
+
+
     @distributed_trace
     def read(
         self,
-        populate_query_metrics=None,  # type: Optional[bool]
-        populate_partition_key_range_statistics=None,  # type: Optional[bool]
-        populate_quota_info=None,  # type: Optional[bool]
+        *args,
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
 
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key
+        :keyword bool populate_partition_key_range_statistics: Enable returning partition key
             range statistics in response headers.
-        :param populate_quota_info: Enable returning collection storage quota information in response headers.
+        :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -133,8 +143,15 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
+        populate_query_metrics = args[0] if args else kwargs.pop('populate_query_metrics', None)
+        if populate_query_metrics:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+        populate_partition_key_range_statistics = args[1] if args and len(args) > 1 else kwargs.pop(
+            "populate_partition_key_range_statistics", None)
+        populate_quota_info = args[2] if args and len(args) > 2 else kwargs.pop("populate_quota_info", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
@@ -164,11 +181,15 @@ class ContainerProxy(object):
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -190,9 +211,17 @@ class ContainerProxy(object):
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
@@ -210,10 +239,14 @@ class ContainerProxy(object):
         """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -222,7 +255,15 @@ class ContainerProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -316,8 +357,13 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -349,6 +395,10 @@ class ContainerProxy(object):
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -382,7 +432,6 @@ class ContainerProxy(object):
 
         :param item: The ID (name) or dict representing item to be replaced.
         :param body: A dict-like object representing the item to replace.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -399,8 +448,12 @@ class ContainerProxy(object):
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
@@ -430,7 +483,6 @@ class ContainerProxy(object):
         does not already exist, it is inserted.
 
         :param body: A dict-like object representing the item to update or insert.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -445,8 +497,12 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
@@ -480,7 +536,6 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param indexing_directive: Indicate whether the document should be omitted from indexing.
@@ -500,6 +555,10 @@ class ContainerProxy(object):
 
         request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
         if populate_query_metrics:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
@@ -532,7 +591,6 @@ class ContainerProxy(object):
 
         :param item: The ID (name) or dict representing item to be deleted.
         :param partition_key: Specifies the partition key value for the item.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -550,6 +608,10 @@ class ContainerProxy(object):
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
@@ -564,15 +626,31 @@ class ContainerProxy(object):
     @distributed_trace
     def read_offer(self, **kwargs):
         # type: (Any) -> Offer
-        """Read the Offer object for this container.
-
-        If no Offer already exists for the container, an exception is raised.
-
+        """Get the ThroughputProperties object for this container.
+        If no ThroughputProperties already exist for the container, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the container.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
-            the offer could not be retrieved.
-        :rtype: ~azure.cosmos.Offer
+        :returns: Throughput for the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
+        """
+        warnings.warn(
+            "read_offer is a deprecated method name, use get_throughput instead",
+            DeprecationWarning
+        )
+        return self.get_throughput(**kwargs)
+
+    @distributed_trace
+    def get_throughput(self, **kwargs):
+        # type: (Any) -> ThroughputProperties
+        """Get the ThroughputProperties object for this container.
+
+        If no ThroughputProperties already exist for the container, an exception is raised.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: Throughput for the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
+            the throughput properties could not be retrieved.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -581,30 +659,31 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not offers:
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for container " + self.container_link)
+                message="Could not find ThroughputProperties for container " + self.container_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, offers)
+            response_hook(self.client_connection.last_response_headers, throughput_properties)
 
-        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
+        return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
+                                    properties=throughput_properties[0])
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (int, Any) -> Offer
+        # type: (int, Any) -> ThroughputProperties
         """Replace the container's throughput.
 
-        If no Offer already exists for the container, an exception is raised.
+        If no ThroughputProperties already exist for the container, an exception is raised.
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: Offer for the container, updated with new throughput.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
-            or the offer could not be updated.
-        :rtype: ~azure.cosmos.Offer
+        :returns: ThroughputProperties for the container, updated with new throughput.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
+            or the throughput properties could not be updated.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -613,19 +692,20 @@ class ContainerProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
-        if not offers:
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
+        if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=StatusCodes.NOT_FOUND,
                 message="Could not find Offer for container " + self.container_link)
-        new_offer = offers[0].copy()
-        new_offer["content"]["offerThroughput"] = throughput
-        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
+        new_throughput_properties = throughput_properties[0].copy()
+        new_throughput_properties["content"]["offerThroughput"] = throughput
+        data = self.client_connection.ReplaceOffer(
+            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
     def list_conflicts(self, max_item_count=None, **kwargs):

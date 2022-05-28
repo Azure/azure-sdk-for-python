@@ -71,7 +71,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
 
     # --Test cases for block blobs --------------------------------------------
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @BlobPreparer()
     def test_put_block_bytes_largest(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -129,7 +129,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @BlobPreparer()
     def test_put_block_stream_largest(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -191,7 +191,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @BlobPreparer()
     def test_create_largest_blob_from_path(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -262,7 +262,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_counter, 1)
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_create_largest_blob_from_stream_without_network(self, storage_account_name, storage_account_key):

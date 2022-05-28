@@ -326,6 +326,11 @@ async for secret_property in secret_properties:
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-secrets`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a key that doesn't exist in the vault,

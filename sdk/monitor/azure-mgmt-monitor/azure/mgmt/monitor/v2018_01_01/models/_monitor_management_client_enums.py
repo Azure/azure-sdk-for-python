@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """the aggregation type of the metric.
     """
 
@@ -37,7 +22,7 @@ class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class MetricClass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MetricClass(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The class of the metric.
     """
 
@@ -47,7 +32,7 @@ class MetricClass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LATENCY = "Latency"
     SATURATION = "Saturation"
 
-class MetricUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MetricUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The unit of the metric.
     """
 
@@ -65,7 +50,7 @@ class MetricUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
 
-class ResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DATA = "Data"
     METADATA = "Metadata"

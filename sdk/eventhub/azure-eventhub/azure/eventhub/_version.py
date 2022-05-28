@@ -3,4 +3,4 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-VERSION = "5.9.0b2"
+VERSION = "5.9.1"
