@@ -54,14 +54,15 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             for scope_metric in resource_metric.scope_metrics:
                 for metric in scope_metric.metrics:
                     for point in metric.data.data_points:
-                        envelopes.append(
-                            self._point_to_envelope(
-                                point,
-                                metric.name,
-                                resource_metric.resource,
-                                scope_metric.scope
+                        if point is not None:
+                            envelopes.append(
+                                self._point_to_envelope(
+                                    point,
+                                    metric.name,
+                                    resource_metric.resource,
+                                    scope_metric.scope
+                                )
                             )
-                        )
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
@@ -89,8 +90,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None
     ) -> TelemetryItem:
-        if not point:
-            return None
         envelope = _convert_point_to_envelope(point, name, resource, scope)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
@@ -146,7 +145,7 @@ def _convert_point_to_envelope(
         max=max,
     )
     data = MetricsData(
-        properties=point.attributes,
+        properties=dict(point.attributes),
         metrics=[data_point],
     )
 
