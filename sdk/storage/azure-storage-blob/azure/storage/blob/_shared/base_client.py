@@ -105,6 +105,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get("require_encryption", False)
+        self.encryption_version = kwargs.get("encryption_version", "1.0")
         self.key_encryption_key = kwargs.get("key_encryption_key")
         self.key_resolver_function = kwargs.get("key_resolver_function")
         self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)

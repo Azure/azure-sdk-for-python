@@ -355,11 +355,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Encryption required but no key was provided.")
         encryption_options = {
             'required': self.require_encryption,
+            'version': self.encryption_version,
             'key': self.key_encryption_key,
             'resolver': self.key_resolver_function,
         }
         if self.key_encryption_key is not None:
-            cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
+            cek, iv, encryption_data = generate_blob_encryption_data(
+                self.key_encryption_key,
+                self.encryption_version)
             encryption_options['cek'] = cek
             encryption_options['vector'] = iv
             encryption_options['data'] = encryption_data

@@ -5,11 +5,16 @@
 # --------------------------------------------------------------------------
 
 import os
+import math
+import sys
+from collections import OrderedDict
+from io import BytesIO
 from json import (
     dumps,
     loads,
 )
-from collections import OrderedDict
+from typing import Any, Dict, Optional
+
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -170,6 +175,156 @@ class _EncryptionData:
         self.encryption_agent = encryption_agent
         self.wrapped_content_key = wrapped_content_key
         self.key_wrapping_metadata = key_wrapping_metadata
+
+
+class GCMBlobEncryptionStream:
+    def __init__(
+            self,
+            content_encryption_key,
+            data_stream,
+            ):
+        self.content_encryption_key = content_encryption_key
+        self.data_stream = data_stream
+
+        self.offset = 0
+        self.current = b''
+        self.nonce_counter = 0
+
+    def read(self, size: int = -1) -> bytes:
+        result = BytesIO()
+        remaining = sys.maxsize if size == -1 else size
+
+        while remaining > 0:
+            # Start by reading from current
+            if len(self.current) > 0:
+                read = min(remaining, len(self.current))
+                result.write(self.current[:read])
+
+                self.current = self.current[read:]
+                self.offset += read
+                remaining -= read
+
+            if remaining > 0:
+                # Read one region of data and encrypt it
+                data = self.data_stream.read(_GCM_REGION_LENGTH)
+                if len(data) == 0:
+                    # No more data to read
+                    break
+
+                self.current = self.encrypt_region(data)
+
+        return result.getvalue()
+
+    def encrypt_region(self, data: bytes) -> bytes:
+        # Each region MUST use a different nonce
+        nonce = self.nonce_counter.to_bytes(_GCM_NONCE_LENGTH, 'big')
+        self.nonce_counter += 1
+
+        aesgcm = AESGCM(self.content_encryption_key)
+
+        # Returns ciphertext + tag
+        cipertext_with_tag = aesgcm.encrypt(nonce, data, None)
+        return nonce + cipertext_with_tag
+
+
+def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
+    # If encryption_data is None, assume no encryption
+    return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
+
+
+def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
+    if encryption_version == _ENCRYPTION_PROTOCOL_V1:
+        return length + (16 - (length % 16))
+    elif encryption_version == _ENCRYPTION_PROTOCOL_V2:
+        encryption_data_length = _GCM_NONCE_LENGTH + _GCM_TAG_LENGTH
+        regions = math.ceil(length / _GCM_REGION_LENGTH)
+        return length + (regions * encryption_data_length)
+    else:
+        raise ValueError("Invalid encryption version specified.")
+
+
+def get_adjusted_download_range_and_offset(
+        start: int,
+        end: int,
+        length: int,
+        encryption_data: Optional[_EncryptionData]):
+
+    start_offset, end_offset = 0, 0
+    if encryption_data is None:
+        return (start, end), (start_offset, end_offset)
+
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
+        if start is not None:
+            # Align the start of the range along a 16 byte block
+            start_offset = start % 16
+            start -= start_offset
+
+            # Include an extra 16 bytes for the IV if necessary
+            # Because of the previous offsetting, start_range will always
+            # be a multiple of 16.
+            if start > 0:
+                start_offset += 16
+                start -= 16
+
+        if length is not None:
+            # Align the end of the range along a 16 byte block
+            end_offset = 15 - (end % 16)
+            end += end_offset
+
+    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
+        start_offset, end_offset = 0, end
+
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        data_length = encryption_data.encrypted_region_info.encrypted_region_data_length
+        tag_length = encryption_data.encrypted_region_info.tag_length
+        region_length = nonce_length + data_length + tag_length
+        requested_length = end - start
+
+        if start is not None:
+            # Find which data region the start is in
+            region_num = start // data_length
+            # The start of the data region is different from the start of the encryption region
+            data_start = region_num * data_length
+            region_start = region_num * region_length
+            # Offset is based on data region
+            start_offset = start - data_start
+            # New start is the start of the encryption region
+            start = region_start
+
+        if end is not None:
+            # Find which data region the end is in
+            region_num = end // data_length
+            end_offset = start_offset + requested_length + 1
+            # New end is the end of the encryption region
+            end = (region_num * region_length) + region_length - 1
+
+    return (start, end), (start_offset, end_offset)
+
+
+def parse_encryption_data(metadata: Dict[str, Any], require_encryption: bool) -> Optional[_EncryptionData]:
+    try:
+        encryption_data_str = metadata['encryptiondata']
+        return _dict_to_encryption_data(loads(encryption_data_str))
+    except:  # pylint: disable=bare-except
+        if require_encryption:
+            raise ValueError(
+                'Encryption required, but received data does not contain appropriate metatadata.' + \
+                'Data was either not encrypted or metadata has been lost.')
+        return None
+
+
+def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_EncryptionData]) -> int:
+    if is_encryption_v2(encryption_data):
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        data_length = encryption_data.encrypted_region_info.encrypted_region_data_length
+        tag_length = encryption_data.encrypted_region_info.tag_length
+        region_length = nonce_length + data_length + tag_length
+
+        num_regions = math.ceil(size / region_length)
+        metadata_size = num_regions * (nonce_length + tag_length)
+        return size - metadata_size
+
+    return size
 
 
 def _generate_encryption_data_dict(kek, cek, iv, version):
@@ -394,9 +549,9 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
     return decrypted_data
 
 
-def encrypt_blob(blob, key_encryption_key):
+def encrypt_blob(blob, key_encryption_key, version):
     '''
-    Encrypts the given blob using AES256 in CBC mode with 128 bit padding.
+    Encrypts the given blob using the given encryption protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
@@ -409,6 +564,7 @@ def encrypt_blob(blob, key_encryption_key):
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
         get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
         get_kid()--returns a string key id for this key-encryption-key.
+    :param str version: The client encryption version to use.
     :return: A tuple of json-formatted string containing the encryption metadata and the encrypted blob data.
     :rtype: (str, bytes)
     '''
@@ -417,35 +573,51 @@ def encrypt_blob(blob, key_encryption_key):
     _validate_not_none('key_encryption_key', key_encryption_key)
     _validate_key_encryption_key_wrap(key_encryption_key)
 
-    # AES256 uses 256 bit (32 byte) keys and always with 16 byte blocks
-    content_encryption_key = os.urandom(32)
-    initialization_vector = os.urandom(16)
+    if version == _ENCRYPTION_PROTOCOL_V1:
+        # AES256 uses 256 bit (32 byte) keys and always with 16 byte blocks
+        content_encryption_key = os.urandom(32)
+        initialization_vector = os.urandom(16)
 
-    cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
+        cipher = _generate_AES_CBC_cipher(content_encryption_key, initialization_vector)
 
-    # PKCS7 with 16 byte blocks ensures compatibility with AES.
-    padder = PKCS7(128).padder()
-    padded_data = padder.update(blob) + padder.finalize()
+        # PKCS7 with 16 byte blocks ensures compatibility with AES.
+        padder = PKCS7(128).padder()
+        padded_data = padder.update(blob) + padder.finalize()
 
-    # Encrypt the data.
-    encryptor = cipher.encryptor()
-    encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
+        # Encrypt the data.
+        encryptor = cipher.encryptor()
+        encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
+
+    elif version == _ENCRYPTION_PROTOCOL_V2:
+        # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
+        content_encryption_key = AESGCM.generate_key(bit_length=256)
+        initialization_vector = None
+
+        data = BytesIO(blob)
+        encryption_stream = GCMBlobEncryptionStream(content_encryption_key, data)
+
+        encrypted_data = encryption_stream.read()
+
+    else:
+        raise ValueError("Invalid encryption version specified.")
+
     encryption_data = _generate_encryption_data_dict(key_encryption_key, content_encryption_key,
-                                                     initialization_vector, _EncryptionAlgorithm.AES_CBC_256)
+                                                     initialization_vector, version)
     encryption_data['EncryptionMode'] = 'FullBlob'
 
     return dumps(encryption_data), encrypted_data
 
 
-def generate_blob_encryption_data(key_encryption_key):
+def generate_blob_encryption_data(key_encryption_key, version):
     '''
     Generates the encryption_metadata for the blob.
 
-    :param bytes key_encryption_key:
+    :param object key_encryption_key:
         The key-encryption-key used to wrap the cek associate with this blob.
+    :param str version: The client encryption version to use.
     :return: A tuple containing the cek and iv for this blob as well as the
         serialized encryption metadata for the blob.
-    :rtype: (bytes, bytes, str)
+    :rtype: (bytes, Optional[bytes], str)
     '''
     encryption_data = None
     content_encryption_key = None
@@ -453,11 +625,13 @@ def generate_blob_encryption_data(key_encryption_key):
     if key_encryption_key:
         _validate_key_encryption_key_wrap(key_encryption_key)
         content_encryption_key = os.urandom(32)
-        initialization_vector = os.urandom(16)
+        # Initialization vector only needed for V1
+        if version == _ENCRYPTION_PROTOCOL_V1:
+            initialization_vector = os.urandom(16)
         encryption_data = _generate_encryption_data_dict(key_encryption_key,
                                                          content_encryption_key,
                                                          initialization_vector,
-                                                         _EncryptionAlgorithm.AES_CBC_256)
+                                                         version)
         encryption_data['EncryptionMode'] = 'FullBlob'
         encryption_data = dumps(encryption_data)
 
@@ -466,22 +640,31 @@ def generate_blob_encryption_data(key_encryption_key):
 
 def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
                  content, start_offset, end_offset, response_headers):
-    '''
+    """
     Decrypts the given blob contents and returns only the requested range.
 
     :param bool require_encryption:
-        Whether or not the calling blob service requires objects to be decrypted.
+        Whether the calling blob service requires objects to be decrypted.
     :param object key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
         get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
         get_kid()--returns a string key id for this key-encryption-key.
-    :param key_resolver(kid):
+    :param object key_resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
+    :param bytes content:
+        The encrypted blob content.
+    :param int start_offset:
+        The adjusted offset from the beginning of the *decrypted* content for the caller's data.
+    :param int end_offset:
+        The adjusted offset from the end of the *decrypted* content for the caller's data.
+    :param Dict[str, Any] response_headers:
+        A dictionary of response headers from the download request. Expected to include the
+        'x-ms-meta-encryptiondata' header if the blob was encrypted.
     :return: The decrypted blob content.
     :rtype: bytes
-    '''
+    """
     try:
         encryption_data = _dict_to_encryption_data(loads(response_headers['x-ms-meta-encryptiondata']))
     except:  # pylint: disable=bare-except
@@ -492,51 +675,86 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
 
         return content
 
-    if encryption_data.encryption_agent.encryption_algorithm != _EncryptionAlgorithm.AES_CBC_256:
+    algorithm = encryption_data.encryption_agent.encryption_algorithm
+    if (algorithm != _EncryptionAlgorithm.AES_CBC_256 and algorithm != _EncryptionAlgorithm.AES_GCM_256):
         raise ValueError('Specified encryption algorithm is not supported.')
 
-    blob_type = response_headers['x-ms-blob-type']
+    content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, key_resolver)
 
-    iv = None
-    unpad = False
-    if 'content-range' in response_headers:
-        content_range = response_headers['content-range']
-        # Format: 'bytes x-y/size'
+    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
+        blob_type = response_headers['x-ms-blob-type']
 
-        # Ignore the word 'bytes'
-        content_range = content_range.split(' ')
+        iv = None
+        unpad = False
+        if 'content-range' in response_headers:
+            content_range = response_headers['content-range']
+            # Format: 'bytes x-y/size'
 
-        content_range = content_range[1].split('-')
-        content_range = content_range[1].split('/')
-        end_range = int(content_range[0])
-        blob_size = int(content_range[1])
+            # Ignore the word 'bytes'
+            content_range = content_range.split(' ')
 
-        if start_offset >= 16:
-            iv = content[:16]
-            content = content[16:]
-            start_offset -= 16
+            content_range = content_range[1].split('-')
+            content_range = content_range[1].split('/')
+            end_range = int(content_range[0])
+            blob_size = int(content_range[1])
+
+            if start_offset >= 16:
+                iv = content[:16]
+                content = content[16:]
+                start_offset -= 16
+            else:
+                iv = encryption_data.content_encryption_IV
+
+            if end_range == blob_size - 1:
+                unpad = True
         else:
+            unpad = True
             iv = encryption_data.content_encryption_IV
 
-        if end_range == blob_size - 1:
-            unpad = True
+        if blob_type == 'PageBlob':
+            unpad = False
+
+        cipher = _generate_AES_CBC_cipher(content_encryption_key, iv)
+        decryptor = cipher.decryptor()
+
+        content = decryptor.update(content) + decryptor.finalize()
+        if unpad:
+            unpadder = PKCS7(128).unpadder()
+            content = unpadder.update(content) + unpadder.finalize()
+
+        return content[start_offset: len(content) - end_offset]
+
+    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
+        # We assume the content contains only full encryption regions
+        total_size = len(content)
+        offset = 0
+
+        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        data_length = encryption_data.encrypted_region_info.encrypted_region_data_length
+        tag_length = encryption_data.encrypted_region_info.tag_length
+        region_length = nonce_length + data_length + tag_length
+
+        decrypted_content = bytearray()
+        while offset < total_size:
+            # Process one encryption region at a time
+            process_size = min(region_length, total_size)
+            encrypted_region = content[offset:offset + process_size]
+
+            # First bytes are the nonce
+            nonce = encrypted_region[:nonce_length]
+            ciphertext_with_tag = encrypted_region[nonce_length:]
+
+            aesgcm = AESGCM(content_encryption_key)
+            decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+            decrypted_content.extend(decrypted_data)
+
+            offset += process_size
+
+        # Read the caller requested data from the decrypted content
+        return decrypted_content[start_offset:end_offset]
+
     else:
-        unpad = True
-        iv = encryption_data.content_encryption_IV
-
-    if blob_type == 'PageBlob':
-        unpad = False
-
-    content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, key_resolver)
-    cipher = _generate_AES_CBC_cipher(content_encryption_key, iv)
-    decryptor = cipher.decryptor()
-
-    content = decryptor.update(content) + decryptor.finalize()
-    if unpad:
-        unpadder = PKCS7(128).unpadder()
-        content = unpadder.update(content) + unpadder.finalize()
-
-    return content[start_offset: len(content) - end_offset]
+        raise ValueError('Specified encryption version is not supported.')
 
 
 def get_blob_encryptor_and_padder(cek, iv, should_pad):
