@@ -43,7 +43,7 @@ def build_set_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
@@ -88,7 +88,7 @@ def build_get_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
@@ -131,7 +131,7 @@ def build_get_statistics_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
@@ -177,7 +177,7 @@ def build_list_queues_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
@@ -313,7 +313,7 @@ class ServiceOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': "{url}/"}  # type: ignore
+    set_properties.metadata = {'url': "{url}"}  # type: ignore
 
 
     @distributed_trace
@@ -391,7 +391,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_properties.metadata = {'url': "{url}/"}  # type: ignore
+    get_properties.metadata = {'url': "{url}"}  # type: ignore
 
 
     @distributed_trace
@@ -471,7 +471,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_statistics.metadata = {'url': "{url}/"}  # type: ignore
+    get_statistics.metadata = {'url': "{url}"}  # type: ignore
 
 
     @distributed_trace
@@ -572,5 +572,5 @@ class ServiceOperations(object):
 
         return deserialized
 
-    list_queues_segment.metadata = {'url': "{url}/"}  # type: ignore
+    list_queues_segment.metadata = {'url': "{url}"}  # type: ignore
 

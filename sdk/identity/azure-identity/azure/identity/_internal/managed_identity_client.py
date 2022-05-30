@@ -32,15 +32,13 @@ if TYPE_CHECKING:
 
 class ManagedIdentityClientBase(ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
-    def __init__(self, request_factory, client_id=None, resource_id=None, identity_config=None, **kwargs):
-        # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[str], Optional[Dict], **Any) -> None
+    def __init__(self, request_factory, client_id=None, identity_config=None, **kwargs):
+        # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[Dict], **Any) -> None
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._identity_config = identity_config or {}
         if client_id:
             self._identity_config["client_id"] = client_id
-        if resource_id:
-            self._identity_config["mi_res_id"] = resource_id
         self._pipeline = self._build_pipeline(**kwargs)
         self._request_factory = request_factory
 

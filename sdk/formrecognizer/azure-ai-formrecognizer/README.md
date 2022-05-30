@@ -34,7 +34,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b3 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
+|3.2.0b4 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -650,7 +650,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
 [service_recognize_tax_documents]: https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
 [service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md

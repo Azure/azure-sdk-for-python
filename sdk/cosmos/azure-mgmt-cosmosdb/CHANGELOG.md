@@ -1,5 +1,49 @@
 # Release History
 
+## 7.0.0b6 (2022-05-23)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+
+**Breaking changes**
+
+  - Removed operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+
+## 7.0.0b5 (2022-04-28)
+
+**Features**
+
+  - Added operation DataTransferJobsOperations.cancel
+  - Added operation DataTransferJobsOperations.pause
+  - Added operation DataTransferJobsOperations.resume
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Model DataTransferJobGetResults has a new parameter processed_count
+  - Model DataTransferJobGetResults has a new parameter total_count
+  - Model DataTransferJobProperties has a new parameter processed_count
+  - Model DataTransferJobProperties has a new parameter total_count
+
+**Breaking changes**
+
+  - Model DataTransferJobGetResults no longer has parameter percentage_complete
+  - Model DataTransferJobProperties no longer has parameter percentage_complete
+
+## 7.0.0b4 (2022-04-14)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model KeyWrapMetadata has a new parameter algorithm
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+
 ## 7.0.0b3 (2022-02-18)
 
 **Features**

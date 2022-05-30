@@ -380,6 +380,66 @@ async def test_cloud_shell_user_assigned_identity():
 
 
 @pytest.mark.asyncio
+async def test_app_service_2017_09_01():
+    """When the environment for 2019-08-01 is not configured, 2017-09-01 should be used."""
+
+    access_token = "****"
+    expires_on = 42
+    expected_token = AccessToken(access_token, expires_on)
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                url,
+                method="GET",
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
+            )
+        ]
+        * 2,
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.MSI_ENDPOINT: url,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+
+@pytest.mark.asyncio
 async def test_app_service_2019_08_01():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 

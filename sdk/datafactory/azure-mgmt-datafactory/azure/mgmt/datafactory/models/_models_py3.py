@@ -451,7 +451,7 @@ class LinkedService(msrest.serialization.Model):
     """The Azure Data Factory nested object which contains the information and credential which can be used to connect with related store or compute resource.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonMWSLinkedService, AmazonRdsForOracleLinkedService, AmazonRdsForSqlServerLinkedService, AmazonRedshiftLinkedService, AmazonS3LinkedService, AmazonS3CompatibleLinkedService, AzureBatchLinkedService, AzureBlobFSLinkedService, AzureBlobStorageLinkedService, AzureDataExplorerLinkedService, AzureDataLakeAnalyticsLinkedService, AzureDataLakeStoreLinkedService, AzureDatabricksLinkedService, AzureDatabricksDeltaLakeLinkedService, AzureFileStorageLinkedService, AzureFunctionLinkedService, AzureKeyVaultLinkedService, AzureMLLinkedService, AzureMLServiceLinkedService, AzureMariaDBLinkedService, AzureMySqlLinkedService, AzurePostgreSqlLinkedService, AzureSearchLinkedService, AzureSqlDWLinkedService, AzureSqlDatabaseLinkedService, AzureSqlMILinkedService, AzureStorageLinkedService, AzureTableStorageLinkedService, CassandraLinkedService, CommonDataServiceForAppsLinkedService, ConcurLinkedService, CosmosDbLinkedService, CosmosDbMongoDbApiLinkedService, CouchbaseLinkedService, CustomDataSourceLinkedService, Db2LinkedService, DrillLinkedService, DynamicsLinkedService, DynamicsAXLinkedService, DynamicsCrmLinkedService, EloquaLinkedService, FileServerLinkedService, FtpServerLinkedService, GoogleAdWordsLinkedService, GoogleBigQueryLinkedService, GoogleCloudStorageLinkedService, GreenplumLinkedService, HBaseLinkedService, HDInsightLinkedService, HDInsightOnDemandLinkedService, HdfsLinkedService, HiveLinkedService, HttpLinkedService, HubspotLinkedService, ImpalaLinkedService, InformixLinkedService, JiraLinkedService, MagentoLinkedService, MariaDBLinkedService, MarketoLinkedService, MicrosoftAccessLinkedService, MongoDbLinkedService, MongoDbAtlasLinkedService, MongoDbV2LinkedService, MySqlLinkedService, NetezzaLinkedService, ODataLinkedService, OdbcLinkedService, Office365LinkedService, OracleLinkedService, OracleCloudStorageLinkedService, OracleServiceCloudLinkedService, PaypalLinkedService, PhoenixLinkedService, PostgreSqlLinkedService, PrestoLinkedService, QuickBooksLinkedService, QuickbaseLinkedService, ResponsysLinkedService, RestServiceLinkedService, SalesforceLinkedService, SalesforceMarketingCloudLinkedService, SalesforceServiceCloudLinkedService, SapBWLinkedService, SapCloudForCustomerLinkedService, SapEccLinkedService, SapHanaLinkedService, SapOpenHubLinkedService, SapTableLinkedService, ServiceNowLinkedService, SftpServerLinkedService, SharePointOnlineListLinkedService, ShopifyLinkedService, SmartsheetLinkedService, SnowflakeLinkedService, SparkLinkedService, SqlServerLinkedService, SquareLinkedService, SybaseLinkedService, TeamDeskLinkedService, TeradataLinkedService, VerticaLinkedService, WebLinkedService, XeroLinkedService, ZendeskLinkedService, ZohoLinkedService.
+    sub-classes are: AmazonMWSLinkedService, AmazonRdsForOracleLinkedService, AmazonRdsForSqlServerLinkedService, AmazonRedshiftLinkedService, AmazonS3LinkedService, AmazonS3CompatibleLinkedService, AppFiguresLinkedService, AsanaLinkedService, AzureBatchLinkedService, AzureBlobFSLinkedService, AzureBlobStorageLinkedService, AzureDataExplorerLinkedService, AzureDataLakeAnalyticsLinkedService, AzureDataLakeStoreLinkedService, AzureDatabricksLinkedService, AzureDatabricksDeltaLakeLinkedService, AzureFileStorageLinkedService, AzureFunctionLinkedService, AzureKeyVaultLinkedService, AzureMLLinkedService, AzureMLServiceLinkedService, AzureMariaDBLinkedService, AzureMySqlLinkedService, AzurePostgreSqlLinkedService, AzureSearchLinkedService, AzureSqlDWLinkedService, AzureSqlDatabaseLinkedService, AzureSqlMILinkedService, AzureStorageLinkedService, AzureTableStorageLinkedService, CassandraLinkedService, CommonDataServiceForAppsLinkedService, ConcurLinkedService, CosmosDbLinkedService, CosmosDbMongoDbApiLinkedService, CouchbaseLinkedService, CustomDataSourceLinkedService, DataworldLinkedService, Db2LinkedService, DrillLinkedService, DynamicsLinkedService, DynamicsAXLinkedService, DynamicsCrmLinkedService, EloquaLinkedService, FileServerLinkedService, FtpServerLinkedService, GoogleAdWordsLinkedService, GoogleBigQueryLinkedService, GoogleCloudStorageLinkedService, GreenplumLinkedService, HBaseLinkedService, HDInsightLinkedService, HDInsightOnDemandLinkedService, HdfsLinkedService, HiveLinkedService, HttpLinkedService, HubspotLinkedService, ImpalaLinkedService, InformixLinkedService, JiraLinkedService, MagentoLinkedService, MariaDBLinkedService, MarketoLinkedService, MicrosoftAccessLinkedService, MongoDbLinkedService, MongoDbAtlasLinkedService, MongoDbV2LinkedService, MySqlLinkedService, NetezzaLinkedService, ODataLinkedService, OdbcLinkedService, Office365LinkedService, OracleLinkedService, OracleCloudStorageLinkedService, OracleServiceCloudLinkedService, PaypalLinkedService, PhoenixLinkedService, PostgreSqlLinkedService, PrestoLinkedService, QuickBooksLinkedService, QuickbaseLinkedService, ResponsysLinkedService, RestServiceLinkedService, SalesforceLinkedService, SalesforceMarketingCloudLinkedService, SalesforceServiceCloudLinkedService, SapBWLinkedService, SapCloudForCustomerLinkedService, SapEccLinkedService, SapHanaLinkedService, SapOpenHubLinkedService, SapTableLinkedService, ServiceNowLinkedService, SftpServerLinkedService, SharePointOnlineListLinkedService, ShopifyLinkedService, SmartsheetLinkedService, SnowflakeLinkedService, SparkLinkedService, SqlServerLinkedService, SquareLinkedService, SybaseLinkedService, TeamDeskLinkedService, TeradataLinkedService, TwilioLinkedService, VerticaLinkedService, WebLinkedService, XeroLinkedService, ZendeskLinkedService, ZohoLinkedService.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -484,7 +484,7 @@ class LinkedService(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonMWS': 'AmazonMWSLinkedService', 'AmazonRdsForOracle': 'AmazonRdsForOracleLinkedService', 'AmazonRdsForSqlServer': 'AmazonRdsForSqlServerLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'AmazonS3Compatible': 'AmazonS3CompatibleLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDatabricksDeltaLake': 'AzureDatabricksDeltaLakeLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'AzureFunction': 'AzureFunctionLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureML': 'AzureMLLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureStorage': 'AzureStorageLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'Cassandra': 'CassandraLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'Concur': 'ConcurLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'Db2': 'Db2LinkedService', 'Drill': 'DrillLinkedService', 'Dynamics': 'DynamicsLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Eloqua': 'EloquaLinkedService', 'FileServer': 'FileServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'Greenplum': 'GreenplumLinkedService', 'HBase': 'HBaseLinkedService', 'HDInsight': 'HDInsightLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'Hdfs': 'HdfsLinkedService', 'Hive': 'HiveLinkedService', 'HttpServer': 'HttpLinkedService', 'Hubspot': 'HubspotLinkedService', 'Impala': 'ImpalaLinkedService', 'Informix': 'InformixLinkedService', 'Jira': 'JiraLinkedService', 'Magento': 'MagentoLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Marketo': 'MarketoLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'MongoDb': 'MongoDbLinkedService', 'MongoDbAtlas': 'MongoDbAtlasLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MySql': 'MySqlLinkedService', 'Netezza': 'NetezzaLinkedService', 'OData': 'ODataLinkedService', 'Odbc': 'OdbcLinkedService', 'Office365': 'Office365LinkedService', 'Oracle': 'OracleLinkedService', 'OracleCloudStorage': 'OracleCloudStorageLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'Paypal': 'PaypalLinkedService', 'Phoenix': 'PhoenixLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'Presto': 'PrestoLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Quickbase': 'QuickbaseLinkedService', 'Responsys': 'ResponsysLinkedService', 'RestService': 'RestServiceLinkedService', 'Salesforce': 'SalesforceLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'SapBW': 'SapBWLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapTable': 'SapTableLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'Sftp': 'SftpServerLinkedService', 'SharePointOnlineList': 'SharePointOnlineListLinkedService', 'Shopify': 'ShopifyLinkedService', 'Smartsheet': 'SmartsheetLinkedService', 'Snowflake': 'SnowflakeLinkedService', 'Spark': 'SparkLinkedService', 'SqlServer': 'SqlServerLinkedService', 'Square': 'SquareLinkedService', 'Sybase': 'SybaseLinkedService', 'TeamDesk': 'TeamDeskLinkedService', 'Teradata': 'TeradataLinkedService', 'Vertica': 'VerticaLinkedService', 'Web': 'WebLinkedService', 'Xero': 'XeroLinkedService', 'Zendesk': 'ZendeskLinkedService', 'Zoho': 'ZohoLinkedService'}
+        'type': {'AmazonMWS': 'AmazonMWSLinkedService', 'AmazonRdsForOracle': 'AmazonRdsForOracleLinkedService', 'AmazonRdsForSqlServer': 'AmazonRdsForSqlServerLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'AmazonS3Compatible': 'AmazonS3CompatibleLinkedService', 'AppFigures': 'AppFiguresLinkedService', 'Asana': 'AsanaLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDatabricksDeltaLake': 'AzureDatabricksDeltaLakeLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'AzureFunction': 'AzureFunctionLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureML': 'AzureMLLinkedService', 'AzureMLService': 'AzureMLServiceLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureStorage': 'AzureStorageLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'Cassandra': 'CassandraLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'Concur': 'ConcurLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'Dataworld': 'DataworldLinkedService', 'Db2': 'Db2LinkedService', 'Drill': 'DrillLinkedService', 'Dynamics': 'DynamicsLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Eloqua': 'EloquaLinkedService', 'FileServer': 'FileServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'Greenplum': 'GreenplumLinkedService', 'HBase': 'HBaseLinkedService', 'HDInsight': 'HDInsightLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'Hdfs': 'HdfsLinkedService', 'Hive': 'HiveLinkedService', 'HttpServer': 'HttpLinkedService', 'Hubspot': 'HubspotLinkedService', 'Impala': 'ImpalaLinkedService', 'Informix': 'InformixLinkedService', 'Jira': 'JiraLinkedService', 'Magento': 'MagentoLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Marketo': 'MarketoLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'MongoDb': 'MongoDbLinkedService', 'MongoDbAtlas': 'MongoDbAtlasLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MySql': 'MySqlLinkedService', 'Netezza': 'NetezzaLinkedService', 'OData': 'ODataLinkedService', 'Odbc': 'OdbcLinkedService', 'Office365': 'Office365LinkedService', 'Oracle': 'OracleLinkedService', 'OracleCloudStorage': 'OracleCloudStorageLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'Paypal': 'PaypalLinkedService', 'Phoenix': 'PhoenixLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'Presto': 'PrestoLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Quickbase': 'QuickbaseLinkedService', 'Responsys': 'ResponsysLinkedService', 'RestService': 'RestServiceLinkedService', 'Salesforce': 'SalesforceLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'SapBW': 'SapBWLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapTable': 'SapTableLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'Sftp': 'SftpServerLinkedService', 'SharePointOnlineList': 'SharePointOnlineListLinkedService', 'Shopify': 'ShopifyLinkedService', 'Smartsheet': 'SmartsheetLinkedService', 'Snowflake': 'SnowflakeLinkedService', 'Spark': 'SparkLinkedService', 'SqlServer': 'SqlServerLinkedService', 'Square': 'SquareLinkedService', 'Sybase': 'SybaseLinkedService', 'TeamDesk': 'TeamDeskLinkedService', 'Teradata': 'TeradataLinkedService', 'Twilio': 'TwilioLinkedService', 'Vertica': 'VerticaLinkedService', 'Web': 'WebLinkedService', 'Xero': 'XeroLinkedService', 'Zendesk': 'ZendeskLinkedService', 'Zoho': 'ZohoLinkedService'}
     }
 
     def __init__(
@@ -3236,6 +3236,90 @@ class AppendVariableActivity(ControlActivity):
         self.value = value
 
 
+class AppFiguresLinkedService(LinkedService):
+    """Linked service for AppFigures.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar user_name: Required. The username of the Appfigures source.
+    :vartype user_name: any
+    :ivar password: Required. The password of the AppFigures source.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar client_key: Required. The client key for the AppFigures source.
+    :vartype client_key: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+        'client_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'client_key': {'key': 'typeProperties.clientKey', 'type': 'SecretBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_name: Any,
+        password: "SecretBase",
+        client_key: "SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword user_name: Required. The username of the Appfigures source.
+        :paramtype user_name: any
+        :keyword password: Required. The password of the AppFigures source.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword client_key: Required. The client key for the AppFigures source.
+        :paramtype client_key: ~azure.mgmt.datafactory.models.SecretBase
+        """
+        super(AppFiguresLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'AppFigures'  # type: str
+        self.user_name = user_name
+        self.password = password
+        self.client_key = client_key
+
+
 class ArmIdWrapper(msrest.serialization.Model):
     """A wrapper for an ARM resource id.
 
@@ -3261,6 +3345,85 @@ class ArmIdWrapper(msrest.serialization.Model):
         """
         super(ArmIdWrapper, self).__init__(**kwargs)
         self.id = None
+
+
+class AsanaLinkedService(LinkedService):
+    """Linked service for Asana.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar api_token: Required. The api token for the Asana source.
+    :vartype api_token: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string (or Expression with
+     resultType string).
+    :vartype encrypted_credential: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'api_token': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'api_token': {'key': 'typeProperties.apiToken', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        api_token: "SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        encrypted_credential: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword api_token: Required. The api token for the Asana source.
+        :paramtype api_token: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string (or Expression
+         with resultType string).
+        :paramtype encrypted_credential: any
+        """
+        super(AsanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'Asana'  # type: str
+        self.api_token = api_token
+        self.encrypted_credential = encrypted_credential
 
 
 class AvroDataset(Dataset):
@@ -16261,21 +16424,20 @@ class Credential(msrest.serialization.Model):
 class CredentialReference(msrest.serialization.Model):
     """Credential reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Credential reference type. Has constant value: "CredentialReference".
-    :vartype type: str
+    :ivar type: Required. Credential reference type. Possible values include:
+     "CredentialReference".
+    :vartype type: str or ~azure.mgmt.datafactory.models.CredentialReferenceType
     :ivar reference_name: Required. Reference credential name.
     :vartype reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -16285,11 +16447,10 @@ class CredentialReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "CredentialReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "CredentialReferenceType"],
         reference_name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
@@ -16298,11 +16459,15 @@ class CredentialReference(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
+        :keyword type: Required. Credential reference type. Possible values include:
+         "CredentialReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.CredentialReferenceType
         :keyword reference_name: Required. Reference credential name.
         :paramtype reference_name: str
         """
         super(CredentialReference, self).__init__(**kwargs)
         self.additional_properties = additional_properties
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -17636,15 +17801,13 @@ class DataFlowListResponse(msrest.serialization.Model):
 class DataFlowReference(msrest.serialization.Model):
     """Data flow reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar type: Data flow reference type. Has constant value: "DataFlowReference".
-    :vartype type: str
+    :ivar type: Required. Data flow reference type. Possible values include: "DataFlowReference".
+    :vartype type: str or ~azure.mgmt.datafactory.models.DataFlowReferenceType
     :ivar reference_name: Required. Reference data flow name.
     :vartype reference_name: str
     :ivar dataset_parameters: Reference data flow parameters from dataset.
@@ -17654,7 +17817,7 @@ class DataFlowReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -17666,11 +17829,10 @@ class DataFlowReference(msrest.serialization.Model):
         'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
-    type = "DataFlowReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "DataFlowReferenceType"],
         reference_name: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         dataset_parameters: Optional[Any] = None,
@@ -17681,6 +17843,9 @@ class DataFlowReference(msrest.serialization.Model):
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
+        :keyword type: Required. Data flow reference type. Possible values include:
+         "DataFlowReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.DataFlowReferenceType
         :keyword reference_name: Required. Reference data flow name.
         :paramtype reference_name: str
         :keyword dataset_parameters: Reference data flow parameters from dataset.
@@ -17690,6 +17855,7 @@ class DataFlowReference(msrest.serialization.Model):
         """
         super(DataFlowReference, self).__init__(**kwargs)
         self.additional_properties = additional_properties
+        self.type = type
         self.reference_name = reference_name
         self.dataset_parameters = dataset_parameters
         self.parameters = parameters
@@ -17820,6 +17986,8 @@ class DataFlowSink(Transformation):
     :vartype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :ivar schema_linked_service: Schema linked service reference.
     :vartype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar rejected_data_linked_service: Rejected data linked service reference.
+    :vartype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
 
     _validation = {
@@ -17833,6 +18001,7 @@ class DataFlowSink(Transformation):
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
+        'rejected_data_linked_service': {'key': 'rejectedDataLinkedService', 'type': 'LinkedServiceReference'},
     }
 
     def __init__(
@@ -17844,6 +18013,7 @@ class DataFlowSink(Transformation):
         linked_service: Optional["LinkedServiceReference"] = None,
         flowlet: Optional["DataFlowReference"] = None,
         schema_linked_service: Optional["LinkedServiceReference"] = None,
+        rejected_data_linked_service: Optional["LinkedServiceReference"] = None,
         **kwargs
     ):
         """
@@ -17859,9 +18029,12 @@ class DataFlowSink(Transformation):
         :paramtype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
         :keyword schema_linked_service: Schema linked service reference.
         :paramtype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword rejected_data_linked_service: Rejected data linked service reference.
+        :paramtype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
         """
         super(DataFlowSink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, flowlet=flowlet, **kwargs)
         self.schema_linked_service = schema_linked_service
+        self.rejected_data_linked_service = rejected_data_linked_service
 
 
 class DataFlowSource(Transformation):
@@ -18453,6 +18626,85 @@ class DatasetSchemaDataElement(msrest.serialization.Model):
         self.additional_properties = additional_properties
         self.name = name
         self.type = type
+
+
+class DataworldLinkedService(LinkedService):
+    """Linked service for Dataworld.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar api_token: Required. The api token for the Dataworld source.
+    :vartype api_token: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
+     encrypted using the integration runtime credential manager. Type: string (or Expression with
+     resultType string).
+    :vartype encrypted_credential: any
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'api_token': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'api_token': {'key': 'typeProperties.apiToken', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        api_token: "SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        encrypted_credential: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword api_token: Required. The api token for the Dataworld source.
+        :paramtype api_token: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
+         are encrypted using the integration runtime credential manager. Type: string (or Expression
+         with resultType string).
+        :paramtype encrypted_credential: any
+        """
+        super(DataworldLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'Dataworld'  # type: str
+        self.api_token = api_token
+        self.encrypted_credential = encrypted_credential
 
 
 class Db2LinkedService(LinkedService):
@@ -21149,7 +21401,7 @@ class DynamicsLinkedService(LinkedService):
     :ivar service_principal_credential_type: The service principal credential type to use in
      Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
      for certificate. Type: string (or Expression with resultType string).
-    :vartype service_principal_credential_type: str
+    :vartype service_principal_credential_type: any
     :ivar service_principal_credential: The credential of the service principal object in Azure
      Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
      servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -21186,7 +21438,7 @@ class DynamicsLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'str'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
         'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'credential': {'key': 'typeProperties.credential', 'type': 'CredentialReference'},
@@ -21209,7 +21461,7 @@ class DynamicsLinkedService(LinkedService):
         username: Optional[Any] = None,
         password: Optional["SecretBase"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_credential_type: Optional[str] = None,
+        service_principal_credential_type: Optional[Any] = None,
         service_principal_credential: Optional["SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         credential: Optional["CredentialReference"] = None,
@@ -21261,7 +21513,7 @@ class DynamicsLinkedService(LinkedService):
         :keyword service_principal_credential_type: The service principal credential type to use in
          Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
          for certificate. Type: string (or Expression with resultType string).
-        :paramtype service_principal_credential_type: str
+        :paramtype service_principal_credential_type: any
         :keyword service_principal_credential: The credential of the service principal object in Azure
          Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
          servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -22208,6 +22460,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     """
 
     _validation = {
@@ -22232,6 +22487,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'typeProperties.sourceStagingConcurrency', 'type': 'object'},
     }
 
     def __init__(
@@ -22251,6 +22507,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
+        source_staging_concurrency: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -22287,6 +22544,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         """
         super(ExecuteDataFlowActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'ExecuteDataFlow'  # type: str
@@ -22297,6 +22557,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
         self.run_concurrently = run_concurrently
+        self.source_staging_concurrency = source_staging_concurrency
 
 
 class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
@@ -22322,6 +22583,9 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     """
 
     _validation = {
@@ -22336,6 +22600,7 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
         'trace_level': {'key': 'traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'sourceStagingConcurrency', 'type': 'object'},
     }
 
     def __init__(
@@ -22348,6 +22613,7 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
+        source_staging_concurrency: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -22369,6 +22635,9 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         """
         super(ExecuteDataFlowActivityTypeProperties, self).__init__(**kwargs)
         self.data_flow = data_flow
@@ -22378,6 +22647,7 @@ class ExecuteDataFlowActivityTypeProperties(msrest.serialization.Model):
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
         self.run_concurrently = run_concurrently
+        self.source_staging_concurrency = source_staging_concurrency
 
 
 class ExecuteDataFlowActivityTypePropertiesCompute(msrest.serialization.Model):
@@ -22437,6 +22707,8 @@ class ExecutePipelineActivity(ControlActivity):
     :vartype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
     :vartype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :ivar policy: Execute pipeline activity policy.
+    :vartype policy: ~azure.mgmt.datafactory.models.ExecutePipelineActivityPolicy
     :ivar pipeline: Required. Pipeline reference.
     :vartype pipeline: ~azure.mgmt.datafactory.models.PipelineReference
     :ivar parameters: Pipeline parameters.
@@ -22459,6 +22731,7 @@ class ExecutePipelineActivity(ControlActivity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'policy': {'key': 'policy', 'type': 'ExecutePipelineActivityPolicy'},
         'pipeline': {'key': 'typeProperties.pipeline', 'type': 'PipelineReference'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
         'wait_on_completion': {'key': 'typeProperties.waitOnCompletion', 'type': 'bool'},
@@ -22473,6 +22746,7 @@ class ExecutePipelineActivity(ControlActivity):
         description: Optional[str] = None,
         depends_on: Optional[List["ActivityDependency"]] = None,
         user_properties: Optional[List["UserProperty"]] = None,
+        policy: Optional["ExecutePipelineActivityPolicy"] = None,
         parameters: Optional[Dict[str, Any]] = None,
         wait_on_completion: Optional[bool] = None,
         **kwargs
@@ -22489,6 +22763,8 @@ class ExecutePipelineActivity(ControlActivity):
         :paramtype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
         :paramtype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+        :keyword policy: Execute pipeline activity policy.
+        :paramtype policy: ~azure.mgmt.datafactory.models.ExecutePipelineActivityPolicy
         :keyword pipeline: Required. Pipeline reference.
         :paramtype pipeline: ~azure.mgmt.datafactory.models.PipelineReference
         :keyword parameters: Pipeline parameters.
@@ -22499,9 +22775,46 @@ class ExecutePipelineActivity(ControlActivity):
         """
         super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.type = 'ExecutePipeline'  # type: str
+        self.policy = policy
         self.pipeline = pipeline
         self.parameters = parameters
         self.wait_on_completion = wait_on_completion
+
+
+class ExecutePipelineActivityPolicy(msrest.serialization.Model):
+    """Execution policy for an execute pipeline activity.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar secure_input: When set to true, Input from activity is considered as secure and will not
+     be logged to monitoring.
+    :vartype secure_input: bool
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'secure_input': {'key': 'secureInput', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        secure_input: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword secure_input: When set to true, Input from activity is considered as secure and will
+         not be logged to monitoring.
+        :paramtype secure_input: bool
+        """
+        super(ExecutePipelineActivityPolicy, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.secure_input = secure_input
 
 
 class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypeProperties):
@@ -22527,6 +22840,9 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     :ivar sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to a
      queryName.
     :vartype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
@@ -22546,6 +22862,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         'trace_level': {'key': 'traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'sourceStagingConcurrency', 'type': 'object'},
         'sinks': {'key': 'sinks', 'type': '{PowerQuerySink}'},
         'queries': {'key': 'queries', 'type': '[PowerQuerySinkMapping]'},
     }
@@ -22560,6 +22877,7 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
+        source_staging_concurrency: Optional[Any] = None,
         sinks: Optional[Dict[str, "PowerQuerySink"]] = None,
         queries: Optional[List["PowerQuerySinkMapping"]] = None,
         **kwargs
@@ -22583,13 +22901,16 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         :keyword sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to
          a queryName.
         :paramtype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
         :keyword queries: List of mapping for Power Query mashup query to sink dataset(s).
         :paramtype queries: list[~azure.mgmt.datafactory.models.PowerQuerySinkMapping]
         """
-        super(ExecutePowerQueryActivityTypeProperties, self).__init__(data_flow=data_flow, staging=staging, integration_runtime=integration_runtime, compute=compute, trace_level=trace_level, continue_on_error=continue_on_error, run_concurrently=run_concurrently, **kwargs)
+        super(ExecutePowerQueryActivityTypeProperties, self).__init__(data_flow=data_flow, staging=staging, integration_runtime=integration_runtime, compute=compute, trace_level=trace_level, continue_on_error=continue_on_error, run_concurrently=run_concurrently, source_staging_concurrency=source_staging_concurrency, **kwargs)
         self.sinks = sinks
         self.queries = queries
 
@@ -22805,6 +23126,9 @@ class ExecuteWranglingDataflowActivity(Activity):
      the same save order to be processed concurrently. Type: boolean (or Expression with resultType
      boolean).
     :vartype run_concurrently: any
+    :ivar source_staging_concurrency: Specify number of parallel staging for sources applicable to
+     the sink. Type: integer (or Expression with resultType integer).
+    :vartype source_staging_concurrency: any
     :ivar sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to a
      queryName.
     :vartype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
@@ -22833,6 +23157,7 @@ class ExecuteWranglingDataflowActivity(Activity):
         'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
         'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
         'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
+        'source_staging_concurrency': {'key': 'typeProperties.sourceStagingConcurrency', 'type': 'object'},
         'sinks': {'key': 'typeProperties.sinks', 'type': '{PowerQuerySink}'},
         'queries': {'key': 'typeProperties.queries', 'type': '[PowerQuerySinkMapping]'},
     }
@@ -22853,6 +23178,7 @@ class ExecuteWranglingDataflowActivity(Activity):
         trace_level: Optional[Any] = None,
         continue_on_error: Optional[Any] = None,
         run_concurrently: Optional[Any] = None,
+        source_staging_concurrency: Optional[Any] = None,
         sinks: Optional[Dict[str, "PowerQuerySink"]] = None,
         queries: Optional[List["PowerQuerySinkMapping"]] = None,
         **kwargs
@@ -22889,6 +23215,9 @@ class ExecuteWranglingDataflowActivity(Activity):
          with the same save order to be processed concurrently. Type: boolean (or Expression with
          resultType boolean).
         :paramtype run_concurrently: any
+        :keyword source_staging_concurrency: Specify number of parallel staging for sources applicable
+         to the sink. Type: integer (or Expression with resultType integer).
+        :paramtype source_staging_concurrency: any
         :keyword sinks: (Deprecated. Please use Queries). List of Power Query activity sinks mapped to
          a queryName.
         :paramtype sinks: dict[str, ~azure.mgmt.datafactory.models.PowerQuerySink]
@@ -22905,6 +23234,7 @@ class ExecuteWranglingDataflowActivity(Activity):
         self.trace_level = trace_level
         self.continue_on_error = continue_on_error
         self.run_concurrently = run_concurrently
+        self.source_staging_concurrency = source_staging_concurrency
         self.sinks = sinks
         self.queries = queries
 
@@ -23162,6 +23492,8 @@ class Factory(Resource):
     :vartype create_time: ~datetime.datetime
     :ivar version: Version of the factory.
     :vartype version: str
+    :ivar purview_configuration: Purview information of the factory.
+    :vartype purview_configuration: ~azure.mgmt.datafactory.models.PurviewConfiguration
     :ivar repo_configuration: Git repo information of the factory.
     :vartype repo_configuration: ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
     :ivar global_parameters: List of parameters for factory.
@@ -23196,6 +23528,7 @@ class Factory(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
         'version': {'key': 'properties.version', 'type': 'str'},
+        'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'repo_configuration': {'key': 'properties.repoConfiguration', 'type': 'FactoryRepoConfiguration'},
         'global_parameters': {'key': 'properties.globalParameters', 'type': '{GlobalParameterSpecification}'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionConfiguration'},
@@ -23209,6 +23542,7 @@ class Factory(Resource):
         tags: Optional[Dict[str, str]] = None,
         additional_properties: Optional[Dict[str, Any]] = None,
         identity: Optional["FactoryIdentity"] = None,
+        purview_configuration: Optional["PurviewConfiguration"] = None,
         repo_configuration: Optional["FactoryRepoConfiguration"] = None,
         global_parameters: Optional[Dict[str, "GlobalParameterSpecification"]] = None,
         encryption: Optional["EncryptionConfiguration"] = None,
@@ -23225,6 +23559,8 @@ class Factory(Resource):
         :paramtype additional_properties: dict[str, any]
         :keyword identity: Managed service identity of the factory.
         :paramtype identity: ~azure.mgmt.datafactory.models.FactoryIdentity
+        :keyword purview_configuration: Purview information of the factory.
+        :paramtype purview_configuration: ~azure.mgmt.datafactory.models.PurviewConfiguration
         :keyword repo_configuration: Git repo information of the factory.
         :paramtype repo_configuration: ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
         :keyword global_parameters: List of parameters for factory.
@@ -23242,6 +23578,7 @@ class Factory(Resource):
         self.provisioning_state = None
         self.create_time = None
         self.version = None
+        self.purview_configuration = purview_configuration
         self.repo_configuration = repo_configuration
         self.global_parameters = global_parameters
         self.encryption = encryption
@@ -25241,6 +25578,93 @@ class GitHubClientSecret(msrest.serialization.Model):
         super(GitHubClientSecret, self).__init__(**kwargs)
         self.byoa_secret_akv_url = byoa_secret_akv_url
         self.byoa_secret_name = byoa_secret_name
+
+
+class GlobalParameterListResponse(msrest.serialization.Model):
+    """A list of Global parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. List of global parameters.
+    :vartype value: list[~azure.mgmt.datafactory.models.GlobalParameterResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[GlobalParameterResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["GlobalParameterResource"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. List of global parameters.
+        :paramtype value: list[~azure.mgmt.datafactory.models.GlobalParameterResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
+        super(GlobalParameterListResponse, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GlobalParameterResource(SubResource):
+    """Global parameters resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :ivar properties: Required. Properties of the global parameter.
+    :vartype properties: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{GlobalParameterSpecification}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Dict[str, "GlobalParameterSpecification"],
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Properties of the global parameter.
+        :paramtype properties: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
+        """
+        super(GlobalParameterResource, self).__init__(**kwargs)
+        self.properties = properties
 
 
 class GlobalParameterSpecification(msrest.serialization.Model):
@@ -34251,19 +34675,17 @@ class ManagedVirtualNetworkListResponse(msrest.serialization.Model):
 class ManagedVirtualNetworkReference(msrest.serialization.Model):
     """Managed Virtual Network reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Managed Virtual Network reference type. Has constant value:
+    :ivar type: Required. Managed Virtual Network reference type. Possible values include:
      "ManagedVirtualNetworkReference".
-    :vartype type: str
+    :vartype type: str or ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReferenceType
     :ivar reference_name: Required. Reference ManagedVirtualNetwork name.
     :vartype reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -34272,19 +34694,22 @@ class ManagedVirtualNetworkReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "ManagedVirtualNetworkReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "ManagedVirtualNetworkReferenceType"],
         reference_name: str,
         **kwargs
     ):
         """
+        :keyword type: Required. Managed Virtual Network reference type. Possible values include:
+         "ManagedVirtualNetworkReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReferenceType
         :keyword reference_name: Required. Reference ManagedVirtualNetwork name.
         :paramtype reference_name: str
         """
         super(ManagedVirtualNetworkReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -42163,6 +42588,8 @@ class PowerQuerySink(DataFlowSink):
     :vartype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
     :ivar schema_linked_service: Schema linked service reference.
     :vartype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar rejected_data_linked_service: Rejected data linked service reference.
+    :vartype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :ivar script: sink script.
     :vartype script: str
     """
@@ -42178,6 +42605,7 @@ class PowerQuerySink(DataFlowSink):
         'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
         'flowlet': {'key': 'flowlet', 'type': 'DataFlowReference'},
         'schema_linked_service': {'key': 'schemaLinkedService', 'type': 'LinkedServiceReference'},
+        'rejected_data_linked_service': {'key': 'rejectedDataLinkedService', 'type': 'LinkedServiceReference'},
         'script': {'key': 'script', 'type': 'str'},
     }
 
@@ -42190,6 +42618,7 @@ class PowerQuerySink(DataFlowSink):
         linked_service: Optional["LinkedServiceReference"] = None,
         flowlet: Optional["DataFlowReference"] = None,
         schema_linked_service: Optional["LinkedServiceReference"] = None,
+        rejected_data_linked_service: Optional["LinkedServiceReference"] = None,
         script: Optional[str] = None,
         **kwargs
     ):
@@ -42206,10 +42635,12 @@ class PowerQuerySink(DataFlowSink):
         :paramtype flowlet: ~azure.mgmt.datafactory.models.DataFlowReference
         :keyword schema_linked_service: Schema linked service reference.
         :paramtype schema_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword rejected_data_linked_service: Rejected data linked service reference.
+        :paramtype rejected_data_linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
         :keyword script: sink script.
         :paramtype script: str
         """
-        super(PowerQuerySink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, flowlet=flowlet, schema_linked_service=schema_linked_service, **kwargs)
+        super(PowerQuerySink, self).__init__(name=name, description=description, dataset=dataset, linked_service=linked_service, flowlet=flowlet, schema_linked_service=schema_linked_service, rejected_data_linked_service=rejected_data_linked_service, **kwargs)
         self.script = script
 
 
@@ -42701,6 +43132,31 @@ class PrestoSource(TabularSource):
         self.query = query
 
 
+class PrivateEndpoint(msrest.serialization.Model):
+    """Private endpoint which a connection belongs to.
+
+    :ivar id: The resource Id for private endpoint.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The resource Id for private endpoint.
+        :paramtype id: str
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = id
+
+
 class PrivateEndpointConnectionListResponse(msrest.serialization.Model):
     """A list of linked service resources.
 
@@ -42791,25 +43247,32 @@ class PrivateLinkConnectionApprovalRequest(msrest.serialization.Model):
     :ivar private_link_service_connection_state: The state of a private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
+    :ivar private_endpoint: The resource of private endpoint.
+    :vartype private_endpoint: ~azure.mgmt.datafactory.models.PrivateEndpoint
     """
 
     _attribute_map = {
         'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
     }
 
     def __init__(
         self,
         *,
         private_link_service_connection_state: Optional["PrivateLinkConnectionState"] = None,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
         **kwargs
     ):
         """
         :keyword private_link_service_connection_state: The state of a private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
+        :keyword private_endpoint: The resource of private endpoint.
+        :paramtype private_endpoint: ~azure.mgmt.datafactory.models.PrivateEndpoint
         """
         super(PrivateLinkConnectionApprovalRequest, self).__init__(**kwargs)
         self.private_link_service_connection_state = private_link_service_connection_state
+        self.private_endpoint = private_endpoint
 
 
 class PrivateLinkConnectionApprovalRequestResource(SubResource):
@@ -43009,6 +43472,31 @@ class PrivateLinkResourcesWrapper(msrest.serialization.Model):
         """
         super(PrivateLinkResourcesWrapper, self).__init__(**kwargs)
         self.value = value
+
+
+class PurviewConfiguration(msrest.serialization.Model):
+    """Purview configuration.
+
+    :ivar purview_resource_id: Purview resource id.
+    :vartype purview_resource_id: str
+    """
+
+    _attribute_map = {
+        'purview_resource_id': {'key': 'purviewResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        purview_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword purview_resource_id: Purview resource id.
+        :paramtype purview_resource_id: str
+        """
+        super(PurviewConfiguration, self).__init__(**kwargs)
+        self.purview_resource_id = purview_resource_id
 
 
 class QueryDataFlowDebugSessionsResponse(msrest.serialization.Model):
@@ -48689,7 +49177,7 @@ class ScriptAction(msrest.serialization.Model):
     :ivar uri: Required. The URI for the script action.
     :vartype uri: str
     :ivar roles: Required. The node types on which the script action should be executed.
-    :vartype roles: str
+    :vartype roles: any
     :ivar parameters: The parameters for the script action.
     :vartype parameters: str
     """
@@ -48703,7 +49191,7 @@ class ScriptAction(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
-        'roles': {'key': 'roles', 'type': 'str'},
+        'roles': {'key': 'roles', 'type': 'object'},
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
@@ -48712,7 +49200,7 @@ class ScriptAction(msrest.serialization.Model):
         *,
         name: str,
         uri: str,
-        roles: str,
+        roles: Any,
         parameters: Optional[str] = None,
         **kwargs
     ):
@@ -48722,7 +49210,7 @@ class ScriptAction(msrest.serialization.Model):
         :keyword uri: Required. The URI for the script action.
         :paramtype uri: str
         :keyword roles: Required. The node types on which the script action should be executed.
-        :paramtype roles: str
+        :paramtype roles: any
         :keyword parameters: The parameters for the script action.
         :paramtype parameters: str
         """
@@ -53082,8 +53570,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     :vartype stored_procedure_name: any
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: any
     """
 
     _validation = {
@@ -53102,7 +53589,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'stored_procedure_name': {'key': 'typeProperties.storedProcedureName', 'type': 'object'},
-        'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': 'object'},
     }
 
     def __init__(
@@ -53116,7 +53603,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         user_properties: Optional[List["UserProperty"]] = None,
         linked_service_name: Optional["LinkedServiceReference"] = None,
         policy: Optional["ActivityPolicy"] = None,
-        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -53140,8 +53627,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         :paramtype stored_procedure_name: any
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: any
         """
         super(SqlServerStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.type = 'SqlServerStoredProcedure'  # type: str
@@ -56457,18 +56943,16 @@ class TriggerQueryResponse(msrest.serialization.Model):
 class TriggerReference(msrest.serialization.Model):
     """Trigger reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Trigger reference type. Has constant value: "TriggerReference".
-    :vartype type: str
+    :ivar type: Required. Trigger reference type. Possible values include: "TriggerReference".
+    :vartype type: str or ~azure.mgmt.datafactory.models.TriggerReferenceType
     :ivar reference_name: Required. Reference trigger name.
     :vartype reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -56477,19 +56961,21 @@ class TriggerReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "TriggerReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "TriggerReferenceType"],
         reference_name: str,
         **kwargs
     ):
         """
+        :keyword type: Required. Trigger reference type. Possible values include: "TriggerReference".
+        :paramtype type: str or ~azure.mgmt.datafactory.models.TriggerReferenceType
         :keyword reference_name: Required. Reference trigger name.
         :paramtype reference_name: str
         """
         super(TriggerReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -56892,6 +57378,82 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
         self.type = 'TumblingWindowTriggerDependencyReference'  # type: str
         self.offset = offset
         self.size = size
+
+
+class TwilioLinkedService(LinkedService):
+    """Linked service for Twilio.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of linked service.Constant filled by server.
+    :vartype type: str
+    :ivar connect_via: The integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :ivar description: Linked service description.
+    :vartype description: str
+    :ivar parameters: Parameters for linked service.
+    :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :ivar annotations: List of tags that can be used for describing the linked service.
+    :vartype annotations: list[any]
+    :ivar user_name: Required. The Account SID of Twilio service.
+    :vartype user_name: any
+    :ivar password: Required. The auth token of Twilio service.
+    :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_name: Any,
+        password: "SecretBase",
+        additional_properties: Optional[Dict[str, Any]] = None,
+        connect_via: Optional["IntegrationRuntimeReference"] = None,
+        description: Optional[str] = None,
+        parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
+        annotations: Optional[List[Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword connect_via: The integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+        :keyword description: Linked service description.
+        :paramtype description: str
+        :keyword parameters: Parameters for linked service.
+        :paramtype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
+        :keyword annotations: List of tags that can be used for describing the linked service.
+        :paramtype annotations: list[any]
+        :keyword user_name: Required. The Account SID of Twilio service.
+        :paramtype user_name: any
+        :keyword password: Required. The auth token of Twilio service.
+        :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        """
+        super(TwilioLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.type = 'Twilio'  # type: str
+        self.user_name = user_name
+        self.password = password
 
 
 class TypeConversionSettings(msrest.serialization.Model):
@@ -57778,6 +58340,8 @@ class WebActivity(ExecutionActivity):
     :vartype body: any
     :ivar authentication: Authentication method used for calling the endpoint.
     :vartype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
+    :ivar disable_cert_validation: When set to true, Certificate validation will be disabled.
+    :vartype disable_cert_validation: bool
     :ivar datasets: List of datasets passed to web endpoint.
     :vartype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     :ivar linked_services: List of linked services passed to web endpoint.
@@ -57807,6 +58371,7 @@ class WebActivity(ExecutionActivity):
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
         'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
+        'disable_cert_validation': {'key': 'typeProperties.disableCertValidation', 'type': 'bool'},
         'datasets': {'key': 'typeProperties.datasets', 'type': '[DatasetReference]'},
         'linked_services': {'key': 'typeProperties.linkedServices', 'type': '[LinkedServiceReference]'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
@@ -57827,6 +58392,7 @@ class WebActivity(ExecutionActivity):
         headers: Optional[Any] = None,
         body: Optional[Any] = None,
         authentication: Optional["WebActivityAuthentication"] = None,
+        disable_cert_validation: Optional[bool] = None,
         datasets: Optional[List["DatasetReference"]] = None,
         linked_services: Optional[List["LinkedServiceReference"]] = None,
         connect_via: Optional["IntegrationRuntimeReference"] = None,
@@ -57863,6 +58429,8 @@ class WebActivity(ExecutionActivity):
         :paramtype body: any
         :keyword authentication: Authentication method used for calling the endpoint.
         :paramtype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
+        :keyword disable_cert_validation: When set to true, Certificate validation will be disabled.
+        :paramtype disable_cert_validation: bool
         :keyword datasets: List of datasets passed to web endpoint.
         :paramtype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
         :keyword linked_services: List of linked services passed to web endpoint.
@@ -57877,6 +58445,7 @@ class WebActivity(ExecutionActivity):
         self.headers = headers
         self.body = body
         self.authentication = authentication
+        self.disable_cert_validation = disable_cert_validation
         self.datasets = datasets
         self.linked_services = linked_services
         self.connect_via = connect_via

@@ -5,7 +5,7 @@ import uuid
 import pytest
 from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.documents as documents
+from azure.cosmos import PartitionKey
 import test_config
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
@@ -33,9 +33,9 @@ class SessionTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.create_container_if_not_exists(test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
 
     def _MockRequest(self, global_endpoint_manager, request_params, connection_policy, pipeline_client, request):
         if HttpHeaders.SessionToken in request.headers:
@@ -44,7 +44,7 @@ class SessionTests(unittest.TestCase):
             self.last_session_token_sent = None
         return self._OriginalRequest(global_endpoint_manager, request_params, connection_policy, pipeline_client, request)
 
-    def test_session_token_not_sent_for_master_resource_ops (self):
+    def test_session_token_not_sent_for_master_resource_ops(self):
         self._OriginalRequest = synchronized_request._Request
         synchronized_request._Request = self._MockRequest
         created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
@@ -78,7 +78,7 @@ class SessionTests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionInvalidSessionToken(self, function, *args, **kwargs):
-        response = {'_self':'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id':'1'}
+        response = {'_self': 'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id': '1'}
         headers = {HttpHeaders.SessionToken: '0:2', HttpHeaders.AlternateContentPath: 'dbs/testDatabase/colls/testCollection'}
         return (response, headers)
 

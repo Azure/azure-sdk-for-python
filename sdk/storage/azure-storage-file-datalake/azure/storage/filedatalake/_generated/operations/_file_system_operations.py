@@ -36,7 +36,7 @@ def build_create_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "filesystem")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     properties = kwargs.pop('properties', None)  # type: Optional[str]
@@ -80,7 +80,7 @@ def build_set_properties_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "filesystem")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     properties = kwargs.pop('properties', None)  # type: Optional[str]
@@ -130,7 +130,7 @@ def build_get_properties_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "filesystem")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
@@ -171,7 +171,7 @@ def build_delete_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "filesystem")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
@@ -218,7 +218,7 @@ def build_list_paths_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "filesystem")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     recursive = kwargs.pop('recursive')  # type: bool
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -274,7 +274,7 @@ def build_list_blob_hierarchy_segment_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "container")  # type: str
     comp = kwargs.pop('comp', "list")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     prefix = kwargs.pop('prefix', None)  # type: Optional[str]
     delimiter = kwargs.pop('delimiter', None)  # type: Optional[str]
     marker = kwargs.pop('marker', None)  # type: Optional[str]

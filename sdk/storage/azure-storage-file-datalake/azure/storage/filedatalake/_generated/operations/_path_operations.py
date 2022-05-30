@@ -35,7 +35,7 @@ def build_create_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     resource = kwargs.pop('resource', None)  # type: Optional[Union[str, "_models.PathResourceType"]]
@@ -60,6 +60,9 @@ def build_create_request(
     source_if_none_match = kwargs.pop('source_if_none_match', None)  # type: Optional[str]
     source_if_modified_since = kwargs.pop('source_if_modified_since', None)  # type: Optional[datetime.datetime]
     source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', "AES256")  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -124,6 +127,12 @@ def build_create_request(
         _header_parameters['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
     if source_if_unmodified_since is not None:
         _header_parameters['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
+    if encryption_key is not None:
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+    if encryption_key_sha256 is not None:
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+    if encryption_algorithm is not None:
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -140,7 +149,7 @@ def build_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     action = kwargs.pop('action')  # type: Union[str, "_models.PathUpdateAction"]
     mode = kwargs.pop('mode')  # type: Union[str, "_models.PathSetAccessControlRecursiveMode"]
@@ -255,7 +264,7 @@ def build_lease_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     x_ms_lease_action = kwargs.pop('x_ms_lease_action')  # type: Union[str, "_models.PathLeaseAction"]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -320,7 +329,7 @@ def build_read_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     range = kwargs.pop('range', None)  # type: Optional[str]
@@ -330,6 +339,9 @@ def build_read_request(
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
     if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', "AES256")  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -364,6 +376,12 @@ def build_read_request(
         _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
         _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    if encryption_key is not None:
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+    if encryption_key_sha256 is not None:
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+    if encryption_algorithm is not None:
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -380,7 +398,7 @@ def build_get_properties_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     action = kwargs.pop('action', None)  # type: Optional[Union[str, "_models.PathGetPropertiesAction"]]
@@ -440,7 +458,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     recursive = kwargs.pop('recursive', None)  # type: Optional[bool]
@@ -501,7 +519,7 @@ def build_set_access_control_request(
 ):
     # type: (...) -> HttpRequest
     action = kwargs.pop('action', "setAccessControl")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     owner = kwargs.pop('owner', None)  # type: Optional[str]
@@ -569,7 +587,7 @@ def build_set_access_control_recursive_request(
 ):
     # type: (...) -> HttpRequest
     action = kwargs.pop('action', "setAccessControlRecursive")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     mode = kwargs.pop('mode')  # type: Union[str, "_models.PathSetAccessControlRecursiveMode"]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     continuation = kwargs.pop('continuation', None)  # type: Optional[str]
@@ -624,7 +642,7 @@ def build_flush_data_request(
 ):
     # type: (...) -> HttpRequest
     action = kwargs.pop('action', "flush")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     position = kwargs.pop('position', None)  # type: Optional[int]
     retain_uncommitted_data = kwargs.pop('retain_uncommitted_data', None)  # type: Optional[bool]
@@ -642,6 +660,9 @@ def build_flush_data_request(
     if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
     if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', "AES256")  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -693,6 +714,12 @@ def build_flush_data_request(
     if request_id_parameter is not None:
         _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if encryption_key is not None:
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+    if encryption_key_sha256 is not None:
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+    if encryption_algorithm is not None:
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -710,7 +737,7 @@ def build_append_data_request(
 ):
     # type: (...) -> HttpRequest
     action = kwargs.pop('action', "append")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     position = kwargs.pop('position', None)  # type: Optional[int]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -719,6 +746,9 @@ def build_append_data_request(
     transactional_content_crc64 = kwargs.pop('transactional_content_crc64', None)  # type: Optional[bytearray]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', "AES256")  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -750,6 +780,12 @@ def build_append_data_request(
     if request_id_parameter is not None:
         _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    if encryption_key is not None:
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+    if encryption_key_sha256 is not None:
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+    if encryption_algorithm is not None:
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if content_type is not None:
         _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
@@ -769,7 +805,7 @@ def build_set_expiry_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "expiry")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     expiry_options = kwargs.pop('expiry_options')  # type: Union[str, "_models.PathExpiryOptions"]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
@@ -815,7 +851,7 @@ def build_undelete_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "undelete")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     undelete_source = kwargs.pop('undelete_source', None)  # type: Optional[str]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
@@ -890,6 +926,7 @@ class PathOperations(object):
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -965,6 +1002,8 @@ class PathOperations(object):
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.filedatalake.models.SourceModifiedAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -990,6 +1029,9 @@ class PathOperations(object):
         _source_if_none_match = None
         _source_if_modified_since = None
         _source_if_unmodified_since = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
             _content_encoding = path_http_headers.content_encoding
@@ -1008,6 +1050,10 @@ class PathOperations(object):
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
 
         request = build_create_request(
             url=self._config.url,
@@ -1036,6 +1082,9 @@ class PathOperations(object):
             source_if_none_match=_source_if_none_match,
             source_if_modified_since=_source_if_modified_since,
             source_if_unmodified_since=_source_if_unmodified_since,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
@@ -1061,6 +1110,8 @@ class PathOperations(object):
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['x-ms-continuation']=self._deserialize('str', response.headers.get('x-ms-continuation'))
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
 
 
         if cls:
@@ -1485,6 +1536,7 @@ class PathOperations(object):
         x_ms_range_get_content_md5=None,  # type: Optional[bool]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
@@ -1518,6 +1570,8 @@ class PathOperations(object):
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -1534,6 +1588,9 @@ class PathOperations(object):
         _if_none_match = None
         _if_modified_since = None
         _if_unmodified_since = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -1541,6 +1598,10 @@ class PathOperations(object):
             _if_none_match = modified_access_conditions.if_none_match
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
 
         request = build_read_request(
             url=self._config.url,
@@ -1554,6 +1615,9 @@ class PathOperations(object):
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.read.metadata['url'],
         )
         request = _convert_request(request)
@@ -1592,6 +1656,8 @@ class PathOperations(object):
             response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
             response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
             response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
+            response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -1616,6 +1682,8 @@ class PathOperations(object):
             response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
             response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
             response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
+            response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+            response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             
             deserialized = response.stream_download(self._client._pipeline)
 
@@ -2107,6 +2175,7 @@ class PathOperations(object):
         path_http_headers=None,  # type: Optional["_models.PathHTTPHeaders"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2157,6 +2226,8 @@ class PathOperations(object):
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword action: action. Default value is "flush". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype action: str
@@ -2184,6 +2255,9 @@ class PathOperations(object):
         _if_none_match = None
         _if_modified_since = None
         _if_unmodified_since = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if path_http_headers is not None:
             _content_md5 = path_http_headers.content_md5
         if lease_access_conditions is not None:
@@ -2199,6 +2273,10 @@ class PathOperations(object):
             _if_none_match = modified_access_conditions.if_none_match
             _if_modified_since = modified_access_conditions.if_modified_since
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
 
         request = build_flush_data_request(
             url=self._config.url,
@@ -2221,6 +2299,9 @@ class PathOperations(object):
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.flush_data.metadata['url'],
         )
         request = _convert_request(request)
@@ -2246,6 +2327,8 @@ class PathOperations(object):
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
 
 
         if cls:
@@ -2265,6 +2348,7 @@ class PathOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         path_http_headers=None,  # type: Optional["_models.PathHTTPHeaders"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2301,6 +2385,8 @@ class PathOperations(object):
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
+        :param cpk_info: Parameter group. Default value is None.
+        :type cpk_info: ~azure.storage.filedatalake.models.CpkInfo
         :keyword action: action. Default value is "append". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype action: str
@@ -2320,10 +2406,17 @@ class PathOperations(object):
 
         _transactional_content_hash = None
         _lease_id = None
+        _encryption_key = None
+        _encryption_key_sha256 = None
+        encryption_algorithm = None
         if path_http_headers is not None:
             _transactional_content_hash = path_http_headers.transactional_content_hash
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if cpk_info is not None:
+            _encryption_key = cpk_info.encryption_key
+            _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            encryption_algorithm = cpk_info.encryption_algorithm
         _content = body
 
         request = build_append_data_request(
@@ -2339,6 +2432,9 @@ class PathOperations(object):
             transactional_content_crc64=transactional_content_crc64,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
+            encryption_key=_encryption_key,
+            encryption_key_sha256=_encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
             template_url=self.append_data.metadata['url'],
         )
         request = _convert_request(request)
@@ -2365,6 +2461,7 @@ class PathOperations(object):
         response_headers['Content-MD5']=self._deserialize('bytearray', response.headers.get('Content-MD5'))
         response_headers['x-ms-content-crc64']=self._deserialize('bytearray', response.headers.get('x-ms-content-crc64'))
         response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
 
 
         if cls:

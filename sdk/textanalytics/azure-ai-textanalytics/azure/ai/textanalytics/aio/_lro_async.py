@@ -13,11 +13,12 @@ from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling._async_poller import PollingReturnType
 from .._lro import TextAnalyticsOperationResourcePolling
+from .._generated.v2022_04_01_preview.models import JobMetadata
 
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
@@ -101,8 +102,6 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def _current_body(self):
-        from .._generated.models import JobMetadata
-
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -128,6 +127,12 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
         if not self._current_body:
             return None
         return self._current_body.job_id
+
+    @property
+    def display_name(self):
+        if not self._current_body:
+            return None
+        return self._current_body.display_name
 
     def get_continuation_token(self):
         # type() -> str
@@ -178,6 +183,18 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         """
         return self.polling_method().id
 
+    @property
+    def display_name(self) -> str:
+        """Given display_name to the healthcare entities job
+
+        :return: Display name of the healthcare entities job.
+        :rtype: str
+
+        .. versionadded:: 2022-04-01-preview
+            *display_name* property.
+        """
+        return self.polling_method().display_name
+
     @classmethod
     def from_continuation_token(  # type: ignore
         cls,
@@ -222,13 +239,17 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         await self.polling_method().update_status()
 
         try:
-            return await getattr(
+            client = getattr(
                 self._polling_method, "_text_analytics_client"
-            ).begin_cancel_health_job(
-                self.id,
-                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval),
             )
-
+            try:
+                return await client.begin_cancel_health_job(
+                    self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+                )
+            except ValueError:  # language API compat
+                return await client.begin_analyze_text_cancel_job(
+                    self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+                )
         except HttpResponseError as error:
             from .._response_handlers import process_http_response_error
 
@@ -244,9 +265,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def _current_body(self):
-        from .._generated.models import AnalyzeJobMetadata
-
-        return AnalyzeJobMetadata.deserialize(self._pipeline_response)
+        return JobMetadata.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):

@@ -156,4 +156,4 @@ class ServiceOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_file_systems.metadata = {'url': "{url}/"}  # type: ignore
+    list_file_systems.metadata = {'url': "{url}"}  # type: ignore

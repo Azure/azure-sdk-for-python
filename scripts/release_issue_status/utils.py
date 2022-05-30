@@ -3,6 +3,7 @@ import json
 import os
 import re
 import logging
+import urllib.parse
 
 from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
 from azure.devops.v6_0.pipelines import models
@@ -75,7 +76,7 @@ def _get_pkname_and_readme_link(rest_repo, link, issue_info):
             
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
-            contents_url = pr_changed_file.contents_url
+            contents_url = urllib.parse.unquote(pr_changed_file.contents_url)
             if '/resource-manager' in contents_url:
                 try:
                     pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])

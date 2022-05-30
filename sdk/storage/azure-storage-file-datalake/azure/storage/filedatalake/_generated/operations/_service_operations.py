@@ -36,7 +36,7 @@ def build_list_file_systems_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "account")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     prefix = kwargs.pop('prefix', None)  # type: Optional[str]
     continuation = kwargs.pop('continuation', None)  # type: Optional[str]
     max_results = kwargs.pop('max_results', None)  # type: Optional[int]
@@ -45,7 +45,7 @@ def build_list_file_systems_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
@@ -215,4 +215,4 @@ class ServiceOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_file_systems.metadata = {'url': "{url}/"}  # type: ignore
+    list_file_systems.metadata = {'url': "{url}"}  # type: ignore

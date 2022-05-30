@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2020-08-01", "2021-06-01", "2021-12-01-preview"],
+    "total_api_version_list": ["2019-09-01", "2020-08-01", "2021-06-01", "2021-12-01-preview"],
     "client": {
         "name": "LogAnalyticsManagementClient",
         "filename": "_log_analytics_management_client",
@@ -97,10 +97,8 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "operations": "Operations",
-        "workspaces": "WorkspacesOperations",
-        "deleted_workspaces": "DeletedWorkspacesOperations",
-        "tables": "TablesOperations",
+        "query_packs": "QueryPacksOperations",
+        "queries": "QueriesOperations",
         "data_exports": "DataExportsOperations",
         "data_sources": "DataSourcesOperations",
         "intelligence_packs": "IntelligencePacksOperations",
@@ -116,6 +114,10 @@
         "gateways": "GatewaysOperations",
         "schema": "SchemaOperations",
         "workspace_purge": "WorkspacePurgeOperations",
-        "clusters": "ClustersOperations"
+        "clusters": "ClustersOperations",
+        "operations": "Operations",
+        "workspaces": "WorkspacesOperations",
+        "deleted_workspaces": "DeletedWorkspacesOperations",
+        "tables": "TablesOperations"
     }
 }

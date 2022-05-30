@@ -5,34 +5,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
-import unittest
 import asyncio
+import pytest
+import unittest
 import uuid
 from datetime import datetime, timedelta
 
-import pytest
-
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-
 from azure.core import MatchConditions
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.filedatalake import generate_account_sas, ResourceTypes, AccountSasPermissions
-from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
-from azure.storage.filedatalake import PublicAccess
-from azure.storage.filedatalake import FileSystemSasPermissions
+from azure.storage.filedatalake import(
+    AccessPolicy,
+    AccountSasPermissions,
+    DirectorySasPermissions,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas,
+    generate_file_system_sas)
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
-
-
 # ------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -81,8 +80,8 @@ class FileSystemTest(StorageTestCase):
         async for item in async_iterator:
             result.append(item)
         return result
-    # --Helpers-----------------------------------------------------------------
 
+    # --Test cases for file system ---------------------------------------------
     @DataLakePreparer()
     async def test_create_file_system_async(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -91,6 +90,19 @@ class FileSystemTest(StorageTestCase):
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
+        created = await file_system_client.create_file_system()
+
+        # Assert
+        self.assertTrue(created)
+
+    @DataLakePreparer()
+    async def test_create_file_system_async_extra_backslash(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = self.dsc.get_file_system_client(file_system_name + '/')
         created = await file_system_client.create_file_system()
 
         # Assert
@@ -147,6 +159,33 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(file_systems[0].has_immutability_policy)
         self.assertIsNotNone(file_systems[0].has_legal_hold)
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_list_file_systems_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+        file_system = await self.dsc.create_file_system(file_system_name)
+        sas_token = generate_account_sas(
+            datalake_storage_account_name,
+            datalake_storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=sas_token)
+        file_systems = []
+        async for filesystem in dsc.list_file_systems():
+            file_systems.append(filesystem)
+
+        # Assert
+        self.assertIsNotNone(file_systems)
+        self.assertGreaterEqual(len(file_systems), 1)
+        self.assertIsNotNone(file_systems[0])
+        self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
+
     @DataLakePreparer()
     async def test_delete_file_system_with_existing_file_system_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
@@ -181,10 +220,10 @@ class FileSystemTest(StorageTestCase):
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Record when enabled.")
     @DataLakePreparer()
     async def test_rename_file_system_with_file_system_client(
             self, datalake_storage_account_name, datalake_storage_account_key):
-        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
@@ -250,11 +289,9 @@ class FileSystemTest(StorageTestCase):
                 props = await restored_fs_client.get_file_system_properties()
                 self.assertIsNotNone(props)
 
+    @pytest.mark.skip(reason="We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
     @DataLakePreparer()
     async def test_restore_file_system_with_sas(self, datalake_storage_account_name, datalake_storage_account_key):
-        # TODO: Needs soft delete enabled account in ARM template.
-        pytest.skip(
-            "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         token = generate_account_sas(
             self.dsc.account_name,
@@ -430,6 +467,44 @@ class FileSystemTest(StorageTestCase):
             paths.append(path)
 
         self.assertEqual(len(paths), 6)
+
+    @DataLakePreparer()
+    async def test_list_paths_create_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        file_client = await file_system.create_file('file1')
+
+        expires_on = datetime.utcnow() + timedelta(days=1)
+        await file_client.set_file_expiry("Absolute", expires_on=expires_on)
+
+        # Act
+        paths = []
+        async for path in file_system.get_paths(upn=True):
+            paths.append(path)
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        props = await file_client.get_file_properties()
+        # Properties do not include microseconds so let them vary by 1 second
+        self.assertAlmostEqual(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
+        self.assertAlmostEqual(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+
+    @DataLakePreparer()
+    async def test_list_paths_no_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        await file_system.create_file('file1')
+
+        # Act
+        paths = []
+        async for path in file_system.get_paths(upn=True):
+            paths.append(path)
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        self.assertIsNone(paths[0].expiry_time)
 
     @DataLakePreparer()
     async def test_list_paths_which_are_all_files_async(

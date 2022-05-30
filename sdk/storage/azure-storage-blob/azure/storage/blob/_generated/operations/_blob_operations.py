@@ -1132,6 +1132,7 @@ def build_copy_from_url_request(
     legal_hold = kwargs.pop('legal_hold', None)  # type: Optional[bool]
     copy_source_authorization = kwargs.pop('copy_source_authorization', None)  # type: Optional[str]
     encryption_scope = kwargs.pop('encryption_scope', None)  # type: Optional[str]
+    copy_source_tags = kwargs.pop('copy_source_tags', None)  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
 
     accept = "application/xml"
     # Construct URL
@@ -1192,6 +1193,8 @@ def build_copy_from_url_request(
         _header_parameters['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
     if encryption_scope is not None:
         _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+    if copy_source_tags is not None:
+        _header_parameters['x-ms-copy-source-tag-option'] = _SERIALIZER.header("copy_source_tags", copy_source_tags, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -3577,6 +3580,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
         legal_hold=None,  # type: Optional[bool]
         copy_source_authorization=None,  # type: Optional[str]
+        copy_source_tags=None,  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
         source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -3628,6 +3632,9 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
+         copied or replaced with the tags specified by x-ms-tags. Default value is None.
+        :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
@@ -3707,6 +3714,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
+            copy_source_tags=copy_source_tags,
             template_url=self.copy_from_url.metadata['url'],
         )
         request = _convert_request(request)

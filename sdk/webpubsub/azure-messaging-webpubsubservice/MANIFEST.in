@@ -4,3 +4,4 @@ include azure/messaging/__init__.py
 include LICENSE
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/messaging/webpubsubservice/py.typed

@@ -26,7 +26,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2020-10-02". Note that overriding this default value may result in unsupported behavior.
+     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -37,7 +37,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     ) -> None:
         super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
         resource = kwargs.pop('resource', "filesystem")  # type: str
-        version = kwargs.pop('version', "2020-10-02")  # type: str
+        version = kwargs.pop('version', "2021-06-08")  # type: str
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")

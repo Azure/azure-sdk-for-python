@@ -55,7 +55,7 @@ if TYPE_CHECKING:
     from .._metrics_advisor_client import FeedbackUnion
 
 
-class MetricsAdvisorClient(object):
+class MetricsAdvisorClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

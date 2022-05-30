@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from ._models import ShareProperties, AccessPolicy
 
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-methods
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -333,7 +333,7 @@ class ShareClient(StorageAccountHostsMixin):
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 

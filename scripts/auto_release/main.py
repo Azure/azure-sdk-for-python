@@ -149,6 +149,7 @@ class CodegenTestPR:
         self.pr_number = 0
         self.container_name = ''
         self.private_package_link = []  # List[str]
+        self.tag_is_stable = False
 
     @return_origin_path
     def get_latest_commit_in_swagger_repo(self) -> str:
@@ -183,9 +184,14 @@ class CodegenTestPR:
         with open(self.autorest_result, 'w') as file:
             json.dump(input_data, file)
 
-        # generate code
+        # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+
+        generate_result = self.get_autorest_result()
+        self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
+        log(f"tag_is_stable is {self.tag_is_stable}")
+        
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
@@ -239,7 +245,7 @@ class CodegenTestPR:
         # self.prepare_branch_with_base_branch()
 
     def check_sdk_readme(self):
-        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.package_name}/README.md'))
+        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
 
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
@@ -256,6 +262,13 @@ class CodegenTestPR:
                 content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
 
         modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
+
+    # Use the template to update readme and setup by packaging_tools
+    @return_origin_path
+    def check_file_with_packaging_tool(self):
+        os.chdir(Path(f'sdk/{self.sdk_folder}'))
+        print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
+        log('packaging_tools --build-conf successfully ')
 
     def check_pprint_name(self):
         pprint_name = self.package_name.capitalize()
@@ -275,33 +288,8 @@ class CodegenTestPR:
         all_files(self.sdk_code_path(), files)
         return files
 
-    def judge_tag(self) -> bool:
-        files = self.get_all_files_under_package_folder()
-        default_api_version = ''  # for multi-api
-        api_version = ''  # for single-api
-        for file in files:
-            if '.py' not in file or '.pyc' in file:
-                continue
-            try:
-                with open(file, 'r') as file_in:
-                    list_in = file_in.readlines()
-            except:
-                _LOG.info(f'can not open {file}')
-                continue
-
-            for line in list_in:
-                if line.find('DEFAULT_API_VERSION = ') > -1:
-                    default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-                if default_api_version == '' and line.find('api_version = ') > -1:
-                    api_version += line.split('=')[-1].strip('\n')  # collect all single api version
-        if default_api_version != '':
-            log(f'find default api version:{default_api_version}')
-            return 'preview' in default_api_version
-        log(f'find single api version:{api_version}')
-        return 'preview' in api_version
-
     def calculate_next_version_proc(self, last_version: str):
-        preview_tag = self.judge_tag()
+        preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
             return '0.0.0'
@@ -402,7 +390,9 @@ class CodegenTestPR:
         self.check_ci_file_proc('azure-mgmt-core>=1.3.0,<2.0.0')
 
     def check_file(self):
+        self.check_file_with_packaging_tool()
         self.check_pprint_name()
+        self.check_sdk_readme()
         self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()

@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 import functools
-from typing import Optional, Any, Union, TypeVar
+from typing import Any, Dict, Optional, Type, TypeVar, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -28,6 +29,9 @@ from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
 from ._deserialize import process_storage_error, is_file_path
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 ClassType = TypeVar("ClassType")
@@ -58,6 +62,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -249,7 +256,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 

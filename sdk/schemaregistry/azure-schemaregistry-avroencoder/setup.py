@@ -10,7 +10,7 @@ import re
 import sys
 import os.path
 from io import open
-from setuptools import find_packages, setup
+from setuptools import find_namespace_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-schemaregistry-avroencoder"
@@ -32,16 +32,10 @@ with open('README.md', encoding='utf-8') as f:
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
-exclude_packages = [
-        'tests',
-        'samples',
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-        'azure.schemaregistry',
-    ]
 install_packages = [
     'azure-schemaregistry>=1.0.0,<2.0.0',
-    'avro>=1.11.0'
+    'avro>=1.11.0',
+    "typing-extensions>=4.0.1",
 ]
 
 setup(
@@ -55,7 +49,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
@@ -67,9 +61,12 @@ setup(
     ],
     python_requires=">=3.6",
     zip_safe=False,
-    packages=[
-        'azure.schemaregistry.encoder.avroencoder',
-        'azure.schemaregistry.encoder.avroencoder.aio',
-    ],
+    packages=find_namespace_packages(
+        include=['azure.schemaregistry.encoder.*']  # Exclude packages that will be covered by PEP420 or nspkg
+    ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=install_packages
 )

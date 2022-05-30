@@ -6,9 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._subscriptions_operations import SubscriptionsOperations
-from ._tenants_operations import TenantsOperations
-from ._subscription_client_operations import SubscriptionClientOperationsMixin
+from ._operations import SubscriptionsOperations
+from ._operations import TenantsOperations
+from ._operations import SubscriptionClientOperationsMixin
 
 __all__ = [
     'SubscriptionsOperations',

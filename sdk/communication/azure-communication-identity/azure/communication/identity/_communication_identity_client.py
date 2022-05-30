@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from ._generated.models import CommunicationTokenScope
 
 
-class CommunicationIdentityClient(object):
+class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Identity client.
 
     :param str endpoint:

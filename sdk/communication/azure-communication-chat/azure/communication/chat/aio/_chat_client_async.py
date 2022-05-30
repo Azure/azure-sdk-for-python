@@ -37,7 +37,7 @@ from .._utils import ( # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
 
-class ChatClient(object):
+class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
 
     This client provides operations to create chat thread, delete chat thread,

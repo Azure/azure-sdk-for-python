@@ -1,92 +1,115 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "632",
+        "Content-Length": "363",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8ad797c-5d0e-11ec-aaf2-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [{\u0022parameters\u0022: {\u0022opinionMining\u0022: true, \u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022extractiveSummarizationTasks\u0022: [], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022It has a sleek premium aluminum design that makes it beautiful to look at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022The food and service is not good\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "It has a sleek premium aluminum design that makes it beautiful to look at.",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "The food and service is not good",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "opinionMining": true,
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "aa8d4741-ca95-4601-84c9-9b2b226a3cc8",
-        "Date": "Tue, 14 Dec 2021 18:50:35 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c9c645de-8948-4ba0-9ec7-33695da7f97c",
+        "apim-request-id": "43c10bbb-eeaf-4c22-af43-a2be5ea8a201",
+        "Content-Length": "0",
+        "Date": "Tue, 03 May 2022 00:03:17 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9db53bd2-7133-4be1-a6ee-0afa46daf392?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "222"
+        "x-envoy-upstream-service-time": "347"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c9c645de-8948-4ba0-9ec7-33695da7f97c?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9db53bd2-7133-4be1-a6ee-0afa46daf392?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8ad797c-5d0e-11ec-aaf2-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0ff52233-288f-4cef-9351-a2ded137879e",
+        "apim-request-id": "61da5744-1466-4bea-aeea-3c20af5257e4",
+        "Content-Length": "279",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:50:40 GMT",
+        "Date": "Tue, 03 May 2022 00:03:21 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "45"
       },
       "ResponseBody": {
-        "jobId": "c9c645de-8948-4ba0-9ec7-33695da7f97c",
-        "lastUpdateDateTime": "2021-12-14T18:50:35Z",
-        "createdDateTime": "2021-12-14T18:50:35Z",
-        "expirationDateTime": "2021-12-15T18:50:35Z",
+        "jobId": "9db53bd2-7133-4be1-a6ee-0afa46daf392",
+        "lastUpdateDateTime": "2022-05-03T00:03:17Z",
+        "createdDateTime": "2022-05-03T00:03:16Z",
+        "expirationDateTime": "2022-05-04T00:03:16Z",
         "status": "running",
         "errors": [],
         "tasks": {
           "completed": 0,
           "failed": 0,
           "inProgress": 1,
-          "total": 1
+          "total": 1,
+          "items": []
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/c9c645de-8948-4ba0-9ec7-33695da7f97c?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9db53bd2-7133-4be1-a6ee-0afa46daf392?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8ad797c-5d0e-11ec-aaf2-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ff00a9d1-8070-4b6f-8bee-81729b7c76b8",
+        "apim-request-id": "4552f0e4-e3bf-4d6e-9169-bcb209ed5213",
+        "Content-Length": "2455",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:50:45 GMT",
+        "Date": "Tue, 03 May 2022 00:03:26 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "149"
+        "x-envoy-upstream-service-time": "132"
       },
       "ResponseBody": {
-        "jobId": "c9c645de-8948-4ba0-9ec7-33695da7f97c",
-        "lastUpdateDateTime": "2021-12-14T18:50:43Z",
-        "createdDateTime": "2021-12-14T18:50:35Z",
-        "expirationDateTime": "2021-12-15T18:50:35Z",
+        "jobId": "9db53bd2-7133-4be1-a6ee-0afa46daf392",
+        "lastUpdateDateTime": "2022-05-03T00:03:25Z",
+        "createdDateTime": "2022-05-03T00:03:16Z",
+        "expirationDateTime": "2022-05-04T00:03:16Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -94,11 +117,12 @@
           "failed": 0,
           "inProgress": 0,
           "total": 1,
-          "sentimentAnalysisTasks": [
+          "items": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:50:43.6706207Z",
+              "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "state": "succeeded",
+              "lastUpdateDateTime": "2022-05-03T00:03:25.3974182Z",
+              "status": "succeeded",
               "results": {
                 "statistics": {
                   "documentsCount": 2,

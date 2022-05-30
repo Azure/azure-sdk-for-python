@@ -136,6 +136,16 @@ IGNORED_SAMPLES = {
         "sample_copy_model_async.py",
     ],
     "azure-ai-language-questionanswering": ["sample_chat.py"],
+    "azure-ai-textanalytics": [
+        "sample_analyze_healthcare_entities_with_cancellation.py",
+        "sample_analyze_healthcare_entities_with_cancellation_async.py",
+        "sample_single_category_classify.py",
+        "sample_multi_category_classify.py",
+        "sample_recognize_custom_entities.py",
+        "sample_multi_category_classify_async.py",
+        "sample_recognize_custom_entities_async.py",
+        "sample_single_category_classify_async.py",
+    ]
 }
 
 def run_check_call_with_timeout(

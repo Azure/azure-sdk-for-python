@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import LogAnalyticsManagementClientConfiguration
-from .operations import AvailableServiceTiersOperations, ClustersOperations, DataExportsOperations, DataSourcesOperations, DeletedWorkspacesOperations, GatewaysOperations, IntelligencePacksOperations, LinkedServicesOperations, LinkedStorageAccountsOperations, ManagementGroupsOperations, OperationStatusesOperations, Operations, SavedSearchesOperations, SchemaOperations, SharedKeysOperations, StorageInsightConfigsOperations, TablesOperations, UsagesOperations, WorkspacePurgeOperations, WorkspacesOperations
+from .operations import AvailableServiceTiersOperations, ClustersOperations, DataExportsOperations, DataSourcesOperations, DeletedWorkspacesOperations, GatewaysOperations, IntelligencePacksOperations, LinkedServicesOperations, LinkedStorageAccountsOperations, ManagementGroupsOperations, OperationStatusesOperations, Operations, QueriesOperations, QueryPacksOperations, SavedSearchesOperations, SchemaOperations, SharedKeysOperations, StorageInsightConfigsOperations, TablesOperations, UsagesOperations, WorkspacePurgeOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,14 +24,10 @@ if TYPE_CHECKING:
 class LogAnalyticsManagementClient:
     """Operational Insights Client.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.loganalytics.operations.Operations
-    :ivar workspaces: WorkspacesOperations operations
-    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
-    :ivar deleted_workspaces: DeletedWorkspacesOperations operations
-    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
-    :ivar tables: TablesOperations operations
-    :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
+    :ivar query_packs: QueryPacksOperations operations
+    :vartype query_packs: azure.mgmt.loganalytics.operations.QueryPacksOperations
+    :ivar queries: QueriesOperations operations
+    :vartype queries: azure.mgmt.loganalytics.operations.QueriesOperations
     :ivar data_exports: DataExportsOperations operations
     :vartype data_exports: azure.mgmt.loganalytics.operations.DataExportsOperations
     :ivar data_sources: DataSourcesOperations operations
@@ -67,6 +63,14 @@ class LogAnalyticsManagementClient:
     :vartype workspace_purge: azure.mgmt.loganalytics.operations.WorkspacePurgeOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.loganalytics.operations.Operations
+    :ivar workspaces: WorkspacesOperations operations
+    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
+    :ivar deleted_workspaces: DeletedWorkspacesOperations operations
+    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
+    :ivar tables: TablesOperations operations
+    :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -91,10 +95,8 @@ class LogAnalyticsManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_workspaces = DeletedWorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tables = TablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.query_packs = QueryPacksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.queries = QueriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_exports = DataExportsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_sources = DataSourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.intelligence_packs = IntelligencePacksOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -111,6 +113,10 @@ class LogAnalyticsManagementClient:
         self.schema = SchemaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_purge = WorkspacePurgeOperations(self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deleted_workspaces = DeletedWorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.tables = TablesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

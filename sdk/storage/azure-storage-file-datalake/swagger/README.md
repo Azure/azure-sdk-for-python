@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.StorageDataLake/preview/2020-10-02/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2021-06-08/DataLakeStorage.json
 output-folder: ../azure/storage/filedatalake/_generated
 namespace: azure.storage.filedatalake
 no-namespace-folders: true
@@ -75,7 +75,7 @@ directive:
     $["x-ms-parameterized-host"] = undefined;
 ```
 
-### Add url parameter to each operation and add it to the url
+### Add url parameter to each operation and add url to the path
 ``` yaml
 directive:
 - from: swagger-document
@@ -90,7 +90,17 @@ directive:
         $[property]["parameters"].push({"$ref": "#/parameters/Url"});
 
         var oldName = property;
-        var newName = '{url}' + property;
+        // For service operations (where the path is just '/') we need to
+        // remove the '/' at the begining to avoid having an extra '/' in
+        // the final URL.
+        if (property === '/' || property.startsWith('/?'))
+        {
+            var newName = '{url}' + property.substring(1);
+        }
+        else
+        {
+            var newName = '{url}' + property;
+        }
         $[newName] = $[oldName];
         delete $[oldName];
     }

@@ -6,7 +6,7 @@
 
 import functools
 import pytest
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import RequestsTransport
@@ -113,7 +113,10 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_get_form_recognizer_client_v2(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        set_bodiless_matcher()  
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  
         transport = RequestsTransport()
         ftc = FormTrainingClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport, api_version="2.1")
 

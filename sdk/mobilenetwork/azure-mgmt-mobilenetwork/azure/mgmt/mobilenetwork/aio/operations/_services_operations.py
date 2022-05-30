@@ -33,7 +33,7 @@ class ServicesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -170,7 +170,7 @@ class ServicesOperations:
         :type service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Service, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.Service
+        :rtype: ~azure.mgmt.mobilenetwork.models.Service
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Service"]
@@ -278,7 +278,7 @@ class ServicesOperations:
          strings - ``default``\ , ``requested`` or ``service``.
         :type service_name: str
         :param parameters: Parameters supplied to the create or update service operation.
-        :type parameters: ~mobile_network_management_client.models.Service
+        :type parameters: ~azure.mgmt.mobilenetwork.models.Service
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -289,7 +289,7 @@ class ServicesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Service or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~mobile_network_management_client.models.Service]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.Service]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -354,10 +354,10 @@ class ServicesOperations:
          strings - ``default``\ , ``requested`` or ``service``.
         :type service_name: str
         :param parameters: Parameters supplied to update service tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Service, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.Service
+        :rtype: ~azure.mgmt.mobilenetwork.models.Service
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Service"]
@@ -416,7 +416,7 @@ class ServicesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServiceListResult or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.ServiceListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.ServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceListResult"]

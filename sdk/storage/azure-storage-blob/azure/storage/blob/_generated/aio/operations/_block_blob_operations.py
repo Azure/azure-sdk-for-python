@@ -256,6 +256,7 @@ class BlockBlobOperations:
         blob_tags_string: Optional[str] = None,
         copy_source_blob_properties: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
+        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
         blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
@@ -311,6 +312,9 @@ class BlockBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
+         copied or replaced with the tags specified by x-ms-tags. Default value is None.
+        :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -427,6 +431,7 @@ class BlockBlobOperations:
             blob_tags_string=blob_tags_string,
             copy_source_blob_properties=copy_source_blob_properties,
             copy_source_authorization=copy_source_authorization,
+            copy_source_tags=copy_source_tags,
             template_url=self.put_blob_from_url.metadata['url'],
         )
         request = _convert_request(request)
