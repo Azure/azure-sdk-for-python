@@ -26,6 +26,7 @@ from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperat
 from ._private_end_point_connections_operations import PrivateEndPointConnectionsOperations
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._global_parameters_operations import GlobalParametersOperations
 
 __all__ = [
     'Operations',
@@ -48,4 +49,5 @@ __all__ = [
     'PrivateEndPointConnectionsOperations',
     'PrivateEndpointConnectionOperations',
     'PrivateLinkResourcesOperations',
+    'GlobalParametersOperations',
 ]
