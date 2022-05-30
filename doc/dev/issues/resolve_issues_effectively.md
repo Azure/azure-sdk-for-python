@@ -11,6 +11,8 @@ Most issues can be classified into 3 categories. They are
 ## Usage error (For users)
 If you are not familiar with the SDK usage of a service, you can find relevant examples in [this repo][sample repo] in most cases.
 
+For some common errors, you can check [here](#Summary Of Common Errors).
+
 ## Feature Request(For users)
 
 See [here][request_a_feature] for more details.
@@ -20,6 +22,23 @@ See [here][request_a_feature] for more details.
 Please describe the bug in as much detail as possible, such as listing the SDK package name, version and operating system info you use.
 
 If you can provide detailed reproduction steps, it will help us locate and solve the issue.
+
+<hr/>
+
+## Summary Of Common Errors
+
+### Error from track1 to track2
+If the code you use needs to set wait() function for the Long Running Operation to wait for the result, it should be the SDK of Track1. We have stopped maintenance at present.
+
+We strongly recommend that you update the SDK version. Then you will find that in the SDK of Track2, we all use the function name prefixed with `begin_` for LRO operations, and the result() method can be used to get the returned result.
+
+### Error from Service
+Since the python SDK is generated based on the rest API, we will not deliberately change the returned results. So if you have any questions about the value of the response result of the request, please open the issue under the [rest issue][rest issue].
+
+### Error like (AttributeError: 'PipelineResponse' object has no attribute 'get')
+When this error occurs, you can check the version of `msrest`. Currently, for most SDKs, it needs to be >= 0.6.21. FYI: [SDK dependency][SDK dependency]
+
+You could upgrade the dependency before using the SDK to check if the issue has been solved.
 
 <hr/>
 
@@ -57,3 +76,5 @@ If the issue is not from the SDK but from the [rest API][rest API], you can repl
 [sample repo]: https://github.com/Azure-Samples/azure-samples-python-management
 [request_a_feature]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/how_to_request_a_feature_in_sdk.md
 [rest API]: https://github.com/Azure/azure-rest-api-specs
+[rest issue]: https://github.com/Azure/azure-rest-api-specs/issues
+[SDK dependency]: https://github.com/Azure/azure-sdk-for-python/blob/main/shared_requirements.txt
