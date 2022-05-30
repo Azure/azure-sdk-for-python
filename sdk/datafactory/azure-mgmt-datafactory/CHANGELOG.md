@@ -1,5 +1,18 @@
 # Release History
 
+## 2.6.0 (2022-05-27)
+
+**Features**
+
+  - Added operation group GlobalParametersOperations
+  - Model DataFlowSink has a new parameter rejected_data_linked_service
+  - Model ExecuteDataFlowActivity has a new parameter source_staging_concurrency
+  - Model ExecuteDataFlowActivityTypeProperties has a new parameter source_staging_concurrency
+  - Model ExecutePowerQueryActivityTypeProperties has a new parameter source_staging_concurrency
+  - Model ExecuteWranglingDataflowActivity has a new parameter source_staging_concurrency
+  - Model Factory has a new parameter purview_configuration
+  - Model PowerQuerySink has a new parameter rejected_data_linked_service
+
 ## 2.5.0 (2022-05-12)
 
 **Features**
