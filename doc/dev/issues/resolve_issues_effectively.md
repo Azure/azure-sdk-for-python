@@ -27,13 +27,13 @@ If you can provide detailed reproduction steps, it will help us locate and solve
 
 ## Summary Of Common Errors
 
-### Error from track1 to track2
+### Error from Track1 to Track2
 If the code you use needs to set wait() function for the Long Running Operation to wait for the result, it should be the SDK of Track1. We have stopped maintenance at present.
 
 We strongly recommend that you update the SDK version. Then you will find that in the SDK of Track2, we all use the function name prefixed with `begin_` for LRO operations, and the result() method can be used to get the returned result.
 
 ### Error from Service
-Since the python SDK is generated based on the rest API, we will not deliberately change the returned results. So if you have any questions about the value of the response result of the request, please open the issue under the [rest issue][rest issue].
+Since the python SDK is generated based on the [rest API][rest API], it will not deliberately change the returned results. So if you have any questions about the response result value of the request, please open the issue under the [rest issue][rest issue].
 
 ### Error like (AttributeError: 'PipelineResponse' object has no attribute 'get')
 When this error occurs, you can check the version of `msrest`. Currently, for most SDKs, it needs to be >= 0.6.21. FYI: [SDK dependency][SDK dependency]
