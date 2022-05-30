@@ -2201,3 +2201,32 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 await self.table.upsert_entity(entity)
         finally:
             await self._tear_down()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_upsert_entity_with_invalid_key_type(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table_name = self._get_table_reference('table')
+            table = self.ts.get_table_client(table_name)
+            await table.create_table()
+
+            # Act
+            entity1 = {
+                u'PartitionKey': 1,
+                u'RowKey': '0',
+                u'data': 123
+            }
+            entity2 = {
+                u'PartitionKey': '1',
+                u'RowKey': 0,
+                u'data': 123
+            }
+
+            with pytest.raises(TypeError):
+                await self.table.upsert_entity(entity1)
+            with pytest.raises(TypeError):
+                await self.table.upsert_entity(entity2)
+        finally:
+            await self._tear_down()
