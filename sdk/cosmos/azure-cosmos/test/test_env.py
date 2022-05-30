@@ -62,8 +62,8 @@ class EnvTest(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(url=cls.host, credential=cls.masterKey, consistency_level="Session",
                                                 connection_policy=cls.connectionPolicy)
         cls.created_db = cls.client.create_database_if_not_exists("Test_Env_DB")
-        cls.created_collection = cls.databaseForTest.create_container_if_not_exists(
-            cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
+        cls.created_collection = cls.created_db.create_container_if_not_exists(
+            "Test_Env_Container", PartitionKey(path="/id"))
 
     @classmethod
     def tearDownClass(cls):

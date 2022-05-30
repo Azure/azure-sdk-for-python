@@ -53,9 +53,9 @@ class ConversationAppAsyncTests(AsyncConversationTest):
             assert result["result"]["prediction"]["projectKind"] == 'Conversation'
             
             # assert - top intent
-            assert result["result"]["prediction"]["topIntent"] == 'Read'
+            assert result["result"]["prediction"]["topIntent"] == 'Setup'
             assert len(result["result"]["prediction"]["intents"]) > 0
-            assert result["result"]["prediction"]["intents"][0]["category"] == 'Read'
+            assert result["result"]["prediction"]["intents"][0]["category"] == 'Setup'
             assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
             
             # assert - entities

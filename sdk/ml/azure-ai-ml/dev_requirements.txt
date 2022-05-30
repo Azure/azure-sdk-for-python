@@ -2,3 +2,14 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
+marshmallow-jsonschema==0.10.0
+mock
+pytest-cov
+pytest-forked
+pytest-xdist
+pytest-timeout
+pytest-mock
+pytest
+pydash
+pytest-vcr
+azure-mgmt-storage~=19.1.0
