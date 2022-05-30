@@ -159,6 +159,33 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(file_systems[0].has_immutability_policy)
         self.assertIsNotNone(file_systems[0].has_legal_hold)
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_list_file_systems_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+        file_system = await self.dsc.create_file_system(file_system_name)
+        sas_token = generate_account_sas(
+            datalake_storage_account_name,
+            datalake_storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=sas_token)
+        file_systems = []
+        async for filesystem in dsc.list_file_systems():
+            file_systems.append(filesystem)
+
+        # Assert
+        self.assertIsNotNone(file_systems)
+        self.assertGreaterEqual(len(file_systems), 1)
+        self.assertIsNotNone(file_systems[0])
+        self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
+
     @DataLakePreparer()
     async def test_delete_file_system_with_existing_file_system_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
@@ -193,10 +220,10 @@ class FileSystemTest(StorageTestCase):
         props = await new_filesystem.get_file_system_properties()
         self.assertEqual(new_name, props.name)
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Record when enabled.")
     @DataLakePreparer()
     async def test_rename_file_system_with_file_system_client(
             self, datalake_storage_account_name, datalake_storage_account_key):
-        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
@@ -262,11 +289,9 @@ class FileSystemTest(StorageTestCase):
                 props = await restored_fs_client.get_file_system_properties()
                 self.assertIsNotNone(props)
 
+    @pytest.mark.skip(reason="We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
     @DataLakePreparer()
     async def test_restore_file_system_with_sas(self, datalake_storage_account_name, datalake_storage_account_key):
-        # TODO: Needs soft delete enabled account in ARM template.
-        pytest.skip(
-            "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         token = generate_account_sas(
             self.dsc.account_name,

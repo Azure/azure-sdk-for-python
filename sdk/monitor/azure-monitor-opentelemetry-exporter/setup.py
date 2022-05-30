@@ -74,11 +74,16 @@ setup(
         'azure.monitor',
         'azure.monitor.opentelemetry'
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     python_requires=">=3.6.0",
     install_requires=[
         "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.10",
-        "opentelemetry-api<2.0.0,>=1.10.0,!=1.10a0",
-        "opentelemetry-sdk<2.0.0,>=1.10.0,!=1.10a0",
+        "opentelemetry-api<2.0.0,>=1.11.1,!=1.10a0",
+        "opentelemetry-sdk<2.0.0,>=1.11.1,!=1.10a0",
     ],
 )
+

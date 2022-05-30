@@ -1,11 +1,21 @@
 # Release History
 
-## 21.1.0b1 (2022-04-18)
+## 21.1.0 (2022-05-05)
 
 **Features**
 
-  - Added operation group ChangeResourceOperations
-  - Added operation group ChangeResourcesOperations
+  - GA `azure.mgmt.resource.changes`
+
+
+## 21.1.0b1 (2022-04-19)
+
+**Features**
+
+  - Added operation TemplateSpecVersionsOperations.get_built_in
+  - Added operation TemplateSpecVersionsOperations.list_built_ins
+  - Added operation TemplateSpecsOperations.get_built_in
+  - Added operation TemplateSpecsOperations.list_built_ins
+  - Added operation group ChangesOperations
   - Combined operation files into one.
 
 **Fixes**

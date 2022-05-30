@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 10 Mar 2022 23:50:58 GMT
+      - Fri, 29 Apr 2022 22:16:41 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 10 Mar 2022 23:50:58 GMT
-      etag: '"0x8DA02F0D348D49F"'
-      last-modified: Thu, 10 Mar 2022 23:50:58 GMT
+      date: Fri, 29 Apr 2022 22:16:40 GMT
+      etag: '"0x8DA2A2DEFD71943"'
+      last-modified: Fri, 29 Apr 2022 22:16:41 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-06-08'
     status:
@@ -32,11 +32,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 10 Mar 2022 23:50:58 GMT
+      - Fri, 29 Apr 2022 22:16:41 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -56,15 +56,15 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 10 Mar 2022 23:50:58 GMT
-      etag: '"0x8DA02F0D36A2B11"'
-      last-modified: Thu, 10 Mar 2022 23:50:58 GMT
+      date: Fri, 29 Apr 2022 22:16:41 GMT
+      etag: '"0x8DA2A2DEFFA2668"'
+      last-modified: Fri, 29 Apr 2022 22:16:41 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2022-03-10T23:50:58.8703505Z'
-      x-ms-file-creation-time: '2022-03-10T23:50:58.8703505Z'
+      x-ms-file-change-time: '2022-04-29T22:16:41.4389864Z'
+      x-ms-file-creation-time: '2022-04-29T22:16:41.4389864Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2022-03-10T23:50:58.8703505Z'
+      x-ms-file-last-write-time: '2022-04-29T22:16:41.4389864Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 8725144154719613152*15111010650564761710
       x-ms-request-server-encrypted: 'true'
@@ -83,9 +83,9 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 10 Mar 2022 23:50:58 GMT
+      - Fri, 29 Apr 2022 22:16:41 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -100,11 +100,11 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Thu, 10 Mar 2022 23:50:58 GMT
-      etag: '"0x8DA02F0D3728E45"'
-      last-modified: Thu, 10 Mar 2022 23:50:58 GMT
+      date: Fri, 29 Apr 2022 22:16:41 GMT
+      etag: '"0x8DA2A2DF002D7B4"'
+      last-modified: Fri, 29 Apr 2022 22:16:41 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-file-last-write-time: '2022-03-10T23:50:58.9253189Z'
+      x-ms-file-last-write-time: '2022-04-29T22:16:41.4959540Z'
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
     status:
@@ -117,9 +117,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 10 Mar 2022 23:50:58 GMT
+      - Fri, 29 Apr 2022 22:16:41 GMT
       x-ms-version:
       - '2021-06-08'
     method: HEAD
@@ -130,15 +130,15 @@ interactions:
     headers:
       content-length: '1024'
       content-type: application/octet-stream
-      date: Thu, 10 Mar 2022 23:50:58 GMT
-      etag: '"0x8DA02F0D3728E45"'
-      last-modified: Thu, 10 Mar 2022 23:50:58 GMT
+      date: Fri, 29 Apr 2022 22:16:41 GMT
+      etag: '"0x8DA2A2DF002D7B4"'
+      last-modified: Fri, 29 Apr 2022 22:16:41 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2022-03-10T23:50:58.9253189Z'
-      x-ms-file-creation-time: '2022-03-10T23:50:58.8703505Z'
+      x-ms-file-change-time: '2022-04-29T22:16:41.4959540Z'
+      x-ms-file-creation-time: '2022-04-29T22:16:41.4389864Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2022-03-10T23:50:58.9253189Z'
+      x-ms-file-last-write-time: '2022-04-29T22:16:41.4959540Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 8725144154719613152*15111010650564761710
       x-ms-lease-state: available
@@ -160,9 +160,9 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 10 Mar 2022 23:50:59 GMT
+      - Fri, 29 Apr 2022 22:16:41 GMT
       x-ms-file-last-write-time:
       - Preserve
       x-ms-range:
@@ -179,11 +179,11 @@ interactions:
     headers:
       content-length: '0'
       content-md5: pTsTLZHyQ+et6NksJ1OHxg==
-      date: Thu, 10 Mar 2022 23:50:58 GMT
-      etag: '"0x8DA02F0D383A2D1"'
-      last-modified: Thu, 10 Mar 2022 23:50:59 GMT
+      date: Fri, 29 Apr 2022 22:16:41 GMT
+      etag: '"0x8DA2A2DF014133F"'
+      last-modified: Fri, 29 Apr 2022 22:16:41 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-file-last-write-time: '2022-03-10T23:50:58.9253189Z'
+      x-ms-file-last-write-time: '2022-04-29T22:16:41.4959540Z'
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
     status:
@@ -196,9 +196,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 10 Mar 2022 23:50:59 GMT
+      - Fri, 29 Apr 2022 22:16:41 GMT
       x-ms-version:
       - '2021-06-08'
     method: HEAD
@@ -209,15 +209,15 @@ interactions:
     headers:
       content-length: '1024'
       content-type: application/octet-stream
-      date: Thu, 10 Mar 2022 23:50:58 GMT
-      etag: '"0x8DA02F0D383A2D1"'
-      last-modified: Thu, 10 Mar 2022 23:50:59 GMT
+      date: Fri, 29 Apr 2022 22:16:41 GMT
+      etag: '"0x8DA2A2DF014133F"'
+      last-modified: Fri, 29 Apr 2022 22:16:41 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2022-03-10T23:50:59.0372561Z'
-      x-ms-file-creation-time: '2022-03-10T23:50:58.8703505Z'
+      x-ms-file-change-time: '2022-04-29T22:16:41.6088895Z'
+      x-ms-file-creation-time: '2022-04-29T22:16:41.4389864Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2022-03-10T23:50:58.9253189Z'
+      x-ms-file-last-write-time: '2022-04-29T22:16:41.4959540Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 8725144154719613152*15111010650564761710
       x-ms-lease-state: available

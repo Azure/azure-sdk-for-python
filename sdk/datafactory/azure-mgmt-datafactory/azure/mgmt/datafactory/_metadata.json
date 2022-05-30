@@ -116,6 +116,7 @@
         "managed_private_endpoints": "ManagedPrivateEndpointsOperations",
         "private_end_point_connections": "PrivateEndPointConnectionsOperations",
         "private_endpoint_connection": "PrivateEndpointConnectionOperations",
-        "private_link_resources": "PrivateLinkResourcesOperations"
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "global_parameters": "GlobalParametersOperations"
     }
 }

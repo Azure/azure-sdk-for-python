@@ -26,22 +26,11 @@
 
 from .._generated.models import (
     SnoozeScope,
-    Severity as AnomalySeverity,
-    DataSourceType as DatasourceType,
-    ViewMode as DataFeedAccessMode,
-    RollUpMethod as DataFeedAutoRollupMethod,
-    FillMissingPointType as DatasourceMissingDataPointFillType,
     AnomalyDetectorDirection,
-    IncidentStatus as AnomalyIncidentStatus,
-    Granularity as DataFeedGranularityType,
-    EntityStatus as DataFeedStatus,
     AnomalyValue,
     ChangePointValue,
     PeriodType,
     FeedbackType,
-    TimeMode as AlertQueryTimeMode,
-    DataSourceCredentialType as DatasourceCredentialType,
-    AuthenticationTypeEnum as DatasourceAuthenticationType,
 )
 
 from .._generated.models import (
@@ -50,13 +39,24 @@ from .._generated.models import (
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
     EnrichmentStatus,
-    MetricSeriesItem as MetricSeriesDefinition,
-    IngestionStatus as DataFeedIngestionStatus,
     SeriesIdentity,
     SeverityFilterCondition,
 )
 
 from ._models import (
+    AnomalySeverity,
+    DataFeedAccessMode,
+    DataFeedAutoRollupMethod,
+    DatasourceMissingDataPointFillType,
+    DataFeedGranularityType,
+    DataFeedStatus,
+    AlertQueryTimeMode,
+    DatasourceType,
+    AnomalyIncidentStatus,
+    DatasourceCredentialType,
+    DatasourceAuthenticationType,
+    MetricSeriesDefinition,
+    DataFeedIngestionStatus,
     MetricFeedback,
     AnomalyFeedback,
     ChangePointFeedback,

@@ -635,7 +635,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         await client.detect_language(["please don't fail"])
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
@@ -645,3 +645,25 @@ class TestDetectLanguage(TextAnalyticsTest):
             disable_service_logs=True,
             raw_response_hook=callback,
         )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @recorded_by_proxy_async
+    async def test_disable_service_logs_body_param(self, client):
+        def callback(resp):
+            import json
+            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+        await client.detect_language(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    async def test_language_multiapi_validate_args_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            res = await client.detect_language(["I'm tired"], disable_service_logs=True)
+        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"

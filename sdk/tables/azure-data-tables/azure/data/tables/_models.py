@@ -535,24 +535,24 @@ class TablePayloadFormat(object):
     """Returns minimal type information for the entity properties plus some extra odata properties."""
 
 
-class UpdateMode(str, Enum):
+class UpdateMode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     REPLACE = "replace"
     MERGE = "merge"
 
 
-class TransactionOperation(str, Enum):
+class TransactionOperation(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     CREATE = "create"
     UPSERT = "upsert"
     UPDATE = "update"
     DELETE = "delete"
 
 
-class SASProtocol(str, Enum):
+class SASProtocol(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     HTTPS = "https"
     HTTP = "http"
 
 
-class LocationMode(str, Enum):
+class LocationMode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types

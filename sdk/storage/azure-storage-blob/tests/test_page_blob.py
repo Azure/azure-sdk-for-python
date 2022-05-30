@@ -27,6 +27,7 @@ from azure.storage.blob import (
     generate_blob_sas)
 from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils.storage import StorageTestCase
+from test_helpers import ProgressTracker
 from settings.testcase import BlobPreparer
 
 
@@ -1791,7 +1792,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @pytest.mark.skip(reason="Failing live test https://github.com/Azure/azure-sdk-for-python/issues/10473")
+    @pytest.mark.skip(reason="Requires further investigation. Failing for unexpected kwarg seal_blob")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_incremental_copy_blob(self, storage_account_name, storage_account_key):
@@ -2128,3 +2129,59 @@ class StoragePageBlobTest(StorageTestCase):
         end = page_ranges[0]['end']
 
         content = blob_client.download_blob(max_concurrency=3).readall()
+
+    @BlobPreparer()
+    def test_upload_progress_chunked_non_parallel(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_page_size=1024)
+
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.PageBlob,
+            overwrite=True,
+            max_concurrency=1,
+            progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_upload_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_page_size=1024)
+
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.PageBlob,
+            overwrite=True,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()

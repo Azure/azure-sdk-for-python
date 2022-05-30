@@ -49,7 +49,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
@@ -64,5 +64,9 @@ setup(
     packages=find_namespace_packages(
         include=['azure.schemaregistry.encoder.*']  # Exclude packages that will be covered by PEP420 or nspkg
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=install_packages
 )

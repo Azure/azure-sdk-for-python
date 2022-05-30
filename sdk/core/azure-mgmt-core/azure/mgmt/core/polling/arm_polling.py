@@ -26,6 +26,7 @@
 from enum import Enum
 from typing import TYPE_CHECKING, Optional, Union
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling.base_polling import (
     LongRunningOperation,
     LROBasePolling,
@@ -50,13 +51,13 @@ if TYPE_CHECKING:
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
-class _LroOption(str, Enum):
+class _LroOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Known LRO options from Swagger."""
 
     FINAL_STATE_VIA = "final-state-via"
 
 
-class _FinalStateViaOption(str, Enum):
+class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible final-state-via options."""
 
     AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"

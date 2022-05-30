@@ -6,54 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessPolicyEntry
-    from ._models_py3 import CheckNameAvailabilityResult
-    from ._models_py3 import DeletedVault
-    from ._models_py3 import DeletedVaultListResult
-    from ._models_py3 import DeletedVaultProperties
-    from ._models_py3 import LogSpecification
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import Permissions
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceListResult
-    from ._models_py3 import ServiceSpecification
-    from ._models_py3 import Sku
-    from ._models_py3 import Vault
-    from ._models_py3 import VaultAccessPolicyParameters
-    from ._models_py3 import VaultAccessPolicyProperties
-    from ._models_py3 import VaultCheckNameAvailabilityParameters
-    from ._models_py3 import VaultCreateOrUpdateParameters
-    from ._models_py3 import VaultListResult
-    from ._models_py3 import VaultPatchParameters
-    from ._models_py3 import VaultPatchProperties
-    from ._models_py3 import VaultProperties
-except (SyntaxError, ImportError):
-    from ._models import AccessPolicyEntry  # type: ignore
-    from ._models import CheckNameAvailabilityResult  # type: ignore
-    from ._models import DeletedVault  # type: ignore
-    from ._models import DeletedVaultListResult  # type: ignore
-    from ._models import DeletedVaultProperties  # type: ignore
-    from ._models import LogSpecification  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import Permissions  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceListResult  # type: ignore
-    from ._models import ServiceSpecification  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import Vault  # type: ignore
-    from ._models import VaultAccessPolicyParameters  # type: ignore
-    from ._models import VaultAccessPolicyProperties  # type: ignore
-    from ._models import VaultCheckNameAvailabilityParameters  # type: ignore
-    from ._models import VaultCreateOrUpdateParameters  # type: ignore
-    from ._models import VaultListResult  # type: ignore
-    from ._models import VaultPatchParameters  # type: ignore
-    from ._models import VaultPatchProperties  # type: ignore
-    from ._models import VaultProperties  # type: ignore
+from ._models_py3 import AccessPolicyEntry
+from ._models_py3 import CheckNameAvailabilityResult
+from ._models_py3 import DeletedVault
+from ._models_py3 import DeletedVaultListResult
+from ._models_py3 import DeletedVaultProperties
+from ._models_py3 import LogSpecification
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import Permissions
+from ._models_py3 import Resource
+from ._models_py3 import ResourceListResult
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import Sku
+from ._models_py3 import Vault
+from ._models_py3 import VaultAccessPolicyParameters
+from ._models_py3 import VaultAccessPolicyProperties
+from ._models_py3 import VaultCheckNameAvailabilityParameters
+from ._models_py3 import VaultCreateOrUpdateParameters
+from ._models_py3 import VaultListResult
+from ._models_py3 import VaultPatchParameters
+from ._models_py3 import VaultPatchProperties
+from ._models_py3 import VaultProperties
+
 
 from ._key_vault_management_client_enums import (
     AccessPolicyUpdateKind,
