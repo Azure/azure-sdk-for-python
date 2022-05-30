@@ -1,0 +1,22 @@
+trigger: none
+
+stages:
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: 'azure-communication-rooms'
+      JobName: rooms
+      ServiceDirectory: communication
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-communication-services-cloud-test-resources-common)
+            - $(sub-config-communication-services-cloud-test-resources-python)
+          MatrixReplace:
+            - TestSamples=.*/true
+        Int:
+            SubscriptionConfigurations:
+              - $(sub-config-communication-int-test-resources-common)
+              - $(sub-config-communication-int-test-resources-python)
+      Clouds: Public,Int
+
