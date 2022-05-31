@@ -36,9 +36,7 @@ We strongly recommend that you update the SDK version. Then you will find that i
 Since the python SDK is generated based on the [rest API][rest API], it will not deliberately change the returned results. So if you have any questions about the response result value of the request, please open the issue under the [rest issue][rest issue].
 
 ### Error like (AttributeError: 'PipelineResponse' object has no attribute 'get')
-When this error occurs, you can check the version of `msrest`. Currently, for most SDKs, it needs to be >= 0.6.21. FYI: [SDK dependency][SDK dependency]
-
-You could upgrade the dependency before using the SDK to check if the issue has been solved.
+When this error occurs, you can check the version of `msrest` and upgrade it to latest version then try again.
 
 <hr/>
 
