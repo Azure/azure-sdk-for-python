@@ -2,19 +2,15 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Optional, Sequence, Any
-from xmlrpc.client import MININT
+from typing import Optional, Any
 
 from opentelemetry.sdk.metrics.export import (
     DataPointT,
-    Gauge,
-    Histogram,
     HistogramDataPoint,
     MetricExporter,
     MetricExportResult,
     MetricsData as OTMetricsData,
     NumberDataPoint,
-    Sum,
 )
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -40,7 +36,10 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
     def export(
-        self, metrics_data: OTMetricsData, **kwargs: Any  # pylint: disable=unused-argument
+        self,
+        metrics_data: OTMetricsData,
+        timeout_millis: float = 10_000,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> MetricExportResult:
         """Exports a batch of metric data
         :param metrics: Open Telemetry Metric(s) to export.
@@ -76,7 +75,11 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             _logger.exception("Exception occurred while exporting the data.")
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
-    def shutdown(self) -> None:
+    def shutdown(
+        self,
+        timeout_millis: float = 30_000,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> None:
         """Shuts down the exporter.
 
         Called when the SDK is shut down.
@@ -117,15 +120,15 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None
+    scope: Optional[InstrumentationScope] = None  # pylint: disable=unused-argument
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = "Microsoft.ApplicationInsights.Metric"
     envelope.tags.update(_utils._populate_part_a_fields(resource))
     value = 0
     count = 1
-    min = None
-    max = None
+    min_ = None
+    max_ = None
     # std_dev = None
 
     if isinstance(point, NumberDataPoint):
@@ -133,16 +136,16 @@ def _convert_point_to_envelope(
     elif isinstance(point, HistogramDataPoint):
         value = point.sum
         count = point.count
-        min = point.min
-        max = point.max
+        min_ = point.min
+        max_ = point.max
 
     data_point = MetricDataPoint(
         name=name,
         value=value,
         data_point_type="Aggregation",
         count=count,
-        min=min,
-        max=max,
+        min=min_,
+        max=max_,
     )
     data = MetricsData(
         properties=dict(point.attributes),
