@@ -3,7 +3,7 @@ import pytest
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
-from tests.automl_job.test_utilities import download_dataset
+from test_utilities import download_dataset
 
 from typing import Tuple
 import os
