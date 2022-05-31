@@ -25,7 +25,7 @@ class DataCollectionRuleOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~monitor_data_collection_client.aio.MonitorDataCollectionClient`'s
+        :class:`~data_collection_rule_client.aio.DataCollectionRuleClient`'s
         :attr:`data_collection_rule` attribute.
     """
 

@@ -13,8 +13,8 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class MonitorDataCollectionClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for MonitorDataCollectionClient.
+class DataCollectionRuleClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for DataCollectionRuleClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -32,7 +32,7 @@ class MonitorDataCollectionClientConfiguration(Configuration):  # pylint: disabl
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        super(MonitorDataCollectionClientConfiguration, self).__init__(**kwargs)
+        super(DataCollectionRuleClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
 
         if endpoint is None:
@@ -40,7 +40,7 @@ class MonitorDataCollectionClientConfiguration(Configuration):  # pylint: disabl
 
         self.endpoint = endpoint
         self.api_version = api_version
-        kwargs.setdefault('sdk_moniker', 'monitordatacollectionclient/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'datacollectionruleclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

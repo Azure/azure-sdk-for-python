@@ -7,26 +7,26 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from msrest import Deserializer, Serializer
 
-from azure.core import AsyncPipelineClient
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import MonitorDataCollectionClientConfiguration
+from ._configuration import DataCollectionRuleClientConfiguration
 from .operations import DataCollectionRuleOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class MonitorDataCollectionClient:
+class DataCollectionRuleClient:
     """Azure Monitor Data Collection Python Client.
 
     :ivar data_collection_rule: DataCollectionRuleOperations operations
     :vartype data_collection_rule:
-     monitor_data_collection_client.aio.operations.DataCollectionRuleOperations
+     data_collection_rule_client.operations.DataCollectionRuleOperations
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
      https://dce-name.eastus-2.ingest.monitor.azure.com.
     :type endpoint: str
@@ -41,8 +41,8 @@ class MonitorDataCollectionClient:
         **kwargs: Any
     ) -> None:
         _endpoint = '{endpoint}'
-        self._config = MonitorDataCollectionClientConfiguration(endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = DataCollectionRuleClientConfiguration(endpoint=endpoint, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -56,14 +56,14 @@ class MonitorDataCollectionClient:
         self,
         request: HttpRequest,
         **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -71,7 +71,7 @@ class MonitorDataCollectionClient:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -82,12 +82,15 @@ class MonitorDataCollectionClient:
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "MonitorDataCollectionClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> DataCollectionRuleClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
