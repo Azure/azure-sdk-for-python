@@ -9,7 +9,7 @@ from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 import pytest
 from unittest.mock import Mock, patch
 from pathlib import Path
-from tests.test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
+from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 from typing import Callable, Iterable
 
 

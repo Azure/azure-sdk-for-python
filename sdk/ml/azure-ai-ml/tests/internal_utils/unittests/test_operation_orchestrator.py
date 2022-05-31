@@ -21,7 +21,7 @@ from azure.ai.ml.constants import (
     VERSIONED_RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from tests.test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 from pytest_mock import MockFixture
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._assets import Model, Code, Data, Environment, Dataset

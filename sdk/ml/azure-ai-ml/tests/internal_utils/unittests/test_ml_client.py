@@ -17,7 +17,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.sweep import SweepJob
-from tests.test_utilities.constants import Test_Resource_Group, Test_Subscription
+from test_utilities.constants import Test_Resource_Group, Test_Subscription
 
 
 @pytest.mark.unittest
