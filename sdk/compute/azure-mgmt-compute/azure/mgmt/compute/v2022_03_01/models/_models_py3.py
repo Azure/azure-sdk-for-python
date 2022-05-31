@@ -11390,7 +11390,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
      scale set. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2022_03_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.compute.v2022_03_01.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -11402,14 +11402,14 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue"]] = None,
+        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
@@ -11424,45 +11424,13 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
          form:
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.compute.v2022_03_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
+         ~azure.mgmt.compute.v2022_03_01.models.UserAssignedIdentitiesValue]
         """
         super(VirtualMachineScaleSetIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
-
-
-class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
-    """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
 
 
 class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):

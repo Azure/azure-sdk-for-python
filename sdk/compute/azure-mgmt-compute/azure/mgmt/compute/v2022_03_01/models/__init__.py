@@ -201,7 +201,6 @@ from ._models_py3 import VirtualMachineScaleSetExtensionUpdate
 from ._models_py3 import VirtualMachineScaleSetHardwareProfile
 from ._models_py3 import VirtualMachineScaleSetIPConfiguration
 from ._models_py3 import VirtualMachineScaleSetIdentity
-from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
 from ._models_py3 import VirtualMachineScaleSetInstanceView
 from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
 from ._models_py3 import VirtualMachineScaleSetIpTag
@@ -525,7 +524,6 @@ __all__ = [
     'VirtualMachineScaleSetHardwareProfile',
     'VirtualMachineScaleSetIPConfiguration',
     'VirtualMachineScaleSetIdentity',
-    'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetInstanceViewStatusesSummary',
     'VirtualMachineScaleSetIpTag',

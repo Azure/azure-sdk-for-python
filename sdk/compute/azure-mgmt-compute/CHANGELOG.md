@@ -1,5 +1,22 @@
 # Release History
 
+## 27.1.0 (2022-05-31)
+
+**Features**
+
+  - Added operation CommunityGalleryImageVersionsOperations.list
+  - Added operation CommunityGalleryImagesOperations.list
+  - Model CommunityGalleryImage has a new parameter architecture
+  - Model CommunityGalleryImage has a new parameter eula
+  - Model CommunityGalleryImage has a new parameter privacy_statement_uri
+  - Model CommunityGalleryImageVersion has a new parameter exclude_from_latest
+  - Model CommunityGalleryImageVersion has a new parameter storage_profile
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter advanced_settings
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter settings
+  - Model SharedGalleryImage has a new parameter architecture
+  - Model SharedGalleryImageVersion has a new parameter exclude_from_latest
+  - Model SharedGalleryImageVersion has a new parameter storage_profile
+
 ## 27.0.0 (2022-05-17)
 
 **Features**
