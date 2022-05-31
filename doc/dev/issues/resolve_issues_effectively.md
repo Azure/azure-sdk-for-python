@@ -11,7 +11,7 @@ Most issues can be classified into 3 categories. They are
 ## Usage error (For users)
 If you are not familiar with the SDK usage of a service, you can find relevant examples in [this repo][sample repo] in most cases.
 
-For some common errors, you can check [here](##Summary Of Common Errors).
+For some common errors, you can check [here](## Summary Of Common Errors).
 
 ## Feature Request(For users)
 
