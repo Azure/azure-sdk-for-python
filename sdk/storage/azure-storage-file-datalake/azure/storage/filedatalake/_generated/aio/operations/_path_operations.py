@@ -195,7 +195,7 @@ class PathOperations:
         _source_if_unmodified_since = None
         _encryption_key = None
         _encryption_key_sha256 = None
-        encryption_algorithm = None
+        _encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
             _content_disposition = path_http_headers.content_disposition
@@ -215,7 +215,7 @@ class PathOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
         if cpk_info is not None:
-            encryption_algorithm = cpk_info.encryption_algorithm
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
 
@@ -774,7 +774,7 @@ class PathOperations:
         _if_unmodified_since = None
         _encryption_key = None
         _encryption_key_sha256 = None
-        encryption_algorithm = None
+        _encryption_algorithm = None
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -783,7 +783,7 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if cpk_info is not None:
-            encryption_algorithm = cpk_info.encryption_algorithm
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
 
@@ -1469,7 +1469,7 @@ class PathOperations:
         _if_unmodified_since = None
         _encryption_key = None
         _encryption_key_sha256 = None
-        encryption_algorithm = None
+        _encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
             _content_disposition = path_http_headers.content_disposition
@@ -1485,7 +1485,7 @@ class PathOperations:
             _if_none_match = modified_access_conditions.if_none_match
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
         if cpk_info is not None:
-            encryption_algorithm = cpk_info.encryption_algorithm
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
 
@@ -1624,13 +1624,13 @@ class PathOperations:
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
-        encryption_algorithm = None
+        _encryption_algorithm = None
         if path_http_headers is not None:
             _transactional_content_hash = path_http_headers.transactional_content_hash
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if cpk_info is not None:
-            encryption_algorithm = cpk_info.encryption_algorithm
+            _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
         _content = body
