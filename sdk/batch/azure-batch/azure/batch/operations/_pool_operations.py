@@ -993,7 +993,7 @@ class PoolOperations(object):
          HTTP status code is 400 (Bad Request). If you specify a new interval,
          then the existing autoscale evaluation schedule will be stopped and a
          new autoscale evaluation schedule will be started, with its starting
-         time being the time when this request was issued.
+         time being the time when this request was issued. Example PT8M for 8 minutes in [ISO 8601 format](https://www.iso.org/iso-8601-date-and-time-format.html)
         :type auto_scale_evaluation_interval: timedelta
         :param pool_enable_auto_scale_options: Additional parameters for the
          operation
