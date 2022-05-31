@@ -32,7 +32,7 @@ If the code you use needs to set wait() function for the Long Running Operation 
 
 We strongly recommend that you update the SDK version. Then you will find that in the SDK of Track2, we all use the function name prefixed with `begin_` for LRO operations, and the result() method can be used to get the returned result.
 
-### Error from Service
+### Possible Error from Service
 Since the python SDK is generated based on the [rest API][rest API], it will not deliberately change the returned results. So if you have any questions about the response result value of the request, please open the issue under the [rest issue][rest issue].
 
 ### Error like (AttributeError: 'PipelineResponse' object has no attribute 'get')
