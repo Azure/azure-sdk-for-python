@@ -6,16 +6,12 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
-    Union,
     Optional,
     Any,
-    IO,
-    Iterable,
-    AnyStr,
     Dict,
     List,
-    Tuple,
     TYPE_CHECKING,
 )
 
@@ -45,9 +41,7 @@ from .._queue_client import QueueClient as QueueClientBase
 
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
-    from .._models import QueueSasPermissions, QueueProperties
+    from .._models import QueueProperties
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
@@ -371,12 +365,21 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
-        self._config.message_encode_policy.configure(
-            require_encryption=self.require_encryption,
-            encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function
-        )
+        try:
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function,
+                encryption_version=self.encryption_version)
+        except TypeError:
+            warnings.warn(
+                "message_encode_policy.configure does not accept encryption_version parameter.",
+                DeprecationWarning
+            )
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function)
         encoded_content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -601,12 +604,23 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
-            self._config.message_encode_policy.configure(
-                self.require_encryption,
-                self.encryption_version,
-                self.key_encryption_key,
-                self.key_resolver_function
-            )
+            try:
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
+                    encryption_version=self.encryption_version
+                )
+            except TypeError:
+                warnings.warn(
+                    "message_encode_policy.configure does not accept encryption_version parameter.",
+                    DeprecationWarning
+                )
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function
+                )
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:

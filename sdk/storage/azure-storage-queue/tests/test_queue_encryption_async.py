@@ -27,7 +27,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.queue._shared.encryption import (
     _ERROR_OBJECT_INVALID,
-    _GCM_REGION_LENGTH,
+    _GCM_REGION_DATA_LENGTH,
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
     _EncryptedRegionInfo,
@@ -625,6 +625,33 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_update_encrypted_binary_message_v2(self, storage_account_name, storage_account_key):
+        # Arrange
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            requires_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=KeyWrapper('key1'))
+        queue = await self._create_queue(
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy())
+        queue.key_encryption_key = KeyWrapper('key1')
+
+        await queue.send_message(b'Update Me')
+        message = await queue.receive_message()
+        message.content = b'Updated'
+
+        # Act
+        await queue.update_message(message)
+        message = await queue.receive_message()
+
+        # Assert
+        self.assertEqual(b'Updated', message.content)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_validate_encryption_v2(self, storage_account_name, storage_account_key):
         # Arrange
         kek = KeyWrapper('key1')
@@ -667,7 +694,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
             encrypted_region_info['EncryptedRegionDataLength'],
             encrypted_region_info['NonceLength'],
             encrypted_region_info['TagLength'])
-        self.assertEqual(_GCM_REGION_LENGTH, encrypted_region_info.encrypted_region_data_length)
+        self.assertEqual(_GCM_REGION_DATA_LENGTH, encrypted_region_info.encrypted_region_data_length)
         self.assertEqual(_GCM_NONCE_LENGTH, encrypted_region_info.nonce_length)
         self.assertEqual(_GCM_TAG_LENGTH, encrypted_region_info.tag_length)
 

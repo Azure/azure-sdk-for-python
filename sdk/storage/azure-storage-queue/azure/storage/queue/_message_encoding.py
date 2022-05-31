@@ -11,7 +11,7 @@ import sys
 import six
 from azure.core.exceptions import DecodeError
 
-from ._shared.encryption import decrypt_queue_message, encrypt_queue_message
+from ._shared.encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
 
 
 class MessageEncodePolicy(object):
@@ -29,7 +29,7 @@ class MessageEncodePolicy(object):
                 content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_version)
         return content
 
-    def configure(self, require_encryption, encryption_version, key_encryption_key, resolver):
+    def configure(self, require_encryption, key_encryption_key, resolver, encryption_version=_ENCRYPTION_PROTOCOL_V1):
         self.require_encryption = require_encryption
         self.encryption_version = encryption_version
         self.key_encryption_key = key_encryption_key
