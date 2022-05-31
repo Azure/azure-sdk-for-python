@@ -8,6 +8,7 @@ import inspect
 import logging
 import os
 import pkgutil
+import importlib
 import sys
 from typing import List, Optional, Tuple
 import multiprocessing
@@ -120,13 +121,13 @@ class _PerfStressRunner:
         self._test_classes = {}
         if os.path.isdir(os.path.join(test_folder_path, 'tests')):
             test_folder_path = os.path.join(test_folder_path, 'tests')
+        sys.path.append(test_folder_path)
         self.logger.debug("Searching for tests in {}".format(test_folder_path))
 
         # Dynamically enumerate all python modules under the tests path for classes that implement PerfStressTest
-        for loader, module_name, _ in pkgutil.walk_packages([test_folder_path]):
+        for _, module_name, _ in pkgutil.walk_packages([test_folder_path]):
             try:
-                module_loader = loader.find_module(module_name)
-                module = module_loader.load_module(module_name)
+                module = importlib.import_module(module_name)
             except Exception as e:
                 self.logger.debug("Unable to load module {}: {}".format(module_name, e))
                 continue
@@ -136,7 +137,7 @@ class _PerfStressRunner:
                 if inspect.isclass(value):
                     if issubclass(value, _PerfTestABC) and value not in base_classes:
                         self.logger.info("Loaded test class: {}".format(name))
-                        self._test_classes[name] = (value, (module_loader, module_name))
+                        self._test_classes[name] = (value, module_name)
 
     def _next_stage(self, title: str, track_status: bool = False, report_results: bool = False):
         # Wait for previous stage to complete.
@@ -170,25 +171,26 @@ class _PerfStressRunner:
         k, m = divmod(self.per_test_args.parallel, processes)
         mapping = [(i*k+min(i, m), ((i+1)*k+min(i+1, m)) - (i*k+min(i, m))) for i in range(processes)]
 
-        self.results = multiprocessing.Queue()
-        self.status = multiprocessing.JoinableQueue()
+        ctx = multiprocessing.get_context('spawn')
+        self.results = ctx.Queue()
+        self.status = ctx.JoinableQueue()
         self.status_thread = RepeatedTimer(1, self._print_status, start_now=False)
 
         # The barrier will synchronize each child proc with the parent at each stage of the
         # the testing run. This prevents one proc from running tests while global resources
         # are still being configured or cleaned up.
         self.test_stages = {
-            "Setup": multiprocessing.Barrier(processes + 1),
-            "Post Setup": multiprocessing.Barrier(processes + 1),
-            "Warmup": multiprocessing.Barrier(processes + 1),
-            "Tests": multiprocessing.Barrier(processes + 1),
-            "Pre Cleanup": multiprocessing.Barrier(processes + 1),
-            "Cleanup": multiprocessing.Barrier(processes + 1),
-            "Finished": multiprocessing.Barrier(processes + 1)
+            "Setup": ctx.Barrier(processes + 1),
+            "Post Setup": ctx.Barrier(processes + 1),
+            "Warmup": ctx.Barrier(processes + 1),
+            "Tests": ctx.Barrier(processes + 1),
+            "Pre Cleanup": ctx.Barrier(processes + 1),
+            "Cleanup": ctx.Barrier(processes + 1),
+            "Finished": ctx.Barrier(processes + 1)
         }
 
         try:
-            futures = [multiprocessing.Process(
+            futures = [ctx.Process(
                         target=run_process,
                         args=(
                             index,
