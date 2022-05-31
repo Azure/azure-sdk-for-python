@@ -9,6 +9,7 @@ from typing import List, Optional
 import multiprocessing
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import importlib
 
 from ._perf_stress_base import _PerfTestABC, _PerfTestBase
 
@@ -18,8 +19,8 @@ def run_process(index, args, module, test_name, num_tests, test_stages, results,
     
     Here we load the test class from the correct module and start it.
     """
-    test_module = module[0].load_module(module[1])
-    test_class = getattr(test_module, test_name)  
+    test_module = importlib.import_module(module)
+    test_class = getattr(test_module, test_name)
     value = asyncio.run(_start_tests(index, test_class, num_tests, args, test_stages, results, status))
     return value
 
@@ -39,10 +40,13 @@ def _synchronize(stages, ignore_error=False):
 async def _start_tests(index, test_class, num_tests, args, test_stages, results, status):
     """Create test classes, run setup, tests and cleanup."""
     # Create all parallel tests with a global unique index value
-    with _PerfTestBase._global_parallel_index_lock:
-        _PerfTestBase._global_parallel_index = index
-        tests = [test_class(args) for _ in range(num_tests)]
+    tests = []
+
     try:
+        with _PerfTestBase._global_parallel_index_lock:
+            _PerfTestBase._global_parallel_index = index
+            tests = [test_class(args) for _ in range(num_tests)]
+
         # Run the global setup once per process.
         await tests[0].global_setup()
 
