@@ -174,7 +174,7 @@ class _PerfStressRunner:
         ctx = multiprocessing.get_context('spawn')
         self.results = ctx.Queue()
         self.status = ctx.JoinableQueue()
-        self.status_thread = RepeatedTimer(1, self._print_status, start_now=False)
+        self.status_thread = RepeatedTimer(1, self._print_status, self.per_test_args.parallel, start_now=False)
 
         # The barrier will synchronize each child proc with the parent at each stage of the
         # the testing run. This prevents one proc from running tests while global resources
@@ -260,19 +260,24 @@ class _PerfStressRunner:
             self.logger.info("Completed without generating operation statistics.")
         self.logger.info("")
 
-    def _print_status(self):
+    def _print_status(self, num_tests):
         """Print the ongoing status as reported by all child processes"""
         if self._operation_status_tracker == -1:
             self._operation_status_tracker = 0
             self.logger.info("Current\t\tTotal\t\tAverage")
 
-        operations = []
+        operations = [None] * num_tests
         while not self.status.empty():
-            operations.append(self.status.get())
-            self.status.task_done()
-        total_operations = self._get_completed_operations(operations)
-        current_operations = total_operations - self._operation_status_tracker
-        average_operations = self._get_operations_per_second(operations)
+            test_status = self.status.get()
+            operations[test_status[0]] = test_status
+            if all(operations):
+                # We only print status stats when all processes have reported
+                # otherwise we can't correctly calculate the current operations.
+                total_operations = self._get_completed_operations(operations)
+                current_operations = total_operations - self._operation_status_tracker
+                average_operations = self._get_operations_per_second(operations)
 
-        self._operation_status_tracker = total_operations
-        self.logger.info("{}\t\t{}\t\t{:.2f}".format(current_operations, total_operations, average_operations))
+                self._operation_status_tracker = total_operations
+                self.logger.info("{}\t\t{}\t\t{:.2f}".format(current_operations, total_operations, average_operations))
+
+            self.status.task_done()
