@@ -4,8 +4,7 @@
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
 - Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
-- Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
-- Conversational PII: Used to extract and redact personally-identifiable info (PII) 
+
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Product documentation][conversationallanguage_docs] | [Samples][conversationallanguage_samples]
 
@@ -134,7 +133,6 @@ for entity in result["result"]["prediction"]["entities"]:
                 print("key: {}".format(data["key"]))
             if data["extraInformationKind"] == "EntitySubtype":
                 print("value: {}".format(data["value"]))
-
 ```
 
 ### Analyze Text with an Orchestration App
@@ -197,198 +195,8 @@ if top_intent_object["targetProjectKind"] == "Luis":
     print("\nentities:")
     for entity in luis_response["entities"]:
         print("\n{}".format(entity))
-
 ```
 
-### Conversational Summarization
-
-You can use this sample if you need to summarize a conversation in the form of an issue, and final resolution. For example, a dialog from tech support:
-
-```python
-# import libraries
-import os
-from azure.core.credentials import AzureKeyCredential
-
-from azure.ai.language.conversations import ConversationAnalysisClient
-
-# get secrets
-endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-key = os.environ["AZURE_CONVERSATIONS_KEY"]
-
-# analyze quey
-client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
-with client:
-    poller = client.begin_conversation_analysis(
-        task={
-            "displayName": "Analyze conversations from xxx",
-            "analysisInput": {
-                "conversations": [
-                    {
-                        "conversationItems": [
-                            {
-                                "text": "Hello, how can I help you?",
-                                "modality": "text",
-                                "id": "1",
-                                "participantId": "Agent"
-                            },
-                            {
-                                "text": "How to upgrade Office? I am getting error messages the whole day.",
-                                "modality": "text",
-                                "id": "2",
-                                "participantId": "Customer"
-                            },
-                            {
-                                "text": "Press the upgrade button please. Then sign in and follow the instructions.",
-                                "modality": "text",
-                                "id": "3",
-                                "participantId": "Agent"
-                            }
-                        ],
-                        "modality": "text",
-                        "id": "conversation1",
-                        "language": "en"
-                    },
-                ]
-            },
-            "tasks": [
-                {
-                    "taskName": "analyze 1",
-                    "kind": "ConversationalSummarizationTask",
-                    "parameters": {
-                        "summaryAspects": ["Issue, Resolution"]
-                    }
-                }
-            ]
-        }
-    )
-
-    # view result
-    result = poller.result()
-    task_result = result["tasks"]["items"][0]
-    print("... view task status ...")
-    print("status: {}".format(task_result["status"]))
-    resolution_result = task_result["results"]
-    if resolution_result["errors"]:
-        print("... errors occured ...")
-        for error in resolution_result["errors"]:
-            print(error)
-    else:
-        conversation_result = resolution_result["conversations"][0]
-        if conversation_result["warnings"]:
-            print("... view warnings ...")
-            for warning in conversation_result["warnings"]:
-                print(warning)
-        else:
-            summaries = conversation_result["summaries"]
-            print("... view task result ...")
-            print("issue: {}".format(summaries[0]["text"]))
-            print("resolution: {}".format(summaries[1]["text"]))
-
-```
-
-### Conversational PII
-
-You can use this sample if you need to extract and redact pii info from/in conversations
-
-```python
-# import libraries
-import os
-from azure.core.credentials import AzureKeyCredential
-
-from azure.ai.language.conversations import ConversationAnalysisClient
-
-# get secrets
-endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-key = os.environ["AZURE_CONVERSATIONS_KEY"]
-
-# analyze quey
-client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
-with client:
-
-    poller = client.begin_conversation_analysis(
-        task={
-            "displayName": "Analyze PII in conversation",
-            "analysisInput": {
-                "conversations": [
-                    {
-                        "conversationItems": [
-                            {
-                                "id": "1",
-                                "participantId": "0",
-                                "modality": "transcript",
-                                "text": "It is john doe.",
-                                "lexical": "It is john doe",
-                                "itn": "It is john doe",
-                                "maskedItn": "It is john doe"
-                            },
-                            {
-                                "id": "2",
-                                "participantId": "1",
-                                "modality": "transcript",
-                                "text": "Yes, 633-27-8199 is my phone",
-                                "lexical": "yes six three three two seven eight one nine nine is my phone",
-                                "itn": "yes 633278199 is my phone",
-                                "maskedItn": "yes 633278199 is my phone",
-                            },
-                            {
-                                "id": "3",
-                                "participantId": "1",
-                                "modality": "transcript",
-                                "text": "j.doe@yahoo.com is my email",
-                                "lexical": "j dot doe at yahoo dot com is my email",
-                                "maskedItn": "j.doe@yahoo.com is my email",
-                                "itn": "j.doe@yahoo.com is my email",
-                            }
-                        ],
-                        "modality": "transcript",
-                        "id": "1",
-                        "language": "en"
-                    }
-                ]
-            },
-            "tasks": [
-                {
-                    "kind": "ConversationalPIITask",
-                    "parameters": {
-                        "redactionSource": "lexical",
-                        "piiCategories": [
-                            "all"
-                        ]
-                    }
-                }
-            ]
-        }
-    )
-
-    # view result
-    result = poller.result()
-    task_result = result["tasks"]["items"][0]
-    print("... view task status ...")
-    print("status: {}".format(task_result["status"]))
-    conv_pii_result = task_result["results"]
-    if conv_pii_result["errors"]:
-        print("... errors occured ...")
-        for error in conv_pii_result["errors"]:
-            print(error)
-    else:
-        conversation_result = conv_pii_result["conversations"][0]
-        if conversation_result["warnings"]:
-            print("... view warnings ...")
-            for warning in conversation_result["warnings"]:
-                print(warning)
-        else:
-            print("... view task result ...")
-            for conversation in conversation_result["conversationItems"]:
-                print("conversation id: {}".format(conversation["id"]))
-                print("... entities ...")
-                for entity in conversation["entities"]:
-                    print("text: {}".format(entity["text"]))
-                    print("category: {}".format(entity["category"]))
-                    print("confidence: {}".format(entity["confidenceScore"]))
-                    print("offset: {}".format(entity["offset"]))
-                    print("length: {}".format(entity["length"]))
-
-```
 
 ## Optional Configuration
 
