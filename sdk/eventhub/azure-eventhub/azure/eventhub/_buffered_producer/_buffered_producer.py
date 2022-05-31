@@ -168,7 +168,7 @@ class BufferedProducer:
             if self._cur_buffered_len > 0:
                 now_time = time.time()
                 _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
-                # flush the partition if the producer is running beyond the waiting time 
+                # flush the partition if the producer is running beyond the waiting time
                 # or the buffer is at max capacity
                 if (now_time - self._last_send_time > self._max_wait_time) or (
                     self._cur_buffered_len >= self._max_buffer_len
