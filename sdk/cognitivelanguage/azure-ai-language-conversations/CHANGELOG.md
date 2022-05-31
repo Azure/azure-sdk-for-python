@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0GA (Unreleased)
+Not much update from 1.0b3
+Only more resolution types added
+
 ## 1.1.0b1 (2022-05-26)
 
 ### Features Added
