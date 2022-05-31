@@ -32,7 +32,7 @@ title: ConversationAnalysisClient
 tag: release_2022_05_01
 openapi-type: data-plane
 version-tolerant: true
-package-version: 1.0GA
+package-version: 1.0b4
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key

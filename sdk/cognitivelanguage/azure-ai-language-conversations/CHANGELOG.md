@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0GA (Unreleased)
+## 1.0b4 (Unreleased)
 Not much update from 1.0b3
 Only more resolution types added
 
