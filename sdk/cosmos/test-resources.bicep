@@ -1,7 +1,7 @@
 param baseName string
 
 @description('Flag to enable or disable multiple write locations on CosmosDB Account')
-param enableMultipleWriteLocations bool
+param enableMultipleWriteLocations bool = false
 
 @description('Default Cosmosdb Account level consistency')
 param defaultConsistencyLevel string = 'Session'

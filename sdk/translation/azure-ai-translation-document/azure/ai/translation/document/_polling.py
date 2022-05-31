@@ -71,6 +71,9 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "DocumentTranslationLROPoller":  # type: ignore
+        """
+        :meta private:
+        """
         (
             client,
             initial_response,

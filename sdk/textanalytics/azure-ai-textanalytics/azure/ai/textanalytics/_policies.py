@@ -28,18 +28,18 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
             data = ContentDecodePolicy.deserialize_from_http_generics(
                 response.http_response
             )
-            if self._is_lro and (not data or data.get("status") not in _FINISHED):
+            if self._is_lro and (not data or data.get("status", "").lower() not in _FINISHED):
+                return
+            if response.http_response.status_code == 429:
                 return
             if data:
                 inner = data.get("results", data)  # language API compat
                 statistics = inner.get("statistics", None)
                 model_version = inner.get("modelVersion", None)
-
-                if statistics or model_version:
-                    batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access
-                        statistics
-                    )
-                    response.statistics = batch_statistics
-                    response.model_version = model_version
+                batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access
+                    statistics
+                )
+                response.statistics = batch_statistics
+                response.model_version = model_version
             response.raw_response = data
             self._response_callback(response)

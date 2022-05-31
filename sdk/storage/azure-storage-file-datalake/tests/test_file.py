@@ -108,7 +108,7 @@ class FileTest(StorageTestCase):
                                              file_client.file_system_name + '/',
                                              '/' + file_client.path_name,
                                              credential=datalake_storage_account_key, logging_enable=True)
-        response = file_client.create_file()
+        response = new_file_client.create_file()
 
         # Assert
         self.assertIsNotNone(response)
@@ -859,10 +859,10 @@ class FileTest(StorageTestCase):
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
+    @pytest.mark.skip(reason="Service bug, requires further investigation.")
     @DataLakePreparer()
     def test_rename_file_with_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        pytest.skip("service bug")
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,

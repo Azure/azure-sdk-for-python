@@ -4880,8 +4880,10 @@ class DataTransferJobGetResults(ARMProxyResource):
     :vartype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
     :ivar status: Job Status.
     :vartype status: str
-    :ivar percentage_complete: Percentage of completion.
-    :vartype percentage_complete: float
+    :ivar processed_count: Processed Count.
+    :vartype processed_count: long
+    :ivar total_count: Total Count.
+    :vartype total_count: long
     :ivar last_updated_utc_time: Last Updated Time (ISO-8601 format).
     :vartype last_updated_utc_time: ~datetime.datetime
     :ivar worker_count: Worker count.
@@ -4896,7 +4898,8 @@ class DataTransferJobGetResults(ARMProxyResource):
         'type': {'readonly': True},
         'job_name': {'readonly': True},
         'status': {'readonly': True},
-        'percentage_complete': {'readonly': True},
+        'processed_count': {'readonly': True},
+        'total_count': {'readonly': True},
         'last_updated_utc_time': {'readonly': True},
         'worker_count': {'minimum': 0},
         'error': {'readonly': True},
@@ -4910,7 +4913,8 @@ class DataTransferJobGetResults(ARMProxyResource):
         'source': {'key': 'properties.source', 'type': 'DataTransferDataSourceSink'},
         'destination': {'key': 'properties.destination', 'type': 'DataTransferDataSourceSink'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'percentage_complete': {'key': 'properties.percentageComplete', 'type': 'float'},
+        'processed_count': {'key': 'properties.processedCount', 'type': 'long'},
+        'total_count': {'key': 'properties.totalCount', 'type': 'long'},
         'last_updated_utc_time': {'key': 'properties.lastUpdatedUtcTime', 'type': 'iso-8601'},
         'worker_count': {'key': 'properties.workerCount', 'type': 'int'},
         'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
@@ -4937,7 +4941,8 @@ class DataTransferJobGetResults(ARMProxyResource):
         self.source = source
         self.destination = destination
         self.status = None
-        self.percentage_complete = None
+        self.processed_count = None
+        self.total_count = None
         self.last_updated_utc_time = None
         self.worker_count = worker_count
         self.error = None
@@ -4958,8 +4963,10 @@ class DataTransferJobProperties(msrest.serialization.Model):
     :vartype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
     :ivar status: Job Status.
     :vartype status: str
-    :ivar percentage_complete: Percentage of completion.
-    :vartype percentage_complete: float
+    :ivar processed_count: Processed Count.
+    :vartype processed_count: long
+    :ivar total_count: Total Count.
+    :vartype total_count: long
     :ivar last_updated_utc_time: Last Updated Time (ISO-8601 format).
     :vartype last_updated_utc_time: ~datetime.datetime
     :ivar worker_count: Worker count.
@@ -4973,7 +4980,8 @@ class DataTransferJobProperties(msrest.serialization.Model):
         'source': {'required': True},
         'destination': {'required': True},
         'status': {'readonly': True},
-        'percentage_complete': {'readonly': True},
+        'processed_count': {'readonly': True},
+        'total_count': {'readonly': True},
         'last_updated_utc_time': {'readonly': True},
         'worker_count': {'minimum': 0},
         'error': {'readonly': True},
@@ -4984,7 +4992,8 @@ class DataTransferJobProperties(msrest.serialization.Model):
         'source': {'key': 'source', 'type': 'DataTransferDataSourceSink'},
         'destination': {'key': 'destination', 'type': 'DataTransferDataSourceSink'},
         'status': {'key': 'status', 'type': 'str'},
-        'percentage_complete': {'key': 'percentageComplete', 'type': 'float'},
+        'processed_count': {'key': 'processedCount', 'type': 'long'},
+        'total_count': {'key': 'totalCount', 'type': 'long'},
         'last_updated_utc_time': {'key': 'lastUpdatedUtcTime', 'type': 'iso-8601'},
         'worker_count': {'key': 'workerCount', 'type': 'int'},
         'error': {'key': 'error', 'type': 'ErrorResponse'},
@@ -5011,7 +5020,8 @@ class DataTransferJobProperties(msrest.serialization.Model):
         self.source = source
         self.destination = destination
         self.status = None
-        self.percentage_complete = None
+        self.processed_count = None
+        self.total_count = None
         self.last_updated_utc_time = None
         self.worker_count = worker_count
         self.error = None
@@ -9431,6 +9441,37 @@ class Permission(msrest.serialization.Model):
         self.not_data_actions = not_data_actions
 
 
+class PhysicalPartitionId(msrest.serialization.Model):
+    """PhysicalPartitionId object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Id of a physical partition.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. Id of a physical partition.
+        :paramtype id: str
+        """
+        super(PhysicalPartitionId, self).__init__(**kwargs)
+        self.id = id
+
+
 class PhysicalPartitionStorageInfo(msrest.serialization.Model):
     """The storage of a physical partition.
 
@@ -9490,6 +9531,171 @@ class PhysicalPartitionStorageInfoCollection(msrest.serialization.Model):
         """
         super(PhysicalPartitionStorageInfoCollection, self).__init__(**kwargs)
         self.physical_partition_storage_info_collection = None
+
+
+class PhysicalPartitionThroughputInfoProperties(msrest.serialization.Model):
+    """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoProperties object.
+
+    :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
+    :vartype physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    """
+
+    _attribute_map = {
+        'physical_partition_throughput_info': {'key': 'physicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        physical_partition_throughput_info: Optional[List["PhysicalPartitionThroughputInfoResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword physical_partition_throughput_info: Array of physical partition throughput info
+         objects.
+        :paramtype physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        """
+        super(PhysicalPartitionThroughputInfoProperties, self).__init__(**kwargs)
+        self.physical_partition_throughput_info = physical_partition_throughput_info
+
+
+class PhysicalPartitionThroughputInfoResource(msrest.serialization.Model):
+    """PhysicalPartitionThroughputInfo object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Id of a physical partition.
+    :vartype id: str
+    :ivar throughput: Throughput of a physical partition.
+    :vartype throughput: float
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'throughput': {'key': 'throughput', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,
+        throughput: Optional[float] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Required. Id of a physical partition.
+        :paramtype id: str
+        :keyword throughput: Throughput of a physical partition.
+        :paramtype throughput: float
+        """
+        super(PhysicalPartitionThroughputInfoResource, self).__init__(**kwargs)
+        self.id = id
+        self.throughput = throughput
+
+
+class PhysicalPartitionThroughputInfoResult(ARMResourceProperties):
+    """An Azure Cosmos DB PhysicalPartitionThroughputInfoResult object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags are a list of key-value pairs that describe the resource. These
+     tags can be used in viewing and grouping this resource (across resource groups). A maximum of
+     15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters
+     and value no greater than 256 characters. For example, the default experience for a template
+     type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values also
+     include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar resource: properties of physical partition throughput info.
+    :vartype resource:
+     ~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'PhysicalPartitionThroughputInfoResultPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
+        resource: Optional["PhysicalPartitionThroughputInfoResultPropertiesResource"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The location of the resource group to which the resource belongs.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+         These tags can be used in viewing and grouping this resource (across resource groups). A
+         maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+         characters and value no greater than 256 characters. For example, the default experience for a
+         template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+         also include "Table", "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+        :keyword resource: properties of physical partition throughput info.
+        :paramtype resource:
+         ~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultPropertiesResource
+        """
+        super(PhysicalPartitionThroughputInfoResult, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class PhysicalPartitionThroughputInfoResultPropertiesResource(PhysicalPartitionThroughputInfoProperties):
+    """properties of physical partition throughput info.
+
+    :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
+    :vartype physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    """
+
+    _attribute_map = {
+        'physical_partition_throughput_info': {'key': 'physicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        physical_partition_throughput_info: Optional[List["PhysicalPartitionThroughputInfoResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword physical_partition_throughput_info: Array of physical partition throughput info
+         objects.
+        :paramtype physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        """
+        super(PhysicalPartitionThroughputInfoResultPropertiesResource, self).__init__(physical_partition_throughput_info=physical_partition_throughput_info, **kwargs)
 
 
 class Resource(msrest.serialization.Model):
@@ -9865,6 +10071,136 @@ class PrivilegeResource(msrest.serialization.Model):
         super(PrivilegeResource, self).__init__(**kwargs)
         self.db = db
         self.collection = collection
+
+
+class RedistributeThroughputParameters(ARMResourceProperties):
+    """Cosmos DB redistribute throughput parameters object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags are a list of key-value pairs that describe the resource. These
+     tags can be used in viewing and grouping this resource (across resource groups). A maximum of
+     15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters
+     and value no greater than 256 characters. For example, the default experience for a template
+     type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values also
+     include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar resource: Required. The standard JSON format of a resource throughput.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.RedistributeThroughputPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RedistributeThroughputPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource: "RedistributeThroughputPropertiesResource",
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The location of the resource group to which the resource belongs.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+         These tags can be used in viewing and grouping this resource (across resource groups). A
+         maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+         characters and value no greater than 256 characters. For example, the default experience for a
+         template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+         also include "Table", "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+        :keyword resource: Required. The standard JSON format of a resource throughput.
+        :paramtype resource: ~azure.mgmt.cosmosdb.models.RedistributeThroughputPropertiesResource
+        """
+        super(RedistributeThroughputParameters, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RedistributeThroughputPropertiesResource(msrest.serialization.Model):
+    """Resource to redistribute throughput for Azure Cosmos DB resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar throughput_policy: Required. ThroughputPolicy to apply for throughput redistribution.
+     Possible values include: "none", "equal", "custom".
+    :vartype throughput_policy: str or ~azure.mgmt.cosmosdb.models.ThroughputPolicyType
+    :ivar target_physical_partition_throughput_info: Required. Array of
+     PhysicalPartitionThroughputInfoResource objects.
+    :vartype target_physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    :ivar source_physical_partition_throughput_info: Required. Array of
+     PhysicalPartitionThroughputInfoResource objects.
+    :vartype source_physical_partition_throughput_info:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+    """
+
+    _validation = {
+        'throughput_policy': {'required': True},
+        'target_physical_partition_throughput_info': {'required': True},
+        'source_physical_partition_throughput_info': {'required': True},
+    }
+
+    _attribute_map = {
+        'throughput_policy': {'key': 'throughputPolicy', 'type': 'str'},
+        'target_physical_partition_throughput_info': {'key': 'targetPhysicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+        'source_physical_partition_throughput_info': {'key': 'sourcePhysicalPartitionThroughputInfo', 'type': '[PhysicalPartitionThroughputInfoResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        throughput_policy: Union[str, "ThroughputPolicyType"],
+        target_physical_partition_throughput_info: List["PhysicalPartitionThroughputInfoResource"],
+        source_physical_partition_throughput_info: List["PhysicalPartitionThroughputInfoResource"],
+        **kwargs
+    ):
+        """
+        :keyword throughput_policy: Required. ThroughputPolicy to apply for throughput redistribution.
+         Possible values include: "none", "equal", "custom".
+        :paramtype throughput_policy: str or ~azure.mgmt.cosmosdb.models.ThroughputPolicyType
+        :keyword target_physical_partition_throughput_info: Required. Array of
+         PhysicalPartitionThroughputInfoResource objects.
+        :paramtype target_physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        :keyword source_physical_partition_throughput_info: Required. Array of
+         PhysicalPartitionThroughputInfoResource objects.
+        :paramtype source_physical_partition_throughput_info:
+         list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
+        """
+        super(RedistributeThroughputPropertiesResource, self).__init__(**kwargs)
+        self.throughput_policy = throughput_policy
+        self.target_physical_partition_throughput_info = target_physical_partition_throughput_info
+        self.source_physical_partition_throughput_info = source_physical_partition_throughput_info
 
 
 class RegionForOnlineOffline(msrest.serialization.Model):
@@ -10892,7 +11228,6 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         self.rid = None
         self.ts = None
         self.etag = None
-        self.self_property = None
 
 
 class RestorableSqlContainersListResult(msrest.serialization.Model):
@@ -11120,9 +11455,6 @@ class RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource, Exten
         self.users = None
         self.self_property = None
         self.id = id
-        self.colls = None
-        self.users = None
-        self.self_property = None
 
 
 class RestorableSqlDatabasesListResult(msrest.serialization.Model):
@@ -11393,6 +11725,110 @@ class RestoreParameters(msrest.serialization.Model):
         self.databases_to_restore = databases_to_restore
         self.gremlin_databases_to_restore = gremlin_databases_to_restore
         self.tables_to_restore = tables_to_restore
+
+
+class RetrieveThroughputParameters(ARMResourceProperties):
+    """Cosmos DB retrieve throughput parameters object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: A set of tags. Tags are a list of key-value pairs that describe the resource. These
+     tags can be used in viewing and grouping this resource (across resource groups). A maximum of
+     15 tags can be provided for a resource. Each tag must have a key no greater than 128 characters
+     and value no greater than 256 characters. For example, the default experience for a template
+     type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values also
+     include "Table", "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar resource: Required. The standard JSON format of a resource throughput.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.RetrieveThroughputPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'resource': {'key': 'properties.resource', 'type': 'RetrieveThroughputPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource: "RetrieveThroughputPropertiesResource",
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The location of the resource group to which the resource belongs.
+        :paramtype location: str
+        :keyword tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
+         These tags can be used in viewing and grouping this resource (across resource groups). A
+         maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
+         characters and value no greater than 256 characters. For example, the default experience for a
+         template type is set with "defaultExperience": "Cassandra". Current "defaultExperience" values
+         also include "Table", "Graph", "DocumentDB", and "MongoDB".
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+        :keyword resource: Required. The standard JSON format of a resource throughput.
+        :paramtype resource: ~azure.mgmt.cosmosdb.models.RetrieveThroughputPropertiesResource
+        """
+        super(RetrieveThroughputParameters, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+        self.resource = resource
+
+
+class RetrieveThroughputPropertiesResource(msrest.serialization.Model):
+    """Resource to retrieve throughput information for Cosmos DB resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar physical_partition_ids: Required. Array of PhysicalPartitionId objects.
+    :vartype physical_partition_ids: list[~azure.mgmt.cosmosdb.models.PhysicalPartitionId]
+    """
+
+    _validation = {
+        'physical_partition_ids': {'required': True},
+    }
+
+    _attribute_map = {
+        'physical_partition_ids': {'key': 'physicalPartitionIds', 'type': '[PhysicalPartitionId]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        physical_partition_ids: List["PhysicalPartitionId"],
+        **kwargs
+    ):
+        """
+        :keyword physical_partition_ids: Required. Array of PhysicalPartitionId objects.
+        :paramtype physical_partition_ids: list[~azure.mgmt.cosmosdb.models.PhysicalPartitionId]
+        """
+        super(RetrieveThroughputPropertiesResource, self).__init__(**kwargs)
+        self.physical_partition_ids = physical_partition_ids
 
 
 class Role(msrest.serialization.Model):
@@ -12103,8 +12539,6 @@ class SqlDatabaseGetPropertiesResource(SqlDatabaseResource, ExtendedResourceProp
         self.colls = colls
         self.users = users
         self.id = id
-        self.colls = colls
-        self.users = users
 
 
 class SqlDatabaseGetResults(ARMResourceProperties):

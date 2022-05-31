@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from msrest import Deserializer, Serializer
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
 from ._configuration import TextAnalyticsClientConfiguration
@@ -19,10 +20,7 @@ from .operations import TextAnalyticsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
 class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
     """The Text Analytics API is a suite of natural language processing (NLP) services built with
@@ -43,11 +41,10 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "TokenCredential",
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
         _base_url = '{Endpoint}/text/analytics/v3.1'
         self._config = TextAnalyticsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
@@ -60,10 +57,9 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

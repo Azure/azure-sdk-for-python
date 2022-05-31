@@ -5,7 +5,7 @@
 
 import json
 import datetime
-from typing import Any, List, Union, TYPE_CHECKING, overload, Optional
+from typing import Any, List, Union, TYPE_CHECKING, overload, Optional, cast
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
@@ -163,7 +163,7 @@ class DocumentTranslationClient:
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -190,14 +190,14 @@ class DocumentTranslationClient:
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_translation(
-        self, *args, **kwargs
-    ):  # pylint: disable=client-method-missing-type-annotations
+        self, *args: Union[str, List[DocumentTranslationInput]], **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language. There are two ways to call this method:
 
@@ -243,7 +243,7 @@ class DocumentTranslationClient:
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -279,17 +279,19 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return await self._client.document_translation.begin_start_translation(
-            inputs=inputs if not continuation_token else None,
-            polling=AsyncDocumentTranslationLROPollingMethod(
-                timeout=polling_interval,
-                lro_algorithms=[TranslationPolling()],
-                cont_token_response=pipeline_response,
+        return cast(AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]],
+            await self._client.document_translation.begin_start_translation(
+                inputs=inputs if not continuation_token else None,
+                polling=AsyncDocumentTranslationLROPollingMethod(
+                    timeout=polling_interval,
+                    lro_algorithms=[TranslationPolling()],
+                    cont_token_response=pipeline_response,
+                    **kwargs
+                ),
+                cls=callback,
+                continuation_token=continuation_token,
                 **kwargs
-            ),
-            cls=callback,
-            continuation_token=continuation_token,
-            **kwargs
+            )
         )
 
     @distributed_trace_async
@@ -394,17 +396,19 @@ class DocumentTranslationClient:
             ],
         )
 
-        return self._client.document_translation.get_translations_status(  # type: ignore
-            cls=model_conversion_function,
-            maxpagesize=results_per_page,
-            created_date_time_utc_start=created_after,
-            created_date_time_utc_end=created_before,
-            ids=translation_ids,
-            order_by=order_by,
-            statuses=statuses,
-            top=top,
-            skip=skip,
-            **kwargs
+        return cast(AsyncItemPaged[TranslationStatus],
+            self._client.document_translation.get_translations_status(
+                cls=model_conversion_function,
+                maxpagesize=results_per_page,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=translation_ids,
+                order_by=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -476,18 +480,20 @@ class DocumentTranslationClient:
             ],
         )
 
-        return self._client.document_translation.get_documents_status(  # type: ignore
-            id=translation_id,
-            cls=model_conversion_function,
-            maxpagesize=results_per_page,
-            created_date_time_utc_start=created_after,
-            created_date_time_utc_end=created_before,
-            ids=document_ids,
-            order_by=order_by,
-            statuses=statuses,
-            top=top,
-            skip=skip,
-            **kwargs
+        return cast(AsyncItemPaged[DocumentStatus],
+            self._client.document_translation.get_documents_status(
+                id=translation_id,
+                cls=model_conversion_function,
+                maxpagesize=results_per_page,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=document_ids,
+                order_by=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            )
         )
 
     @distributed_trace_async

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -37,18 +37,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "d725d356-64cb-4102-ae7f-59b954a23f4a",
+        "apim-request-id": "fa4f84eb-cc15-4794-86f1-e7c1d0123357",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:54:52 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/90daf756-ac87-49aa-abb2-a464ddb1efa0?api-version=2022-03-01-preview",
+        "Date": "Tue, 03 May 2022 00:09:54 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/57978b50-4a70-4a92-b7bd-67c25604a081?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "125"
+        "x-envoy-upstream-service-time": "176"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/90daf756-ac87-49aa-abb2-a464ddb1efa0?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/57978b50-4a70-4a92-b7bd-67c25604a081?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -58,19 +58,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "932fe4d6-ef3c-4d9c-9c13-3696778d94d4",
+        "apim-request-id": "14ea8e30-4a3e-4d46-bf2f-9322559b7df8",
         "Content-Length": "847",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:54:58 GMT",
+        "Date": "Tue, 03 May 2022 00:09:59 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "37"
+        "x-envoy-upstream-service-time": "53"
       },
       "ResponseBody": {
-        "jobId": "90daf756-ac87-49aa-abb2-a464ddb1efa0",
-        "lastUpdateDateTime": "2022-04-20T23:54:56Z",
-        "createdDateTime": "2022-04-20T23:54:53Z",
-        "expirationDateTime": "2022-04-21T23:54:53Z",
+        "jobId": "57978b50-4a70-4a92-b7bd-67c25604a081",
+        "lastUpdateDateTime": "2022-05-03T00:09:56Z",
+        "createdDateTime": "2022-05-03T00:09:54Z",
+        "expirationDateTime": "2022-05-04T00:09:54Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -82,7 +82,7 @@
             {
               "kind": "ExtractiveSummarizationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:54:56.2989365Z",
+              "lastUpdateDateTime": "2022-05-03T00:09:56.8950643Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -107,7 +107,7 @@
                     "id": "1",
                     "error": {
                       "code": "InvalidArgument",
-                      "message": "Invalid document in request.",
+                      "message": "Invalid Document in request.",
                       "innererror": {
                         "code": "InvalidDocument",
                         "message": "Document text is empty."

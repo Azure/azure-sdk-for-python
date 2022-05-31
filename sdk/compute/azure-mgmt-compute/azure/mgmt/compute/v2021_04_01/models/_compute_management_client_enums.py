@@ -404,7 +404,6 @@ class OrchestrationServiceNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     """
 
     AUTOMATIC_REPAIRS = "AutomaticRepairs"
-    DUMMY_ORCHESTRATION_SERVICE_NAME = "DummyOrchestrationServiceName"
 
 class OrchestrationServiceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current state of the service.

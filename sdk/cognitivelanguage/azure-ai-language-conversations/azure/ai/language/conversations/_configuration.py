@@ -26,7 +26,7 @@ class ConversationAnalysisClientConfiguration(Configuration):  # pylint: disable
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -38,7 +38,7 @@ class ConversationAnalysisClientConfiguration(Configuration):  # pylint: disable
         **kwargs: Any
     ) -> None:
         super(ConversationAnalysisClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-15-preview")  # type: str
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

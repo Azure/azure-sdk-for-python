@@ -4,7 +4,17 @@
 # --------------------------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, Union, cast, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Mapping,
+    Optional,
+    Type,
+    Union,
+    cast,
+    TypeVar,
+)
 from avro.errors import SchemaResolutionException  # type: ignore
 
 from ._exceptions import (  # pylint: disable=import-error
@@ -63,7 +73,10 @@ def create_message_content(
 
     if message_type:
         try:
-            return cast(MessageType, message_type.from_message_content(payload, content_type, **kwargs))
+            return cast(
+                MessageType,
+                message_type.from_message_content(payload, content_type, **kwargs),
+            )
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
