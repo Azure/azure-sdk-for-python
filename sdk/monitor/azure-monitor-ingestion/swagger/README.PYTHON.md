@@ -20,3 +20,10 @@ modelerfour:
 python: true
 v3: true
 ```
+
+```yaml
+directive:
+  - rename-operation:
+      from: "DataCollectionRule_Ingest"
+      to: "Ingest"
+```

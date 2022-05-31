@@ -15,18 +15,15 @@ from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from ._configuration import DataCollectionRuleClientConfiguration
-from .operations import DataCollectionRuleOperations
+from ._operations import DataCollectionRuleClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class DataCollectionRuleClient:
+class DataCollectionRuleClient(DataCollectionRuleClientOperationsMixin):
     """Azure Monitor Data Collection Python Client.
 
-    :ivar data_collection_rule: DataCollectionRuleOperations operations
-    :vartype data_collection_rule:
-     data_collection_rule_client.aio.operations.DataCollectionRuleOperations
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
      https://dce-name.eastus-2.ingest.monitor.azure.com.
     :type endpoint: str
@@ -47,9 +44,6 @@ class DataCollectionRuleClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.data_collection_rule = DataCollectionRuleOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
 
     def send_request(

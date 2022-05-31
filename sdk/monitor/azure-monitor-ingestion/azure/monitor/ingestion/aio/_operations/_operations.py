@@ -8,90 +8,22 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from msrest import Serializer
-
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .._vendor import _format_url_section
+from ..._operations._operations import build_ingest_request
+from .._vendor import MixinABC
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
+class DataCollectionRuleClientOperationsMixin(MixinABC):
 
-def build_data_collection_rule_ingest_request(
-    rule_id: str,
-    stream: str,
-    *,
-    json: Optional[List[Any]] = None,
-    content: Any = None,
-    content_encoding: Optional[str] = None,
-    x_ms_client_request_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-01-preview"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
-
-    # Construct URL
-    _url = "/dataCollectionRules/{ruleId}/streams/{stream}"
-    path_format_arguments = {
-        "ruleId": _SERIALIZER.url("rule_id", rule_id, 'str'),
-        "stream": _SERIALIZER.url("stream", stream, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    if content_encoding is not None:
-        _headers['Content-Encoding'] = _SERIALIZER.header("content_encoding", content_encoding, 'str')
-    if x_ms_client_request_id is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
-    if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-class DataCollectionRuleOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~data_collection_rule_client.DataCollectionRuleClient`'s
-        :attr:`data_collection_rule` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-
-    @distributed_trace
-    def ingest(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def ingest(  # pylint: disable=inconsistent-return-statements
         self,
         rule_id: str,
         stream: str,
@@ -141,7 +73,7 @@ class DataCollectionRuleOperations:
 
         _json = body
 
-        request = build_data_collection_rule_ingest_request(
+        request = build_ingest_request(
             rule_id=rule_id,
             stream=stream,
             api_version=api_version,
@@ -157,7 +89,7 @@ class DataCollectionRuleOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
