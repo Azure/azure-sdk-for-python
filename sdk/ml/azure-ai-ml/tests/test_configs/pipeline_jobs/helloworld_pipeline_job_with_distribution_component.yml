@@ -1,0 +1,63 @@
+type: pipeline
+
+# name: microsoft.samples.PipelineJobSampleToDefineScope #follow up on schema validation error
+name: simplePipelineJobWithDistributionComps
+description: The hello world pipeline job with distribution components
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:gpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+  job_in_path:
+    path: ../data
+    mode: ro_mount
+
+jobs:
+  hello_world_component_mpi:
+    type: command
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    compute: azureml:gpu-cluster
+
+    component: ../components/helloworld_component_mpi.yml
+
+    resources:
+      instance_count: 3
+    distribution:
+      type: mpi
+      process_count_per_instance: 3
+
+  hello_world_component_pytorch:
+    type: command
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    compute: azureml:gpu-cluster
+
+    component: ../components/helloworld_component_pytorch.yml
+
+    resources:
+      instance_count: 4
+    distribution:
+      type: pytorch
+      process_count_per_instance: 4
+
+  hello_world_component_tensorflow:
+    type: command
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    compute: azureml:gpu-cluster
+
+    resources:
+      instance_count: 5
+    distribution:
+      type: tensorflow
+      worker_count: 5
+
+    component: ../components/helloworld_component_tensorflow.yml

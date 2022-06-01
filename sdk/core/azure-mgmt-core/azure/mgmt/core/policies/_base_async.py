@@ -83,7 +83,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
             return False
 
         while True:
-            asyncio.sleep(10)
+            await asyncio.sleep(10)
             get_response = await self.next.send(
                 self._build_next_request(initial_request, "GET", get_url)
             )
