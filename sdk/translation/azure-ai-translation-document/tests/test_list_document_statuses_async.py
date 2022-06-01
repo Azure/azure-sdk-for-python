@@ -26,7 +26,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = client.list_document_statuses(poller.id)
@@ -51,7 +51,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses_pages = client.list_document_statuses(translation_id=poller.id, results_per_page=results_per_page).by_page()
@@ -80,7 +80,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = client.list_document_statuses(translation_id=poller.id, skip=skip)
@@ -104,7 +104,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # list operations
         statuses = ["NotStarted"]
@@ -139,7 +139,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # filter ids
         doc_statuses = client.list_document_statuses(poller.id)
@@ -167,7 +167,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = client.list_document_statuses(poller.id, order_by=["created_on asc"])
@@ -192,7 +192,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         target_language = "es"
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = client.list_document_statuses(poller.id, order_by=["created_on desc"])
@@ -220,7 +220,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         skip = 3
 
         # submit and validate operation
-        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language_code=target_language, wait=True, variables=variables)
+        poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, language=target_language, wait=True, variables=variables)
 
         # get ids
         doc_statuses = client.list_document_statuses(poller.id)

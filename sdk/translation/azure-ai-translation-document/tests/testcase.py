@@ -238,7 +238,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         container_suffix = kwargs.pop('container_suffix', "")
         variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', True)
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
         docs_per_operation = kwargs.pop('docs_per_operation', 2)
         result_job_ids = []
         for i in range(operations_count):
@@ -254,7 +254,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code=language_code
+                            language=language
                         )
                     ]
                 )
@@ -275,7 +275,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         # get input params
         wait_for_operation = kwargs.pop('wait', False)
         variables = kwargs.get('variables', {})
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
 
         # prepare containers and test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
@@ -289,7 +289,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code=language_code
+                        language=language
                     )
                 ]
             )

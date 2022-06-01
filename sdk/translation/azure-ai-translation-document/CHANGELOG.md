@@ -7,6 +7,11 @@
 ### Breaking Changes
 
 - Changed: `TranslationStatus` property `documents_not_yet_started_count` has been renamed to `documents_not_started_count`.
+- Changed: `begin_translation` parameter `target_language_code` has been renamed to `target_language`.
+- Changed: `begin_translation` keyword-only argument `source_language_code` has been renamed to `source_language`.
+- Changed: `DocumentTranslationInput` keyword-only argument and property `source_language_code` has been renamed to `source_language`.
+- Changed: `TranslationTarget` keyword-only argument and property `language_code` has been renamed to `language`.
+- Changed: `TranslationStatus` property `documents_not_yet_started_count` has been renamed to `documents_not_started_count`.
 
 ### Bugs Fixed
 
