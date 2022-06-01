@@ -732,10 +732,11 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         :raises EventDataSendError: If the producer fails to flush the buffer within the given timeout
          in buffered mode.
         """
-        if self._buffered_mode and self._buffered_producer_dispatcher:
-            timeout = kwargs.get("timeout")
-            timeout_time = time.time() + timeout if timeout else None
-            self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
+        with self._lock:
+            if self._buffered_mode and self._buffered_producer_dispatcher:
+                timeout = kwargs.get("timeout")
+                timeout_time = time.time() + timeout if timeout else None
+                self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
 
     def close(self, *, flush: bool = True, **kwargs: Any) -> None:
         """Close the Producer client underlying AMQP connection and links.

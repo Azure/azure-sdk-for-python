@@ -104,28 +104,30 @@ class BufferedProducerDispatcher:
 
     async def close(self, *, flush=True, timeout_time=None, raise_error=False):
 
-        futures = []
-        # stop all buffered producers
-        for pid, producer in self._buffered_producers.items():
-            futures.append((pid, asyncio.ensure_future(
-                producer.stop(flush=flush, timeout_time=timeout_time, raise_error=raise_error)
-            )))
+        async with self._lock:
 
-        exc_results = {}
-        # gather results
-        for pid, future in futures:
-            try:
-                await future
-            except Exception as exc:  # pylint: disable=broad-except
-                exc_results[pid] = exc
+            futures = []
+            # stop all buffered producers
+            for pid, producer in self._buffered_producers.items():
+                futures.append((pid, asyncio.ensure_future(
+                    producer.stop(flush=flush, timeout_time=timeout_time, raise_error=raise_error)
+                )))
 
-        if exc_results:
-            _LOGGER.warning('Stopping all partitions failed with result %r.', exc_results)
-            if raise_error:
-                raise EventHubError(
-                    message="Stopping all partitions partially failed, failed partitions are {!r}"
-                            " Exception details are {!r}".format(exc_results.keys(), exc_results)
-                )
+            exc_results = {}
+            # gather results
+            for pid, future in futures:
+                try:
+                    await future
+                except Exception as exc:  # pylint: disable=broad-except
+                    exc_results[pid] = exc
+
+            if exc_results:
+                _LOGGER.warning('Stopping all partitions failed with result %r.', exc_results)
+                if raise_error:
+                    raise EventHubError(
+                        message="Stopping all partitions partially failed, failed partitions are {!r}"
+                                " Exception details are {!r}".format(exc_results.keys(), exc_results)
+                    )
 
     def get_buffered_event_count(self, pid):
         try:
