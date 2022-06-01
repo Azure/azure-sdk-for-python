@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 20 May 2022 15:03:46 GMT
+      - Wed, 01 Jun 2022 08:16:30 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -22,8 +22,8 @@ interactions:
         token is not valid."}}'
     headers:
       content-type: application/json
-      date: Fri, 20 May 2022 15:03:46 GMT
-      ms-cv: Ijbif4KSp0GtiLcGi8huOQ.0
+      date: Wed, 01 Jun 2022 08:16:30 GMT
+      ms-cv: QoueBpYczUW/gYai1g3Adg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
