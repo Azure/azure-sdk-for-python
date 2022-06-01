@@ -103,6 +103,7 @@ class UsageDetailsOperations(object):
         skiptoken: Optional[str] = None,
         top: Optional[int] = None,
         metric: Optional[Union[str, "_models.Metrictype"]] = None,
+        params: Optional[dict] = None,
         **kwargs: Any
     ) -> Iterable["_models.UsageDetailsListResult"]:
         """Lists the usage details for the defined scope. Usage details are available via this API only
@@ -169,6 +170,7 @@ class UsageDetailsOperations(object):
                     skiptoken=skiptoken,
                     top=top,
                     metric=metric,
+                    params=params,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -183,6 +185,7 @@ class UsageDetailsOperations(object):
                     skiptoken=skiptoken,
                     top=top,
                     metric=metric,
+                    params=params,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
