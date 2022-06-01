@@ -20,9 +20,15 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.retry_backoff_max = kwargs.get("retry_backoff_max", 120)  # type: int
         self.logging_enable = kwargs.get("logging_enable", False)  # type: bool
         self.http_proxy = kwargs.get("http_proxy")  # type: Optional[Dict[str, Any]]
+
+        self.custom_endpoint_address = kwargs.get("custom_endpoint_address")  # type: Optional[str]
+        self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
+        self.connection_port = DEFAULT_AMQPS_PORT
+        self.custom_endpoint_hostname = None
+
         self.transport_type = (
             TransportType.AmqpOverWebsocket
-            if self.http_proxy
+            if self.http_proxy or self.custom_endpoint_address
             else kwargs.get("transport_type", TransportType.Amqp)
         )
         # The following configs are not public, for internal usage only
@@ -31,11 +37,6 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.keep_alive = kwargs.get("keep_alive", 30)
         self.timeout = kwargs.get("timeout", 60)  # type: float
-
-        self.custom_endpoint_address = kwargs.get("custom_endpoint_address")  # type: Optional[str]
-        self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
-        self.connection_port = DEFAULT_AMQPS_PORT
-        self.custom_endpoint_hostname = None
 
         if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
             self.transport_type = TransportType.AmqpOverWebsocket
