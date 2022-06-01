@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0b4 (Unreleased)
+## 1.0b4 (2022-06-01)
 Not much update from 1.0b3
 Only more resolution types added
 
