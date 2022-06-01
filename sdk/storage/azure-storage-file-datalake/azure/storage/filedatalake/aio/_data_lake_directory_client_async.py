@@ -156,7 +156,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 8
                 :caption: Create directory.
         """
-        return await self._create('directory', metadata=metadata, **kwargs)
+        lease_id = kwargs.pop('lease_id', None)
+        lease_duration = kwargs.pop('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        elif lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        return await self._create('directory', lease_id=lease_id, lease_duration=lease_duration, metadata=metadata, **kwargs)
 
     async def exists(self, **kwargs):
         # type: (**Any) -> bool
@@ -422,8 +428,14 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient for the subdirectory.
         """
+        lease_id = kwargs.pop('lease_id', None)
+        lease_duration = kwargs.pop('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        elif lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
         subdir = self.get_sub_directory_client(sub_directory)
-        await subdir.create_directory(metadata=metadata, **kwargs)
+        await subdir.create_directory(lease_id=lease_id, lease_duration=lease_duration, metadata=metadata, **kwargs)
         return subdir
 
     async def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
@@ -549,8 +561,14 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient
         """
+        lease_id = kwargs.pop('lease_id', None)
+        lease_duration = kwargs.pop('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        elif lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
         file_client = self.get_file_client(file)
-        await file_client.create_file(**kwargs)
+        await file_client.create_file(lease_id=lease_id, lease_duration=lease_duration, **kwargs)
         return file_client
 
     def get_file_client(self, file  # type: Union[FileProperties, str]

@@ -210,7 +210,13 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Create file.
         """
-        return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
+        lease_id = kwargs.pop('lease_id', None)
+        lease_duration = kwargs.pop('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        elif lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        return self._create('file', lease_id=lease_id, lease_duration=lease_duration, content_settings=content_settings, metadata=metadata, **kwargs)
 
     def delete_file(self, **kwargs):
         # type: (...) -> None

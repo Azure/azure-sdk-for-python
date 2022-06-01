@@ -616,8 +616,14 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create directory in the file system.
         """
+        lease_id = kwargs.pop('lease_id', None)
+        lease_duration = kwargs.pop('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        elif lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
         directory_client = self.get_directory_client(directory)
-        directory_client.create_directory(metadata=metadata, **kwargs)
+        directory_client.create_directory(lease_id=lease_id, lease_duration=lease_duration, metadata=metadata, **kwargs)
         return directory_client
 
     def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -758,8 +764,14 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create file in the file system.
         """
+        lease_id = kwargs.pop('lease_id', None)
+        lease_duration = kwargs.pop('lease_duration', None)
+        if lease_id and not lease_duration:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
+        elif lease_duration and not lease_id:
+            raise ValueError("Please specify a lease_id and a lease_duration.")
         file_client = self.get_file_client(file)
-        file_client.create_file(**kwargs)
+        file_client.create_file(lease_id=lease_id, lease_duration=lease_duration, **kwargs)
         return file_client
 
     def delete_file(self, file,  # type: Union[FileProperties, str]
@@ -869,6 +881,7 @@ class FileSystemClient(StorageAccountHostsMixin):
     def delete_files(
         self,
         *files: str,
+        raise_on_any_failure=False,
         **kwargs) -> List[Optional[HttpResponseError]]:
         """Marks the specified files or empty directories for deletion.
 
@@ -896,7 +909,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
+            This is a boolean param which defaults to False. When this is set, an exception
             is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
