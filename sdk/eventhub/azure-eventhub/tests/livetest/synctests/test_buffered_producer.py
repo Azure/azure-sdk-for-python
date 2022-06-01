@@ -75,7 +75,7 @@ def test_producer_client_constructor(connection_str):
     "flush_after_sending, close_after_sending",
     [
         (False, False),
-        #(True, False),
+        (True, False),
         (False, True)
     ]
 )
@@ -180,7 +180,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
-        #(True, False),
+        (True, False),
         (False, True),
         (False, False)
     ]
@@ -292,7 +292,6 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
 
 
 @pytest.mark.liveTest
-@pytest.mark.skip
 def test_send_with_hybrid_partition_assignment(connection_str):
     received_events = defaultdict(list)
 
