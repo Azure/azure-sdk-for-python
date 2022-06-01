@@ -237,6 +237,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_put_blob_multi_region_chunked_size_equal_region(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -285,6 +286,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_put_blob_multi_region_chunked_size_less_region(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -308,6 +310,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_put_blob_multi_region_chunked_size_greater_region(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -331,6 +334,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_range_single_region_beginning_to_middle(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -338,7 +342,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcd' * 1024 * 1024
+        content = b'abcd' * 1024 * 1024  # 4 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -347,6 +351,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content[:100000], data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_range_single_region_middle_to_middle(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -354,7 +359,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcd' * 1024 * 1024
+        content = b'abcd' * 1024 * 1024  # 4 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -363,6 +368,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content[100000:2100000], data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_range_single_region_middle_to_end(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -370,7 +376,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcd' * 1024 * 1024
+        content = b'abcd' * 1024 * 1024  # 4 MiB
         length = len(content)
 
         # Act
@@ -380,6 +386,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content[length - 1000000:], data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_range_cross_region(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -387,7 +394,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcdef' * 1024 * 1024
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -396,6 +403,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content[3*1024*1024:5*1024*1024], data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_range_inside_second_region(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -403,7 +411,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcdef' * 1024 * 1024
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -412,6 +420,41 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content[5 * 1024 * 1024:6 * 1024 * 1024], data)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_range_oversize_length(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
+
+        # Act
+        blob.upload_blob(content, overwrite=True)
+        data = blob.download_blob(offset=1 * 1024 * 1024, length=7 * 1024 * 1024).readall()
+
+        # Assert
+        self.assertEqual(content[1 * 1024 * 1024:], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_range_boundary(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
+
+        # Act
+        blob.upload_blob(content, overwrite=True)
+        data = blob.download_blob(offset=4 * 1024 * 1024 - 1).readall()
+
+        # Assert
+        self.assertEqual(content[4 * 1024 * 1024 - 1:], data)
+
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_chunked_size_equal_region_size(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -433,7 +476,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         data = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(len(content), len(data))
+        self.assertEqual(content, data)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -458,8 +501,9 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         data = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(len(content), len(data))
+        self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_chunked_size_less_than_region_size(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -481,8 +525,9 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         data = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(len(content), len(data))
+        self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_get_blob_chunked_size_greater_than_region_size(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -504,4 +549,33 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         data = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(len(content), len(data))
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_using_chunks_iter(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * 1024 * 1024,
+            max_chunk_get_size=4 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        blob.upload_blob(content, overwrite=True)
+        chunks_iter = blob.download_blob().chunks()
+
+        total = 0
+        for chunk in chunks_iter:
+            self.assertEqual(content[total:total+len(chunk)], chunk)
+            total += len(chunk)
+
+        # Assert
+        self.assertEqual(len(content), total)

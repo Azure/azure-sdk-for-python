@@ -206,7 +206,7 @@ class GCMBlobEncryptionStream:
 
             if remaining > 0:
                 # Read one region of data and encrypt it
-                data = self.data_stream.read(_GCM_REGION_LENGTH)
+                data = self.data_stream.read(_GCM_REGION_DATA_LENGTH)
                 if len(data) == 0:
                     # No more data to read
                     break
@@ -237,7 +237,7 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
         return length + (16 - (length % 16))
     elif encryption_version == _ENCRYPTION_PROTOCOL_V2:
         encryption_data_length = _GCM_NONCE_LENGTH + _GCM_TAG_LENGTH
-        regions = math.ceil(length / _GCM_REGION_LENGTH)
+        regions = math.ceil(length / _GCM_REGION_DATA_LENGTH)
         return length + (regions * encryption_data_length)
     else:
         raise ValueError("Invalid encryption version specified.")
