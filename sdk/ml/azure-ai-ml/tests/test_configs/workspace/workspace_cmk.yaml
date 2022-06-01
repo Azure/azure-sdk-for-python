@@ -1,0 +1,12 @@
+name: wps_fullpe
+display_name: baniwps
+description: some desc
+
+hbi_workspace: true
+customer_managed_key:
+  key_vault: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/banisdktest/providers/Microsoft.KeyVault/vaults/banitestk1
+  key_uri: https://banitestk1.vault.azure.net/keys/testvm/0b7de9b7a5f545529b8d47f8c19617ab
+
+tags:
+  purpose: testing
+  team: ws-management
