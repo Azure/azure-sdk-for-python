@@ -241,7 +241,7 @@ class MetricsAdvisorClientOperationsMixin(
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
+        return self._deserialize_anomaly_alert_configuration(pipeline_response, **kwargs)
 
     @distributed_trace_async
     async def refresh_data_feed_ingestion(  # type: ignore # pylint: disable=arguments-differ
@@ -302,7 +302,7 @@ class MetricsAdvisorClientOperationsMixin(
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
-        return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
+        return self._deserialize_anomaly_alert_configuration(pipeline_response, **kwargs)
 
     @distributed_trace_async
     async def update_detection_configuration(  # type: ignore # pylint: disable=arguments-differ

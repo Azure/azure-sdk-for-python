@@ -126,7 +126,7 @@ class OperationMixinHelpers:
             ingestion_settings = models.DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
         return models.DataFeed(granularity=granularity, schema=schema, ingestion_settings=ingestion_settings, **kwargs)
 
-    def _deserialize_anomaly_detection_configuration(
+    def _deserialize_anomaly_alert_configuration(
         self, pipeline_response, **kwargs
     ) -> models.AnomalyAlertConfiguration:
         cls = kwargs.pop("cls", None)
@@ -951,7 +951,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
+        return self._deserialize_anomaly_alert_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
     def refresh_data_feed_ingestion(  # type: ignore # pylint: disable=arguments-differ
@@ -1013,7 +1013,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
-        return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
+        return self._deserialize_anomaly_alert_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
     def update_detection_configuration(  # type: ignore # pylint: disable=arguments-differ
