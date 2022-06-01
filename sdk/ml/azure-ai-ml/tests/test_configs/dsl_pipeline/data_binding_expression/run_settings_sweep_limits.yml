@@ -1,0 +1,51 @@
+type: pipeline
+
+display_name: pipeline_with_data_binding
+description: The hello world pipeline job with data binding
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  job_in_number: 1
+  job_in_string: "hello"
+  job_in_folder:
+    path: ../../data
+    type: uri_folder
+    mode: ro_mount
+  job_in_file:
+    path: ../../data/sample1.csv
+    type: uri_file
+    mode: ro_mount
+  target_compute: "cpu-cluster"
+  output_file_name: "sample1.csv"
+
+jobs:
+  hello_world_sweep:
+    type: sweep
+    search_space:
+      batch_size:
+        type: choice
+        values: [25, 35]
+    inputs:
+      data_folder: ${{parent.inputs.job_in_folder}}
+      first_layer_neurons: 32
+      second_layer_neurons: 32
+      third_layer_neurons: 5
+      epochs: 1
+      momentum: 10
+      weight_decay: 0.01
+      learning_rate: 0.001
+      f1: 0.5
+      f2: 15
+      random_seed: 42
+    limits:
+      max_total_trials: ${{parent.inputs.job_in_number}}
+    sampling_algorithm: random
+    objective:
+      goal: maximize
+      primary_metric: "accuracy"
+
+    trial: file:../../components/helloworld_component_for_sweep.yml

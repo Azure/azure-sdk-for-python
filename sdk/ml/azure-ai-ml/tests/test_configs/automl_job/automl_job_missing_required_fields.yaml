@@ -1,0 +1,24 @@
+type: automl
+
+name: A simple AutoML Job
+
+compute: azureml:cpu-cluster
+
+limits:
+  timeout_minutes: 180
+  max_trials: 40
+  max_concurrent_trials: 5
+  enable_early_termination: true
+  exit_score: 0.85
+
+training_data:
+validation_data:
+  path: azureml:insurance-validation-data:1
+  type: mltable
+
+featurization:
+  mode: auto
+
+training:
+  enable_dnn_training: True
+  enable_model_explainability: true

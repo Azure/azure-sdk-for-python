@@ -1,0 +1,14 @@
+name: model-remote2
+path: "azureml://subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W34/workspaces/sdk_vnext_cli/datastores/workspaceblobstore/paths/LocalUpload/af5597c29467a96523a70787c319f4db/model.pkl"
+version: 3
+description: "this is my test model"
+tags:
+  foo: bar
+  abc: 123
+utc_time_created: '2020-10-19 17:44:02.096572'
+flavors:
+  sklearn:
+    sklearn_version: 0.23.2
+  python_function:
+    loader_module: office.plrmodel
+    python_version: 3.8.5

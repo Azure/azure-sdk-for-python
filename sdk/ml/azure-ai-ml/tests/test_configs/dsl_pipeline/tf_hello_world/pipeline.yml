@@ -1,0 +1,15 @@
+type: pipeline
+description: "TensorFlow hello-world showing training environment with $TF_CONFIG"
+
+jobs:
+  tf_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
+    distribution:
+      type: tensorflow
+      worker_count: 1
+
+        

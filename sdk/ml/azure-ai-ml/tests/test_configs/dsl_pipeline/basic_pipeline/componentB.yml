@@ -1,0 +1,12 @@
+type: command
+
+name: component_b
+display_name: componentB
+version: 1
+
+code: ./componentB_src
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+
+command: >-
+  python hello.py

@@ -1,0 +1,35 @@
+type: automl
+
+experiment_name: cli_e2e_test
+compute: azureml:cpu-cluster
+
+log_verbosity: debug
+task: forecasting
+primary_metric: normalized_root_mean_squared_error
+
+properties:
+  _automl_internal_enable_mltable_quick_profile: "true"
+  _automl_internal_label: "latest"
+  _automl_internal_save_mlflow: "true"
+
+limits:
+  timeout_minutes: 180
+  trial_timeout_minutes: 20
+  max_trials: 2
+  max_concurrent_trials: 2
+  enable_early_termination: true
+  exit_score: 0.85
+
+target_column_name: BeerProduction
+training_data:
+  path: tests/test_configs/automl_job/test_datasets/beer_forecasting/train
+  type: mltable
+n_cross_validations: 2
+
+featurization:
+  mode: auto
+
+forecasting:
+  forecast_horizon: 12
+  frequency: MS
+  time_column_name: DATE

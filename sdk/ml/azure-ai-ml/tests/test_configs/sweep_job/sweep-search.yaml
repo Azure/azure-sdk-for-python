@@ -1,0 +1,36 @@
+sampling_algorithm: random
+experiment_name: "all-sweep"
+type: sweep
+search_space:
+  conv_size:
+    type: choice
+    values: [2, 5, 7]
+  dropout_rate:
+    type: uniform
+    min_value: 0.1
+    max_value: 0.5
+  dropout_rate2:
+    type: uniform
+    min_value: 0.2
+    max_value: 0.6
+  lr:
+    type: loguniform
+    max_value: 1
+    min_value: 0
+objective:
+  primary_metric: accuracy
+  goal: maximize
+trial:
+  command: python ./sweep_test.py --lr {search_space.lr} --conv_size {search_space.conv_size} --dropout_rate {search_space.dropout_rate} --dropout_rate2 {search_space.dropout_rate2}
+  code: ../python/sweep_test.py
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: azureml:rihorn-comp
+limits:
+  max_total_trials: 100
+  max_concurrent_trials: 10
+  timeout: 10000
+early_termination:
+  type: truncation_selection
+  evaluation_interval: 100
+  delay_evaluation: 200
+  truncation_percentage: 40
