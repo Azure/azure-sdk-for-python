@@ -64,24 +64,6 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType]):
             )
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
-    @classmethod
-    def from_continuation_token(  # type: ignore
-        cls,
-        polling_method: "DocumentTranslationLROPollingMethod",
-        continuation_token: str,
-        **kwargs: Any
-    ) -> "DocumentTranslationLROPoller":  # type: ignore
-        """
-        :meta private:
-        """
-        (
-            client,
-            initial_response,
-            deserialization_callback,
-        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
-
-        return cls(client, initial_response, deserialization_callback, polling_method)
-
 
 class DocumentTranslationLROPollingMethod(LROBasePolling):
     """A custom polling method implementation for Document Translation."""
