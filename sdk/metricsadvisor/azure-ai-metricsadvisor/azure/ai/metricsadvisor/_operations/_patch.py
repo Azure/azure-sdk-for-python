@@ -322,7 +322,6 @@ class OperationMixinHelpers:
             content_type=content_type,
             json=metric_series_query_options.serialize(),
             skip=kwargs.pop("skip", None),
-            maxpagesize=kwargs.pop("maxpagesize", None),
         )
         next_request = operations.build_list_metric_series_definitions_request(
             metric_id=metric_id,
@@ -530,14 +529,12 @@ class OperationMixinHelpers:
         alert_id: str,
         *,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[HttpRequest, HttpRequest, Any]:
         initial_request = operations.build_list_incidents_for_alert_request(
             alert_configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            maxpagesize=maxpagesize,
         )
         next_request = operations.build_list_incidents_for_alert_request(
             alert_configuration_id=alert_configuration_id,
@@ -1048,7 +1045,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         status: Optional[Union[str, "models.DataFeedStatus"]] = None,
         creator: Optional[str] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[models.DataFeed]:
         return self._paging_helper(
@@ -1059,7 +1055,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
                 status=status,
                 creator=creator,
                 skip=skip,
-                maxpagesize=maxpagesize,
             ),
             next_request=operations.build_list_data_feeds_request(),
             deserializer=self._deserialize_data_feed,
@@ -1083,7 +1078,6 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
             initial_request=operations.build_list_alert_configurations_request(
                 configuration_id=detection_configuration_id,
                 skip=kwargs.pop("skip", None),
-                maxpagesize=kwargs.pop("maxpagesize", None),
             ),
             next_request=operations.build_list_alert_configurations_request(
                 configuration_id=detection_configuration_id
@@ -1306,14 +1300,12 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         alert_id: str,
         *,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable[models.AnomalyIncident]:
         initial_request, next_request, kwargs = self._list_incidents_for_alert_requests(
             alert_configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            maxpagesize=maxpagesize,
             **kwargs
         )
         return self._paging_helper(

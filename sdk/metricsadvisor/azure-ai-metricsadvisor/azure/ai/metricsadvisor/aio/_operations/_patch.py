@@ -334,7 +334,6 @@ class MetricsAdvisorClientOperationsMixin(
         status: Optional[Union[str, "models.DataFeedStatus"]] = None,
         creator: Optional[str] = None,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[models.DataFeed]:
         return self._paging_helper(
@@ -345,7 +344,6 @@ class MetricsAdvisorClientOperationsMixin(
                 status=status,
                 creator=creator,
                 skip=skip,
-                maxpagesize=maxpagesize,
             ),
             next_request=build_list_data_feeds_request(),
             deserializer=self._deserialize_data_feed,
@@ -369,7 +367,6 @@ class MetricsAdvisorClientOperationsMixin(
             initial_request=build_list_alert_configurations_request(
                 configuration_id=detection_configuration_id,
                 skip=kwargs.pop("skip", None),
-                maxpagesize=kwargs.pop("maxpagesize", None),
             ),
             next_request=build_list_alert_configurations_request(configuration_id=detection_configuration_id),
             deserializer=functools.partial(_deserialize, self._deserialize),
@@ -590,14 +587,12 @@ class MetricsAdvisorClientOperationsMixin(
         alert_id: str,
         *,
         skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[models.AnomalyIncident]:
         initial_request, next_request, kwargs = self._list_incidents_for_alert_requests(
             alert_configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
-            maxpagesize=maxpagesize,
             **kwargs
         )
         return self._paging_helper(
