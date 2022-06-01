@@ -19,6 +19,7 @@ import uamqp.message
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
     ServiceBusReceiveMode,
+    ServiceBusMessageState,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
@@ -35,6 +36,7 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
+    MESSAGE_STATE_NAME
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -56,6 +58,14 @@ if TYPE_CHECKING:
     )
     from .._servicebus_receiver import ServiceBusReceiver
     from azure.core.tracing import AbstractSpan
+    PrimitiveTypes = Union[
+        int,
+        float,
+        bytes,
+        bool,
+        str,
+        uuid.UUID
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -68,7 +78,9 @@ class ServiceBusMessage(
     :param body: The data to send in a single message.
     :type body: Optional[Union[str, bytes]]
 
-    :keyword Optional[dict] application_properties: The user defined properties on the message.
+    :keyword application_properties: The user defined properties on the message.
+    :paramtype application_properties: Dict[str, Union[int or float or bool or
+     bytes or str or uuid.UUID or datetime or None]]
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
     :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
@@ -96,7 +108,7 @@ class ServiceBusMessage(
         self,
         body: Optional[Union[str, bytes]],
         *,
-        application_properties: Optional[Dict[str, Any]] = None,
+        application_properties: Optional[Dict[str, "PrimitiveTypes"]] = None,
         session_id: Optional[str] = None,
         message_id: Optional[str] = None,
         scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
@@ -279,7 +291,7 @@ class ServiceBusMessage(
 
     @property
     def application_properties(self):
-        # type: () -> Optional[dict]
+        # type: () -> Optional[Dict]
         """The user defined properties on the message.
 
         :rtype: dict
@@ -288,7 +300,7 @@ class ServiceBusMessage(
 
     @application_properties.setter
     def application_properties(self, value):
-        # type: (dict) -> None
+        # type: (Dict) -> None
         self._raw_amqp_message.application_properties = value
 
     @property
@@ -966,6 +978,24 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             except AttributeError:
                 pass
         return None
+
+    @property
+    def state(self):
+        # type: () -> ServiceBusMessageState
+        """
+        Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
+        or Scheduled.
+
+        :rtype: ~azure.servicebus.ServiceBusMessageState
+        """
+        try:
+            message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
+            try:
+                return ServiceBusMessageState(message_state)
+            except ValueError:
+                return ServiceBusMessageState.ACTIVE if not message_state else message_state
+        except AttributeError:
+            return ServiceBusMessageState.ACTIVE
 
     @property
     def delivery_count(self):

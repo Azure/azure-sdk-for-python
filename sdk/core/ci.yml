@@ -12,6 +12,8 @@ trigger:
     - sdk/core/
     - eng/
     - tools/
+    exclude:
+    - eng/common/
 
 pr:
   branches:
@@ -26,16 +28,13 @@ pr:
     - sdk/core/
     - eng/
     - tools/
+    exclude:
+    - eng/common/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: core
-    MatrixConfigs:
-      - Name: core_ci_matrix
-        Path: sdk/core/platform-matrix.json
-        Selection: sparse
-        GenerateVMJobs: true
     Artifacts:
     - name: azure-core
       safeName: azurecore

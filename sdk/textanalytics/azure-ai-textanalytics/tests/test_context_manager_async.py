@@ -3,10 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    from unittest import mock  # type: ignore
+from unittest import mock
 import asyncio
 import sys
 
@@ -34,7 +31,9 @@ class AsyncMockTransport(mock.MagicMock):
 
 class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
-    async def test_close(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_close(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
@@ -47,7 +46,9 @@ class TestContextManager(TextAnalyticsTest):
         assert transport.__aexit__.call_count == 1
 
     @TextAnalyticsPreparer()
-    async def test_context_manager(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    async def test_context_manager(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,

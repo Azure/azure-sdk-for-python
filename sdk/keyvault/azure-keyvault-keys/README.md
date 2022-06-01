@@ -29,7 +29,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.7 or later
+* Python 3.6 or later
 * A Key Vault. If you need to create one, you can use the
 [Azure Cloud Shell][azure_cloud_shell] to create one with these commands
 (replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
@@ -380,6 +380,11 @@ async for key in keys:
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-keys`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a key that doesn't exist in the vault, [KeyClient][key_client_docs]

@@ -6,48 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
-    from azure.core.credentials import AzureKeyCredential
-
-
-class ConversationAnalysisClientConfiguration(Configuration):
+class ConversationAnalysisClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ConversationAnalysisClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :param endpoint: Supported Cognitive Services endpoint (e.g.,
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        endpoint,  # type: str
-        credential,  # type: AzureKeyCredential
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        endpoint: str,
+        credential: AzureKeyCredential,
+        **kwargs: Any
+    ) -> None:
+        super(ConversationAnalysisClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-05-15-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(ConversationAnalysisClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = "2021-11-01-preview"
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'ai-language-conversations/{}'.format(VERSION))
         self._configure(**kwargs)
 

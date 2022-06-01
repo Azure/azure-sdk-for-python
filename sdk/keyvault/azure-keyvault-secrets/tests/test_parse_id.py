@@ -2,18 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
+
+import pytest
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-from devtools_testutils import PowerShellPreparer
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import SecretsTestCase
+from _test_case import SecretsClientPreparer
 
 
-class TestParseId(SecretsTestCase, KeyVaultTestCase):
-    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
-    def test_parse_secret_id_with_version(self, azure_keyvault_url):
-        client = self.create_client(azure_keyvault_url)
-
+class TestParseId(KeyVaultTestCase):
+    @pytest.mark.parametrize("api_version", [(DEFAULT_VERSION)])
+    @SecretsClientPreparer()
+    @recorded_by_proxy
+    def test_parse_secret_id_with_version(self, client, **kwargs):
         secret_name = self.get_resource_name("secret")
         secret_value = "secret_value"
         # create secret
@@ -52,3 +55,15 @@ def test_parse_deleted_secret_id():
     assert parsed_secret_id.vault_url == "https://keyvault-name.vault.azure.net"
     assert parsed_secret_id.version is None
     assert parsed_secret_id.source_id == "https://keyvault-name.vault.azure.net/deletedsecrets/deleted-secret"
+
+
+def test_parse_secret_id_with_port():
+    """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/24446"""
+
+    source_id = "https://localhost:8443/secrets/secret-name/version"
+    parsed_key_id = KeyVaultSecretIdentifier(source_id)
+
+    assert parsed_key_id.name == "secret-name"
+    assert parsed_key_id.vault_url == "https://localhost:8443"
+    assert parsed_key_id.version == "version"
+    assert parsed_key_id.source_id == "https://localhost:8443/secrets/secret-name/version"

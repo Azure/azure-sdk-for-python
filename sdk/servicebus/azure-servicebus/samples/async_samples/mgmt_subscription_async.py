@@ -14,8 +14,6 @@ Example to show managing subscription entities under a ServiceBus namespace, inc
     - List subscriptions under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import uuid

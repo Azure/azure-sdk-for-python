@@ -98,6 +98,9 @@ class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SQLAG_WORK_LOAD_CONTAINER = "SQLAGWorkLoadContainer"
     STORAGE_CONTAINER = "StorageContainer"
     GENERIC_CONTAINER = "GenericContainer"
+    MICROSOFT_CLASSIC_COMPUTE_VIRTUAL_MACHINES = "Microsoft.ClassicCompute/virtualMachines"
+    MICROSOFT_COMPUTE_VIRTUAL_MACHINES = "Microsoft.Compute/virtualMachines"
+    AZURE_WORKLOAD_CONTAINER = "AzureWorkloadContainer"
 
 class CopyOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Options to resolve copy conflicts.
@@ -256,6 +259,12 @@ class HttpStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
+
+class IAASVMPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    INVALID = "Invalid"
+    V1 = "V1"
+    V2 = "V2"
 
 class InfrastructureEncryptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -444,6 +453,8 @@ class ProtectionIntentItemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     AZURE_RESOURCE_ITEM = "AzureResourceItem"
     RECOVERY_SERVICE_VAULT_ITEM = "RecoveryServiceVaultItem"
     AZURE_WORKLOAD_CONTAINER_AUTO_PROTECTION_INTENT = "AzureWorkloadContainerAutoProtectionIntent"
+    AZURE_WORKLOAD_AUTO_PROTECTION_INTENT = "AzureWorkloadAutoProtectionIntent"
+    AZURE_WORKLOAD_SQL_AUTO_PROTECTION_INTENT = "AzureWorkloadSQLAutoProtectionIntent"
 
 class ProtectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Backup state of this backup item.

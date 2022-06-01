@@ -1,3 +1,7 @@
+# NOTE: There is a newer version of this package
+
+Please install the [azure-ai-textanalytics](https://pypi.org/project/azure-ai-textanalytics/) package for the latest features and support.
+
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Cognitive Services Text Analytics Client Library.

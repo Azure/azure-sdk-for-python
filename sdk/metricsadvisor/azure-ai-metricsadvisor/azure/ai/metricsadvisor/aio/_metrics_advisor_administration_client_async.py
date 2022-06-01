@@ -69,7 +69,7 @@ if TYPE_CHECKING:
 
 class MetricsAdvisorAdministrationClient(
     object
-):  # pylint:disable=too-many-public-methods
+):  # pylint:disable=too-many-public-methods, client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -749,6 +749,7 @@ class MetricsAdvisorAdministrationClient(
             data_feed_patch = construct_data_feed_dict(update)
 
         else:
+            data_feed = cast(DataFeed, data_feed)
             data_feed_id = data_feed.id
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(
@@ -811,6 +812,7 @@ class MetricsAdvisorAdministrationClient(
             alert_configuration_patch = construct_alert_config_dict(update)
 
         else:
+            alert_configuration = cast(AnomalyAlertConfiguration, alert_configuration)
             alert_configuration_id = alert_configuration.id
             alert_configuration_patch = alert_configuration._to_generated_patch(
                 name=update.pop("name", None),
@@ -887,6 +889,7 @@ class MetricsAdvisorAdministrationClient(
             detection_config_patch = construct_detection_config_dict(update)
 
         else:
+            detection_configuration = cast(AnomalyDetectionConfiguration, detection_configuration)
             detection_configuration_id = detection_configuration.id
             detection_config_patch = detection_configuration._to_generated_patch(
                 name=update.pop("name", None),
@@ -971,6 +974,7 @@ class MetricsAdvisorAdministrationClient(
             hook_patch = construct_hook_dict(update, hook_type)
 
         else:
+            hook = cast(Union[EmailNotificationHook, WebNotificationHook], hook)
             hook_id = hook.id
             if hook.hook_type == "Email":
                 hook = cast(EmailNotificationHook, hook)

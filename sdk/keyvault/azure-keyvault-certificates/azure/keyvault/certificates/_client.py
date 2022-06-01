@@ -414,7 +414,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def update_certificate_policy(self, certificate_name, policy, **kwargs):
         # type: (str, CertificatePolicy, **Any) -> CertificatePolicy
-        """Updates the policy for a certificate. Requires certificiates/update permission.
+        """Updates the policy for a certificate. Requires certificates/update permission.
 
         Set specified members in the certificate policy. Leaves others as null.
 

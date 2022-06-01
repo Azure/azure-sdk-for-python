@@ -119,7 +119,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
          detection.
         :paramtype disable_cache_reprocessing_change_detection: bool
-        :return: The created IndexSearchIndexerer
+        :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))

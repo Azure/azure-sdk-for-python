@@ -21,6 +21,7 @@ import unittest
 # import azure.mgmt.managementgroups
 import azure.mgmt.resource
 import azure.mgmt.resource.resources.v2019_07_01
+import pytest
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -220,7 +221,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
         result_delete = self.resource_client.resource_groups.begin_delete(group_name)
         result_delete.wait()
 
-    @unittest.skip('hard to skip')
+    @pytest.mark.skip('hard to skip')
     @RandomNameResourceGroupPreparer()
     def test_resources(self, resource_group, location):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -365,7 +366,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
         )
         async_delete.wait()
 
-    @unittest.skip('hard to test')
+    @pytest.mark.skip('hard to test')
     @RandomNameResourceGroupPreparer()
     def test_deployments_basic(self, resource_group, location):
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
@@ -476,7 +477,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
         )
         async_delete.wait()
 
-    @unittest.skip('hard to test')
+    @pytest.mark.skip('hard to test')
     @RandomNameResourceGroupPreparer()
     def test_deployments_at_scope(self, resource_group, location):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

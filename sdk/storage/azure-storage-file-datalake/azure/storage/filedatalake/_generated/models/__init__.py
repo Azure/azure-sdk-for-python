@@ -12,6 +12,7 @@ try:
     from ._models_py3 import BlobItemInternal
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobPropertiesInternal
+    from ._models_py3 import CpkInfo
     from ._models_py3 import FileSystem
     from ._models_py3 import FileSystemList
     from ._models_py3 import LeaseAccessConditions
@@ -30,6 +31,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobItemInternal  # type: ignore
     from ._models import BlobPrefix  # type: ignore
     from ._models import BlobPropertiesInternal  # type: ignore
+    from ._models import CpkInfo  # type: ignore
     from ._models import FileSystem  # type: ignore
     from ._models import FileSystemList  # type: ignore
     from ._models import LeaseAccessConditions  # type: ignore
@@ -60,6 +62,7 @@ __all__ = [
     'BlobItemInternal',
     'BlobPrefix',
     'BlobPropertiesInternal',
+    'CpkInfo',
     'FileSystem',
     'FileSystemList',
     'LeaseAccessConditions',

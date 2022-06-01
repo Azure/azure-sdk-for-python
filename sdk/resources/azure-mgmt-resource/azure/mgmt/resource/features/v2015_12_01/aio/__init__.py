@@ -8,3 +8,8 @@
 
 from ._feature_client import FeatureClient
 __all__ = ['FeatureClient']
+
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()

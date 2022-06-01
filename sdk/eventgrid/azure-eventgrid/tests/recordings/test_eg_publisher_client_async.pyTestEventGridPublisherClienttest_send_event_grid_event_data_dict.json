@@ -1,0 +1,66 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "178",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)"
+      },
+      "RequestBody": "client_id=75a1a7ff-9dbb-4ee3-81df-c655bdfa1e4f\u0026client_secret=450e20ed-64e7-49c4-b39a-71ff1367e9cc\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Feventgrid.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "1321",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Jan 2022 02:20:19 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=Avox71nb3K5Diym0GHNwAHGIATgcEAAAAM3UctkOAAAA; expires=Sun, 13-Feb-2022 02:20:20 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12261.17 - NCUS ProdSlices",
+        "x-ms-request-id": "e7833345-d4e2-47b6-8826-5e87fc817b00"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL2V2ZW50Z3JpZC5henVyZS5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNjQyMTI2NTIwLCJuYmYiOjE2NDIxMjY1MjAsImV4cCI6MTY0MjIxMzIyMCwiYWlvIjoiRTJaZ1lOanBjTyt6cDRRNXkvZTRkbDlwbnEwbkFRPT0iLCJhcHBpZCI6Ijc1YTFhN2ZmLTlkYmItNGVlMy04MWRmLWM2NTViZGZhMWU0ZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiIyYTg0OTJkYS1lYzk3LTQ5YzItODQ4Ni1kYTQxNjhlYjZlZGIiLCJyaCI6IjAuQVJvQXY0ajVjdkdHcjBHUnF5MTgwQkhiUl8tbm9YVzduZU5PZ2RfR1ZiMzZIazhhQUFBLiIsInN1YiI6IjJhODQ5MmRhLWVjOTctNDljMi04NDg2LWRhNDE2OGViNmVkYiIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6IlJUT0Q1LUxVdGtlSUpsNkhfSUY3QUEiLCJ2ZXIiOiIxLjAifQ.mx62UOMhE7U4wmEUpn7GhaJVBbAbl1HOGKdM9UwYAKbIldTseEexKqZTxQmMNmFaYZWnWmWpXfZtFaYGl3md1PGBxBAn-RLsW9FmSuUM__iH52aw-D8U8X7mJ5FW8U_TR74_7yjZx03vxj0GUZy1P8wnZgxsulZ4TvRzrLjCVNcRWe_O4Mwoy3M_yU_eh2bAyfLP9C2wldAn4Q2BHLleilOQML4-40r6dZa5ktx0EvQeiyu4n--bwhp_Sk9-6-HG8dIzJfe8II_dkeisIlAHrXtYIuy4ogZ1s16vlHDXdb6k_WFLzFk7T8BHBNiDrCPXe-cm9OEyk_pvFbcxRXfIrg"
+      }
+    },
+    {
+      "RequestUri": "https://fakeresource.westus2-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "211",
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "azsdk-python-eventgridpublisherclient/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "862c9a42-74e0-11ec-9aa2-2816a845e8c6"
+      },
+      "RequestBody": "[{\u0022id\u0022: \u0022efacbe30-8625-4e5b-847f-512e58b2843d\u0022, \u0022subject\u0022: \u0022sample\u0022, \u0022data\u0022: {\u0022sample\u0022: \u0022eventgridevent\u0022}, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222022-01-14T02:20:21.41891Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2018-01-01",
+        "Content-Length": "0",
+        "Date": "Fri, 14 Jan 2022 02:20:19 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-request-id": "92be42a3-f170-4ca8-ac1e-2fcf48458227"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

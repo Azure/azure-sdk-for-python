@@ -18,16 +18,20 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PurviewCatalogClientConfiguration(Configuration):
+class PurviewCatalogClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for PurviewCatalogClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.purview.azure.com.
+    :param endpoint: The catalog endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -36,15 +40,17 @@ class PurviewCatalogClientConfiguration(Configuration):
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
+        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = "2021-05-01-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

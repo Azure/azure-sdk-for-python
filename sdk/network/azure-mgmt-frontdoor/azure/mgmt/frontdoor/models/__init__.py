@@ -6,180 +6,93 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AzureAsyncOperationResult
-    from ._models_py3 import Backend
-    from ._models_py3 import BackendPool
-    from ._models_py3 import BackendPoolListResult
-    from ._models_py3 import BackendPoolProperties
-    from ._models_py3 import BackendPoolUpdateParameters
-    from ._models_py3 import BackendPoolsSettings
-    from ._models_py3 import CacheConfiguration
-    from ._models_py3 import CheckNameAvailabilityInput
-    from ._models_py3 import CheckNameAvailabilityOutput
-    from ._models_py3 import CustomHttpsConfiguration
-    from ._models_py3 import CustomRule
-    from ._models_py3 import CustomRuleList
-    from ._models_py3 import Endpoint
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Experiment
-    from ._models_py3 import ExperimentList
-    from ._models_py3 import ExperimentUpdateModel
-    from ._models_py3 import ForwardingConfiguration
-    from ._models_py3 import FrontDoor
-    from ._models_py3 import FrontDoorListResult
-    from ._models_py3 import FrontDoorProperties
-    from ._models_py3 import FrontDoorUpdateParameters
-    from ._models_py3 import FrontendEndpoint
-    from ._models_py3 import FrontendEndpointLink
-    from ._models_py3 import FrontendEndpointProperties
-    from ._models_py3 import FrontendEndpointUpdateParameters
-    from ._models_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
-    from ._models_py3 import FrontendEndpointsListResult
-    from ._models_py3 import HeaderAction
-    from ._models_py3 import HealthProbeSettingsListResult
-    from ._models_py3 import HealthProbeSettingsModel
-    from ._models_py3 import HealthProbeSettingsProperties
-    from ._models_py3 import HealthProbeSettingsUpdateParameters
-    from ._models_py3 import KeyVaultCertificateSourceParametersVault
-    from ._models_py3 import LatencyMetric
-    from ._models_py3 import LatencyScorecard
-    from ._models_py3 import LoadBalancingSettingsListResult
-    from ._models_py3 import LoadBalancingSettingsModel
-    from ._models_py3 import LoadBalancingSettingsProperties
-    from ._models_py3 import LoadBalancingSettingsUpdateParameters
-    from ._models_py3 import ManagedRuleDefinition
-    from ._models_py3 import ManagedRuleExclusion
-    from ._models_py3 import ManagedRuleGroupDefinition
-    from ._models_py3 import ManagedRuleGroupOverride
-    from ._models_py3 import ManagedRuleOverride
-    from ._models_py3 import ManagedRuleSet
-    from ._models_py3 import ManagedRuleSetDefinition
-    from ._models_py3 import ManagedRuleSetDefinitionList
-    from ._models_py3 import ManagedRuleSetList
-    from ._models_py3 import MatchCondition
-    from ._models_py3 import PolicySettings
-    from ._models_py3 import PreconfiguredEndpoint
-    from ._models_py3 import PreconfiguredEndpointList
-    from ._models_py3 import Profile
-    from ._models_py3 import ProfileList
-    from ._models_py3 import ProfileUpdateModel
-    from ._models_py3 import PurgeParameters
-    from ._models_py3 import RedirectConfiguration
-    from ._models_py3 import Resource
-    from ._models_py3 import RouteConfiguration
-    from ._models_py3 import RoutingRule
-    from ._models_py3 import RoutingRuleLink
-    from ._models_py3 import RoutingRuleListResult
-    from ._models_py3 import RoutingRuleProperties
-    from ._models_py3 import RoutingRuleUpdateParameters
-    from ._models_py3 import RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
-    from ._models_py3 import RulesEngine
-    from ._models_py3 import RulesEngineAction
-    from ._models_py3 import RulesEngineListResult
-    from ._models_py3 import RulesEngineMatchCondition
-    from ._models_py3 import RulesEngineProperties
-    from ._models_py3 import RulesEngineRule
-    from ._models_py3 import RulesEngineUpdateParameters
-    from ._models_py3 import SecurityPolicyLink
-    from ._models_py3 import Sku
-    from ._models_py3 import SubResource
-    from ._models_py3 import TagsObject
-    from ._models_py3 import Timeseries
-    from ._models_py3 import TimeseriesDataPoint
-    from ._models_py3 import ValidateCustomDomainInput
-    from ._models_py3 import ValidateCustomDomainOutput
-    from ._models_py3 import WebApplicationFirewallPolicy
-    from ._models_py3 import WebApplicationFirewallPolicyList
-except (SyntaxError, ImportError):
-    from ._models import AzureAsyncOperationResult  # type: ignore
-    from ._models import Backend  # type: ignore
-    from ._models import BackendPool  # type: ignore
-    from ._models import BackendPoolListResult  # type: ignore
-    from ._models import BackendPoolProperties  # type: ignore
-    from ._models import BackendPoolUpdateParameters  # type: ignore
-    from ._models import BackendPoolsSettings  # type: ignore
-    from ._models import CacheConfiguration  # type: ignore
-    from ._models import CheckNameAvailabilityInput  # type: ignore
-    from ._models import CheckNameAvailabilityOutput  # type: ignore
-    from ._models import CustomHttpsConfiguration  # type: ignore
-    from ._models import CustomRule  # type: ignore
-    from ._models import CustomRuleList  # type: ignore
-    from ._models import Endpoint  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Experiment  # type: ignore
-    from ._models import ExperimentList  # type: ignore
-    from ._models import ExperimentUpdateModel  # type: ignore
-    from ._models import ForwardingConfiguration  # type: ignore
-    from ._models import FrontDoor  # type: ignore
-    from ._models import FrontDoorListResult  # type: ignore
-    from ._models import FrontDoorProperties  # type: ignore
-    from ._models import FrontDoorUpdateParameters  # type: ignore
-    from ._models import FrontendEndpoint  # type: ignore
-    from ._models import FrontendEndpointLink  # type: ignore
-    from ._models import FrontendEndpointProperties  # type: ignore
-    from ._models import FrontendEndpointUpdateParameters  # type: ignore
-    from ._models import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink  # type: ignore
-    from ._models import FrontendEndpointsListResult  # type: ignore
-    from ._models import HeaderAction  # type: ignore
-    from ._models import HealthProbeSettingsListResult  # type: ignore
-    from ._models import HealthProbeSettingsModel  # type: ignore
-    from ._models import HealthProbeSettingsProperties  # type: ignore
-    from ._models import HealthProbeSettingsUpdateParameters  # type: ignore
-    from ._models import KeyVaultCertificateSourceParametersVault  # type: ignore
-    from ._models import LatencyMetric  # type: ignore
-    from ._models import LatencyScorecard  # type: ignore
-    from ._models import LoadBalancingSettingsListResult  # type: ignore
-    from ._models import LoadBalancingSettingsModel  # type: ignore
-    from ._models import LoadBalancingSettingsProperties  # type: ignore
-    from ._models import LoadBalancingSettingsUpdateParameters  # type: ignore
-    from ._models import ManagedRuleDefinition  # type: ignore
-    from ._models import ManagedRuleExclusion  # type: ignore
-    from ._models import ManagedRuleGroupDefinition  # type: ignore
-    from ._models import ManagedRuleGroupOverride  # type: ignore
-    from ._models import ManagedRuleOverride  # type: ignore
-    from ._models import ManagedRuleSet  # type: ignore
-    from ._models import ManagedRuleSetDefinition  # type: ignore
-    from ._models import ManagedRuleSetDefinitionList  # type: ignore
-    from ._models import ManagedRuleSetList  # type: ignore
-    from ._models import MatchCondition  # type: ignore
-    from ._models import PolicySettings  # type: ignore
-    from ._models import PreconfiguredEndpoint  # type: ignore
-    from ._models import PreconfiguredEndpointList  # type: ignore
-    from ._models import Profile  # type: ignore
-    from ._models import ProfileList  # type: ignore
-    from ._models import ProfileUpdateModel  # type: ignore
-    from ._models import PurgeParameters  # type: ignore
-    from ._models import RedirectConfiguration  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import RouteConfiguration  # type: ignore
-    from ._models import RoutingRule  # type: ignore
-    from ._models import RoutingRuleLink  # type: ignore
-    from ._models import RoutingRuleListResult  # type: ignore
-    from ._models import RoutingRuleProperties  # type: ignore
-    from ._models import RoutingRuleUpdateParameters  # type: ignore
-    from ._models import RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink  # type: ignore
-    from ._models import RulesEngine  # type: ignore
-    from ._models import RulesEngineAction  # type: ignore
-    from ._models import RulesEngineListResult  # type: ignore
-    from ._models import RulesEngineMatchCondition  # type: ignore
-    from ._models import RulesEngineProperties  # type: ignore
-    from ._models import RulesEngineRule  # type: ignore
-    from ._models import RulesEngineUpdateParameters  # type: ignore
-    from ._models import SecurityPolicyLink  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import TagsObject  # type: ignore
-    from ._models import Timeseries  # type: ignore
-    from ._models import TimeseriesDataPoint  # type: ignore
-    from ._models import ValidateCustomDomainInput  # type: ignore
-    from ._models import ValidateCustomDomainOutput  # type: ignore
-    from ._models import WebApplicationFirewallPolicy  # type: ignore
-    from ._models import WebApplicationFirewallPolicyList  # type: ignore
+from ._models_py3 import AzureAsyncOperationResult
+from ._models_py3 import Backend
+from ._models_py3 import BackendPool
+from ._models_py3 import BackendPoolListResult
+from ._models_py3 import BackendPoolProperties
+from ._models_py3 import BackendPoolUpdateParameters
+from ._models_py3 import BackendPoolsSettings
+from ._models_py3 import CacheConfiguration
+from ._models_py3 import CheckNameAvailabilityInput
+from ._models_py3 import CheckNameAvailabilityOutput
+from ._models_py3 import CustomHttpsConfiguration
+from ._models_py3 import CustomRule
+from ._models_py3 import CustomRuleList
+from ._models_py3 import Endpoint
+from ._models_py3 import Error
+from ._models_py3 import ErrorDetails
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Experiment
+from ._models_py3 import ExperimentList
+from ._models_py3 import ExperimentUpdateModel
+from ._models_py3 import ForwardingConfiguration
+from ._models_py3 import FrontDoor
+from ._models_py3 import FrontDoorListResult
+from ._models_py3 import FrontDoorProperties
+from ._models_py3 import FrontDoorUpdateParameters
+from ._models_py3 import FrontendEndpoint
+from ._models_py3 import FrontendEndpointLink
+from ._models_py3 import FrontendEndpointProperties
+from ._models_py3 import FrontendEndpointUpdateParameters
+from ._models_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
+from ._models_py3 import FrontendEndpointsListResult
+from ._models_py3 import HeaderAction
+from ._models_py3 import HealthProbeSettingsListResult
+from ._models_py3 import HealthProbeSettingsModel
+from ._models_py3 import HealthProbeSettingsProperties
+from ._models_py3 import HealthProbeSettingsUpdateParameters
+from ._models_py3 import KeyVaultCertificateSourceParametersVault
+from ._models_py3 import LatencyMetric
+from ._models_py3 import LatencyScorecard
+from ._models_py3 import LoadBalancingSettingsListResult
+from ._models_py3 import LoadBalancingSettingsModel
+from ._models_py3 import LoadBalancingSettingsProperties
+from ._models_py3 import LoadBalancingSettingsUpdateParameters
+from ._models_py3 import ManagedRuleDefinition
+from ._models_py3 import ManagedRuleExclusion
+from ._models_py3 import ManagedRuleGroupDefinition
+from ._models_py3 import ManagedRuleGroupOverride
+from ._models_py3 import ManagedRuleOverride
+from ._models_py3 import ManagedRuleSet
+from ._models_py3 import ManagedRuleSetDefinition
+from ._models_py3 import ManagedRuleSetDefinitionList
+from ._models_py3 import ManagedRuleSetList
+from ._models_py3 import MatchCondition
+from ._models_py3 import PolicySettings
+from ._models_py3 import PreconfiguredEndpoint
+from ._models_py3 import PreconfiguredEndpointList
+from ._models_py3 import Profile
+from ._models_py3 import ProfileList
+from ._models_py3 import ProfileUpdateModel
+from ._models_py3 import PurgeParameters
+from ._models_py3 import RedirectConfiguration
+from ._models_py3 import Resource
+from ._models_py3 import RouteConfiguration
+from ._models_py3 import RoutingRule
+from ._models_py3 import RoutingRuleLink
+from ._models_py3 import RoutingRuleListResult
+from ._models_py3 import RoutingRuleProperties
+from ._models_py3 import RoutingRuleUpdateParameters
+from ._models_py3 import RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
+from ._models_py3 import RulesEngine
+from ._models_py3 import RulesEngineAction
+from ._models_py3 import RulesEngineListResult
+from ._models_py3 import RulesEngineMatchCondition
+from ._models_py3 import RulesEngineProperties
+from ._models_py3 import RulesEngineRule
+from ._models_py3 import RulesEngineUpdateParameters
+from ._models_py3 import SecurityPolicyLink
+from ._models_py3 import Sku
+from ._models_py3 import SubResource
+from ._models_py3 import TagsObject
+from ._models_py3 import Timeseries
+from ._models_py3 import TimeseriesDataPoint
+from ._models_py3 import ValidateCustomDomainInput
+from ._models_py3 import ValidateCustomDomainOutput
+from ._models_py3 import WebApplicationFirewallPolicy
+from ._models_py3 import WebApplicationFirewallPolicyList
+
 
 from ._front_door_management_client_enums import (
     ActionType,

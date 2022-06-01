@@ -5,12 +5,12 @@
 import asyncio
 import os
 
-from azure.keyvault.keys import KeyType
 import pytest
+from azure.keyvault.keys import KeyType
+from devtools_testutils.aio import recorded_by_proxy_async
 
+from _async_test_case import AsyncKeysClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
-
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
@@ -39,9 +39,11 @@ async def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
-    @all_api_versions()
-    @client_setup
+class TestExamplesKeyVault(KeyVaultTestCase):
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_example_key_crud_operations(self, key_client, **kwargs):
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
             pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
@@ -128,8 +130,10 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(deleted_key.recovery_id)
         # [END delete_key]
 
-    @only_hsm()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_example_create_oct_key(self, key_client, **kwargs):
         key_name = self.get_resource_name("key")
 
@@ -141,8 +145,10 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(key.key_type)
         # [END create_oct_key]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
@@ -186,8 +192,10 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_example_keys_backup_restore(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         await key_client.create_key(key_name, "RSA")
@@ -219,8 +227,10 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_example_keys_recover(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         created_key = await key_client.create_key(key_name, "RSA")

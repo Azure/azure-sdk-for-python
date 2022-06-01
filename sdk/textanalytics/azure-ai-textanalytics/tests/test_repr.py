@@ -389,7 +389,7 @@ class TestRepr():
 
         assert repr(model) == model_repr
 
-    def test_recognized_linked_entites_result(self, linked_entity, text_analytics_warning, text_document_statistics):
+    def test_recognized_linked_entities_result(self, linked_entity, text_analytics_warning, text_document_statistics):
         model = _models.RecognizeLinkedEntitiesResult(
             id="1",
             entities=[linked_entity[0]],

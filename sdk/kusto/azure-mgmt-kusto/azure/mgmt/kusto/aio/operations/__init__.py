@@ -18,6 +18,7 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._data_connections_operations import DataConnectionsOperations
 from ._operations import Operations
 from ._operations_results_operations import OperationsResultsOperations
+from ._operations_results_location_operations import OperationsResultsLocationOperations
 
 __all__ = [
     'ClustersOperations',
@@ -32,4 +33,5 @@ __all__ = [
     'DataConnectionsOperations',
     'Operations',
     'OperationsResultsOperations',
+    'OperationsResultsLocationOperations',
 ]

@@ -45,11 +45,15 @@ param (
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $ProvisionerApplicationId,
 
+    [Parameter(ParameterSetName = 'Provisioner', Mandatory = $false)]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $ProvisionerApplicationOid,
+
     [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
     [string] $ProvisionerApplicationSecret,
 
     [Parameter()]
-    [ValidateRange(1, [int]::MaxValue)]
+    [ValidateRange(1, 7*24)]
     [int] $DeleteAfterHours = 120,
 
     [Parameter()]
@@ -79,7 +83,14 @@ param (
     [switch] $OutFile,
 
     [Parameter()]
-    [switch] $SuppressVsoCommands = ($null -eq $env:SYSTEM_TEAMPROJECTID)
+    [switch] $SuppressVsoCommands = ($null -eq $env:SYSTEM_TEAMPROJECTID),
+
+    # Captures any arguments not declared here (no parameter errors)
+    # This enables backwards compatibility with old script versions in
+    # hotfix branches if and when the dynamic subscription configuration
+    # secrets get updated to add new parameters.
+    [Parameter(ValueFromRemainingArguments = $true)]
+    $NewTestResourcesRemainingArguments
 )
 
 . $PSScriptRoot/SubConfig-Helpers.ps1
@@ -132,6 +143,14 @@ function Retry([scriptblock] $Action, [int] $Attempts = 5)
 # https://azure.microsoft.com/en-us/updates/update-your-apps-to-use-microsoft-graph-before-30-june-2022/
 function NewServicePrincipalWrapper([string]$subscription, [string]$resourceGroup, [string]$displayName)
 {
+    if ((Get-Module Az.Resources).Version -eq "5.3.0") {
+        # https://github.com/Azure/azure-powershell/issues/17040
+        # New-AzAdServicePrincipal calls will fail with:
+        # "You cannot call a method on a null-valued expression."
+        Write-Warning "Az.Resources version 5.3.0 is not supported. Please update to >= 5.3.1"
+        Write-Warning "Update-Module Az.Resources -RequiredVersion 5.3.1"
+        exit 1
+    }
     $servicePrincipal = Retry {
         New-AzADServicePrincipal -Role "Owner" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName" -DisplayName $displayName
     }
@@ -155,7 +174,7 @@ function NewServicePrincipalWrapper([string]$subscription, [string]$resourceGrou
             $appId = $servicePrincipal.AppId
         } else {
             Write-Verbose "Creating service principal credential via MS Graph API"
-            # In 7.1.0 the password credential issue was fixed (see https://github.com/Azure/azure-powershell/pull/16690) but the
+            # In 5.2.0 the password credential issue was fixed (see https://github.com/Azure/azure-powershell/pull/16690) but the
             # parameter set was changed making the above call fail due to a missing ServicePrincipalId parameter.
             $credential = Retry { $servicePrincipal | New-AzADSpCredential }
             $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
@@ -217,7 +236,8 @@ function BuildBicepFile([System.IO.FileSystemInfo] $file)
     return $templateFilePath
 }
 
-function BuildDeploymentOutputs([string]$serviceDirectoryPrefix, [object]$azContext, [object]$deployment) {
+function BuildDeploymentOutputs([string]$serviceName, [object]$azContext, [object]$deployment) {
+    $serviceDirectoryPrefix = BuildServiceDirectoryPrefix $serviceName
     # Add default values
     $deploymentOutputs = [Ordered]@{
         "${serviceDirectoryPrefix}CLIENT_ID" = $TestApplicationId;
@@ -230,6 +250,7 @@ function BuildDeploymentOutputs([string]$serviceDirectoryPrefix, [object]$azCont
         "${serviceDirectoryPrefix}AZURE_AUTHORITY_HOST" = $azContext.Environment.ActiveDirectoryAuthority;
         "${serviceDirectoryPrefix}RESOURCE_MANAGER_URL" = $azContext.Environment.ResourceManagerUrl;
         "${serviceDirectoryPrefix}SERVICE_MANAGEMENT_URL" = $azContext.Environment.ServiceManagementUrl;
+        "AZURE_SERVICE_DIRECTORY" = $serviceName.ToUpperInvariant();
     }
 
     MergeHashes $EnvironmentVariables $(Get-Variable deploymentOutputs)
@@ -249,8 +270,7 @@ function BuildDeploymentOutputs([string]$serviceDirectoryPrefix, [object]$azCont
 }
 
 function SetDeploymentOutputs([string]$serviceName, [object]$azContext, [object]$deployment, [object]$templateFile) {
-    $serviceDirectoryPrefix = $serviceName.ToUpperInvariant() + "_"
-    $deploymentOutputs = BuildDeploymentOutputs $serviceDirectoryPrefix $azContext $deployment
+    $deploymentOutputs = BuildDeploymentOutputs $serviceName $azContext $deployment
 
     if ($OutFile) {
         if (!$IsWindows) {
@@ -281,7 +301,7 @@ function SetDeploymentOutputs([string]$serviceName, [object]$azContext, [object]
             $EnvironmentVariables[$key] = $value
 
             if ($CI) {
-                if (ShouldMarkValueAsSecret $serviceDirectoryPrefix $key $value $notSecretValues) {
+                if (ShouldMarkValueAsSecret $serviceName $key $value $notSecretValues) {
                     # Treat all ARM template output variables as secrets since "SecureString" variables do not set values.
                     # In order to mask secrets but set environment variables for any given ARM template, we set variables twice as shown below.
                     LogVsoCommand "##vso[task.setvariable variable=_$key;issecret=true;]$value"
@@ -348,17 +368,16 @@ try {
         exit
     }
 
-    $UserName =  if ($env:USER) { $env:USER } else { "${env:USERNAME}" }
-    # Remove spaces, etc. that may be in $UserName
-    $UserName = $UserName -replace '\W'
+    $UserName = GetUserName
 
-    # Make sure $BaseName is set.
-    if ($CI) {
-        $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
-        Log "Generated base name '$BaseName' for CI build"
-    } elseif (!$BaseName) {
-        $BaseName = "$UserName$ServiceDirectory"
-        Log "BaseName was not set. Using default base name '$BaseName'"
+    if (!$BaseName) {
+        if ($CI) {
+            $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
+            Log "Generated base name '$BaseName' for CI build"
+        } else {
+            $BaseName = GetBaseName $UserName (GetServiceLeafDirectoryName $ServiceDirectory)
+            Log "BaseName was not set. Using default base name '$BaseName'"
+        }
     }
 
     # Make sure pre- and post-scripts are passed formerly required arguments.
@@ -387,8 +406,7 @@ try {
         Write-Verbose "Location was not set. Using default location for environment: '$Location'"
     }
 
-    if (!$CI) {
-
+    if (!$CI -and $PSCmdlet.ParameterSetName -ne "Provisioner") {
         # Make sure the user is logged in to create a service principal.
         $context = Get-AzContext;
         if (!$context) {
@@ -481,40 +499,34 @@ try {
     $context = Get-AzContext;
 
     # Make sure the provisioner OID is set so we can pass it through to the deployment.
-    $provisionerApplicationOid = if (!$ProvisionerApplicationId) {
+    if (!$ProvisionerApplicationId -and !$ProvisionerApplicationOid) {
         if ($context.Account.Type -eq 'User') {
             $user = Get-AzADUser -UserPrincipalName $context.Account.Id
-            $user.Id
+            $ProvisionerApplicationOid = $user.Id
         } elseif ($context.Account.Type -eq 'ServicePrincipal') {
             $sp = Get-AzADServicePrincipal -ApplicationId $context.Account.Id
-            $sp.Id
+            $ProvisionerApplicationOid = $sp.Id
         } else {
             Write-Warning "Getting the OID for provisioner type '$($context.Account.Type)' is not supported and will not be passed to deployments (seldom required)."
         }
-    } else {
+    } elseif (!$ProvisionerApplicationOid) {
         $sp = Get-AzADServicePrincipal -ApplicationId $ProvisionerApplicationId
-        $sp.Id
+        $ProvisionerApplicationOid = $sp.Id
     }
 
-    # If the ServiceDirectory has multiple segments use the last directory name
-    # e.g. D:\foo\bar -> bar or foo/bar -> bar
-    $serviceName = if (Split-Path $ServiceDirectory) {
-        Split-Path -Leaf $ServiceDirectory
-    } else {
-        $ServiceDirectory.Trim('/')
-    }
+    $serviceName = GetServiceLeafDirectoryName $ServiceDirectory
 
     $ResourceGroupName = if ($ResourceGroupName) {
         $ResourceGroupName
     } elseif ($CI) {
         # Format the resource group name based on resource group naming recommendations and limitations.
-        "rg-{0}-$BaseName" -f ($serviceName -replace '[\\\/:]', '-').Substring(0, [Math]::Min($serviceName.Length, 90 - $BaseName.Length - 4)).Trim('-')
+        "rg-{0}-$BaseName" -f ($serviceName -replace '[\.\\\/:]', '-').ToLowerInvariant().Substring(0, [Math]::Min($serviceName.Length, 90 - $BaseName.Length - 4)).Trim('-')
     } else {
         "rg-$BaseName"
     }
 
     $tags = @{
-        Creator = $UserName
+        Owners = $UserName
         ServiceDirectory = $ServiceDirectory
     }
 
@@ -532,16 +544,12 @@ try {
             BuildReason = "${env:BUILD_REASON}"
         }
 
-        # Set the resource group name variable.
-        Write-Host "Setting variable 'AZURE_RESOURCEGROUP_NAME': $ResourceGroupName"
-        LogVsoCommand "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME;]$ResourceGroupName"
-        if ($EnvironmentVariables.ContainsKey('AZURE_RESOURCEGROUP_NAME') -and `
-            $EnvironmentVariables['AZURE_RESOURCEGROUP_NAME'] -ne $ResourceGroupName)
-        {
-            Write-Warning ("Overwriting 'EnvironmentVariables.AZURE_RESOURCEGROUP_NAME' with value " +
-                "'$($EnvironmentVariables['AZURE_RESOURCEGROUP_NAME'])' " + "to new value '$($ResourceGroupName)'")
-        }
-        $EnvironmentVariables['AZURE_RESOURCEGROUP_NAME'] = $ResourceGroupName
+        # Set an environment variable marking that resources have been deployed
+        # This variable can be consumed as a yaml condition in later stages of the pipeline
+        # to determine whether resources should be removed.
+        Write-Host "Setting variable 'CI_HAS_DEPLOYED_RESOURCES': 'true'"
+        LogVsoCommand "##vso[task.setvariable variable=CI_HAS_DEPLOYED_RESOURCES;]true"
+        $EnvironmentVariables['CI_HAS_DEPLOYED_RESOURCES'] = $true
     }
 
     Log "Creating resource group '$ResourceGroupName' in location '$Location'"
@@ -651,7 +659,9 @@ try {
         baseName = $BaseName
         testApplicationId = $TestApplicationId
         testApplicationOid = "$TestApplicationOid"
-        provisionerApplicationOid = "$provisionerApplicationOid"
+    }
+    if ($ProvisionerApplicationOid) {
+        $templateParameters["provisionerApplicationOid"] = "$ProvisionerApplicationOid"
     }
 
     if ($TenantId) {
@@ -1008,7 +1018,6 @@ the SecureString to plaintext by another means.
 
 .EXAMPLE
 New-TestResources.ps1 `
-    -BaseName 'Generated' `
     -ServiceDirectory '$(ServiceDirectory)' `
     -TenantId '$(TenantId)' `
     -ProvisionerApplicationId '$(ProvisionerId)' `

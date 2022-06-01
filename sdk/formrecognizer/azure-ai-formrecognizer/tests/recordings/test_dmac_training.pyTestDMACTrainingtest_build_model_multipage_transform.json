@@ -1,153 +1,152 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "108",
+        "Content-Length": "131",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "075510e5-5ee6-11ec-b2ef-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "97bfdab3-7f2b-11ec-bf62-c8348e073d30"
       },
       "RequestBody": {
-        "modelId": "2df39af1-d4fc-442b-8b45-373c998ce196",
+        "modelId": "71392933-dee2-4d39-b080-bd69e7196a95",
+        "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url"
         }
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "d564f8b8-b022-4320-9e3a-899368395db2",
+        "apim-request-id": "60122e72-72a7-4698-b0ab-a680584cdb56",
         "Content-Length": "0",
-        "Date": "Fri, 17 Dec 2021 03:04:21 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31526657740_d564f8b8-b022-4320-9e3a-899368395db2?api-version=2021-09-30-preview",
+        "Date": "Thu, 27 Jan 2022 04:42:56 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31523109426_60122e72-72a7-4698-b0ab-a680584cdb56?api-version=2022-01-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2166"
+        "x-envoy-upstream-service-time": "2202"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31526657740_d564f8b8-b022-4320-9e3a-899368395db2?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31523109426_60122e72-72a7-4698-b0ab-a680584cdb56?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "075510e5-5ee6-11ec-b2ef-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "97bfdab3-7f2b-11ec-bf62-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1ee89633-cf2c-43e9-9dcb-d72285329272",
+        "apim-request-id": "942ef2f1-2c7d-4479-a786-608c8241a10e",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:04:27 GMT",
+        "Date": "Thu, 27 Jan 2022 04:43:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "41"
+        "x-envoy-upstream-service-time": "80"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022operationId\u0022: \u002231526657740_d564f8b8-b022-4320-9e3a-899368395db2\u0022,\n",
-        "  \u0022kind\u0022: \u0022documentModelBuild\u0022,\n",
-        "  \u0022status\u0022: \u0022succeeded\u0022,\n",
-        "  \u0022createdDateTime\u0022: \u00222021-12-17T03:04:20Z\u0022,\n",
-        "  \u0022lastUpdatedDateTime\u0022: \u00222021-12-17T03:04:23Z\u0022,\n",
-        "  \u0022resourceLocation\u0022: \u0022https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2df39af1-d4fc-442b-8b45-373c998ce196?api-version=2021-09-30-preview\u0022,\n",
-        "  \u0022percentCompleted\u0022: 100,\n",
-        "  \u0022result\u0022: {\n",
-        "    \u0022docTypes\u0022: {\n",
-        "      \u00222df39af1-d4fc-442b-8b45-373c998ce196\u0022: {\n",
-        "        \u0022fieldSchema\u0022: {\n",
-        "          \u0022Merchant\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022MerchantAddress\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022MerchantPhoneNumber\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022CustomerName\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022CustomerAddress\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022CustomerPhoneNumber\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022FirstItem\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022FirstQuantity\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022FirstPrice\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Subtotal\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Tax\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Tip\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Total\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Signature\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Merchant2\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Customer2\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Total2\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          },\n",
-        "          \u0022Signature2\u0022: {\n",
-        "            \u0022type\u0022: \u0022string\u0022\n",
-        "          }\n",
-        "        },\n",
-        "        \u0022technique\u0022: \u0022fixedTemplate-2021-07-30\u0022,\n",
-        "        \u0022modelType\u0022: \u0022form\u0022,\n",
-        "        \u0022fieldConfidence\u0022: {\n",
-        "          \u0022Customer2\u0022: 0.95,\n",
-        "          \u0022CustomerAddress\u0022: 0.95,\n",
-        "          \u0022CustomerName\u0022: 0.95,\n",
-        "          \u0022CustomerPhoneNumber\u0022: 0.95,\n",
-        "          \u0022FirstItem\u0022: 0.95,\n",
-        "          \u0022FirstPrice\u0022: 0.95,\n",
-        "          \u0022FirstQuantity\u0022: 0.95,\n",
-        "          \u0022Merchant\u0022: 0,\n",
-        "          \u0022Merchant2\u0022: 0,\n",
-        "          \u0022MerchantAddress\u0022: 0.95,\n",
-        "          \u0022MerchantPhoneNumber\u0022: 0.95,\n",
-        "          \u0022Signature\u0022: 0.95,\n",
-        "          \u0022Signature2\u0022: 0.95,\n",
-        "          \u0022Subtotal\u0022: 0.95,\n",
-        "          \u0022Tax\u0022: 0.95,\n",
-        "          \u0022Tip\u0022: 0.95,\n",
-        "          \u0022Total\u0022: 0.95,\n",
-        "          \u0022Total2\u0022: 0.95\n",
-        "        }\n",
-        "      }\n",
-        "    },\n",
-        "    \u0022modelId\u0022: \u00222df39af1-d4fc-442b-8b45-373c998ce196\u0022,\n",
-        "    \u0022createdDateTime\u0022: \u00222021-12-17T03:04:23Z\u0022\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "operationId": "31523109426_60122e72-72a7-4698-b0ab-a680584cdb56",
+        "kind": "documentModelBuild",
+        "status": "succeeded",
+        "createdDateTime": "2022-01-27T04:42:54Z",
+        "lastUpdatedDateTime": "2022-01-27T04:42:58Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/71392933-dee2-4d39-b080-bd69e7196a95?api-version=2022-01-30-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "71392933-dee2-4d39-b080-bd69e7196a95": {
+              "fieldSchema": {
+                "Merchant": {
+                  "type": "string"
+                },
+                "MerchantAddress": {
+                  "type": "string"
+                },
+                "MerchantPhoneNumber": {
+                  "type": "string"
+                },
+                "CustomerName": {
+                  "type": "string"
+                },
+                "CustomerAddress": {
+                  "type": "string"
+                },
+                "CustomerPhoneNumber": {
+                  "type": "string"
+                },
+                "FirstItem": {
+                  "type": "string"
+                },
+                "FirstQuantity": {
+                  "type": "string"
+                },
+                "FirstPrice": {
+                  "type": "string"
+                },
+                "Subtotal": {
+                  "type": "string"
+                },
+                "Tax": {
+                  "type": "string"
+                },
+                "Tip": {
+                  "type": "string"
+                },
+                "Total": {
+                  "type": "string"
+                },
+                "Signature": {
+                  "type": "string"
+                },
+                "Merchant2": {
+                  "type": "string"
+                },
+                "Customer2": {
+                  "type": "string"
+                },
+                "Total2": {
+                  "type": "string"
+                },
+                "Signature2": {
+                  "type": "string"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "Customer2": 0.95,
+                "CustomerAddress": 0.95,
+                "CustomerName": 0.95,
+                "CustomerPhoneNumber": 0.95,
+                "FirstItem": 0.95,
+                "FirstPrice": 0.95,
+                "FirstQuantity": 0.95,
+                "Merchant": 0,
+                "Merchant2": 0,
+                "MerchantAddress": 0.95,
+                "MerchantPhoneNumber": 0.95,
+                "Signature": 0.95,
+                "Signature2": 0.95,
+                "Subtotal": 0.95,
+                "Tax": 0.95,
+                "Tip": 0.95,
+                "Total": 0.95,
+                "Total2": 0.95
+              }
+            }
+          },
+          "modelId": "71392933-dee2-4d39-b080-bd69e7196a95",
+          "createdDateTime": "2022-01-27T04:42:57Z",
+          "apiVersion": "2022-01-30-preview"
+        }
+      }
     }
   ],
   "Variables": {}

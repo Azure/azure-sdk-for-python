@@ -161,9 +161,9 @@ class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AR_JO = "ar-jo"
     #: Query language value for Danish (Denmark).
     DA_DK = "da-dk"
-    #: Query language value for Norwegian (Normway).
+    #: Query language value for Norwegian (Norway).
     NO_NO = "no-no"
-    #: Query language value for Bulgarian (Bulgary).
+    #: Query language value for Bulgarian (Bulgaria).
     BG_BG = "bg-bg"
     #: Query language value for Croatian (Croatia).
     HR_HR = "hr-hr"

@@ -1,5 +1,19 @@
 # Release History
 
+## 4.0.0b2 (2022-03-08)
+
+**Features**
+
+  - Added operation group DistributedAvailabilityGroupsOperations
+  - Added operation group IPv6FirewallRulesOperations
+  - Added operation group ServerTrustCertificatesOperations
+  - Model ElasticPool has a new parameter high_availability_replica_count
+  - Model ElasticPoolUpdate has a new parameter high_availability_replica_count
+
+**Breaking changes**
+
+  - Removed operation group OperationsHealthOperations
+
 ## 4.0.0b1 (2021-12-21)
 
 **Features**

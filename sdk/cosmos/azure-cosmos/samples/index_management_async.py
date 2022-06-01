@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.documents as documents
 import azure.cosmos.aio.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -370,7 +375,7 @@ async def range_scan_on_hash_index(db):
         # Now add IndexingDirective and repeat query
         # expect 200 OK because now we are explicitly allowing scans in a query
         # using the enableScanInQuery directive
-        results = await created_Container.query_items(
+        results = created_Container.query_items(
             query,
             enable_scan_in_query=True,
             enable_cross_partition_query=True
@@ -626,37 +631,36 @@ async def perform_multi_orderby_query(db):
 
 async def run_sample():
     try:
-        client = obtain_client()
-        await fetch_all_databases(client)
+        async with obtain_client() as client:
+            await fetch_all_databases(client)
 
-        # Create database if doesn't exist already.
-        created_db = await client.create_database_if_not_exists(DATABASE_ID)
-        print(created_db)
+            # Create database if doesn't exist already.
+            created_db = await client.create_database_if_not_exists(DATABASE_ID)
+            print(created_db)
 
-        # 1. Exclude a document from the index
-        await explicitly_exclude_from_index(created_db)
+            # 1. Exclude a document from the index
+            await explicitly_exclude_from_index(created_db)
 
-        # 2. Use manual (instead of automatic) indexing
-        await use_manual_indexing(created_db)
+            # 2. Use manual (instead of automatic) indexing
+            await use_manual_indexing(created_db)
 
-        # 4. Exclude specified document paths from the index
-        await exclude_paths_from_index(created_db)
+            # 4. Exclude specified document paths from the index
+            await exclude_paths_from_index(created_db)
 
-        # 5. Force a range scan operation on a hash indexed path
-        await range_scan_on_hash_index(created_db)
+            # 5. Force a range scan operation on a hash indexed path
+            await range_scan_on_hash_index(created_db)
 
-        # 6. Use range indexes on strings
-        await use_range_indexes_on_strings(created_db)
+            # 6. Use range indexes on strings
+            await use_range_indexes_on_strings(created_db)
 
-        # 7. Perform an index transform
-        await perform_index_transformations(created_db)
+            # 7. Perform an index transform
+            await perform_index_transformations(created_db)
 
-        # 8. Perform Multi Orderby queries using composite indexes
-        await perform_multi_orderby_query(created_db)
+            # 8. Perform Multi Orderby queries using composite indexes
+            await perform_multi_orderby_query(created_db)
 
-        print('Sample done, cleaning up sample-generated data')
-        await client.delete_database(DATABASE_ID)
-        await client.close()
+            print('Sample done, cleaning up sample-generated data')
+            await client.delete_database(DATABASE_ID)
 
     except exceptions.AzureError as e:
         raise e

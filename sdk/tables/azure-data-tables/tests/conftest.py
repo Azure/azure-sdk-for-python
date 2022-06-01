@@ -23,17 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
+import os
 
 import pytest
-from devtools_testutils import add_general_regex_sanitizer, test_proxy
+from devtools_testutils import add_general_regex_sanitizer, add_body_key_sanitizer, test_proxy
 
 # fixture needs to be visible from conftest
-
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -49,3 +44,11 @@ def add_sanitizers(test_proxy):
         regex="batch[a-z]*_([0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b)",
         group_for_replace="1",
     )
+    # sanitizes tenant ID
+    tenant_id = os.environ.get("TABLES_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
+    # sanitizes tenant ID used in test_challenge_auth(_async).py tests
+    challenge_tenant_id = os.environ.get("CHALLENGE_TABLES_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=challenge_tenant_id)
+    # sanitizes access tokens in response bodies
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")

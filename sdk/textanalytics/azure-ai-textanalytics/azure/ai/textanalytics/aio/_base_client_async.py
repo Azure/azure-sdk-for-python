@@ -2,13 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
+from typing import Any, Union, TYPE_CHECKING
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
 from .._policies import TextAnalyticsResponseHookPolicy
 from .._user_agent import USER_AGENT
 from .._version import DEFAULT_API_VERSION
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 def _authentication_policy(credential):
@@ -28,7 +30,12 @@ def _authentication_policy(credential):
 
 
 class AsyncTextAnalyticsClientBase:
-    def __init__(self, endpoint, credential, **kwargs):
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any
+    ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(
             {
@@ -50,6 +57,7 @@ class AsyncTextAnalyticsClientBase:
                 "$top",
                 "$skip",
                 "opinionMining",
+                "api-version"
             }
         )
         try:
@@ -58,7 +66,7 @@ class AsyncTextAnalyticsClientBase:
             raise ValueError("Parameter 'endpoint' must be a string.")
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
-            credential=credential,
+            credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),

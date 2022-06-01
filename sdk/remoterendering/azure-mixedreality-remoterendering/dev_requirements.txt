@@ -2,7 +2,7 @@
 ../../core/azure-core
 ../../nspkg/azure-mixedreality-nspkg
 ../../mixedreality/azure-mixedreality-authentication
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 -e ../../identity/azure-identity
 -e ../../../tools/azure-devtools
 

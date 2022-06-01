@@ -33,7 +33,14 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
-from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties, get_api_version
+from ._serialize import (
+    get_access_conditions,
+    get_api_version,
+    get_dest_access_conditions,
+    get_rename_smb_properties,
+    get_smb_properties,
+    get_source_conditions,
+    get_source_access_conditions)
 from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
@@ -171,7 +178,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
@@ -307,8 +314,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     def create_file(  # type: ignore
             self, size,  # type: int
             file_attributes="none",  # type: Union[str, NTFSAttributes]
-            file_creation_time="now",  # type: Union[str, datetime]
-            file_last_write_time="now",  # type: Union[str, datetime]
+            file_creation_time="now",  # type: Optional[Union[str, datetime]]
+            file_last_write_time="now",  # type: Optional[Union[str, datetime]]
             file_permission=None,   # type: Optional[str]
             permission_key=None,  # type: Optional[str]
             **kwargs  # type: Any
@@ -343,6 +350,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword ~datetime.datetime file_change_time
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -389,6 +402,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_content_disposition=content_settings.content_disposition
             )
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
+        file_change_time = kwargs.pop('file_change_time', None)
         try:
             return self._client.file.create(  # type: ignore
                 file_content_length=size,
@@ -396,6 +410,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
@@ -412,8 +427,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             self, data,  # type: Any
             length=None,  # type: Optional[int]
             file_attributes="none",  # type: Union[str, NTFSAttributes]
-            file_creation_time="now",  # type: Union[str, datetime]
-            file_last_write_time="now",  # type: Union[str, datetime]
+            file_creation_time="now",  # type: Optional[Union[str, datetime]]
+            file_last_write_time="now",  # type: Optional[Union[str, datetime]]
             file_permission=None,  # type: Optional[str]
             permission_key=None,  # type: Optional[str]
             **kwargs  # type: Any
@@ -448,6 +463,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword ~datetime.datetime file_change_time
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
@@ -787,6 +808,124 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
+    def rename_file(
+            self, new_name, # type: str
+            **kwargs # type: Any
+        ):
+        # type: (...) -> ShareFileClient
+        """
+        Rename the source file.
+
+        :param str new_name:
+            The new file name.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword bool overwrite:
+            A boolean value for if the destination file already exists, whether this request will
+            overwrite the file or not. If true, the rename will succeed and will overwrite the
+            destination file. If not provided or if false and the destination file does exist, the
+            request will not overwrite the destination file. If provided and the destination file
+            doesn't exist, the rename will succeed.
+        :keyword bool ignore_read_only:
+            A boolean value that specifies whether the ReadOnly attribute on a preexisting destination
+            file should be respected. If true, the rename will succeed, otherwise, a previous file at the
+            destination with the ReadOnly attribute set will cause the rename to fail.
+        :keyword str file_permission:
+            If specified the permission (security descriptor) shall be set for the file. This header
+            can be used if Permission size is <= 8KB, else file_permission_key shall be used.
+            If SDDL is specified as input, it must have owner, group and dacl.
+            A value of 'preserve' can be passed to preserve source permissions.
+            Note: Only one of the file_permission or file_permission_key should be specified.
+        :keyword str file_permission_key:
+            Key of the permission to be set for the file.
+            Note: Only one of the file-permission or file-permission-key should be specified.
+        :keyword file_attributes:
+            The file system attributes for the file.
+        :paramtype file_attributes:~azure.storage.fileshare.NTFSAttributes or str
+        :keyword file_creation_time:
+            Creation time for the file.
+        :paramtype file_creation_time:~datetime.datetime or str
+        :keyword file_last_write_time:
+            Last write time for the file.
+        :paramtype file_last_write_time:~datetime.datetime or str
+        :keyword ~datetime.datetime file_change_time
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :keyword str content_type:
+            The Content Type of the new file.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :keyword Dict[str,str] metadata:
+            A name-value pair to associate with a file storage object.
+        :keyword source_lease:
+            Required if the source file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype source_lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword destination_lease:
+            Required if the destination file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype destination_lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :returns: The new File Client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
+        """
+        if not new_name:
+            raise ValueError("Please specify a new file name.")
+
+        new_name = new_name.strip('/')
+        new_path_and_query = new_name.split('?')
+        new_file_path = new_path_and_query[0]
+        if len(new_path_and_query) == 2:
+            new_file_sas = new_path_and_query[1] or self._query_str.strip('?')
+        else:
+            new_file_sas = self._query_str.strip('?')
+
+        new_file_client = ShareFileClient(
+            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
+            credential=new_file_sas or self.credential, api_version=self.api_version,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+        )
+
+        kwargs.update(get_rename_smb_properties(kwargs))
+
+        file_http_headers = None
+        content_type = kwargs.pop('content_type', None)
+        if content_type:
+            file_http_headers = FileHTTPHeaders(
+                file_content_type=content_type
+            )
+
+        timeout = kwargs.pop('timeout', None)
+        overwrite = kwargs.pop('overwrite', None)
+        metadata = kwargs.pop('metadata', None)
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+
+        source_access_conditions = get_source_access_conditions(kwargs.pop('source_lease', None))
+        dest_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
+
+        try:
+            new_file_client._client.file.rename(  # pylint: disable=protected-access
+                self.url,
+                timeout=timeout,
+                replace_if_exists=overwrite,
+                file_http_headers=file_http_headers,
+                source_lease_access_conditions=source_access_conditions,
+                destination_lease_access_conditions=dest_access_conditions,
+                headers=headers,
+                **kwargs)
+
+            return new_file_client
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def get_file_properties(self, **kwargs):
         # type: (Any) -> FileProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -824,8 +963,8 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_http_headers(self, content_settings,  # type: ContentSettings
                          file_attributes="preserve",  # type: Union[str, NTFSAttributes]
-                         file_creation_time="preserve",  # type: Union[str, datetime]
-                         file_last_write_time="preserve",  # type: Union[str, datetime]
+                         file_creation_time="preserve",  # type: Optional[Union[str, datetime]]
+                         file_last_write_time="preserve",  # type: Optional[Union[str, datetime]]
                          file_permission=None,  # type: Optional[str]
                          permission_key=None,  # type: Optional[str]
                          **kwargs  # type: Any
@@ -858,6 +997,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword ~datetime.datetime file_change_time
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -882,6 +1027,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             file_content_disposition=content_settings.content_disposition
         )
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_change_time = kwargs.pop('file_change_time', None)
         try:
             return self._client.file.set_http_headers(  # type: ignore
                 file_content_length=file_content_length,
@@ -889,6 +1035,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 lease_access_conditions=access_conditions,
@@ -963,6 +1110,15 @@ class ShareFileClient(StorageAccountHostsMixin):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
+        :keyword file_last_write_mode:
+            If the file last write time should be preserved or overwritten. Possible values
+            are "preserve" or "now". If not specified, file last write time will be changed to
+            the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -980,6 +1136,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -995,6 +1152,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
+                file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -1024,6 +1182,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         source_authorization = kwargs.pop('source_authorization', None)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
 
         options = {
             'copy_source_authorization': source_authorization,
@@ -1031,6 +1190,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             'content_length': 0,
             'source_range': source_range,
             'range': destination_range,
+            'file_last_written_mode': file_last_write_mode,
             'source_modified_access_conditions': source_mod_conditions,
             'lease_access_conditions': access_conditions,
             'timeout': kwargs.pop('timeout', None),
@@ -1084,6 +1244,15 @@ class ShareFileClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
+        :keyword file_last_write_mode:
+            If the file last write time should be preserved or overwritten. Possible values
+            are "preserve" or "now". If not specified, file last write time will be changed to
+            the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

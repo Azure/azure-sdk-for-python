@@ -3,13 +3,7 @@ import os
 from io import open
 import re
 
-# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named
-# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect
-# your package.
-
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
-
+# Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-containerregistry"
 PACKAGE_PPRINT_NAME = "Azure Container Registry"
 
@@ -43,13 +37,13 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
     ],
     packages=find_packages(
@@ -59,13 +53,11 @@ setup(
             "azure",
         ]
     ),
+    python_requires=">=3.6",
     install_requires=[
-        "azure-core>=1.20.0,<2.0.0",
+        "azure-core>=1.23.0,<2.0.0",
         "msrest>=0.6.21",
     ],
-    extras_require={
-        # ":python_version<'3.0'": ["azure-nspkg"],
-    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-python",

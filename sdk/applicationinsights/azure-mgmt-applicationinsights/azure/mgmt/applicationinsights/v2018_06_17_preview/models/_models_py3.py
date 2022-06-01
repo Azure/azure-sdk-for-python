@@ -17,12 +17,12 @@ from ._application_insights_management_client_enums import *
 class ErrorFieldContract(msrest.serialization.Model):
     """Error Field contract.
 
-    :param code: Property level error code.
-    :type code: str
-    :param message: Human-readable representation of property-level error.
-    :type message: str
-    :param target: Property name.
-    :type target: str
+    :ivar code: Property level error code.
+    :vartype code: str
+    :ivar message: Human-readable representation of property-level error.
+    :vartype message: str
+    :ivar target: Property name.
+    :vartype target: str
     """
 
     _attribute_map = {
@@ -39,6 +39,14 @@ class ErrorFieldContract(msrest.serialization.Model):
         target: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Property level error code.
+        :paramtype code: str
+        :keyword message: Human-readable representation of property-level error.
+        :paramtype message: str
+        :keyword target: Property name.
+        :paramtype target: str
+        """
         super(ErrorFieldContract, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -48,10 +56,10 @@ class ErrorFieldContract(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -66,6 +74,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -74,10 +88,10 @@ class ErrorResponse(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """CDN REST API operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.OperationDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -92,6 +106,12 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -100,12 +120,12 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Cdn.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
+    :ivar provider: Service provider: Microsoft.Cdn.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
     """
 
     _attribute_map = {
@@ -122,6 +142,14 @@ class OperationDisplay(msrest.serialization.Model):
         operation: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Cdn.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -131,10 +159,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list CDN operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of CDN operations supported by the CDN resource provider.
-    :type value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of CDN operations supported by the CDN resource provider.
+    :vartype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -149,6 +177,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of CDN operations supported by the CDN resource provider.
+        :paramtype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -168,13 +202,13 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param kind: The kind of workbook. Choices are user and shared. Possible values include:
-     "user", "shared".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+     "shared".
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -201,6 +235,16 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
+         "user", "shared".
+        :paramtype kind: str or
+         ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -224,32 +268,32 @@ class Workbook(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param kind: The kind of workbook. Choices are user and shared. Possible values include:
-     "user", "shared".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param display_name: The user-defined name (display name) of the workbook.
-    :type display_name: str
-    :param serialized_data: Configuration of this particular workbook. Configuration data is a
+    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+     "shared".
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar display_name: The user-defined name (display name) of the workbook.
+    :vartype display_name: str
+    :ivar serialized_data: Configuration of this particular workbook. Configuration data is a
      string containing valid JSON.
-    :type serialized_data: str
+    :vartype serialized_data: str
     :ivar time_modified: Date and time in UTC of the last modification that was made to this
      workbook definition.
     :vartype time_modified: str
-    :param category: Workbook category, as defined by the user at creation time.
-    :type category: str
-    :param version: Workbook version.
-    :type version: str
-    :param tags_properties_tags: A list of 0 or more tags that are associated with this workbook
+    :ivar category: Workbook category, as defined by the user at creation time.
+    :vartype category: str
+    :ivar version: Workbook version.
+    :vartype version: str
+    :ivar tags_properties_tags: A list of 0 or more tags that are associated with this workbook
      definition.
-    :type tags_properties_tags: list[str]
+    :vartype tags_properties_tags: list[str]
     :ivar user_id: Unique user id of the specific user that owns this workbook.
     :vartype user_id: str
-    :param source_id: ResourceId for a source resource.
-    :type source_id: str
+    :ivar source_id: ResourceId for a source resource.
+    :vartype source_id: str
     """
 
     _validation = {
@@ -292,6 +336,30 @@ class Workbook(Resource):
         source_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
+         "user", "shared".
+        :paramtype kind: str or
+         ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword display_name: The user-defined name (display name) of the workbook.
+        :paramtype display_name: str
+        :keyword serialized_data: Configuration of this particular workbook. Configuration data is a
+         string containing valid JSON.
+        :paramtype serialized_data: str
+        :keyword category: Workbook category, as defined by the user at creation time.
+        :paramtype category: str
+        :keyword version: Workbook version.
+        :paramtype version: str
+        :keyword tags_properties_tags: A list of 0 or more tags that are associated with this workbook
+         definition.
+        :paramtype tags_properties_tags: list[str]
+        :keyword source_id: ResourceId for a source resource.
+        :paramtype source_id: str
+        """
         super(Workbook, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.display_name = display_name
         self.serialized_data = serialized_data
@@ -306,13 +374,13 @@ class Workbook(Resource):
 class WorkbookError(msrest.serialization.Model):
     """Error message body that will indicate why the operation failed.
 
-    :param code: Service-defined error code. This code serves as a sub-status for the HTTP error
+    :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
      code specified in the response.
-    :type code: str
-    :param message: Human-readable representation of the error.
-    :type message: str
-    :param details: The list of invalid fields send in request, in case of validation error.
-    :type details:
+    :vartype code: str
+    :ivar message: Human-readable representation of the error.
+    :vartype message: str
+    :ivar details: The list of invalid fields send in request, in case of validation error.
+    :vartype details:
      list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.ErrorFieldContract]
     """
 
@@ -330,6 +398,16 @@ class WorkbookError(msrest.serialization.Model):
         details: Optional[List["ErrorFieldContract"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Service-defined error code. This code serves as a sub-status for the HTTP error
+         code specified in the response.
+        :paramtype code: str
+        :keyword message: Human-readable representation of the error.
+        :paramtype message: str
+        :keyword details: The list of invalid fields send in request, in case of validation error.
+        :paramtype details:
+         list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.ErrorFieldContract]
+        """
         super(WorkbookError, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -339,8 +417,8 @@ class WorkbookError(msrest.serialization.Model):
 class WorkbooksListResult(msrest.serialization.Model):
     """Workbook list result.
 
-    :param value: An array of workbooks.
-    :type value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Workbook]
+    :ivar value: An array of workbooks.
+    :vartype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Workbook]
     """
 
     _attribute_map = {
@@ -353,6 +431,10 @@ class WorkbooksListResult(msrest.serialization.Model):
         value: Optional[List["Workbook"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of workbooks.
+        :paramtype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Workbook]
+        """
         super(WorkbooksListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -360,21 +442,21 @@ class WorkbooksListResult(msrest.serialization.Model):
 class WorkbookUpdateParameters(msrest.serialization.Model):
     """The parameters that can be provided when updating workbook properties properties.
 
-    :param kind: The kind of workbook. Choices are user and shared. Possible values include:
-     "user", "shared".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param display_name: The user-defined name (display name) of the workbook.
-    :type display_name: str
-    :param serialized_data: Configuration of this particular workbook. Configuration data is a
+    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+     "shared".
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar display_name: The user-defined name (display name) of the workbook.
+    :vartype display_name: str
+    :ivar serialized_data: Configuration of this particular workbook. Configuration data is a
      string containing valid JSON.
-    :type serialized_data: str
-    :param category: Workbook category, as defined by the user at creation time.
-    :type category: str
-    :param tags_properties_tags: A list of 0 or more tags that are associated with this workbook
+    :vartype serialized_data: str
+    :ivar category: Workbook category, as defined by the user at creation time.
+    :vartype category: str
+    :ivar tags_properties_tags: A list of 0 or more tags that are associated with this workbook
      definition.
-    :type tags_properties_tags: list[str]
+    :vartype tags_properties_tags: list[str]
     """
 
     _attribute_map = {
@@ -397,6 +479,24 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
         tags_properties_tags: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
+         "user", "shared".
+        :paramtype kind: str or
+         ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword display_name: The user-defined name (display name) of the workbook.
+        :paramtype display_name: str
+        :keyword serialized_data: Configuration of this particular workbook. Configuration data is a
+         string containing valid JSON.
+        :paramtype serialized_data: str
+        :keyword category: Workbook category, as defined by the user at creation time.
+        :paramtype category: str
+        :keyword tags_properties_tags: A list of 0 or more tags that are associated with this workbook
+         definition.
+        :paramtype tags_properties_tags: list[str]
+        """
         super(WorkbookUpdateParameters, self).__init__(**kwargs)
         self.kind = kind
         self.tags = tags

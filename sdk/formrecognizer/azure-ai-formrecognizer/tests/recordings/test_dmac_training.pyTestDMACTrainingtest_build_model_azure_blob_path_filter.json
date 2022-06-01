@@ -1,46 +1,44 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "129",
+        "Content-Length": "153",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "1107795d-5ee6-11ec-a9f9-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "modelId": "c767406d-f8f2-49d0-9e6b-e8bcc299d65d",
+        "modelId": "a765bec0-8629-4c1d-8012-e1837cd8494a",
+        "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url",
-          "prefix": "subfolder"
+          "prefix": "testfolder"
         }
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "6e011b91-c69e-4dd2-be68-05b7c23e1ef9",
+        "apim-request-id": "df890e1d-20f8-40f5-977d-4ffc40181f7c",
         "Content-Type": "application/json",
-        "Date": "Fri, 17 Dec 2021 03:04:36 GMT",
+        "Date": "Thu, 31 Mar 2022 23:41:51 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "520"
+        "x-envoy-upstream-service-time": "215"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022error\u0022: {\n",
-        "    \u0022code\u0022: \u0022InvalidRequest\u0022,\n",
-        "    \u0022message\u0022: \u0022Invalid request.\u0022,\n",
-        "    \u0022innererror\u0022: {\n",
-        "      \u0022code\u0022: \u0022TrainingContentMissing\u0022,\n",
-        "      \u0022message\u0022: \u0022Training data is missing: Could not find any training data at the given path.\u0022\n",
-        "    }\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Invalid request.",
+          "innererror": {
+            "code": "TrainingContentMissing",
+            "message": "Training data is missing: Could not find any training data at the given path."
+          }
+        }
+      }
     }
   ],
   "Variables": {}

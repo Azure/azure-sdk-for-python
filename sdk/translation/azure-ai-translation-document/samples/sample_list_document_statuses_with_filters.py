@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -72,12 +71,12 @@ def sample_list_document_statuses_with_filters():
             display_doc_info(doc)
 
 def display_doc_info(document):
-    print("Document ID: {}".format(document.id))
-    print("Document status: {}".format(document.status))
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
     if document.status == "Succeeded":
-        print("Source document location: {}".format(document.source_document_url))
-        print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translated_to))
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
 
 if __name__ == '__main__':
     sample_list_document_statuses_with_filters()

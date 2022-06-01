@@ -10,29 +10,22 @@ from azure.iot.deviceupdate import DeviceUpdateClient
 
 
 class DeviceUpdateTest(AzureTestCase):
+    def __init__(self, method_name, **kwargs):
+        super(DeviceUpdateTest, self).__init__(method_name, **kwargs)
 
-    def create_client(self, account_endpoint, instance_id):
+    def create_client(self, endpoint, instance_id):
         credential = self.get_credential(DeviceUpdateClient)
         return self.create_client_from_credential(
             DeviceUpdateClient,
-            credential=credential,
-            account_endpoint=account_endpoint,
+            endpoint=endpoint,
             instance_id=instance_id,
+            credential=credential
         )
+
 
 DeviceUpdatePowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "deviceupdate",
-    deviceupdate_account_endpoint="fake_endpoint.com",
-    deviceupdate_instance_id="blue",
-    deviceupdate_operation_id="fakeOperationId",
-    deviceupdate_provider="Contoso",
-    deviceupdate_model="Virtual-Machine",
-    deviceupdate_version="fakeVersion",
-    deviceupdate_deployment_id="fakeDeploymentId",
-    deviceupdate_device_id="fakeDeviceId",
-    deviceupdate_device_class_id="fakeDeviceClassId"
+    deviceupdate_endpoint="fake_account.account.purview.azure.com",
+    deviceupdate_instance_id="instance"
 )
-
-def callback(response, value, headers):
-    return response, value, headers

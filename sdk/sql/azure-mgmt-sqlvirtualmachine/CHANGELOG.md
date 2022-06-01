@@ -1,5 +1,25 @@
 # Release History
 
+## 1.0.0b2 (2022-03-02)
+
+**Features**
+
+  - Added operation SqlVirtualMachinesOperations.begin_redeploy
+  - Added operation SqlVirtualMachinesOperations.begin_start_assessment
+  - Model AutoBackupSettings has a new parameter days_of_week
+  - Model AutoBackupSettings has a new parameter storage_container_name
+  - Model AvailabilityGroupListener has a new parameter availability_group_configuration
+  - Model AvailabilityGroupListener has a new parameter system_data
+  - Model ServerConfigurationsManagementSettings has a new parameter sql_instance_settings
+  - Model SqlVirtualMachine has a new parameter assessment_settings
+  - Model SqlVirtualMachine has a new parameter system_data
+  - Model SqlVirtualMachineGroup has a new parameter system_data
+  - Model StorageConfigurationSettings has a new parameter sql_system_db_on_data_disk
+
+**Breaking changes**
+
+  - Operation AvailabilityGroupListenersOperations.get has a new signature
+
 ## 1.0.0b1 (2021-05-19)
 
 This is beta preview version.

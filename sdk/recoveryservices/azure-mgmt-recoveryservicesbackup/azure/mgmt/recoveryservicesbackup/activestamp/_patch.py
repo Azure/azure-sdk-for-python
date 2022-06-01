@@ -24,8 +24,56 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Any, List, TYPE_CHECKING
+import importlib
+import urllib.parse
+from ._recovery_services_backup_client import RecoveryServicesBackupClient as RecoveryServicesBackupClientGenerated
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
+class RemoveDuplicateParamsPolicy(SansIOHTTPPolicy):
+    def __init__(self, duplicate_param_names):
+        # type: (List[str]) -> None
+        self.duplicate_param_names = duplicate_param_names
+
+    def on_request(self, request):
+        parsed_url = urllib.parse.urlparse(request.http_request.url)
+        query_params = urllib.parse.parse_qs(parsed_url.query)
+        filtered_query_params = {
+            k: v[-1:] if k in self.duplicate_param_names else v
+            for k, v in query_params.items()
+        }
+        request.http_request.url = request.http_request.url.replace(parsed_url.query, "") + urllib.parse.urlencode(filtered_query_params, doseq=True)
+        return super().on_request(request)
+
+DUPLICATE_PARAMS_POLICY = RemoveDuplicateParamsPolicy(duplicate_param_names=["$filter", "$skiptoken", "api-version"])
+
+class RecoveryServicesBackupClient(RecoveryServicesBackupClientGenerated):
+    __doc__ = RecoveryServicesBackupClientGenerated.__doc__
+    def __init__(
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        per_call_policies = kwargs.pop("per_call_policies", [])
+        try:
+            per_call_policies.append(DUPLICATE_PARAMS_POLICY)
+        except AttributeError:
+            per_call_policies = [per_call_policies, DUPLICATE_PARAMS_POLICY]
+        super().__init__(
+            credential=credential,
+            subscription_id=subscription_id,
+            base_url=base_url,
+            per_call_policies=per_call_policies,
+            **kwargs
+        )
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
 def patch_sdk():
-    pass
+    curr_package = importlib.import_module("azure.mgmt.recoveryservicesbackup.activestamp")
+    curr_package.RecoveryServicesBackupClient = RecoveryServicesBackupClient

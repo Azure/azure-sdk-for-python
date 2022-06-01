@@ -32,7 +32,8 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - script: |
-      python -m pip install pip==20.1
+      python -m pip install pip==20.3.3
+      python -m pip install wheel==0.37.0
       pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
@@ -40,6 +41,8 @@ steps:
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - template: /eng/common/testproxy/test-proxy-tool.yml
+      parameters:
+        runProxy: false
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
@@ -47,6 +50,8 @@ steps:
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
+
+  - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
   - task: PythonScript@0
     displayName: 'Run Tests'
@@ -65,7 +70,12 @@ steps:
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
-        cat $(Build.SourcesDirectory)/test-proxy.log
+        $files = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter _proxy_log_*.log
+        foreach($file in $files){
+            Write-Host "##[group]$file"
+            cat $file
+            Write-Host "##[endgroup]"
+        }
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
 

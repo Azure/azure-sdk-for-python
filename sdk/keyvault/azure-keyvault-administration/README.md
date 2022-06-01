@@ -32,7 +32,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 3.7 or later
+* Python 3.6 or later
 * A [managed HSM][managed_hsm]. If you need to create one, see the final two steps in the next section for details on creating the managed HSM with the Azure CLI.
 
 ### Authenticate the client
@@ -335,6 +335,11 @@ restore_poller.wait()
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-administration`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a role assignment that doesn't exist, KeyVaultAccessControlClient

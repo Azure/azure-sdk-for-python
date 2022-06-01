@@ -105,7 +105,9 @@ class ProtectionContainer(msrest.serialization.Model):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -126,7 +128,7 @@ class ProtectionContainer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'StorageContainer': 'AzureStorageContainer', 'Windows': 'MabContainer'}
+        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaasVMContainer': 'IaaSVMContainer', 'StorageContainer': 'AzureStorageContainer', 'Windows': 'MabContainer'}
     }
 
     def __init__(
@@ -194,7 +196,9 @@ class DpmContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -333,7 +337,9 @@ class AzureBackupServerContainer(DpmContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -1807,7 +1813,9 @@ class IaaSVMContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -1881,7 +1889,7 @@ class IaaSVMContainer(ProtectionContainer):
         :paramtype resource_group: str
         """
         super(IaaSVMContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, protectable_object_type=protectable_object_type, **kwargs)
-        self.container_type = 'IaaSVMContainer'  # type: str
+        self.container_type = 'IaasVMContainer'  # type: str
         self.virtual_machine_id = virtual_machine_id
         self.virtual_machine_version = virtual_machine_version
         self.resource_group = resource_group
@@ -1913,7 +1921,9 @@ class AzureIaaSClassicComputeVMContainer(IaaSVMContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -2677,7 +2687,9 @@ class AzureIaaSComputeVMContainer(IaaSVMContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -3751,6 +3763,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
     :ivar time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific Standard
      Time".
     :vartype time_zone: str
+    :ivar policy_type: Possible values include: "Invalid", "V1", "V2".
+    :vartype policy_type: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.IAASVMPolicyType
     """
 
     _validation = {
@@ -3766,6 +3781,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
         'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'policy_type': {'key': 'policyType', 'type': 'str'},
     }
 
     def __init__(
@@ -3778,6 +3794,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         retention_policy: Optional["RetentionPolicy"] = None,
         instant_rp_retention_range_in_days: Optional[int] = None,
         time_zone: Optional[str] = None,
+        policy_type: Optional[Union[str, "IAASVMPolicyType"]] = None,
         **kwargs
     ):
         """
@@ -3799,6 +3816,9 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         :keyword time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific
          Standard Time".
         :paramtype time_zone: str
+        :keyword policy_type: Possible values include: "Invalid", "V1", "V2".
+        :paramtype policy_type: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.IAASVMPolicyType
         """
         super(AzureIaaSVMProtectionPolicy, self).__init__(protected_items_count=protected_items_count, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
         self.backup_management_type = 'AzureIaasVM'  # type: str
@@ -3807,6 +3827,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
         self.retention_policy = retention_policy
         self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
         self.time_zone = time_zone
+        self.policy_type = policy_type
 
 
 class ProtectionIntent(msrest.serialization.Model):
@@ -3819,7 +3840,8 @@ class ProtectionIntent(msrest.serialization.Model):
 
     :ivar protection_intent_item_type: Required. backup protectionIntent type.Constant filled by
      server. Possible values include: "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
-     "AzureWorkloadContainerAutoProtectionIntent".
+     "AzureWorkloadContainerAutoProtectionIntent", "AzureWorkloadAutoProtectionIntent",
+     "AzureWorkloadSQLAutoProtectionIntent".
     :vartype protection_intent_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentItemType
     :ivar backup_management_type: Type of backup management for the backed up item. Possible values
@@ -3904,7 +3926,8 @@ class AzureRecoveryServiceVaultProtectionIntent(ProtectionIntent):
 
     :ivar protection_intent_item_type: Required. backup protectionIntent type.Constant filled by
      server. Possible values include: "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
-     "AzureWorkloadContainerAutoProtectionIntent".
+     "AzureWorkloadContainerAutoProtectionIntent", "AzureWorkloadAutoProtectionIntent",
+     "AzureWorkloadSQLAutoProtectionIntent".
     :vartype protection_intent_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentItemType
     :ivar backup_management_type: Type of backup management for the backed up item. Possible values
@@ -3981,7 +4004,8 @@ class AzureResourceProtectionIntent(ProtectionIntent):
 
     :ivar protection_intent_item_type: Required. backup protectionIntent type.Constant filled by
      server. Possible values include: "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
-     "AzureWorkloadContainerAutoProtectionIntent".
+     "AzureWorkloadContainerAutoProtectionIntent", "AzureWorkloadAutoProtectionIntent",
+     "AzureWorkloadSQLAutoProtectionIntent".
     :vartype protection_intent_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentItemType
     :ivar backup_management_type: Type of backup management for the backed up item. Possible values
@@ -4083,7 +4107,9 @@ class AzureWorkloadContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -4215,7 +4241,9 @@ class AzureSQLAGWorkloadContainerProtectionContainer(AzureWorkloadContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -4338,7 +4366,9 @@ class AzureSqlContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -4686,7 +4716,9 @@ class AzureStorageContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -5047,7 +5079,9 @@ class ProtectableContainer(msrest.serialization.Model):
      server. Possible values include: "Invalid", "Unknown", "IaasVMContainer",
      "IaasVMServiceContainer", "DPMContainer", "AzureBackupServerContainer", "MABContainer",
      "Cluster", "AzureSqlContainer", "Windows", "VCenter", "VMAppContainer",
-     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype protectable_container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar health_status: Status of health of the container.
@@ -5123,7 +5157,9 @@ class AzureStorageProtectableContainer(ProtectableContainer):
      server. Possible values include: "Invalid", "Unknown", "IaasVMContainer",
      "IaasVMServiceContainer", "DPMContainer", "AzureBackupServerContainer", "MABContainer",
      "Cluster", "AzureSqlContainer", "Windows", "VCenter", "VMAppContainer",
-     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype protectable_container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar health_status: Status of health of the container.
@@ -5191,7 +5227,9 @@ class AzureVMAppContainerProtectableContainer(ProtectableContainer):
      server. Possible values include: "Invalid", "Unknown", "IaasVMContainer",
      "IaasVMServiceContainer", "DPMContainer", "AzureBackupServerContainer", "MABContainer",
      "Cluster", "AzureSqlContainer", "Windows", "VCenter", "VMAppContainer",
-     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype protectable_container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar health_status: Status of health of the container.
@@ -5264,7 +5302,9 @@ class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -8076,7 +8116,8 @@ class AzureWorkloadAutoProtectionIntent(AzureRecoveryServiceVaultProtectionInten
 
     :ivar protection_intent_item_type: Required. backup protectionIntent type.Constant filled by
      server. Possible values include: "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
-     "AzureWorkloadContainerAutoProtectionIntent".
+     "AzureWorkloadContainerAutoProtectionIntent", "AzureWorkloadAutoProtectionIntent",
+     "AzureWorkloadSQLAutoProtectionIntent".
     :vartype protection_intent_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentItemType
     :ivar backup_management_type: Type of backup management for the backed up item. Possible values
@@ -8207,7 +8248,8 @@ class AzureWorkloadContainerAutoProtectionIntent(ProtectionIntent):
 
     :ivar protection_intent_item_type: Required. backup protectionIntent type.Constant filled by
      server. Possible values include: "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
-     "AzureWorkloadContainerAutoProtectionIntent".
+     "AzureWorkloadContainerAutoProtectionIntent", "AzureWorkloadAutoProtectionIntent",
+     "AzureWorkloadSQLAutoProtectionIntent".
     :vartype protection_intent_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentItemType
     :ivar backup_management_type: Type of backup management for the backed up item. Possible values
@@ -9378,7 +9420,8 @@ class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
 
     :ivar protection_intent_item_type: Required. backup protectionIntent type.Constant filled by
      server. Possible values include: "Invalid", "AzureResourceItem", "RecoveryServiceVaultItem",
-     "AzureWorkloadContainerAutoProtectionIntent".
+     "AzureWorkloadContainerAutoProtectionIntent", "AzureWorkloadAutoProtectionIntent",
+     "AzureWorkloadSQLAutoProtectionIntent".
     :vartype protection_intent_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentItemType
     :ivar backup_management_type: Type of backup management for the backed up item. Possible values
@@ -11369,7 +11412,9 @@ class BMSContainerQueryObject(msrest.serialization.Model):
     :ivar container_type: Type of container for filter. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar backup_engine_name: Backup engine name.
@@ -11415,7 +11460,9 @@ class BMSContainerQueryObject(msrest.serialization.Model):
         :keyword container_type: Type of container for filter. Possible values include: "Invalid",
          "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
          "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-         "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+         "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+         "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+         "AzureWorkloadContainer".
         :paramtype container_type: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
         :keyword backup_engine_name: Backup engine name.
@@ -12147,6 +12194,31 @@ class DailyRetentionSchedule(msrest.serialization.Model):
         super(DailyRetentionSchedule, self).__init__(**kwargs)
         self.retention_times = retention_times
         self.retention_duration = retention_duration
+
+
+class DailySchedule(msrest.serialization.Model):
+    """DailySchedule.
+
+    :ivar schedule_run_times: List of times of day this schedule has to be run.
+    :vartype schedule_run_times: list[~datetime.datetime]
+    """
+
+    _attribute_map = {
+        'schedule_run_times': {'key': 'scheduleRunTimes', 'type': '[iso-8601]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_run_times: Optional[List[datetime.datetime]] = None,
+        **kwargs
+    ):
+        """
+        :keyword schedule_run_times: List of times of day this schedule has to be run.
+        :paramtype schedule_run_times: list[~datetime.datetime]
+        """
+        super(DailySchedule, self).__init__(**kwargs)
+        self.schedule_run_times = schedule_run_times
 
 
 class Day(msrest.serialization.Model):
@@ -13275,7 +13347,9 @@ class GenericContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -15062,7 +15136,7 @@ class SchedulePolicy(msrest.serialization.Model):
     """Base class for backup schedule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LogSchedulePolicy, LongTermSchedulePolicy, SimpleSchedulePolicy.
+    sub-classes are: LogSchedulePolicy, LongTermSchedulePolicy, SimpleSchedulePolicy, SimpleSchedulePolicyV2.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -15080,7 +15154,7 @@ class SchedulePolicy(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'schedule_policy_type': {'LogSchedulePolicy': 'LogSchedulePolicy', 'LongTermSchedulePolicy': 'LongTermSchedulePolicy', 'SimpleSchedulePolicy': 'SimpleSchedulePolicy'}
+        'schedule_policy_type': {'LogSchedulePolicy': 'LogSchedulePolicy', 'LongTermSchedulePolicy': 'LongTermSchedulePolicy', 'SimpleSchedulePolicy': 'SimpleSchedulePolicy', 'SimpleSchedulePolicyV2': 'SimpleSchedulePolicyV2'}
     }
 
     def __init__(
@@ -15285,7 +15359,9 @@ class MabContainer(ProtectionContainer):
      Backup is VMAppContainer.Constant filled by server. Possible values include: "Invalid",
      "Unknown", "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer",
      "AzureBackupServerContainer", "MABContainer", "Cluster", "AzureSqlContainer", "Windows",
-     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "VCenter", "VMAppContainer", "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer",
+     "Microsoft.ClassicCompute/virtualMachines", "Microsoft.Compute/virtualMachines",
+     "AzureWorkloadContainer".
     :vartype container_type: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.ContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
@@ -18748,6 +18824,69 @@ class SimpleSchedulePolicy(SchedulePolicy):
         self.schedule_weekly_frequency = schedule_weekly_frequency
 
 
+class SimpleSchedulePolicyV2(SchedulePolicy):
+    """The V2 policy schedule for IaaS that supports hourly backups.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar schedule_policy_type: Required. This property will be used as the discriminator for
+     deciding the specific types in the polymorphic chain of types.Constant filled by server.
+    :vartype schedule_policy_type: str
+    :ivar schedule_run_frequency: Frequency of the schedule operation of this policy. Possible
+     values include: "Invalid", "Daily", "Weekly", "Hourly".
+    :vartype schedule_run_frequency: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.ScheduleRunType
+    :ivar hourly_schedule: hourly schedule of this policy.
+    :vartype hourly_schedule: ~azure.mgmt.recoveryservicesbackup.activestamp.models.HourlySchedule
+    :ivar daily_schedule: Daily schedule of this policy.
+    :vartype daily_schedule: ~azure.mgmt.recoveryservicesbackup.activestamp.models.DailySchedule
+    :ivar weekly_schedule: Weekly schedule of this policy.
+    :vartype weekly_schedule: ~azure.mgmt.recoveryservicesbackup.activestamp.models.WeeklySchedule
+    """
+
+    _validation = {
+        'schedule_policy_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'schedule_policy_type': {'key': 'schedulePolicyType', 'type': 'str'},
+        'schedule_run_frequency': {'key': 'scheduleRunFrequency', 'type': 'str'},
+        'hourly_schedule': {'key': 'hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'weeklySchedule', 'type': 'WeeklySchedule'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_run_frequency: Optional[Union[str, "ScheduleRunType"]] = None,
+        hourly_schedule: Optional["HourlySchedule"] = None,
+        daily_schedule: Optional["DailySchedule"] = None,
+        weekly_schedule: Optional["WeeklySchedule"] = None,
+        **kwargs
+    ):
+        """
+        :keyword schedule_run_frequency: Frequency of the schedule operation of this policy. Possible
+         values include: "Invalid", "Daily", "Weekly", "Hourly".
+        :paramtype schedule_run_frequency: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ScheduleRunType
+        :keyword hourly_schedule: hourly schedule of this policy.
+        :paramtype hourly_schedule:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.HourlySchedule
+        :keyword daily_schedule: Daily schedule of this policy.
+        :paramtype daily_schedule: ~azure.mgmt.recoveryservicesbackup.activestamp.models.DailySchedule
+        :keyword weekly_schedule: Weekly schedule of this policy.
+        :paramtype weekly_schedule:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.WeeklySchedule
+        """
+        super(SimpleSchedulePolicyV2, self).__init__(**kwargs)
+        self.schedule_policy_type = 'SimpleSchedulePolicyV2'  # type: str
+        self.schedule_run_frequency = schedule_run_frequency
+        self.hourly_schedule = hourly_schedule
+        self.daily_schedule = daily_schedule
+        self.weekly_schedule = weekly_schedule
+
+
 class SQLDataDirectory(msrest.serialization.Model):
     """SQLDataDirectory info.
 
@@ -19561,6 +19700,40 @@ class WeeklyRetentionSchedule(msrest.serialization.Model):
         self.days_of_the_week = days_of_the_week
         self.retention_times = retention_times
         self.retention_duration = retention_duration
+
+
+class WeeklySchedule(msrest.serialization.Model):
+    """WeeklySchedule.
+
+    :ivar schedule_run_days:
+    :vartype schedule_run_days: list[str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.DayOfWeek]
+    :ivar schedule_run_times: List of times of day this schedule has to be run.
+    :vartype schedule_run_times: list[~datetime.datetime]
+    """
+
+    _attribute_map = {
+        'schedule_run_days': {'key': 'scheduleRunDays', 'type': '[str]'},
+        'schedule_run_times': {'key': 'scheduleRunTimes', 'type': '[iso-8601]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_run_days: Optional[List[Union[str, "DayOfWeek"]]] = None,
+        schedule_run_times: Optional[List[datetime.datetime]] = None,
+        **kwargs
+    ):
+        """
+        :keyword schedule_run_days:
+        :paramtype schedule_run_days: list[str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.DayOfWeek]
+        :keyword schedule_run_times: List of times of day this schedule has to be run.
+        :paramtype schedule_run_times: list[~datetime.datetime]
+        """
+        super(WeeklySchedule, self).__init__(**kwargs)
+        self.schedule_run_days = schedule_run_days
+        self.schedule_run_times = schedule_run_times
 
 
 class WorkloadInquiryDetails(msrest.serialization.Model):

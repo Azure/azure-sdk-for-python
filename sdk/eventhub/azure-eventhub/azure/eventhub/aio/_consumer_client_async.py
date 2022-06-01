@@ -18,8 +18,6 @@ from typing import (
     Awaitable,
 )
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
@@ -28,7 +26,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from ._client_base_async import CredentialTypes
     from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
@@ -38,7 +36,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBaseAsync):
+class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -97,7 +95,7 @@ class EventHubConsumerClient(ClientBaseAsync):
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
@@ -147,7 +145,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: "CredentialTypes",
         **kwargs
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
@@ -235,7 +233,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         :param str consumer_group: Receive events from the Event Hub for this consumer group.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
@@ -469,12 +467,12 @@ class EventHubConsumerClient(ClientBaseAsync):
          a dict with partition ID as the key and position as the value for individual partitions, or a single
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :paramtype starting_position_inclusive: bool or Dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -585,12 +583,12 @@ class EventHubConsumerClient(ClientBaseAsync):
          a dict with partition ID as the key and position as the value for individual partitions, or a single
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :paramtype starting_position_inclusive: bool or Dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -651,7 +649,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict
+        :rtype: Dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -681,7 +679,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict
+        :rtype: Dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(

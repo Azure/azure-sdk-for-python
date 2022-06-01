@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._managed_service_identity_client import ManagedServiceIdentityClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['ManagedServiceIdentityClient']
 
 try:

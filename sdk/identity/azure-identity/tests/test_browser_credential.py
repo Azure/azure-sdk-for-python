@@ -186,7 +186,7 @@ def test_redirect_uri():
     expected_message = "test_redirect_uri"
     server = Mock(side_effect=Exception(expected_message))  # exception prevents this test actually authenticating
     credential = InteractiveBrowserCredential(
-        redirect_uri="htps://{}:{}".format(expected_hostname, expected_port), _server_class=server
+        redirect_uri="https://{}:{}".format(expected_hostname, expected_port), _server_class=server
     )
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")

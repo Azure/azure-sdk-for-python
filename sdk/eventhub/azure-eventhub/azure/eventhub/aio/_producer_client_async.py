@@ -8,8 +8,6 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
@@ -18,7 +16,7 @@ from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from ._client_base_async import CredentialTypes
     from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
@@ -26,7 +24,7 @@ SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBaseAsync):
+class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accepts-api-version-keyword
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -64,7 +62,7 @@ class EventHubProducerClient(ClientBaseAsync):
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
@@ -90,9 +88,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: "CredentialTypes",
         **kwargs
     ) -> None:
         super(EventHubProducerClient, self).__init__(
@@ -203,7 +199,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
@@ -410,7 +406,7 @@ class EventHubProducerClient(ClientBaseAsync):
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -440,7 +436,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(

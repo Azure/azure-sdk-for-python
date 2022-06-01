@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class SearchClientConfiguration(Configuration):
+class SearchClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for SearchClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -25,7 +25,8 @@ class SearchClientConfiguration(Configuration):
 
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

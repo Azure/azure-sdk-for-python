@@ -172,7 +172,7 @@ You must specify use_cache=True in the preparer decorator""".format(
         # Inform the next step in the chain (our parent) that we're cached.
         if self._use_cache or getattr(fn, "__use_cache", False):
             setattr(_preparer_wrapper, "__use_cache", True)
-        functools.wraps(_preparer_wrapper, fn)
+        functools.update_wrapper(_preparer_wrapper, fn)
         return _preparer_wrapper
 
     @contextlib.contextmanager

@@ -1,53 +1,69 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages?model-version=latest\u0026showStats=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview\u0026showStats=true",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "87",
+        "Content-Length": "177",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "fb5d5c30-5d10-11ec-92f9-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022this is written in english\u0022, \u0022countryHint\u0022: \u0022ES\u0022}]}",
+      "RequestBody": {
+        "kind": "LanguageDetection",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "this is written in english",
+              "countryHint": "ES"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "latest"
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "785fed5d-a9e0-4858-99d8-c31d9755eb37",
+        "apim-request-id": "b7b24104-e968-4e81-8263-534f77ec8b52",
+        "Content-Length": "371",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:06:45 GMT",
+        "Date": "Tue, 03 May 2022 00:15:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7"
+        "x-envoy-upstream-service-time": "15"
       },
       "ResponseBody": {
-        "statistics": {
-          "documentsCount": 1,
-          "validDocumentsCount": 1,
-          "erroneousDocumentsCount": 0,
-          "transactionsCount": 1
-        },
-        "documents": [
-          {
-            "id": "0",
-            "detectedLanguage": {
-              "name": "English",
-              "iso6391Name": "en",
-              "confidenceScore": 1.0
-            },
-            "statistics": {
-              "charactersCount": 26,
-              "transactionsCount": 1
-            },
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2021-01-05"
+        "kind": "LanguageDetectionResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 1,
+            "validDocumentsCount": 1,
+            "erroneousDocumentsCount": 0,
+            "transactionsCount": 1
+          },
+          "documents": [
+            {
+              "id": "0",
+              "detectedLanguage": {
+                "name": "English",
+                "iso6391Name": "en",
+                "confidenceScore": 1.0
+              },
+              "statistics": {
+                "charactersCount": 26,
+                "transactionsCount": 1
+              },
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-11-20"
+        }
       }
     }
   ],

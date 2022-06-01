@@ -1,5 +1,12 @@
 # Release History
 
+## 6.1.0 (2022-01-24)
+
+**Features**
+
+  - Added operation WebAppsOperations.create_one_deploy_operation
+  - Added operation WebAppsOperations.get_one_deploy_status
+
 ## 6.0.0 (2022-01-10)
 
 **Features**

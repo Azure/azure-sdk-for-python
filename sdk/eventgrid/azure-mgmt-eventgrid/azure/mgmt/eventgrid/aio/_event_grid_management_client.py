@@ -7,36 +7,64 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import EventGridManagementClientConfiguration
-from .operations import DomainTopicsOperations, DomainsOperations, EventSubscriptionsOperations, ExtensionTopicsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, SystemTopicEventSubscriptionsOperations, SystemTopicsOperations, TopicTypesOperations, TopicsOperations
+from .operations import ChannelsOperations, DomainEventSubscriptionsOperations, DomainTopicEventSubscriptionsOperations, DomainTopicsOperations, DomainsOperations, EventChannelsOperations, EventSubscriptionsOperations, ExtensionTopicsOperations, Operations, PartnerConfigurationsOperations, PartnerDestinationsOperations, PartnerNamespacesOperations, PartnerRegistrationsOperations, PartnerTopicEventSubscriptionsOperations, PartnerTopicsOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, SystemTopicEventSubscriptionsOperations, SystemTopicsOperations, TopicEventSubscriptionsOperations, TopicTypesOperations, TopicsOperations, VerifiedPartnersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class EventGridManagementClient:
+class EventGridManagementClient:    # pylint: disable=too-many-instance-attributes
     """Azure EventGrid Management Client.
 
+    :ivar channels: ChannelsOperations operations
+    :vartype channels: azure.mgmt.eventgrid.aio.operations.ChannelsOperations
     :ivar domains: DomainsOperations operations
     :vartype domains: azure.mgmt.eventgrid.aio.operations.DomainsOperations
     :ivar domain_topics: DomainTopicsOperations operations
     :vartype domain_topics: azure.mgmt.eventgrid.aio.operations.DomainTopicsOperations
+    :ivar event_channels: EventChannelsOperations operations
+    :vartype event_channels: azure.mgmt.eventgrid.aio.operations.EventChannelsOperations
     :ivar event_subscriptions: EventSubscriptionsOperations operations
     :vartype event_subscriptions: azure.mgmt.eventgrid.aio.operations.EventSubscriptionsOperations
+    :ivar domain_topic_event_subscriptions: DomainTopicEventSubscriptionsOperations operations
+    :vartype domain_topic_event_subscriptions:
+     azure.mgmt.eventgrid.aio.operations.DomainTopicEventSubscriptionsOperations
+    :ivar topic_event_subscriptions: TopicEventSubscriptionsOperations operations
+    :vartype topic_event_subscriptions:
+     azure.mgmt.eventgrid.aio.operations.TopicEventSubscriptionsOperations
+    :ivar domain_event_subscriptions: DomainEventSubscriptionsOperations operations
+    :vartype domain_event_subscriptions:
+     azure.mgmt.eventgrid.aio.operations.DomainEventSubscriptionsOperations
     :ivar system_topic_event_subscriptions: SystemTopicEventSubscriptionsOperations operations
     :vartype system_topic_event_subscriptions:
      azure.mgmt.eventgrid.aio.operations.SystemTopicEventSubscriptionsOperations
+    :ivar partner_topic_event_subscriptions: PartnerTopicEventSubscriptionsOperations operations
+    :vartype partner_topic_event_subscriptions:
+     azure.mgmt.eventgrid.aio.operations.PartnerTopicEventSubscriptionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.eventgrid.aio.operations.Operations
-    :ivar topics: TopicsOperations operations
-    :vartype topics: azure.mgmt.eventgrid.aio.operations.TopicsOperations
+    :ivar partner_configurations: PartnerConfigurationsOperations operations
+    :vartype partner_configurations:
+     azure.mgmt.eventgrid.aio.operations.PartnerConfigurationsOperations
+    :ivar partner_destinations: PartnerDestinationsOperations operations
+    :vartype partner_destinations:
+     azure.mgmt.eventgrid.aio.operations.PartnerDestinationsOperations
+    :ivar partner_namespaces: PartnerNamespacesOperations operations
+    :vartype partner_namespaces: azure.mgmt.eventgrid.aio.operations.PartnerNamespacesOperations
+    :ivar partner_registrations: PartnerRegistrationsOperations operations
+    :vartype partner_registrations:
+     azure.mgmt.eventgrid.aio.operations.PartnerRegistrationsOperations
+    :ivar partner_topics: PartnerTopicsOperations operations
+    :vartype partner_topics: azure.mgmt.eventgrid.aio.operations.PartnerTopicsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.eventgrid.aio.operations.PrivateEndpointConnectionsOperations
@@ -45,17 +73,24 @@ class EventGridManagementClient:
      azure.mgmt.eventgrid.aio.operations.PrivateLinkResourcesOperations
     :ivar system_topics: SystemTopicsOperations operations
     :vartype system_topics: azure.mgmt.eventgrid.aio.operations.SystemTopicsOperations
+    :ivar topics: TopicsOperations operations
+    :vartype topics: azure.mgmt.eventgrid.aio.operations.TopicsOperations
     :ivar extension_topics: ExtensionTopicsOperations operations
     :vartype extension_topics: azure.mgmt.eventgrid.aio.operations.ExtensionTopicsOperations
     :ivar topic_types: TopicTypesOperations operations
     :vartype topic_types: azure.mgmt.eventgrid.aio.operations.TopicTypesOperations
+    :ivar verified_partners: VerifiedPartnersOperations operations
+    :vartype verified_partners: azure.mgmt.eventgrid.aio.operations.VerifiedPartnersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-10-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -74,17 +109,29 @@ class EventGridManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.channels = ChannelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.domain_topics = DomainTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.event_channels = EventChannelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.event_subscriptions = EventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.domain_topic_event_subscriptions = DomainTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.topic_event_subscriptions = TopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.domain_event_subscriptions = DomainEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.system_topic_event_subscriptions = SystemTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_topic_event_subscriptions = PartnerTopicEventSubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.topics = TopicsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_configurations = PartnerConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_destinations = PartnerDestinationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_namespaces = PartnerNamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_registrations = PartnerRegistrationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_topics = PartnerTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.system_topics = SystemTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.topics = TopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extension_topics = ExtensionTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.topic_types = TopicTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.verified_partners = VerifiedPartnersOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

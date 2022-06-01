@@ -6,34 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
+from . import models
+from ._configuration import MySQLManagementClientConfiguration
+from .operations import BackupsOperations, CheckNameAvailabilityOperations, CheckVirtualNetworkSubnetUsageOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, GetPrivateDnsZoneSuffixOperations, LocationBasedCapabilitiesOperations, Operations, ReplicasOperations, ServersOperations
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import MySQLManagementClientConfiguration
-from .operations import ServersOperations
-from .operations import ReplicasOperations
-from .operations import BackupsOperations
-from .operations import FirewallRulesOperations
-from .operations import DatabasesOperations
-from .operations import ConfigurationsOperations
-from .operations import LocationBasedCapabilitiesOperations
-from .operations import CheckVirtualNetworkSubnetUsageOperations
-from .operations import CheckNameAvailabilityOperations
-from .operations import GetPrivateDnsZoneSuffixOperations
-from .operations import Operations
-from . import models
-
-
-class MySQLManagementClient(object):
+class MySQLManagementClient:
     """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
 
     :ivar servers: ServersOperations operations
@@ -43,87 +31,89 @@ class MySQLManagementClient(object):
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.rdbms.mysql_flexibleservers.operations.BackupsOperations
     :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: azure.mgmt.rdbms.mysql_flexibleservers.operations.FirewallRulesOperations
+    :vartype firewall_rules:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.FirewallRulesOperations
     :ivar databases: DatabasesOperations operations
     :vartype databases: azure.mgmt.rdbms.mysql_flexibleservers.operations.DatabasesOperations
     :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations: azure.mgmt.rdbms.mysql_flexibleservers.operations.ConfigurationsOperations
+    :vartype configurations:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.ConfigurationsOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
-    :vartype location_based_capabilities: azure.mgmt.rdbms.mysql_flexibleservers.operations.LocationBasedCapabilitiesOperations
+    :vartype location_based_capabilities:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.LocationBasedCapabilitiesOperations
     :ivar check_virtual_network_subnet_usage: CheckVirtualNetworkSubnetUsageOperations operations
-    :vartype check_virtual_network_subnet_usage: azure.mgmt.rdbms.mysql_flexibleservers.operations.CheckVirtualNetworkSubnetUsageOperations
+    :vartype check_virtual_network_subnet_usage:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.CheckVirtualNetworkSubnetUsageOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability: azure.mgmt.rdbms.mysql_flexibleservers.operations.CheckNameAvailabilityOperations
+    :vartype check_name_availability:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.CheckNameAvailabilityOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
-    :vartype get_private_dns_zone_suffix: azure.mgmt.rdbms.mysql_flexibleservers.operations.GetPrivateDnsZoneSuffixOperations
+    :vartype get_private_dns_zone_suffix:
+     azure.mgmt.rdbms.mysql_flexibleservers.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :type base_url: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = MySQLManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = MySQLManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.location_based_capabilities = LocationBasedCapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.servers = ServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.replicas = ReplicasOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backups = BackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.firewall_rules = FirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.databases = DatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.configurations = ConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.location_based_capabilities = LocationBasedCapabilitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.check_name_availability = CheckNameAvailabilityOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

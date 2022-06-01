@@ -97,12 +97,14 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if not self.session and self._session_owner:
             jar = aiohttp.DummyCookieJar()
-            self.session = aiohttp.ClientSession(
-                loop=self._loop,
-                trust_env=self._use_env_settings,
-                cookie_jar=jar,
-                auto_decompress=False,
-            )
+            clientsession_kwargs = {
+                "trust_env": self._use_env_settings,
+                "cookie_jar": jar,
+                "auto_decompress": False,
+            }
+            if self._loop is not None:
+                clientsession_kwargs["loop"] = self._loop
+            self.session = aiohttp.ClientSession(**clientsession_kwargs)
         if self.session is not None:
             await self.session.__aenter__()
 

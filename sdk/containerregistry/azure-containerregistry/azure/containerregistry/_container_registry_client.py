@@ -3,7 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, overload, Any, Dict, Optional, Union
+from io import BytesIO
+from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -15,35 +16,55 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors
-from ._helpers import _parse_next_link, _is_tag, SUPPORTED_API_VERSIONS
-from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
+from ._generated.models import AcrErrors, OCIManifest
+from ._helpers import (
+    _compute_digest,
+    _is_tag,
+    _parse_next_link,
+    _serialize_manifest,
+    _validate_digest,
+    OCI_MANIFEST_MEDIA_TYPE,
+    SUPPORTED_API_VERSIONS,
+)
+from ._models import (
+    RepositoryProperties,
+    ArtifactTagProperties,
+    ArtifactManifestProperties,
+    DownloadBlobResult,
+    DownloadManifestResult,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from typing import Dict
+
+def _return_response(pipeline_response, deserialized, response_headers):
+    return pipeline_response, deserialized, response_headers
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential=None, **kwargs):
         # type: (str, Optional[TokenCredential], **Any) -> None
-        """Create a ContainerRegistryClient from an ACR endpoint and a credential
+        """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
-        :param str endpoint: An ACR endpoint
-        :param credential: The credential with which to authenticate
-        :type credential: :class:`~azure.core.credentials.TokenCredential`
+        :param str endpoint: An ACR endpoint.
+        :param credential: The credential with which to authenticate.
+        :type credential: ~azure.core.credentials.TokenCredential
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-        may result in unsupported behavior.
+         may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-        "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
-        "https://management.usgovcloudapi.net"
+         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de"
+         or "https://management.usgovcloudapi.net".
         :paramtype audience: str
         :returns: None
-        :raises ValueError: if audience keyword-only argument isn't provided
+        :rtype: None
+        :raises ValueError: If the provided api_version keyword-only argument isn't supported or
+         audience keyword-only argument isn't provided.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_client.py
+            .. literalinclude:: ../samples/sample_hello_world.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
                 :language: python
@@ -83,11 +104,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: The repository to delete
         :returns: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_client.py
+            .. literalinclude:: ../samples/sample_hello_world.py
                 :start-after: [START delete_repository]
                 :end-before: [END delete_repository]
                 :language: python
@@ -105,11 +126,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype results_per_page: int
         :returns: An iterable of strings
         :rtype: ~azure.core.paging.ItemPaged[str]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_delete_old_tags.py
+            .. literalinclude:: ../samples/sample_delete_tags.py
                 :start-after: [START list_repository_names]
                 :end-before: [END list_repository_names]
                 :language: python
@@ -183,8 +204,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             link = None
             if "Link" in pipeline_response.http_response.headers.keys():
                 link = _parse_next_link(pipeline_response.http_response.headers["Link"])
-            elif "link" in pipeline_response.http_response.headers.keys():  # python 2.7 turns this into lowercase
-                link = _parse_next_link(pipeline_response.http_response.headers["link"])
             return link, iter(list_of_elem)
 
         def get_next(next_link=None):
@@ -212,8 +231,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Get the properties of a repository
 
         :param str repository: Name of the repository
-        :returns: :class:`~azure.containerregistry.RepositoryProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :rtype: ~azure.containerregistry.RepositoryProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.get_properties(repository, **kwargs)
@@ -226,12 +245,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder` or str
+        :paramtype order_by: ~azure.containerregistry.ArtifactManifestOrder or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :returns: An iterable of :class:`~azure.containerregistry.ArtifactManifestProperties`
         :rtype: ~azure.core.paging.ItemPaged[~azure.containerregistry.ArtifactManifestProperties]
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
         name = repository
         last = kwargs.pop("last", None)
@@ -339,33 +358,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_manifest(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> None
-        """Delete a manifest. If the manifest cannot be found or a response status code of
-        404 is returned an error will not be raised.
-
-        :param str repository: Name of the repository the manifest belongs to
-        :param str tag_or_digest: Tag or digest of the manifest to be deleted
-        :returns: None
-        :rtype: None
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Example
-
-        .. code-block:: python
-
-            from azure.containerregistry import ContainerRepositoryClient
-            from azure.identity import DefaultAzureCredential
-            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, DefaultAzureCredential())
-            client.delete_manifest("my_repository", "my_tag_or_digest")
-        """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
-
-        self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-
-    @distributed_trace
     def delete_tag(self, repository, tag, **kwargs):
         # type: (str, str, **Any) -> None
         """Delete a tag from a repository. If the tag cannot be found or a response status code of
@@ -375,17 +367,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag: The tag to be deleted
         :returns: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example
 
         .. code-block:: python
 
-            from azure.containerregistry import ContainerRepositoryClient
+            from azure.containerregistry import ContainerRegistryClient
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_tag_properties():
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            for tag in client.list_tag_properties("my_repository"):
                 client.delete_tag("my_repository", tag.name)
         """
         self._client.container_registry.delete_tag(repository, tag, **kwargs)
@@ -397,18 +389,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag_or_digest: Tag or digest of the manifest
-        :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :rtype: ~azure.containerregistry.ArtifactManifestProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
         .. code-block:: python
 
-            from azure.containerregistry import ContainerRepositoryClient
+            from azure.containerregistry import ContainerRegistryClient
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_manifest_properties():
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            for artifact in client.list_manifest_properties("my_repository"):
                 properties = client.get_manifest_properties("my_repository", artifact.digest)
         """
         if _is_tag(tag_or_digest):
@@ -427,18 +419,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag: The tag to get tag properties for
-        :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :rtype: ~azure.containerregistry.ArtifactTagProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
         .. code-block:: python
 
-            from azure.containerregistry import ContainerRepositoryClient
+            from azure.containerregistry import ContainerRegistryClient
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
-            for tag in client.list_tag_properties():
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            for tag in client.list_tag_properties("my_repository"):
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
@@ -453,23 +445,22 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.TagOrder` or str
+        :paramtype order_by: ~azure.containerregistry.ArtifactTagOrder or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :returns: An iterable of :class:`~azure.containerregistry.ArtifactTagProperties`
         :rtype: ~azure.core.paging.ItemPaged[~azure.containerregistry.ArtifactTagProperties]
-        :rtype: :class:`~azure.core.paging.ItemPaged`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
         .. code-block:: python
 
-            from azure.containerregistry import ContainerRepositoryClient
+            from azure.containerregistry import ContainerRegistryClient
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
-            for tag in client.list_tag_properties():
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            for tag in client.list_tag_properties("my_repository"):
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         name = repository
@@ -591,26 +582,31 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def update_manifest_properties(self, *args, **kwargs):
         # type: (Union[str, ArtifactManifestProperties], **Any) -> ArtifactManifestProperties
-        """Set the properties for a manifest
+        """Set the permission properties for a manifest.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.ArtifactManifestProperties]
-        :param str repository: Repository the manifest belongs to
-        :param str tag_or_digest: Tag or digest of the manifest
-        :param properties: The property's values to be set
-        :type properties: :class:`~azure.containerregistry.ArtifactManifestProperties`
-        :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the manifest belongs to.
+        :param str tag_or_digest: Tag or digest of the manifest.
+        :param properties: The property's values to be set. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type properties: ~azure.containerregistry.ArtifactManifestProperties
+        :keyword bool can_delete: Delete permissions for a manifest.
+        :keyword bool can_list: List permissions for a manifest.
+        :keyword bool can_read: Read permissions for a manifest.
+        :keyword bool can_write: Write permissions for a manifest.
+        :rtype: ~azure.containerregistry.ArtifactManifestProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
         .. code-block:: python
 
-            from azure.containerregistry import ContainerRepositoryClient
+            from azure.containerregistry import ContainerRegistryClient
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
-            for artifact in client.list_manifest_properties():
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            for artifact in client.list_manifest_properties("my_repository"):
                 received_properties = client.update_manifest_properties(
                     "my_repository",
                     artifact.digest,
@@ -660,25 +656,30 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def update_tag_properties(self, *args, **kwargs):
         # type: (Union[str, ArtifactTagProperties], **Any) -> ArtifactTagProperties
-        """Set the properties for a tag
+        """Set the permission properties for a tag.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.ArtifactTagProperties]
-        :param str repository: Repository the tag belongs to
-        :param str tag: Tag to set properties for
-        :param properties: The property's values to be set
-        :type properties: ArtifactTagProperties
-        :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the tag belongs to.
+        :param str tag: Tag to set properties for.
+        :param properties: The property's values to be set. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type properties: ~azure.containerregistry.ArtifactTagProperties
+        :keyword bool can_delete: Delete permissions for a tag.
+        :keyword bool can_list: List permissions for a tag.
+        :keyword bool can_read: Read permissions for a tag.
+        :keyword bool can_write: Write permissions for a tag.
+        :rtype: ~azure.containerregistry.ArtifactTagProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
         .. code-block:: python
 
-            from azure.containerregistry import ContainerRepositoryClient, TagWriteableProperties
+            from azure.containerregistry import ContainerRegistryClient
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRepositoryClient(endpoint, "my_repository", DefaultAzureCredential())
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
             tag_identifier = "latest"
             received = client.update_tag_properties(
                 "my_repository",
@@ -722,15 +723,20 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def update_repository_properties(self, *args, **kwargs):
         # type: (Union[str, RepositoryProperties], **Any) -> RepositoryProperties
-        """Set the properties of a repository
+        """Set the permission properties of a repository.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.RepositoryProperties]
-        :param str repository: Name of the repository
-        :param properties: Properties to set for the repository
-        :type properties: :class:`~azure.containerregistry.RepositoryProperties`
-        :returns: :class:`~azure.containerregistry.RepositoryProperties`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Name of the repository.
+        :param properties: Properties to set for the repository. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type properties: ~azure.containerregistry.RepositoryProperties
+        :keyword bool can_delete: Delete permissions for a repository.
+        :keyword bool can_list: List permissions for a repository.
+        :keyword bool can_read: Read permissions for a repository.
+        :keyword bool can_write: Write permissions for a repository.
+        :rtype: ~azure.containerregistry.RepositoryProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
         repository, properties = None, None
         if len(args) == 2:
@@ -750,3 +756,190 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 repository, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
+
+    @distributed_trace
+    def upload_manifest(
+        self, repository: str, manifest: "Union['OCIManifest', 'IO']", *, tag: "Optional[str]" = None, **kwargs: "Any"
+    ) -> str:
+        """Upload a manifest for an OCI artifact.
+
+        :param str repository: Name of the repository
+        :param manifest: The manifest to upload. Note: This must be a seekable stream.
+        :type manifest: ~azure.containerregistry.models.OCIManifest or IO
+        :keyword tag: Tag of the manifest.
+        :paramtype tag: str or None
+        :returns: The digest of the uploaded manifest, calculated by the registry.
+        :rtype: str
+        :raises ValueError: If the parameter repository or manifest is None.
+        :raises ~azure.core.exceptions.HttpResponseError:
+            If the digest in the response does not match the digest of the uploaded manifest.
+        """
+        try:
+            data = manifest
+            if isinstance(manifest, OCIManifest):
+                data = _serialize_manifest(manifest)
+            tag_or_digest = tag
+            if tag is None:
+                tag_or_digest = _compute_digest(data)
+
+            _, _, response_headers = self._client.container_registry.create_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                payload=data,
+                content_type=OCI_MANIFEST_MEDIA_TYPE,
+                headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
+                cls=_return_response,
+                **kwargs
+            )
+
+            digest = response_headers['Docker-Content-Digest']
+        except ValueError:
+            if repository is None or manifest is None:
+                raise ValueError("The parameter repository and manifest cannot be None.")
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
+            raise
+
+        return digest
+
+    @distributed_trace
+    def upload_blob(self, repository, data, **kwargs):
+        # type: (str, IO, **Any) -> str
+        """Upload an artifact blob.
+
+        :param str repository: Name of the repository
+        :param data: The blob to upload. Note: This must be a seekable stream.
+        :type data: IO
+        :returns: The digest of the uploaded blob, calculated by the registry.
+        :rtype: str
+        :raises ValueError: If the parameter repository or data is None.
+        """
+        try:
+            _, _, start_upload_response_headers = self._client.container_registry_blob.start_upload(
+                repository, cls=_return_response, **kwargs
+            )
+            _, _, upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk(
+                start_upload_response_headers['Location'], data, cls=_return_response, **kwargs
+            )
+            digest = _compute_digest(data)
+            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload(
+                digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs
+            )
+        except ValueError:
+            if repository is None or data is None:
+                raise ValueError("The parameter repository and data cannot be None.")
+            raise
+        return complete_upload_response_headers['Docker-Content-Digest']
+
+    @distributed_trace
+    def download_manifest(self, repository, tag_or_digest, **kwargs):
+        # type: (str, str, **Any) -> DownloadManifestResult
+        """Download the manifest for an OCI artifact.
+
+        :param str repository: Name of the repository
+        :param str tag_or_digest: The tag or digest of the manifest to download.
+        :returns: DownloadManifestResult
+        :rtype: ~azure.containerregistry.models.DownloadManifestResult
+        :raises ValueError: If the parameter repository or tag_or_digest is None.
+        :raises ~azure.core.exceptions.HttpResponseError:
+            If the requested digest does not match the digest of the received manifest.
+        """
+        try:
+            response, manifest_wrapper, _ = self._client.container_registry.get_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
+                cls=_return_response,
+                **kwargs
+            )
+            digest = response.http_response.headers['Docker-Content-Digest']
+            manifest = OCIManifest.deserialize(manifest_wrapper.serialize())
+            manifest_stream = _serialize_manifest(manifest)
+        except ValueError:
+            if repository is None or tag_or_digest is None:
+                raise ValueError("The parameter repository and tag_or_digest cannot be None.")
+            if not _validate_digest(manifest_stream, digest):
+                raise ValueError("The requested digest does not match the digest of the received manifest.")
+            raise
+
+        return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
+
+    @distributed_trace
+    def download_blob(self, repository, digest, **kwargs):
+        # type: (str, str, **Any) -> DownloadBlobResult | None
+        """Download a blob that is part of an artifact.
+
+        :param str repository: Name of the repository
+        :param str digest: The digest of the blob to download.
+        :returns: DownloadBlobResult or None
+        :rtype: ~azure.containerregistry.DownloadBlobResult or None
+        :raises ValueError: If the parameter repository or digest is None.
+        """
+        try:
+            _, deserialized, _ = self._client.container_registry_blob.get_blob(
+                repository, digest, cls=_return_response, **kwargs
+            )
+        except ValueError:
+            if repository is None or digest is None:
+                raise ValueError("The parameter repository and digest cannot be None.")
+            raise
+
+        if deserialized:
+            blob_content = b''
+            for chunk in deserialized:
+                if chunk:
+                    blob_content += chunk
+            return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
+        return None
+
+    @distributed_trace
+    def delete_manifest(self, repository, tag_or_digest, **kwargs):
+        # type: (str, str, **Any) -> None
+        """Delete a manifest. If the manifest cannot be found or a response status code of
+        404 is returned an error will not be raised.
+
+        :param str repository: Name of the repository the manifest belongs to
+        :param str tag_or_digest: Tag or digest of the manifest to be deleted
+        :returns: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry import ContainerRegistryClient
+            from azure.identity import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            client.delete_manifest("my_repository", "my_tag_or_digest")
+        """
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+
+        self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
+
+    @distributed_trace
+    def delete_blob(self, repository, tag_or_digest, **kwargs):
+        # type: (str, str, **Any) -> None
+        """Delete a blob. If the blob cannot be found or a response status code of
+        404 is returned an error will not be raised.
+
+        :param str repository: Name of the repository the manifest belongs to
+        :param str tag_or_digest: Tag or digest of the blob to be deleted
+        :returns: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry import ContainerRegistryClient
+            from azure.identity import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            client.delete_blob("my_repository", "my_tag_or_digest")
+        """
+        if _is_tag(tag_or_digest):
+            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+
+        self._client.container_registry_blob.delete_blob(repository, tag_or_digest, **kwargs)

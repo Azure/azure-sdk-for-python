@@ -9,8 +9,6 @@
 Example to demonstrate utilizing azure.core.credentials.AzureSasCredential to authenticate with Event Hubs.
 """
 
-# pylint: disable=C0111
-
 import asyncio
 import os
 import time

@@ -14,7 +14,7 @@ collect_ignore = []
 
 # Only run stress tests on request.
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):
-    collect_ignore.append("tests/stress_tests")
+    collect_ignore.append("stress/scripts")
 
 # Allow us to pass stress_test_duration from the command line.
 def pytest_addoption(parser):

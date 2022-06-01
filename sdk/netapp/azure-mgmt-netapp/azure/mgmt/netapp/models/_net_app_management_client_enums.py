@@ -86,6 +86,15 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class EnableSubvolumes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Flag indicating whether subvolume operations are enabled on the volume
+    """
+
+    #: subvolumes are enabled.
+    ENABLED = "Enabled"
+    #: subvolumes are not enabled.
+    DISABLED = "Disabled"
+
 class EncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Encryption type of the capacity pool, set encryption type for data at rest for this pool and
     all volumes in it. This value can only be set when creating new pool.

@@ -7,6 +7,13 @@ trigger:
     exclude:
     - '*'
 
+# avoid being triggered as part of CI check
+pr:
+  branches:
+    exclude:
+    - '*'
+
+
 schedules:
   - cron: "0 16 * * *"
     displayName: Daily Statistics
@@ -47,7 +54,6 @@ jobs:
         export TOKEN=$(USR_TOKEN)
         export SWAGGER_REPO=$(pwd)/azure-rest-api-specs
         export SDK_REPO=$(pwd)/sdk-repo
-        export AZP_RUN=$(AZP_RUN)
         export SKIP_COVERAGE=$(SKIP_COVERAGE)
 
         # create virtual env

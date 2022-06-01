@@ -80,7 +80,7 @@ def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = client.get_schema(schema_id)
     print(
-        "The schema string of schema id: {} string is {}".format(id, schema.definition)
+        "The schema string of schema id: {} string is {}".format(schema_id, schema.definition)
     )
     print("Schema properties are {}".format(schema_id))
     return schema.definition

@@ -1,5 +1,20 @@
 # Release History
 
+## 2.0.0 (2022-03-31)
+
+**Features**
+
+  - Model Extension has a new parameter installed_version
+  - Model FluxConfiguration has a new parameter source_synced_commit_id
+  - Model FluxConfiguration has a new parameter source_updated_at
+  - Model FluxConfiguration has a new parameter status_updated_at
+  - Model KustomizationDefinition has a new parameter name
+
+**Breaking changes**
+
+  - Model FluxConfiguration no longer has parameter last_source_updated_at
+  - Model FluxConfiguration no longer has parameter last_source_updated_commit_id
+
 ## 1.0.0 (2021-12-06)
 
 **Features**

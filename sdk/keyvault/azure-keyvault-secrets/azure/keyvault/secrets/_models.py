@@ -187,6 +187,15 @@ class SecretProperties(object):
         """
         return self._tags
 
+    @property
+    def managed(self):
+        # type: () -> Optional[bool]
+        """Whether the secret's lifetime is managed by Key Vault. If the secret backs a certificate, this will be true.
+
+        :rtype: bool or None
+        """
+        return self._managed
+
 
 class KeyVaultSecret(object):
     """All of a secret's properties, and its value."""

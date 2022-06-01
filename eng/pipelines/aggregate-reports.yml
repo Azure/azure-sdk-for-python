@@ -28,16 +28,29 @@ stages:
             parameters:
               ScanPath: $(Build.SourcesDirectory)
 
-          - task: AzureFileCopy@2
-            displayName: 'Upload dependency report'
+          - task: AzureFileCopy@4
+            displayName: 'Upload Dependency Report'
             condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
             inputs:
-              sourcePath: '$(Build.ArtifactStagingDirectory)/reports'
+              sourcePath: '$(Build.ArtifactStagingDirectory)/reports/*'
               azureSubscription: 'Azure SDK Artifacts'
               destination: AzureBlob
               storage: azuresdkartifacts
               containerName: 'azure-sdk-for-python'
               blobPrefix: dependencies
+              AdditionalArgumentsForBlobCopy: '--exclude-pattern=*data.js*'
+
+          - task: AzureFileCopy@4
+            displayName: 'Upload Dependency Graph'
+            condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
+            inputs:
+              sourcePath: '$(Build.ArtifactStagingDirectory)/reports/*'
+              azureSubscription: 'Azure SDK Artifacts'
+              destination: AzureBlob
+              storage: azuresdkartifacts
+              containerName: 'azure-sdk-for-python'
+              blobPrefix: dependencies/dependencyGraph
+              AdditionalArgumentsForBlobCopy: '--include-pattern=*data.js*'
 
           - task: PowerShell@2
             displayName: "Verify Repository Resource Refs"
@@ -60,25 +73,9 @@ stages:
       - job: ComplianceTools
         timeoutInMinutes: 120
         steps:
-          - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
-            displayName: 'Run CredScan'
-            condition: succeededOrFailed()
-            inputs:
-              suppressionsFile: 'eng\CredScanSuppression.json'
-
-          - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
-            displayName: 'Post Analysis'
-            condition: succeededOrFailed()
-            inputs:
-              GdnBreakAllTools: false
-              GdnBreakGdnToolCredScan: true
-              GdnBreakGdnToolCredScanSeverity: Error
-              GdnBreakBaselineFiles: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-              GdnBreakBaselines: baseline
-              # Used for generating baseline file.
-              # GdnBreakOutputBaselineFile: python
-              # GdnBreakOutputBaseline: baseline
-            continueOnError: true
+          - template: /eng/common/pipelines/templates/steps/credscan.yml
+            parameters:
+              BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
 
           - pwsh: |
               azcopy copy "https://azuresdkartifacts.blob.core.windows.net/policheck/PythonPoliCheckExclusion.mdb?$(azuresdk-policheck-blob-SAS)" `

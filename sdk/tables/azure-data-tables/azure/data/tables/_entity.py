@@ -24,7 +24,7 @@ class TableEntity(dict):
         return self._metadata
 
 
-class EdmType(str, Enum):
+class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.

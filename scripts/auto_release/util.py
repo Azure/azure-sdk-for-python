@@ -1,3 +1,5 @@
+from pathlib import Path
+
 CERTIFICATION = '''
 -----BEGIN CERTIFICATE-----
 MIIDSDCCAjCgAwIBAgIUPMKpJ/j10eQrcQBNnkImIaOYHakwDQYJKoZIhvcNAQEL
@@ -20,3 +22,10 @@ UTYD8pRJJ/DyG0empvOVE8Sg93msHPquAbgqO9aqCpykgg/a8CFvI4wRdfvGEFlv
 8XJKL8Y/PFsmFeO3axq3zUYKFVdc9Un4dFIaag==
 -----END CERTIFICATE-----
 '''
+
+
+def add_certificate():
+    cacert_path = Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')
+    with open(cacert_path, 'a+') as f:
+        f.seek(0, 0)
+        f.write(CERTIFICATION)

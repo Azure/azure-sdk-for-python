@@ -54,6 +54,17 @@ def test_user_agent():
 
     credential.get_token("scope")
 
+def test_tenant_id():
+    transport = validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+    )
+
+    credential.get_token("scope", tenant_id="tenant_id")
 
 def test_auth_code_credential():
     client_id = "client id"

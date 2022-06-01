@@ -18,15 +18,18 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestReceiptFromStream(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_enum_content_type_v2(self, client):
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         poller = client.begin_recognize_receipts(
-            myfile,
+            my_file,
             content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
@@ -34,7 +37,8 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
+    def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
@@ -44,7 +48,8 @@ class TestReceiptFromStream(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     # TODO should there be a v3 version of this test?
-    def test_damaged_file_bytes_io_fails_autodetect(self, client):
+    def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
+        client = kwargs.pop("client")
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
@@ -53,18 +58,20 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_passing_bad_content_type_param_passed(self, client):
+    def test_passing_bad_content_type_param_passed(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
-                myfile,
+                my_file,
                 content_type="application/jpeg"
             )
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_passing_unsupported_url_content_type(self, client):
+    def test_passing_unsupported_url_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             poller = client.begin_recognize_receipts(
                 "https://badurl.jpg",
@@ -107,7 +114,8 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_receipt_locale_v2(self, client):
+    def test_receipt_locale_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(ValueError) as e:

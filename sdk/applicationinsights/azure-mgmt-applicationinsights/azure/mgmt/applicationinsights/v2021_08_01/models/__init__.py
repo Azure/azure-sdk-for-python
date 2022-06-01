@@ -6,34 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UserAssignedIdentity
-    from ._models_py3 import Workbook
-    from ._models_py3 import WorkbookError
-    from ._models_py3 import WorkbookErrorDefinition
-    from ._models_py3 import WorkbookInnerErrorTrace
-    from ._models_py3 import WorkbookResource
-    from ._models_py3 import WorkbookResourceIdentity
-    from ._models_py3 import WorkbookUpdateParameters
-    from ._models_py3 import WorkbooksListResult
-except (SyntaxError, ImportError):
-    from ._models import ManagedServiceIdentity  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UserAssignedIdentity  # type: ignore
-    from ._models import Workbook  # type: ignore
-    from ._models import WorkbookError  # type: ignore
-    from ._models import WorkbookErrorDefinition  # type: ignore
-    from ._models import WorkbookInnerErrorTrace  # type: ignore
-    from ._models import WorkbookResource  # type: ignore
-    from ._models import WorkbookResourceIdentity  # type: ignore
-    from ._models import WorkbookUpdateParameters  # type: ignore
-    from ._models import WorkbooksListResult  # type: ignore
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import Workbook
+from ._models_py3 import WorkbookError
+from ._models_py3 import WorkbookErrorDefinition
+from ._models_py3 import WorkbookInnerErrorTrace
+from ._models_py3 import WorkbookResource
+from ._models_py3 import WorkbookResourceIdentity
+from ._models_py3 import WorkbookUpdateParameters
+from ._models_py3 import WorkbooksListResult
+
 
 from ._application_insights_management_client_enums import (
     CategoryType,

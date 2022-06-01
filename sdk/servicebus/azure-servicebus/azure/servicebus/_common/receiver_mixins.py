@@ -176,3 +176,11 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_message_properties(self, message):
         if self._session:
             message[MGMT_REQUEST_SESSION_ID] = self._session_id
+
+    def _enhanced_message_received(self, message):
+        # pylint: disable=protected-access
+        self._handler._was_message_received = True
+        if self._receive_context.is_set():
+            self._handler._received_messages.put(message)
+        else:
+            message.release()

@@ -41,7 +41,7 @@ class HttpChallenge(object):
             raise ValueError("Invalid challenge parameters")
 
         authorization_uri = self.get_authorization_server()
-        # the authoritzation server URI should look something like https://login.windows.net/tenant-id
+        # the authorization server URI should look something like https://login.windows.net/tenant-id
         uri_path = parse.urlparse(authorization_uri).path.lstrip("/")
         self.tenant_id = uri_path.split("/")[0] or None
 

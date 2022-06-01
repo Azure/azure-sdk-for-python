@@ -44,6 +44,7 @@ pylint-*.out.txt
 coverage-*.xml
 stderr.txt
 stdout.txt
+_proxy_log_*.log
 
 # tox environment folders
 .tox/
@@ -92,6 +93,7 @@ src/build
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
 venv/
+.venv/
 code_reports
 
 # Azure Storage test credentials

@@ -6,26 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import WorkbookTemplate
-    from ._models_py3 import WorkbookTemplateError
-    from ._models_py3 import WorkbookTemplateErrorBody
-    from ._models_py3 import WorkbookTemplateErrorFieldContract
-    from ._models_py3 import WorkbookTemplateGallery
-    from ._models_py3 import WorkbookTemplateLocalizedGallery
-    from ._models_py3 import WorkbookTemplateResource
-    from ._models_py3 import WorkbookTemplateUpdateParameters
-    from ._models_py3 import WorkbookTemplatesListResult
-except (SyntaxError, ImportError):
-    from ._models import WorkbookTemplate  # type: ignore
-    from ._models import WorkbookTemplateError  # type: ignore
-    from ._models import WorkbookTemplateErrorBody  # type: ignore
-    from ._models import WorkbookTemplateErrorFieldContract  # type: ignore
-    from ._models import WorkbookTemplateGallery  # type: ignore
-    from ._models import WorkbookTemplateLocalizedGallery  # type: ignore
-    from ._models import WorkbookTemplateResource  # type: ignore
-    from ._models import WorkbookTemplateUpdateParameters  # type: ignore
-    from ._models import WorkbookTemplatesListResult  # type: ignore
+from ._models_py3 import WorkbookTemplate
+from ._models_py3 import WorkbookTemplateError
+from ._models_py3 import WorkbookTemplateErrorBody
+from ._models_py3 import WorkbookTemplateErrorFieldContract
+from ._models_py3 import WorkbookTemplateGallery
+from ._models_py3 import WorkbookTemplateLocalizedGallery
+from ._models_py3 import WorkbookTemplateResource
+from ._models_py3 import WorkbookTemplateUpdateParameters
+from ._models_py3 import WorkbookTemplatesListResult
+
 
 __all__ = [
     'WorkbookTemplate',

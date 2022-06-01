@@ -1,5 +1,55 @@
 # Release History
 
+## 2.6.0 (2022-05-27)
+
+**Features**
+
+  - Added operation group GlobalParametersOperations
+  - Model DataFlowSink has a new parameter rejected_data_linked_service
+  - Model ExecuteDataFlowActivity has a new parameter source_staging_concurrency
+  - Model ExecuteDataFlowActivityTypeProperties has a new parameter source_staging_concurrency
+  - Model ExecutePowerQueryActivityTypeProperties has a new parameter source_staging_concurrency
+  - Model ExecuteWranglingDataflowActivity has a new parameter source_staging_concurrency
+  - Model Factory has a new parameter purview_configuration
+  - Model PowerQuerySink has a new parameter rejected_data_linked_service
+
+## 2.5.0 (2022-05-12)
+
+**Features**
+
+  - Model PrivateLinkConnectionApprovalRequest has a new parameter private_endpoint
+
+## 2.4.0 (2022-04-15)
+
+**Features**
+
+  - Model ExecutePipelineActivity has a new parameter policy
+  - Model WebActivity has a new parameter disable_cert_validation
+
+## 2.3.0 (2022-03-02)
+
+**Features**
+
+  - Added model QuickbaseLinkedService
+  - Added model ScriptActivity
+  - Added model ScriptActivityLogDestination
+  - Added model ScriptActivityParameter
+  - Added model ScriptActivityParameterDirection
+  - Added model ScriptActivityParameterType
+  - Added model ScriptActivityScriptBlock
+  - Added model ScriptActivityTypePropertiesLogSettings
+  - Added model ScriptType
+  - Added model SmartsheetLinkedService
+  - Added model TeamDeskAuthenticationType
+  - Added model TeamDeskLinkedService
+  - Added model ZendeskAuthenticationType
+  - Added model ZendeskLinkedService
+
+## 2.2.1 (2022-02-14)
+
+**Fixes**
+  - Fix parameter public_network_access mapping type in Model FactoryUpdateParameters
+
 ## 2.2.0 (2022-01-06)
 
 **Features**

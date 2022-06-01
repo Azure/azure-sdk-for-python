@@ -11,16 +11,17 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from msrest import Deserializer, Serializer
+
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import TemplateSpecsClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -53,7 +54,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2021-05-01'
+    DEFAULT_API_VERSION = '2022-02-01'
     _PROFILE_TAG = "azure.mgmt.resource.templatespecs.TemplateSpecsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -67,12 +68,10 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = TemplateSpecsClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(TemplateSpecsClient, self).__init__(
@@ -91,6 +90,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01-preview: :mod:`v2019_06_01_preview.models<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models>`
            * 2021-03-01-preview: :mod:`v2021_03_01_preview.models<azure.mgmt.resource.templatespecs.v2021_03_01_preview.models>`
            * 2021-05-01: :mod:`v2021_05_01.models<azure.mgmt.resource.templatespecs.v2021_05_01.models>`
+           * 2022-02-01: :mod:`v2022_02_01.models<azure.mgmt.resource.templatespecs.v2022_02_01.models>`
         """
         if api_version == '2019-06-01-preview':
             from ..v2019_06_01_preview import models
@@ -101,6 +101,9 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2021-05-01':
             from ..v2021_05_01 import models
             return models
+        elif api_version == '2022-02-01':
+            from ..v2022_02_01 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -110,6 +113,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01-preview: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2019_06_01_preview.aio.operations.TemplateSpecVersionsOperations>`
            * 2021-03-01-preview: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2021_03_01_preview.aio.operations.TemplateSpecVersionsOperations>`
            * 2021-05-01: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2021_05_01.aio.operations.TemplateSpecVersionsOperations>`
+           * 2022-02-01: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2022_02_01.aio.operations.TemplateSpecVersionsOperations>`
         """
         api_version = self._get_api_version('template_spec_versions')
         if api_version == '2019-06-01-preview':
@@ -118,6 +122,8 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_03_01_preview.aio.operations import TemplateSpecVersionsOperations as OperationClass
         elif api_version == '2021-05-01':
             from ..v2021_05_01.aio.operations import TemplateSpecVersionsOperations as OperationClass
+        elif api_version == '2022-02-01':
+            from ..v2022_02_01.aio.operations import TemplateSpecVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'template_spec_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -129,6 +135,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
            * 2019-06-01-preview: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2019_06_01_preview.aio.operations.TemplateSpecsOperations>`
            * 2021-03-01-preview: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2021_03_01_preview.aio.operations.TemplateSpecsOperations>`
            * 2021-05-01: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2021_05_01.aio.operations.TemplateSpecsOperations>`
+           * 2022-02-01: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2022_02_01.aio.operations.TemplateSpecsOperations>`
         """
         api_version = self._get_api_version('template_specs')
         if api_version == '2019-06-01-preview':
@@ -137,6 +144,8 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_03_01_preview.aio.operations import TemplateSpecsOperations as OperationClass
         elif api_version == '2021-05-01':
             from ..v2021_05_01.aio.operations import TemplateSpecsOperations as OperationClass
+        elif api_version == '2022-02-01':
+            from ..v2022_02_01.aio.operations import TemplateSpecsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'template_specs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

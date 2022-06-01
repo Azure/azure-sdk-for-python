@@ -33,10 +33,11 @@ except ImportError:
     from mock import Mock
 
 # module under test
-from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
+from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format, SerializationError, DeserializationError
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase
+from utils import HTTP_REQUESTS
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponseBase):
     def __init__(self, json_body):
@@ -151,6 +152,8 @@ class TestExceptions(object):
         # Could test if we see a deprecation warning
         assert error.error.error.code == "FakeErrorOne"
         assert error.error.error.message == "A fake error"
+
+        assert str(error) == "(FakeErrorOne) A fake error\nCode: FakeErrorOne\nMessage: A fake error"
 
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
@@ -285,3 +288,57 @@ class TestExceptions(object):
         }
         exp = HttpResponseError(response=mock_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "501"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_non_odatav4_error_body(self, client, http_request):
+        request = http_request("GET", "/errors/non-odatav4-body")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]}}"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_malformed_json(self, client, http_request):
+        request = http_request("GET", "/errors/malformed-json")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_text(self, client, http_request):
+        request = http_request("GET", "/errors/text")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: I am throwing an error"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_datav4_error(self, client, http_request):
+        request = http_request("GET", "/errors/odatav4")
+        response = client.send_request(request)
+        with pytest.raises(HttpResponseError) as ex:
+            response.raise_for_status()
+        assert "Content: {\"" not in str(ex.value)
+
+def test_serialization_error():
+    message = "Oopsy bad input passed for serialization"
+    error = SerializationError(message)
+    with pytest.raises(SerializationError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+    with pytest.raises(ValueError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+def test_deserialization_error():
+    message = "Oopsy bad input passed for serialization"
+    error = DeserializationError(message)
+    with pytest.raises(DeserializationError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+    with pytest.raises(ValueError) as ex:
+        raise error
+    assert str(ex.value) == message

@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllowedEndpointRecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AllowedEndpointRecordType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The allowed type DNS record types for this profile.
     """
 
@@ -35,7 +20,7 @@ class AllowedEndpointRecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     I_PV6_ADDRESS = "IPv6Address"
     ANY = "Any"
 
-class EndpointMonitorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointMonitorStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The monitoring status of the endpoint.
     """
 
@@ -46,7 +31,7 @@ class EndpointMonitorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     INACTIVE = "Inactive"
     STOPPED = "Stopped"
 
-class EndpointStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the endpoint. If the endpoint is Enabled, it is probed for endpoint health and is
     included in the traffic routing method.
     """
@@ -54,7 +39,13 @@ class EndpointStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class MonitorProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    AZURE_ENDPOINTS = "AzureEndpoints"
+    EXTERNAL_ENDPOINTS = "ExternalEndpoints"
+    NESTED_ENDPOINTS = "NestedEndpoints"
+
+class MonitorProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The protocol (HTTP, HTTPS or TCP) used to probe for endpoint health.
     """
 
@@ -62,7 +53,7 @@ class MonitorProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HTTPS = "HTTPS"
     TCP = "TCP"
 
-class ProfileMonitorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProfileMonitorStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The profile-level monitoring status of the Traffic Manager profile.
     """
 
@@ -72,14 +63,14 @@ class ProfileMonitorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     INACTIVE = "Inactive"
 
-class ProfileStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProfileStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the Traffic Manager profile.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class TrafficRoutingMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TrafficRoutingMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The traffic routing method of the Traffic Manager profile.
     """
 
@@ -90,7 +81,7 @@ class TrafficRoutingMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MULTI_VALUE = "MultiValue"
     SUBNET = "Subnet"
 
-class TrafficViewEnrollmentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TrafficViewEnrollmentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether Traffic View is 'Enabled' or 'Disabled' for the Traffic Manager profile.
     Null, indicates 'Disabled'. Enabling this feature will increase the cost of the Traffic Manage
     profile.

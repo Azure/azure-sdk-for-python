@@ -19,8 +19,8 @@ class DataContainer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param workspace: Required. Log Analytics workspace information.
-    :type workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
+    :ivar workspace: Required. Log Analytics workspace information.
+    :vartype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
     """
 
     _validation = {
@@ -37,6 +37,10 @@ class DataContainer(msrest.serialization.Model):
         workspace: "WorkspaceInfo",
         **kwargs
     ):
+        """
+        :keyword workspace: Required. Log Analytics workspace information.
+        :paramtype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
+        """
         super(DataContainer, self).__init__(**kwargs)
         self.workspace = workspace
 
@@ -46,10 +50,10 @@ class Error(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code identifying the specific error.
-    :type code: str
-    :param message: Error message in the caller's locale.
-    :type message: str
+    :ivar code: Required. Error code identifying the specific error.
+    :vartype code: str
+    :ivar message: Error message in the caller's locale.
+    :vartype message: str
     """
 
     _validation = {
@@ -68,6 +72,12 @@ class Error(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. Error code identifying the specific error.
+        :paramtype code: str
+        :keyword message: Error message in the caller's locale.
+        :paramtype message: str
+        """
         super(Error, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -102,6 +112,8 @@ class ProxyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -113,8 +125,8 @@ class ResponseWithError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param error: Required. Error information.
-    :type error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
+    :ivar error: Required. Error information.
+    :vartype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
     """
 
     _validation = {
@@ -131,6 +143,10 @@ class ResponseWithError(msrest.serialization.Model):
         error: "Error",
         **kwargs
     ):
+        """
+        :keyword error: Required. Error information.
+        :paramtype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
+        """
         super(ResponseWithError, self).__init__(**kwargs)
         self.error = error
 
@@ -146,20 +162,20 @@ class VMInsightsOnboardingStatus(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param resource_id: Azure Resource Manager identifier of the resource whose onboarding status
-     is being represented.
-    :type resource_id: str
-    :param onboarding_status: The onboarding status for the resource. Note that, a higher level
+    :ivar resource_id: Azure Resource Manager identifier of the resource whose onboarding status is
+     being represented.
+    :vartype resource_id: str
+    :ivar onboarding_status: The onboarding status for the resource. Note that, a higher level
      scope, e.g., resource group or subscription, is considered onboarded if at least one resource
      under it is onboarded. Possible values include: "onboarded", "notOnboarded", "unknown".
-    :type onboarding_status: str or
+    :vartype onboarding_status: str or
      ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
-    :param data_status: The status of VM Insights data from the resource. When reported as
+    :ivar data_status: The status of VM Insights data from the resource. When reported as
      ``present`` the data array will contain information about the data containers to which data for
      the specified resource is being routed. Possible values include: "present", "notPresent".
-    :type data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
-    :param data: Containers that currently store VM Insights data for the specified resource.
-    :type data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
+    :vartype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
+    :ivar data: Containers that currently store VM Insights data for the specified resource.
+    :vartype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
     """
 
     _validation = {
@@ -187,6 +203,22 @@ class VMInsightsOnboardingStatus(ProxyResource):
         data: Optional[List["DataContainer"]] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: Azure Resource Manager identifier of the resource whose onboarding status
+         is being represented.
+        :paramtype resource_id: str
+        :keyword onboarding_status: The onboarding status for the resource. Note that, a higher level
+         scope, e.g., resource group or subscription, is considered onboarded if at least one resource
+         under it is onboarded. Possible values include: "onboarded", "notOnboarded", "unknown".
+        :paramtype onboarding_status: str or
+         ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
+        :keyword data_status: The status of VM Insights data from the resource. When reported as
+         ``present`` the data array will contain information about the data containers to which data for
+         the specified resource is being routed. Possible values include: "present", "notPresent".
+        :paramtype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
+        :keyword data: Containers that currently store VM Insights data for the specified resource.
+        :paramtype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
+        """
         super(VMInsightsOnboardingStatus, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.onboarding_status = onboarding_status
@@ -199,12 +231,12 @@ class WorkspaceInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Azure Resource Manager identifier of the Log Analytics Workspace.
-    :type id: str
-    :param location: Required. Location of the Log Analytics workspace.
-    :type location: str
-    :param customer_id: Required. Log Analytics workspace identifier.
-    :type customer_id: str
+    :ivar id: Required. Azure Resource Manager identifier of the Log Analytics Workspace.
+    :vartype id: str
+    :ivar location: Required. Location of the Log Analytics workspace.
+    :vartype location: str
+    :ivar customer_id: Required. Log Analytics workspace identifier.
+    :vartype customer_id: str
     """
 
     _validation = {
@@ -227,6 +259,14 @@ class WorkspaceInfo(msrest.serialization.Model):
         customer_id: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. Azure Resource Manager identifier of the Log Analytics Workspace.
+        :paramtype id: str
+        :keyword location: Required. Location of the Log Analytics workspace.
+        :paramtype location: str
+        :keyword customer_id: Required. Log Analytics workspace identifier.
+        :paramtype customer_id: str
+        """
         super(WorkspaceInfo, self).__init__(**kwargs)
         self.id = id
         self.location = location

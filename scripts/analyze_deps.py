@@ -20,7 +20,8 @@ skip_pkgs = [
     'azure-servicemanagement-legacy', # legacy (not officially deprecated)
     'azure-common',
     'azure',
-    'azure-keyvault'
+    'azure-keyvault',
+    'azure-ai-ml'
 ]
 
 def report_should_skip_lib(lib_name):
@@ -411,7 +412,9 @@ if __name__ == '__main__':
         pkg_ids = [k for k in dump_data.keys()]
         for pkg_id in pkg_ids:
             resolve_lib_deps(dump_data, data_pkgs, pkg_id)
-        with io.open(args.dump, 'w', encoding='utf-8') as dump_file:
+        with io.open(f"{args.dump}/data.js", 'w', encoding='utf-8') as dump_file:
             dump_file.write('const data = ' + json.dumps(dump_data) + ';')
+        with io.open(f"{args.dump}/arcdata.json", 'w', encoding='utf-8') as dump_file:
+            dump_file.write(json.dumps(dump_data))
 
     sys.exit(exitcode)

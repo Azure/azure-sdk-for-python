@@ -283,29 +283,29 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
             try:
                 log_string = "Request URL: '{}'".format(http_request.url)
-                log_string += "/nRequest method: '{}'".format(http_request.method)
-                log_string += "/nRequest headers:"
+                log_string += "\nRequest method: '{}'".format(http_request.method)
+                log_string += "\nRequest headers:"
                 for header, value in http_request.headers.items():
-                    log_string += "/n    '{}': '{}'".format(header, value)
-                log_string += "/nRequest body:"
+                    log_string += "\n    '{}': '{}'".format(header, value)
+                log_string += "\nRequest body:"
 
                 # We don't want to log the binary data of a file upload.
                 if isinstance(http_request.body, types.GeneratorType):
-                    log_string += "/nFile upload"
+                    log_string += "\nFile upload"
                     _LOGGER.debug(log_string)
                     return
                 try:
                     if isinstance(http_request.body, types.AsyncGeneratorType):
-                        log_string += "/nFile upload"
+                        log_string += "\nFile upload"
                         _LOGGER.debug(log_string)
                         return
                 except AttributeError:
                     pass
                 if http_request.body:
-                    log_string += "/n{}".format(str(http_request.body))
+                    log_string += "\n{}".format(str(http_request.body))
                     _LOGGER.debug(log_string)
                     return
-                log_string += "/nThis request has no body"
+                log_string += "\nThis request has no body"
                 _LOGGER.debug(log_string)
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
@@ -327,27 +327,27 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                     return
 
                 log_string = "Response status: '{}'".format(http_response.status_code)
-                log_string += "/nResponse headers:"
+                log_string += "\nResponse headers:"
                 for res_header, value in http_response.headers.items():
-                    log_string += "/n    '{}': '{}'".format(res_header, value)
+                    log_string += "\n    '{}': '{}'".format(res_header, value)
 
                 # We don't want to log binary data if the response is a file.
-                log_string += "/nResponse content:"
+                log_string += "\nResponse content:"
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
                 header = http_response.headers.get('content-disposition')
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
-                    log_string += "/nFile attachments: {}".format(filename)
+                    log_string += "\nFile attachments: {}".format(filename)
                 elif http_response.headers.get("content-type", "").endswith("octet-stream"):
-                    log_string += "/nBody contains binary data."
+                    log_string += "\nBody contains binary data."
                 elif http_response.headers.get("content-type", "").startswith("image"):
-                    log_string += "/nBody contains image data."
+                    log_string += "\nBody contains image data."
                 else:
                     if response.context.options.get('stream', False):
-                        log_string += "/nBody is streamable."
+                        log_string += "\nBody is streamable."
                     else:
-                        log_string += "/n{}".format(http_response.text())
+                        log_string += "\n{}".format(http_response.text())
                 _LOGGER.debug(log_string)
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
@@ -381,6 +381,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "Server",
         "Transfer-Encoding",
         "User-Agent",
+        "WWW-Authenticate", # OAuth Challenge header.
     ])
     REDACTED_PLACEHOLDER = "REDACTED"
     MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
@@ -451,27 +452,27 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
                 logger.info("No body was attached to the request")
                 return
             log_string = "Request URL: '{}'".format(redacted_url)
-            log_string += "/nRequest method: '{}'".format(http_request.method)
-            log_string += "/nRequest headers:"
+            log_string += "\nRequest method: '{}'".format(http_request.method)
+            log_string += "\nRequest headers:"
             for header, value in http_request.headers.items():
                 value = self._redact_header(header, value)
-                log_string += "/n    '{}': '{}'".format(header, value)
+                log_string += "\n    '{}': '{}'".format(header, value)
             if isinstance(http_request.body, types.GeneratorType):
-                log_string += "/nFile upload"
+                log_string += "\nFile upload"
                 logger.info(log_string)
                 return
             try:
                 if isinstance(http_request.body, types.AsyncGeneratorType):
-                    log_string += "/nFile upload"
+                    log_string += "\nFile upload"
                     logger.info(log_string)
                     return
             except AttributeError:
                 pass
             if http_request.body:
-                log_string += "/nA body is sent with the request"
+                log_string += "\nA body is sent with the request"
                 logger.info(log_string)
                 return
-            log_string += "/nNo body was attached to the request"
+            log_string += "\nNo body was attached to the request"
             logger.info(log_string)
 
         except Exception as err:  # pylint: disable=broad-except
@@ -496,10 +497,10 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
                     logger.info("    %r: %r", res_header, value)
                 return
             log_string = "Response status: {}".format(http_response.status_code)
-            log_string += "/nResponse headers:"
+            log_string += "\nResponse headers:"
             for res_header, value in http_response.headers.items():
                 value = self._redact_header(res_header, value)
-                log_string += "/n    '{}': '{}'".format(res_header, value)
+                log_string += "\n    '{}': '{}'".format(res_header, value)
             logger.info(log_string)
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log response: %s", repr(err))

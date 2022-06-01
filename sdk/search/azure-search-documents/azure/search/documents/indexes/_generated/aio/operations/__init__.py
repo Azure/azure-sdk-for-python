@@ -11,6 +11,7 @@ from ._indexers_operations import IndexersOperations
 from ._skillsets_operations import SkillsetsOperations
 from ._synonym_maps_operations import SynonymMapsOperations
 from ._indexes_operations import IndexesOperations
+from ._aliases_operations import AliasesOperations
 from ._search_client_operations import SearchClientOperationsMixin
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     'SkillsetsOperations',
     'SynonymMapsOperations',
     'IndexesOperations',
+    'AliasesOperations',
     'SearchClientOperationsMixin',
 ]

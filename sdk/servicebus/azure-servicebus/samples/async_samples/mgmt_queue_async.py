@@ -14,8 +14,6 @@ Example to show managing queue entities under a ServiceBus Namespace asynchronou
     - List queues under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import uuid

@@ -14,9 +14,11 @@
 #   proximity_placement_groups: 6/6
 #   resource_skus: 1/1
 
+import os
 import datetime as dt
 import unittest
 
+import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
@@ -108,6 +110,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         else:
             return "fakeuri"
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute(self, resource_group):
@@ -121,6 +124,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # Lists all available Resource SKUs[get]
         result = self.mgmt_client.resource_skus.list()
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_availability_sets(self, resource_group):
@@ -156,6 +160,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # Delete availability sets (TODO: need a swagger file)
         resout = self.mgmt_client.availability_sets.delete(resource_group.name, AVAILABILITY_SET_NAME)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_proximity_placement_groups(self, resource_group):
@@ -187,6 +192,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # Delete a proximity placement group.[delete]
         result = self.mgmt_client.proximity_placement_groups.delete(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_log_analytics(self, resource_group):

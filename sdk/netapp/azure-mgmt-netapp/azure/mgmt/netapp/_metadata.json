@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-08-01",
-    "total_api_version_list": ["2021-08-01"],
+    "chosen_version": "2021-10-01",
+    "total_api_version_list": ["2021-10-01"],
     "client": {
         "name": "NetAppManagementClient",
         "filename": "_net_app_management_client",
@@ -109,6 +109,7 @@
         "account_backups": "AccountBackupsOperations",
         "backup_policies": "BackupPoliciesOperations",
         "vaults": "VaultsOperations",
-        "volume_groups": "VolumeGroupsOperations"
+        "volume_groups": "VolumeGroupsOperations",
+        "subvolumes": "SubvolumesOperations"
     }
 }

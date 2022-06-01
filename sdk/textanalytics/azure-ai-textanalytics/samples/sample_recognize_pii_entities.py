@@ -18,8 +18,8 @@ USAGE:
     python sample_recognize_pii_entities.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -28,7 +28,7 @@ import os
 def sample_recognize_pii_entities():
     print(
         "In this sample we will be going through our customer's loan payment information and redacting "
-        "all PII (personally identifable information) before storing this information on our public website. "
+        "all PII (personally identifiable information) before storing this information on our public website. "
         "I'm also looking to explicitly extract the SSN information, so I can update my database with SSNs for "
         "our customers"
     )
@@ -36,8 +36,8 @@ def sample_recognize_pii_entities():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -71,14 +71,14 @@ def sample_recognize_pii_entities():
         "I also want to be fairly confident that what I'm storing is an SSN, so let's also "
         "ensure that we're > 60% positive the entity is a SSN"
     )
-    ssns = []
+    social_security_numbers = []
     for doc in docs:
         for entity in doc.entities:
             if entity.category == 'USSocialSecurityNumber' and entity.confidence_score >= 0.6:
-                ssns.append(entity.text)
+                social_security_numbers.append(entity.text)
 
     print("We have extracted the following SSNs as well: '{}'".format(
-        "', '".join(ssns)
+        "', '".join(social_security_numbers)
     ))
 
 

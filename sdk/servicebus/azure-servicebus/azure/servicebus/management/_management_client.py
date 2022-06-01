@@ -72,7 +72,7 @@ from ._generated._service_bus_management_client import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from . import _constants as constants
-from ._api_version import DEFAULT_VERSION
+from ._api_version import DEFAULT_VERSION, ApiVersion
 from ._models import (
     AuthorizationRule,
     QueueRuntimeProperties,
@@ -100,9 +100,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
     :type credential: TokenCredential
-    :keyword str api_version: The Service Bus API version to use for requests. Default value is the most
+    :keyword api_version: The Service Bus API version to use for requests. Default value is the most
      recent service version that is compatible with the current SDK. Setting to an older version may result
      in reduced feature compatibility.
+    :paramtype api_version: str or ApiVersion
     """
 
     def __init__(
@@ -110,7 +111,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         *,
-        api_version: str = DEFAULT_VERSION,
+        api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
         **kwargs: Any
     ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
@@ -240,14 +241,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str, *, api_version: str = DEFAULT_VERSION, **kwargs: Any
+        cls, conn_str: str, *, api_version: Union[str, ApiVersion] = DEFAULT_VERSION, **kwargs: Any
     ) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
-        :keyword str api_version: The Service Bus API version to use for requests. Default value is the most
+        :keyword api_version: The Service Bus API version to use for requests. Default value is the most
          recent service version that is compatible with the current SDK. Setting to an older version may result
          in reduced feature compatibility.
+        :paramtype api_version: str or ApiVersion
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
         (

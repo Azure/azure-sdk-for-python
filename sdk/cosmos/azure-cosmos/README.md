@@ -76,6 +76,35 @@ KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
 
+### AAD Authentication
+
+You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
+You can directly pass in the credentials information to ClientSecretCrednetial, or use the DefaultAzureCredential:
+```Python
+from azure.cosmos import CosmosClient
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
+
+import os
+url = os.environ['ACCOUNT_URI']
+tenant_id = os.environ['TENANT_ID']
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ['CLIENT_SECRET']
+
+# Using ClientSecretCredential
+aad_credentials = ClientSecretCredential(
+    tenant_id=tenant_id,
+    client_id=client_id,
+    client_secret=client_secret)
+
+# Using DefaultAzureCredential (recommended)
+aad_credentials = DefaultAzureCredential()
+
+client = CosmosClient(url, aad_credentials)
+```
+Always ensure that the managed identity you use for AAD authentication has `readMetadata` permissions. <br>
+More information on how to set up AAD authentication: [Set up RBAC for AAD authentication](https://docs.microsoft.com/azure/cosmos-db/how-to-setup-rbac) <br>
+More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
+
 ## Key concepts
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
@@ -97,6 +126,20 @@ The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (d
 
 When using queries that try to find items based on an **id** value, always make sure you are passing in a string type variable. Azure Cosmos DB only allows string id values and if you use any other datatype, this SDK will return no results and no error messages.
 
+## Note on client consistency levels
+
+As of release version 4.3.0b3, if a user does not pass in an explicit consistency level to their client initialization,
+their client will use their database account's default level. Previously, the default was being set to `Session` consistency.
+If for some reason you'd like to keep doing this, you can change your client initialization to include the explicit parameter for this like shown:
+```Python
+from azure.cosmos import CosmosClient
+
+import os
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY, consistency_level='Session')
+```
+
 ## Limitations
 
 Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
@@ -111,11 +154,9 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
 * Change Feed: Read specific time
-* Change Feed: Read from the beggining
+* Change Feed: Read from the beginning
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
-* Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
-* Cross partition queries do not handle partition splits (410 Gone errors)
 
 ### Control Plane Limitations:
 
@@ -127,10 +168,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Get the connection string
 * Get the minimum RU/s of a container
 
-### Security Limitations:
-
-* AAD support
-
 ## Workarounds
 
 ### Bulk processing Limitation Workaround
@@ -139,15 +176,7 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
-
-### AAD Support Workaround
-
-A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
-
-## Consistency Level
-
-Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
+Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ## Boolean Data Type
 
@@ -436,9 +465,10 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
-### Using the asynchronous client (Preview)
+### Using the asynchronous client
 
 The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
+The Async client needs to be initialized and closed after usage, which can be done manually or with the use of a context manager. The example below shows how to do so manually.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -446,13 +476,13 @@ import os
 
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
-client = CosmosClient(URL, credential=KEY)
 DATABASE_NAME = 'testDatabase'
-database = client.get_database_client(DATABASE_NAME)
-CONTAINER_NAME = 'products'
-container = database.get_container_client(CONTAINER_NAME)
+CONTAINER_NAME = 'products'    
 
-async def create_items():
+async def create_products():
+    client = CosmosClient(URL, credential=KEY)
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
     for i in range(10):
         await container.upsert_item({
                 'id': 'item{0}'.format(i),
@@ -463,7 +493,7 @@ async def create_items():
     await client.close() # the async client must be closed manually if it's not initialized in a with statement
 ```
 
-It is also worth pointing out that the asynchronous client has to be closed manually after its use, either by initializing it using async with or calling the close() method directly like shown above.
+Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement. The example below shows how to do so.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -474,19 +504,20 @@ KEY = os.environ['ACCOUNT_KEY']
 DATABASE_NAME = 'testDatabase'
 CONTAINER_NAME = 'products'
 
-async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically close the async client
-    database = client.get_database_client(DATABASE_NAME)
-    container = database.get_container_client(CONTAINER_NAME)
-    for i in range(10):
-        await container.upsert_item({
-                'id': 'item{0}'.format(i),
-                'productName': 'Widget',
-                'productModel': 'Model {0}'.format(i)
-            }
-        )
+async def create_products():
+    async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically initialize and close the async client
+        database = client.get_database_client(DATABASE_NAME)
+        container = database.get_container_client(CONTAINER_NAME)
+        for i in range(10):
+            await container.upsert_item({
+                    'id': 'item{0}'.format(i),
+                    'productName': 'Widget',
+                    'productModel': 'Model {0}'.format(i)
+                }
+            )
 ```
 
-### Queries with the asynchronous client (Preview)
+### Queries with the asynchronous client
 
 Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
 

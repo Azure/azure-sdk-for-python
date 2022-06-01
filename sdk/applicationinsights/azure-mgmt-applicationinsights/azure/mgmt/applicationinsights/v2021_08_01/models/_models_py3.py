@@ -28,16 +28,16 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :param type: Required. Type of managed service identity (where both SystemAssigned and
+    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
      UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
      "UserAssigned", "SystemAssigned,UserAssigned".
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
-    :param user_assigned_identities: The set of user assigned identities associated with the
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
      The dictionary values can be empty objects ({}) in requests.
-    :type user_assigned_identities: dict[str,
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.applicationinsights.v2021_08_01.models.UserAssignedIdentity]
     """
 
@@ -61,6 +61,19 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
+         UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
+         "UserAssigned", "SystemAssigned,UserAssigned".
+        :paramtype type: str or
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.UserAssignedIdentity]
+        """
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -99,6 +112,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -108,21 +123,22 @@ class Resource(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or
+     ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -145,6 +161,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -169,10 +203,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -197,6 +231,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -227,6 +267,8 @@ class UserAssignedIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -247,17 +289,17 @@ class WorkbookResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: Identity used for BYOS.
-    :type identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-    :param kind: The kind of workbook. Choices are user and shared. Possible values include:
-     "user", "shared".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
-    :param etag: Resource etag.
-    :type etag: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: Identity used for BYOS.
+    :vartype identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
+    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
+     "shared".
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
+    :ivar etag: Resource etag.
+    :vartype etag: str
     """
 
     _validation = {
@@ -288,6 +330,20 @@ class WorkbookResource(TrackedResource):
         etag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: Identity used for BYOS.
+        :paramtype identity:
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
+        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
+         "user", "shared".
+        :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
+        :keyword etag: Resource etag.
+        :paramtype etag: str
+        """
         super(WorkbookResource, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.kind = kind
@@ -309,42 +365,42 @@ class Workbook(WorkbookResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: Identity used for BYOS.
-    :type identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-    :param kind: The kind of workbook. Choices are user and shared. Possible values include:
-     "user", "shared".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
-    :param etag: Resource etag.
-    :type etag: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: Identity used for BYOS.
+    :vartype identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
+    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
+     "shared".
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.applicationinsights.v2021_08_01.models.SystemData
-    :param display_name: The user-defined name (display name) of the workbook.
-    :type display_name: str
-    :param serialized_data: Configuration of this particular workbook. Configuration data is a
+    :ivar display_name: The user-defined name (display name) of the workbook.
+    :vartype display_name: str
+    :ivar serialized_data: Configuration of this particular workbook. Configuration data is a
      string containing valid JSON.
-    :type serialized_data: str
-    :param version: Workbook schema version format, like 'Notebook/1.0', which should match the
+    :vartype serialized_data: str
+    :ivar version: Workbook schema version format, like 'Notebook/1.0', which should match the
      workbook in serializedData.
-    :type version: str
+    :vartype version: str
     :ivar time_modified: Date and time in UTC of the last modification that was made to this
      workbook definition.
     :vartype time_modified: ~datetime.datetime
-    :param category: Workbook category, as defined by the user at creation time.
-    :type category: str
-    :param tags_properties_tags: Being deprecated, please use the other tags field.
-    :type tags_properties_tags: list[str]
+    :ivar category: Workbook category, as defined by the user at creation time.
+    :vartype category: str
+    :ivar tags_properties_tags: Being deprecated, please use the other tags field.
+    :vartype tags_properties_tags: list[str]
     :ivar user_id: Unique user id of the specific user that owns this workbook.
     :vartype user_id: str
-    :param source_id: ResourceId for a source resource.
-    :type source_id: str
-    :param storage_uri: The resourceId to the storage account when bring your own storage is used.
-    :type storage_uri: str
-    :param description: The description of the workbook.
-    :type description: str
+    :ivar source_id: ResourceId for a source resource.
+    :vartype source_id: str
+    :ivar storage_uri: The resourceId to the storage account when bring your own storage is used.
+    :vartype storage_uri: str
+    :ivar description: The description of the workbook.
+    :vartype description: str
     :ivar revision: The unique revision id for this workbook definition.
     :vartype revision: str
     """
@@ -401,6 +457,39 @@ class Workbook(WorkbookResource):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: Identity used for BYOS.
+        :paramtype identity:
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
+        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
+         "user", "shared".
+        :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
+        :keyword etag: Resource etag.
+        :paramtype etag: str
+        :keyword display_name: The user-defined name (display name) of the workbook.
+        :paramtype display_name: str
+        :keyword serialized_data: Configuration of this particular workbook. Configuration data is a
+         string containing valid JSON.
+        :paramtype serialized_data: str
+        :keyword version: Workbook schema version format, like 'Notebook/1.0', which should match the
+         workbook in serializedData.
+        :paramtype version: str
+        :keyword category: Workbook category, as defined by the user at creation time.
+        :paramtype category: str
+        :keyword tags_properties_tags: Being deprecated, please use the other tags field.
+        :paramtype tags_properties_tags: list[str]
+        :keyword source_id: ResourceId for a source resource.
+        :paramtype source_id: str
+        :keyword storage_uri: The resourceId to the storage account when bring your own storage is
+         used.
+        :paramtype storage_uri: str
+        :keyword description: The description of the workbook.
+        :paramtype description: str
+        """
         super(Workbook, self).__init__(tags=tags, location=location, identity=identity, kind=kind, etag=etag, **kwargs)
         self.system_data = None
         self.display_name = display_name
@@ -419,8 +508,8 @@ class Workbook(WorkbookResource):
 class WorkbookError(msrest.serialization.Model):
     """Error response.
 
-    :param error: The error details.
-    :type error: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookErrorDefinition
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookErrorDefinition
     """
 
     _attribute_map = {
@@ -433,6 +522,10 @@ class WorkbookError(msrest.serialization.Model):
         error: Optional["WorkbookErrorDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookErrorDefinition
+        """
         super(WorkbookError, self).__init__(**kwargs)
         self.error = error
 
@@ -466,6 +559,8 @@ class WorkbookErrorDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkbookErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -493,6 +588,8 @@ class WorkbookInnerErrorTrace(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkbookInnerErrorTrace, self).__init__(**kwargs)
         self.trace = None
 
@@ -510,16 +607,16 @@ class WorkbookResourceIdentity(ManagedServiceIdentity):
     :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :param type: Required. Type of managed service identity (where both SystemAssigned and
+    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
      UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
      "UserAssigned", "SystemAssigned,UserAssigned".
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
-    :param user_assigned_identities: The set of user assigned identities associated with the
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
      The dictionary values can be empty objects ({}) in requests.
-    :type user_assigned_identities: dict[str,
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.applicationinsights.v2021_08_01.models.UserAssignedIdentity]
     """
 
@@ -543,6 +640,19 @@ class WorkbookResourceIdentity(ManagedServiceIdentity):
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
+         UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
+         "UserAssigned", "SystemAssigned,UserAssigned".
+        :paramtype type: str or
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.applicationinsights.v2021_08_01.models.UserAssignedIdentity]
+        """
         super(WorkbookResourceIdentity, self).__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
 
 
@@ -553,8 +663,8 @@ class WorkbooksListResult(msrest.serialization.Model):
 
     :ivar value: An array of workbooks.
     :vartype value: list[~azure.mgmt.applicationinsights.v2021_08_01.models.Workbook]
-    :param next_link:
-    :type next_link: str
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _validation = {
@@ -572,6 +682,10 @@ class WorkbooksListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        """
         super(WorkbooksListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = next_link
@@ -580,25 +694,25 @@ class WorkbooksListResult(msrest.serialization.Model):
 class WorkbookUpdateParameters(msrest.serialization.Model):
     """The parameters that can be provided when updating workbook properties properties.
 
-    :param kind: The kind of workbook. Choices are user and shared. Possible values include:
-     "user", "shared".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param display_name: The user-defined name (display name) of the workbook.
-    :type display_name: str
-    :param serialized_data: Configuration of this particular workbook. Configuration data is a
+    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
+     "shared".
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar display_name: The user-defined name (display name) of the workbook.
+    :vartype display_name: str
+    :ivar serialized_data: Configuration of this particular workbook. Configuration data is a
      string containing valid JSON.
-    :type serialized_data: str
-    :param category: Workbook category, as defined by the user at creation time.
-    :type category: str
-    :param tags_properties_tags: A list of 0 or more tags that are associated with this workbook
+    :vartype serialized_data: str
+    :ivar category: Workbook category, as defined by the user at creation time.
+    :vartype category: str
+    :ivar tags_properties_tags: A list of 0 or more tags that are associated with this workbook
      definition.
-    :type tags_properties_tags: list[str]
-    :param description: The description of the workbook.
-    :type description: str
-    :param revision: The unique revision id for this workbook definition.
-    :type revision: str
+    :vartype tags_properties_tags: list[str]
+    :ivar description: The description of the workbook.
+    :vartype description: str
+    :ivar revision: The unique revision id for this workbook definition.
+    :vartype revision: str
     """
 
     _attribute_map = {
@@ -625,6 +739,27 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
         revision: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
+         "user", "shared".
+        :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword display_name: The user-defined name (display name) of the workbook.
+        :paramtype display_name: str
+        :keyword serialized_data: Configuration of this particular workbook. Configuration data is a
+         string containing valid JSON.
+        :paramtype serialized_data: str
+        :keyword category: Workbook category, as defined by the user at creation time.
+        :paramtype category: str
+        :keyword tags_properties_tags: A list of 0 or more tags that are associated with this workbook
+         definition.
+        :paramtype tags_properties_tags: list[str]
+        :keyword description: The description of the workbook.
+        :paramtype description: str
+        :keyword revision: The unique revision id for this workbook definition.
+        :paramtype revision: str
+        """
         super(WorkbookUpdateParameters, self).__init__(**kwargs)
         self.kind = kind
         self.tags = tags

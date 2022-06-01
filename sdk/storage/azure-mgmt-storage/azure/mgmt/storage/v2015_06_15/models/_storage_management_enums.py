@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status indicating whether the primary location of the storage account is available or
     unavailable.
     """
@@ -34,7 +19,7 @@ class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
-class AccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The sku name. Required for account creation; optional for update. Note that in older versions,
     sku name was called accountType.
     """
@@ -45,7 +30,7 @@ class AccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_RAGRS = "Standard_RAGRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the storage account at the time the operation was called.
     """
 
@@ -53,7 +38,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason that a storage account name could not be used. The Reason element is only returned
     if NameAvailable is false.
     """
@@ -61,7 +46,7 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The unit of measurement.
     """
 

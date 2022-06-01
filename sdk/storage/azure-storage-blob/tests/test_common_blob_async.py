@@ -166,7 +166,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         # wait until the policy has gone into effect
         if self.is_live:
-            time.sleep(30)
+            time.sleep(35)
 
     async def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
@@ -286,6 +286,31 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         # Assert
         self.assertEqual(data, raw_data*2)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_pipe(self, storage_account_name, storage_account_key):
+        # Different OSs have different behavior, so this can't be recorded.
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b"Hello World"
+
+        reader_fd, writer_fd = os.pipe()
+
+        with os.fdopen(writer_fd, 'wb') as writer:
+            writer.write(data)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with os.fdopen(reader_fd, mode='rb') as reader:
+            await blob.upload_blob(data=reader, overwrite=True)
+
+        blob_data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(data, blob_data)
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -767,10 +792,13 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_no_server_encryption(self, storage_account_name, storage_account_key):
-        pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
+    async def test_no_server_encryption_async(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account_name, storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
+        self.byte_data = self.get_random_bytes(1024)
+        await self.bsc.create_container(self.container_name)
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -2018,6 +2046,30 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_token_credential_blob(self, storage_account_name, storage_account_key):
+        # Setup
+        container_name = self._get_container_reference()
+        blob_name = self._get_blob_reference()
+        blob_data = b'Helloworld'
+        token_credential = self.generate_oauth_token()
+
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container = service.get_container_client(container_name)
+
+        # Act / Assert
+        try:
+            await container.create_container()
+            blob = await container.upload_blob(blob_name, blob_data)
+
+            data = await (await blob.download_blob()).readall()
+            self.assertEqual(blob_data, data)
+
+            await blob.delete_blob()
+        finally:
+            await container.delete_container()
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test

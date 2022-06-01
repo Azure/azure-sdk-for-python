@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
+from typing import Any, MutableMapping
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -80,15 +81,18 @@ def _convert_to_isoformat(date_time):
     deserialized = deserialized.replace(tzinfo=tzinfo)
     return deserialized
 
-def _case_insensitive_dict(*args, **kwargs):
-    """Return a case-insensitive dict from a structure that a dict would have accepted.
+def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
+    """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
-    Rational is I don't want to re-implement this, but I don't want
-    to assume "requests" or "aiohttp" are installed either.
-    So I use the one from "requests" or the one from "aiohttp" ("multidict")
-    If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
-    we can add "multidict" as a dependency or re-implement our own.
+    :return: A case-insensitive mutable mapping object.
+    :rtype: ~collections.abc.MutableMapping
     """
+
+    # Rational is I don't want to re-implement this, but I don't want
+    # to assume "requests" or "aiohttp" are installed either.
+    # So I use the one from "requests" or the one from "aiohttp" ("multidict")
+    # If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
+    # we can add "multidict" as a dependency or re-implement our own.
     try:
         from requests.structures import CaseInsensitiveDict
 

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,7 +5,6 @@
 
 import datetime
 from typing import Union, Optional, List
-import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -136,7 +134,7 @@ def convert_datetime(date_time):
     # type: (Union[str, datetime.datetime]) -> datetime.datetime
     if isinstance(date_time, datetime.datetime):
         return date_time
-    if isinstance(date_time, six.string_types):
+    if isinstance(date_time, str):
         try:
             return datetime.datetime.strptime(date_time, "%Y-%m-%d")
         except ValueError:

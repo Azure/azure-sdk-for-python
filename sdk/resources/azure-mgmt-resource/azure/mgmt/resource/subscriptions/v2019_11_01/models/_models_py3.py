@@ -14,16 +14,52 @@ import msrest.serialization
 from ._subscription_client_enums import *
 
 
+class AvailabilityZonePeers(msrest.serialization.Model):
+    """List of availability zones shared by the subscriptions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar availability_zone: The availabilityZone.
+    :vartype availability_zone: str
+    :ivar peers: Details of shared availability zone.
+    :vartype peers: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Peers]
+    """
+
+    _validation = {
+        'availability_zone': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'availability_zone': {'key': 'availabilityZone', 'type': 'str'},
+        'peers': {'key': 'peers', 'type': '[Peers]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        peers: Optional[List["Peers"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword peers: Details of shared availability zone.
+        :paramtype peers: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Peers]
+        """
+        super(AvailabilityZonePeers, self).__init__(**kwargs)
+        self.availability_zone = None
+        self.peers = peers
+
+
 class CheckResourceNameResult(msrest.serialization.Model):
     """Resource Name valid if not a reserved word, does not contain a reserved word and does not start with a reserved word.
 
-    :param name: Name of Resource.
-    :type name: str
-    :param type: Type of Resource.
-    :type type: str
-    :param status: Is the resource name Allowed or Reserved. Possible values include: "Allowed",
+    :ivar name: Name of Resource.
+    :vartype name: str
+    :ivar type: Type of Resource.
+    :vartype type: str
+    :ivar status: Is the resource name Allowed or Reserved. Possible values include: "Allowed",
      "Reserved".
-    :type status: str or ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ResourceNameStatus
+    :vartype status: str or
+     ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ResourceNameStatus
     """
 
     _attribute_map = {
@@ -40,19 +76,137 @@ class CheckResourceNameResult(msrest.serialization.Model):
         status: Optional[Union[str, "ResourceNameStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of Resource.
+        :paramtype name: str
+        :keyword type: Type of Resource.
+        :paramtype type: str
+        :keyword status: Is the resource name Allowed or Reserved. Possible values include: "Allowed",
+         "Reserved".
+        :paramtype status: str or
+         ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ResourceNameStatus
+        """
         super(CheckResourceNameResult, self).__init__(**kwargs)
         self.name = name
         self.type = type
         self.status = status
 
 
+class CheckZonePeersRequest(msrest.serialization.Model):
+    """Check zone peers request parameters.
+
+    :ivar location: The Microsoft location.
+    :vartype location: str
+    :ivar subscription_ids: The peer Microsoft Azure subscription ID.
+    :vartype subscription_ids: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'subscription_ids': {'key': 'subscriptionIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        subscription_ids: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The Microsoft location.
+        :paramtype location: str
+        :keyword subscription_ids: The peer Microsoft Azure subscription ID.
+        :paramtype subscription_ids: list[str]
+        """
+        super(CheckZonePeersRequest, self).__init__(**kwargs)
+        self.location = location
+        self.subscription_ids = subscription_ids
+
+
+class CheckZonePeersResult(msrest.serialization.Model):
+    """Result of the Check zone peers operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar subscription_id: The subscription ID.
+    :vartype subscription_id: str
+    :ivar location: the location of the subscription.
+    :vartype location: str
+    :ivar availability_zone_peers: The Availability Zones shared by the subscriptions.
+    :vartype availability_zone_peers:
+     list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.AvailabilityZonePeers]
+    """
+
+    _validation = {
+        'subscription_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'availability_zone_peers': {'key': 'availabilityZonePeers', 'type': '[AvailabilityZonePeers]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        availability_zone_peers: Optional[List["AvailabilityZonePeers"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: the location of the subscription.
+        :paramtype location: str
+        :keyword availability_zone_peers: The Availability Zones shared by the subscriptions.
+        :paramtype availability_zone_peers:
+         list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.AvailabilityZonePeers]
+        """
+        super(CheckZonePeersResult, self).__init__(**kwargs)
+        self.subscription_id = None
+        self.location = location
+        self.availability_zone_peers = availability_zone_peers
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
 class ErrorDefinition(msrest.serialization.Model):
     """Error description and code explaining why resource name is invalid.
 
-    :param message: Description of the error.
-    :type message: str
-    :param code: Code of the error.
-    :type code: str
+    :ivar message: Description of the error.
+    :vartype message: str
+    :ivar code: Code of the error.
+    :vartype code: str
     """
 
     _attribute_map = {
@@ -67,16 +221,95 @@ class ErrorDefinition(msrest.serialization.Model):
         code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message: Description of the error.
+        :paramtype message: str
+        :keyword code: Code of the error.
+        :paramtype code: str
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.message = message
         self.code = code
 
 
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
 class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorDetail"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorDetail
+        """
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated(msrest.serialization.Model):
     """Error response.
 
-    :param error: The error details.
-    :type error: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorDefinition
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -89,7 +322,11 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDefinition"] = None,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ErrorDefinition
+        """
+        super(ErrorResponseAutoGenerated, self).__init__(**kwargs)
         self.error = error
 
 
@@ -109,8 +346,8 @@ class Location(msrest.serialization.Model):
     :vartype display_name: str
     :ivar regional_display_name: The display name of the location and its region.
     :vartype regional_display_name: str
-    :param metadata: Metadata of the location, such as lat/long, paired region, and others.
-    :type metadata: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.LocationMetadata
+    :ivar metadata: Metadata of the location, such as lat/long, paired region, and others.
+    :vartype metadata: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.LocationMetadata
     """
 
     _validation = {
@@ -136,6 +373,10 @@ class Location(msrest.serialization.Model):
         metadata: Optional["LocationMetadata"] = None,
         **kwargs
     ):
+        """
+        :keyword metadata: Metadata of the location, such as lat/long, paired region, and others.
+        :paramtype metadata: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.LocationMetadata
+        """
         super(Location, self).__init__(**kwargs)
         self.id = None
         self.subscription_id = None
@@ -148,8 +389,8 @@ class Location(msrest.serialization.Model):
 class LocationListResult(msrest.serialization.Model):
     """Location list operation response.
 
-    :param value: An array of locations.
-    :type value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Location]
+    :ivar value: An array of locations.
+    :vartype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Location]
     """
 
     _attribute_map = {
@@ -162,6 +403,10 @@ class LocationListResult(msrest.serialization.Model):
         value: Optional[List["Location"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of locations.
+        :paramtype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Location]
+        """
         super(LocationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -185,8 +430,9 @@ class LocationMetadata(msrest.serialization.Model):
     :vartype latitude: str
     :ivar physical_location: The physical location of the Azure location.
     :vartype physical_location: str
-    :param paired_region: The regions paired to this region.
-    :type paired_region: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.PairedRegion]
+    :ivar paired_region: The regions paired to this region.
+    :vartype paired_region:
+     list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.PairedRegion]
     """
 
     _validation = {
@@ -214,6 +460,11 @@ class LocationMetadata(msrest.serialization.Model):
         paired_region: Optional[List["PairedRegion"]] = None,
         **kwargs
     ):
+        """
+        :keyword paired_region: The regions paired to this region.
+        :paramtype paired_region:
+         list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.PairedRegion]
+        """
         super(LocationMetadata, self).__init__(**kwargs)
         self.region_type = None
         self.region_category = None
@@ -245,6 +496,8 @@ class ManagedByTenant(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedByTenant, self).__init__(**kwargs)
         self.tenant_id = None
 
@@ -252,10 +505,10 @@ class ManagedByTenant(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Microsoft.Resources operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.OperationDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -270,6 +523,12 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -278,14 +537,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Resources.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.Resources.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -304,6 +563,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Resources.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -314,10 +583,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Microsoft.Resources operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Microsoft.Resources operations.
-    :type value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Microsoft.Resources operations.
+    :vartype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -332,6 +601,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Microsoft.Resources operations.
+        :paramtype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -367,10 +642,44 @@ class PairedRegion(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PairedRegion, self).__init__(**kwargs)
         self.name = None
         self.id = None
         self.subscription_id = None
+
+
+class Peers(msrest.serialization.Model):
+    """Information about shared availability zone.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar subscription_id: The subscription ID.
+    :vartype subscription_id: str
+    :ivar availability_zone: The availabilityZone.
+    :vartype availability_zone: str
+    """
+
+    _validation = {
+        'subscription_id': {'readonly': True},
+        'availability_zone': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'availability_zone': {'key': 'availabilityZone', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Peers, self).__init__(**kwargs)
+        self.subscription_id = None
+        self.availability_zone = None
 
 
 class ResourceName(msrest.serialization.Model):
@@ -378,10 +687,10 @@ class ResourceName(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the resource.
-    :type name: str
-    :param type: Required. The type of the resource.
-    :type type: str
+    :ivar name: Required. Name of the resource.
+    :vartype name: str
+    :ivar type: Required. The type of the resource.
+    :vartype type: str
     """
 
     _validation = {
@@ -401,6 +710,12 @@ class ResourceName(msrest.serialization.Model):
         type: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the resource.
+        :paramtype name: str
+        :keyword type: Required. The type of the resource.
+        :paramtype type: str
+        """
         super(ResourceName, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -423,18 +738,18 @@ class Subscription(msrest.serialization.Model):
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
      and Deleted. Possible values include: "Enabled", "Warned", "PastDue", "Disabled", "Deleted".
     :vartype state: str or ~azure.mgmt.resource.subscriptions.v2019_11_01.models.SubscriptionState
-    :param subscription_policies: The subscription policies.
-    :type subscription_policies:
+    :ivar subscription_policies: The subscription policies.
+    :vartype subscription_policies:
      ~azure.mgmt.resource.subscriptions.v2019_11_01.models.SubscriptionPolicies
-    :param authorization_source: The authorization source of the request. Valid values are one or
+    :ivar authorization_source: The authorization source of the request. Valid values are one or
      more combinations of Legacy, RoleBased, Bypassed, Direct and Management. For example, 'Legacy,
      RoleBased'.
-    :type authorization_source: str
-    :param managed_by_tenants: An array containing the tenants managing the subscription.
-    :type managed_by_tenants:
+    :vartype authorization_source: str
+    :ivar managed_by_tenants: An array containing the tenants managing the subscription.
+    :vartype managed_by_tenants:
      list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.ManagedByTenant]
-    :param tags: A set of tags. The tags attached to the subscription.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. The tags attached to the subscription.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -466,6 +781,20 @@ class Subscription(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword subscription_policies: The subscription policies.
+        :paramtype subscription_policies:
+         ~azure.mgmt.resource.subscriptions.v2019_11_01.models.SubscriptionPolicies
+        :keyword authorization_source: The authorization source of the request. Valid values are one or
+         more combinations of Legacy, RoleBased, Bypassed, Direct and Management. For example, 'Legacy,
+         RoleBased'.
+        :paramtype authorization_source: str
+        :keyword managed_by_tenants: An array containing the tenants managing the subscription.
+        :paramtype managed_by_tenants:
+         list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.ManagedByTenant]
+        :keyword tags: A set of tags. The tags attached to the subscription.
+        :paramtype tags: dict[str, str]
+        """
         super(Subscription, self).__init__(**kwargs)
         self.id = None
         self.subscription_id = None
@@ -483,10 +812,10 @@ class SubscriptionListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: An array of subscriptions.
-    :type value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Subscription]
-    :param next_link: Required. The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: An array of subscriptions.
+    :vartype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Subscription]
+    :ivar next_link: Required. The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -505,6 +834,12 @@ class SubscriptionListResult(msrest.serialization.Model):
         value: Optional[List["Subscription"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of subscriptions.
+        :paramtype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.Subscription]
+        :keyword next_link: Required. The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(SubscriptionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -543,6 +878,8 @@ class SubscriptionPolicies(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubscriptionPolicies, self).__init__(**kwargs)
         self.location_placement_id = None
         self.quota_id = None
@@ -597,6 +934,8 @@ class TenantIdDescription(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TenantIdDescription, self).__init__(**kwargs)
         self.id = None
         self.tenant_id = None
@@ -612,10 +951,10 @@ class TenantListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: An array of tenants.
-    :type value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.TenantIdDescription]
-    :param next_link: Required. The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of tenants.
+    :vartype value: list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.TenantIdDescription]
+    :ivar next_link: Required. The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -634,6 +973,13 @@ class TenantListResult(msrest.serialization.Model):
         value: Optional[List["TenantIdDescription"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of tenants.
+        :paramtype value:
+         list[~azure.mgmt.resource.subscriptions.v2019_11_01.models.TenantIdDescription]
+        :keyword next_link: Required. The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(TenantListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

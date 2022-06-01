@@ -14,8 +14,6 @@ Example to show managing subscription entities under a ServiceBus Namespace, inc
     - List subscriptions under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient

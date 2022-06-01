@@ -3,6 +3,7 @@ import json
 import os
 import re
 import logging
+import urllib.parse
 
 from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
 from azure.devops.v6_0.pipelines import models
@@ -75,7 +76,7 @@ def _get_pkname_and_readme_link(rest_repo, link, issue_info):
             
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
-            contents_url = pr_changed_file.contents_url
+            contents_url = urllib.parse.unquote(pr_changed_file.contents_url)
             if '/resource-manager' in contents_url:
                 try:
                     pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])
@@ -148,7 +149,7 @@ def get_pipeline_url(python_piplines, output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
+def run_pipeline(issue_link, pipeline_url, spec_readme):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -160,15 +161,19 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
         },
         "variables": {
             "BASE_BRANCH": {
-                "value": f"{sdk_issue_object.head.label}",
+                "value": "",
                 "isSecret": False
             },
             "ISSUE_LINK": {
-                "value": f"{issue_link}",
+                "value": issue_link,
                 "isSecret": False
             },
             "PIPELINE_LINK": {
-                "value": f"{pipeline_url}",
+                "value": pipeline_url,
+                "isSecret": False
+            },
+            "SPEC_README": {
+                "value": spec_readme,
                 "isSecret": False
             }
         }
@@ -181,7 +186,7 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
     credentials = BasicAuthentication('', personal_access_token)
     run_parameters = models.RunPipelineParameters(**paramaters)
     client = PipelinesClient(base_url=organization_url, creds=credentials)
-    result = client.run_pipeline(project='internal',pipeline_id=2500,run_parameters=run_parameters)
+    result = client.run_pipeline(project='internal', pipeline_id=2500, run_parameters=run_parameters)
     if result.state == 'inProgress':
         return True
     else:

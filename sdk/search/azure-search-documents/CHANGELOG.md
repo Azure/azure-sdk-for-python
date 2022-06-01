@@ -1,16 +1,30 @@
 # Release History
 
-## 11.3.0b7 (Unreleased)
+## 11.3.0b9 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
 
 ### Other Changes
 
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+## 11.3.0b8 (2022-03-08)
+
+### Features Added
+- Added support to create, update and delete aliases via the `SearchIndexClient`.
+
+## 11.3.0b7 (2022-02-08)
+
+### Features Added
+
+- Support for [`AzureMachineLearningSkill`](https://docs.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://docs.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://docs.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 11.3.0b6 (2021-11-19)
 

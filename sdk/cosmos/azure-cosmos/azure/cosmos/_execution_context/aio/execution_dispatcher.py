@@ -70,7 +70,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 query_to_use = self._query if self._query is not None else "Select * from root r"
                 query_execution_info = _PartitionedQueryExecutionInfo(await self._client._GetQueryPlanThroughGateway
                                                                       (query_to_use, self._resource_link))
-                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+                self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
 

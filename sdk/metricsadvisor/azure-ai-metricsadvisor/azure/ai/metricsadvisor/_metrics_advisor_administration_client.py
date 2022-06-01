@@ -155,7 +155,7 @@ DATA_FEED_PATCH = {
 
 class MetricsAdvisorAdministrationClient(
     object
-):  # pylint:disable=too-many-public-methods
+):  # pylint:disable=too-many-public-methods, client-accepts-api-version-keyword
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -640,7 +640,7 @@ class MetricsAdvisorAdministrationClient(
 
     @distributed_trace
     def delete_alert_configuration(self, *alert_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete an anomaly alert configuration by its ID.
 
         :param str alert_configuration_id: anomaly alert configuration unique id.
@@ -666,7 +666,7 @@ class MetricsAdvisorAdministrationClient(
 
     @distributed_trace
     def delete_detection_configuration(self, *detection_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete an anomaly detection configuration by its ID.
 
         :param str detection_configuration_id: anomaly detection configuration unique id.
@@ -692,7 +692,7 @@ class MetricsAdvisorAdministrationClient(
 
     @distributed_trace
     def delete_data_feed(self, *data_feed_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete a data feed by its ID.
 
         :param str data_feed_id: The data feed unique id.
@@ -716,7 +716,7 @@ class MetricsAdvisorAdministrationClient(
 
     @distributed_trace
     def delete_hook(self, *hook_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete a web or email hook by its ID.
 
         :param str hook_id: Hook unique ID.
@@ -844,6 +844,7 @@ class MetricsAdvisorAdministrationClient(
             data_feed_patch = construct_data_feed_dict(update)
 
         else:
+            data_feed = cast(DataFeed, data_feed)
             data_feed_id = data_feed.id
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(
@@ -908,6 +909,7 @@ class MetricsAdvisorAdministrationClient(
             alert_configuration_patch = construct_alert_config_dict(update)
 
         else:
+            alert_configuration = cast(AnomalyAlertConfiguration, alert_configuration)
             alert_configuration_id = alert_configuration.id
             alert_configuration_patch = alert_configuration._to_generated_patch(
                 name=update.pop("name", None),
@@ -985,6 +987,7 @@ class MetricsAdvisorAdministrationClient(
             detection_config_patch = construct_detection_config_dict(update)
 
         else:
+            detection_configuration = cast(AnomalyDetectionConfiguration, detection_configuration)
             detection_configuration_id = detection_configuration.id
             detection_config_patch = detection_configuration._to_generated_patch(
                 name=update.pop("name", None),
@@ -1071,6 +1074,7 @@ class MetricsAdvisorAdministrationClient(
             hook_patch = construct_hook_dict(update, hook_type)
 
         else:
+            hook = cast(Union[EmailNotificationHook, WebNotificationHook], hook)
             hook_id = hook.id
             if hook.hook_type == "Email":
                 hook = cast(EmailNotificationHook, hook)
@@ -1470,7 +1474,7 @@ class MetricsAdvisorAdministrationClient(
 
     @distributed_trace
     def delete_datasource_credential(self, *credential_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete a datasource credential by its ID.
 
         :param str credential_id: Datasource credential unique ID.

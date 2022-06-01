@@ -20,9 +20,12 @@
 #SOFTWARE.
 
 import unittest
+import uuid
+
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import PartitionKey
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos._routing import routing_range as routing_range
 import test_config
@@ -55,13 +58,18 @@ class RoutingMapEndToEndTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client).container_link
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
+        cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_container = cls.created_database.create_container("routing_map_tests_"+str(uuid.uuid4()), PartitionKey(path="/pk"))
+        cls.collection_link = cls.created_container.container_link
 
     def test_read_partition_key_ranges(self):
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         #"the number of expected partition ranges returned from the emulator is 5."
-        self.assertEqual(5, len(partition_key_ranges))
+        if self.host == 'https://localhost:8081/':
+            self.assertEqual(5, len(partition_key_ranges))
+        else:
+            self.assertEqual(1, len(partition_key_ranges))
         
     def test_routing_map_provider(self):
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))

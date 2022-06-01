@@ -18,14 +18,14 @@ from .._generated.aio._monitor_query_client import (
     MonitorQueryClient,
 )
 from .._models import MetricsQueryResult, MetricDefinition, MetricNamespace
-from ._helpers_asyc import get_metrics_authentication_policy
+from ._helpers_async import get_metrics_authentication_policy
 from .._helpers import construct_iso8601
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MetricsQueryClient(object):
+class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient
 
     :param credential: The credential to authenticate the client

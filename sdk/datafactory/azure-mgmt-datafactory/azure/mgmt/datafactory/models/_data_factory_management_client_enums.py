@@ -107,6 +107,12 @@ class CosmosDbServicePrincipalCredentialType(with_metaclass(CaseInsensitiveEnumM
     SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
     SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
+class CredentialReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Credential reference type.
+    """
+
+    CREDENTIAL_REFERENCE = "CredentialReference"
+
 class DataFlowComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Compute type of the cluster which will execute data flow job.
     """
@@ -122,6 +128,12 @@ class DataFlowDebugCommandType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     EXECUTE_PREVIEW_QUERY = "executePreviewQuery"
     EXECUTE_STATISTICS_QUERY = "executeStatisticsQuery"
     EXECUTE_EXPRESSION_QUERY = "executeExpressionQuery"
+
+class DataFlowReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Data flow reference type.
+    """
+
+    DATA_FLOW_REFERENCE = "DataFlowReference"
 
 class DatasetCompressionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """All available compression levels.
@@ -412,6 +424,12 @@ class ManagedIntegrationRuntimeNodeStatus(with_metaclass(CaseInsensitiveEnumMeta
     RECYCLING = "Recycling"
     UNAVAILABLE = "Unavailable"
 
+class ManagedVirtualNetworkReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Managed Virtual Network reference type.
+    """
+
+    MANAGED_VIRTUAL_NETWORK_REFERENCE = "ManagedVirtualNetworkReference"
+
 class MongoDbAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the MongoDB database.
     """
@@ -621,6 +639,45 @@ class SapTablePartitionOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     PARTITION_ON_CALENDAR_DATE = "PartitionOnCalendarDate"
     PARTITION_ON_TIME = "PartitionOnTime"
 
+class ScriptActivityLogDestination(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The destination of logs. Type: string.
+    """
+
+    ACTIVITY_OUTPUT = "ActivityOutput"
+    EXTERNAL_STORE = "ExternalStore"
+
+class ScriptActivityParameterDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The direction of the parameter.
+    """
+
+    INPUT = "Input"
+    OUTPUT = "Output"
+    INPUT_OUTPUT = "InputOutput"
+
+class ScriptActivityParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the parameter.
+    """
+
+    BOOLEAN = "Boolean"
+    DATE_TIME = "DateTime"
+    DATE_TIME_OFFSET = "DateTimeOffset"
+    DECIMAL = "Decimal"
+    DOUBLE = "Double"
+    GUID = "Guid"
+    INT16 = "Int16"
+    INT32 = "Int32"
+    INT64 = "Int64"
+    SINGLE = "Single"
+    STRING = "String"
+    TIMESPAN = "Timespan"
+
+class ScriptType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the query. Type: string.
+    """
+
+    QUERY = "Query"
+    NON_QUERY = "NonQuery"
+
 class SelfHostedIntegrationRuntimeNodeStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the integration runtime node.
     """
@@ -755,6 +812,13 @@ class SybaseAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     BASIC = "Basic"
     WINDOWS = "Windows"
 
+class TeamDeskAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The authentication type to use.
+    """
+
+    BASIC = "Basic"
+    TOKEN = "Token"
+
 class TeradataAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """AuthenticationType to be used for connection.
     """
@@ -769,6 +833,12 @@ class TeradataPartitionOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     NONE = "None"
     HASH = "Hash"
     DYNAMIC_RANGE = "DynamicRange"
+
+class TriggerReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Trigger reference type.
+    """
+
+    TRIGGER_REFERENCE = "TriggerReference"
 
 class TriggerRunStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Trigger run status.
@@ -824,3 +894,10 @@ class WebHookActivityMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     POST = "POST"
+
+class ZendeskAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The authentication type to use.
+    """
+
+    BASIC = "Basic"
+    TOKEN = "Token"

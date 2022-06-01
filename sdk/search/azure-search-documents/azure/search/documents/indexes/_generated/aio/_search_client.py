@@ -9,16 +9,18 @@
 from copy import deepcopy
 from typing import Any, Awaitable
 
+from msrest import Deserializer, Serializer
+
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import SearchClientConfiguration
-from .operations import DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
+from .operations import AliasesOperations, DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
 
-class SearchClient(SearchClientOperationsMixin):
-    """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
+class SearchClient(SearchClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+    """Client that can be used to manage and query indexes and documents, as well as manage other
+    resources, on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
     :vartype data_sources: azure.search.documents.indexes.aio.operations.DataSourcesOperations
@@ -30,6 +32,8 @@ class SearchClient(SearchClientOperationsMixin):
     :vartype synonym_maps: azure.search.documents.indexes.aio.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.search.documents.indexes.aio.operations.IndexesOperations
+    :ivar aliases: AliasesOperations operations
+    :vartype aliases: azure.search.documents.indexes.aio.operations.AliasesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
     :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
@@ -55,6 +59,7 @@ class SearchClient(SearchClientOperationsMixin):
         self.skillsets = SkillsetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.synonym_maps = SynonymMapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.aliases = AliasesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

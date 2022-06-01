@@ -53,20 +53,20 @@ try:
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
 
-# Send a text message to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all(message='hello, connection_string_reverse_proxy!', content_type='text/plain')
-    print('Successfully sent a JSON message')
-except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
-
-
-# Send a json message from a stream to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all(message=io.BytesIO(b'{ "hello": "connection_string_reverse_proxy" }'), content_type='application/octet-stream')
-    print('Successfully sent a JSON message')
-except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+# # Send a text message to everybody on the given hub...
+# try:
+#     # Raise an exception if the service rejected the call
+#     client.send_to_all(message='hello, connection_string_reverse_proxy!', content_type='text/plain')
+#     print('Successfully sent a JSON message')
+# except HttpResponseError as e:
+#     print('Failed to send JSON message: {}'.format(e.response.json()))
+#
+#
+# # Send a json message from a stream to everybody on the given hub...
+# try:
+#     # Raise an exception if the service rejected the call
+#     client.send_to_all(message=io.BytesIO(b'{ "hello": "connection_string_reverse_proxy" }'), content_type='application/octet-stream')
+#     print('Successfully sent a JSON message')
+# except HttpResponseError as e:
+#     print('Failed to send JSON message: {}'.format(e.response.json()))
 

@@ -13,7 +13,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Optional, List
+    from typing import Any, Dict, List, Optional, Union
     from datetime import datetime
     from . import _generated_models as _models
     from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
@@ -81,13 +81,16 @@ class KeyProperties(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
+        # pylint:disable=line-too-long
         # release_policy was added in 7.3-preview
         release_policy = None
-        if (hasattr(key_bundle, "release_policy") and
-            key_bundle.release_policy is not None):  # type: ignore[attr-defined]
+        if (
+            hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None  # type: ignore[attr-defined]
+        ):
             release_policy = KeyReleasePolicy(
-                data=key_bundle.release_policy.data,  # type: ignore[attr-defined]
-                content_type=key_bundle.release_policy.content_type  # type: ignore[attr-defined]
+                encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
+                content_type=key_bundle.release_policy.content_type,  # type: ignore[attr-defined]
+                immutable=key_bundle.release_policy.immutable,  # type: ignore[attr-defined]
             )
 
         return cls(
@@ -106,7 +109,7 @@ class KeyProperties(object):
             key_id=key_item.kid,  # type: ignore
             attributes=key_item.attributes,
             managed=key_item.managed,
-            tags=key_item.tags
+            tags=key_item.tags,
         )
 
     @property
@@ -222,10 +225,10 @@ class KeyProperties(object):
 
     @property
     def managed(self):
-        # type: () -> bool
-        """Returns whether the key's lifetime is managed by key vault
+        # type: () -> Optional[bool]
+        """Whether the key's lifetime is managed by Key Vault. If the key backs a certificate, this will be true.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._managed
 
@@ -234,7 +237,7 @@ class KeyProperties(object):
         # type: () -> Optional[bool]
         """Whether the private key can be exported
 
-        :rtype: bool
+        :rtype: bool or None
         """
         # exportable was added in 7.3-preview
         if self._attributes:
@@ -246,7 +249,7 @@ class KeyProperties(object):
         # type: () -> Optional[KeyReleasePolicy]
         """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
 
-        :rtype: ~azure.keyvault.keys.KeyReleasePolicy
+        :rtype: ~azure.keyvault.keys.KeyReleasePolicy or None
         """
         return self._release_policy
 
@@ -254,18 +257,21 @@ class KeyProperties(object):
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
 
-    :param data: Blob encoding the policy rules under which the key can be released.
-    :type data: bytes
+    :param bytes encoded_policy: The policy rules under which the key can be released. Encoded based on the
+        ``content_type``. For more information regarding release policy grammar, please refer to:
+        https://aka.ms/policygrammarkeys for Azure Key Vault; https://aka.ms/policygrammarmhsm for Azure Managed HSM.
 
-    :keyword content_type: Content type and version of the release policy. Defaults to "application/json; charset=utf-8"
-        if omitted.
-    :paramtype content_type: str
+    :keyword str content_type: Content type and version of the release policy. Defaults to "application/json;
+        charset=utf-8" if omitted.
+    :keyword bool immutable: Marks a release policy as immutable. An immutable release policy cannot be changed or
+        updated after being marked immutable. Release policies are mutable by default.
     """
 
-    def __init__(self, data, **kwargs):
+    def __init__(self, encoded_policy, **kwargs):
         # type: (bytes, **Any) -> None
-        self.encoded_policy = data
+        self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
+        self.immutable = kwargs.get("immutable", None)
 
 
 class ReleaseKeyResult(object):
@@ -285,12 +291,14 @@ class KeyRotationLifetimeAction(object):
     :param action: The action that will be executed.
     :type action: ~azure.keyvault.keys.KeyRotationPolicyAction or str
 
-    :keyword str time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
+    :keyword time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
-    :keyword str time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
+    :paramtype time_after_create: Optional[str]
+    :keyword time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
+    :paramtype time_before_expiry: Optional[str]
     """
 
     def __init__(self, action, **kwargs):
@@ -313,29 +321,35 @@ class KeyRotationLifetimeAction(object):
 class KeyRotationPolicy(object):
     """The key rotation policy that belongs to a key.
 
-    :ivar str id: The identifier of the key rotation policy.
+    :ivar id: The identifier of the key rotation policy.
+    :vartype id: Optional[str]
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
-    :type lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
-    :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO
-        8601 duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_
-        for more information on ISO 8601 durations.
+    :vartype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
+    :ivar expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
+        duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for
+        more information on ISO 8601 durations.
+    :vartype expires_in: Optional[str]
     :ivar created_on: When the policy was created, in UTC
-    :type created_on: ~datetime.datetime
+    :vartype created_on: Optional[~datetime.datetime]
     :ivar updated_on: When the policy was last updated, in UTC
-    :type updated_on: ~datetime.datetime
+    :vartype updated_on: Optional[~datetime.datetime]
     """
 
-    def __init__(self, policy_id, **kwargs):
-        # type: (str, **Any) -> None
-        self.id = policy_id
-        self.lifetime_actions = kwargs.get("lifetime_actions", None)
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        self.id = kwargs.get("policy_id", None)
+        self.lifetime_actions = kwargs.get("lifetime_actions", [])
         self.expires_in = kwargs.get("expires_in", None)
         self.created_on = kwargs.get("created_on", None)
         self.updated_on = kwargs.get("updated_on", None)
 
     @classmethod
     def _from_generated(cls, policy):
-        lifetime_actions = [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
+        lifetime_actions = (
+            []
+            if policy.lifetime_actions is None
+            else [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
+        )
         if policy.attributes:
             return cls(
                 policy_id=policy.id,
@@ -444,7 +458,7 @@ class KeyVaultKey(object):
 
     @property
     def key_type(self):
-        # type: () -> KeyType
+        # type: () -> Union[str, KeyType]
         """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
 
         :rtype: ~azure.keyvault.keys.KeyType or str
@@ -454,10 +468,10 @@ class KeyVaultKey(object):
 
     @property
     def key_operations(self):
-        # type: () -> List[KeyOperation]
+        # type: () -> List[Union[str, KeyOperation]]
         """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
 
-        :rtype: list[~azure.keyvault.keys.KeyOperation or str]
+        :rtype: List[~azure.keyvault.keys.KeyOperation or str]
         """
         # pylint:disable=no-member
         return self._key_material.key_ops  # type: ignore[attr-defined]

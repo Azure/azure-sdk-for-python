@@ -8,7 +8,7 @@ import datetime
 import functools
 import logging
 import warnings
-from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING
+from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING, cast
 
 import six
 
@@ -103,7 +103,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -194,6 +194,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
+        self._receive_context = asyncio.Event()
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
     # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
@@ -211,11 +212,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 original_timeout = self.receiver._handler._timeout
                 self.receiver._handler._timeout = self.max_wait_time * 1000
             try:
+                self.receiver._receive_context.set()
                 message = await self.receiver._inner_anext()
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self.receiver, links=links):
                     return message
             finally:
+                self.receiver._receive_context.clear()
                 if original_timeout:
                     try:
                         self.receiver._handler._timeout = original_timeout
@@ -236,10 +239,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 raise
 
     async def __anext__(self):
-        message = await self._inner_anext()
-        links = get_receive_links(message)
-        with receive_trace_context_manager(self, links=links):
-            return message
+        try:
+            self._receive_context.set()
+            message = await self._inner_anext()
+            links = get_receive_links(message)
+            with receive_trace_context_manager(self, links=links):
+                return message
+        finally:
+            self._receive_context.clear()
 
     async def _iter_next(self):
         await self._open()
@@ -280,7 +287,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -333,9 +340,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
-            keep_alive_interval=self._config.keep_alive,
+            # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
+            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
             shutdown_after_timeout=False,
         )
+        if self._prefetch_count == 1:
+            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
 
     async def _open(self):
         # pylint: disable=protected-access
@@ -360,66 +370,70 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
-        await self._open()
+        try:
+            self._receive_context.set()
+            await self._open()
 
-        amqp_receive_client = self._handler
-        received_messages_queue = amqp_receive_client._received_messages
-        max_message_count = max_message_count or self._prefetch_count
-        timeout_ms = (
-            1000 * (timeout or self._max_wait_time)
-            if (timeout or self._max_wait_time)
-            else 0
-        )
-        abs_timeout_ms = (
-            amqp_receive_client._counter.get_current_ms() + timeout_ms
-            if timeout_ms
-            else 0
-        )
-
-        batch = []  # type: List[Message]
-        while not received_messages_queue.empty() and len(batch) < max_message_count:
-            batch.append(received_messages_queue.get())
-            received_messages_queue.task_done()
-        if len(batch) >= max_message_count:
-            return [self._build_message(message) for message in batch]
-
-        # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
-        if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
-            link_credit_needed = max_message_count - len(batch)
-            await amqp_receive_client.message_handler.reset_link_credit_async(
-                link_credit_needed
+            amqp_receive_client = self._handler
+            received_messages_queue = amqp_receive_client._received_messages
+            max_message_count = max_message_count or self._prefetch_count
+            timeout_ms = (
+                1000 * (timeout or self._max_wait_time)
+                if (timeout or self._max_wait_time)
+                else 0
+            )
+            abs_timeout_ms = (
+                amqp_receive_client._counter.get_current_ms() + timeout_ms
+                if timeout_ms
+                else 0
             )
 
-        first_message_received = expired = False
-        receiving = True
-        while receiving and not expired and len(batch) < max_message_count:
-            while receiving and received_messages_queue.qsize() < max_message_count:
-                if (
-                    abs_timeout_ms
-                    and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
-                ):
-                    expired = True
-                    break
-                before = received_messages_queue.qsize()
-                receiving = await amqp_receive_client.do_work_async()
-                received = received_messages_queue.qsize() - before
-                if (
-                    not first_message_received
-                    and received_messages_queue.qsize() > 0
-                    and received > 0
-                ):
-                    # first message(s) received, continue receiving for some time
-                    first_message_received = True
-                    abs_timeout_ms = (
-                        amqp_receive_client._counter.get_current_ms()
-                        + self._further_pull_receive_timeout_ms
-                    )
-            while (
-                not received_messages_queue.empty() and len(batch) < max_message_count
-            ):
+            batch = []  # type: List[Message]
+            while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
-        return [self._build_message(message) for message in batch]
+            if len(batch) >= max_message_count:
+                return [self._build_message(message) for message in batch]
+
+            # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
+            if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
+                link_credit_needed = max_message_count - len(batch)
+                await amqp_receive_client.message_handler.reset_link_credit_async(
+                    link_credit_needed
+                )
+
+            first_message_received = expired = False
+            receiving = True
+            while receiving and not expired and len(batch) < max_message_count:
+                while receiving and received_messages_queue.qsize() < max_message_count:
+                    if (
+                        abs_timeout_ms
+                        and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
+                    ):
+                        expired = True
+                        break
+                    before = received_messages_queue.qsize()
+                    receiving = await amqp_receive_client.do_work_async()
+                    received = received_messages_queue.qsize() - before
+                    if (
+                        not first_message_received
+                        and received_messages_queue.qsize() > 0
+                        and received > 0
+                    ):
+                        # first message(s) received, continue receiving for some time
+                        first_message_received = True
+                        abs_timeout_ms = (
+                            amqp_receive_client._counter.get_current_ms()
+                            + self._further_pull_receive_timeout_ms
+                        )
+                while (
+                    not received_messages_queue.empty() and len(batch) < max_message_count
+                ):
+                    batch.append(received_messages_queue.get())
+                    received_messages_queue.task_done()
+            return [self._build_message(message) for message in batch]
+        finally:
+            self._receive_context.clear()
 
     async def _settle_message_with_retry(
         self,
@@ -678,6 +692,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
+        sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
         await self._open()

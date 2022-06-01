@@ -27,43 +27,48 @@
 
 import functools
 
-from typing import Awaitable, Callable, Dict, Optional, Any, TypeVar, overload
-
+from typing import Awaitable, Callable, Any, TypeVar, overload
+from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
+from . import SpanKind as _SpanKind
 from ..settings import settings
 
-
+P = ParamSpec("P")
 T = TypeVar("T")
 
 
 @overload
 def distributed_trace_async(
-    __func: Callable[..., Awaitable[T]]
-) -> Callable[..., Awaitable[T]]:
+    __func: Callable[P, Awaitable[T]]
+) -> Callable[P, Awaitable[T]]:
     pass
 
 
 @overload
 def distributed_trace_async(  # pylint:disable=function-redefined
-    **kwargs: Any  # pylint:disable=unused-argument
-) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
+    **kwargs: Any,  # pylint:disable=unused-argument
+) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     pass
 
 
 def distributed_trace_async(  # pylint:disable=function-redefined
-    __func: Callable[..., Awaitable[T]] = None, **kwargs: Any
+    __func: Callable[P, Awaitable[T]] = None, **kwargs: Any
 ):
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
 
     :param callable func: A function to decorate
-    :param str name_of_span: The span name to replace func name if necessary
+    :keyword name_of_span: The span name to replace func name if necessary
+    :paramtype name_of_span: str
+    :keyword kind: The kind of the span. INTERNAL by default.
+    :paramtype kind: ~azure.core.tracing.SpanKind
     """
     name_of_span = kwargs.pop("name_of_span", None)
     tracing_attributes = kwargs.pop("tracing_attributes", {})
+    kind = kwargs.pop("kind", _SpanKind.INTERNAL)
 
-    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
+    def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         @functools.wraps(func)
         async def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
             merge_span = kwargs.pop("merge_span", False)
@@ -79,7 +84,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
 
             with change_context(passed_in_parent):
                 name = name_of_span or get_function_and_class_name(func, *args)
-                with span_impl_type(name=name) as span:
+                with span_impl_type(name=name, kind=kind) as span:
                     for key, value in tracing_attributes.items():
                         span.add_attribute(key, value)
                     return await func(*args, **kwargs)

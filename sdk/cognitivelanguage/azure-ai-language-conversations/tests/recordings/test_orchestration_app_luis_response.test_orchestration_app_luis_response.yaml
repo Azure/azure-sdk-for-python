@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: '{"kind": "Conversation", "analysisInput": {"conversationItem": {"participantId":
+      "1", "id": "1", "modality": "text", "language": "en", "text": "Reserve a table
+      for 2 at the Italian restaurant"}, "isLoggingEnabled": false}, "parameters":
+      {"projectName": "OrchScriptDeployed1", "deploymentName": "dep_test", "verbose":
+      true, "stringIndexType": "UnicodeCodePoint"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '364'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: POST
+    uri: https://languagesdktest.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2022-05-15-preview
+  response:
+    body:
+      string: '{"kind":"ConversationResult","result":{"query":"Reserve a table for
+        2 at the Italian restaurant","prediction":{"topIntent":"RestaurantIntent","projectKind":"Orchestration","intents":{"RestaurantIntent":{"confidenceScore":0.940697,"targetProjectKind":"Luis","result":{"query":"Reserve
+        a table for 2 at the Italian restaurant","prediction":{"topIntent":"Reserve","intents":{"Reserve":{"score":0.9980588},"Reject":{"score":0.0063590785},"FindReservationEntry":{"score":0.005097165},"Confirm":{"score":0.0044939914},"DeleteReservation":{"score":0.0022345681},"FindReservationWhen":{"score":0.0016679561},"FindReservationWhere":{"score":0.00022148465},"None":{"score":0.00016065614},"ChangeReservation":{"score":9.267964E-05}},"entities":{"NumberPeople":["2"],"Cuisine":["Italian"],"$instance":{"NumberPeople":[{"type":"NumberPeople","text":"2","startIndex":20,"length":1,"score":0.99470425,"modelTypeId":1,"modelType":"Entity
+        Extractor","recognitionSources":["model"]}],"Cuisine":[{"type":"Cuisine","text":"Italian","startIndex":29,"length":7,"score":0.9961355,"modelTypeId":1,"modelType":"Entity
+        Extractor","recognitionSources":["model"]}]}}}}},"ChitChat-QnA":{"confidenceScore":0.61326313,"targetProjectKind":"QuestionAnswering"},"EmailIntent":{"confidenceScore":0.2647618,"targetProjectKind":"Conversation"},"None":{"confidenceScore":0.24316412,"targetProjectKind":"NonLinked"}}}}}'
+    headers:
+      apim-request-id:
+      - 3ca95ad7-541c-4ec6-8e1e-995d692b449d
+      cache-control:
+      - no-store, proxy-revalidate, no-cache, max-age=0, private
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.Language.OrchestrationWorkflow.Prediction=1
+      date:
+      - Thu, 26 May 2022 16:35:19 GMT
+      pragma:
+      - no-cache
+      request-id:
+      - 3ca95ad7-541c-4ec6-8e1e-995d692b449d
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '206'
+    status:
+      code: 200
+      message: OK
+version: 1

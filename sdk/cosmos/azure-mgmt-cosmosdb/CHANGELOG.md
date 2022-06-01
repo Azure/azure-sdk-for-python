@@ -1,5 +1,127 @@
 # Release History
 
+## 7.0.0b6 (2022-05-23)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+
+**Breaking changes**
+
+  - Removed operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+
+## 7.0.0b5 (2022-04-28)
+
+**Features**
+
+  - Added operation DataTransferJobsOperations.cancel
+  - Added operation DataTransferJobsOperations.pause
+  - Added operation DataTransferJobsOperations.resume
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Model DataTransferJobGetResults has a new parameter processed_count
+  - Model DataTransferJobGetResults has a new parameter total_count
+  - Model DataTransferJobProperties has a new parameter processed_count
+  - Model DataTransferJobProperties has a new parameter total_count
+
+**Breaking changes**
+
+  - Model DataTransferJobGetResults no longer has parameter percentage_complete
+  - Model DataTransferJobProperties no longer has parameter percentage_complete
+
+## 7.0.0b4 (2022-04-14)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model KeyWrapMetadata has a new parameter algorithm
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+
+## 7.0.0b3 (2022-02-18)
+
+**Features**
+
+  - Added operation CassandraClustersOperations.get_backup
+  - Added operation CassandraClustersOperations.list_backups
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation GremlinResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.list_mongo_role_definitions
+  - Added operation MongoDBResourcesOperations.list_mongo_user_definitions
+  - Added operation SqlResourcesOperations.begin_create_update_client_encryption_key
+  - Added operation SqlResourcesOperations.get_client_encryption_key
+  - Added operation SqlResourcesOperations.list_client_encryption_keys
+  - Added operation TableResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group DataTransferJobsOperations
+  - Added operation group GraphResourcesOperations
+  - Added operation group RestorableGremlinDatabasesOperations
+  - Added operation group RestorableGremlinGraphsOperations
+  - Added operation group RestorableGremlinResourcesOperations
+  - Added operation group RestorableTableResourcesOperations
+  - Added operation group RestorableTablesOperations
+  - Added operation group ServiceOperations
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model DataCenterResourceProperties has a new parameter authentication_method_ldap_properties
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_materialized_views
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountGetResults has a new parameter enable_materialized_views
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_materialized_views
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model LocationProperties has a new parameter status
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model RestoreParameters has a new parameter gremlin_databases_to_restore
+  - Model RestoreParameters has a new parameter tables_to_restore
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+
+**Breaking changes**
+
+  - Operation RestorableMongodbCollectionsOperations.list has a new signature
+  - Operation RestorableMongodbCollectionsOperations.list has a new signature
+
 ## 7.0.0b2 (2021-10-26)
 
 **Features**

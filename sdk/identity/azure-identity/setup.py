@@ -52,7 +52,7 @@ setup(
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -76,7 +76,7 @@ setup(
         "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.5",
         "msal<2.0.0,>=1.12.0",
-        "msal-extensions~=0.3.0",
+        "msal-extensions<2.0.0,>=0.3.0",
         "six>=1.12.0",
     ],
 )

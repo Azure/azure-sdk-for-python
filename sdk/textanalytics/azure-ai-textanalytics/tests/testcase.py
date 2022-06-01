@@ -22,19 +22,15 @@ from azure.ai.textanalytics import (
 from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
 
 
+def is_public_cloud():
+    return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
+
+
 TextAnalyticsPreparer = functools.partial(
     PowerShellPreparer,
     'textanalytics',
     textanalytics_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     textanalytics_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    textanalytics_single_category_classify_project_name="single_category_classify_project_name",
-    textanalytics_single_category_classify_deployment_name="single_category_classify_deployment_name",
-    textanalytics_multi_category_classify_project_name="multi_category_classify_project_name",
-    textanalytics_multi_category_classify_deployment_name="multi_category_classify_deployment_name",
-    textanalytics_custom_entities_project_name="custom_entities_project_name",
-    textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
 )
 
 

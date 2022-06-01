@@ -1,7 +1,7 @@
 # Azure Document Translation client library for Python
 
-Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages
-and dialects while preserving document structure and data format. Use the client library for Document Translation to:
+Azure Cognitive Services Document Translation is a cloud service that can be used to translate multiple and complex documents across languages and dialects while preserving original document structure and data format.
+Use the client library for Document Translation to:
 
 * Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice.
 * Check the translation status and progress of each document in the translation operation.
@@ -189,6 +189,7 @@ poller = document_translation_client.begin_translation(my_input)
 
 > Note: the target_url for each target language must be unique.
 
+To translate documents under a folder, or only translate certain documents, see [sample_begin_translation_with_filters.py][sample_begin_translation_with_filters].
 See the service documentation for all [supported languages][supported_languages].
 
 ### Long-Running Operations
@@ -210,7 +211,7 @@ The following section provides several code snippets covering some of the most c
 * [List translation operations](#list-translation-operations "List Translation Operations")
 
 ### Translate your documents
-Translate the documents in your source container to the target container.
+Translate all the documents in your source container to the target container. To translate documents under a folder, or only translate certain documents, see [sample_begin_translation_with_filters.py][sample_begin_translation_with_filters].
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -227,24 +228,24 @@ poller = document_translation_client.begin_translation(source_container_sas_url_
 
 result = poller.result()
 
-print("Status: {}".format(poller.status()))
-print("Created on: {}".format(poller.details.created_on))
-print("Last updated on: {}".format(poller.details.last_updated_on))
-print("Total number of translations on documents: {}".format(poller.details.documents_total_count))
+print(f"Status: {poller.status()}")
+print(f"Created on: {poller.details.created_on}")
+print(f"Last updated on: {poller.details.last_updated_on}")
+print(f"Total number of translations on documents: {poller.details.documents_total_count}")
 
 print("\nOf total documents...")
-print("{} failed".format(poller.details.documents_failed_count))
-print("{} succeeded".format(poller.details.documents_succeeded_count))
+print(f"{poller.details.documents_failed_count} failed")
+print(f"{poller.details.documents_succeeded_count} succeeded")
 
 for document in result:
-    print("Document ID: {}".format(document.id))
-    print("Document status: {}".format(document.status))
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
     if document.status == "Succeeded":
-        print("Source document location: {}".format(document.source_document_url))
-        print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translated_to))
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
     else:
-        print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
 
 ### Translate multiple inputs
@@ -285,14 +286,14 @@ poller = document_translation_client.begin_translation(
 result = poller.result()
 
 for document in result:
-    print("Document ID: {}".format(document.id))
-    print("Document status: {}".format(document.status))
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
     if document.status == "Succeeded":
-        print("Source document location: {}".format(document.source_document_url))
-        print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translated_to))
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
     else:
-        print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
 
 ### List translation operations
@@ -310,17 +311,17 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 operations = document_translation_client.list_translation_statuses()  # type: ItemPaged[TranslationStatus]
 
 for operation in operations:
-    print("\nID: {}".format(operation.id))
-    print("Status: {}".format(operation.status))
-    print("Created on: {}".format(operation.created_on))
-    print("Last updated on: {}".format(operation.last_updated_on))
-    print("Total number of translations on documents: {}".format(operation.documents_total_count))
-    print("Total number of characters charged: {}".format(operation.total_characters_charged))
+    print(f"\nID: {operation.id}")
+    print(f"Status: {operation.status}")
+    print(f"Created on: {operation.created_on}")
+    print(f"Last updated on: {operation.last_updated_on}")
+    print(f"Total number of translations on documents: {operation.documents_total_count}")
+    print(f"Total number of characters charged: {operation.total_characters_charged}")
 
     print("Of total documents...")
-    print("{} failed".format(operation.documents_failed_count))
-    print("{} succeeded".format(operation.documents_succeeded_count))
-    print("{} canceled".format(operation.documents_canceled_count))
+    print(f"{operation.documents_failed_count} failed")
+    print(f"{operation.documents_succeeded_count} succeeded")
+    print(f"{operation.documents_canceled_count} canceled")
 ```
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
@@ -385,6 +386,7 @@ describes available configurations for retries, logging, transport protocols, an
 ## Next steps
 
 The following section provides several code snippets illustrating common patterns used in the Document Translation Python client library.
+More samples can be found under the [samples][samples] directory.
 
 ### More sample code
 
@@ -439,7 +441,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli_create_DT_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [supported_languages]: https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-[source_containers]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-your-azure-blob-storage-containers
+[source_containers]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-azure-blob-storage-containers
 [custom_model]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [glossary]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [sas_token]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/create-sas-tokens?tabs=Containers#create-your-sas-tokens-with-azure-storage-explorer
@@ -457,8 +459,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [managed_identity]: https://aka.ms/azsdk/documenttranslation/managed-identity
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
 [sample_begin_translation]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
@@ -475,6 +478,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 [sample_translation_with_custom_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_custom_model.py
 [sample_translation_with_custom_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_custom_model_async.py
+[sample_begin_translation_with_filters]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation_with_filters.py
 
 [supported_glossary_formats]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
