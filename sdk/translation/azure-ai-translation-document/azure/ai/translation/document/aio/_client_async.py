@@ -339,7 +339,6 @@ class DocumentTranslationClient:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        results_per_page: Optional[int] = None,
         translation_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
@@ -352,7 +351,6 @@ class DocumentTranslationClient:
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
         :keyword int skip: the number of operations to skip (from beginning of all submitted operations).
             By default, we sort by all submitted operations in descending order by start time.
-        :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
@@ -399,7 +397,6 @@ class DocumentTranslationClient:
         return cast(AsyncItemPaged[TranslationStatus],
             self._client.document_translation.get_translations_status(
                 cls=model_conversion_function,
-                maxpagesize=results_per_page,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=translation_ids,
@@ -418,7 +415,6 @@ class DocumentTranslationClient:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        results_per_page: Optional[int] = None,
         document_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
@@ -432,7 +428,6 @@ class DocumentTranslationClient:
         :keyword int top: the total number of documents to return (across all pages).
         :keyword int skip: the number of documents to skip (from beginning).
             By default, we sort by all documents in descending order by start time.
-        :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
@@ -484,7 +479,6 @@ class DocumentTranslationClient:
             self._client.document_translation.get_documents_status(
                 id=translation_id,
                 cls=model_conversion_function,
-                maxpagesize=results_per_page,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,
