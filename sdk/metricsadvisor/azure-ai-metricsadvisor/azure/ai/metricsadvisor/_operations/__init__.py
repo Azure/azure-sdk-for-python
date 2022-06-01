@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._metrics_advisor import MetricsAdvisor
-__all__ = ['MetricsAdvisor']
+from ._patch import MetricsAdvisorClientOperationsMixin
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = [
+    "MetricsAdvisorClientOperationsMixin",
+]
+
+_patch_sdk()

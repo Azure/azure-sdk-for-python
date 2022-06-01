@@ -6,8 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._metrics_advisor_operations import MetricsAdvisorOperationsMixin
+from ._patch import MetricsAdvisorClientOperationsMixin
+
+
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'MetricsAdvisorOperationsMixin',
+    "MetricsAdvisorClientOperationsMixin",
 ]
+
+_patch_sdk()
