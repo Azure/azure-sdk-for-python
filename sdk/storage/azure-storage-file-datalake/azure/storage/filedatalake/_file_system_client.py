@@ -881,7 +881,6 @@ class FileSystemClient(StorageAccountHostsMixin):
     def delete_files(
         self,
         *files: str,
-        raise_on_any_failure=False,
         **kwargs) -> List[Optional[HttpResponseError]]:
         """Marks the specified files or empty directories for deletion.
 
@@ -909,7 +908,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to False. When this is set, an exception
+            This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
