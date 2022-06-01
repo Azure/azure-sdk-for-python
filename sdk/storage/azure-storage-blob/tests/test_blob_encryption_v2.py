@@ -8,7 +8,8 @@ import pytest
 from json import loads
 
 from azure.storage.blob import (
-    BlobServiceClient
+    BlobServiceClient,
+    BlobType
 )
 from azure.storage.blob._shared.encryption import (
     _dict_to_encryption_data,
@@ -56,6 +57,18 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.bsc.encryption_version = '2.0'
         self.bsc.key_encryption_key = kek
     # --------------------------------------------------------------------------
+
+    @BlobPreparer()
+    def test_v2_blocked_for_page_blob_upload(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        # Act
+        with self.assertRaises(ValueError):
+            blob.upload_blob(b'Test', blob_type=BlobType.PAGEBLOB)
 
     @BlobPreparer()
     def test_validate_encryption(self, storage_account_name, storage_account_key):

@@ -425,6 +425,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
         elif blob_type == BlobType.PageBlob:
+            if self.encryption_version == '2.0' and (self.require_encryption or self.key_encryption_key is not None):
+                raise ValueError("Encryption version 2.0 does not currently support page blobs.")
             kwargs['client'] = self._client.page_blob
         elif blob_type == BlobType.AppendBlob:
             if self.require_encryption or (self.key_encryption_key is not None):
