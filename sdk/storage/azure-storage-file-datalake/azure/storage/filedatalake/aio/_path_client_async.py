@@ -187,15 +187,32 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """
         lease_id = kwargs.get('lease_id', None)
         lease_duration = kwargs.get('lease_duration', None)
+        expires_on = kwargs.get('expires_on', None)
         if lease_id and not lease_duration:
             raise ValueError("Please specify a lease_id and a lease_duration.")
-        elif lease_duration and not lease_id:
+        if lease_duration and not lease_id:
             raise ValueError("Please specify a lease_id and a lease_duration.")
-        options = self._create_path_options(
-            resource_type,
-            content_settings=content_settings,
-            metadata=metadata,
-            **kwargs)
+        if expires_on:
+            if isinstance(expires_on, datetime):
+                options = self._create_path_options(
+                    resource_type,
+                    content_settings=content_settings,
+                    metadata=metadata,
+                    expiry_options='Absolute',
+                    **kwargs)
+            else:
+                options = self._create_path_options(
+                    resource_type,
+                    content_settings=content_settings,
+                    metadata=metadata,
+                    expiry_options='RelativeToNow',
+                    **kwargs)
+        else:
+            options = self._create_path_options(
+                resource_type,
+                content_settings=content_settings,
+                metadata=metadata,
+                **kwargs)
         try:
             return await self._client.path.create(**options)
         except HttpResponseError as error:
