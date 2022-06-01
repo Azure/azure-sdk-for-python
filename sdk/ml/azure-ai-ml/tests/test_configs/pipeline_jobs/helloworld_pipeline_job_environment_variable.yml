@@ -1,0 +1,16 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+jobs:
+  hello_job:
+    command: echo "hello"
+    environment:
+      image: python:latest
+    compute: azureml:cpu-cluster
+  world_job:
+    command: echo "world"
+    environment:
+      image: python
+    compute: azureml:cpu-cluster
+    environment_variables:
+      AZUREML_COMPUTE_USE_COMMON_RUNTIME : "false"
+      abc: def

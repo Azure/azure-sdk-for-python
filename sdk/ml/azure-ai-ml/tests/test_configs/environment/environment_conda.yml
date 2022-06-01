@@ -1,0 +1,5 @@
+conda_file: environment_files/environment.yml
+image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+name: myTestEnv
+version: 1
+description: This is description

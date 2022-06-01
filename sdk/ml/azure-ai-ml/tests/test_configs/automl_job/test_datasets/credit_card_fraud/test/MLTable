@@ -1,0 +1,7 @@
+paths:
+  - file: https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/creditcard_test.csv
+transformations:
+  - read_delimited:
+      delimiter: ','
+      encoding: 'ascii'
+      empty_as_string: false
