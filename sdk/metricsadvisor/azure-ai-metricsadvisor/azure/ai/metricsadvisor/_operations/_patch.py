@@ -126,9 +126,7 @@ class OperationMixinHelpers:
             ingestion_settings = models.DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
         return models.DataFeed(granularity=granularity, schema=schema, ingestion_settings=ingestion_settings, **kwargs)
 
-    def _deserialize_anomaly_alert_configuration(
-        self, pipeline_response, **kwargs
-    ) -> models.AnomalyAlertConfiguration:
+    def _deserialize_anomaly_alert_configuration(self, pipeline_response, **kwargs) -> models.AnomalyAlertConfiguration:
         cls = kwargs.pop("cls", None)
         response_json = pipeline_response.http_response.json()
         try:
@@ -525,11 +523,7 @@ class OperationMixinHelpers:
 
     @staticmethod
     def _list_incidents_for_alert_requests(
-        alert_configuration_id: str,
-        alert_id: str,
-        *,
-        skip: Optional[int] = None,
-        **kwargs: Any
+        alert_configuration_id: str, alert_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> Tuple[HttpRequest, HttpRequest, Any]:
         initial_request = operations.build_list_incidents_for_alert_request(
             alert_configuration_id=alert_configuration_id,
@@ -1295,18 +1289,10 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def _list_incidents_for_alert(
-        self,
-        alert_configuration_id: str,
-        alert_id: str,
-        *,
-        skip: Optional[int] = None,
-        **kwargs: Any
+        self, alert_configuration_id: str, alert_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[models.AnomalyIncident]:
         initial_request, next_request, kwargs = self._list_incidents_for_alert_requests(
-            alert_configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            **kwargs
+            alert_configuration_id=alert_configuration_id, alert_id=alert_id, skip=skip, **kwargs
         )
         return self._paging_helper(
             initial_request=initial_request,

@@ -582,18 +582,10 @@ class MetricsAdvisorClientOperationsMixin(
 
     @distributed_trace
     def _list_incidents_for_alert(
-        self,
-        alert_configuration_id: str,
-        alert_id: str,
-        *,
-        skip: Optional[int] = None,
-        **kwargs: Any
+        self, alert_configuration_id: str, alert_id: str, *, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged[models.AnomalyIncident]:
         initial_request, next_request, kwargs = self._list_incidents_for_alert_requests(
-            alert_configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            **kwargs
+            alert_configuration_id=alert_configuration_id, alert_id=alert_id, skip=skip, **kwargs
         )
         return self._paging_helper(
             initial_request=initial_request,

@@ -126,7 +126,9 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "TokenCredential"], **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -682,7 +684,9 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
 
-    def __init__(self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "TokenCredential"], **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
