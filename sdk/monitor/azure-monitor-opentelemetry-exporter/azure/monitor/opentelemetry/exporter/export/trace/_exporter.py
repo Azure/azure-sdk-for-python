@@ -29,6 +29,21 @@ _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
 
+_STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
+    "http.",
+    "db.",
+    "message.",
+    "messaging.",
+    "rpc.",
+    "enduser.",
+    "net.",
+    "peer.",
+    "exception.",
+    "thread.",
+    "fass.",
+    "code.",
+]
+
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
@@ -402,11 +417,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             data.name = data.name[:1024]
     for key, val in span.attributes.items():
         # Remove Opentelemetry related span attributes from custom dimensions
-        if key.startswith("http.") or \
-                key.startswith("db.") or \
-                key.startswith("rpc.") or \
-                key.startswith("net.") or \
-                key.startswith("messaging."):
+        if _is_opentelemetry_standard_attribute(key):
             continue
         # Apply truncation rules
         # Max key length is 150, value is 8192
@@ -438,6 +449,15 @@ def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
                 span.parent.span_id
             )
         properties = {}
+        for key, val in event.attributes.items():
+            # Remove Opentelemetry related event attributes from custom dimensions
+            if _is_opentelemetry_standard_attribute(key):
+                continue
+            # Apply truncation rules
+            # Max key length is 150, value is 8192
+            if not key or len(key) > 150 or val is None:
+                continue
+            properties[key] = val[:8192]
         if event.name == "exception":
             envelope.name = 'Microsoft.ApplicationInsights.Exception'
             exc_type = event.attributes.get(SpanAttributes.EXCEPTION_TYPE)
@@ -445,8 +465,6 @@ def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
             if exc_message is None or not exc_message:
                 exc_message = "Exception"
             stack_trace = event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
-            escaped = event.attributes.get(SpanAttributes.EXCEPTION_ESCAPED)
-            properties[SpanAttributes.EXCEPTION_ESCAPED] = escaped
             has_full_stack = stack_trace is not None
             exc_details = TelemetryExceptionDetails(
                 type_name=exc_type,
@@ -520,6 +538,12 @@ def _is_sql_db(dbsystem: str) -> bool:
         DbSystemValues.H2.value,
       )
 
+
+def _is_opentelemetry_standard_attribute(attribute: str) -> bool:
+    for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
+        if attribute.startswith(prefix):
+            return True
+    return False
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub
