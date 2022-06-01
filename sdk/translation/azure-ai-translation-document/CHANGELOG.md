@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Changed: `TranslationStatus` property `documents_not_yet_started_count` has been renamed to `documents_not_started_count`.
+
 ### Bugs Fixed
 
 ### Other Changes

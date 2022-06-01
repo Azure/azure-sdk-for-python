@@ -312,7 +312,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
     :ivar int documents_failed_count: Number of documents that failed translation.
     :ivar int documents_succeeded_count: Number of successful translations on documents.
     :ivar int documents_in_progress_count: Number of translations on documents in progress.
-    :ivar int documents_not_yet_started_count: Number of documents that have not yet started being translated.
+    :ivar int documents_not_started_count: Number of documents that have not started being translated.
     :ivar int documents_canceled_count: Number of documents that were canceled for translation.
     :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
@@ -329,8 +329,8 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
         self.documents_in_progress_count = kwargs.get(
             "documents_in_progress_count", None
         )
-        self.documents_not_yet_started_count = kwargs.get(
-            "documents_not_yet_started_count", None
+        self.documents_not_started_count = kwargs.get(
+            "documents_not_started_count", None
         )
         self.documents_canceled_count = kwargs.get("documents_canceled_count", None)
         self.total_characters_charged = kwargs.get("total_characters_charged", None)
@@ -354,7 +354,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
             documents_failed_count=batch_status_details.summary.failed,
             documents_succeeded_count=batch_status_details.summary.success,
             documents_in_progress_count=batch_status_details.summary.in_progress,
-            documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
+            documents_not_started_count=batch_status_details.summary.not_yet_started,
             documents_canceled_count=batch_status_details.summary.cancelled,
             total_characters_charged=batch_status_details.summary.total_character_charged,
         )
@@ -364,7 +364,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
             "TranslationStatus(id={}, created_on={}, "
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
-            "documents_in_progress_count={}, documents_not_yet_started_count={}, "
+            "documents_in_progress_count={}, documents_not_started_count={}, "
             "documents_canceled_count={}, total_characters_charged={})".format(
                 self.id,
                 self.created_on,
@@ -375,7 +375,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
                 self.documents_failed_count,
                 self.documents_succeeded_count,
                 self.documents_in_progress_count,
-                self.documents_not_yet_started_count,
+                self.documents_not_started_count,
                 self.documents_canceled_count,
                 self.total_characters_charged,
             )[:1024]

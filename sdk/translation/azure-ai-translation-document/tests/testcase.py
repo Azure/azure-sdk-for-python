@@ -152,9 +152,9 @@ class DocumentTranslationTest(AzureRecordedTestCase):
             else:
                 assert poller.details.documents_in_progress_count is not None
             if notstarted:
-                assert poller.details.documents_not_yet_started_count == notstarted
+                assert poller.details.documents_not_started_count == notstarted
             else:
-                assert poller.details.documents_not_yet_started_count is not None
+                assert poller.details.documents_not_started_count is not None
             if canceled:
                 assert poller.details.documents_canceled_count == canceled
             else:
@@ -199,9 +199,9 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         else:
             assert job_details.documents_in_progress_count is not None
         if notstarted:
-            assert job_details.documents_not_yet_started_count == notstarted
+            assert job_details.documents_not_started_count == notstarted
         else:
-            assert job_details.documents_not_yet_started_count is not None
+            assert job_details.documents_not_started_count is not None
         if canceled:
             assert job_details.documents_canceled_count == canceled
         else:
