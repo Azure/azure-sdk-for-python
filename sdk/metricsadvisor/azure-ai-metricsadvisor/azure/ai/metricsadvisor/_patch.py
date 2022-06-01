@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, List, Union, overload, Dict, cast
+from typing import Any, List, Union, overload, Dict, cast, TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.tracing.decorator import distributed_trace
@@ -19,6 +19,9 @@ from ._operations._patch import (
     FeedbackUnion,
 )
 from . import models
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
@@ -123,7 +126,7 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -679,7 +682,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
 
-    def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint

@@ -25,12 +25,11 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-from typing import List, Dict, Any, Union, overload, cast
+from typing import List, Dict, Any, Union, overload, cast, TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.credentials_async import AsyncTokenCredential
 
 from .._operations._patch import (
     DataFeedSourceUnion,
@@ -44,6 +43,10 @@ from .._patch import (
 )
 from ._client import MetricsAdvisorClient as _ClientAsync
 from .. import models
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods,client-accepts-api-version-keyword
@@ -67,7 +70,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **kwargs: Any
+        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
@@ -953,7 +956,7 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **kwargs: Any
+        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
