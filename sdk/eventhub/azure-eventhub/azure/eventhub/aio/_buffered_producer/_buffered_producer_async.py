@@ -59,7 +59,7 @@ class BufferedProducer:
         self._running = False
         if flush:
             async with self._lock:
-                await self.flush(timeout_time=timeout_time, raise_error=raise_error)
+                await self._flush(timeout_time=timeout_time, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -91,7 +91,7 @@ class BufferedProducer:
             )
             # flush the buffer
             async with self._lock:
-                await self.flush(timeout_time=timeout_time)
+                await self._flush(timeout_time=timeout_time)
 
         if timeout_time and time.time() > timeout_time:
             raise OperationTimeoutError("Failed to enqueue events into buffer due to timeout.")
@@ -124,6 +124,10 @@ class BufferedProducer:
         return wrapper_callback
 
     async def flush(self, timeout_time=None, raise_error=True):
+        async with self._lock:
+            await self._flush(timeout_time, raise_error)
+
+    async def _flush(self, timeout_time=None, raise_error=True):
         # pylint: disable=protected-access
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
@@ -171,7 +175,7 @@ class BufferedProducer:
                 ):
                     # in the worker, not raising error for flush, users can not handle this
                     async with self._lock:
-                        await self.flush(raise_error=False)
+                        await self._flush(raise_error=False)
             await asyncio.sleep(min(self._max_wait_time, 5))
 
     @property
