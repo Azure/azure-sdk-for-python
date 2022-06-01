@@ -616,14 +616,8 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create directory in the file system.
         """
-        lease_id = kwargs.pop('lease_id', None)
-        lease_duration = kwargs.pop('lease_duration', None)
-        if lease_id and not lease_duration:
-            raise ValueError("Please specify a lease_id and a lease_duration.")
-        elif lease_duration and not lease_id:
-            raise ValueError("Please specify a lease_id and a lease_duration.")
         directory_client = self.get_directory_client(directory)
-        directory_client.create_directory(lease_id=lease_id, lease_duration=lease_duration, metadata=metadata, **kwargs)
+        directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
     def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -764,14 +758,8 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create file in the file system.
         """
-        lease_id = kwargs.pop('lease_id', None)
-        lease_duration = kwargs.pop('lease_duration', None)
-        if lease_id and not lease_duration:
-            raise ValueError("Please specify a lease_id and a lease_duration.")
-        elif lease_duration and not lease_id:
-            raise ValueError("Please specify a lease_id and a lease_duration.")
         file_client = self.get_file_client(file)
-        file_client.create_file(lease_id=lease_id, lease_duration=lease_duration, **kwargs)
+        file_client.create_file(**kwargs)
         return file_client
 
     def delete_file(self, file,  # type: Union[FileProperties, str]

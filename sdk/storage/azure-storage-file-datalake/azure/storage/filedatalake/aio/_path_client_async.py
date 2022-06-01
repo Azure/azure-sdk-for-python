@@ -185,16 +185,14 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             The timeout parameter is expressed in seconds.
         :return: Dict[str, Union[str, datetime]]
         """
-        lease_id = kwargs.pop('lease_id', None)
-        lease_duration = kwargs.pop('lease_duration', None)
+        lease_id = kwargs.get('lease_id', None)
+        lease_duration = kwargs.get('lease_duration', None)
         if lease_id and not lease_duration:
             raise ValueError("Please specify a lease_id and a lease_duration.")
         elif lease_duration and not lease_id:
             raise ValueError("Please specify a lease_id and a lease_duration.")
         options = self._create_path_options(
             resource_type,
-            lease_id=lease_id,
-            lease_duration=lease_duration,
             content_settings=content_settings,
             metadata=metadata,
             **kwargs)
