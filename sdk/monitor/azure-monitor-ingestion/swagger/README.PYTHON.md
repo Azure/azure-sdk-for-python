@@ -15,10 +15,10 @@ output-folder: ../azure/monitor/ingestion
 source-code-folder-path: ./azure/monitor/ingestion
 input-file: 
     - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/monitor/data-plane/ingestion/preview/2021-11-01-preview/DataCollectionRules.json
-modelerfour:
-    lenient-model-deduplication: true
+add-credential: true
 python: true
-v3: true
+version-tolerant: true
+python3-only: true
 ```
 
 ```yaml
