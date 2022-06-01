@@ -11,6 +11,8 @@ from ._environments_operations import EnvironmentsOperations
 from ._event_sources_operations import EventSourcesOperations
 from ._reference_data_sets_operations import ReferenceDataSetsOperations
 from ._access_policies_operations import AccessPoliciesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'Operations',
@@ -18,4 +20,6 @@ __all__ = [
     'EventSourcesOperations',
     'ReferenceDataSetsOperations',
     'AccessPoliciesOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
 ]

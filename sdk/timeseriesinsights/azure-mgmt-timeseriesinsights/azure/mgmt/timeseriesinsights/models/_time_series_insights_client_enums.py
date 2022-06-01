@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessPolicyRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessPolicyRole(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A role defining the data plane operations that a principal can perform on a Time Series
     Insights client.
     """
@@ -34,7 +19,7 @@ class AccessPolicyRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     READER = "Reader"
     CONTRIBUTOR = "Contributor"
 
-class DataStringComparisonBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataStringComparisonBehavior(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reference data set key comparison behavior can be set using this property. By default, the
     value is 'Ordinal' - which means case sensitive key comparison will be performed while joining
     reference data with events or while adding new reference data. When 'OrdinalIgnoreCase' is set,
@@ -44,35 +29,44 @@ class DataStringComparisonBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str,
     ORDINAL = "Ordinal"
     ORDINAL_IGNORE_CASE = "OrdinalIgnoreCase"
 
-class EnvironmentKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EnvironmentKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the environment.
     """
 
     GEN1 = "Gen1"
     GEN2 = "Gen2"
 
-class EnvironmentResourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EnvironmentResourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the environment.
     """
 
     GEN1 = "Gen1"
     GEN2 = "Gen2"
 
-class EventSourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EventSourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the event source.
     """
 
     MICROSOFT_EVENT_HUB = "Microsoft.EventHub"
     MICROSOFT_IO_T_HUB = "Microsoft.IoTHub"
 
-class EventSourceResourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EventSourceResourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the event source.
     """
 
     MICROSOFT_EVENT_HUB = "Microsoft.EventHub"
     MICROSOFT_IO_T_HUB = "Microsoft.IoTHub"
 
-class IngressState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IngressStartAtType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the ingressStartAt, It can be "EarliestAvailable", "EventSourceCreationTime",
+    "CustomEnqueuedTime".
+    """
+
+    EARLIEST_AVAILABLE = "EarliestAvailable"
+    EVENT_SOURCE_CREATION_TIME = "EventSourceCreationTime"
+    CUSTOM_ENQUEUED_TIME = "CustomEnqueuedTime"
+
+class IngressState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This string represents the state of ingress operations on an environment. It can be "Disabled",
     "Ready", "Running", "Paused" or "Unknown"
     """
@@ -83,19 +77,36 @@ class IngressState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PAUSED = "Paused"
     UNKNOWN = "Unknown"
 
-class LocalTimestampFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LocalTimestampFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enum that represents the format of the local timestamp property that needs to be set.
     """
 
     EMBEDDED = "Embedded"
 
-class PropertyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+class PropertyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the property.
     """
 
     STRING = "String"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the resource.
     """
 
@@ -106,7 +117,16 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class ReferenceDataKeyPropertyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """This value can be set to 'enabled' to avoid breaking changes on existing customer resources and
+    templates. If set to 'disabled', traffic over public interface is not allowed, and private
+    endpoint connections would be the exclusive access method.
+    """
+
+    ENABLED = "enabled"
+    DISABLED = "disabled"
+
+class ReferenceDataKeyPropertyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the key property.
     """
 
@@ -115,7 +135,7 @@ class ReferenceDataKeyPropertyType(with_metaclass(_CaseInsensitiveEnumMeta, str,
     BOOL = "Bool"
     DATE_TIME = "DateTime"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The name of this SKU.
     """
 
@@ -124,7 +144,7 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     P1 = "P1"
     L1 = "L1"
 
-class StorageLimitExceededBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StorageLimitExceededBehavior(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The behavior the Time Series Insights service should take when the environment's capacity has
     been exceeded. If "PauseIngress" is specified, new events will not be read from the event
     source. If "PurgeOldData" is specified, new events will continue to be read and old events will
@@ -134,7 +154,7 @@ class StorageLimitExceededBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str,
     PURGE_OLD_DATA = "PurgeOldData"
     PAUSE_INGRESS = "PauseIngress"
 
-class WarmStoragePropertiesState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WarmStoragePropertiesState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This string represents the state of warm storage properties usage. It can be "Ok", "Error",
     "Unknown".
     """

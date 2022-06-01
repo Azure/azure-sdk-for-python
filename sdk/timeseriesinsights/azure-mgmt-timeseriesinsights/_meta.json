@@ -1,0 +1,11 @@
+{
+  "autorest": "3.7.2",
+  "use": [
+    "@autorest/python@5.13.0",
+    "@autorest/modelerfour@4.19.3"
+  ],
+  "commit": "27a778f98e46bb598b126d34bde8e96e8e4c96a6",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest_command": "autorest specification/timeseriesinsights/resource-manager/readme.md --multiapi --python --python-sdks-folder=/mnt/vss/_work/1/s/azure-sdk-for-python/sdk --python3-only --use=@autorest/python@5.13.0 --use=@autorest/modelerfour@4.19.3 --version=3.7.2",
+  "readme": "specification/timeseriesinsights/resource-manager/readme.md"
+}

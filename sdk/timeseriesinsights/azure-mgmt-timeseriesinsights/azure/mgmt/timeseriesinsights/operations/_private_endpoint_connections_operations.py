@@ -30,7 +30,7 @@ def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    reference_data_set_name: str,
+    private_endpoint_connection_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -41,12 +41,12 @@ def build_create_or_update_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "referenceDataSetName": _SERIALIZER.url("reference_data_set_name", reference_data_set_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]'),
+        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -76,19 +76,19 @@ def build_get_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    reference_data_set_name: str,
+    private_endpoint_connection_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "referenceDataSetName": _SERIALIZER.url("reference_data_set_name", reference_data_set_name, 'str'),
+        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -110,69 +110,23 @@ def build_get_request(
     )
 
 
-def build_update_request(
-    subscription_id: str,
-    resource_group_name: str,
-    environment_name: str,
-    reference_data_set_name: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "referenceDataSetName": _SERIALIZER.url("reference_data_set_name", reference_data_set_name, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-
 def build_delete_request(
     subscription_id: str,
     resource_group_name: str,
     environment_name: str,
-    reference_data_set_name: str,
+    private_endpoint_connection_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "environmentName": _SERIALIZER.url("environment_name", environment_name, 'str'),
-        "referenceDataSetName": _SERIALIZER.url("reference_data_set_name", reference_data_set_name, 'str'),
+        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -204,7 +158,7 @@ def build_list_by_environment_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
@@ -229,8 +183,8 @@ def build_list_by_environment_request(
         **kwargs
     )
 
-class ReferenceDataSetsOperations(object):
-    """ReferenceDataSetsOperations operations.
+class PrivateEndpointConnectionsOperations(object):
+    """PrivateEndpointConnectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -256,28 +210,30 @@ class ReferenceDataSetsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        reference_data_set_name: str,
-        parameters: "_models.ReferenceDataSetCreateOrUpdateParameters",
+        private_endpoint_connection_name: str,
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
         **kwargs: Any
-    ) -> "_models.ReferenceDataSetResource":
-        """Create or update a reference data set in the specified environment.
+    ) -> "_models.PrivateEndpointConnection":
+        """Updates a Private Endpoint connection of the environment in the given resource group.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param reference_data_set_name: Name of the reference data set.
-        :type reference_data_set_name: str
-        :param parameters: Parameters for creating a reference data set.
-        :type parameters:
-         ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetCreateOrUpdateParameters
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource.
+        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection: The definition of the private endpoint connection to
+         update.
+        :type private_endpoint_connection:
+         ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReferenceDataSetResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReferenceDataSetResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -286,13 +242,13 @@ class ReferenceDataSetsOperations(object):
         api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'ReferenceDataSetCreateOrUpdateParameters')
+        _json = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            reference_data_set_name=reference_data_set_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -308,22 +264,18 @@ class ReferenceDataSetsOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ReferenceDataSetResource', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('ReferenceDataSetResource', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
 
     @distributed_trace
@@ -331,25 +283,26 @@ class ReferenceDataSetsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        reference_data_set_name: str,
+        private_endpoint_connection_name: str,
         **kwargs: Any
-    ) -> "_models.ReferenceDataSetResource":
-        """Gets the reference data set with the specified name in the specified environment.
+    ) -> "_models.PrivateEndpointConnection":
+        """Gets the details of the private endpoint connection of the environment in the given resource
+        group.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param reference_data_set_name: The name of the Time Series Insights reference data set
-         associated with the specified environment.
-        :type reference_data_set_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource.
+        :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReferenceDataSetResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReferenceDataSetResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -362,7 +315,7 @@ class ReferenceDataSetsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            reference_data_set_name=reference_data_set_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -380,88 +333,14 @@ class ReferenceDataSetsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ReferenceDataSetResource', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}"}  # type: ignore
-
-
-    @distributed_trace
-    def update(
-        self,
-        resource_group_name: str,
-        environment_name: str,
-        reference_data_set_name: str,
-        reference_data_set_update_parameters: "_models.ReferenceDataSetUpdateParameters",
-        **kwargs: Any
-    ) -> "_models.ReferenceDataSetResource":
-        """Updates the reference data set with the specified name in the specified subscription, resource
-        group, and environment.
-
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
-        :param environment_name: The name of the Time Series Insights environment associated with the
-         specified resource group.
-        :type environment_name: str
-        :param reference_data_set_name: The name of the Time Series Insights reference data set
-         associated with the specified environment.
-        :type reference_data_set_name: str
-        :param reference_data_set_update_parameters: Request object that contains the updated
-         information for the reference data set.
-        :type reference_data_set_update_parameters:
-         ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetUpdateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReferenceDataSetResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReferenceDataSetResource"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(reference_data_set_update_parameters, 'ReferenceDataSetUpdateParameters')
-
-        request = build_update_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            environment_name=environment_name,
-            reference_data_set_name=reference_data_set_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.update.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('ReferenceDataSetResource', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
 
     @distributed_trace
@@ -469,20 +348,19 @@ class ReferenceDataSetsOperations(object):
         self,
         resource_group_name: str,
         environment_name: str,
-        reference_data_set_name: str,
+        private_endpoint_connection_name: str,
         **kwargs: Any
     ) -> None:
-        """Deletes the reference data set with the specified name in the specified subscription, resource
-        group, and environment.
+        """Disconnects the private endpoint connection and deletes it from the environment.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param reference_data_set_name: The name of the Time Series Insights reference data set
-         associated with the specified environment.
-        :type reference_data_set_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource.
+        :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -501,7 +379,7 @@ class ReferenceDataSetsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            reference_data_set_name=reference_data_set_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
@@ -522,7 +400,7 @@ class ReferenceDataSetsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets/{referenceDataSetName}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
 
     @distributed_trace
@@ -531,9 +409,8 @@ class ReferenceDataSetsOperations(object):
         resource_group_name: str,
         environment_name: str,
         **kwargs: Any
-    ) -> "_models.ReferenceDataSetListResponse":
-        """Lists all the available reference data sets associated with the subscription and within the
-        specified resource group and environment.
+    ) -> "_models.PrivateEndpointConnectionListResult":
+        """Gets a list of all private endpoint connections in the given environment.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
@@ -541,11 +418,11 @@ class ReferenceDataSetsOperations(object):
          specified resource group.
         :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReferenceDataSetListResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.ReferenceDataSetListResponse
+        :return: PrivateEndpointConnectionListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnectionListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReferenceDataSetListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -575,12 +452,12 @@ class ReferenceDataSetsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ReferenceDataSetListResponse', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_by_environment.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/referenceDataSets"}  # type: ignore
+    list_by_environment.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections"}  # type: ignore
 

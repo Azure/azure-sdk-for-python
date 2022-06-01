@@ -17,12 +17,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._access_policies_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_by_environment_request, build_update_request
+from ...operations._private_endpoint_connections_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_by_environment_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AccessPoliciesOperations:
-    """AccessPoliciesOperations async operations.
+class PrivateEndpointConnectionsOperations:
+    """PrivateEndpointConnectionsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -48,27 +48,30 @@ class AccessPoliciesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        access_policy_name: str,
-        parameters: "_models.AccessPolicyCreateOrUpdateParameters",
+        private_endpoint_connection_name: str,
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
         **kwargs: Any
-    ) -> "_models.AccessPolicyResource":
-        """Create or update an access policy in the specified environment.
+    ) -> "_models.PrivateEndpointConnection":
+        """Updates a Private Endpoint connection of the environment in the given resource group.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param access_policy_name: Name of the access policy.
-        :type access_policy_name: str
-        :param parameters: Parameters for creating an access policy.
-        :type parameters: ~azure.mgmt.timeseriesinsights.models.AccessPolicyCreateOrUpdateParameters
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource.
+        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection: The definition of the private endpoint connection to
+         update.
+        :type private_endpoint_connection:
+         ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccessPolicyResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.AccessPolicyResource
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessPolicyResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -77,13 +80,13 @@ class AccessPoliciesOperations:
         api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'AccessPolicyCreateOrUpdateParameters')
+        _json = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            access_policy_name=access_policy_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -99,22 +102,18 @@ class AccessPoliciesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('AccessPolicyResource', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('AccessPolicyResource', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/accessPolicies/{accessPolicyName}"}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -122,25 +121,26 @@ class AccessPoliciesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        access_policy_name: str,
+        private_endpoint_connection_name: str,
         **kwargs: Any
-    ) -> "_models.AccessPolicyResource":
-        """Gets the access policy with the specified name in the specified environment.
+    ) -> "_models.PrivateEndpointConnection":
+        """Gets the details of the private endpoint connection of the environment in the given resource
+        group.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param access_policy_name: The name of the Time Series Insights access policy associated with
-         the specified environment.
-        :type access_policy_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource.
+        :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccessPolicyResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.AccessPolicyResource
+        :return: PrivateEndpointConnection, or the result of cls(response)
+        :rtype: ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessPolicyResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -153,7 +153,7 @@ class AccessPoliciesOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            access_policy_name=access_policy_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -171,88 +171,14 @@ class AccessPoliciesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AccessPolicyResource', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/accessPolicies/{accessPolicyName}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def update(
-        self,
-        resource_group_name: str,
-        environment_name: str,
-        access_policy_name: str,
-        access_policy_update_parameters: "_models.AccessPolicyUpdateParameters",
-        **kwargs: Any
-    ) -> "_models.AccessPolicyResource":
-        """Updates the access policy with the specified name in the specified subscription, resource
-        group, and environment.
-
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
-        :param environment_name: The name of the Time Series Insights environment associated with the
-         specified resource group.
-        :type environment_name: str
-        :param access_policy_name: The name of the Time Series Insights access policy associated with
-         the specified environment.
-        :type access_policy_name: str
-        :param access_policy_update_parameters: Request object that contains the updated information
-         for the access policy.
-        :type access_policy_update_parameters:
-         ~azure.mgmt.timeseriesinsights.models.AccessPolicyUpdateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccessPolicyResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.AccessPolicyResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessPolicyResource"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-03-31-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(access_policy_update_parameters, 'AccessPolicyUpdateParameters')
-
-        request = build_update_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            environment_name=environment_name,
-            access_policy_name=access_policy_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.update.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('AccessPolicyResource', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/accessPolicies/{accessPolicyName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -260,20 +186,19 @@ class AccessPoliciesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        access_policy_name: str,
+        private_endpoint_connection_name: str,
         **kwargs: Any
     ) -> None:
-        """Deletes the access policy with the specified name in the specified subscription, resource
-        group, and environment.
+        """Disconnects the private endpoint connection and deletes it from the environment.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param environment_name: The name of the Time Series Insights environment associated with the
          specified resource group.
         :type environment_name: str
-        :param access_policy_name: The name of the Time Series Insights access policy associated with
-         the specified environment.
-        :type access_policy_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource.
+        :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -292,7 +217,7 @@ class AccessPoliciesOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             environment_name=environment_name,
-            access_policy_name=access_policy_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
@@ -313,7 +238,7 @@ class AccessPoliciesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/accessPolicies/{accessPolicyName}"}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -322,8 +247,8 @@ class AccessPoliciesOperations:
         resource_group_name: str,
         environment_name: str,
         **kwargs: Any
-    ) -> "_models.AccessPolicyListResponse":
-        """Lists all the available access policies associated with the environment.
+    ) -> "_models.PrivateEndpointConnectionListResult":
+        """Gets a list of all private endpoint connections in the given environment.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
@@ -331,11 +256,11 @@ class AccessPoliciesOperations:
          specified resource group.
         :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccessPolicyListResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.timeseriesinsights.models.AccessPolicyListResponse
+        :return: PrivateEndpointConnectionListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnectionListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccessPolicyListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -365,12 +290,12 @@ class AccessPoliciesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AccessPolicyListResponse', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_by_environment.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/accessPolicies"}  # type: ignore
+    list_by_environment.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.TimeSeriesInsights/environments/{environmentName}/privateEndpointConnections"}  # type: ignore
 

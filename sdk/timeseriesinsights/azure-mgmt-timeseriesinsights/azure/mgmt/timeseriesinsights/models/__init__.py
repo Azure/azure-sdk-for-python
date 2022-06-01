@@ -6,140 +6,84 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessPolicyCreateOrUpdateParameters
-    from ._models_py3 import AccessPolicyListResponse
-    from ._models_py3 import AccessPolicyResource
-    from ._models_py3 import AccessPolicyUpdateParameters
-    from ._models_py3 import AzureEventSourceProperties
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import CreateOrUpdateTrackedResourceProperties
-    from ._models_py3 import EnvironmentCreateOrUpdateParameters
-    from ._models_py3 import EnvironmentListResponse
-    from ._models_py3 import EnvironmentResource
-    from ._models_py3 import EnvironmentResourceProperties
-    from ._models_py3 import EnvironmentStateDetails
-    from ._models_py3 import EnvironmentStatus
-    from ._models_py3 import EnvironmentUpdateParameters
-    from ._models_py3 import EventHubEventSourceCommonProperties
-    from ._models_py3 import EventHubEventSourceCreateOrUpdateParameters
-    from ._models_py3 import EventHubEventSourceCreationProperties
-    from ._models_py3 import EventHubEventSourceMutableProperties
-    from ._models_py3 import EventHubEventSourceResource
-    from ._models_py3 import EventHubEventSourceResourceProperties
-    from ._models_py3 import EventHubEventSourceUpdateParameters
-    from ._models_py3 import EventSourceCommonProperties
-    from ._models_py3 import EventSourceCreateOrUpdateParameters
-    from ._models_py3 import EventSourceListResponse
-    from ._models_py3 import EventSourceMutableProperties
-    from ._models_py3 import EventSourceResource
-    from ._models_py3 import EventSourceUpdateParameters
-    from ._models_py3 import Gen1EnvironmentCreateOrUpdateParameters
-    from ._models_py3 import Gen1EnvironmentCreationProperties
-    from ._models_py3 import Gen1EnvironmentResource
-    from ._models_py3 import Gen1EnvironmentResourceProperties
-    from ._models_py3 import Gen1EnvironmentUpdateParameters
-    from ._models_py3 import Gen2EnvironmentCreateOrUpdateParameters
-    from ._models_py3 import Gen2EnvironmentResource
-    from ._models_py3 import Gen2EnvironmentResourceProperties
-    from ._models_py3 import Gen2EnvironmentUpdateParameters
-    from ._models_py3 import Gen2StorageConfigurationInput
-    from ._models_py3 import Gen2StorageConfigurationMutableProperties
-    from ._models_py3 import Gen2StorageConfigurationOutput
-    from ._models_py3 import IngressEnvironmentStatus
-    from ._models_py3 import IoTHubEventSourceCommonProperties
-    from ._models_py3 import IoTHubEventSourceCreateOrUpdateParameters
-    from ._models_py3 import IoTHubEventSourceCreationProperties
-    from ._models_py3 import IoTHubEventSourceMutableProperties
-    from ._models_py3 import IoTHubEventSourceResource
-    from ._models_py3 import IoTHubEventSourceResourceProperties
-    from ._models_py3 import IoTHubEventSourceUpdateParameters
-    from ._models_py3 import LocalTimestamp
-    from ._models_py3 import LocalTimestampTimeZoneOffset
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ReferenceDataSetCreateOrUpdateParameters
-    from ._models_py3 import ReferenceDataSetCreationProperties
-    from ._models_py3 import ReferenceDataSetKeyProperty
-    from ._models_py3 import ReferenceDataSetListResponse
-    from ._models_py3 import ReferenceDataSetResource
-    from ._models_py3 import ReferenceDataSetResourceProperties
-    from ._models_py3 import ReferenceDataSetUpdateParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceProperties
-    from ._models_py3 import Sku
-    from ._models_py3 import TimeSeriesIdProperty
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import WarmStorageEnvironmentStatus
-    from ._models_py3 import WarmStoreConfigurationProperties
-except (SyntaxError, ImportError):
-    from ._models import AccessPolicyCreateOrUpdateParameters  # type: ignore
-    from ._models import AccessPolicyListResponse  # type: ignore
-    from ._models import AccessPolicyResource  # type: ignore
-    from ._models import AccessPolicyUpdateParameters  # type: ignore
-    from ._models import AzureEventSourceProperties  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import CreateOrUpdateTrackedResourceProperties  # type: ignore
-    from ._models import EnvironmentCreateOrUpdateParameters  # type: ignore
-    from ._models import EnvironmentListResponse  # type: ignore
-    from ._models import EnvironmentResource  # type: ignore
-    from ._models import EnvironmentResourceProperties  # type: ignore
-    from ._models import EnvironmentStateDetails  # type: ignore
-    from ._models import EnvironmentStatus  # type: ignore
-    from ._models import EnvironmentUpdateParameters  # type: ignore
-    from ._models import EventHubEventSourceCommonProperties  # type: ignore
-    from ._models import EventHubEventSourceCreateOrUpdateParameters  # type: ignore
-    from ._models import EventHubEventSourceCreationProperties  # type: ignore
-    from ._models import EventHubEventSourceMutableProperties  # type: ignore
-    from ._models import EventHubEventSourceResource  # type: ignore
-    from ._models import EventHubEventSourceResourceProperties  # type: ignore
-    from ._models import EventHubEventSourceUpdateParameters  # type: ignore
-    from ._models import EventSourceCommonProperties  # type: ignore
-    from ._models import EventSourceCreateOrUpdateParameters  # type: ignore
-    from ._models import EventSourceListResponse  # type: ignore
-    from ._models import EventSourceMutableProperties  # type: ignore
-    from ._models import EventSourceResource  # type: ignore
-    from ._models import EventSourceUpdateParameters  # type: ignore
-    from ._models import Gen1EnvironmentCreateOrUpdateParameters  # type: ignore
-    from ._models import Gen1EnvironmentCreationProperties  # type: ignore
-    from ._models import Gen1EnvironmentResource  # type: ignore
-    from ._models import Gen1EnvironmentResourceProperties  # type: ignore
-    from ._models import Gen1EnvironmentUpdateParameters  # type: ignore
-    from ._models import Gen2EnvironmentCreateOrUpdateParameters  # type: ignore
-    from ._models import Gen2EnvironmentResource  # type: ignore
-    from ._models import Gen2EnvironmentResourceProperties  # type: ignore
-    from ._models import Gen2EnvironmentUpdateParameters  # type: ignore
-    from ._models import Gen2StorageConfigurationInput  # type: ignore
-    from ._models import Gen2StorageConfigurationMutableProperties  # type: ignore
-    from ._models import Gen2StorageConfigurationOutput  # type: ignore
-    from ._models import IngressEnvironmentStatus  # type: ignore
-    from ._models import IoTHubEventSourceCommonProperties  # type: ignore
-    from ._models import IoTHubEventSourceCreateOrUpdateParameters  # type: ignore
-    from ._models import IoTHubEventSourceCreationProperties  # type: ignore
-    from ._models import IoTHubEventSourceMutableProperties  # type: ignore
-    from ._models import IoTHubEventSourceResource  # type: ignore
-    from ._models import IoTHubEventSourceResourceProperties  # type: ignore
-    from ._models import IoTHubEventSourceUpdateParameters  # type: ignore
-    from ._models import LocalTimestamp  # type: ignore
-    from ._models import LocalTimestampTimeZoneOffset  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ReferenceDataSetCreateOrUpdateParameters  # type: ignore
-    from ._models import ReferenceDataSetCreationProperties  # type: ignore
-    from ._models import ReferenceDataSetKeyProperty  # type: ignore
-    from ._models import ReferenceDataSetListResponse  # type: ignore
-    from ._models import ReferenceDataSetResource  # type: ignore
-    from ._models import ReferenceDataSetResourceProperties  # type: ignore
-    from ._models import ReferenceDataSetUpdateParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceProperties  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import TimeSeriesIdProperty  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import WarmStorageEnvironmentStatus  # type: ignore
-    from ._models import WarmStoreConfigurationProperties  # type: ignore
+from ._models_py3 import AccessPolicyCreateOrUpdateParameters
+from ._models_py3 import AccessPolicyListResponse
+from ._models_py3 import AccessPolicyResource
+from ._models_py3 import AccessPolicyUpdateParameters
+from ._models_py3 import AzureEventSourceProperties
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import CreateOrUpdateTrackedResourceProperties
+from ._models_py3 import Dimension
+from ._models_py3 import EnvironmentCreateOrUpdateParameters
+from ._models_py3 import EnvironmentListResponse
+from ._models_py3 import EnvironmentResource
+from ._models_py3 import EnvironmentResourceProperties
+from ._models_py3 import EnvironmentStateDetails
+from ._models_py3 import EnvironmentStatus
+from ._models_py3 import EnvironmentUpdateParameters
+from ._models_py3 import EventHubEventSourceCommonProperties
+from ._models_py3 import EventHubEventSourceCreateOrUpdateParameters
+from ._models_py3 import EventHubEventSourceCreationProperties
+from ._models_py3 import EventHubEventSourceMutableProperties
+from ._models_py3 import EventHubEventSourceResource
+from ._models_py3 import EventHubEventSourceResourceProperties
+from ._models_py3 import EventHubEventSourceUpdateParameters
+from ._models_py3 import EventSourceCommonProperties
+from ._models_py3 import EventSourceCreateOrUpdateParameters
+from ._models_py3 import EventSourceListResponse
+from ._models_py3 import EventSourceMutableProperties
+from ._models_py3 import EventSourceResource
+from ._models_py3 import EventSourceUpdateParameters
+from ._models_py3 import Gen1EnvironmentCreateOrUpdateParameters
+from ._models_py3 import Gen1EnvironmentCreationProperties
+from ._models_py3 import Gen1EnvironmentResource
+from ._models_py3 import Gen1EnvironmentResourceProperties
+from ._models_py3 import Gen1EnvironmentUpdateParameters
+from ._models_py3 import Gen2EnvironmentCreateOrUpdateParameters
+from ._models_py3 import Gen2EnvironmentResource
+from ._models_py3 import Gen2EnvironmentResourceProperties
+from ._models_py3 import Gen2EnvironmentUpdateParameters
+from ._models_py3 import Gen2StorageConfigurationInput
+from ._models_py3 import Gen2StorageConfigurationMutableProperties
+from ._models_py3 import Gen2StorageConfigurationOutput
+from ._models_py3 import IngressEnvironmentStatus
+from ._models_py3 import IoTHubEventSourceCommonProperties
+from ._models_py3 import IoTHubEventSourceCreateOrUpdateParameters
+from ._models_py3 import IoTHubEventSourceCreationProperties
+from ._models_py3 import IoTHubEventSourceMutableProperties
+from ._models_py3 import IoTHubEventSourceResource
+from ._models_py3 import IoTHubEventSourceResourceProperties
+from ._models_py3 import IoTHubEventSourceUpdateParameters
+from ._models_py3 import LocalTimestamp
+from ._models_py3 import LocalTimestampTimeZoneOffset
+from ._models_py3 import LogSpecification
+from ._models_py3 import MetricAvailability
+from ._models_py3 import MetricSpecification
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import ReferenceDataSetCreateOrUpdateParameters
+from ._models_py3 import ReferenceDataSetCreationProperties
+from ._models_py3 import ReferenceDataSetKeyProperty
+from ._models_py3 import ReferenceDataSetListResponse
+from ._models_py3 import ReferenceDataSetResource
+from ._models_py3 import ReferenceDataSetResourceProperties
+from ._models_py3 import ReferenceDataSetUpdateParameters
+from ._models_py3 import Resource
+from ._models_py3 import ResourceProperties
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import Sku
+from ._models_py3 import TimeSeriesIdProperty
+from ._models_py3 import TrackedResource
+from ._models_py3 import WarmStorageEnvironmentStatus
+from ._models_py3 import WarmStoreConfigurationProperties
+
 
 from ._time_series_insights_client_enums import (
     AccessPolicyRole,
@@ -148,10 +92,14 @@ from ._time_series_insights_client_enums import (
     EnvironmentResourceKind,
     EventSourceKind,
     EventSourceResourceKind,
+    IngressStartAtType,
     IngressState,
     LocalTimestampFormat,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
     PropertyType,
     ProvisioningState,
+    PublicNetworkAccess,
     ReferenceDataKeyPropertyType,
     SkuName,
     StorageLimitExceededBehavior,
@@ -166,6 +114,7 @@ __all__ = [
     'AzureEventSourceProperties',
     'CloudErrorBody',
     'CreateOrUpdateTrackedResourceProperties',
+    'Dimension',
     'EnvironmentCreateOrUpdateParameters',
     'EnvironmentListResponse',
     'EnvironmentResource',
@@ -208,9 +157,18 @@ __all__ = [
     'IoTHubEventSourceUpdateParameters',
     'LocalTimestamp',
     'LocalTimestampTimeZoneOffset',
+    'LogSpecification',
+    'MetricAvailability',
+    'MetricSpecification',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'ReferenceDataSetCreateOrUpdateParameters',
     'ReferenceDataSetCreationProperties',
     'ReferenceDataSetKeyProperty',
@@ -220,6 +178,7 @@ __all__ = [
     'ReferenceDataSetUpdateParameters',
     'Resource',
     'ResourceProperties',
+    'ServiceSpecification',
     'Sku',
     'TimeSeriesIdProperty',
     'TrackedResource',
@@ -231,10 +190,14 @@ __all__ = [
     'EnvironmentResourceKind',
     'EventSourceKind',
     'EventSourceResourceKind',
+    'IngressStartAtType',
     'IngressState',
     'LocalTimestampFormat',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
     'PropertyType',
     'ProvisioningState',
+    'PublicNetworkAccess',
     'ReferenceDataKeyPropertyType',
     'SkuName',
     'StorageLimitExceededBehavior',

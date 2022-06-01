@@ -17,12 +17,12 @@ from ._time_series_insights_client_enums import *
 class AccessPolicyCreateOrUpdateParameters(msrest.serialization.Model):
     """AccessPolicyCreateOrUpdateParameters.
 
-    :param principal_object_id: The objectId of the principal in Azure Active Directory.
-    :type principal_object_id: str
-    :param description: An description of the access policy.
-    :type description: str
-    :param roles: The list of roles the principal is assigned on the environment.
-    :type roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+    :ivar principal_object_id: The objectId of the principal in Azure Active Directory.
+    :vartype principal_object_id: str
+    :ivar description: An description of the access policy.
+    :vartype description: str
+    :ivar roles: The list of roles the principal is assigned on the environment.
+    :vartype roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
     """
 
     _attribute_map = {
@@ -39,6 +39,14 @@ class AccessPolicyCreateOrUpdateParameters(msrest.serialization.Model):
         roles: Optional[List[Union[str, "AccessPolicyRole"]]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_object_id: The objectId of the principal in Azure Active Directory.
+        :paramtype principal_object_id: str
+        :keyword description: An description of the access policy.
+        :paramtype description: str
+        :keyword roles: The list of roles the principal is assigned on the environment.
+        :paramtype roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+        """
         super(AccessPolicyCreateOrUpdateParameters, self).__init__(**kwargs)
         self.principal_object_id = principal_object_id
         self.description = description
@@ -48,8 +56,8 @@ class AccessPolicyCreateOrUpdateParameters(msrest.serialization.Model):
 class AccessPolicyListResponse(msrest.serialization.Model):
     """The response of the List access policies operation.
 
-    :param value: Result of the List access policies operation.
-    :type value: list[~azure.mgmt.timeseriesinsights.models.AccessPolicyResource]
+    :ivar value: Result of the List access policies operation.
+    :vartype value: list[~azure.mgmt.timeseriesinsights.models.AccessPolicyResource]
     """
 
     _attribute_map = {
@@ -62,20 +70,26 @@ class AccessPolicyListResponse(msrest.serialization.Model):
         value: Optional[List["AccessPolicyResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List access policies operation.
+        :paramtype value: list[~azure.mgmt.timeseriesinsights.models.AccessPolicyResource]
+        """
         super(AccessPolicyListResponse, self).__init__(**kwargs)
         self.value = value
 
 
 class Resource(msrest.serialization.Model):
-    """Time Series Insights resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -95,6 +109,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -106,18 +122,20 @@ class AccessPolicyResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param principal_object_id: The objectId of the principal in Azure Active Directory.
-    :type principal_object_id: str
-    :param description: An description of the access policy.
-    :type description: str
-    :param roles: The list of roles the principal is assigned on the environment.
-    :type roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+    :ivar principal_object_id: The objectId of the principal in Azure Active Directory.
+    :vartype principal_object_id: str
+    :ivar description: An description of the access policy.
+    :vartype description: str
+    :ivar roles: The list of roles the principal is assigned on the environment.
+    :vartype roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
     """
 
     _validation = {
@@ -143,6 +161,14 @@ class AccessPolicyResource(Resource):
         roles: Optional[List[Union[str, "AccessPolicyRole"]]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_object_id: The objectId of the principal in Azure Active Directory.
+        :paramtype principal_object_id: str
+        :keyword description: An description of the access policy.
+        :paramtype description: str
+        :keyword roles: The list of roles the principal is assigned on the environment.
+        :paramtype roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+        """
         super(AccessPolicyResource, self).__init__(**kwargs)
         self.principal_object_id = principal_object_id
         self.description = description
@@ -152,10 +178,10 @@ class AccessPolicyResource(Resource):
 class AccessPolicyUpdateParameters(msrest.serialization.Model):
     """AccessPolicyUpdateParameters.
 
-    :param description: An description of the access policy.
-    :type description: str
-    :param roles: The list of roles the principal is assigned on the environment.
-    :type roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+    :ivar description: An description of the access policy.
+    :vartype description: str
+    :ivar roles: The list of roles the principal is assigned on the environment.
+    :vartype roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
     """
 
     _attribute_map = {
@@ -170,6 +196,12 @@ class AccessPolicyUpdateParameters(msrest.serialization.Model):
         roles: Optional[List[Union[str, "AccessPolicyRole"]]] = None,
         **kwargs
     ):
+        """
+        :keyword description: An description of the access policy.
+        :paramtype description: str
+        :keyword roles: The list of roles the principal is assigned on the environment.
+        :paramtype roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+        """
         super(AccessPolicyUpdateParameters, self).__init__(**kwargs)
         self.description = description
         self.roles = roles
@@ -201,6 +233,8 @@ class ResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.creation_time = None
@@ -216,10 +250,22 @@ class EventSourceCommonProperties(ResourceProperties):
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
     """
 
     _validation = {
@@ -231,16 +277,43 @@ class EventSourceCommonProperties(ResourceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        """
         super(EventSourceCommonProperties, self).__init__(**kwargs)
         self.timestamp_property_name = timestamp_property_name
+        self.local_timestamp = local_timestamp
+        self.type = type
+        self.time = time
 
 
 class AzureEventSourceProperties(EventSourceCommonProperties):
@@ -255,13 +328,25 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
     """
 
     _validation = {
@@ -274,6 +359,9 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
     }
 
@@ -282,26 +370,49 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
         *,
         event_source_resource_id: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(AzureEventSourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        """
+        super(AzureEventSourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, **kwargs)
         self.event_source_resource_id = event_source_resource_id
 
 
 class CloudErrorBody(msrest.serialization.Model):
     """Describes a particular API error with an error code and a message.
 
-    :param code: An error code that describes the error condition more precisely than an HTTP
-     status code. Can be used to programmatically handle specific error cases.
-    :type code: str
-    :param message: A message that describes the error in detail and provides debugging
-     information.
-    :type message: str
-    :param target: The target of the particular error (for example, the name of the property in
+    :ivar code: An error code that describes the error condition more precisely than an HTTP status
+     code. Can be used to programmatically handle specific error cases.
+    :vartype code: str
+    :ivar message: A message that describes the error in detail and provides debugging information.
+    :vartype message: str
+    :ivar target: The target of the particular error (for example, the name of the property in
      error).
-    :type target: str
-    :param details: Contains nested errors that are related to this error.
-    :type details: list[~azure.mgmt.timeseriesinsights.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: Contains nested errors that are related to this error.
+    :vartype details: list[~azure.mgmt.timeseriesinsights.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -320,6 +431,19 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An error code that describes the error condition more precisely than an HTTP
+         status code. Can be used to programmatically handle specific error cases.
+        :paramtype code: str
+        :keyword message: A message that describes the error in detail and provides debugging
+         information.
+        :paramtype message: str
+        :keyword target: The target of the particular error (for example, the name of the property in
+         error).
+        :paramtype target: str
+        :keyword details: Contains nested errors that are related to this error.
+        :paramtype details: list[~azure.mgmt.timeseriesinsights.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -332,10 +456,10 @@ class CreateOrUpdateTrackedResourceProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -354,9 +478,47 @@ class CreateOrUpdateTrackedResourceProperties(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        """
         super(CreateOrUpdateTrackedResourceProperties, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
+
+
+class Dimension(msrest.serialization.Model):
+    """Dimension of blobs, possibly be blob type or access tier.
+
+    :ivar name: Display name of dimension.
+    :vartype name: str
+    :ivar display_name: Display name of dimension.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Display name of dimension.
+        :paramtype name: str
+        :keyword display_name: Display name of dimension.
+        :paramtype display_name: str
+        """
+        super(Dimension, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
 
 
 class EnvironmentCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProperties):
@@ -367,17 +529,17 @@ class EnvironmentCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
      include: "Gen1", "Gen2".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
-    :param sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
-     Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
-     ingress rate, and the billing rate.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
+    :ivar sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or Gen2
+     (L1). For Gen1 environments the sku determines the capacity of the environment, the ingress
+     rate, and the billing rate.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
     """
 
     _validation = {
@@ -405,6 +567,16 @@ class EnvironmentCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
+         Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
+         ingress rate, and the billing rate.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        """
         super(EnvironmentCreateOrUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = 'EnvironmentCreateOrUpdateParameters'  # type: str
         self.sku = sku
@@ -413,8 +585,8 @@ class EnvironmentCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
 class EnvironmentListResponse(msrest.serialization.Model):
     """The response of the List Environments operation.
 
-    :param value: Result of the List Environments operation.
-    :type value: list[~azure.mgmt.timeseriesinsights.models.EnvironmentResource]
+    :ivar value: Result of the List Environments operation.
+    :vartype value: list[~azure.mgmt.timeseriesinsights.models.EnvironmentResource]
     """
 
     _attribute_map = {
@@ -427,6 +599,10 @@ class EnvironmentListResponse(msrest.serialization.Model):
         value: Optional[List["EnvironmentResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Environments operation.
+        :paramtype value: list[~azure.mgmt.timeseriesinsights.models.EnvironmentResource]
+        """
         super(EnvironmentListResponse, self).__init__(**kwargs)
         self.value = value
 
@@ -438,16 +614,18 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -472,6 +650,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -487,23 +671,25 @@ class EnvironmentResource(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
-     Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
-     ingress rate, and the billing rate.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or Gen2
+     (L1). For Gen1 environments the sku determines the capacity of the environment, the ingress
+     rate, and the billing rate.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
      include: "Gen1", "Gen2".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentResourceKind
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentResourceKind
     """
 
     _validation = {
@@ -537,6 +723,16 @@ class EnvironmentResource(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
+         Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
+         ingress rate, and the billing rate.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        """
         super(EnvironmentResource, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = 'EnvironmentResource'  # type: str
@@ -583,6 +779,8 @@ class EnvironmentResourceProperties(ResourceProperties):
         self,
         **kwargs
     ):
+        """
+        """
         super(EnvironmentResourceProperties, self).__init__(**kwargs)
         self.data_access_id = None
         self.data_access_fqdn = None
@@ -592,11 +790,11 @@ class EnvironmentResourceProperties(ResourceProperties):
 class EnvironmentStateDetails(msrest.serialization.Model):
     """An object that contains the details about an environment's state.
 
-    :param code: Contains the code that represents the reason of an environment being in a
+    :ivar code: Contains the code that represents the reason of an environment being in a
      particular state. Can be used to programmatically handle specific cases.
-    :type code: str
-    :param message: A message that describes the state in detail.
-    :type message: str
+    :vartype code: str
+    :ivar message: A message that describes the state in detail.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -611,6 +809,13 @@ class EnvironmentStateDetails(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Contains the code that represents the reason of an environment being in a
+         particular state. Can be used to programmatically handle specific cases.
+        :paramtype code: str
+        :keyword message: A message that describes the state in detail.
+        :paramtype message: str
+        """
         super(EnvironmentStateDetails, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -641,6 +846,8 @@ class EnvironmentStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EnvironmentStatus, self).__init__(**kwargs)
         self.ingress = None
         self.warm_storage = None
@@ -652,17 +859,17 @@ class EnvironmentUpdateParameters(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: Gen1EnvironmentUpdateParameters, Gen2EnvironmentUpdateParameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
-     "Gen1", "Gen2".
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
+     include: "Gen1", "Gen2".
     :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
-    :param tags: A set of tags. Key-value pairs of additional properties for the environment.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the environment.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -680,6 +887,10 @@ class EnvironmentUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the environment.
+        :paramtype tags: dict[str, str]
+        """
         super(EnvironmentUpdateParameters, self).__init__(**kwargs)
         self.kind = None  # type: Optional[str]
         self.tags = tags
@@ -697,25 +908,36 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param service_bus_namespace: Required. The name of the service bus that contains the event
-     hub.
-    :type service_bus_namespace: str
-    :param event_hub_name: Required. The name of the event hub.
-    :type event_hub_name: str
-    :param consumer_group_name: Required. The name of the event hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar service_bus_namespace: Required. The name of the service bus that contains the event hub.
+    :vartype service_bus_namespace: str
+    :ivar event_hub_name: Required. The name of the event hub.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: Required. The name of the event hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the SAS key that grants the Time Series Insights service
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the SAS key that grants the Time Series Insights service
      access to the event hub. The shared access policies for this key must grant 'Listen'
      permissions to the event hub.
-    :type key_name: str
+    :vartype key_name: str
     """
 
     _validation = {
@@ -732,6 +954,9 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
@@ -748,9 +973,45 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword service_bus_namespace: Required. The name of the service bus that contains the event
+         hub.
+        :paramtype service_bus_namespace: str
+        :keyword event_hub_name: Required. The name of the event hub.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: Required. The name of the event hub's consumer group that holds
+         the partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the SAS key that grants the Time Series Insights
+         service access to the event hub. The shared access policies for this key must grant 'Listen'
+         permissions to the event hub.
+        :paramtype key_name: str
+        """
+        super(EventHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, event_source_resource_id=event_source_resource_id, **kwargs)
         self.service_bus_namespace = service_bus_namespace
         self.event_hub_name = event_hub_name
         self.consumer_group_name = consumer_group_name
@@ -765,18 +1026,18 @@ class EventSourceCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
      include: "Microsoft.EventHub", "Microsoft.IoTHub".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
      format of local timestamp that needs to be used and the corresponding timezone offset
      information. If a value isn't specified for localTimestamp, or if null, then the local
      timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
     """
 
     _validation = {
@@ -803,6 +1064,17 @@ class EventSourceCreateOrUpdateParameters(CreateOrUpdateTrackedResourcePropertie
         local_timestamp: Optional["LocalTimestamp"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        """
         super(EventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = 'EventSourceCreateOrUpdateParameters'  # type: str
         self.local_timestamp = local_timestamp
@@ -815,46 +1087,58 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
      include: "Microsoft.EventHub", "Microsoft.IoTHub".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
      format of local timestamp that needs to be used and the corresponding timezone offset
      information. If a value isn't specified for localTimestamp, or if null, then the local
      timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param service_bus_namespace: Required. The name of the service bus that contains the event
-     hub.
-    :type service_bus_namespace: str
-    :param event_hub_name: Required. The name of the event hub.
-    :type event_hub_name: str
-    :param consumer_group_name: Required. The name of the event hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp_properties_local_timestamp: An object that represents the local timestamp
+     property. It contains the format of local timestamp that needs to be used and the corresponding
+     timezone offset information. If a value isn't specified for localTimestamp, or if null, then
+     the local timestamp will not be ingressed with the events.
+    :vartype local_timestamp_properties_local_timestamp:
+     ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar service_bus_namespace: Required. The name of the service bus that contains the event hub.
+    :vartype service_bus_namespace: str
+    :ivar event_hub_name: Required. The name of the event hub.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: Required. The name of the event hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the SAS key that grants the Time Series Insights service
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the SAS key that grants the Time Series Insights service
      access to the event hub. The shared access policies for this key must grant 'Listen'
      permissions to the event hub.
-    :type key_name: str
-    :param shared_access_key: Required. The value of the shared access key that grants the Time
+    :vartype key_name: str
+    :ivar shared_access_key: Required. The value of the shared access key that grants the Time
      Series Insights service read access to the event hub. This property is not shown in event
      source responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _validation = {
@@ -878,6 +1162,9 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'local_timestamp_properties_local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
@@ -899,13 +1186,66 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         tags: Optional[Dict[str, str]] = None,
         local_timestamp: Optional["LocalTimestamp"] = None,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp_properties_local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp_properties_local_timestamp: An object that represents the local
+         timestamp property. It contains the format of local timestamp that needs to be used and the
+         corresponding timezone offset information. If a value isn't specified for localTimestamp, or if
+         null, then the local timestamp will not be ingressed with the events.
+        :paramtype local_timestamp_properties_local_timestamp:
+         ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword service_bus_namespace: Required. The name of the service bus that contains the event
+         hub.
+        :paramtype service_bus_namespace: str
+        :keyword event_hub_name: Required. The name of the event hub.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: Required. The name of the event hub's consumer group that holds
+         the partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the SAS key that grants the Time Series Insights
+         service access to the event hub. The shared access policies for this key must grant 'Listen'
+         permissions to the event hub.
+        :paramtype key_name: str
+        :keyword shared_access_key: Required. The value of the shared access key that grants the Time
+         Series Insights service read access to the event hub. This property is not shown in event
+         source responses.
+        :paramtype shared_access_key: str
+        """
         super(EventHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, local_timestamp=local_timestamp, **kwargs)
         self.kind = 'Microsoft.EventHub'  # type: str
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.local_timestamp_properties_local_timestamp = local_timestamp_properties_local_timestamp
+        self.type = type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.service_bus_namespace = service_bus_namespace
         self.event_hub_name = event_hub_name
@@ -926,29 +1266,40 @@ class EventHubEventSourceCreationProperties(EventHubEventSourceCommonProperties)
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param service_bus_namespace: Required. The name of the service bus that contains the event
-     hub.
-    :type service_bus_namespace: str
-    :param event_hub_name: Required. The name of the event hub.
-    :type event_hub_name: str
-    :param consumer_group_name: Required. The name of the event hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar service_bus_namespace: Required. The name of the service bus that contains the event hub.
+    :vartype service_bus_namespace: str
+    :ivar event_hub_name: Required. The name of the event hub.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: Required. The name of the event hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the SAS key that grants the Time Series Insights service
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the SAS key that grants the Time Series Insights service
      access to the event hub. The shared access policies for this key must grant 'Listen'
      permissions to the event hub.
-    :type key_name: str
-    :param shared_access_key: Required. The value of the shared access key that grants the Time
+    :vartype key_name: str
+    :ivar shared_access_key: Required. The value of the shared access key that grants the Time
      Series Insights service read access to the event hub. This property is not shown in event
      source responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _validation = {
@@ -966,6 +1317,9 @@ class EventHubEventSourceCreationProperties(EventHubEventSourceCommonProperties)
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
@@ -984,64 +1338,96 @@ class EventHubEventSourceCreationProperties(EventHubEventSourceCommonProperties)
         key_name: str,
         shared_access_key: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword service_bus_namespace: Required. The name of the service bus that contains the event
+         hub.
+        :paramtype service_bus_namespace: str
+        :keyword event_hub_name: Required. The name of the event hub.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: Required. The name of the event hub's consumer group that holds
+         the partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the SAS key that grants the Time Series Insights
+         service access to the event hub. The shared access policies for this key must grant 'Listen'
+         permissions to the event hub.
+        :paramtype key_name: str
+        :keyword shared_access_key: Required. The value of the shared access key that grants the Time
+         Series Insights service read access to the event hub. This property is not shown in event
+         source responses.
+        :paramtype shared_access_key: str
+        """
+        super(EventHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
         self.shared_access_key = shared_access_key
 
 
 class EventSourceMutableProperties(msrest.serialization.Model):
     """An object that represents a set of mutable event source resource properties.
 
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
-     format of local timestamp that needs to be used and the corresponding timezone offset
-     information. If a value isn't specified for localTimestamp, or if null, then the local
-     timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :vartype timestamp_property_name: str
     """
 
     _attribute_map = {
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
-        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
     }
 
     def __init__(
         self,
         *,
         timestamp_property_name: Optional[str] = None,
-        local_timestamp: Optional["LocalTimestamp"] = None,
         **kwargs
     ):
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        """
         super(EventSourceMutableProperties, self).__init__(**kwargs)
         self.timestamp_property_name = timestamp_property_name
-        self.local_timestamp = local_timestamp
 
 
 class EventHubEventSourceMutableProperties(EventSourceMutableProperties):
     """An object that represents a set of mutable EventHub event source resource properties.
 
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
-     format of local timestamp that needs to be used and the corresponding timezone offset
-     information. If a value isn't specified for localTimestamp, or if null, then the local
-     timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
-    :param shared_access_key: The value of the shared access key that grants the Time Series
+    :vartype timestamp_property_name: str
+    :ivar shared_access_key: The value of the shared access key that grants the Time Series
      Insights service read access to the event hub. This property is not shown in event source
      responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _attribute_map = {
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
-        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
         'shared_access_key': {'key': 'sharedAccessKey', 'type': 'str'},
     }
 
@@ -1049,11 +1435,20 @@ class EventHubEventSourceMutableProperties(EventSourceMutableProperties):
         self,
         *,
         timestamp_property_name: Optional[str] = None,
-        local_timestamp: Optional["LocalTimestamp"] = None,
         shared_access_key: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceMutableProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword shared_access_key: The value of the shared access key that grants the Time Series
+         Insights service read access to the event hub. This property is not shown in event source
+         responses.
+        :paramtype shared_access_key: str
+        """
+        super(EventHubEventSourceMutableProperties, self).__init__(timestamp_property_name=timestamp_property_name, **kwargs)
         self.shared_access_key = shared_access_key
 
 
@@ -1067,19 +1462,21 @@ class EventSourceResource(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
      include: "Microsoft.EventHub", "Microsoft.IoTHub".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceResourceKind
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceResourceKind
     """
 
     _validation = {
@@ -1110,6 +1507,12 @@ class EventSourceResource(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(EventSourceResource, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = 'EventSourceResource'  # type: str
 
@@ -1121,43 +1524,57 @@ class EventHubEventSourceResource(EventSourceResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
      include: "Microsoft.EventHub", "Microsoft.IoTHub".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceResourceKind
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceResourceKind
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param service_bus_namespace: Required. The name of the service bus that contains the event
-     hub.
-    :type service_bus_namespace: str
-    :param event_hub_name: Required. The name of the event hub.
-    :type event_hub_name: str
-    :param consumer_group_name: Required. The name of the event hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type_properties_ingress_start_at_type: The type of the ingressStartAt, It can be
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include:
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type_properties_ingress_start_at_type: str or
+     ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar service_bus_namespace: Required. The name of the service bus that contains the event hub.
+    :vartype service_bus_namespace: str
+    :ivar event_hub_name: Required. The name of the event hub.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: Required. The name of the event hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the SAS key that grants the Time Series Insights service
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the SAS key that grants the Time Series Insights service
      access to the event hub. The shared access policies for this key must grant 'Listen'
      permissions to the event hub.
-    :type key_name: str
+    :vartype key_name: str
     """
 
     _validation = {
@@ -1185,6 +1602,9 @@ class EventHubEventSourceResource(EventSourceResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
+        'type_properties_ingress_start_at_type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
@@ -1203,13 +1623,57 @@ class EventHubEventSourceResource(EventSourceResource):
         key_name: str,
         tags: Optional[Dict[str, str]] = None,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type_properties_ingress_start_at_type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type_properties_ingress_start_at_type: The type of the ingressStartAt, It can be
+         "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include:
+         "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type_properties_ingress_start_at_type: str or
+         ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword service_bus_namespace: Required. The name of the service bus that contains the event
+         hub.
+        :paramtype service_bus_namespace: str
+        :keyword event_hub_name: Required. The name of the event hub.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: Required. The name of the event hub's consumer group that holds
+         the partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the SAS key that grants the Time Series Insights
+         service access to the event hub. The shared access policies for this key must grant 'Listen'
+         permissions to the event hub.
+        :paramtype key_name: str
+        """
         super(EventHubEventSourceResource, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = 'Microsoft.EventHub'  # type: str
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.local_timestamp = local_timestamp
+        self.type_properties_ingress_start_at_type = type_properties_ingress_start_at_type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.service_bus_namespace = service_bus_namespace
         self.event_hub_name = event_hub_name
@@ -1229,25 +1693,36 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param service_bus_namespace: Required. The name of the service bus that contains the event
-     hub.
-    :type service_bus_namespace: str
-    :param event_hub_name: Required. The name of the event hub.
-    :type event_hub_name: str
-    :param consumer_group_name: Required. The name of the event hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar service_bus_namespace: Required. The name of the service bus that contains the event hub.
+    :vartype service_bus_namespace: str
+    :ivar event_hub_name: Required. The name of the event hub.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: Required. The name of the event hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the SAS key that grants the Time Series Insights service
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the SAS key that grants the Time Series Insights service
      access to the event hub. The shared access policies for this key must grant 'Listen'
      permissions to the event hub.
-    :type key_name: str
+    :vartype key_name: str
     """
 
     _validation = {
@@ -1264,6 +1739,9 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
@@ -1280,9 +1758,45 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword service_bus_namespace: Required. The name of the service bus that contains the event
+         hub.
+        :paramtype service_bus_namespace: str
+        :keyword event_hub_name: Required. The name of the event hub.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: Required. The name of the event hub's consumer group that holds
+         the partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the SAS key that grants the Time Series Insights
+         service access to the event hub. The shared access policies for this key must grant 'Listen'
+         permissions to the event hub.
+        :paramtype key_name: str
+        """
+        super(EventHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
 
 
 class EventSourceUpdateParameters(msrest.serialization.Model):
@@ -1291,17 +1805,17 @@ class EventSourceUpdateParameters(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: EventHubEventSourceUpdateParameters, IoTHubEventSourceUpdateParameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
-     "Microsoft.EventHub", "Microsoft.IoTHub".
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
+     include: "Microsoft.EventHub", "Microsoft.IoTHub".
     :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
-    :param tags: A set of tags. Key-value pairs of additional properties for the event source.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the event source.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -1319,6 +1833,10 @@ class EventSourceUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the event source.
+        :paramtype tags: dict[str, str]
+        """
         super(EventSourceUpdateParameters, self).__init__(**kwargs)
         self.kind = None  # type: Optional[str]
         self.tags = tags
@@ -1327,37 +1845,31 @@ class EventSourceUpdateParameters(msrest.serialization.Model):
 class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """Parameters supplied to the Update Event Source operation to update an EventHub event source.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
-     "Microsoft.EventHub", "Microsoft.IoTHub".
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
+     include: "Microsoft.EventHub", "Microsoft.IoTHub".
     :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
-    :param tags: A set of tags. Key-value pairs of additional properties for the event source.
-    :type tags: dict[str, str]
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the event source.
+    :vartype tags: dict[str, str]
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
-     format of local timestamp that needs to be used and the corresponding timezone offset
-     information. If a value isn't specified for localTimestamp, or if null, then the local
-     timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
-    :param shared_access_key: The value of the shared access key that grants the Time Series
+    :vartype timestamp_property_name: str
+    :ivar shared_access_key: The value of the shared access key that grants the Time Series
      Insights service read access to the event hub. This property is not shown in event source
      responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
-        'local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
         'shared_access_key': {'key': 'properties.sharedAccessKey', 'type': 'str'},
     }
 
@@ -1366,22 +1878,32 @@ class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
         *,
         tags: Optional[Dict[str, str]] = None,
         timestamp_property_name: Optional[str] = None,
-        local_timestamp: Optional["LocalTimestamp"] = None,
         shared_access_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the event source.
+        :paramtype tags: dict[str, str]
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword shared_access_key: The value of the shared access key that grants the Time Series
+         Insights service read access to the event hub. This property is not shown in event source
+         responses.
+        :paramtype shared_access_key: str
+        """
         super(EventHubEventSourceUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.kind = 'Microsoft.EventHub'  # type: str
         self.timestamp_property_name = timestamp_property_name
-        self.local_timestamp = local_timestamp
         self.shared_access_key = shared_access_key
 
 
 class EventSourceListResponse(msrest.serialization.Model):
     """The response of the List EventSources operation.
 
-    :param value: Result of the List EventSources operation.
-    :type value: list[~azure.mgmt.timeseriesinsights.models.EventSourceResource]
+    :ivar value: Result of the List EventSources operation.
+    :vartype value: list[~azure.mgmt.timeseriesinsights.models.EventSourceResource]
     """
 
     _attribute_map = {
@@ -1394,6 +1916,10 @@ class EventSourceListResponse(msrest.serialization.Model):
         value: Optional[List["EventSourceResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List EventSources operation.
+        :paramtype value: list[~azure.mgmt.timeseriesinsights.models.EventSourceResource]
+        """
         super(EventSourceListResponse, self).__init__(**kwargs)
         self.value = value
 
@@ -1403,30 +1929,30 @@ class Gen1EnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameter
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
      include: "Gen1", "Gen2".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
-    :param sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
-     Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
-     ingress rate, and the billing rate.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
-     the environment's events will be available for query.
-    :type data_retention_time: ~datetime.timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
+    :ivar sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or Gen2
+     (L1). For Gen1 environments the sku determines the capacity of the environment, the ingress
+     rate, and the billing rate.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :ivar data_retention_time: Required. ISO8601 timespan specifying the minimum number of days the
+     environment's events will be available for query.
+    :vartype data_retention_time: ~datetime.timedelta
+    :ivar storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
      take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
      events will not be read from the event source. If "PurgeOldData" is specified, new events will
      continue to be read and old events will be deleted from the environment. The default behavior
      is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
-    :type storage_limit_exceeded_behavior: str or
+    :vartype storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of event properties which will be used to partition
+    :ivar partition_key_properties: The list of event properties which will be used to partition
      data in the environment. Currently, only a single partition key property is supported.
-    :type partition_key_properties:
+    :vartype partition_key_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     """
 
@@ -1458,6 +1984,30 @@ class Gen1EnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameter
         partition_key_properties: Optional[List["TimeSeriesIdProperty"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
+         Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
+         ingress rate, and the billing rate.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        :keyword data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
+         the environment's events will be available for query.
+        :paramtype data_retention_time: ~datetime.timedelta
+        :keyword storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+         take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
+         events will not be read from the event source. If "PurgeOldData" is specified, new events will
+         continue to be read and old events will be deleted from the environment. The default behavior
+         is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
+        :paramtype storage_limit_exceeded_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+        :keyword partition_key_properties: The list of event properties which will be used to partition
+         data in the environment. Currently, only a single partition key property is supported.
+        :paramtype partition_key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        """
         super(Gen1EnvironmentCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.kind = 'Gen1'  # type: str
         self.data_retention_time = data_retention_time
@@ -1470,19 +2020,19 @@ class Gen1EnvironmentCreationProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
-     the environment's events will be available for query.
-    :type data_retention_time: ~datetime.timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+    :ivar data_retention_time: Required. ISO8601 timespan specifying the minimum number of days the
+     environment's events will be available for query.
+    :vartype data_retention_time: ~datetime.timedelta
+    :ivar storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
      take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
      events will not be read from the event source. If "PurgeOldData" is specified, new events will
      continue to be read and old events will be deleted from the environment. The default behavior
      is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
-    :type storage_limit_exceeded_behavior: str or
+    :vartype storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of event properties which will be used to partition
+    :ivar partition_key_properties: The list of event properties which will be used to partition
      data in the environment. Currently, only a single partition key property is supported.
-    :type partition_key_properties:
+    :vartype partition_key_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     """
 
@@ -1504,6 +2054,22 @@ class Gen1EnvironmentCreationProperties(msrest.serialization.Model):
         partition_key_properties: Optional[List["TimeSeriesIdProperty"]] = None,
         **kwargs
     ):
+        """
+        :keyword data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
+         the environment's events will be available for query.
+        :paramtype data_retention_time: ~datetime.timedelta
+        :keyword storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+         take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
+         events will not be read from the event source. If "PurgeOldData" is specified, new events will
+         continue to be read and old events will be deleted from the environment. The default behavior
+         is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
+        :paramtype storage_limit_exceeded_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+        :keyword partition_key_properties: The list of event properties which will be used to partition
+         data in the environment. Currently, only a single partition key property is supported.
+        :paramtype partition_key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        """
         super(Gen1EnvironmentCreationProperties, self).__init__(**kwargs)
         self.data_retention_time = data_retention_time
         self.storage_limit_exceeded_behavior = storage_limit_exceeded_behavior
@@ -1517,36 +2083,38 @@ class Gen1EnvironmentResource(EnvironmentResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
-     Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
-     ingress rate, and the billing rate.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or Gen2
+     (L1). For Gen1 environments the sku determines the capacity of the environment, the ingress
+     rate, and the billing rate.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
      include: "Gen1", "Gen2".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentResourceKind
-    :param data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
-     the environment's events will be available for query.
-    :type data_retention_time: ~datetime.timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentResourceKind
+    :ivar data_retention_time: Required. ISO8601 timespan specifying the minimum number of days the
+     environment's events will be available for query.
+    :vartype data_retention_time: ~datetime.timedelta
+    :ivar storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
      take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
      events will not be read from the event source. If "PurgeOldData" is specified, new events will
      continue to be read and old events will be deleted from the environment. The default behavior
      is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
-    :type storage_limit_exceeded_behavior: str or
+    :vartype storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of event properties which will be used to partition
+    :ivar partition_key_properties: The list of event properties which will be used to partition
      data in the environment. Currently, only a single partition key property is supported.
-    :type partition_key_properties:
+    :vartype partition_key_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
@@ -1608,6 +2176,30 @@ class Gen1EnvironmentResource(EnvironmentResource):
         partition_key_properties: Optional[List["TimeSeriesIdProperty"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
+         Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
+         ingress rate, and the billing rate.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        :keyword data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
+         the environment's events will be available for query.
+        :paramtype data_retention_time: ~datetime.timedelta
+        :keyword storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+         take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
+         events will not be read from the event source. If "PurgeOldData" is specified, new events will
+         continue to be read and old events will be deleted from the environment. The default behavior
+         is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
+        :paramtype storage_limit_exceeded_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+        :keyword partition_key_properties: The list of event properties which will be used to partition
+         data in the environment. Currently, only a single partition key property is supported.
+        :paramtype partition_key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        """
         super(Gen1EnvironmentResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.kind = 'Gen1'  # type: str
         self.data_retention_time = data_retention_time
@@ -1641,19 +2233,19 @@ class Gen1EnvironmentResourceProperties(Gen1EnvironmentCreationProperties, Envir
     :ivar status: An object that represents the status of the environment, and its internal state
      in the Time Series Insights service.
     :vartype status: ~azure.mgmt.timeseriesinsights.models.EnvironmentStatus
-    :param data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
-     the environment's events will be available for query.
-    :type data_retention_time: ~datetime.timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+    :ivar data_retention_time: Required. ISO8601 timespan specifying the minimum number of days the
+     environment's events will be available for query.
+    :vartype data_retention_time: ~datetime.timedelta
+    :ivar storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
      take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
      events will not be read from the event source. If "PurgeOldData" is specified, new events will
      continue to be read and old events will be deleted from the environment. The default behavior
      is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
-    :type storage_limit_exceeded_behavior: str or
+    :vartype storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
-    :param partition_key_properties: The list of event properties which will be used to partition
+    :ivar partition_key_properties: The list of event properties which will be used to partition
      data in the environment. Currently, only a single partition key property is supported.
-    :type partition_key_properties:
+    :vartype partition_key_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
     """
 
@@ -1685,6 +2277,22 @@ class Gen1EnvironmentResourceProperties(Gen1EnvironmentCreationProperties, Envir
         partition_key_properties: Optional[List["TimeSeriesIdProperty"]] = None,
         **kwargs
     ):
+        """
+        :keyword data_retention_time: Required. ISO8601 timespan specifying the minimum number of days
+         the environment's events will be available for query.
+        :paramtype data_retention_time: ~datetime.timedelta
+        :keyword storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+         take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
+         events will not be read from the event source. If "PurgeOldData" is specified, new events will
+         continue to be read and old events will be deleted from the environment. The default behavior
+         is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
+        :paramtype storage_limit_exceeded_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+        :keyword partition_key_properties: The list of event properties which will be used to partition
+         data in the environment. Currently, only a single partition key property is supported.
+        :paramtype partition_key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        """
         super(Gen1EnvironmentResourceProperties, self).__init__(data_retention_time=data_retention_time, storage_limit_exceeded_behavior=storage_limit_exceeded_behavior, partition_key_properties=partition_key_properties, **kwargs)
         self.provisioning_state = None
         self.creation_time = None
@@ -1699,29 +2307,29 @@ class Gen1EnvironmentResourceProperties(Gen1EnvironmentCreationProperties, Envir
 class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a Gen1 environment.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
-     "Gen1", "Gen2".
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
+     include: "Gen1", "Gen2".
     :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
-    :param tags: A set of tags. Key-value pairs of additional properties for the environment.
-    :type tags: dict[str, str]
-    :param sku: The sku of the environment.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param data_retention_time: ISO8601 timespan specifying the minimum number of days the
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the environment.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the environment.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :ivar data_retention_time: ISO8601 timespan specifying the minimum number of days the
      environment's events will be available for query.
-    :type data_retention_time: ~datetime.timedelta
-    :param storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+    :vartype data_retention_time: ~datetime.timedelta
+    :ivar storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
      take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
      events will not be read from the event source. If "PurgeOldData" is specified, new events will
      continue to be read and old events will be deleted from the environment. The default behavior
      is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
-    :type storage_limit_exceeded_behavior: str or
+    :vartype storage_limit_exceeded_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -1741,6 +2349,22 @@ class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
         storage_limit_exceeded_behavior: Optional[Union[str, "StorageLimitExceededBehavior"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the environment.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the environment.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        :keyword data_retention_time: ISO8601 timespan specifying the minimum number of days the
+         environment's events will be available for query.
+        :paramtype data_retention_time: ~datetime.timedelta
+        :keyword storage_limit_exceeded_behavior: The behavior the Time Series Insights service should
+         take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new
+         events will not be read from the event source. If "PurgeOldData" is specified, new events will
+         continue to be read and old events will be deleted from the environment. The default behavior
+         is PurgeOldData. Possible values include: "PurgeOldData", "PauseIngress".
+        :paramtype storage_limit_exceeded_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
+        """
         super(Gen1EnvironmentUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.kind = 'Gen1'  # type: str
         self.sku = sku
@@ -1751,32 +2375,44 @@ class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
 class Gen2EnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameters):
     """Parameters supplied to the Create or Update Environment operation for a Gen2 environment.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
      include: "Gen1", "Gen2".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
-    :param sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
-     Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
-     ingress rate, and the billing rate.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param time_series_id_properties: Required. The list of event properties which will be used to
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
+    :ivar sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or Gen2
+     (L1). For Gen1 environments the sku determines the capacity of the environment, the ingress
+     rate, and the billing rate.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :ivar time_series_id_properties: Required. The list of event properties which will be used to
      define the environment's time series id.
-    :type time_series_id_properties:
+    :vartype time_series_id_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
-    :param storage_configuration: Required. The storage configuration provides the connection
+    :ivar storage_configuration: Required. The storage configuration provides the connection
      details that allows the Time Series Insights service to connect to the customer storage account
      that is used to store the environment's data.
-    :type storage_configuration:
+    :vartype storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationInput
-    :param warm_store_configuration: The warm store configuration provides the details to create a
+    :ivar warm_store_configuration: The warm store configuration provides the details to create a
      warm store cache that will retain a copy of the environment's data available for faster query.
-    :type warm_store_configuration:
+    :vartype warm_store_configuration:
      ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+    :ivar public_network_access: This value can be set to 'enabled' to avoid breaking changes on
+     existing customer resources and templates. If set to 'disabled', traffic over public interface
+     is not allowed, and private endpoint connections would be the exclusive access method. Possible
+     values include: "enabled", "disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.timeseriesinsights.models.PublicNetworkAccess
+    :ivar private_endpoint_connections: The list of private endpoint connections to the
+     environment.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -1785,6 +2421,7 @@ class Gen2EnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameter
         'sku': {'required': True},
         'time_series_id_properties': {'required': True},
         'storage_configuration': {'required': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1795,6 +2432,8 @@ class Gen2EnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameter
         'time_series_id_properties': {'key': 'properties.timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
         'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'Gen2StorageConfigurationInput'},
         'warm_store_configuration': {'key': 'properties.warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -1806,13 +2445,46 @@ class Gen2EnvironmentCreateOrUpdateParameters(EnvironmentCreateOrUpdateParameter
         storage_configuration: "Gen2StorageConfigurationInput",
         tags: Optional[Dict[str, str]] = None,
         warm_store_configuration: Optional["WarmStoreConfigurationProperties"] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
+         Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
+         ingress rate, and the billing rate.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        :keyword time_series_id_properties: Required. The list of event properties which will be used
+         to define the environment's time series id.
+        :paramtype time_series_id_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        :keyword storage_configuration: Required. The storage configuration provides the connection
+         details that allows the Time Series Insights service to connect to the customer storage account
+         that is used to store the environment's data.
+        :paramtype storage_configuration:
+         ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationInput
+        :keyword warm_store_configuration: The warm store configuration provides the details to create
+         a warm store cache that will retain a copy of the environment's data available for faster
+         query.
+        :paramtype warm_store_configuration:
+         ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+        :keyword public_network_access: This value can be set to 'enabled' to avoid breaking changes on
+         existing customer resources and templates. If set to 'disabled', traffic over public interface
+         is not allowed, and private endpoint connections would be the exclusive access method. Possible
+         values include: "enabled", "disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.timeseriesinsights.models.PublicNetworkAccess
+        """
         super(Gen2EnvironmentCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.kind = 'Gen2'  # type: str
         self.time_series_id_properties = time_series_id_properties
         self.storage_configuration = storage_configuration
         self.warm_store_configuration = warm_store_configuration
+        self.public_network_access = public_network_access
+        self.private_endpoint_connections = None
 
 
 class Gen2EnvironmentResource(EnvironmentResource):
@@ -1822,23 +2494,25 @@ class Gen2EnvironmentResource(EnvironmentResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
-     Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
-     ingress rate, and the billing rate.
-    :type sku: ~azure.mgmt.timeseriesinsights.models.Sku
-    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or Gen2
+     (L1). For Gen1 environments the sku determines the capacity of the environment, the ingress
+     rate, and the billing rate.
+    :vartype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
      include: "Gen1", "Gen2".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentResourceKind
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentResourceKind
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
@@ -1853,19 +2527,28 @@ class Gen2EnvironmentResource(EnvironmentResource):
     :ivar status: An object that represents the status of the environment, and its internal state
      in the Time Series Insights service.
     :vartype status: ~azure.mgmt.timeseriesinsights.models.EnvironmentStatus
-    :param time_series_id_properties: Required. The list of event properties which will be used to
+    :ivar time_series_id_properties: Required. The list of event properties which will be used to
      define the environment's time series id.
-    :type time_series_id_properties:
+    :vartype time_series_id_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
-    :param storage_configuration: Required. The storage configuration provides the connection
+    :ivar storage_configuration: Required. The storage configuration provides the connection
      details that allows the Time Series Insights service to connect to the customer storage account
      that is used to store the environment's data.
-    :type storage_configuration:
+    :vartype storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationOutput
-    :param warm_store_configuration: The warm store configuration provides the details to create a
+    :ivar warm_store_configuration: The warm store configuration provides the details to create a
      warm store cache that will retain a copy of the environment's data available for faster query.
-    :type warm_store_configuration:
+    :vartype warm_store_configuration:
      ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+    :ivar public_network_access: If 'enabled', public network access is allowed. If 'disabled',
+     traffic over public interface is not allowed, and private endpoint connections would be the
+     exclusive access method. Possible values include: "enabled", "disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.timeseriesinsights.models.PublicNetworkAccess
+    :ivar private_endpoint_connections: The list of private endpoint connections to the
+     environment.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -1882,6 +2565,7 @@ class Gen2EnvironmentResource(EnvironmentResource):
         'status': {'readonly': True},
         'time_series_id_properties': {'required': True},
         'storage_configuration': {'required': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1900,6 +2584,8 @@ class Gen2EnvironmentResource(EnvironmentResource):
         'time_series_id_properties': {'key': 'properties.timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
         'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'Gen2StorageConfigurationOutput'},
         'warm_store_configuration': {'key': 'properties.warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -1911,8 +2597,38 @@ class Gen2EnvironmentResource(EnvironmentResource):
         storage_configuration: "Gen2StorageConfigurationOutput",
         tags: Optional[Dict[str, str]] = None,
         warm_store_configuration: Optional["WarmStoreConfigurationProperties"] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The sku determines the type of environment, either Gen1 (S1 or S2) or
+         Gen2 (L1). For Gen1 environments the sku determines the capacity of the environment, the
+         ingress rate, and the billing rate.
+        :paramtype sku: ~azure.mgmt.timeseriesinsights.models.Sku
+        :keyword time_series_id_properties: Required. The list of event properties which will be used
+         to define the environment's time series id.
+        :paramtype time_series_id_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        :keyword storage_configuration: Required. The storage configuration provides the connection
+         details that allows the Time Series Insights service to connect to the customer storage account
+         that is used to store the environment's data.
+        :paramtype storage_configuration:
+         ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationOutput
+        :keyword warm_store_configuration: The warm store configuration provides the details to create
+         a warm store cache that will retain a copy of the environment's data available for faster
+         query.
+        :paramtype warm_store_configuration:
+         ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+        :keyword public_network_access: If 'enabled', public network access is allowed. If 'disabled',
+         traffic over public interface is not allowed, and private endpoint connections would be the
+         exclusive access method. Possible values include: "enabled", "disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.timeseriesinsights.models.PublicNetworkAccess
+        """
         super(Gen2EnvironmentResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.kind = 'Gen2'  # type: str
         self.provisioning_state = None
@@ -1923,6 +2639,8 @@ class Gen2EnvironmentResource(EnvironmentResource):
         self.time_series_id_properties = time_series_id_properties
         self.storage_configuration = storage_configuration
         self.warm_store_configuration = warm_store_configuration
+        self.public_network_access = public_network_access
+        self.private_endpoint_connections = None
 
 
 class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
@@ -1946,19 +2664,28 @@ class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
     :ivar status: An object that represents the status of the environment, and its internal state
      in the Time Series Insights service.
     :vartype status: ~azure.mgmt.timeseriesinsights.models.EnvironmentStatus
-    :param time_series_id_properties: Required. The list of event properties which will be used to
+    :ivar time_series_id_properties: Required. The list of event properties which will be used to
      define the environment's time series id.
-    :type time_series_id_properties:
+    :vartype time_series_id_properties:
      list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
-    :param storage_configuration: Required. The storage configuration provides the connection
+    :ivar storage_configuration: Required. The storage configuration provides the connection
      details that allows the Time Series Insights service to connect to the customer storage account
      that is used to store the environment's data.
-    :type storage_configuration:
+    :vartype storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationOutput
-    :param warm_store_configuration: The warm store configuration provides the details to create a
+    :ivar warm_store_configuration: The warm store configuration provides the details to create a
      warm store cache that will retain a copy of the environment's data available for faster query.
-    :type warm_store_configuration:
+    :vartype warm_store_configuration:
      ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+    :ivar public_network_access: If 'enabled', public network access is allowed. If 'disabled',
+     traffic over public interface is not allowed, and private endpoint connections would be the
+     exclusive access method. Possible values include: "enabled", "disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.timeseriesinsights.models.PublicNetworkAccess
+    :ivar private_endpoint_connections: The list of private endpoint connections to the
+     environment.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -1969,6 +2696,7 @@ class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
         'status': {'readonly': True},
         'time_series_id_properties': {'required': True},
         'storage_configuration': {'required': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1980,6 +2708,8 @@ class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
         'time_series_id_properties': {'key': 'timeSeriesIdProperties', 'type': '[TimeSeriesIdProperty]'},
         'storage_configuration': {'key': 'storageConfiguration', 'type': 'Gen2StorageConfigurationOutput'},
         'warm_store_configuration': {'key': 'warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -1988,37 +2718,61 @@ class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
         time_series_id_properties: List["TimeSeriesIdProperty"],
         storage_configuration: "Gen2StorageConfigurationOutput",
         warm_store_configuration: Optional["WarmStoreConfigurationProperties"] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         **kwargs
     ):
+        """
+        :keyword time_series_id_properties: Required. The list of event properties which will be used
+         to define the environment's time series id.
+        :paramtype time_series_id_properties:
+         list[~azure.mgmt.timeseriesinsights.models.TimeSeriesIdProperty]
+        :keyword storage_configuration: Required. The storage configuration provides the connection
+         details that allows the Time Series Insights service to connect to the customer storage account
+         that is used to store the environment's data.
+        :paramtype storage_configuration:
+         ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationOutput
+        :keyword warm_store_configuration: The warm store configuration provides the details to create
+         a warm store cache that will retain a copy of the environment's data available for faster
+         query.
+        :paramtype warm_store_configuration:
+         ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+        :keyword public_network_access: If 'enabled', public network access is allowed. If 'disabled',
+         traffic over public interface is not allowed, and private endpoint connections would be the
+         exclusive access method. Possible values include: "enabled", "disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.timeseriesinsights.models.PublicNetworkAccess
+        """
         super(Gen2EnvironmentResourceProperties, self).__init__(**kwargs)
         self.time_series_id_properties = time_series_id_properties
         self.storage_configuration = storage_configuration
         self.warm_store_configuration = warm_store_configuration
+        self.public_network_access = public_network_access
+        self.private_endpoint_connections = None
 
 
 class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a Gen2 environment.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
-     "Gen1", "Gen2".
+    :ivar kind: Required. The kind of the environment.Constant filled by server. Possible values
+     include: "Gen1", "Gen2".
     :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
-    :param tags: A set of tags. Key-value pairs of additional properties for the environment.
-    :type tags: dict[str, str]
-    :param storage_configuration: The storage configuration provides the connection details that
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the environment.
+    :vartype tags: dict[str, str]
+    :ivar storage_configuration: The storage configuration provides the connection details that
      allows the Time Series Insights service to connect to the customer storage account that is used
      to store the environment's data.
-    :type storage_configuration:
+    :vartype storage_configuration:
      ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationMutableProperties
-    :param warm_store_configuration: The warm store configuration provides the details to create a
+    :ivar warm_store_configuration: The warm store configuration provides the details to create a
      warm store cache that will retain a copy of the environment's data available for faster query.
-    :type warm_store_configuration:
+    :vartype warm_store_configuration:
      ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -2036,6 +2790,20 @@ class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
         warm_store_configuration: Optional["WarmStoreConfigurationProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the environment.
+        :paramtype tags: dict[str, str]
+        :keyword storage_configuration: The storage configuration provides the connection details that
+         allows the Time Series Insights service to connect to the customer storage account that is used
+         to store the environment's data.
+        :paramtype storage_configuration:
+         ~azure.mgmt.timeseriesinsights.models.Gen2StorageConfigurationMutableProperties
+        :keyword warm_store_configuration: The warm store configuration provides the details to create
+         a warm store cache that will retain a copy of the environment's data available for faster
+         query.
+        :paramtype warm_store_configuration:
+         ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
+        """
         super(Gen2EnvironmentUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.kind = 'Gen2'  # type: str
         self.storage_configuration = storage_configuration
@@ -2047,13 +2815,13 @@ class Gen2StorageConfigurationInput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The name of the storage account that will hold the environment's
+    :ivar account_name: Required. The name of the storage account that will hold the environment's
      Gen2 data.
-    :type account_name: str
-    :param management_key: Required. The value of the management key that grants the Time Series
+    :vartype account_name: str
+    :ivar management_key: Required. The value of the management key that grants the Time Series
      Insights service write access to the storage account. This property is not shown in environment
      responses.
-    :type management_key: str
+    :vartype management_key: str
     """
 
     _validation = {
@@ -2073,6 +2841,15 @@ class Gen2StorageConfigurationInput(msrest.serialization.Model):
         management_key: str,
         **kwargs
     ):
+        """
+        :keyword account_name: Required. The name of the storage account that will hold the
+         environment's Gen2 data.
+        :paramtype account_name: str
+        :keyword management_key: Required. The value of the management key that grants the Time Series
+         Insights service write access to the storage account. This property is not shown in environment
+         responses.
+        :paramtype management_key: str
+        """
         super(Gen2StorageConfigurationInput, self).__init__(**kwargs)
         self.account_name = account_name
         self.management_key = management_key
@@ -2083,10 +2860,10 @@ class Gen2StorageConfigurationMutableProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param management_key: Required. The value of the management key that grants the Time Series
+    :ivar management_key: Required. The value of the management key that grants the Time Series
      Insights service write access to the storage account. This property is not shown in environment
      responses.
-    :type management_key: str
+    :vartype management_key: str
     """
 
     _validation = {
@@ -2103,6 +2880,12 @@ class Gen2StorageConfigurationMutableProperties(msrest.serialization.Model):
         management_key: str,
         **kwargs
     ):
+        """
+        :keyword management_key: Required. The value of the management key that grants the Time Series
+         Insights service write access to the storage account. This property is not shown in environment
+         responses.
+        :paramtype management_key: str
+        """
         super(Gen2StorageConfigurationMutableProperties, self).__init__(**kwargs)
         self.management_key = management_key
 
@@ -2112,9 +2895,9 @@ class Gen2StorageConfigurationOutput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The name of the storage account that will hold the environment's
+    :ivar account_name: Required. The name of the storage account that will hold the environment's
      Gen2 data.
-    :type account_name: str
+    :vartype account_name: str
     """
 
     _validation = {
@@ -2131,6 +2914,11 @@ class Gen2StorageConfigurationOutput(msrest.serialization.Model):
         account_name: str,
         **kwargs
     ):
+        """
+        :keyword account_name: Required. The name of the storage account that will hold the
+         environment's Gen2 data.
+        :paramtype account_name: str
+        """
         super(Gen2StorageConfigurationOutput, self).__init__(**kwargs)
         self.account_name = account_name
 
@@ -2140,10 +2928,10 @@ class IngressEnvironmentStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param state: This string represents the state of ingress operations on an environment. It can
+    :ivar state: This string represents the state of ingress operations on an environment. It can
      be "Disabled", "Ready", "Running", "Paused" or "Unknown". Possible values include: "Disabled",
      "Ready", "Running", "Paused", "Unknown".
-    :type state: str or ~azure.mgmt.timeseriesinsights.models.IngressState
+    :vartype state: str or ~azure.mgmt.timeseriesinsights.models.IngressState
     :ivar state_details: An object that contains the details about an environment's state.
     :vartype state_details: ~azure.mgmt.timeseriesinsights.models.EnvironmentStateDetails
     """
@@ -2163,6 +2951,12 @@ class IngressEnvironmentStatus(msrest.serialization.Model):
         state: Optional[Union[str, "IngressState"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: This string represents the state of ingress operations on an environment. It
+         can be "Disabled", "Ready", "Running", "Paused" or "Unknown". Possible values include:
+         "Disabled", "Ready", "Running", "Paused", "Unknown".
+        :paramtype state: str or ~azure.mgmt.timeseriesinsights.models.IngressState
+        """
         super(IngressEnvironmentStatus, self).__init__(**kwargs)
         self.state = state
         self.state_details = None
@@ -2180,22 +2974,34 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param iot_hub_name: Required. The name of the iot hub.
-    :type iot_hub_name: str
-    :param consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar iot_hub_name: Required. The name of the iot hub.
+    :vartype iot_hub_name: str
+    :ivar consumer_group_name: Required. The name of the iot hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the Shared Access Policy key that grants the Time Series
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the Shared Access Policy key that grants the Time Series
      Insights service access to the iot hub. This shared access policy key must grant 'service
      connect' permissions to the iot hub.
-    :type key_name: str
+    :vartype key_name: str
     """
 
     _validation = {
@@ -2211,6 +3017,9 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'consumerGroupName', 'type': 'str'},
@@ -2225,9 +3034,42 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword iot_hub_name: Required. The name of the iot hub.
+        :paramtype iot_hub_name: str
+        :keyword consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+         partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the Shared Access Policy key that grants the Time
+         Series Insights service access to the iot hub. This shared access policy key must grant
+         'service connect' permissions to the iot hub.
+        :paramtype key_name: str
+        """
+        super(IoTHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, event_source_resource_id=event_source_resource_id, **kwargs)
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
         self.key_name = key_name
@@ -2240,43 +3082,56 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
      include: "Microsoft.EventHub", "Microsoft.IoTHub".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
      format of local timestamp that needs to be used and the corresponding timezone offset
      information. If a value isn't specified for localTimestamp, or if null, then the local
      timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param iot_hub_name: Required. The name of the iot hub.
-    :type iot_hub_name: str
-    :param consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp_properties_local_timestamp: An object that represents the local timestamp
+     property. It contains the format of local timestamp that needs to be used and the corresponding
+     timezone offset information. If a value isn't specified for localTimestamp, or if null, then
+     the local timestamp will not be ingressed with the events.
+    :vartype local_timestamp_properties_local_timestamp:
+     ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar iot_hub_name: Required. The name of the iot hub.
+    :vartype iot_hub_name: str
+    :ivar consumer_group_name: Required. The name of the iot hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the Shared Access Policy key that grants the Time Series
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the Shared Access Policy key that grants the Time Series
      Insights service access to the iot hub. This shared access policy key must grant 'service
      connect' permissions to the iot hub.
-    :type key_name: str
-    :param shared_access_key: Required. The value of the Shared Access Policy key that grants the
+    :vartype key_name: str
+    :ivar shared_access_key: Required. The value of the Shared Access Policy key that grants the
      Time Series Insights service read access to the iot hub. This property is not shown in event
      source responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _validation = {
@@ -2299,6 +3154,9 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'local_timestamp_properties_local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'properties.iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'properties.consumerGroupName', 'type': 'str'},
@@ -2318,13 +3176,63 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         tags: Optional[Dict[str, str]] = None,
         local_timestamp: Optional["LocalTimestamp"] = None,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp_properties_local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp_properties_local_timestamp: An object that represents the local
+         timestamp property. It contains the format of local timestamp that needs to be used and the
+         corresponding timezone offset information. If a value isn't specified for localTimestamp, or if
+         null, then the local timestamp will not be ingressed with the events.
+        :paramtype local_timestamp_properties_local_timestamp:
+         ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword iot_hub_name: Required. The name of the iot hub.
+        :paramtype iot_hub_name: str
+        :keyword consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+         partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the Shared Access Policy key that grants the Time
+         Series Insights service access to the iot hub. This shared access policy key must grant
+         'service connect' permissions to the iot hub.
+        :paramtype key_name: str
+        :keyword shared_access_key: Required. The value of the Shared Access Policy key that grants the
+         Time Series Insights service read access to the iot hub. This property is not shown in event
+         source responses.
+        :paramtype shared_access_key: str
+        """
         super(IoTHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, local_timestamp=local_timestamp, **kwargs)
         self.kind = 'Microsoft.IoTHub'  # type: str
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.local_timestamp_properties_local_timestamp = local_timestamp_properties_local_timestamp
+        self.type = type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
@@ -2344,26 +3252,38 @@ class IoTHubEventSourceCreationProperties(IoTHubEventSourceCommonProperties):
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param iot_hub_name: Required. The name of the iot hub.
-    :type iot_hub_name: str
-    :param consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar iot_hub_name: Required. The name of the iot hub.
+    :vartype iot_hub_name: str
+    :ivar consumer_group_name: Required. The name of the iot hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the Shared Access Policy key that grants the Time Series
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the Shared Access Policy key that grants the Time Series
      Insights service access to the iot hub. This shared access policy key must grant 'service
      connect' permissions to the iot hub.
-    :type key_name: str
-    :param shared_access_key: Required. The value of the Shared Access Policy key that grants the
+    :vartype key_name: str
+    :ivar shared_access_key: Required. The value of the Shared Access Policy key that grants the
      Time Series Insights service read access to the iot hub. This property is not shown in event
      source responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _validation = {
@@ -2380,6 +3300,9 @@ class IoTHubEventSourceCreationProperties(IoTHubEventSourceCommonProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'consumerGroupName', 'type': 'str'},
@@ -2396,33 +3319,64 @@ class IoTHubEventSourceCreationProperties(IoTHubEventSourceCommonProperties):
         key_name: str,
         shared_access_key: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword iot_hub_name: Required. The name of the iot hub.
+        :paramtype iot_hub_name: str
+        :keyword consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+         partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the Shared Access Policy key that grants the Time
+         Series Insights service access to the iot hub. This shared access policy key must grant
+         'service connect' permissions to the iot hub.
+        :paramtype key_name: str
+        :keyword shared_access_key: Required. The value of the Shared Access Policy key that grants the
+         Time Series Insights service read access to the iot hub. This property is not shown in event
+         source responses.
+        :paramtype shared_access_key: str
+        """
+        super(IoTHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
         self.shared_access_key = shared_access_key
 
 
 class IoTHubEventSourceMutableProperties(EventSourceMutableProperties):
     """An object that represents a set of mutable IoTHub event source resource properties.
 
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
-     format of local timestamp that needs to be used and the corresponding timezone offset
-     information. If a value isn't specified for localTimestamp, or if null, then the local
-     timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
-    :param shared_access_key: The value of the shared access key that grants the Time Series
+    :vartype timestamp_property_name: str
+    :ivar shared_access_key: The value of the shared access key that grants the Time Series
      Insights service read access to the iot hub. This property is not shown in event source
      responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _attribute_map = {
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
-        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
         'shared_access_key': {'key': 'sharedAccessKey', 'type': 'str'},
     }
 
@@ -2430,11 +3384,20 @@ class IoTHubEventSourceMutableProperties(EventSourceMutableProperties):
         self,
         *,
         timestamp_property_name: Optional[str] = None,
-        local_timestamp: Optional["LocalTimestamp"] = None,
         shared_access_key: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceMutableProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword shared_access_key: The value of the shared access key that grants the Time Series
+         Insights service read access to the iot hub. This property is not shown in event source
+         responses.
+        :paramtype shared_access_key: str
+        """
+        super(IoTHubEventSourceMutableProperties, self).__init__(timestamp_property_name=timestamp_property_name, **kwargs)
         self.shared_access_key = shared_access_key
 
 
@@ -2445,40 +3408,55 @@ class IoTHubEventSourceResource(EventSourceResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
      include: "Microsoft.EventHub", "Microsoft.IoTHub".
-    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceResourceKind
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceResourceKind
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param iot_hub_name: Required. The name of the iot hub.
-    :type iot_hub_name: str
-    :param consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type_properties_ingress_start_at_type: The type of the ingressStartAt, It can be
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include:
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type_properties_ingress_start_at_type: str or
+     ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar iot_hub_name: Required. The name of the iot hub.
+    :vartype iot_hub_name: str
+    :ivar consumer_group_name: Required. The name of the iot hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the Shared Access Policy key that grants the Time Series
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the Shared Access Policy key that grants the Time Series
      Insights service access to the iot hub. This shared access policy key must grant 'service
      connect' permissions to the iot hub.
-    :type key_name: str
+    :vartype key_name: str
     """
 
     _validation = {
@@ -2505,6 +3483,9 @@ class IoTHubEventSourceResource(EventSourceResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
+        'type_properties_ingress_start_at_type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'properties.iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'properties.consumerGroupName', 'type': 'str'},
@@ -2521,13 +3502,54 @@ class IoTHubEventSourceResource(EventSourceResource):
         key_name: str,
         tags: Optional[Dict[str, str]] = None,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type_properties_ingress_start_at_type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type_properties_ingress_start_at_type: The type of the ingressStartAt, It can be
+         "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include:
+         "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type_properties_ingress_start_at_type: str or
+         ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword iot_hub_name: Required. The name of the iot hub.
+        :paramtype iot_hub_name: str
+        :keyword consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+         partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the Shared Access Policy key that grants the Time
+         Series Insights service access to the iot hub. This shared access policy key must grant
+         'service connect' permissions to the iot hub.
+        :paramtype key_name: str
+        """
         super(IoTHubEventSourceResource, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = 'Microsoft.IoTHub'  # type: str
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.local_timestamp = local_timestamp
+        self.type_properties_ingress_start_at_type = type_properties_ingress_start_at_type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
@@ -2546,22 +3568,34 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param event_source_resource_id: Required. The resource id of the event source in Azure
-     Resource Manager.
-    :type event_source_resource_id: str
-    :param iot_hub_name: Required. The name of the iot hub.
-    :type iot_hub_name: str
-    :param consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+    :vartype timestamp_property_name: str
+    :ivar local_timestamp: An object that represents the local timestamp property. It contains the
+     format of local timestamp that needs to be used and the corresponding timezone offset
+     information. If a value isn't specified for localTimestamp, or if null, then the local
+     timestamp will not be ingressed with the events.
+    :vartype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+    :ivar type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :ivar time: ISO8601 UTC datetime with seconds precision (milliseconds are optional), specifying
+     the date and time that will be the starting point for Events to be consumed.
+    :vartype time: str
+    :ivar event_source_resource_id: Required. The resource id of the event source in Azure Resource
+     Manager.
+    :vartype event_source_resource_id: str
+    :ivar iot_hub_name: Required. The name of the iot hub.
+    :vartype iot_hub_name: str
+    :ivar consumer_group_name: Required. The name of the iot hub's consumer group that holds the
      partitions from which events will be read.
-    :type consumer_group_name: str
-    :param key_name: Required. The name of the Shared Access Policy key that grants the Time Series
+    :vartype consumer_group_name: str
+    :ivar key_name: Required. The name of the Shared Access Policy key that grants the Time Series
      Insights service access to the iot hub. This shared access policy key must grant 'service
      connect' permissions to the iot hub.
-    :type key_name: str
+    :vartype key_name: str
     """
 
     _validation = {
@@ -2577,6 +3611,9 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'local_timestamp': {'key': 'localTimestamp', 'type': 'LocalTimestamp'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'consumerGroupName', 'type': 'str'},
@@ -2591,45 +3628,72 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        local_timestamp: Optional["LocalTimestamp"] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        """
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword local_timestamp: An object that represents the local timestamp property. It contains
+         the format of local timestamp that needs to be used and the corresponding timezone offset
+         information. If a value isn't specified for localTimestamp, or if null, then the local
+         timestamp will not be ingressed with the events.
+        :paramtype local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
+        :keyword type: The type of the ingressStartAt, It can be "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+         "EventSourceCreationTime", "CustomEnqueuedTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+        :keyword time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+         specifying the date and time that will be the starting point for Events to be consumed.
+        :paramtype time: str
+        :keyword event_source_resource_id: Required. The resource id of the event source in Azure
+         Resource Manager.
+        :paramtype event_source_resource_id: str
+        :keyword iot_hub_name: Required. The name of the iot hub.
+        :paramtype iot_hub_name: str
+        :keyword consumer_group_name: Required. The name of the iot hub's consumer group that holds the
+         partitions from which events will be read.
+        :paramtype consumer_group_name: str
+        :keyword key_name: Required. The name of the Shared Access Policy key that grants the Time
+         Series Insights service access to the iot hub. This shared access policy key must grant
+         'service connect' permissions to the iot hub.
+        :paramtype key_name: str
+        """
+        super(IoTHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, local_timestamp=local_timestamp, type=type, time=time, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
 
 
 class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """Parameters supplied to the Update Event Source operation to update an IoTHub event source.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
-     "Microsoft.EventHub", "Microsoft.IoTHub".
+    :ivar kind: Required. The kind of the event source.Constant filled by server. Possible values
+     include: "Microsoft.EventHub", "Microsoft.IoTHub".
     :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
-    :param tags: A set of tags. Key-value pairs of additional properties for the event source.
-    :type tags: dict[str, str]
-    :param timestamp_property_name: The event property that will be used as the event source's
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the event source.
+    :vartype tags: dict[str, str]
+    :ivar timestamp_property_name: The event property that will be used as the event source's
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
-    :type timestamp_property_name: str
-    :param local_timestamp: An object that represents the local timestamp property. It contains the
-     format of local timestamp that needs to be used and the corresponding timezone offset
-     information. If a value isn't specified for localTimestamp, or if null, then the local
-     timestamp will not be ingressed with the events.
-    :type local_timestamp: ~azure.mgmt.timeseriesinsights.models.LocalTimestamp
-    :param shared_access_key: The value of the shared access key that grants the Time Series
+    :vartype timestamp_property_name: str
+    :ivar shared_access_key: The value of the shared access key that grants the Time Series
      Insights service read access to the iot hub. This property is not shown in event source
      responses.
-    :type shared_access_key: str
+    :vartype shared_access_key: str
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
-        'local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
         'shared_access_key': {'key': 'properties.sharedAccessKey', 'type': 'str'},
     }
 
@@ -2638,26 +3702,36 @@ class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
         *,
         tags: Optional[Dict[str, str]] = None,
         timestamp_property_name: Optional[str] = None,
-        local_timestamp: Optional["LocalTimestamp"] = None,
         shared_access_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the event source.
+        :paramtype tags: dict[str, str]
+        :keyword timestamp_property_name: The event property that will be used as the event source's
+         timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
+         specified, the event creation time will be used.
+        :paramtype timestamp_property_name: str
+        :keyword shared_access_key: The value of the shared access key that grants the Time Series
+         Insights service read access to the iot hub. This property is not shown in event source
+         responses.
+        :paramtype shared_access_key: str
+        """
         super(IoTHubEventSourceUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.kind = 'Microsoft.IoTHub'  # type: str
         self.timestamp_property_name = timestamp_property_name
-        self.local_timestamp = local_timestamp
         self.shared_access_key = shared_access_key
 
 
 class LocalTimestamp(msrest.serialization.Model):
     """An object that represents the local timestamp property. It contains the format of local timestamp that needs to be used and the corresponding timezone offset information. If a value isn't specified for localTimestamp, or if null, then the local timestamp will not be ingressed with the events.
 
-    :param format: An enum that represents the format of the local timestamp property that needs to
+    :ivar format: An enum that represents the format of the local timestamp property that needs to
      be set. Possible values include: "Embedded".
-    :type format: str or ~azure.mgmt.timeseriesinsights.models.LocalTimestampFormat
-    :param time_zone_offset: An object that represents the offset information for the local
+    :vartype format: str or ~azure.mgmt.timeseriesinsights.models.LocalTimestampFormat
+    :ivar time_zone_offset: An object that represents the offset information for the local
      timestamp format specified. Should not be specified for LocalTimestampFormat - Embedded.
-    :type time_zone_offset: ~azure.mgmt.timeseriesinsights.models.LocalTimestampTimeZoneOffset
+    :vartype time_zone_offset: ~azure.mgmt.timeseriesinsights.models.LocalTimestampTimeZoneOffset
     """
 
     _attribute_map = {
@@ -2672,6 +3746,14 @@ class LocalTimestamp(msrest.serialization.Model):
         time_zone_offset: Optional["LocalTimestampTimeZoneOffset"] = None,
         **kwargs
     ):
+        """
+        :keyword format: An enum that represents the format of the local timestamp property that needs
+         to be set. Possible values include: "Embedded".
+        :paramtype format: str or ~azure.mgmt.timeseriesinsights.models.LocalTimestampFormat
+        :keyword time_zone_offset: An object that represents the offset information for the local
+         timestamp format specified. Should not be specified for LocalTimestampFormat - Embedded.
+        :paramtype time_zone_offset: ~azure.mgmt.timeseriesinsights.models.LocalTimestampTimeZoneOffset
+        """
         super(LocalTimestamp, self).__init__(**kwargs)
         self.format = format
         self.time_zone_offset = time_zone_offset
@@ -2680,12 +3762,12 @@ class LocalTimestamp(msrest.serialization.Model):
 class LocalTimestampTimeZoneOffset(msrest.serialization.Model):
     """An object that represents the offset information for the local timestamp format specified. Should not be specified for LocalTimestampFormat - Embedded.
 
-    :param property_name: The event property that will be contain the offset information to
+    :ivar property_name: The event property that will be contain the offset information to
      calculate the local timestamp. When the LocalTimestampFormat is Iana, the property name will
      contain the name of the column which contains IANA Timezone Name (eg: Americas/Los Angeles).
      When LocalTimestampFormat is Timespan, it contains the name of property which contains values
      representing the offset (eg: P1D or 1.00:00:00).
-    :type property_name: str
+    :vartype property_name: str
     """
 
     _attribute_map = {
@@ -2698,8 +3780,161 @@ class LocalTimestampTimeZoneOffset(msrest.serialization.Model):
         property_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword property_name: The event property that will be contain the offset information to
+         calculate the local timestamp. When the LocalTimestampFormat is Iana, the property name will
+         contain the name of the column which contains IANA Timezone Name (eg: Americas/Los Angeles).
+         When LocalTimestampFormat is Timespan, it contains the name of property which contains values
+         representing the offset (eg: P1D or 1.00:00:00).
+        :paramtype property_name: str
+        """
         super(LocalTimestampTimeZoneOffset, self).__init__(**kwargs)
         self.property_name = property_name
+
+
+class LogSpecification(msrest.serialization.Model):
+    """The specification of an Azure Monitoring log.
+
+    :ivar name: Log name.
+    :vartype name: str
+    :ivar display_name: Log display name.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Log name.
+        :paramtype name: str
+        :keyword display_name: Log display name.
+        :paramtype display_name: str
+        """
+        super(LogSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+
+
+class MetricAvailability(msrest.serialization.Model):
+    """Retention policy of a resource metric.
+
+    :ivar time_grain:
+    :vartype time_grain: str
+    :ivar blob_duration:
+    :vartype blob_duration: str
+    """
+
+    _attribute_map = {
+        'time_grain': {'key': 'timeGrain', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        time_grain: Optional[str] = None,
+        blob_duration: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword time_grain:
+        :paramtype time_grain: str
+        :keyword blob_duration:
+        :paramtype blob_duration: str
+        """
+        super(MetricAvailability, self).__init__(**kwargs)
+        self.time_grain = time_grain
+        self.blob_duration = blob_duration
+
+
+class MetricSpecification(msrest.serialization.Model):
+    """Metric specification of operation.
+
+    :ivar name: Name of metric specification.
+    :vartype name: str
+    :ivar display_name: Display name of metric specification.
+    :vartype display_name: str
+    :ivar display_description: Display description of metric specification.
+    :vartype display_description: str
+    :ivar unit: Unit could be Bytes or Count.
+    :vartype unit: str
+    :ivar dimensions: Dimensions of blobs, including blob type and access tier.
+    :vartype dimensions: list[~azure.mgmt.timeseriesinsights.models.Dimension]
+    :ivar aggregation_type: Aggregation type could be Average.
+    :vartype aggregation_type: str
+    :ivar availabilities: Retention policies of a resource metric.
+    :vartype availabilities: list[~azure.mgmt.timeseriesinsights.models.MetricAvailability]
+    :ivar category: The category this metric specification belong to, could be Capacity.
+    :vartype category: str
+    :ivar resource_id_dimension_name_override: Account Resource Id.
+    :vartype resource_id_dimension_name_override: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'availabilities': {'key': 'availabilities', 'type': '[MetricAvailability]'},
+        'category': {'key': 'category', 'type': 'str'},
+        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        display_description: Optional[str] = None,
+        unit: Optional[str] = None,
+        dimensions: Optional[List["Dimension"]] = None,
+        aggregation_type: Optional[str] = None,
+        availabilities: Optional[List["MetricAvailability"]] = None,
+        category: Optional[str] = None,
+        resource_id_dimension_name_override: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Name of metric specification.
+        :paramtype name: str
+        :keyword display_name: Display name of metric specification.
+        :paramtype display_name: str
+        :keyword display_description: Display description of metric specification.
+        :paramtype display_description: str
+        :keyword unit: Unit could be Bytes or Count.
+        :paramtype unit: str
+        :keyword dimensions: Dimensions of blobs, including blob type and access tier.
+        :paramtype dimensions: list[~azure.mgmt.timeseriesinsights.models.Dimension]
+        :keyword aggregation_type: Aggregation type could be Average.
+        :paramtype aggregation_type: str
+        :keyword availabilities: Retention policies of a resource metric.
+        :paramtype availabilities: list[~azure.mgmt.timeseriesinsights.models.MetricAvailability]
+        :keyword category: The category this metric specification belong to, could be Capacity.
+        :paramtype category: str
+        :keyword resource_id_dimension_name_override: Account Resource Id.
+        :paramtype resource_id_dimension_name_override: str
+        """
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.dimensions = dimensions
+        self.aggregation_type = aggregation_type
+        self.availabilities = availabilities
+        self.category = category
+        self.resource_id_dimension_name_override = resource_id_dimension_name_override
 
 
 class Operation(msrest.serialization.Model):
@@ -2712,6 +3947,10 @@ class Operation(msrest.serialization.Model):
     :ivar display: Contains the localized display information for this particular operation /
      action.
     :vartype display: ~azure.mgmt.timeseriesinsights.models.OperationDisplay
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
+    :ivar service_specification: One property of operation, include metric specifications.
+    :vartype service_specification: ~azure.mgmt.timeseriesinsights.models.ServiceSpecification
     """
 
     _validation = {
@@ -2722,15 +3961,28 @@ class Operation(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
     def __init__(
         self,
+        *,
+        origin: Optional[str] = None,
+        service_specification: Optional["ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword origin: The intended executor of the operation.
+        :paramtype origin: str
+        :keyword service_specification: One property of operation, include metric specifications.
+        :paramtype service_specification: ~azure.mgmt.timeseriesinsights.models.ServiceSpecification
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
+        self.origin = origin
+        self.service_specification = service_specification
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -2767,6 +4019,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -2800,9 +4054,256 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class PrivateEndpoint(msrest.serialization.Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
+     values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnectionProvisioningState
+    :ivar private_endpoint: The resource of private end point.
+    :vartype private_endpoint: ~azure.mgmt.timeseriesinsights.models.PrivateEndpoint
+    :ivar group_ids: The provisioning state of the private endpoint connection resource.
+    :vartype group_ids: list[str]
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.timeseriesinsights.models.PrivateLinkServiceConnectionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        group_ids: Optional[List[str]] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        **kwargs
+    ):
+        """
+        :keyword private_endpoint: The resource of private end point.
+        :paramtype private_endpoint: ~azure.mgmt.timeseriesinsights.models.PrivateEndpoint
+        :keyword group_ids: The provisioning state of the private endpoint connection resource.
+        :paramtype group_ids: list[str]
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.timeseriesinsights.models.PrivateLinkServiceConnectionState
+        """
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = private_endpoint
+        self.group_ids = group_ids
+        self.private_link_service_connection_state = private_link_service_connection_state
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """List of private endpoint connection associated with the specified storage account.
+
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.timeseriesinsights.models.PrivateEndpointConnection]
+        """
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        required_zone_names: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(msrest.serialization.Model):
+    """A list of private link resources.
+
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.timeseriesinsights.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateLinkResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.timeseriesinsights.models.PrivateLinkResource]
+        """
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+    """A collection of information about the state of the connection between service consumer and provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Possible values include: "Pending", "Approved", "Rejected".
+    :vartype status: str or
+     ~azure.mgmt.timeseriesinsights.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Possible values include: "Pending", "Approved", "Rejected".
+        :paramtype status: str or
+         ~azure.mgmt.timeseriesinsights.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
 
 
 class ReferenceDataSetCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProperties):
@@ -2810,18 +4311,19 @@ class ReferenceDataSetCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProp
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource.
-    :type location: str
-    :param tags: A set of tags. Key-value pairs of additional properties for the resource.
-    :type tags: dict[str, str]
-    :param key_properties: Required. The list of key properties for the reference data set.
-    :type key_properties: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
-    :param data_string_comparison_behavior: The reference data set key comparison behavior can be
+    :ivar location: Required. The location of the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the resource.
+    :vartype tags: dict[str, str]
+    :ivar key_properties: Required. The list of key properties for the reference data set.
+    :vartype key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+    :ivar data_string_comparison_behavior: The reference data set key comparison behavior can be
      set using this property. By default, the value is 'Ordinal' - which means case sensitive key
      comparison will be performed while joining reference data with events or while adding new
      reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
      Possible values include: "Ordinal", "OrdinalIgnoreCase".
-    :type data_string_comparison_behavior: str or
+    :vartype data_string_comparison_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
     """
 
@@ -2846,6 +4348,22 @@ class ReferenceDataSetCreateOrUpdateParameters(CreateOrUpdateTrackedResourceProp
         data_string_comparison_behavior: Optional[Union[str, "DataStringComparisonBehavior"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource.
+        :paramtype location: str
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the resource.
+        :paramtype tags: dict[str, str]
+        :keyword key_properties: Required. The list of key properties for the reference data set.
+        :paramtype key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+        :keyword data_string_comparison_behavior: The reference data set key comparison behavior can be
+         set using this property. By default, the value is 'Ordinal' - which means case sensitive key
+         comparison will be performed while joining reference data with events or while adding new
+         reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
+         Possible values include: "Ordinal", "OrdinalIgnoreCase".
+        :paramtype data_string_comparison_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
+        """
         super(ReferenceDataSetCreateOrUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.key_properties = key_properties
         self.data_string_comparison_behavior = data_string_comparison_behavior
@@ -2856,14 +4374,15 @@ class ReferenceDataSetCreationProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_properties: Required. The list of key properties for the reference data set.
-    :type key_properties: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
-    :param data_string_comparison_behavior: The reference data set key comparison behavior can be
+    :ivar key_properties: Required. The list of key properties for the reference data set.
+    :vartype key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+    :ivar data_string_comparison_behavior: The reference data set key comparison behavior can be
      set using this property. By default, the value is 'Ordinal' - which means case sensitive key
      comparison will be performed while joining reference data with events or while adding new
      reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
      Possible values include: "Ordinal", "OrdinalIgnoreCase".
-    :type data_string_comparison_behavior: str or
+    :vartype data_string_comparison_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
     """
 
@@ -2883,6 +4402,18 @@ class ReferenceDataSetCreationProperties(msrest.serialization.Model):
         data_string_comparison_behavior: Optional[Union[str, "DataStringComparisonBehavior"]] = None,
         **kwargs
     ):
+        """
+        :keyword key_properties: Required. The list of key properties for the reference data set.
+        :paramtype key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+        :keyword data_string_comparison_behavior: The reference data set key comparison behavior can be
+         set using this property. By default, the value is 'Ordinal' - which means case sensitive key
+         comparison will be performed while joining reference data with events or while adding new
+         reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
+         Possible values include: "Ordinal", "OrdinalIgnoreCase".
+        :paramtype data_string_comparison_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
+        """
         super(ReferenceDataSetCreationProperties, self).__init__(**kwargs)
         self.key_properties = key_properties
         self.data_string_comparison_behavior = data_string_comparison_behavior
@@ -2891,11 +4422,11 @@ class ReferenceDataSetCreationProperties(msrest.serialization.Model):
 class ReferenceDataSetKeyProperty(msrest.serialization.Model):
     """A key property for the reference data set. A reference data set can have multiple key properties.
 
-    :param name: The name of the key property.
-    :type name: str
-    :param type: The type of the key property. Possible values include: "String", "Double", "Bool",
+    :ivar name: The name of the key property.
+    :vartype name: str
+    :ivar type: The type of the key property. Possible values include: "String", "Double", "Bool",
      "DateTime".
-    :type type: str or ~azure.mgmt.timeseriesinsights.models.ReferenceDataKeyPropertyType
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.ReferenceDataKeyPropertyType
     """
 
     _attribute_map = {
@@ -2910,6 +4441,13 @@ class ReferenceDataSetKeyProperty(msrest.serialization.Model):
         type: Optional[Union[str, "ReferenceDataKeyPropertyType"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the key property.
+        :paramtype name: str
+        :keyword type: The type of the key property. Possible values include: "String", "Double",
+         "Bool", "DateTime".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.ReferenceDataKeyPropertyType
+        """
         super(ReferenceDataSetKeyProperty, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -2918,8 +4456,8 @@ class ReferenceDataSetKeyProperty(msrest.serialization.Model):
 class ReferenceDataSetListResponse(msrest.serialization.Model):
     """The response of the List Reference Data Sets operation.
 
-    :param value: Result of the List Reference Data Sets operation.
-    :type value: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource]
+    :ivar value: Result of the List Reference Data Sets operation.
+    :vartype value: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource]
     """
 
     _attribute_map = {
@@ -2932,6 +4470,10 @@ class ReferenceDataSetListResponse(msrest.serialization.Model):
         value: Optional[List["ReferenceDataSetResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Reference Data Sets operation.
+        :paramtype value: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetResource]
+        """
         super(ReferenceDataSetListResponse, self).__init__(**kwargs)
         self.value = value
 
@@ -2943,24 +4485,27 @@ class ReferenceDataSetResource(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param key_properties: The list of key properties for the reference data set.
-    :type key_properties: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
-    :param data_string_comparison_behavior: The reference data set key comparison behavior can be
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar key_properties: The list of key properties for the reference data set.
+    :vartype key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+    :ivar data_string_comparison_behavior: The reference data set key comparison behavior can be
      set using this property. By default, the value is 'Ordinal' - which means case sensitive key
      comparison will be performed while joining reference data with events or while adding new
      reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
      Possible values include: "Ordinal", "OrdinalIgnoreCase".
-    :type data_string_comparison_behavior: str or
+    :vartype data_string_comparison_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
     :ivar provisioning_state: Provisioning state of the resource. Possible values include:
      "Accepted", "Creating", "Updating", "Succeeded", "Failed", "Deleting".
@@ -2999,6 +4544,22 @@ class ReferenceDataSetResource(TrackedResource):
         data_string_comparison_behavior: Optional[Union[str, "DataStringComparisonBehavior"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword key_properties: The list of key properties for the reference data set.
+        :paramtype key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+        :keyword data_string_comparison_behavior: The reference data set key comparison behavior can be
+         set using this property. By default, the value is 'Ordinal' - which means case sensitive key
+         comparison will be performed while joining reference data with events or while adding new
+         reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
+         Possible values include: "Ordinal", "OrdinalIgnoreCase".
+        :paramtype data_string_comparison_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
+        """
         super(ReferenceDataSetResource, self).__init__(location=location, tags=tags, **kwargs)
         self.key_properties = key_properties
         self.data_string_comparison_behavior = data_string_comparison_behavior
@@ -3018,14 +4579,15 @@ class ReferenceDataSetResourceProperties(ReferenceDataSetCreationProperties, Res
     :vartype provisioning_state: str or ~azure.mgmt.timeseriesinsights.models.ProvisioningState
     :ivar creation_time: The time the resource was created.
     :vartype creation_time: ~datetime.datetime
-    :param key_properties: Required. The list of key properties for the reference data set.
-    :type key_properties: list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
-    :param data_string_comparison_behavior: The reference data set key comparison behavior can be
+    :ivar key_properties: Required. The list of key properties for the reference data set.
+    :vartype key_properties:
+     list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+    :ivar data_string_comparison_behavior: The reference data set key comparison behavior can be
      set using this property. By default, the value is 'Ordinal' - which means case sensitive key
      comparison will be performed while joining reference data with events or while adding new
      reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
      Possible values include: "Ordinal", "OrdinalIgnoreCase".
-    :type data_string_comparison_behavior: str or
+    :vartype data_string_comparison_behavior: str or
      ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
     """
 
@@ -3049,6 +4611,18 @@ class ReferenceDataSetResourceProperties(ReferenceDataSetCreationProperties, Res
         data_string_comparison_behavior: Optional[Union[str, "DataStringComparisonBehavior"]] = None,
         **kwargs
     ):
+        """
+        :keyword key_properties: Required. The list of key properties for the reference data set.
+        :paramtype key_properties:
+         list[~azure.mgmt.timeseriesinsights.models.ReferenceDataSetKeyProperty]
+        :keyword data_string_comparison_behavior: The reference data set key comparison behavior can be
+         set using this property. By default, the value is 'Ordinal' - which means case sensitive key
+         comparison will be performed while joining reference data with events or while adding new
+         reference data. When 'OrdinalIgnoreCase' is set, case insensitive comparison will be used.
+         Possible values include: "Ordinal", "OrdinalIgnoreCase".
+        :paramtype data_string_comparison_behavior: str or
+         ~azure.mgmt.timeseriesinsights.models.DataStringComparisonBehavior
+        """
         super(ReferenceDataSetResourceProperties, self).__init__(key_properties=key_properties, data_string_comparison_behavior=data_string_comparison_behavior, **kwargs)
         self.provisioning_state = None
         self.creation_time = None
@@ -3059,9 +4633,8 @@ class ReferenceDataSetResourceProperties(ReferenceDataSetCreationProperties, Res
 class ReferenceDataSetUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to the Update Reference Data Set operation.
 
-    :param tags: A set of tags. Key-value pairs of additional properties for the reference data
-     set.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Key-value pairs of additional properties for the reference data set.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -3074,8 +4647,46 @@ class ReferenceDataSetUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Key-value pairs of additional properties for the reference data
+         set.
+        :paramtype tags: dict[str, str]
+        """
         super(ReferenceDataSetUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+
+
+class ServiceSpecification(msrest.serialization.Model):
+    """One property of operation, include metric specifications.
+
+    :ivar metric_specifications: Metric specifications of operation.
+    :vartype metric_specifications: list[~azure.mgmt.timeseriesinsights.models.MetricSpecification]
+    :ivar log_specifications: A list of Azure Monitoring log definitions.
+    :vartype log_specifications: list[~azure.mgmt.timeseriesinsights.models.LogSpecification]
+    """
+
+    _attribute_map = {
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        log_specifications: Optional[List["LogSpecification"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword metric_specifications: Metric specifications of operation.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.timeseriesinsights.models.MetricSpecification]
+        :keyword log_specifications: A list of Azure Monitoring log definitions.
+        :paramtype log_specifications: list[~azure.mgmt.timeseriesinsights.models.LogSpecification]
+        """
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = metric_specifications
+        self.log_specifications = log_specifications
 
 
 class Sku(msrest.serialization.Model):
@@ -3083,11 +4694,11 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of this SKU. Possible values include: "S1", "S2", "P1", "L1".
-    :type name: str or ~azure.mgmt.timeseriesinsights.models.SkuName
-    :param capacity: Required. The capacity of the sku. For Gen1 environments, this value can be
+    :ivar name: Required. The name of this SKU. Possible values include: "S1", "S2", "P1", "L1".
+    :vartype name: str or ~azure.mgmt.timeseriesinsights.models.SkuName
+    :ivar capacity: Required. The capacity of the sku. For Gen1 environments, this value can be
      changed to support scale out of environments after they have been created.
-    :type capacity: int
+    :vartype capacity: int
     """
 
     _validation = {
@@ -3107,6 +4718,13 @@ class Sku(msrest.serialization.Model):
         capacity: int,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of this SKU. Possible values include: "S1", "S2", "P1", "L1".
+        :paramtype name: str or ~azure.mgmt.timeseriesinsights.models.SkuName
+        :keyword capacity: Required. The capacity of the sku. For Gen1 environments, this value can be
+         changed to support scale out of environments after they have been created.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.capacity = capacity
@@ -3115,10 +4733,10 @@ class Sku(msrest.serialization.Model):
 class TimeSeriesIdProperty(msrest.serialization.Model):
     """The structure of the property that a time series id can have. An environment can have multiple such properties.
 
-    :param name: The name of the property.
-    :type name: str
-    :param type: The type of the property. Possible values include: "String".
-    :type type: str or ~azure.mgmt.timeseriesinsights.models.PropertyType
+    :ivar name: The name of the property.
+    :vartype name: str
+    :ivar type: The type of the property. Possible values include: "String".
+    :vartype type: str or ~azure.mgmt.timeseriesinsights.models.PropertyType
     """
 
     _attribute_map = {
@@ -3133,6 +4751,12 @@ class TimeSeriesIdProperty(msrest.serialization.Model):
         type: Optional[Union[str, "PropertyType"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the property.
+        :paramtype name: str
+        :keyword type: The type of the property. Possible values include: "String".
+        :paramtype type: str or ~azure.mgmt.timeseriesinsights.models.PropertyType
+        """
         super(TimeSeriesIdProperty, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -3141,15 +4765,15 @@ class TimeSeriesIdProperty(msrest.serialization.Model):
 class WarmStorageEnvironmentStatus(msrest.serialization.Model):
     """An object that represents the status of warm storage on an environment.
 
-    :param state: This string represents the state of warm storage properties usage. It can be
-     "Ok", "Error", "Unknown". Possible values include: "Ok", "Error", "Unknown".
-    :type state: str or ~azure.mgmt.timeseriesinsights.models.WarmStoragePropertiesState
-    :param current_count: A value that represents the number of properties used by the environment
+    :ivar state: This string represents the state of warm storage properties usage. It can be "Ok",
+     "Error", "Unknown". Possible values include: "Ok", "Error", "Unknown".
+    :vartype state: str or ~azure.mgmt.timeseriesinsights.models.WarmStoragePropertiesState
+    :ivar current_count: A value that represents the number of properties used by the environment
      for S1/S2 SKU and number of properties used by Warm Store for PAYG SKU.
-    :type current_count: int
-    :param max_count: A value that represents the maximum number of properties used allowed by the
+    :vartype current_count: int
+    :ivar max_count: A value that represents the maximum number of properties used allowed by the
      environment for S1/S2 SKU and maximum number of properties allowed by Warm Store for PAYG SKU.
-    :type max_count: int
+    :vartype max_count: int
     """
 
     _validation = {
@@ -3171,6 +4795,18 @@ class WarmStorageEnvironmentStatus(msrest.serialization.Model):
         max_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: This string represents the state of warm storage properties usage. It can be
+         "Ok", "Error", "Unknown". Possible values include: "Ok", "Error", "Unknown".
+        :paramtype state: str or ~azure.mgmt.timeseriesinsights.models.WarmStoragePropertiesState
+        :keyword current_count: A value that represents the number of properties used by the
+         environment for S1/S2 SKU and number of properties used by Warm Store for PAYG SKU.
+        :paramtype current_count: int
+        :keyword max_count: A value that represents the maximum number of properties used allowed by
+         the environment for S1/S2 SKU and maximum number of properties allowed by Warm Store for PAYG
+         SKU.
+        :paramtype max_count: int
+        """
         super(WarmStorageEnvironmentStatus, self).__init__(**kwargs)
         self.state = state
         self.current_count = current_count
@@ -3182,9 +4818,9 @@ class WarmStoreConfigurationProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_retention: Required. ISO8601 timespan specifying the number of days the
+    :ivar data_retention: Required. ISO8601 timespan specifying the number of days the
      environment's events will be available for query from the warm store.
-    :type data_retention: ~datetime.timedelta
+    :vartype data_retention: ~datetime.timedelta
     """
 
     _validation = {
@@ -3201,5 +4837,10 @@ class WarmStoreConfigurationProperties(msrest.serialization.Model):
         data_retention: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword data_retention: Required. ISO8601 timespan specifying the number of days the
+         environment's events will be available for query from the warm store.
+        :paramtype data_retention: ~datetime.timedelta
+        """
         super(WarmStoreConfigurationProperties, self).__init__(**kwargs)
         self.data_retention = data_retention
