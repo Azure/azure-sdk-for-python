@@ -31,7 +31,7 @@ from . import encode_base64, decode_base64_to_bytes
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
 _ENCRYPTION_PROTOCOL_V2 = '2.0'
-_GCM_REGION_LENGTH = 4 * 1024 * 1024
+_GCM_REGION_DATA_LENGTH = 4 * 1024 * 1024
 _GCM_NONCE_LENGTH = 12
 _GCM_TAG_LENGTH = 16
 
@@ -358,7 +358,7 @@ def _generate_encryption_data_dict(kek, cek, iv, version):
         encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
 
         encrypted_region_info = OrderedDict()
-        encrypted_region_info['EncryptedRegionDataLength'] = _GCM_REGION_LENGTH
+        encrypted_region_info['EncryptedRegionDataLength'] = _GCM_REGION_DATA_LENGTH
         encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
         encrypted_region_info['TagLength'] = _GCM_TAG_LENGTH
 
