@@ -167,7 +167,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Create file.
         """
-        return await self._create('file', metadata=metadata, **kwargs)
+        return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     async def exists(self, **kwargs):
         # type: (**Any) -> bool
