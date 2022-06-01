@@ -6,46 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessReviewDecision
-    from ._models_py3 import AccessReviewDecisionListResult
-    from ._models_py3 import AccessReviewDecisionProperties
-    from ._models_py3 import AccessReviewDecisionTarget
-    from ._models_py3 import AccessReviewDefaultSettings
-    from ._models_py3 import AccessReviewInstance
-    from ._models_py3 import AccessReviewInstanceListResult
-    from ._models_py3 import AccessReviewReviewer
-    from ._models_py3 import AccessReviewScheduleDefinition
-    from ._models_py3 import AccessReviewScheduleDefinitionListResult
-    from ._models_py3 import AccessReviewScheduleDefinitionProperties
-    from ._models_py3 import AccessReviewScheduleSettings
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorDefinitionProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ServicePrincipalDecisionTarget
-    from ._models_py3 import UserDecisionTarget
-except (SyntaxError, ImportError):
-    from ._models import AccessReviewDecision  # type: ignore
-    from ._models import AccessReviewDecisionListResult  # type: ignore
-    from ._models import AccessReviewDecisionProperties  # type: ignore
-    from ._models import AccessReviewDecisionTarget  # type: ignore
-    from ._models import AccessReviewDefaultSettings  # type: ignore
-    from ._models import AccessReviewInstance  # type: ignore
-    from ._models import AccessReviewInstanceListResult  # type: ignore
-    from ._models import AccessReviewReviewer  # type: ignore
-    from ._models import AccessReviewScheduleDefinition  # type: ignore
-    from ._models import AccessReviewScheduleDefinitionListResult  # type: ignore
-    from ._models import AccessReviewScheduleDefinitionProperties  # type: ignore
-    from ._models import AccessReviewScheduleSettings  # type: ignore
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorDefinitionProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ServicePrincipalDecisionTarget  # type: ignore
-    from ._models import UserDecisionTarget  # type: ignore
+from ._models_py3 import AccessReviewDecision
+from ._models_py3 import AccessReviewDecisionListResult
+from ._models_py3 import AccessReviewDecisionProperties
+from ._models_py3 import AccessReviewDecisionTarget
+from ._models_py3 import AccessReviewDefaultSettings
+from ._models_py3 import AccessReviewInstance
+from ._models_py3 import AccessReviewInstanceListResult
+from ._models_py3 import AccessReviewReviewer
+from ._models_py3 import AccessReviewScheduleDefinition
+from ._models_py3 import AccessReviewScheduleDefinitionListResult
+from ._models_py3 import AccessReviewScheduleDefinitionProperties
+from ._models_py3 import AccessReviewScheduleSettings
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorDefinitionProperties
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ServicePrincipalDecisionTarget
+from ._models_py3 import UserDecisionTarget
+
 
 from ._authorization_management_client_enums import (
     AccessRecommendationType,

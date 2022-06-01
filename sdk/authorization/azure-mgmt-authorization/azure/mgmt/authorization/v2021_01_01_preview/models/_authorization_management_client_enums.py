@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class RoleAssignmentApprovalActorIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleAssignmentApprovalActorIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type : user/servicePrincipal
     """
 
     USER = "user"
     SERVICE_PRINCIPAL = "servicePrincipal"
 
-class RoleAssignmentApprovalStepReviewResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleAssignmentApprovalStepReviewResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The decision on the approval stage. This value is initially set to NotReviewed. Approvers can
     take action of Approve/Deny
     """
@@ -42,7 +27,7 @@ class RoleAssignmentApprovalStepReviewResult(with_metaclass(_CaseInsensitiveEnum
     DENY = "Deny"
     NOT_REVIEWED = "NotReviewed"
 
-class RoleAssignmentApprovalStepStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleAssignmentApprovalStepStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This read-only field specifies the status of an approval.
     """
 

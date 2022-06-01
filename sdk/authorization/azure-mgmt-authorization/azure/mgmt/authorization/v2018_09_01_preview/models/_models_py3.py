@@ -39,6 +39,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -82,6 +84,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -93,8 +97,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.authorization.v2018_09_01_preview.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.v2018_09_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -107,6 +111,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.v2018_09_01_preview.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -122,17 +130,18 @@ class RoleAssignment(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role assignment type.
     :vartype type: str
-    :param scope: The role assignment scope.
-    :type scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup".
-    :type principal_type: str or ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
-    :param can_delegate: The Delegation flag for the role assignment.
-    :type can_delegate: bool
+    :ivar scope: The role assignment scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
+    :ivar can_delegate: The Delegation flag for the role assignment.
+    :vartype can_delegate: bool
     """
 
     _validation = {
@@ -162,6 +171,20 @@ class RoleAssignment(msrest.serialization.Model):
         can_delegate: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role assignment scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
+        :keyword can_delegate: The Delegation flag for the role assignment.
+        :paramtype can_delegate: bool
+        """
         super(RoleAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -178,16 +201,17 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param role_definition_id: Required. The role definition ID used in the role assignment.
-    :type role_definition_id: str
-    :param principal_id: Required. The principal ID assigned to the role. This maps to the ID
-     inside the Active Directory. It can point to a user, service principal, or security group.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup".
-    :type principal_type: str or ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
-    :param can_delegate: The delegation flag used for creating a role assignment.
-    :type can_delegate: bool
+    :ivar role_definition_id: Required. The role definition ID used in the role assignment.
+    :vartype role_definition_id: str
+    :ivar principal_id: Required. The principal ID assigned to the role. This maps to the ID inside
+     the Active Directory. It can point to a user, service principal, or security group.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
+    :ivar can_delegate: The delegation flag used for creating a role assignment.
+    :vartype can_delegate: bool
     """
 
     _validation = {
@@ -211,6 +235,19 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
         can_delegate: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: Required. The role definition ID used in the role assignment.
+        :paramtype role_definition_id: str
+        :keyword principal_id: Required. The principal ID assigned to the role. This maps to the ID
+         inside the Active Directory. It can point to a user, service principal, or security group.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
+        :keyword can_delegate: The delegation flag used for creating a role assignment.
+        :paramtype can_delegate: bool
+        """
         super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id
@@ -221,10 +258,10 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 class RoleAssignmentFilter(msrest.serialization.Model):
     """Role Assignments filter.
 
-    :param principal_id: Returns role assignment of the specific principal.
-    :type principal_id: str
-    :param can_delegate: The Delegation flag for the role assignment.
-    :type can_delegate: bool
+    :ivar principal_id: Returns role assignment of the specific principal.
+    :vartype principal_id: str
+    :ivar can_delegate: The Delegation flag for the role assignment.
+    :vartype can_delegate: bool
     """
 
     _attribute_map = {
@@ -239,6 +276,12 @@ class RoleAssignmentFilter(msrest.serialization.Model):
         can_delegate: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment of the specific principal.
+        :paramtype principal_id: str
+        :keyword can_delegate: The Delegation flag for the role assignment.
+        :paramtype can_delegate: bool
+        """
         super(RoleAssignmentFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.can_delegate = can_delegate
@@ -247,10 +290,10 @@ class RoleAssignmentFilter(msrest.serialization.Model):
 class RoleAssignmentListResult(msrest.serialization.Model):
     """Role assignment list operation result.
 
-    :param value: Role assignment list.
-    :type value: list[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role assignment list.
+    :vartype value: list[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -265,6 +308,12 @@ class RoleAssignmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment list.
+        :paramtype value: list[~azure.mgmt.authorization.v2018_09_01_preview.models.RoleAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

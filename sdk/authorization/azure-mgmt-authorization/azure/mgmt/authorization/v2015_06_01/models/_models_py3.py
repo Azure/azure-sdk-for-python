@@ -15,16 +15,16 @@ import msrest.serialization
 class ClassicAdministrator(msrest.serialization.Model):
     """Classic Administrators.
 
-    :param id: The ID of the administrator.
-    :type id: str
-    :param name: The name of the administrator.
-    :type name: str
-    :param type: The type of the administrator.
-    :type type: str
-    :param email_address: The email address of the administrator.
-    :type email_address: str
-    :param role: The role of the administrator.
-    :type role: str
+    :ivar id: The ID of the administrator.
+    :vartype id: str
+    :ivar name: The name of the administrator.
+    :vartype name: str
+    :ivar type: The type of the administrator.
+    :vartype type: str
+    :ivar email_address: The email address of the administrator.
+    :vartype email_address: str
+    :ivar role: The role of the administrator.
+    :vartype role: str
     """
 
     _attribute_map = {
@@ -45,6 +45,18 @@ class ClassicAdministrator(msrest.serialization.Model):
         role: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The ID of the administrator.
+        :paramtype id: str
+        :keyword name: The name of the administrator.
+        :paramtype name: str
+        :keyword type: The type of the administrator.
+        :paramtype type: str
+        :keyword email_address: The email address of the administrator.
+        :paramtype email_address: str
+        :keyword role: The role of the administrator.
+        :paramtype role: str
+        """
         super(ClassicAdministrator, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -56,10 +68,10 @@ class ClassicAdministrator(msrest.serialization.Model):
 class ClassicAdministratorListResult(msrest.serialization.Model):
     """ClassicAdministrator list result information.
 
-    :param value: An array of administrators.
-    :type value: list[~azure.mgmt.authorization.v2015_06_01.models.ClassicAdministrator]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of administrators.
+    :vartype value: list[~azure.mgmt.authorization.v2015_06_01.models.ClassicAdministrator]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -74,6 +86,12 @@ class ClassicAdministratorListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of administrators.
+        :paramtype value: list[~azure.mgmt.authorization.v2015_06_01.models.ClassicAdministrator]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ClassicAdministratorListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -104,6 +122,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -147,6 +167,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -158,8 +180,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.authorization.v2015_06_01.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.v2015_06_01.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -172,5 +194,9 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.v2015_06_01.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error

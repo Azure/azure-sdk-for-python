@@ -15,16 +15,16 @@ import msrest.serialization
 class ClassicAdministrator(msrest.serialization.Model):
     """Classic Administrators.
 
-    :param id: The ID of the administrator.
-    :type id: str
-    :param name: The name of the administrator.
-    :type name: str
-    :param type: The type of the administrator.
-    :type type: str
-    :param email_address: The email address of the administrator.
-    :type email_address: str
-    :param role: The role of the administrator.
-    :type role: str
+    :ivar id: The ID of the administrator.
+    :vartype id: str
+    :ivar name: The name of the administrator.
+    :vartype name: str
+    :ivar type: The type of the administrator.
+    :vartype type: str
+    :ivar email_address: The email address of the administrator.
+    :vartype email_address: str
+    :ivar role: The role of the administrator.
+    :vartype role: str
     """
 
     _attribute_map = {
@@ -45,6 +45,18 @@ class ClassicAdministrator(msrest.serialization.Model):
         role: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The ID of the administrator.
+        :paramtype id: str
+        :keyword name: The name of the administrator.
+        :paramtype name: str
+        :keyword type: The type of the administrator.
+        :paramtype type: str
+        :keyword email_address: The email address of the administrator.
+        :paramtype email_address: str
+        :keyword role: The role of the administrator.
+        :paramtype role: str
+        """
         super(ClassicAdministrator, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -56,10 +68,10 @@ class ClassicAdministrator(msrest.serialization.Model):
 class ClassicAdministratorListResult(msrest.serialization.Model):
     """ClassicAdministrator list result information.
 
-    :param value: An array of administrators.
-    :type value: list[~azure.mgmt.authorization.v2015_07_01.models.ClassicAdministrator]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of administrators.
+    :vartype value: list[~azure.mgmt.authorization.v2015_07_01.models.ClassicAdministrator]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -74,6 +86,12 @@ class ClassicAdministratorListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of administrators.
+        :paramtype value: list[~azure.mgmt.authorization.v2015_07_01.models.ClassicAdministrator]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ClassicAdministratorListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -104,6 +122,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -147,6 +167,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -158,8 +180,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.authorization.v2015_07_01.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.v2015_07_01.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -172,6 +194,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.v2015_07_01.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -179,10 +205,10 @@ class ErrorResponse(msrest.serialization.Model):
 class Permission(msrest.serialization.Model):
     """Role definition permissions.
 
-    :param actions: Allowed actions.
-    :type actions: list[str]
-    :param not_actions: Denied actions.
-    :type not_actions: list[str]
+    :ivar actions: Allowed actions.
+    :vartype actions: list[str]
+    :ivar not_actions: Denied actions.
+    :vartype not_actions: list[str]
     """
 
     _attribute_map = {
@@ -197,6 +223,12 @@ class Permission(msrest.serialization.Model):
         not_actions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword actions: Allowed actions.
+        :paramtype actions: list[str]
+        :keyword not_actions: Denied actions.
+        :paramtype not_actions: list[str]
+        """
         super(Permission, self).__init__(**kwargs)
         self.actions = actions
         self.not_actions = not_actions
@@ -205,10 +237,10 @@ class Permission(msrest.serialization.Model):
 class PermissionGetResult(msrest.serialization.Model):
     """Permissions information.
 
-    :param value: An array of permissions.
-    :type value: list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of permissions.
+    :vartype value: list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -223,6 +255,12 @@ class PermissionGetResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of permissions.
+        :paramtype value: list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(PermissionGetResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -231,16 +269,16 @@ class PermissionGetResult(msrest.serialization.Model):
 class ProviderOperation(msrest.serialization.Model):
     """Operation.
 
-    :param name: The operation name.
-    :type name: str
-    :param display_name: The operation display name.
-    :type display_name: str
-    :param description: The operation description.
-    :type description: str
-    :param origin: The operation origin.
-    :type origin: str
-    :param properties: The operation properties.
-    :type properties: any
+    :ivar name: The operation name.
+    :vartype name: str
+    :ivar display_name: The operation display name.
+    :vartype display_name: str
+    :ivar description: The operation description.
+    :vartype description: str
+    :ivar origin: The operation origin.
+    :vartype origin: str
+    :ivar properties: The operation properties.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -261,6 +299,18 @@ class ProviderOperation(msrest.serialization.Model):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: The operation name.
+        :paramtype name: str
+        :keyword display_name: The operation display name.
+        :paramtype display_name: str
+        :keyword description: The operation description.
+        :paramtype description: str
+        :keyword origin: The operation origin.
+        :paramtype origin: str
+        :keyword properties: The operation properties.
+        :paramtype properties: any
+        """
         super(ProviderOperation, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -272,18 +322,18 @@ class ProviderOperation(msrest.serialization.Model):
 class ProviderOperationsMetadata(msrest.serialization.Model):
     """Provider Operations metadata.
 
-    :param id: The provider id.
-    :type id: str
-    :param name: The provider name.
-    :type name: str
-    :param type: The provider type.
-    :type type: str
-    :param display_name: The provider display name.
-    :type display_name: str
-    :param resource_types: The provider resource types.
-    :type resource_types: list[~azure.mgmt.authorization.v2015_07_01.models.ResourceType]
-    :param operations: The provider operations.
-    :type operations: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperation]
+    :ivar id: The provider id.
+    :vartype id: str
+    :ivar name: The provider name.
+    :vartype name: str
+    :ivar type: The provider type.
+    :vartype type: str
+    :ivar display_name: The provider display name.
+    :vartype display_name: str
+    :ivar resource_types: The provider resource types.
+    :vartype resource_types: list[~azure.mgmt.authorization.v2015_07_01.models.ResourceType]
+    :ivar operations: The provider operations.
+    :vartype operations: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperation]
     """
 
     _attribute_map = {
@@ -306,6 +356,20 @@ class ProviderOperationsMetadata(msrest.serialization.Model):
         operations: Optional[List["ProviderOperation"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: The provider id.
+        :paramtype id: str
+        :keyword name: The provider name.
+        :paramtype name: str
+        :keyword type: The provider type.
+        :paramtype type: str
+        :keyword display_name: The provider display name.
+        :paramtype display_name: str
+        :keyword resource_types: The provider resource types.
+        :paramtype resource_types: list[~azure.mgmt.authorization.v2015_07_01.models.ResourceType]
+        :keyword operations: The provider operations.
+        :paramtype operations: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperation]
+        """
         super(ProviderOperationsMetadata, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -318,10 +382,10 @@ class ProviderOperationsMetadata(msrest.serialization.Model):
 class ProviderOperationsMetadataListResult(msrest.serialization.Model):
     """Provider operations metadata list.
 
-    :param value: The list of providers.
-    :type value: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The list of providers.
+    :vartype value: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -336,6 +400,12 @@ class ProviderOperationsMetadataListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of providers.
+        :paramtype value: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ProviderOperationsMetadataListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -344,12 +414,12 @@ class ProviderOperationsMetadataListResult(msrest.serialization.Model):
 class ResourceType(msrest.serialization.Model):
     """Resource Type.
 
-    :param name: The resource type name.
-    :type name: str
-    :param display_name: The resource type display name.
-    :type display_name: str
-    :param operations: The resource type operations.
-    :type operations: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperation]
+    :ivar name: The resource type name.
+    :vartype name: str
+    :ivar display_name: The resource type display name.
+    :vartype display_name: str
+    :ivar operations: The resource type operations.
+    :vartype operations: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperation]
     """
 
     _attribute_map = {
@@ -366,6 +436,14 @@ class ResourceType(msrest.serialization.Model):
         operations: Optional[List["ProviderOperation"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The resource type name.
+        :paramtype name: str
+        :keyword display_name: The resource type display name.
+        :paramtype display_name: str
+        :keyword operations: The resource type operations.
+        :paramtype operations: list[~azure.mgmt.authorization.v2015_07_01.models.ProviderOperation]
+        """
         super(ResourceType, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -383,8 +461,8 @@ class RoleAssignment(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role assignment type.
     :vartype type: str
-    :param properties: Role assignment properties.
-    :type properties:
+    :ivar properties: Role assignment properties.
+    :vartype properties:
      ~azure.mgmt.authorization.v2015_07_01.models.RoleAssignmentPropertiesWithScope
     """
 
@@ -407,6 +485,11 @@ class RoleAssignment(msrest.serialization.Model):
         properties: Optional["RoleAssignmentPropertiesWithScope"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Role assignment properties.
+        :paramtype properties:
+         ~azure.mgmt.authorization.v2015_07_01.models.RoleAssignmentPropertiesWithScope
+        """
         super(RoleAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -419,8 +502,8 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param properties: Required. Role assignment properties.
-    :type properties: ~azure.mgmt.authorization.v2015_07_01.models.RoleAssignmentProperties
+    :ivar properties: Required. Role assignment properties.
+    :vartype properties: ~azure.mgmt.authorization.v2015_07_01.models.RoleAssignmentProperties
     """
 
     _validation = {
@@ -437,6 +520,10 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
         properties: "RoleAssignmentProperties",
         **kwargs
     ):
+        """
+        :keyword properties: Required. Role assignment properties.
+        :paramtype properties: ~azure.mgmt.authorization.v2015_07_01.models.RoleAssignmentProperties
+        """
         super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
         self.properties = properties
 
@@ -444,8 +531,8 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 class RoleAssignmentFilter(msrest.serialization.Model):
     """Role Assignments filter.
 
-    :param principal_id: Returns role assignment of the specific principal.
-    :type principal_id: str
+    :ivar principal_id: Returns role assignment of the specific principal.
+    :vartype principal_id: str
     """
 
     _attribute_map = {
@@ -458,6 +545,10 @@ class RoleAssignmentFilter(msrest.serialization.Model):
         principal_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment of the specific principal.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
 
@@ -465,10 +556,10 @@ class RoleAssignmentFilter(msrest.serialization.Model):
 class RoleAssignmentListResult(msrest.serialization.Model):
     """Role assignment list operation result.
 
-    :param value: Role assignment list.
-    :type value: list[~azure.mgmt.authorization.v2015_07_01.models.RoleAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role assignment list.
+    :vartype value: list[~azure.mgmt.authorization.v2015_07_01.models.RoleAssignment]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -483,6 +574,12 @@ class RoleAssignmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment list.
+        :paramtype value: list[~azure.mgmt.authorization.v2015_07_01.models.RoleAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -493,11 +590,11 @@ class RoleAssignmentProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param role_definition_id: Required. The role definition ID used in the role assignment.
-    :type role_definition_id: str
-    :param principal_id: Required. The principal ID assigned to the role. This maps to the ID
-     inside the Active Directory. It can point to a user, service principal, or security group.
-    :type principal_id: str
+    :ivar role_definition_id: Required. The role definition ID used in the role assignment.
+    :vartype role_definition_id: str
+    :ivar principal_id: Required. The principal ID assigned to the role. This maps to the ID inside
+     the Active Directory. It can point to a user, service principal, or security group.
+    :vartype principal_id: str
     """
 
     _validation = {
@@ -517,6 +614,13 @@ class RoleAssignmentProperties(msrest.serialization.Model):
         principal_id: str,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: Required. The role definition ID used in the role assignment.
+        :paramtype role_definition_id: str
+        :keyword principal_id: Required. The principal ID assigned to the role. This maps to the ID
+         inside the Active Directory. It can point to a user, service principal, or security group.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentProperties, self).__init__(**kwargs)
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id
@@ -525,12 +629,12 @@ class RoleAssignmentProperties(msrest.serialization.Model):
 class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
     """Role assignment properties with scope.
 
-    :param scope: The role assignment scope.
-    :type scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
+    :ivar scope: The role assignment scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
     """
 
     _attribute_map = {
@@ -547,6 +651,14 @@ class RoleAssignmentPropertiesWithScope(msrest.serialization.Model):
         principal_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role assignment scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentPropertiesWithScope, self).__init__(**kwargs)
         self.scope = scope
         self.role_definition_id = role_definition_id
@@ -564,16 +676,16 @@ class RoleDefinition(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role definition type.
     :vartype type: str
-    :param role_name: The role name.
-    :type role_name: str
-    :param description: The role definition description.
-    :type description: str
-    :param role_type: The role type.
-    :type role_type: str
-    :param permissions: Role definition permissions.
-    :type permissions: list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
-    :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str]
+    :ivar role_name: The role name.
+    :vartype role_name: str
+    :ivar description: The role definition description.
+    :vartype description: str
+    :ivar role_type: The role type.
+    :vartype role_type: str
+    :ivar permissions: Role definition permissions.
+    :vartype permissions: list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
+    :ivar assignable_scopes: Role definition assignable scopes.
+    :vartype assignable_scopes: list[str]
     """
 
     _validation = {
@@ -603,6 +715,18 @@ class RoleDefinition(msrest.serialization.Model):
         assignable_scopes: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword role_name: The role name.
+        :paramtype role_name: str
+        :keyword description: The role definition description.
+        :paramtype description: str
+        :keyword role_type: The role type.
+        :paramtype role_type: str
+        :keyword permissions: Role definition permissions.
+        :paramtype permissions: list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
+        :keyword assignable_scopes: Role definition assignable scopes.
+        :paramtype assignable_scopes: list[str]
+        """
         super(RoleDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -617,8 +741,8 @@ class RoleDefinition(msrest.serialization.Model):
 class RoleDefinitionFilter(msrest.serialization.Model):
     """Role Definitions filter.
 
-    :param role_name: Returns role definition with the specific name.
-    :type role_name: str
+    :ivar role_name: Returns role definition with the specific name.
+    :vartype role_name: str
     """
 
     _attribute_map = {
@@ -631,6 +755,10 @@ class RoleDefinitionFilter(msrest.serialization.Model):
         role_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role_name: Returns role definition with the specific name.
+        :paramtype role_name: str
+        """
         super(RoleDefinitionFilter, self).__init__(**kwargs)
         self.role_name = role_name
 
@@ -638,10 +766,10 @@ class RoleDefinitionFilter(msrest.serialization.Model):
 class RoleDefinitionListResult(msrest.serialization.Model):
     """Role definition list operation result.
 
-    :param value: Role definition list.
-    :type value: list[~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role definition list.
+    :vartype value: list[~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -656,6 +784,12 @@ class RoleDefinitionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role definition list.
+        :paramtype value: list[~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleDefinitionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

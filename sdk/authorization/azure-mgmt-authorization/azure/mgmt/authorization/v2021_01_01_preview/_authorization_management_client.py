@@ -6,97 +6,103 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import AuthorizationManagementClientConfiguration
+from .operations import Operations, RoleAssignmentApprovalOperations, RoleAssignmentApprovalStepOperations, RoleAssignmentApprovalStepsOperations, ScopeRoleAssignmentApprovalOperations, ScopeRoleAssignmentApprovalStepOperations, ScopeRoleAssignmentApprovalStepsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import AuthorizationManagementClientConfiguration
-from .operations import Operations
-from .operations import RoleAssignmentApprovalOperations
-from .operations import RoleAssignmentApprovalStepsOperations
-from .operations import RoleAssignmentApprovalStepOperations
-from .operations import ScopeRoleAssignmentApprovalOperations
-from .operations import ScopeRoleAssignmentApprovalStepsOperations
-from .operations import ScopeRoleAssignmentApprovalStepOperations
-from . import models
-
-
-class AuthorizationManagementClient(object):
-    """Request Approvals service provides the workflow for running request approvals on different kind of resources.
+class AuthorizationManagementClient:    # pylint: disable=too-many-instance-attributes
+    """Request Approvals service provides the workflow for running request approvals on different kind
+    of resources.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.authorization.v2021_01_01_preview.operations.Operations
     :ivar role_assignment_approval: RoleAssignmentApprovalOperations operations
-    :vartype role_assignment_approval: azure.mgmt.authorization.v2021_01_01_preview.operations.RoleAssignmentApprovalOperations
+    :vartype role_assignment_approval:
+     azure.mgmt.authorization.v2021_01_01_preview.operations.RoleAssignmentApprovalOperations
     :ivar role_assignment_approval_steps: RoleAssignmentApprovalStepsOperations operations
-    :vartype role_assignment_approval_steps: azure.mgmt.authorization.v2021_01_01_preview.operations.RoleAssignmentApprovalStepsOperations
+    :vartype role_assignment_approval_steps:
+     azure.mgmt.authorization.v2021_01_01_preview.operations.RoleAssignmentApprovalStepsOperations
     :ivar role_assignment_approval_step: RoleAssignmentApprovalStepOperations operations
-    :vartype role_assignment_approval_step: azure.mgmt.authorization.v2021_01_01_preview.operations.RoleAssignmentApprovalStepOperations
+    :vartype role_assignment_approval_step:
+     azure.mgmt.authorization.v2021_01_01_preview.operations.RoleAssignmentApprovalStepOperations
     :ivar scope_role_assignment_approval: ScopeRoleAssignmentApprovalOperations operations
-    :vartype scope_role_assignment_approval: azure.mgmt.authorization.v2021_01_01_preview.operations.ScopeRoleAssignmentApprovalOperations
-    :ivar scope_role_assignment_approval_steps: ScopeRoleAssignmentApprovalStepsOperations operations
-    :vartype scope_role_assignment_approval_steps: azure.mgmt.authorization.v2021_01_01_preview.operations.ScopeRoleAssignmentApprovalStepsOperations
+    :vartype scope_role_assignment_approval:
+     azure.mgmt.authorization.v2021_01_01_preview.operations.ScopeRoleAssignmentApprovalOperations
+    :ivar scope_role_assignment_approval_steps: ScopeRoleAssignmentApprovalStepsOperations
+     operations
+    :vartype scope_role_assignment_approval_steps:
+     azure.mgmt.authorization.v2021_01_01_preview.operations.ScopeRoleAssignmentApprovalStepsOperations
     :ivar scope_role_assignment_approval_step: ScopeRoleAssignmentApprovalStepOperations operations
-    :vartype scope_role_assignment_approval_step: azure.mgmt.authorization.v2021_01_01_preview.operations.ScopeRoleAssignmentApprovalStepOperations
+    :vartype scope_role_assignment_approval_step:
+     azure.mgmt.authorization.v2021_01_01_preview.operations.ScopeRoleAssignmentApprovalStepOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-01-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = AuthorizationManagementClientConfiguration(credential, **kwargs)
+        credential: "TokenCredential",
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = AuthorizationManagementClientConfiguration(credential=credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.role_assignment_approval = RoleAssignmentApprovalOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.role_assignment_approval_steps = RoleAssignmentApprovalStepsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.role_assignment_approval_step = RoleAssignmentApprovalStepOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scope_role_assignment_approval = ScopeRoleAssignmentApprovalOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scope_role_assignment_approval_steps = ScopeRoleAssignmentApprovalStepsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scope_role_assignment_approval_step = ScopeRoleAssignmentApprovalStepOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.role_assignment_approval = RoleAssignmentApprovalOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.role_assignment_approval_steps = RoleAssignmentApprovalStepsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.role_assignment_approval_step = RoleAssignmentApprovalStepOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.scope_role_assignment_approval = ScopeRoleAssignmentApprovalOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.scope_role_assignment_approval_steps = ScopeRoleAssignmentApprovalStepsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.scope_role_assignment_approval_step = ScopeRoleAssignmentApprovalStepOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        http_request.url = self._client.format_url(http_request.url)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

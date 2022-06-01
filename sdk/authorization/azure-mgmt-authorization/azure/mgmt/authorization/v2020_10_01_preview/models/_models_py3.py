@@ -18,18 +18,20 @@ from ._authorization_management_client_enums import *
 class ApprovalSettings(msrest.serialization.Model):
     """The approval settings.
 
-    :param is_approval_required: Determine whether approval is required or not.
-    :type is_approval_required: bool
-    :param is_approval_required_for_extension: Determine whether approval is required for
-     assignment extension.
-    :type is_approval_required_for_extension: bool
-    :param is_requestor_justification_required: Determine whether requestor justification required.
-    :type is_requestor_justification_required: bool
-    :param approval_mode: The type of rule. Possible values include: "SingleStage", "Serial",
+    :ivar is_approval_required: Determine whether approval is required or not.
+    :vartype is_approval_required: bool
+    :ivar is_approval_required_for_extension: Determine whether approval is required for assignment
+     extension.
+    :vartype is_approval_required_for_extension: bool
+    :ivar is_requestor_justification_required: Determine whether requestor justification required.
+    :vartype is_requestor_justification_required: bool
+    :ivar approval_mode: The type of rule. Possible values include: "SingleStage", "Serial",
      "Parallel", "NoApproval".
-    :type approval_mode: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalMode
-    :param approval_stages: The approval stages of the request.
-    :type approval_stages: list[~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalStage]
+    :vartype approval_mode: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalMode
+    :ivar approval_stages: The approval stages of the request.
+    :vartype approval_stages:
+     list[~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalStage]
     """
 
     _attribute_map = {
@@ -50,6 +52,23 @@ class ApprovalSettings(msrest.serialization.Model):
         approval_stages: Optional[List["ApprovalStage"]] = None,
         **kwargs
     ):
+        """
+        :keyword is_approval_required: Determine whether approval is required or not.
+        :paramtype is_approval_required: bool
+        :keyword is_approval_required_for_extension: Determine whether approval is required for
+         assignment extension.
+        :paramtype is_approval_required_for_extension: bool
+        :keyword is_requestor_justification_required: Determine whether requestor justification
+         required.
+        :paramtype is_requestor_justification_required: bool
+        :keyword approval_mode: The type of rule. Possible values include: "SingleStage", "Serial",
+         "Parallel", "NoApproval".
+        :paramtype approval_mode: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalMode
+        :keyword approval_stages: The approval stages of the request.
+        :paramtype approval_stages:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalStage]
+        """
         super(ApprovalSettings, self).__init__(**kwargs)
         self.is_approval_required = is_approval_required
         self.is_approval_required_for_extension = is_approval_required_for_extension
@@ -61,21 +80,22 @@ class ApprovalSettings(msrest.serialization.Model):
 class ApprovalStage(msrest.serialization.Model):
     """The approval stage.
 
-    :param approval_stage_time_out_in_days: The time in days when approval request would be timed
+    :ivar approval_stage_time_out_in_days: The time in days when approval request would be timed
      out.
-    :type approval_stage_time_out_in_days: int
-    :param is_approver_justification_required: Determine whether approver need to provide
+    :vartype approval_stage_time_out_in_days: int
+    :ivar is_approver_justification_required: Determine whether approver need to provide
      justification for his decision.
-    :type is_approver_justification_required: bool
-    :param escalation_time_in_minutes: The time in minutes when the approval request would be
+    :vartype is_approver_justification_required: bool
+    :ivar escalation_time_in_minutes: The time in minutes when the approval request would be
      escalated if the primary approver does not approves.
-    :type escalation_time_in_minutes: int
-    :param primary_approvers: The primary approver of the request.
-    :type primary_approvers: list[~azure.mgmt.authorization.v2020_10_01_preview.models.UserSet]
-    :param is_escalation_enabled: The value determine whether escalation feature is enabled.
-    :type is_escalation_enabled: bool
-    :param escalation_approvers: The escalation approver of the request.
-    :type escalation_approvers: list[~azure.mgmt.authorization.v2020_10_01_preview.models.UserSet]
+    :vartype escalation_time_in_minutes: int
+    :ivar primary_approvers: The primary approver of the request.
+    :vartype primary_approvers: list[~azure.mgmt.authorization.v2020_10_01_preview.models.UserSet]
+    :ivar is_escalation_enabled: The value determine whether escalation feature is enabled.
+    :vartype is_escalation_enabled: bool
+    :ivar escalation_approvers: The escalation approver of the request.
+    :vartype escalation_approvers:
+     list[~azure.mgmt.authorization.v2020_10_01_preview.models.UserSet]
     """
 
     _attribute_map = {
@@ -98,6 +118,25 @@ class ApprovalStage(msrest.serialization.Model):
         escalation_approvers: Optional[List["UserSet"]] = None,
         **kwargs
     ):
+        """
+        :keyword approval_stage_time_out_in_days: The time in days when approval request would be timed
+         out.
+        :paramtype approval_stage_time_out_in_days: int
+        :keyword is_approver_justification_required: Determine whether approver need to provide
+         justification for his decision.
+        :paramtype is_approver_justification_required: bool
+        :keyword escalation_time_in_minutes: The time in minutes when the approval request would be
+         escalated if the primary approver does not approves.
+        :paramtype escalation_time_in_minutes: int
+        :keyword primary_approvers: The primary approver of the request.
+        :paramtype primary_approvers:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.UserSet]
+        :keyword is_escalation_enabled: The value determine whether escalation feature is enabled.
+        :paramtype is_escalation_enabled: bool
+        :keyword escalation_approvers: The escalation approver of the request.
+        :paramtype escalation_approvers:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.UserSet]
+        """
         super(ApprovalStage, self).__init__(**kwargs)
         self.approval_stage_time_out_in_days = approval_stage_time_out_in_days
         self.is_approver_justification_required = is_approver_justification_required
@@ -110,12 +149,12 @@ class ApprovalStage(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -130,6 +169,14 @@ class CloudErrorBody(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -164,6 +211,8 @@ class EligibleChildResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EligibleChildResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -173,10 +222,11 @@ class EligibleChildResource(msrest.serialization.Model):
 class EligibleChildResourcesListResult(msrest.serialization.Model):
     """Eligible child resources list operation result.
 
-    :param value: Eligible child resource list.
-    :type value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.EligibleChildResource]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Eligible child resource list.
+    :vartype value:
+     list[~azure.mgmt.authorization.v2020_10_01_preview.models.EligibleChildResource]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -191,6 +241,13 @@ class EligibleChildResourcesListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Eligible child resource list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.EligibleChildResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(EligibleChildResourcesListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -221,6 +278,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -264,6 +323,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -275,8 +336,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.authorization.v2020_10_01_preview.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.v2020_10_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -289,6 +350,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.v2020_10_01_preview.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -296,13 +361,13 @@ class ErrorResponse(msrest.serialization.Model):
 class ExpandedProperties(msrest.serialization.Model):
     """ExpandedProperties.
 
-    :param scope: Details of the resource scope.
-    :type scope: ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesScope
-    :param role_definition: Details of role definition.
-    :type role_definition:
+    :ivar scope: Details of the resource scope.
+    :vartype scope: ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesScope
+    :ivar role_definition: Details of role definition.
+    :vartype role_definition:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesRoleDefinition
-    :param principal: Details of the principal.
-    :type principal:
+    :ivar principal: Details of the principal.
+    :vartype principal:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesPrincipal
     """
 
@@ -320,6 +385,16 @@ class ExpandedProperties(msrest.serialization.Model):
         principal: Optional["ExpandedPropertiesPrincipal"] = None,
         **kwargs
     ):
+        """
+        :keyword scope: Details of the resource scope.
+        :paramtype scope: ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesScope
+        :keyword role_definition: Details of role definition.
+        :paramtype role_definition:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesRoleDefinition
+        :keyword principal: Details of the principal.
+        :paramtype principal:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedPropertiesPrincipal
+        """
         super(ExpandedProperties, self).__init__(**kwargs)
         self.scope = scope
         self.role_definition = role_definition
@@ -329,14 +404,14 @@ class ExpandedProperties(msrest.serialization.Model):
 class ExpandedPropertiesPrincipal(msrest.serialization.Model):
     """Details of the principal.
 
-    :param id: Id of the principal.
-    :type id: str
-    :param display_name: Display name of the principal.
-    :type display_name: str
-    :param email: Email id of the principal.
-    :type email: str
-    :param type: Type of the principal.
-    :type type: str
+    :ivar id: Id of the principal.
+    :vartype id: str
+    :ivar display_name: Display name of the principal.
+    :vartype display_name: str
+    :ivar email: Email id of the principal.
+    :vartype email: str
+    :ivar type: Type of the principal.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -355,6 +430,16 @@ class ExpandedPropertiesPrincipal(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Id of the principal.
+        :paramtype id: str
+        :keyword display_name: Display name of the principal.
+        :paramtype display_name: str
+        :keyword email: Email id of the principal.
+        :paramtype email: str
+        :keyword type: Type of the principal.
+        :paramtype type: str
+        """
         super(ExpandedPropertiesPrincipal, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -365,12 +450,12 @@ class ExpandedPropertiesPrincipal(msrest.serialization.Model):
 class ExpandedPropertiesRoleDefinition(msrest.serialization.Model):
     """Details of role definition.
 
-    :param id: Id of the role definition.
-    :type id: str
-    :param display_name: Display name of the role definition.
-    :type display_name: str
-    :param type: Type of the role definition.
-    :type type: str
+    :ivar id: Id of the role definition.
+    :vartype id: str
+    :ivar display_name: Display name of the role definition.
+    :vartype display_name: str
+    :ivar type: Type of the role definition.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -387,6 +472,14 @@ class ExpandedPropertiesRoleDefinition(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Id of the role definition.
+        :paramtype id: str
+        :keyword display_name: Display name of the role definition.
+        :paramtype display_name: str
+        :keyword type: Type of the role definition.
+        :paramtype type: str
+        """
         super(ExpandedPropertiesRoleDefinition, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -396,12 +489,12 @@ class ExpandedPropertiesRoleDefinition(msrest.serialization.Model):
 class ExpandedPropertiesScope(msrest.serialization.Model):
     """Details of the resource scope.
 
-    :param id: Scope id of the resource.
-    :type id: str
-    :param display_name: Display name of the resource.
-    :type display_name: str
-    :param type: Type of the resource.
-    :type type: str
+    :ivar id: Scope id of the resource.
+    :vartype id: str
+    :ivar display_name: Display name of the resource.
+    :vartype display_name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -418,6 +511,14 @@ class ExpandedPropertiesScope(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Scope id of the resource.
+        :paramtype id: str
+        :keyword display_name: Display name of the resource.
+        :paramtype display_name: str
+        :keyword type: Type of the resource.
+        :paramtype type: str
+        """
         super(ExpandedPropertiesScope, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -427,14 +528,14 @@ class ExpandedPropertiesScope(msrest.serialization.Model):
 class Permission(msrest.serialization.Model):
     """Role definition permissions.
 
-    :param actions: Allowed actions.
-    :type actions: list[str]
-    :param not_actions: Denied actions.
-    :type not_actions: list[str]
-    :param data_actions: Allowed Data actions.
-    :type data_actions: list[str]
-    :param not_data_actions: Denied Data actions.
-    :type not_data_actions: list[str]
+    :ivar actions: Allowed actions.
+    :vartype actions: list[str]
+    :ivar not_actions: Denied actions.
+    :vartype not_actions: list[str]
+    :ivar data_actions: Allowed Data actions.
+    :vartype data_actions: list[str]
+    :ivar not_data_actions: Denied Data actions.
+    :vartype not_data_actions: list[str]
     """
 
     _attribute_map = {
@@ -453,6 +554,16 @@ class Permission(msrest.serialization.Model):
         not_data_actions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword actions: Allowed actions.
+        :paramtype actions: list[str]
+        :keyword not_actions: Denied actions.
+        :paramtype not_actions: list[str]
+        :keyword data_actions: Allowed Data actions.
+        :paramtype data_actions: list[str]
+        :keyword not_data_actions: Denied Data actions.
+        :paramtype not_data_actions: list[str]
+        """
         super(Permission, self).__init__(**kwargs)
         self.actions = actions
         self.not_actions = not_actions
@@ -463,14 +574,14 @@ class Permission(msrest.serialization.Model):
 class PolicyAssignmentProperties(msrest.serialization.Model):
     """PolicyAssignmentProperties.
 
-    :param scope: Details of the resource scope.
-    :type scope:
+    :ivar scope: Details of the resource scope.
+    :vartype scope:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentPropertiesScope
-    :param role_definition: Details of role definition.
-    :type role_definition:
+    :ivar role_definition: Details of role definition.
+    :vartype role_definition:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentPropertiesRoleDefinition
-    :param policy: Details of the policy.
-    :type policy:
+    :ivar policy: Details of the policy.
+    :vartype policy:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentPropertiesPolicy
     """
 
@@ -488,6 +599,17 @@ class PolicyAssignmentProperties(msrest.serialization.Model):
         policy: Optional["PolicyAssignmentPropertiesPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword scope: Details of the resource scope.
+        :paramtype scope:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentPropertiesScope
+        :keyword role_definition: Details of role definition.
+        :paramtype role_definition:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentPropertiesRoleDefinition
+        :keyword policy: Details of the policy.
+        :paramtype policy:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentPropertiesPolicy
+        """
         super(PolicyAssignmentProperties, self).__init__(**kwargs)
         self.scope = scope
         self.role_definition = role_definition
@@ -499,12 +621,12 @@ class PolicyAssignmentPropertiesPolicy(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Id of the policy.
-    :type id: str
+    :ivar id: Id of the policy.
+    :vartype id: str
     :ivar last_modified_by: The name of the entity last modified it.
     :vartype last_modified_by: ~azure.mgmt.authorization.v2020_10_01_preview.models.Principal
-    :param last_modified_date_time: The last modified date time.
-    :type last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_date_time: The last modified date time.
+    :vartype last_modified_date_time: ~datetime.datetime
     """
 
     _validation = {
@@ -524,6 +646,12 @@ class PolicyAssignmentPropertiesPolicy(msrest.serialization.Model):
         last_modified_date_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword id: Id of the policy.
+        :paramtype id: str
+        :keyword last_modified_date_time: The last modified date time.
+        :paramtype last_modified_date_time: ~datetime.datetime
+        """
         super(PolicyAssignmentPropertiesPolicy, self).__init__(**kwargs)
         self.id = id
         self.last_modified_by = None
@@ -533,12 +661,12 @@ class PolicyAssignmentPropertiesPolicy(msrest.serialization.Model):
 class PolicyAssignmentPropertiesRoleDefinition(msrest.serialization.Model):
     """Details of role definition.
 
-    :param id: Id of the role definition.
-    :type id: str
-    :param display_name: Display name of the role definition.
-    :type display_name: str
-    :param type: Type of the role definition.
-    :type type: str
+    :ivar id: Id of the role definition.
+    :vartype id: str
+    :ivar display_name: Display name of the role definition.
+    :vartype display_name: str
+    :ivar type: Type of the role definition.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -555,6 +683,14 @@ class PolicyAssignmentPropertiesRoleDefinition(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Id of the role definition.
+        :paramtype id: str
+        :keyword display_name: Display name of the role definition.
+        :paramtype display_name: str
+        :keyword type: Type of the role definition.
+        :paramtype type: str
+        """
         super(PolicyAssignmentPropertiesRoleDefinition, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -564,12 +700,12 @@ class PolicyAssignmentPropertiesRoleDefinition(msrest.serialization.Model):
 class PolicyAssignmentPropertiesScope(msrest.serialization.Model):
     """Details of the resource scope.
 
-    :param id: Scope id of the resource.
-    :type id: str
-    :param display_name: Display name of the resource.
-    :type display_name: str
-    :param type: Type of the resource.
-    :type type: str
+    :ivar id: Scope id of the resource.
+    :vartype id: str
+    :ivar display_name: Display name of the resource.
+    :vartype display_name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -586,6 +722,14 @@ class PolicyAssignmentPropertiesScope(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Scope id of the resource.
+        :paramtype id: str
+        :keyword display_name: Display name of the resource.
+        :paramtype display_name: str
+        :keyword type: Type of the resource.
+        :paramtype type: str
+        """
         super(PolicyAssignmentPropertiesScope, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -613,6 +757,8 @@ class PolicyProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PolicyProperties, self).__init__(**kwargs)
         self.scope = None
 
@@ -620,12 +766,12 @@ class PolicyProperties(msrest.serialization.Model):
 class PolicyPropertiesScope(msrest.serialization.Model):
     """Details of the resource scope.
 
-    :param id: Scope id of the resource.
-    :type id: str
-    :param display_name: Display name of the resource.
-    :type display_name: str
-    :param type: Type of the resource.
-    :type type: str
+    :ivar id: Scope id of the resource.
+    :vartype id: str
+    :ivar display_name: Display name of the resource.
+    :vartype display_name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -642,6 +788,14 @@ class PolicyPropertiesScope(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Scope id of the resource.
+        :paramtype id: str
+        :keyword display_name: Display name of the resource.
+        :paramtype display_name: str
+        :keyword type: Type of the resource.
+        :paramtype type: str
+        """
         super(PolicyPropertiesScope, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -651,14 +805,14 @@ class PolicyPropertiesScope(msrest.serialization.Model):
 class Principal(msrest.serialization.Model):
     """The name of the entity last modified it.
 
-    :param id: The id of the principal made changes.
-    :type id: str
-    :param display_name: The name of the principal made changes.
-    :type display_name: str
-    :param type: Type of principal such as user , group etc.
-    :type type: str
-    :param email: Email of principal.
-    :type email: str
+    :ivar id: The id of the principal made changes.
+    :vartype id: str
+    :ivar display_name: The name of the principal made changes.
+    :vartype display_name: str
+    :ivar type: Type of principal such as user , group etc.
+    :vartype type: str
+    :ivar email: Email of principal.
+    :vartype email: str
     """
 
     _attribute_map = {
@@ -677,6 +831,16 @@ class Principal(msrest.serialization.Model):
         email: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the principal made changes.
+        :paramtype id: str
+        :keyword display_name: The name of the principal made changes.
+        :paramtype display_name: str
+        :keyword type: Type of principal such as user , group etc.
+        :paramtype type: str
+        :keyword email: Email of principal.
+        :paramtype email: str
+        """
         super(Principal, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -697,22 +861,23 @@ class RoleAssignment(msrest.serialization.Model):
     :vartype type: str
     :ivar scope: The role assignment scope.
     :vartype scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
-    :type principal_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param description: Description of role assignment.
-    :type description: str
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+    :ivar description: Description of role assignment.
+    :vartype description: str
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
     :ivar created_on: Time it was created.
     :vartype created_on: ~datetime.datetime
     :ivar updated_on: Time it was updated.
@@ -721,8 +886,8 @@ class RoleAssignment(msrest.serialization.Model):
     :vartype created_by: str
     :ivar updated_by: Id of the user who updated the assignment.
     :vartype updated_by: str
-    :param delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
-    :type delegated_managed_identity_resource_id: str
+    :ivar delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
+    :vartype delegated_managed_identity_resource_id: str
     """
 
     _validation = {
@@ -766,6 +931,27 @@ class RoleAssignment(msrest.serialization.Model):
         delegated_managed_identity_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+        :keyword description: Description of role assignment.
+        :paramtype description: str
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        :keyword delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
+        :paramtype delegated_managed_identity_resource_id: str
+        """
         super(RoleAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -793,22 +979,23 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 
     :ivar scope: The role assignment scope.
     :vartype scope: str
-    :param role_definition_id: Required. The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: Required. The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
-    :type principal_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param description: Description of role assignment.
-    :type description: str
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :ivar role_definition_id: Required. The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: Required. The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+    :ivar description: Description of role assignment.
+    :vartype description: str
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
     :ivar created_on: Time it was created.
     :vartype created_on: ~datetime.datetime
     :ivar updated_on: Time it was updated.
@@ -817,8 +1004,8 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
     :vartype created_by: str
     :ivar updated_by: Id of the user who updated the assignment.
     :vartype updated_by: str
-    :param delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
-    :type delegated_managed_identity_resource_id: str
+    :ivar delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
+    :vartype delegated_managed_identity_resource_id: str
     """
 
     _validation = {
@@ -858,6 +1045,27 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
         delegated_managed_identity_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: Required. The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: Required. The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+        :keyword description: Description of role assignment.
+        :paramtype description: str
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        :keyword delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
+        :paramtype delegated_managed_identity_resource_id: str
+        """
         super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
         self.scope = None
         self.role_definition_id = role_definition_id
@@ -876,8 +1084,8 @@ class RoleAssignmentCreateParameters(msrest.serialization.Model):
 class RoleAssignmentFilter(msrest.serialization.Model):
     """Role Assignments filter.
 
-    :param principal_id: Returns role assignment of the specific principal.
-    :type principal_id: str
+    :ivar principal_id: Returns role assignment of the specific principal.
+    :vartype principal_id: str
     """
 
     _attribute_map = {
@@ -890,6 +1098,10 @@ class RoleAssignmentFilter(msrest.serialization.Model):
         principal_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment of the specific principal.
+        :paramtype principal_id: str
+        """
         super(RoleAssignmentFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
 
@@ -899,8 +1111,8 @@ class RoleAssignmentListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Role assignment list.
-    :type value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignment]
+    :ivar value: Role assignment list.
+    :vartype value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignment]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -920,6 +1132,10 @@ class RoleAssignmentListResult(msrest.serialization.Model):
         value: Optional[List["RoleAssignment"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment list.
+        :paramtype value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignment]
+        """
         super(RoleAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -936,52 +1152,53 @@ class RoleAssignmentSchedule(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role assignment schedule type.
     :vartype type: str
-    :param scope: The role assignment schedule scope.
-    :type scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
-    :type principal_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param role_assignment_schedule_request_id: The id of roleAssignmentScheduleRequest used to
+    :ivar scope: The role assignment schedule scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+    :ivar role_assignment_schedule_request_id: The id of roleAssignmentScheduleRequest used to
      create this roleAssignmentSchedule.
-    :type role_assignment_schedule_request_id: str
-    :param linked_role_eligibility_schedule_id: The id of roleEligibilitySchedule used to activated
+    :vartype role_assignment_schedule_request_id: str
+    :ivar linked_role_eligibility_schedule_id: The id of roleEligibilitySchedule used to activated
      this roleAssignmentSchedule.
-    :type linked_role_eligibility_schedule_id: str
-    :param assignment_type: Assignment type of the role assignment schedule. Possible values
+    :vartype linked_role_eligibility_schedule_id: str
+    :ivar assignment_type: Assignment type of the role assignment schedule. Possible values
      include: "Activated", "Assigned".
-    :type assignment_type: str or
+    :vartype assignment_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.AssignmentType
-    :param member_type: Membership type of the role assignment schedule. Possible values include:
+    :ivar member_type: Membership type of the role assignment schedule. Possible values include:
      "Inherited", "Direct", "Group".
-    :type member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
-    :param status: The status of the role assignment schedule. Possible values include: "Accepted",
+    :vartype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+    :ivar status: The status of the role assignment schedule. Possible values include: "Accepted",
      "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
      "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
      "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
      "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
      "ScheduleCreated", "PendingExternalProvisioning".
-    :type status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
-    :param start_date_time: Start DateTime when role assignment schedule.
-    :type start_date_time: ~datetime.datetime
-    :param end_date_time: End DateTime when role assignment schedule.
-    :type end_date_time: ~datetime.datetime
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :vartype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+    :ivar start_date_time: Start DateTime when role assignment schedule.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time: End DateTime when role assignment schedule.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
-    :param created_on: DateTime when role assignment schedule was created.
-    :type created_on: ~datetime.datetime
-    :param updated_on: DateTime when role assignment schedule was modified.
-    :type updated_on: ~datetime.datetime
-    :param expanded_properties: Additional properties of principal, scope and role definition.
-    :type expanded_properties:
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
+    :ivar created_on: DateTime when role assignment schedule was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar updated_on: DateTime when role assignment schedule was modified.
+    :vartype updated_on: ~datetime.datetime
+    :ivar expanded_properties: Additional properties of principal, scope and role definition.
+    :vartype expanded_properties:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
     """
 
@@ -1034,6 +1251,56 @@ class RoleAssignmentSchedule(msrest.serialization.Model):
         expanded_properties: Optional["ExpandedProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role assignment schedule scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+        :keyword role_assignment_schedule_request_id: The id of roleAssignmentScheduleRequest used to
+         create this roleAssignmentSchedule.
+        :paramtype role_assignment_schedule_request_id: str
+        :keyword linked_role_eligibility_schedule_id: The id of roleEligibilitySchedule used to
+         activated this roleAssignmentSchedule.
+        :paramtype linked_role_eligibility_schedule_id: str
+        :keyword assignment_type: Assignment type of the role assignment schedule. Possible values
+         include: "Activated", "Assigned".
+        :paramtype assignment_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.AssignmentType
+        :keyword member_type: Membership type of the role assignment schedule. Possible values include:
+         "Inherited", "Direct", "Group".
+        :paramtype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+        :keyword status: The status of the role assignment schedule. Possible values include:
+         "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
+         "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
+         "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
+         "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
+         "ScheduleCreated", "PendingExternalProvisioning".
+        :paramtype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+        :keyword start_date_time: Start DateTime when role assignment schedule.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: End DateTime when role assignment schedule.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        :keyword created_on: DateTime when role assignment schedule was created.
+        :paramtype created_on: ~datetime.datetime
+        :keyword updated_on: DateTime when role assignment schedule was modified.
+        :paramtype updated_on: ~datetime.datetime
+        :keyword expanded_properties: Additional properties of principal, scope and role definition.
+        :paramtype expanded_properties:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
+        """
         super(RoleAssignmentSchedule, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1059,12 +1326,12 @@ class RoleAssignmentSchedule(msrest.serialization.Model):
 class RoleAssignmentScheduleFilter(msrest.serialization.Model):
     """Role assignment schedule filter.
 
-    :param principal_id: Returns role assignment schedule of the specific principal.
-    :type principal_id: str
-    :param role_definition_id: Returns role assignment schedule of the specific role definition.
-    :type role_definition_id: str
-    :param status: Returns role assignment schedule instances of the specific status.
-    :type status: str
+    :ivar principal_id: Returns role assignment schedule of the specific principal.
+    :vartype principal_id: str
+    :ivar role_definition_id: Returns role assignment schedule of the specific role definition.
+    :vartype role_definition_id: str
+    :ivar status: Returns role assignment schedule instances of the specific status.
+    :vartype status: str
     """
 
     _attribute_map = {
@@ -1081,6 +1348,14 @@ class RoleAssignmentScheduleFilter(msrest.serialization.Model):
         status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment schedule of the specific principal.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Returns role assignment schedule of the specific role definition.
+        :paramtype role_definition_id: str
+        :keyword status: Returns role assignment schedule instances of the specific status.
+        :paramtype status: str
+        """
         super(RoleAssignmentScheduleFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -1098,53 +1373,54 @@ class RoleAssignmentScheduleInstance(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role assignment schedule instance type.
     :vartype type: str
-    :param scope: The role assignment schedule scope.
-    :type scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
-    :type principal_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param role_assignment_schedule_id: Id of the master role assignment schedule.
-    :type role_assignment_schedule_id: str
-    :param origin_role_assignment_id: Role Assignment Id in external system.
-    :type origin_role_assignment_id: str
-    :param status: The status of the role assignment schedule instance. Possible values include:
+    :ivar scope: The role assignment schedule scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+    :ivar role_assignment_schedule_id: Id of the master role assignment schedule.
+    :vartype role_assignment_schedule_id: str
+    :ivar origin_role_assignment_id: Role Assignment Id in external system.
+    :vartype origin_role_assignment_id: str
+    :ivar status: The status of the role assignment schedule instance. Possible values include:
      "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
      "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
      "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
      "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
      "ScheduleCreated", "PendingExternalProvisioning".
-    :type status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
-    :param start_date_time: The startDateTime of the role assignment schedule instance.
-    :type start_date_time: ~datetime.datetime
-    :param end_date_time: The endDateTime of the role assignment schedule instance.
-    :type end_date_time: ~datetime.datetime
-    :param linked_role_eligibility_schedule_id: roleEligibilityScheduleId used to activate.
-    :type linked_role_eligibility_schedule_id: str
-    :param linked_role_eligibility_schedule_instance_id: roleEligibilityScheduleInstanceId linked
-     to this roleAssignmentScheduleInstance.
-    :type linked_role_eligibility_schedule_instance_id: str
-    :param assignment_type: Assignment type of the role assignment schedule. Possible values
+    :vartype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+    :ivar start_date_time: The startDateTime of the role assignment schedule instance.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time: The endDateTime of the role assignment schedule instance.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar linked_role_eligibility_schedule_id: roleEligibilityScheduleId used to activate.
+    :vartype linked_role_eligibility_schedule_id: str
+    :ivar linked_role_eligibility_schedule_instance_id: roleEligibilityScheduleInstanceId linked to
+     this roleAssignmentScheduleInstance.
+    :vartype linked_role_eligibility_schedule_instance_id: str
+    :ivar assignment_type: Assignment type of the role assignment schedule. Possible values
      include: "Activated", "Assigned".
-    :type assignment_type: str or
+    :vartype assignment_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.AssignmentType
-    :param member_type: Membership type of the role assignment schedule. Possible values include:
+    :ivar member_type: Membership type of the role assignment schedule. Possible values include:
      "Inherited", "Direct", "Group".
-    :type member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :vartype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
-    :param created_on: DateTime when role assignment schedule was created.
-    :type created_on: ~datetime.datetime
-    :param expanded_properties: Additional properties of principal, scope and role definition.
-    :type expanded_properties:
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
+    :ivar created_on: DateTime when role assignment schedule was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar expanded_properties: Additional properties of principal, scope and role definition.
+    :vartype expanded_properties:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
     """
 
@@ -1199,6 +1475,57 @@ class RoleAssignmentScheduleInstance(msrest.serialization.Model):
         expanded_properties: Optional["ExpandedProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role assignment schedule scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+        :keyword role_assignment_schedule_id: Id of the master role assignment schedule.
+        :paramtype role_assignment_schedule_id: str
+        :keyword origin_role_assignment_id: Role Assignment Id in external system.
+        :paramtype origin_role_assignment_id: str
+        :keyword status: The status of the role assignment schedule instance. Possible values include:
+         "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
+         "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
+         "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
+         "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
+         "ScheduleCreated", "PendingExternalProvisioning".
+        :paramtype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+        :keyword start_date_time: The startDateTime of the role assignment schedule instance.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: The endDateTime of the role assignment schedule instance.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword linked_role_eligibility_schedule_id: roleEligibilityScheduleId used to activate.
+        :paramtype linked_role_eligibility_schedule_id: str
+        :keyword linked_role_eligibility_schedule_instance_id: roleEligibilityScheduleInstanceId linked
+         to this roleAssignmentScheduleInstance.
+        :paramtype linked_role_eligibility_schedule_instance_id: str
+        :keyword assignment_type: Assignment type of the role assignment schedule. Possible values
+         include: "Activated", "Assigned".
+        :paramtype assignment_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.AssignmentType
+        :keyword member_type: Membership type of the role assignment schedule. Possible values include:
+         "Inherited", "Direct", "Group".
+        :paramtype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        :keyword created_on: DateTime when role assignment schedule was created.
+        :paramtype created_on: ~datetime.datetime
+        :keyword expanded_properties: Additional properties of principal, scope and role definition.
+        :paramtype expanded_properties:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
+        """
         super(RoleAssignmentScheduleInstance, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1225,16 +1552,16 @@ class RoleAssignmentScheduleInstance(msrest.serialization.Model):
 class RoleAssignmentScheduleInstanceFilter(msrest.serialization.Model):
     """Role assignment schedule instance filter.
 
-    :param principal_id: Returns role assignment schedule instances of the specific principal.
-    :type principal_id: str
-    :param role_definition_id: Returns role assignment schedule instances of the specific role
+    :ivar principal_id: Returns role assignment schedule instances of the specific principal.
+    :vartype principal_id: str
+    :ivar role_definition_id: Returns role assignment schedule instances of the specific role
      definition.
-    :type role_definition_id: str
-    :param status: Returns role assignment schedule instances of the specific status.
-    :type status: str
-    :param role_assignment_schedule_id: Returns role assignment schedule instances belonging to a
+    :vartype role_definition_id: str
+    :ivar status: Returns role assignment schedule instances of the specific status.
+    :vartype status: str
+    :ivar role_assignment_schedule_id: Returns role assignment schedule instances belonging to a
      specific role assignment schedule.
-    :type role_assignment_schedule_id: str
+    :vartype role_assignment_schedule_id: str
     """
 
     _attribute_map = {
@@ -1253,6 +1580,18 @@ class RoleAssignmentScheduleInstanceFilter(msrest.serialization.Model):
         role_assignment_schedule_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment schedule instances of the specific principal.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Returns role assignment schedule instances of the specific role
+         definition.
+        :paramtype role_definition_id: str
+        :keyword status: Returns role assignment schedule instances of the specific status.
+        :paramtype status: str
+        :keyword role_assignment_schedule_id: Returns role assignment schedule instances belonging to a
+         specific role assignment schedule.
+        :paramtype role_assignment_schedule_id: str
+        """
         super(RoleAssignmentScheduleInstanceFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -1263,11 +1602,11 @@ class RoleAssignmentScheduleInstanceFilter(msrest.serialization.Model):
 class RoleAssignmentScheduleInstanceListResult(msrest.serialization.Model):
     """Role assignment schedule instance list operation result.
 
-    :param value: Role assignment schedule instance list.
-    :type value:
+    :ivar value: Role assignment schedule instance list.
+    :vartype value:
      list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleInstance]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1282,6 +1621,13 @@ class RoleAssignmentScheduleInstanceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment schedule instance list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleInstance]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleAssignmentScheduleInstanceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1290,10 +1636,11 @@ class RoleAssignmentScheduleInstanceListResult(msrest.serialization.Model):
 class RoleAssignmentScheduleListResult(msrest.serialization.Model):
     """Role assignment schedule list operation result.
 
-    :param value: Role assignment schedule list.
-    :type value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentSchedule]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role assignment schedule list.
+    :vartype value:
+     list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentSchedule]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1308,6 +1655,13 @@ class RoleAssignmentScheduleListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment schedule list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentSchedule]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleAssignmentScheduleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1326,18 +1680,18 @@ class RoleAssignmentScheduleRequest(msrest.serialization.Model):
     :vartype type: str
     :ivar scope: The role assignment schedule request scope.
     :vartype scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
     :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
      "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
     :vartype principal_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param request_type: The type of the role assignment schedule request. Eg: SelfActivate,
+    :ivar request_type: The type of the role assignment schedule request. Eg: SelfActivate,
      AdminAssign etc. Possible values include: "AdminAssign", "AdminRemove", "AdminUpdate",
      "AdminExtend", "AdminRenew", "SelfActivate", "SelfDeactivate", "SelfExtend", "SelfRenew".
-    :type request_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.RequestType
+    :vartype request_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.RequestType
     :ivar status: The status of the role assignment schedule request. Possible values include:
      "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
      "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
@@ -1347,30 +1701,30 @@ class RoleAssignmentScheduleRequest(msrest.serialization.Model):
     :vartype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
     :ivar approval_id: The approvalId of the role assignment schedule request.
     :vartype approval_id: str
-    :param target_role_assignment_schedule_id: The resultant role assignment schedule id or the
-     role assignment schedule id being updated.
-    :type target_role_assignment_schedule_id: str
-    :param target_role_assignment_schedule_instance_id: The role assignment schedule instance id
+    :ivar target_role_assignment_schedule_id: The resultant role assignment schedule id or the role
+     assignment schedule id being updated.
+    :vartype target_role_assignment_schedule_id: str
+    :ivar target_role_assignment_schedule_instance_id: The role assignment schedule instance id
      being updated.
-    :type target_role_assignment_schedule_instance_id: str
-    :param schedule_info: Schedule info of the role assignment schedule.
-    :type schedule_info:
+    :vartype target_role_assignment_schedule_instance_id: str
+    :ivar schedule_info: Schedule info of the role assignment schedule.
+    :vartype schedule_info:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequestPropertiesScheduleInfo
-    :param linked_role_eligibility_schedule_id: The linked role eligibility schedule id - to
+    :ivar linked_role_eligibility_schedule_id: The linked role eligibility schedule id - to
      activate an eligibility.
-    :type linked_role_eligibility_schedule_id: str
-    :param justification: Justification for the role assignment.
-    :type justification: str
-    :param ticket_info: Ticket Info of the role assignment.
-    :type ticket_info:
+    :vartype linked_role_eligibility_schedule_id: str
+    :ivar justification: Justification for the role assignment.
+    :vartype justification: str
+    :ivar ticket_info: Ticket Info of the role assignment.
+    :vartype ticket_info:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequestPropertiesTicketInfo
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
     :ivar created_on: DateTime when role assignment schedule request was created.
     :vartype created_on: ~datetime.datetime
     :ivar requestor_id: Id of the user who created this request.
@@ -1433,6 +1787,41 @@ class RoleAssignmentScheduleRequest(msrest.serialization.Model):
         condition_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword request_type: The type of the role assignment schedule request. Eg: SelfActivate,
+         AdminAssign etc. Possible values include: "AdminAssign", "AdminRemove", "AdminUpdate",
+         "AdminExtend", "AdminRenew", "SelfActivate", "SelfDeactivate", "SelfExtend", "SelfRenew".
+        :paramtype request_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RequestType
+        :keyword target_role_assignment_schedule_id: The resultant role assignment schedule id or the
+         role assignment schedule id being updated.
+        :paramtype target_role_assignment_schedule_id: str
+        :keyword target_role_assignment_schedule_instance_id: The role assignment schedule instance id
+         being updated.
+        :paramtype target_role_assignment_schedule_instance_id: str
+        :keyword schedule_info: Schedule info of the role assignment schedule.
+        :paramtype schedule_info:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequestPropertiesScheduleInfo
+        :keyword linked_role_eligibility_schedule_id: The linked role eligibility schedule id - to
+         activate an eligibility.
+        :paramtype linked_role_eligibility_schedule_id: str
+        :keyword justification: Justification for the role assignment.
+        :paramtype justification: str
+        :keyword ticket_info: Ticket Info of the role assignment.
+        :paramtype ticket_info:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequestPropertiesTicketInfo
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        """
         super(RoleAssignmentScheduleRequest, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1460,14 +1849,14 @@ class RoleAssignmentScheduleRequest(msrest.serialization.Model):
 class RoleAssignmentScheduleRequestFilter(msrest.serialization.Model):
     """Role assignment schedule request filter.
 
-    :param principal_id: Returns role assignment requests of the specific principal.
-    :type principal_id: str
-    :param role_definition_id: Returns role assignment requests of the specific role definition.
-    :type role_definition_id: str
-    :param requestor_id: Returns role assignment requests created by specific principal.
-    :type requestor_id: str
-    :param status: Returns role assignment requests of specific status.
-    :type status: str
+    :ivar principal_id: Returns role assignment requests of the specific principal.
+    :vartype principal_id: str
+    :ivar role_definition_id: Returns role assignment requests of the specific role definition.
+    :vartype role_definition_id: str
+    :ivar requestor_id: Returns role assignment requests created by specific principal.
+    :vartype requestor_id: str
+    :ivar status: Returns role assignment requests of specific status.
+    :vartype status: str
     """
 
     _attribute_map = {
@@ -1486,6 +1875,16 @@ class RoleAssignmentScheduleRequestFilter(msrest.serialization.Model):
         status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role assignment requests of the specific principal.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Returns role assignment requests of the specific role definition.
+        :paramtype role_definition_id: str
+        :keyword requestor_id: Returns role assignment requests created by specific principal.
+        :paramtype requestor_id: str
+        :keyword status: Returns role assignment requests of specific status.
+        :paramtype status: str
+        """
         super(RoleAssignmentScheduleRequestFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -1496,11 +1895,11 @@ class RoleAssignmentScheduleRequestFilter(msrest.serialization.Model):
 class RoleAssignmentScheduleRequestListResult(msrest.serialization.Model):
     """Role assignment schedule request list operation result.
 
-    :param value: Role assignment schedule request list.
-    :type value:
+    :ivar value: Role assignment schedule request list.
+    :vartype value:
      list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequest]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1515,6 +1914,13 @@ class RoleAssignmentScheduleRequestListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role assignment schedule request list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequest]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleAssignmentScheduleRequestListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1523,10 +1929,10 @@ class RoleAssignmentScheduleRequestListResult(msrest.serialization.Model):
 class RoleAssignmentScheduleRequestPropertiesScheduleInfo(msrest.serialization.Model):
     """Schedule info of the role assignment schedule.
 
-    :param start_date_time: Start DateTime of the role assignment schedule.
-    :type start_date_time: ~datetime.datetime
-    :param expiration: Expiration of the role assignment schedule.
-    :type expiration:
+    :ivar start_date_time: Start DateTime of the role assignment schedule.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar expiration: Expiration of the role assignment schedule.
+    :vartype expiration:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration
     """
 
@@ -1542,6 +1948,13 @@ class RoleAssignmentScheduleRequestPropertiesScheduleInfo(msrest.serialization.M
         expiration: Optional["RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration"] = None,
         **kwargs
     ):
+        """
+        :keyword start_date_time: Start DateTime of the role assignment schedule.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword expiration: Expiration of the role assignment schedule.
+        :paramtype expiration:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration
+        """
         super(RoleAssignmentScheduleRequestPropertiesScheduleInfo, self).__init__(**kwargs)
         self.start_date_time = start_date_time
         self.expiration = expiration
@@ -1550,13 +1963,13 @@ class RoleAssignmentScheduleRequestPropertiesScheduleInfo(msrest.serialization.M
 class RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration(msrest.serialization.Model):
     """Expiration of the role assignment schedule.
 
-    :param type: Type of the role assignment schedule expiration. Possible values include:
+    :ivar type: Type of the role assignment schedule expiration. Possible values include:
      "AfterDuration", "AfterDateTime", "NoExpiration".
-    :type type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Type
-    :param end_date_time: End DateTime of the role assignment schedule.
-    :type end_date_time: ~datetime.datetime
-    :param duration: Duration of the role assignment schedule in TimeSpan.
-    :type duration: str
+    :vartype type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Type
+    :ivar end_date_time: End DateTime of the role assignment schedule.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar duration: Duration of the role assignment schedule in TimeSpan.
+    :vartype duration: str
     """
 
     _attribute_map = {
@@ -1573,6 +1986,15 @@ class RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration(msrest.seria
         duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: Type of the role assignment schedule expiration. Possible values include:
+         "AfterDuration", "AfterDateTime", "NoExpiration".
+        :paramtype type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Type
+        :keyword end_date_time: End DateTime of the role assignment schedule.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword duration: Duration of the role assignment schedule in TimeSpan.
+        :paramtype duration: str
+        """
         super(RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration, self).__init__(**kwargs)
         self.type = type
         self.end_date_time = end_date_time
@@ -1582,10 +2004,10 @@ class RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration(msrest.seria
 class RoleAssignmentScheduleRequestPropertiesTicketInfo(msrest.serialization.Model):
     """Ticket Info of the role assignment.
 
-    :param ticket_number: Ticket number for the role assignment.
-    :type ticket_number: str
-    :param ticket_system: Ticket system name for the role assignment.
-    :type ticket_system: str
+    :ivar ticket_number: Ticket number for the role assignment.
+    :vartype ticket_number: str
+    :ivar ticket_system: Ticket system name for the role assignment.
+    :vartype ticket_system: str
     """
 
     _attribute_map = {
@@ -1600,6 +2022,12 @@ class RoleAssignmentScheduleRequestPropertiesTicketInfo(msrest.serialization.Mod
         ticket_system: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ticket_number: Ticket number for the role assignment.
+        :paramtype ticket_number: str
+        :keyword ticket_system: Ticket system name for the role assignment.
+        :paramtype ticket_system: str
+        """
         super(RoleAssignmentScheduleRequestPropertiesTicketInfo, self).__init__(**kwargs)
         self.ticket_number = ticket_number
         self.ticket_system = ticket_system
@@ -1616,45 +2044,46 @@ class RoleEligibilitySchedule(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role eligibility schedule type.
     :vartype type: str
-    :param scope: The role eligibility schedule scope.
-    :type scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
-    :type principal_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param role_eligibility_schedule_request_id: The id of roleEligibilityScheduleRequest used to
+    :ivar scope: The role eligibility schedule scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+    :ivar role_eligibility_schedule_request_id: The id of roleEligibilityScheduleRequest used to
      create this roleAssignmentSchedule.
-    :type role_eligibility_schedule_request_id: str
-    :param member_type: Membership type of the role eligibility schedule. Possible values include:
+    :vartype role_eligibility_schedule_request_id: str
+    :ivar member_type: Membership type of the role eligibility schedule. Possible values include:
      "Inherited", "Direct", "Group".
-    :type member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
-    :param status: The status of the role eligibility schedule. Possible values include:
-     "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
+    :vartype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+    :ivar status: The status of the role eligibility schedule. Possible values include: "Accepted",
+     "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
      "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
      "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
      "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
      "ScheduleCreated", "PendingExternalProvisioning".
-    :type status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
-    :param start_date_time: Start DateTime when role eligibility schedule.
-    :type start_date_time: ~datetime.datetime
-    :param end_date_time: End DateTime when role eligibility schedule.
-    :type end_date_time: ~datetime.datetime
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :vartype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+    :ivar start_date_time: Start DateTime when role eligibility schedule.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time: End DateTime when role eligibility schedule.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
-    :param created_on: DateTime when role eligibility schedule was created.
-    :type created_on: ~datetime.datetime
-    :param updated_on: DateTime when role eligibility schedule was modified.
-    :type updated_on: ~datetime.datetime
-    :param expanded_properties: Additional properties of principal, scope and role definition.
-    :type expanded_properties:
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
+    :ivar created_on: DateTime when role eligibility schedule was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar updated_on: DateTime when role eligibility schedule was modified.
+    :vartype updated_on: ~datetime.datetime
+    :ivar expanded_properties: Additional properties of principal, scope and role definition.
+    :vartype expanded_properties:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
     """
 
@@ -1703,6 +2132,49 @@ class RoleEligibilitySchedule(msrest.serialization.Model):
         expanded_properties: Optional["ExpandedProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role eligibility schedule scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+        :keyword role_eligibility_schedule_request_id: The id of roleEligibilityScheduleRequest used to
+         create this roleAssignmentSchedule.
+        :paramtype role_eligibility_schedule_request_id: str
+        :keyword member_type: Membership type of the role eligibility schedule. Possible values
+         include: "Inherited", "Direct", "Group".
+        :paramtype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+        :keyword status: The status of the role eligibility schedule. Possible values include:
+         "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
+         "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
+         "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
+         "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
+         "ScheduleCreated", "PendingExternalProvisioning".
+        :paramtype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+        :keyword start_date_time: Start DateTime when role eligibility schedule.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: End DateTime when role eligibility schedule.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        :keyword created_on: DateTime when role eligibility schedule was created.
+        :paramtype created_on: ~datetime.datetime
+        :keyword updated_on: DateTime when role eligibility schedule was modified.
+        :paramtype updated_on: ~datetime.datetime
+        :keyword expanded_properties: Additional properties of principal, scope and role definition.
+        :paramtype expanded_properties:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
+        """
         super(RoleEligibilitySchedule, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1726,12 +2198,12 @@ class RoleEligibilitySchedule(msrest.serialization.Model):
 class RoleEligibilityScheduleFilter(msrest.serialization.Model):
     """Role eligibility schedule filter.
 
-    :param principal_id: Returns role eligibility schedule of the specific principal.
-    :type principal_id: str
-    :param role_definition_id: Returns role eligibility schedule of the specific role definition.
-    :type role_definition_id: str
-    :param status: Returns role eligibility schedule of the specific status.
-    :type status: str
+    :ivar principal_id: Returns role eligibility schedule of the specific principal.
+    :vartype principal_id: str
+    :ivar role_definition_id: Returns role eligibility schedule of the specific role definition.
+    :vartype role_definition_id: str
+    :ivar status: Returns role eligibility schedule of the specific status.
+    :vartype status: str
     """
 
     _attribute_map = {
@@ -1748,6 +2220,14 @@ class RoleEligibilityScheduleFilter(msrest.serialization.Model):
         status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role eligibility schedule of the specific principal.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Returns role eligibility schedule of the specific role definition.
+        :paramtype role_definition_id: str
+        :keyword status: Returns role eligibility schedule of the specific status.
+        :paramtype status: str
+        """
         super(RoleEligibilityScheduleFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -1765,42 +2245,43 @@ class RoleEligibilityScheduleInstance(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role eligibility schedule instance type.
     :vartype type: str
-    :param scope: The role eligibility schedule scope.
-    :type scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
-    :param principal_type: The principal type of the assigned principal ID. Possible values
-     include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
-    :type principal_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param role_eligibility_schedule_id: Id of the master role eligibility schedule.
-    :type role_eligibility_schedule_id: str
-    :param status: The status of the role eligibility schedule instance. Possible values include:
+    :ivar scope: The role eligibility schedule scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
+    :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
+     "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+    :vartype principal_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+    :ivar role_eligibility_schedule_id: Id of the master role eligibility schedule.
+    :vartype role_eligibility_schedule_id: str
+    :ivar status: The status of the role eligibility schedule instance. Possible values include:
      "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
      "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
      "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
      "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
      "ScheduleCreated", "PendingExternalProvisioning".
-    :type status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
-    :param start_date_time: The startDateTime of the role eligibility schedule instance.
-    :type start_date_time: ~datetime.datetime
-    :param end_date_time: The endDateTime of the role eligibility schedule instance.
-    :type end_date_time: ~datetime.datetime
-    :param member_type: Membership type of the role eligibility schedule. Possible values include:
+    :vartype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+    :ivar start_date_time: The startDateTime of the role eligibility schedule instance.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time: The endDateTime of the role eligibility schedule instance.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar member_type: Membership type of the role eligibility schedule. Possible values include:
      "Inherited", "Direct", "Group".
-    :type member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :vartype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
-    :param created_on: DateTime when role eligibility schedule was created.
-    :type created_on: ~datetime.datetime
-    :param expanded_properties: Additional properties of principal, scope and role definition.
-    :type expanded_properties:
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
+    :ivar created_on: DateTime when role eligibility schedule was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar expanded_properties: Additional properties of principal, scope and role definition.
+    :vartype expanded_properties:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
     """
 
@@ -1847,6 +2328,46 @@ class RoleEligibilityScheduleInstance(msrest.serialization.Model):
         expanded_properties: Optional["ExpandedProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role eligibility schedule scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword principal_type: The principal type of the assigned principal ID. Possible values
+         include: "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
+        :paramtype principal_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
+        :keyword role_eligibility_schedule_id: Id of the master role eligibility schedule.
+        :paramtype role_eligibility_schedule_id: str
+        :keyword status: The status of the role eligibility schedule instance. Possible values include:
+         "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
+         "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
+         "PendingApproval", "FailedAsResourceIsLocked", "PendingAdminDecision", "AdminApproved",
+         "AdminDenied", "TimedOut", "ProvisioningStarted", "Invalid", "PendingScheduleCreation",
+         "ScheduleCreated", "PendingExternalProvisioning".
+        :paramtype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
+        :keyword start_date_time: The startDateTime of the role eligibility schedule instance.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: The endDateTime of the role eligibility schedule instance.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword member_type: Membership type of the role eligibility schedule. Possible values
+         include: "Inherited", "Direct", "Group".
+        :paramtype member_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.MemberType
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        :keyword created_on: DateTime when role eligibility schedule was created.
+        :paramtype created_on: ~datetime.datetime
+        :keyword expanded_properties: Additional properties of principal, scope and role definition.
+        :paramtype expanded_properties:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ExpandedProperties
+        """
         super(RoleEligibilityScheduleInstance, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1869,16 +2390,16 @@ class RoleEligibilityScheduleInstance(msrest.serialization.Model):
 class RoleEligibilityScheduleInstanceFilter(msrest.serialization.Model):
     """Role eligibility schedule instance filter.
 
-    :param principal_id: Returns role eligibility schedule instances of the specific principal.
-    :type principal_id: str
-    :param role_definition_id: Returns role eligibility schedule instances of the specific role
+    :ivar principal_id: Returns role eligibility schedule instances of the specific principal.
+    :vartype principal_id: str
+    :ivar role_definition_id: Returns role eligibility schedule instances of the specific role
      definition.
-    :type role_definition_id: str
-    :param status: Returns role eligibility schedule instances of the specific status.
-    :type status: str
-    :param role_eligibility_schedule_id: Returns role eligibility schedule instances belonging to a
+    :vartype role_definition_id: str
+    :ivar status: Returns role eligibility schedule instances of the specific status.
+    :vartype status: str
+    :ivar role_eligibility_schedule_id: Returns role eligibility schedule instances belonging to a
      specific role eligibility schedule.
-    :type role_eligibility_schedule_id: str
+    :vartype role_eligibility_schedule_id: str
     """
 
     _attribute_map = {
@@ -1897,6 +2418,18 @@ class RoleEligibilityScheduleInstanceFilter(msrest.serialization.Model):
         role_eligibility_schedule_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role eligibility schedule instances of the specific principal.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Returns role eligibility schedule instances of the specific role
+         definition.
+        :paramtype role_definition_id: str
+        :keyword status: Returns role eligibility schedule instances of the specific status.
+        :paramtype status: str
+        :keyword role_eligibility_schedule_id: Returns role eligibility schedule instances belonging to
+         a specific role eligibility schedule.
+        :paramtype role_eligibility_schedule_id: str
+        """
         super(RoleEligibilityScheduleInstanceFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -1907,11 +2440,11 @@ class RoleEligibilityScheduleInstanceFilter(msrest.serialization.Model):
 class RoleEligibilityScheduleInstanceListResult(msrest.serialization.Model):
     """Role eligibility schedule instance list operation result.
 
-    :param value: Role eligibility schedule instance list.
-    :type value:
+    :ivar value: Role eligibility schedule instance list.
+    :vartype value:
      list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleInstance]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1926,6 +2459,13 @@ class RoleEligibilityScheduleInstanceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role eligibility schedule instance list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleInstance]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleEligibilityScheduleInstanceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1934,10 +2474,11 @@ class RoleEligibilityScheduleInstanceListResult(msrest.serialization.Model):
 class RoleEligibilityScheduleListResult(msrest.serialization.Model):
     """role eligibility schedule list operation result.
 
-    :param value: role eligibility schedule list.
-    :type value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilitySchedule]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: role eligibility schedule list.
+    :vartype value:
+     list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilitySchedule]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1952,6 +2493,13 @@ class RoleEligibilityScheduleListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: role eligibility schedule list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilitySchedule]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleEligibilityScheduleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1970,18 +2518,18 @@ class RoleEligibilityScheduleRequest(msrest.serialization.Model):
     :vartype type: str
     :ivar scope: The role eligibility schedule request scope.
     :vartype scope: str
-    :param role_definition_id: The role definition ID.
-    :type role_definition_id: str
-    :param principal_id: The principal ID.
-    :type principal_id: str
+    :ivar role_definition_id: The role definition ID.
+    :vartype role_definition_id: str
+    :ivar principal_id: The principal ID.
+    :vartype principal_id: str
     :ivar principal_type: The principal type of the assigned principal ID. Possible values include:
      "User", "Group", "ServicePrincipal", "ForeignGroup", "Device".
     :vartype principal_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.PrincipalType
-    :param request_type: The type of the role assignment schedule request. Eg: SelfActivate,
+    :ivar request_type: The type of the role assignment schedule request. Eg: SelfActivate,
      AdminAssign etc. Possible values include: "AdminAssign", "AdminRemove", "AdminUpdate",
      "AdminExtend", "AdminRenew", "SelfActivate", "SelfDeactivate", "SelfExtend", "SelfRenew".
-    :type request_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.RequestType
+    :vartype request_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.RequestType
     :ivar status: The status of the role eligibility schedule request. Possible values include:
      "Accepted", "PendingEvaluation", "Granted", "Denied", "PendingProvisioning", "Provisioned",
      "PendingRevocation", "Revoked", "Canceled", "Failed", "PendingApprovalProvisioning",
@@ -1991,27 +2539,27 @@ class RoleEligibilityScheduleRequest(msrest.serialization.Model):
     :vartype status: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Status
     :ivar approval_id: The approvalId of the role eligibility schedule request.
     :vartype approval_id: str
-    :param schedule_info: Schedule info of the role eligibility schedule.
-    :type schedule_info:
+    :ivar schedule_info: Schedule info of the role eligibility schedule.
+    :vartype schedule_info:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequestPropertiesScheduleInfo
-    :param target_role_eligibility_schedule_id: The resultant role eligibility schedule id or the
+    :ivar target_role_eligibility_schedule_id: The resultant role eligibility schedule id or the
      role eligibility schedule id being updated.
-    :type target_role_eligibility_schedule_id: str
-    :param target_role_eligibility_schedule_instance_id: The role eligibility schedule instance id
+    :vartype target_role_eligibility_schedule_id: str
+    :ivar target_role_eligibility_schedule_instance_id: The role eligibility schedule instance id
      being updated.
-    :type target_role_eligibility_schedule_instance_id: str
-    :param justification: Justification for the role eligibility.
-    :type justification: str
-    :param ticket_info: Ticket Info of the role eligibility.
-    :type ticket_info:
+    :vartype target_role_eligibility_schedule_instance_id: str
+    :ivar justification: Justification for the role eligibility.
+    :vartype justification: str
+    :ivar ticket_info: Ticket Info of the role eligibility.
+    :vartype ticket_info:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequestPropertiesTicketInfo
-    :param condition: The conditions on the role assignment. This limits the resources it can be
+    :ivar condition: The conditions on the role assignment. This limits the resources it can be
      assigned to. e.g.:
      @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
      StringEqualsIgnoreCase 'foo_storage_container'.
-    :type condition: str
-    :param condition_version: Version of the condition. Currently accepted value is '2.0'.
-    :type condition_version: str
+    :vartype condition: str
+    :ivar condition_version: Version of the condition. Currently accepted value is '2.0'.
+    :vartype condition_version: str
     :ivar created_on: DateTime when role eligibility schedule request was created.
     :vartype created_on: ~datetime.datetime
     :ivar requestor_id: Id of the user who created this request.
@@ -2072,6 +2620,38 @@ class RoleEligibilityScheduleRequest(msrest.serialization.Model):
         condition_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role_definition_id: The role definition ID.
+        :paramtype role_definition_id: str
+        :keyword principal_id: The principal ID.
+        :paramtype principal_id: str
+        :keyword request_type: The type of the role assignment schedule request. Eg: SelfActivate,
+         AdminAssign etc. Possible values include: "AdminAssign", "AdminRemove", "AdminUpdate",
+         "AdminExtend", "AdminRenew", "SelfActivate", "SelfDeactivate", "SelfExtend", "SelfRenew".
+        :paramtype request_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RequestType
+        :keyword schedule_info: Schedule info of the role eligibility schedule.
+        :paramtype schedule_info:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequestPropertiesScheduleInfo
+        :keyword target_role_eligibility_schedule_id: The resultant role eligibility schedule id or the
+         role eligibility schedule id being updated.
+        :paramtype target_role_eligibility_schedule_id: str
+        :keyword target_role_eligibility_schedule_instance_id: The role eligibility schedule instance
+         id being updated.
+        :paramtype target_role_eligibility_schedule_instance_id: str
+        :keyword justification: Justification for the role eligibility.
+        :paramtype justification: str
+        :keyword ticket_info: Ticket Info of the role eligibility.
+        :paramtype ticket_info:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequestPropertiesTicketInfo
+        :keyword condition: The conditions on the role assignment. This limits the resources it can be
+         assigned to. e.g.:
+         @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+         StringEqualsIgnoreCase 'foo_storage_container'.
+        :paramtype condition: str
+        :keyword condition_version: Version of the condition. Currently accepted value is '2.0'.
+        :paramtype condition_version: str
+        """
         super(RoleEligibilityScheduleRequest, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2098,14 +2678,14 @@ class RoleEligibilityScheduleRequest(msrest.serialization.Model):
 class RoleEligibilityScheduleRequestFilter(msrest.serialization.Model):
     """Role eligibility schedule request filter.
 
-    :param principal_id: Returns role eligibility requests of the specific principal.
-    :type principal_id: str
-    :param role_definition_id: Returns role eligibility requests of the specific role definition.
-    :type role_definition_id: str
-    :param requestor_id: Returns role eligibility requests created by specific principal.
-    :type requestor_id: str
-    :param status: Returns role eligibility requests of specific status.
-    :type status: str
+    :ivar principal_id: Returns role eligibility requests of the specific principal.
+    :vartype principal_id: str
+    :ivar role_definition_id: Returns role eligibility requests of the specific role definition.
+    :vartype role_definition_id: str
+    :ivar requestor_id: Returns role eligibility requests created by specific principal.
+    :vartype requestor_id: str
+    :ivar status: Returns role eligibility requests of specific status.
+    :vartype status: str
     """
 
     _attribute_map = {
@@ -2124,6 +2704,16 @@ class RoleEligibilityScheduleRequestFilter(msrest.serialization.Model):
         status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Returns role eligibility requests of the specific principal.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Returns role eligibility requests of the specific role definition.
+        :paramtype role_definition_id: str
+        :keyword requestor_id: Returns role eligibility requests created by specific principal.
+        :paramtype requestor_id: str
+        :keyword status: Returns role eligibility requests of specific status.
+        :paramtype status: str
+        """
         super(RoleEligibilityScheduleRequestFilter, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -2134,11 +2724,11 @@ class RoleEligibilityScheduleRequestFilter(msrest.serialization.Model):
 class RoleEligibilityScheduleRequestListResult(msrest.serialization.Model):
     """Role eligibility schedule request list operation result.
 
-    :param value: Role eligibility schedule request list.
-    :type value:
+    :ivar value: Role eligibility schedule request list.
+    :vartype value:
      list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequest]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2153,6 +2743,13 @@ class RoleEligibilityScheduleRequestListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role eligibility schedule request list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequest]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleEligibilityScheduleRequestListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2161,10 +2758,10 @@ class RoleEligibilityScheduleRequestListResult(msrest.serialization.Model):
 class RoleEligibilityScheduleRequestPropertiesScheduleInfo(msrest.serialization.Model):
     """Schedule info of the role eligibility schedule.
 
-    :param start_date_time: Start DateTime of the role eligibility schedule.
-    :type start_date_time: ~datetime.datetime
-    :param expiration: Expiration of the role eligibility schedule.
-    :type expiration:
+    :ivar start_date_time: Start DateTime of the role eligibility schedule.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar expiration: Expiration of the role eligibility schedule.
+    :vartype expiration:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration
     """
 
@@ -2180,6 +2777,13 @@ class RoleEligibilityScheduleRequestPropertiesScheduleInfo(msrest.serialization.
         expiration: Optional["RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration"] = None,
         **kwargs
     ):
+        """
+        :keyword start_date_time: Start DateTime of the role eligibility schedule.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword expiration: Expiration of the role eligibility schedule.
+        :paramtype expiration:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration
+        """
         super(RoleEligibilityScheduleRequestPropertiesScheduleInfo, self).__init__(**kwargs)
         self.start_date_time = start_date_time
         self.expiration = expiration
@@ -2188,13 +2792,13 @@ class RoleEligibilityScheduleRequestPropertiesScheduleInfo(msrest.serialization.
 class RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration(msrest.serialization.Model):
     """Expiration of the role eligibility schedule.
 
-    :param type: Type of the role eligibility schedule expiration. Possible values include:
+    :ivar type: Type of the role eligibility schedule expiration. Possible values include:
      "AfterDuration", "AfterDateTime", "NoExpiration".
-    :type type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Type
-    :param end_date_time: End DateTime of the role eligibility schedule.
-    :type end_date_time: ~datetime.datetime
-    :param duration: Duration of the role eligibility schedule in TimeSpan.
-    :type duration: str
+    :vartype type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Type
+    :ivar end_date_time: End DateTime of the role eligibility schedule.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar duration: Duration of the role eligibility schedule in TimeSpan.
+    :vartype duration: str
     """
 
     _attribute_map = {
@@ -2211,6 +2815,15 @@ class RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration(msrest.seri
         duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: Type of the role eligibility schedule expiration. Possible values include:
+         "AfterDuration", "AfterDateTime", "NoExpiration".
+        :paramtype type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.Type
+        :keyword end_date_time: End DateTime of the role eligibility schedule.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword duration: Duration of the role eligibility schedule in TimeSpan.
+        :paramtype duration: str
+        """
         super(RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration, self).__init__(**kwargs)
         self.type = type
         self.end_date_time = end_date_time
@@ -2220,10 +2833,10 @@ class RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration(msrest.seri
 class RoleEligibilityScheduleRequestPropertiesTicketInfo(msrest.serialization.Model):
     """Ticket Info of the role eligibility.
 
-    :param ticket_number: Ticket number for the role eligibility.
-    :type ticket_number: str
-    :param ticket_system: Ticket system name for the role eligibility.
-    :type ticket_system: str
+    :ivar ticket_number: Ticket number for the role eligibility.
+    :vartype ticket_number: str
+    :ivar ticket_system: Ticket system name for the role eligibility.
+    :vartype ticket_system: str
     """
 
     _attribute_map = {
@@ -2238,6 +2851,12 @@ class RoleEligibilityScheduleRequestPropertiesTicketInfo(msrest.serialization.Mo
         ticket_system: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ticket_number: Ticket number for the role eligibility.
+        :paramtype ticket_number: str
+        :keyword ticket_system: Ticket system name for the role eligibility.
+        :paramtype ticket_system: str
+        """
         super(RoleEligibilityScheduleRequestPropertiesTicketInfo, self).__init__(**kwargs)
         self.ticket_number = ticket_number
         self.ticket_system = ticket_system
@@ -2254,20 +2873,20 @@ class RoleManagementPolicy(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role management policy type.
     :vartype type: str
-    :param scope: The role management policy scope.
-    :type scope: str
-    :param display_name: The role management policy display name.
-    :type display_name: str
-    :param description: The role management policy description.
-    :type description: str
-    :param is_organization_default: The role management policy is default policy.
-    :type is_organization_default: bool
+    :ivar scope: The role management policy scope.
+    :vartype scope: str
+    :ivar display_name: The role management policy display name.
+    :vartype display_name: str
+    :ivar description: The role management policy description.
+    :vartype description: str
+    :ivar is_organization_default: The role management policy is default policy.
+    :vartype is_organization_default: bool
     :ivar last_modified_by: The name of the entity last modified it.
     :vartype last_modified_by: ~azure.mgmt.authorization.v2020_10_01_preview.models.Principal
     :ivar last_modified_date_time: The last modified date time.
     :vartype last_modified_date_time: ~datetime.datetime
-    :param rules: The rule applied to the policy.
-    :type rules:
+    :ivar rules: The rule applied to the policy.
+    :vartype rules:
      list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRule]
     :ivar effective_rules: The readonly computed rule applied to the policy.
     :vartype effective_rules:
@@ -2312,6 +2931,19 @@ class RoleManagementPolicy(msrest.serialization.Model):
         rules: Optional[List["RoleManagementPolicyRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role management policy scope.
+        :paramtype scope: str
+        :keyword display_name: The role management policy display name.
+        :paramtype display_name: str
+        :keyword description: The role management policy description.
+        :paramtype description: str
+        :keyword is_organization_default: The role management policy is default policy.
+        :paramtype is_organization_default: bool
+        :keyword rules: The rule applied to the policy.
+        :paramtype rules:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRule]
+        """
         super(RoleManagementPolicy, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2335,16 +2967,16 @@ class RoleManagementPolicyRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: The id of the rule.
-    :type id: str
-    :param rule_type: Required. The type of rule.Constant filled by server.  Possible values
-     include: "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
+    :ivar id: The id of the rule.
+    :vartype id: str
+    :ivar rule_type: Required. The type of rule.Constant filled by server. Possible values include:
+     "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
      "RoleManagementPolicyEnablementRule", "RoleManagementPolicyExpirationRule",
      "RoleManagementPolicyNotificationRule".
-    :type rule_type: str or
+    :vartype rule_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleType
-    :param target: The target of the current rule.
-    :type target:
+    :ivar target: The target of the current rule.
+    :vartype target:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
     """
 
@@ -2369,6 +3001,13 @@ class RoleManagementPolicyRule(msrest.serialization.Model):
         target: Optional["RoleManagementPolicyRuleTarget"] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the rule.
+        :paramtype id: str
+        :keyword target: The target of the current rule.
+        :paramtype target:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
+        """
         super(RoleManagementPolicyRule, self).__init__(**kwargs)
         self.id = id
         self.rule_type = None  # type: Optional[str]
@@ -2380,19 +3019,19 @@ class RoleManagementPolicyApprovalRule(RoleManagementPolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: The id of the rule.
-    :type id: str
-    :param rule_type: Required. The type of rule.Constant filled by server.  Possible values
-     include: "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
+    :ivar id: The id of the rule.
+    :vartype id: str
+    :ivar rule_type: Required. The type of rule.Constant filled by server. Possible values include:
+     "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
      "RoleManagementPolicyEnablementRule", "RoleManagementPolicyExpirationRule",
      "RoleManagementPolicyNotificationRule".
-    :type rule_type: str or
+    :vartype rule_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleType
-    :param target: The target of the current rule.
-    :type target:
+    :ivar target: The target of the current rule.
+    :vartype target:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
-    :param setting: The approval setting.
-    :type setting: ~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalSettings
+    :ivar setting: The approval setting.
+    :vartype setting: ~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalSettings
     """
 
     _validation = {
@@ -2414,6 +3053,15 @@ class RoleManagementPolicyApprovalRule(RoleManagementPolicyRule):
         setting: Optional["ApprovalSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the rule.
+        :paramtype id: str
+        :keyword target: The target of the current rule.
+        :paramtype target:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
+        :keyword setting: The approval setting.
+        :paramtype setting: ~azure.mgmt.authorization.v2020_10_01_preview.models.ApprovalSettings
+        """
         super(RoleManagementPolicyApprovalRule, self).__init__(id=id, target=target, **kwargs)
         self.rule_type = 'RoleManagementPolicyApprovalRule'  # type: str
         self.setting = setting
@@ -2430,12 +3078,12 @@ class RoleManagementPolicyAssignment(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The role management policy type.
     :vartype type: str
-    :param scope: The role management policy scope.
-    :type scope: str
-    :param role_definition_id: The role definition of management policy assignment.
-    :type role_definition_id: str
-    :param policy_id: The policy id role management policy assignment.
-    :type policy_id: str
+    :ivar scope: The role management policy scope.
+    :vartype scope: str
+    :ivar role_definition_id: The role definition of management policy assignment.
+    :vartype role_definition_id: str
+    :ivar policy_id: The policy id role management policy assignment.
+    :vartype policy_id: str
     :ivar policy_assignment_properties: Additional properties of scope, role definition and policy.
     :vartype policy_assignment_properties:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.PolicyAssignmentProperties
@@ -2466,6 +3114,14 @@ class RoleManagementPolicyAssignment(msrest.serialization.Model):
         policy_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The role management policy scope.
+        :paramtype scope: str
+        :keyword role_definition_id: The role definition of management policy assignment.
+        :paramtype role_definition_id: str
+        :keyword policy_id: The policy id role management policy assignment.
+        :paramtype policy_id: str
+        """
         super(RoleManagementPolicyAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2479,11 +3135,11 @@ class RoleManagementPolicyAssignment(msrest.serialization.Model):
 class RoleManagementPolicyAssignmentListResult(msrest.serialization.Model):
     """Role management policy assignment list operation result.
 
-    :param value: Role management policy assignment list.
-    :type value:
+    :ivar value: Role management policy assignment list.
+    :vartype value:
      list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2498,6 +3154,13 @@ class RoleManagementPolicyAssignmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role management policy assignment list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleManagementPolicyAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2508,21 +3171,21 @@ class RoleManagementPolicyAuthenticationContextRule(RoleManagementPolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: The id of the rule.
-    :type id: str
-    :param rule_type: Required. The type of rule.Constant filled by server.  Possible values
-     include: "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
+    :ivar id: The id of the rule.
+    :vartype id: str
+    :ivar rule_type: Required. The type of rule.Constant filled by server. Possible values include:
+     "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
      "RoleManagementPolicyEnablementRule", "RoleManagementPolicyExpirationRule",
      "RoleManagementPolicyNotificationRule".
-    :type rule_type: str or
+    :vartype rule_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleType
-    :param target: The target of the current rule.
-    :type target:
+    :ivar target: The target of the current rule.
+    :vartype target:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
-    :param is_enabled: The value indicating if rule is enabled.
-    :type is_enabled: bool
-    :param claim_value: The claim value.
-    :type claim_value: str
+    :ivar is_enabled: The value indicating if rule is enabled.
+    :vartype is_enabled: bool
+    :ivar claim_value: The claim value.
+    :vartype claim_value: str
     """
 
     _validation = {
@@ -2546,6 +3209,17 @@ class RoleManagementPolicyAuthenticationContextRule(RoleManagementPolicyRule):
         claim_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the rule.
+        :paramtype id: str
+        :keyword target: The target of the current rule.
+        :paramtype target:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
+        :keyword is_enabled: The value indicating if rule is enabled.
+        :paramtype is_enabled: bool
+        :keyword claim_value: The claim value.
+        :paramtype claim_value: str
+        """
         super(RoleManagementPolicyAuthenticationContextRule, self).__init__(id=id, target=target, **kwargs)
         self.rule_type = 'RoleManagementPolicyAuthenticationContextRule'  # type: str
         self.is_enabled = is_enabled
@@ -2557,19 +3231,19 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: The id of the rule.
-    :type id: str
-    :param rule_type: Required. The type of rule.Constant filled by server.  Possible values
-     include: "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
+    :ivar id: The id of the rule.
+    :vartype id: str
+    :ivar rule_type: Required. The type of rule.Constant filled by server. Possible values include:
+     "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
      "RoleManagementPolicyEnablementRule", "RoleManagementPolicyExpirationRule",
      "RoleManagementPolicyNotificationRule".
-    :type rule_type: str or
+    :vartype rule_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleType
-    :param target: The target of the current rule.
-    :type target:
+    :ivar target: The target of the current rule.
+    :vartype target:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
-    :param enabled_rules: The list of enabled rules.
-    :type enabled_rules: list[str or
+    :ivar enabled_rules: The list of enabled rules.
+    :vartype enabled_rules: list[str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.EnablementRules]
     """
 
@@ -2592,6 +3266,16 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
         enabled_rules: Optional[List[Union[str, "EnablementRules"]]] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the rule.
+        :paramtype id: str
+        :keyword target: The target of the current rule.
+        :paramtype target:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
+        :keyword enabled_rules: The list of enabled rules.
+        :paramtype enabled_rules: list[str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.EnablementRules]
+        """
         super(RoleManagementPolicyEnablementRule, self).__init__(id=id, target=target, **kwargs)
         self.rule_type = 'RoleManagementPolicyEnablementRule'  # type: str
         self.enabled_rules = enabled_rules
@@ -2602,21 +3286,21 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: The id of the rule.
-    :type id: str
-    :param rule_type: Required. The type of rule.Constant filled by server.  Possible values
-     include: "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
+    :ivar id: The id of the rule.
+    :vartype id: str
+    :ivar rule_type: Required. The type of rule.Constant filled by server. Possible values include:
+     "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
      "RoleManagementPolicyEnablementRule", "RoleManagementPolicyExpirationRule",
      "RoleManagementPolicyNotificationRule".
-    :type rule_type: str or
+    :vartype rule_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleType
-    :param target: The target of the current rule.
-    :type target:
+    :ivar target: The target of the current rule.
+    :vartype target:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
-    :param is_expiration_required: The value indicating whether expiration is required.
-    :type is_expiration_required: bool
-    :param maximum_duration: The maximum duration of expiration in timespan.
-    :type maximum_duration: str
+    :ivar is_expiration_required: The value indicating whether expiration is required.
+    :vartype is_expiration_required: bool
+    :ivar maximum_duration: The maximum duration of expiration in timespan.
+    :vartype maximum_duration: str
     """
 
     _validation = {
@@ -2640,6 +3324,17 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
         maximum_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the rule.
+        :paramtype id: str
+        :keyword target: The target of the current rule.
+        :paramtype target:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
+        :keyword is_expiration_required: The value indicating whether expiration is required.
+        :paramtype is_expiration_required: bool
+        :keyword maximum_duration: The maximum duration of expiration in timespan.
+        :paramtype maximum_duration: str
+        """
         super(RoleManagementPolicyExpirationRule, self).__init__(id=id, target=target, **kwargs)
         self.rule_type = 'RoleManagementPolicyExpirationRule'  # type: str
         self.is_expiration_required = is_expiration_required
@@ -2649,10 +3344,10 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
 class RoleManagementPolicyListResult(msrest.serialization.Model):
     """Role management policy list operation result.
 
-    :param value: Role management policy list.
-    :type value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicy]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Role management policy list.
+    :vartype value: list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicy]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2667,6 +3362,13 @@ class RoleManagementPolicyListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role management policy list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicy]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(RoleManagementPolicyListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2677,32 +3379,33 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: The id of the rule.
-    :type id: str
-    :param rule_type: Required. The type of rule.Constant filled by server.  Possible values
-     include: "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
+    :ivar id: The id of the rule.
+    :vartype id: str
+    :ivar rule_type: Required. The type of rule.Constant filled by server. Possible values include:
+     "RoleManagementPolicyApprovalRule", "RoleManagementPolicyAuthenticationContextRule",
      "RoleManagementPolicyEnablementRule", "RoleManagementPolicyExpirationRule",
      "RoleManagementPolicyNotificationRule".
-    :type rule_type: str or
+    :vartype rule_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleType
-    :param target: The target of the current rule.
-    :type target:
+    :ivar target: The target of the current rule.
+    :vartype target:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
-    :param notification_type: The type of notification. Possible values include: "Email".
-    :type notification_type: str or
+    :ivar notification_type: The type of notification. Possible values include: "Email".
+    :vartype notification_type: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.NotificationDeliveryMechanism
-    :param notification_level: The notification level. Possible values include: "None", "Critical",
+    :ivar notification_level: The notification level. Possible values include: "None", "Critical",
      "All".
-    :type notification_level: str or
+    :vartype notification_level: str or
      ~azure.mgmt.authorization.v2020_10_01_preview.models.NotificationLevel
-    :param recipient_type: The recipient type. Possible values include: "Requestor", "Approver",
+    :ivar recipient_type: The recipient type. Possible values include: "Requestor", "Approver",
      "Admin".
-    :type recipient_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.RecipientType
-    :param notification_recipients: The list notification recipients.
-    :type notification_recipients: list[str]
-    :param is_default_recipients_enabled: Its value determine if the notification need to be sent
-     to the recipient type specified in policy rule.
-    :type is_default_recipients_enabled: bool
+    :vartype recipient_type: str or
+     ~azure.mgmt.authorization.v2020_10_01_preview.models.RecipientType
+    :ivar notification_recipients: The list notification recipients.
+    :vartype notification_recipients: list[str]
+    :ivar is_default_recipients_enabled: Its value determine if the notification need to be sent to
+     the recipient type specified in policy rule.
+    :vartype is_default_recipients_enabled: bool
     """
 
     _validation = {
@@ -2732,6 +3435,29 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
         is_default_recipients_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the rule.
+        :paramtype id: str
+        :keyword target: The target of the current rule.
+        :paramtype target:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RoleManagementPolicyRuleTarget
+        :keyword notification_type: The type of notification. Possible values include: "Email".
+        :paramtype notification_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.NotificationDeliveryMechanism
+        :keyword notification_level: The notification level. Possible values include: "None",
+         "Critical", "All".
+        :paramtype notification_level: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.NotificationLevel
+        :keyword recipient_type: The recipient type. Possible values include: "Requestor", "Approver",
+         "Admin".
+        :paramtype recipient_type: str or
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.RecipientType
+        :keyword notification_recipients: The list notification recipients.
+        :paramtype notification_recipients: list[str]
+        :keyword is_default_recipients_enabled: Its value determine if the notification need to be sent
+         to the recipient type specified in policy rule.
+        :paramtype is_default_recipients_enabled: bool
+        """
         super(RoleManagementPolicyNotificationRule, self).__init__(id=id, target=target, **kwargs)
         self.rule_type = 'RoleManagementPolicyNotificationRule'  # type: str
         self.notification_type = notification_type
@@ -2744,18 +3470,18 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
 class RoleManagementPolicyRuleTarget(msrest.serialization.Model):
     """The role management policy rule target.
 
-    :param caller: The caller of the setting.
-    :type caller: str
-    :param operations: The type of operation.
-    :type operations: list[str]
-    :param level: The assignment level to which it is applied.
-    :type level: str
-    :param target_objects: The list of target objects.
-    :type target_objects: list[str]
-    :param inheritable_settings: The list of inheritable settings.
-    :type inheritable_settings: list[str]
-    :param enforced_settings: The list of enforced settings.
-    :type enforced_settings: list[str]
+    :ivar caller: The caller of the setting.
+    :vartype caller: str
+    :ivar operations: The type of operation.
+    :vartype operations: list[str]
+    :ivar level: The assignment level to which it is applied.
+    :vartype level: str
+    :ivar target_objects: The list of target objects.
+    :vartype target_objects: list[str]
+    :ivar inheritable_settings: The list of inheritable settings.
+    :vartype inheritable_settings: list[str]
+    :ivar enforced_settings: The list of enforced settings.
+    :vartype enforced_settings: list[str]
     """
 
     _attribute_map = {
@@ -2778,6 +3504,20 @@ class RoleManagementPolicyRuleTarget(msrest.serialization.Model):
         enforced_settings: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword caller: The caller of the setting.
+        :paramtype caller: str
+        :keyword operations: The type of operation.
+        :paramtype operations: list[str]
+        :keyword level: The assignment level to which it is applied.
+        :paramtype level: str
+        :keyword target_objects: The list of target objects.
+        :paramtype target_objects: list[str]
+        :keyword inheritable_settings: The list of inheritable settings.
+        :paramtype inheritable_settings: list[str]
+        :keyword enforced_settings: The list of enforced settings.
+        :paramtype enforced_settings: list[str]
+        """
         super(RoleManagementPolicyRuleTarget, self).__init__(**kwargs)
         self.caller = caller
         self.operations = operations
@@ -2790,14 +3530,14 @@ class RoleManagementPolicyRuleTarget(msrest.serialization.Model):
 class UserSet(msrest.serialization.Model):
     """The detail of a user.
 
-    :param user_type: The type of user. Possible values include: "User", "Group".
-    :type user_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.UserType
-    :param is_backup: The value indicating whether the user is a backup fallback approver.
-    :type is_backup: bool
-    :param id: The object id of the user.
-    :type id: str
-    :param description: The description of the user.
-    :type description: str
+    :ivar user_type: The type of user. Possible values include: "User", "Group".
+    :vartype user_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.UserType
+    :ivar is_backup: The value indicating whether the user is a backup fallback approver.
+    :vartype is_backup: bool
+    :ivar id: The object id of the user.
+    :vartype id: str
+    :ivar description: The description of the user.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -2816,6 +3556,16 @@ class UserSet(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword user_type: The type of user. Possible values include: "User", "Group".
+        :paramtype user_type: str or ~azure.mgmt.authorization.v2020_10_01_preview.models.UserType
+        :keyword is_backup: The value indicating whether the user is a backup fallback approver.
+        :paramtype is_backup: bool
+        :keyword id: The object id of the user.
+        :paramtype id: str
+        :keyword description: The description of the user.
+        :paramtype description: str
+        """
         super(UserSet, self).__init__(**kwargs)
         self.user_type = user_type
         self.is_backup = is_backup
@@ -2830,8 +3580,8 @@ class ValidationResponse(msrest.serialization.Model):
 
     :ivar is_valid: Whether or not validation succeeded.
     :vartype is_valid: bool
-    :param error_info: Failed validation result details.
-    :type error_info:
+    :ivar error_info: Failed validation result details.
+    :vartype error_info:
      ~azure.mgmt.authorization.v2020_10_01_preview.models.ValidationResponseErrorInfo
     """
 
@@ -2850,6 +3600,11 @@ class ValidationResponse(msrest.serialization.Model):
         error_info: Optional["ValidationResponseErrorInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword error_info: Failed validation result details.
+        :paramtype error_info:
+         ~azure.mgmt.authorization.v2020_10_01_preview.models.ValidationResponseErrorInfo
+        """
         super(ValidationResponse, self).__init__(**kwargs)
         self.is_valid = None
         self.error_info = error_info
@@ -2880,6 +3635,8 @@ class ValidationResponseErrorInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ValidationResponseErrorInfo, self).__init__(**kwargs)
         self.code = None
         self.message = None
