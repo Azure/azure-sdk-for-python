@@ -778,10 +778,11 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         :raises EventDataSendError: If the producer fails to flush the buffer within the given timeout
          in buffered mode.
         """
-        if self._buffered_mode and self._buffered_producer_dispatcher:
-            timeout = kwargs.get("timeout")
-            timeout_time = time.time() + timeout if timeout else None
-            await self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
+        async with self._lock:
+            if self._buffered_mode and self._buffered_producer_dispatcher:
+                timeout = kwargs.get("timeout")
+                timeout_time = time.time() + timeout if timeout else None
+                await self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
 
     async def close(
         self,
