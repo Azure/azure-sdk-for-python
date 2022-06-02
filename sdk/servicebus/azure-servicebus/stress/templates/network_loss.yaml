@@ -9,7 +9,7 @@ spec:
   action: loss
   direction: to
   externalTargets:
-    - 'servicebus.windows.net'
+    - '{{ .Stress.ResourceGroupName }}.servicebus.windows.net'
   mode: one
   selector:
     labelSelectors:
