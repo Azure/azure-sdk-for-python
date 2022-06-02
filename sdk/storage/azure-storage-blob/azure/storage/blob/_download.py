@@ -25,7 +25,7 @@ from ._shared.encryption import (
 )
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from ._deserialize import deserialize_blob_properties ,get_page_ranges_result
+from ._deserialize import deserialize_blob_properties, get_page_ranges_result
 
 
 def process_range_and_offset(start_range, end_range, length, encryption_options, encryption_data):

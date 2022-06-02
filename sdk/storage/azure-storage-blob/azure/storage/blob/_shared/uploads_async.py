@@ -17,12 +17,12 @@ import six
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .encryption import get_blob_encryptor_and_padder
-from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
-
-
-_LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
-_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
+from .encryption import (
+    GCMBlobEncryptionStream,
+    get_blob_encryptor_and_padder,
+    _ENCRYPTION_PROTOCOL_V1,
+    _ENCRYPTION_PROTOCOL_V2)
+from .uploads import SubStream
 
 
 async def _parallel_uploads(uploader, pending, running):
@@ -57,12 +57,18 @@ async def upload_data_chunks(
         **kwargs):
 
     if encryption_options:
-        encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('cek'),
-            encryption_options.get('vector'),
-            uploader_class is not PageBlobChunkUploader)
-        kwargs['encryptor'] = encryptor
-        kwargs['padder'] = padder
+        # V1 uses an encryptor/padder to encrypt each chunk
+        if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+            encryptor, padder = get_blob_encryptor_and_padder(
+                encryption_options.get('cek'),
+                encryption_options.get('vector'),
+                uploader_class is not PageBlobChunkUploader)
+            kwargs['encryptor'] = encryptor
+            kwargs['padder'] = padder
+
+        # V2 wraps the data stream with an encryption stream
+        elif encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
+            stream = GCMBlobEncryptionStream(encryption_options.get('cek'), stream)
 
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:

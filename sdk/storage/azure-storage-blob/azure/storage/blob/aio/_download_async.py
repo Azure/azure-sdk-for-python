@@ -14,10 +14,15 @@ from typing import AsyncIterator
 
 from aiohttp import ClientPayloadError
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
-from .._shared.encryption import decrypt_blob
+from .._shared.encryption import (
+    adjust_blob_size_for_encryption,
+    decrypt_blob,
+    is_encryption_v2,
+    parse_encryption_data
+)
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from .._deserialize import get_page_ranges_result
+from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 
 async def process_content(data, start_offset, end_offset, encryption):
@@ -80,7 +85,8 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
     async def _download_chunk(self, chunk_start, chunk_end):
         download_range, offset = process_range_and_offset(
-            chunk_start, chunk_end, chunk_end, self.encryption_options)
+            chunk_start, chunk_end, chunk_end, self.encryption_options, self.encryption_data
+        )
 
         # No need to download the empty chunk from server if there's no data in the chunk to be downloaded.
         # Do optimize and create empty chunk locally if condition is met.
@@ -231,6 +237,26 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
+        self._encryption_data = None
+
+    def __len__(self):
+        return self.size
+
+    async def _get_encryption_data_request(self):
+        # Save current request cls
+        download_cls = self._request_options.pop('cls', None)
+        # Adjust cls for get_properties
+        self._request_options['cls'] = deserialize_blob_properties
+
+        properties = await self._clients.blob.get_properties(**self._request_options)
+        self._encryption_data = parse_encryption_data(properties.metadata, self._encryption_options['required'])
+
+        # Restore cls for download
+        self._request_options['cls'] = download_cls
+
+    async def _setup(self):
+        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
+            await self._get_encryption_data_request()
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -244,13 +270,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             initial_request_end = initial_request_start + self._first_get_size - 1
 
         self._initial_range, self._initial_offset = process_range_and_offset(
-            initial_request_start, initial_request_end, self._end_range, self._encryption_options
+            initial_request_start,
+            initial_request_end,
+            self._end_range,
+            self._encryption_options,
+            self._encryption_data
         )
 
-    def __len__(self):
-        return self.size
-
-    async def _setup(self):
         self._response = await self._initial_request()
         self.properties = self._response.properties
         self.properties.name = self.name
@@ -309,6 +335,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # Parse the total file size and adjust the download size if ranges
                 # were specified
                 self._file_size = parse_length_from_content_range(response.properties.content_range)
+                # Remove any extra encryption data size from blob size
+                self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
+
                 if self._end_range is not None:
                     # Use the length unless it is over the end of the file
                     self.size = min(self._file_size, self._end_range - self._start_range + 1)
@@ -381,6 +410,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             iter_downloader = None
         else:
             data_end = self._file_size
+            data_start = self._initial_range[1] + 1,  # Start where the first download ended
+            # For encryption V2 only, adjust start to the end of the fetched data rather than download size
+            if is_encryption_v2(self._encryption_data):
+                data_start = (self._start_range or 0) + len(self._current_content)
+
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file
                 data_end = min(self._file_size, self._end_range + 1)
@@ -390,12 +424,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 total_size=self.size,
                 chunk_size=self._config.max_chunk_get_size,
                 current_progress=self._first_get_size,
-                start_range=self._initial_range[1] + 1,  # Start where the first download ended
+                start_range=data_start,
                 end_range=data_end,
                 stream=None,
                 parallel=False,
                 validate_content=self._validate_content,
                 encryption_options=self._encryption_options,
+                encryption_data=self._encryption_data,
                 use_location=self._location_mode,
                 **self._request_options)
         return _AsyncChunkIterator(
@@ -487,18 +522,24 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Use the length unless it is over the end of the file
             data_end = min(self._file_size, self._end_range + 1)
 
+        data_start = self._initial_range[1] + 1,  # Start where the first download ended
+        # For encryption V2 only, adjust start to the end of the fetched data rather than download size
+        if is_encryption_v2(self._encryption_data):
+            data_start = (self._start_range or 0) + len(self._current_content)
+
         downloader = _AsyncChunkDownloader(
             client=self._clients.blob,
             non_empty_ranges=self._non_empty_ranges,
             total_size=self.size,
             chunk_size=self._config.max_chunk_get_size,
             current_progress=self._first_get_size,
-            start_range=self._initial_range[1] + 1,  # start where the first download ended
+            start_range=data_start,
             end_range=data_end,
             stream=stream,
             parallel=parallel,
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
+            encryption_data=self._encryption_data,
             use_location=self._location_mode,
             progress_hook=self._progress_hook,
             **self._request_options)
