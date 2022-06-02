@@ -66,7 +66,8 @@ class TestCommunicationTokenCredential(TestCase):
 
         credential = CommunicationTokenCredential(
             expired_token, token_refresher=refresher)
-        access_token = await credential.get_token()
+        async with credential:
+            access_token = await credential.get_token()
 
         refresher.assert_called_once()
         assert refreshed_token == access_token.token
@@ -80,7 +81,8 @@ class TestCommunicationTokenCredential(TestCase):
 
         credential = CommunicationTokenCredential(
             initial_token, token_refresher=refresher, proactive_refresh=True)
-        access_token = await credential.get_token()
+        async with credential:
+            access_token = await credential.get_token()
 
         refresher.assert_not_called()
         assert initial_token == access_token.token
@@ -93,8 +95,9 @@ class TestCommunicationTokenCredential(TestCase):
 
         credential = CommunicationTokenCredential(
             generated_token, token_refresher=refresher, proactive_refresh=False)
-        for _ in range(10):
-            access_token = await credential.get_token()
+        async with credential:
+            for _ in range(10):
+                access_token = await credential.get_token()
 
         refresher.assert_not_called()
         assert generated_token == access_token.token
@@ -107,8 +110,9 @@ class TestCommunicationTokenCredential(TestCase):
 
         credential = CommunicationTokenCredential(
             expired_token, token_refresher=refresher)
-        with self.assertRaises(ValueError):
-            await credential.get_token()
+        async with credential:
+            with self.assertRaises(ValueError):
+                await credential.get_token()
 
         assert refresher.call_count == 1
 
@@ -131,7 +135,8 @@ class TestCommunicationTokenCredential(TestCase):
                 initial_token,
                 token_refresher=refresher,
                 proactive_refresh=True)
-            access_token = await credential.get_token()
+            async with credential:
+                access_token = await credential.get_token()
 
         assert refresher.call_count == 0
         assert access_token.token == initial_token
@@ -158,7 +163,8 @@ class TestCommunicationTokenCredential(TestCase):
                 initial_token,
                 token_refresher=refresher,
                 proactive_refresh=True)
-            access_token = await credential.get_token()
+            async with credential:
+                access_token = await credential.get_token()
 
         assert refresher.call_count == 1
         assert access_token.token == refreshed_token
@@ -183,9 +189,10 @@ class TestCommunicationTokenCredential(TestCase):
             expired_token,
             token_refresher=refresher,
             proactive_refresh=True)
-        access_token = await credential.get_token()
-        with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
+        async with credential:
             access_token = await credential.get_token()
+            with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
+                access_token = await credential.get_token()
 
         assert refresher.call_count == 2
         assert access_token.token == last_refreshed_token.token
@@ -209,8 +216,9 @@ class TestCommunicationTokenCredential(TestCase):
         next_milestone = token_validity_seconds / 2
         assert credential._timer.interval == next_milestone
 
-        with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=(get_current_utc_as_int() + next_milestone)):
-            await credential.get_token()
+        async with credential:
+            with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=(get_current_utc_as_int() + next_milestone)):
+                await credential.get_token()
 
         assert refresher.call_count == 1
         next_milestone = next_milestone / 2
@@ -226,9 +234,8 @@ class TestCommunicationTokenCredential(TestCase):
                 expired_token,
                 token_refresher=refresher,
                 proactive_refresh=True)
-        credential.get_token()
-        credential.close()
-        assert credential._timer is not None
+        async with  credential:
+            assert credential._timer is not None
         assert refresher.call_count == 0
         assert credential._timer is not None
         
@@ -242,10 +249,11 @@ class TestCommunicationTokenCredential(TestCase):
                 expired_token,
                 token_refresher=refresher,
                 proactive_refresh=True)
-        credential.get_token()
-        credential.close()
+        async with  credential:
+            assert credential._timer is not None
         assert credential._timer is not None
         
         with pytest.raises(RuntimeError) as err:
-            credential.get_token()
+            with credential:
+                assert credential._timer is not None
         assert str(err.value) == "An instance of CommunicationTokenCredential cannot be reused once it has been closed."

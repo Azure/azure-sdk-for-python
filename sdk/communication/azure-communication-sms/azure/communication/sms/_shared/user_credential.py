@@ -22,6 +22,8 @@ class CommunicationTokenCredential(object):
      If the proactive refreshing is enabled ('proactive_refresh' is true), the credential will use
      a background thread to attempt to refresh the token within 10 minutes before the cached token expires,
      the proactive refresh will request a new token by calling the 'token_refresher' callback.
+     When 'proactive_refresh' is enabled, the Credential object must be either run within a context manager
+     or the 'close' method must be called once the object usage has been finished.
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' callable.
     """
@@ -47,10 +49,11 @@ class CommunicationTokenCredential(object):
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
+        if self._proactive_refresh and self._is_closed.is_set():
+            raise RuntimeError("An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
 
         if not self._token_refresher or not self._is_token_expiring_soon(self._token):
             return self._token
-
         self._update_token_and_reschedule()
         return self._token
 
@@ -125,9 +128,10 @@ class CommunicationTokenCredential(object):
         return get_current_utc_as_int() < token.expires_on
 
     def __enter__(self):
-        if self._is_closed.is_set():
-            raise RuntimeError("An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
         if self._proactive_refresh:
+            if self._is_closed.is_set():
+                raise RuntimeError(
+                    "An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
             self._schedule_refresh()
         return self
 

@@ -29,9 +29,9 @@ class TestCommunicationTokenCredential(TestCase):
             100)  # 1/1/1970
 
     def test_communicationtokencredential_decodes_token(self):
-        credential = CommunicationTokenCredential(self.sample_token)
-        access_token = credential.get_token()
-        self.assertEqual(access_token.token, self.sample_token)
+        with CommunicationTokenCredential(self.sample_token) as credential:
+            access_token = credential.get_token()
+            self.assertEqual(access_token.token, self.sample_token)
 
     def test_communicationtokencredential_throws_if_invalid_token(self):
         self.assertRaises(
@@ -52,31 +52,32 @@ class TestCommunicationTokenCredential(TestCase):
         assert str(err.value) == "When 'proactive_refresh' is True, 'token_refresher' must not be None."
 
     def test_communicationtokencredential_static_token_returns_expired_token(self):
-        credential = CommunicationTokenCredential(self.expired_token)
-        self.assertEqual(credential.get_token().token, self.expired_token)
+        with CommunicationTokenCredential(self.expired_token) as credential:
+            self.assertEqual(credential.get_token().token, self.expired_token)
 
     def test_communicationtokencredential_token_expired_refresh_called(self):
         refresher = MagicMock(
             return_value=create_access_token(self.sample_token))
-        credential = CommunicationTokenCredential(self.expired_token, token_refresher=refresher)
-        access_token = credential.get_token()
+        with CommunicationTokenCredential(self.expired_token, token_refresher=refresher) as credential:
+            access_token = credential.get_token()
         refresher.assert_called_once()
         self.assertEqual(access_token.token, self.sample_token)
 
     def test_communicationtokencredential_raises_if_refresher_returns_expired_token(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
-        credential = CommunicationTokenCredential(self.expired_token, token_refresher=refresher)
-        with self.assertRaises(ValueError):
-            credential.get_token()
-        self.assertEqual(refresher.call_count, 1)
+        with CommunicationTokenCredential(self.expired_token, token_refresher=refresher) as credential:
+            with self.assertRaises(ValueError):
+                credential.get_token()
+            self.assertEqual(refresher.call_count, 1)
 
     def test_uses_initial_token_as_expected(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
         credential = CommunicationTokenCredential(
             self.sample_token, token_refresher=refresher, proactive_refresh=True)
-        access_token = credential.get_token()
+        with credential:
+            access_token = credential.get_token()
 
         self.assertEqual(refresher.call_count, 0)
         self.assertEqual(access_token.token, self.sample_token)
@@ -99,12 +100,13 @@ class TestCommunicationTokenCredential(TestCase):
                 initial_token,
                 token_refresher=refresher,
                 proactive_refresh=True)
-            access_token = credential.get_token()
-            
-            assert refresher.call_count == 0
-            assert access_token.token == initial_token
-            # check that next refresh is always scheduled
-            assert credential._timer is None
+            with credential:
+                access_token = credential.get_token()
+                
+                assert refresher.call_count == 0
+                assert access_token.token == initial_token
+                # check that next refresh is always scheduled
+                assert credential._timer is not None
 
     def test_proactive_refresher_should_be_called_after_specified_time(self):
         refresh_minutes = 10
@@ -125,12 +127,13 @@ class TestCommunicationTokenCredential(TestCase):
                 initial_token,
                 token_refresher=refresher,
                 proactive_refresh=True)
-            access_token = credential.get_token()
+            with credential:
+                access_token = credential.get_token()
 
-            assert refresher.call_count == 1
-            assert access_token.token == refreshed_token
-            # check that next refresh is always scheduled
-            assert credential._timer is not None
+                assert refresher.call_count == 1
+                assert access_token.token == refreshed_token
+                # check that next refresh is always scheduled
+                assert credential._timer is not None
 
     def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_minutes = 10
@@ -149,14 +152,15 @@ class TestCommunicationTokenCredential(TestCase):
             expired_token,
             token_refresher=refresher,
             proactive_refresh=True)
-        access_token = credential.get_token()
-        with patch(user_credential.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
+        with credential:
             access_token = credential.get_token()
-            
-            assert refresher.call_count == 2
-            assert access_token.token == last_refreshed_token.token
-            # check that next refresh is always scheduled
-            assert credential._timer is not None
+            with patch(user_credential.__name__+'.'+get_current_utc_as_int.__name__, return_value=skip_to_timestamp):
+                access_token = credential.get_token()
+                
+                assert refresher.call_count == 2
+                assert access_token.token == last_refreshed_token.token
+                # check that next refresh is always scheduled
+                assert credential._timer is not None
         
     def test_fractional_backoff_applied_when_token_expiring(self):
         token_validity_seconds = 5 * 60
@@ -173,11 +177,13 @@ class TestCommunicationTokenCredential(TestCase):
 
         next_milestone = token_validity_seconds / 2
 
-        with patch(user_credential.__name__+'.'+get_current_utc_as_int.__name__, return_value=(get_current_utc_as_int() + next_milestone)):
-            credential.get_token()
-        assert refresher.call_count == 1
-        next_milestone = next_milestone / 2
-        assert credential._timer.interval == next_milestone       
+        with credential:
+            assert credential._timer.interval == next_milestone
+            with patch(user_credential.__name__+'.'+get_current_utc_as_int.__name__, return_value=(get_current_utc_as_int() + next_milestone)):
+                credential.get_token()
+            assert refresher.call_count == 1
+            next_milestone = next_milestone / 2
+            assert credential._timer.interval == next_milestone       
 
     def test_refresher_should_not_be_called_when_token_still_valid(self):
         generated_token = generate_token_with_custom_expiry(15 * 60)
@@ -186,8 +192,9 @@ class TestCommunicationTokenCredential(TestCase):
 
         credential = CommunicationTokenCredential(
             generated_token, token_refresher=refresher, proactive_refresh=False)
-        for _ in range(10):
-            access_token = credential.get_token()
+        with credential:
+            for _ in range(10):
+                access_token = credential.get_token()
 
         refresher.assert_not_called()
         assert generated_token == access_token.token
@@ -198,8 +205,8 @@ class TestCommunicationTokenCredential(TestCase):
         refresher = MagicMock(return_value=refreshed_token)
         credential = CommunicationTokenCredential(
              self.expired_token,token_refresher=refresher, proactive_refresh=True)
-        credential.get_token()
-        credential.close()
+        with credential:
+            assert credential._timer is not None
         assert credential._timer is None
      
     def test_exit_enter_scenario_throws_exception(self):
@@ -208,12 +215,13 @@ class TestCommunicationTokenCredential(TestCase):
         refresher = MagicMock(return_value=refreshed_token)
         credential = CommunicationTokenCredential(
              self.expired_token,token_refresher=refresher, proactive_refresh=True)
-        credential.get_token()
-        credential.close()
+        with credential:
+            assert credential._timer is not None
         assert credential._timer is None
 
         with pytest.raises(RuntimeError) as err:
-            credential.get_token()
+            with credential:
+                assert credential._timer is not None
         assert str(err.value) == "An instance of CommunicationTokenCredential cannot be reused once it has been closed."
         
 

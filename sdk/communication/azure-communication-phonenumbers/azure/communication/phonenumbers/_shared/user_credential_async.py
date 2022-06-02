@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from asyncio import Condition, Lock
+from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any
 import sys
@@ -24,6 +24,8 @@ class CommunicationTokenCredential(object):
      If the proactive refreshing is enabled ('proactive_refresh' is true), the credential will use
      a background thread to attempt to refresh the token within 10 minutes before the cached token expires,
      the proactive refresh will request a new token by calling the 'token_refresher' callback.
+     When 'proactive_refresh is enabled', the Credential object must be either run within a context manager
+     or the 'close' method must be called once the object usage has been finished.
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
@@ -46,12 +48,16 @@ class CommunicationTokenCredential(object):
             getattr(self._async_mutex, '_get_loop', lambda: None)()
         self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
+        self._is_closed = Event()
 
     async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
+        if self._proactive_refresh and self._is_closed.is_set():
+            raise RuntimeError("An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
+
         if not self._token_refresher or not self._is_token_expiring_soon(self._token):
             return self._token
         await self._update_token_and_reschedule()
@@ -90,6 +96,8 @@ class CommunicationTokenCredential(object):
         return self._token
 
     def _schedule_refresh(self):
+        if self._is_closed.is_set():
+            return
         if self._timer is not None:
             self._timer.cancel()
 
@@ -127,6 +135,9 @@ class CommunicationTokenCredential(object):
 
     async def __aenter__(self):
         if self._proactive_refresh:
+            if self._is_closed.is_set():
+                raise RuntimeError(
+                    "An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
             self._schedule_refresh()
         return self
 
@@ -137,3 +148,4 @@ class CommunicationTokenCredential(object):
         if self._timer is not None:
             self._timer.cancel()
         self._timer = None
+        self._is_closed.set()
