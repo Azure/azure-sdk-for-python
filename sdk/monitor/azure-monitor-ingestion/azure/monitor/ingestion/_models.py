@@ -3,9 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import List
+from six import with_metaclass
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-class SendLogsStatus(str, Enum):
+class SendLogsStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCESS = 'Success'
     PARTIAL_FAILURE = 'PartialFailure'
 
