@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,17 +7,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
-import warnings
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-
+from ..._vendor import _convert_request
+from ...operations._usage_aggregates_operations import build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -27,7 +30,7 @@ class UsageAggregatesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.commerce.models
+    :type models: ~azure.mgmt.commerce.v2015_06_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -42,6 +45,7 @@ class UsageAggregatesOperations:
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def list(
         self,
         reported_start_time: datetime.datetime,
@@ -49,7 +53,7 @@ class UsageAggregatesOperations:
         show_details: Optional[bool] = None,
         aggregation_granularity: Optional[Union[str, "_models.AggregationGranularity"]] = "Daily",
         continuation_token_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageAggregationListResult"]:
         """Query aggregated Azure subscription consumption data for a date range.
 
@@ -61,61 +65,67 @@ class UsageAggregatesOperations:
          server-side aggregation with fewer details. For example, if you have 3 website instances, by
          default you will get 3 line items for website consumption. If you specify showDetails = false,
          the data will be aggregated as a single line item for website consumption within the time
-         period (for the given subscriptionId, meterId, usageStartTime and usageEndTime).
+         period (for the given subscriptionId, meterId, usageStartTime and usageEndTime). Default value
+         is None.
         :type show_details: bool
         :param aggregation_granularity: ``Daily`` (default) returns the data in daily granularity,
-         ``Hourly`` returns the data in hourly granularity.
-        :type aggregation_granularity: str or ~azure.mgmt.commerce.models.AggregationGranularity
+         ``Hourly`` returns the data in hourly granularity. Default value is "Daily".
+        :type aggregation_granularity: str or
+         ~azure.mgmt.commerce.v2015_06_01_preview.models.AggregationGranularity
         :param continuation_token_parameter: Used when a continuation token string is provided in the
          response body of the previous call, enabling paging through a large result set. If not present,
          the data is retrieved from the beginning of the day/hour (based on the granularity) passed in.
+         Default value is None.
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either UsageAggregationListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.commerce.models.UsageAggregationListResult]
+        :return: An iterator like instance of either UsageAggregationListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.commerce.v2015_06_01_preview.models.UsageAggregationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2015-06-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageAggregationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-06-01-preview"
-        accept = "application/json, text/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['reportedStartTime'] = self._serialize.query("reported_start_time", reported_start_time, 'iso-8601')
-                query_parameters['reportedEndTime'] = self._serialize.query("reported_end_time", reported_end_time, 'iso-8601')
-                if show_details is not None:
-                    query_parameters['showDetails'] = self._serialize.query("show_details", show_details, 'bool')
-                if aggregation_granularity is not None:
-                    query_parameters['aggregationGranularity'] = self._serialize.query("aggregation_granularity", aggregation_granularity, 'str')
-                if continuation_token_parameter is not None:
-                    query_parameters['continuationToken'] = self._serialize.query("continuation_token_parameter", continuation_token_parameter, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    reported_start_time=reported_start_time,
+                    reported_end_time=reported_end_time,
+                    show_details=show_details,
+                    aggregation_granularity=aggregation_granularity,
+                    continuation_token_parameter=continuation_token_parameter,
+                    template_url=self.list.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    reported_start_time=reported_start_time,
+                    reported_end_time=reported_end_time,
+                    show_details=show_details,
+                    aggregation_granularity=aggregation_granularity,
+                    continuation_token_parameter=continuation_token_parameter,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('UsageAggregationListResult', pipeline_response)
+            deserialized = self._deserialize("UsageAggregationListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -124,17 +134,22 @@ class UsageAggregatesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
+
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Commerce/UsageAggregates'}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Commerce/UsageAggregates"}  # type: ignore
