@@ -122,7 +122,7 @@ class ContainerProxy(object):
             range statistics in response headers.
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
@@ -160,23 +160,17 @@ class ContainerProxy(object):
         To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
 
-        :param Dict[str, str] body: A dict-like object representing the item to create.
-        :keyword pre_trigger_include: trigger id to be used as pre operation trigger.
-        :paramtype pre_trigger_include: str
-        :keyword post_trigger_include: trigger id to be used as post operation trigger.
-        :paramtype post_trigger_include: str
+        :param dict[str, str] body: A dict-like object representing the item to create.
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
-        :paramtype indexing_directive: int or ~azure.cosmos.documents.IndexingDirective
-        :keyword enable_automatic_id_generation: Enable automatic id generation if no id present.
-        :paramtype enable_automatic_id_generation: bool
-        :keyword session_token: Token for use with Session consistency.
-        :paramtype session_token: str
-        :keyword initial_headers: Initial headers to be sent as part of the request.
-        :paramtype initial_headers: dict[str,str]
+        :paramtype indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
+        :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
-        :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
@@ -219,8 +213,9 @@ class ContainerProxy(object):
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
         :type partition_key: Union[str, int, float, bool]
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         **Provisional** keyword argument max_integrated_cache_staleness_in_ms
@@ -245,6 +240,9 @@ class ContainerProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
+        post_trigger_include = kwargs.pop('post_trigger_include', None)
+        if post_trigger_include is not None:
+            request_options["postTriggerInclude"] = post_trigger_include
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -264,7 +262,7 @@ class ContainerProxy(object):
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         **Provisional** keyword argument max_integrated_cache_staleness_in_ms
@@ -320,7 +318,7 @@ class ContainerProxy(object):
             indexing was opted out on the requested paths.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         **Provisional** keyword argument max_integrated_cache_staleness_in_ms
@@ -447,8 +445,7 @@ class ContainerProxy(object):
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :paramtype session_token: str
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -496,7 +493,7 @@ class ContainerProxy(object):
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -544,7 +541,7 @@ class ContainerProxy(object):
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
@@ -581,7 +578,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be retrieved.
         :returns: ThroughputProperties for the container.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
@@ -615,7 +612,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
-        :rtype: ~azure.cosmos.ThroughputProperties
+        :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()

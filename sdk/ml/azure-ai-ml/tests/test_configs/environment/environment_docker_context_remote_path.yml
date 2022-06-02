@@ -1,0 +1,8 @@
+name: TestEnv
+version: 1
+build:
+   path: https://ankitws8854091092.blob.core.windows.net/azureml-blobstore-579340a1-d0fd-43a7-a49c-2bb8c39c2c95/LocalUpload/c46f59fa5f499ec3cb27a7445c9a7733/environment_files/
+   dockerfile_path: Dockerfile
+tags:
+   test: test
+description: Docker context environment

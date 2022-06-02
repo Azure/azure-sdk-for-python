@@ -91,6 +91,6 @@ In this file, you could search the function name to find the function definition
 Above the `begin_delete` function, you could find it from [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py#L8784).
 The same, the `create_or_update` function is [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py#L9761).
 
-Finally, you also could find the usage of function by [Azure doc](https://docs.microsoft.com/en-us/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group) or [Azure samples](https://github.com/Azure-Samples/azure-samples-python-management).
+Finally, you also could find the usage of function by [Azure doc](https://docs.microsoft.com/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group) or [Azure samples](https://github.com/Azure-Samples/azure-samples-python-management).
 
 Feel free to contact Azure SDK team at any time through any channels. We are passionate to build the world-class cloud product.

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from msrest import Deserializer, Serializer
 
@@ -15,27 +15,35 @@ from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .. import models
 from ._configuration import ConversationAnalysisClientConfiguration
 from ._operations import ConversationAnalysisClientOperationsMixin
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Dict
+
 class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
-    """This API accepts a request and mediates among multiple language projects, such as LUIS
+    """The language service conversations API is a suite of natural language processing (NLP) skills
+    that can be used to analyze structured conversations (textual or spoken). The synchronous API
+    in this suite accepts a request and mediates among multiple language projects, such as LUIS
     Generally Available, Question Answering, Conversational Language Understanding, and then calls
     the best candidate service to handle the request. At last, it returns a response with the
     candidate service's response as a payload.
 
      In some cases, this API needs to forward requests and responses between the caller and an
-    upstream service.
+    upstream service. The asynchronous APIs in this suite enable tasks like Conversation
+    Summarization and Conversational PII detection.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -48,9 +56,8 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
         self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
 

@@ -1,0 +1,6 @@
+name: testDatasetfolder
+version: 1
+description: "this is a test dataset"
+paths:
+  - folder: https://test.blob.core.windows.net/azureml-blobstore-test/testdata/
+    file: https://test.blob.core.windows.net/azureml-blobstore-test/testdata/data.csv
