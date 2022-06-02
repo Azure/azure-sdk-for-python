@@ -1,6 +1,6 @@
 # Release History
 
-## 7.6.2 (Unreleased)
+## 7.7.0 (2022-06-07)
 
 ### Bugs Fixed
 
