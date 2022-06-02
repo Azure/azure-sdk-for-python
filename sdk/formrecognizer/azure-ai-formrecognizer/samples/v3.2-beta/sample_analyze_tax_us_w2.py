@@ -38,6 +38,7 @@ def analyze_tax_us_w2():
 
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.core.exceptions import HttpResponseError
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -46,9 +47,21 @@ def analyze_tax_us_w2():
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-tax.us.w2", document=f, locale="en-US"
-        )
+        # The test is unstable in Public cloud, we try to set the number of retries in the code to increase stability
+        retry_times = 0
+        while retry_times != 10 :
+            try:
+                poller = document_analysis_client.begin_analyze_document(
+                    "prebuilt-tax.us.w2", document=f, locale="en-US"
+                )
+            except HttpResponseError as e:
+                retry_times += 1
+                # Print the known unstable errors
+                print(e.message)
+                continue
+            else:
+                break
+        print("--------Retry times: {}--------".format(retry_times))
     w2s = poller.result()
 
     for idx, w2 in enumerate(w2s.documents):
