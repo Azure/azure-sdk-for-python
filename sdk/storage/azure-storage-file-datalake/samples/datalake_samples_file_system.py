@@ -243,7 +243,6 @@ class FileSystemSamples(object):
             'file3',
             'dir1', # dir1 is not empty
             'dir8', # dir8 doesn't exist
-            raise_on_any_failure=False
         )
         print("Total number of sub-responses: " + len(response) + "\n")
         print("First failure error code: " + response[3].error_code + "\n")
