@@ -32,7 +32,7 @@ class TestDocumentStatus(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code=target_language
+                        language=target_language
                     )
                 ]
             )
