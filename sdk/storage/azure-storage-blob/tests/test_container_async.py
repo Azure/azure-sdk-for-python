@@ -1179,7 +1179,6 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @BlobPreparer()
     async def test_list_blobs_include_deletedwithversion_async(self, versioned_storage_account_name, versioned_storage_account_key):
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
-        # pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(

@@ -1,0 +1,31 @@
+type: pipeline
+
+display_name: pipeline_with_data_binding
+description: The hello world pipeline job with data binding
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  job_in_number: 1
+  job_in_string: "hello"
+  job_in_folder:
+    path: ../../data
+    type: uri_folder
+    mode: ro_mount
+  job_in_file:
+    path: ../../data/sample1.csv
+    type: uri_file
+    mode: ro_mount
+  target_compute: "cpu-cluster"
+  output_file_name: "sample1.csv"
+
+jobs:
+  hello_world:
+    type: command
+    component: file:./component.yml
+    distribution:
+      type: "mpi"
+      process_count_per_instance: ${{parent.inputs.job_in_number}}

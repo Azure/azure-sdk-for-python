@@ -5,7 +5,7 @@
 
 import json
 import datetime
-from typing import Any, List, Union, TYPE_CHECKING, overload, Optional
+from typing import Any, List, Union, TYPE_CHECKING, overload, Optional, cast
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
@@ -273,17 +273,19 @@ class DocumentTranslationClient:
             )
 
         callback = kwargs.pop("cls", deserialization_callback)
-        return self._client.document_translation.begin_start_translation(  # type: ignore
-            inputs=inputs if not continuation_token else None,
-            polling=DocumentTranslationLROPollingMethod(
-                timeout=polling_interval,
-                lro_algorithms=[TranslationPolling()],
-                cont_token_response=pipeline_response,
+        return cast(DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
+            self._client.document_translation.begin_start_translation(
+                inputs=inputs if not continuation_token else None,
+                polling=DocumentTranslationLROPollingMethod(
+                    timeout=polling_interval,
+                    lro_algorithms=[TranslationPolling()],
+                    cont_token_response=pipeline_response,
+                    **kwargs
+                ),
+                cls=callback,
+                continuation_token=continuation_token,
                 **kwargs
-            ),
-            cls=callback,
-            continuation_token=continuation_token,
-            **kwargs
+            )
         )
 
     @distributed_trace
@@ -388,17 +390,19 @@ class DocumentTranslationClient:
             ],
         )
 
-        return self._client.document_translation.get_translations_status(  # type: ignore
-            cls=model_conversion_function,
-            maxpagesize=results_per_page,
-            created_date_time_utc_start=created_after,
-            created_date_time_utc_end=created_before,
-            ids=translation_ids,
-            order_by=order_by,
-            statuses=statuses,
-            top=top,
-            skip=skip,
-            **kwargs
+        return cast(ItemPaged[TranslationStatus],
+            self._client.document_translation.get_translations_status(
+                cls=model_conversion_function,
+                maxpagesize=results_per_page,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=translation_ids,
+                order_by=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -471,18 +475,20 @@ class DocumentTranslationClient:
             ],
         )
 
-        return self._client.document_translation.get_documents_status(  # type: ignore
-            id=translation_id,
-            cls=model_conversion_function,
-            maxpagesize=results_per_page,
-            created_date_time_utc_start=created_after,
-            created_date_time_utc_end=created_before,
-            ids=document_ids,
-            order_by=order_by,
-            statuses=statuses,
-            top=top,
-            skip=skip,
-            **kwargs
+        return cast(ItemPaged[DocumentStatus],
+            self._client.document_translation.get_documents_status(
+                id=translation_id,
+                cls=model_conversion_function,
+                maxpagesize=results_per_page,
+                created_date_time_utc_start=created_after,
+                created_date_time_utc_end=created_before,
+                ids=document_ids,
+                order_by=order_by,
+                statuses=statuses,
+                top=top,
+                skip=skip,
+                **kwargs
+            )
         )
 
     @distributed_trace

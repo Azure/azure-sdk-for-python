@@ -1,0 +1,16 @@
+type: pipeline
+description: "Basic Pipeline Job with 3 Hello World components"
+
+compute: azureml:cpu-cluster
+
+jobs:
+  component_a_job:
+    type: command
+    component: file:./componentA.yml
+  component_b_job:
+    type: command
+    component: file:./componentB.yml
+  component_c_job:
+    type: command
+    component: file:./componentC.yml
+

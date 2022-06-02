@@ -1,0 +1,10 @@
+name: hdfs_pw_example
+type: hdfs
+hdfs_server_certificate: ./tests/test_configs/datastore/hdfs_kerberos_pw.yml
+name_node_address: name_node_address
+protocol: https
+credentials:
+  kerberos_realm: testrealm
+  kerberos_kdc_address: test kdc address
+  kerberos_principal: test-principal
+  kerberos_password: test-password2
