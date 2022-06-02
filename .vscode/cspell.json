@@ -152,6 +152,7 @@
     "deserialization",
     "docfx",
     "dotenv",
+    "dpkg",
     "DWORD",
     "eastus",
     "eckey",
