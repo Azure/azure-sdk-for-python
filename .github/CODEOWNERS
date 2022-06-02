@@ -30,7 +30,7 @@
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @rakshith91
+/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
