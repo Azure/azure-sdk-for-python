@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import DataCollectionRuleClientConfiguration
+from ._configuration import MonitorIngestionClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -20,6 +20,6 @@ if TYPE_CHECKING:
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
     _client: "AsyncPipelineClient"
-    _config: DataCollectionRuleClientConfiguration
+    _config: MonitorIngestionClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

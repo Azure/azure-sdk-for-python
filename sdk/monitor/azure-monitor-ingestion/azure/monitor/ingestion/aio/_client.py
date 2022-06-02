@@ -14,8 +14,8 @@ from msrest import Deserializer, Serializer
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from ._configuration import DataCollectionRuleClientConfiguration
-from ._operations import DataCollectionRuleClientOperationsMixin
+from ._configuration import MonitorIngestionClientConfiguration
+from ._operations import MonitorIngestionClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-class DataCollectionRuleClient(DataCollectionRuleClientOperationsMixin):
+class MonitorIngestionClient(MonitorIngestionClientOperationsMixin):
     """Azure Monitor Data Collection Python Client.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
@@ -43,7 +43,7 @@ class DataCollectionRuleClient(DataCollectionRuleClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         _endpoint = '{endpoint}'
-        self._config = DataCollectionRuleClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = MonitorIngestionClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -84,7 +84,7 @@ class DataCollectionRuleClient(DataCollectionRuleClientOperationsMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DataCollectionRuleClient":
+    async def __aenter__(self) -> "MonitorIngestionClient":
         await self._client.__aenter__()
         return self
 

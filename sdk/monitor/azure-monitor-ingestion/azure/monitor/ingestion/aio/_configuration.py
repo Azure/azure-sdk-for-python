@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class DataCollectionRuleClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for DataCollectionRuleClient.
+class MonitorIngestionClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for MonitorIngestionClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -39,7 +39,7 @@ class DataCollectionRuleClientConfiguration(Configuration):  # pylint: disable=t
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        super(DataCollectionRuleClientConfiguration, self).__init__(**kwargs)
+        super(MonitorIngestionClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
 
         if endpoint is None:
@@ -51,7 +51,7 @@ class DataCollectionRuleClientConfiguration(Configuration):  # pylint: disable=t
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', [])
-        kwargs.setdefault('sdk_moniker', 'datacollectionruleclient/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'monitoringestionclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

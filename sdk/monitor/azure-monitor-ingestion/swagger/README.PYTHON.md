@@ -5,7 +5,7 @@
 ### Configuration
 
 ```yaml
-title: DataCollectionRuleClient
+title: MonitorIngestionClient
 description: Azure Monitor Data Collection Python Client
 generated-metadata: false
 
@@ -25,5 +25,5 @@ python3-only: true
 directive:
   - rename-operation:
       from: "DataCollectionRule_Ingest"
-      to: "Ingest"
+      to: "SendLogs"
 ```

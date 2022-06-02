@@ -15,15 +15,15 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_ingest_request
+from ..._operations._operations import build_send_logs_request
 from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class DataCollectionRuleClientOperationsMixin(MixinABC):
+class MonitorIngestionClientOperationsMixin(MixinABC):
 
     @distributed_trace_async
-    async def ingest(  # pylint: disable=inconsistent-return-statements
+    async def send_logs(  # pylint: disable=inconsistent-return-statements
         self,
         rule_id: str,
         stream: str,
@@ -73,7 +73,7 @@ class DataCollectionRuleClientOperationsMixin(MixinABC):
 
         _json = body
 
-        request = build_ingest_request(
+        request = build_send_logs_request(
             rule_id=rule_id,
             stream=stream,
             api_version=api_version,

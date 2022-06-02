@@ -24,7 +24,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_ingest_request(
+def build_send_logs_request(
     rule_id: str,
     stream: str,
     *,
@@ -72,10 +72,10 @@ def build_ingest_request(
         **kwargs
     )
 
-class DataCollectionRuleClientOperationsMixin(MixinABC):
+class MonitorIngestionClientOperationsMixin(MixinABC):
 
     @distributed_trace
-    def ingest(  # pylint: disable=inconsistent-return-statements
+    def send_logs(  # pylint: disable=inconsistent-return-statements
         self,
         rule_id: str,
         stream: str,
@@ -125,7 +125,7 @@ class DataCollectionRuleClientOperationsMixin(MixinABC):
 
         _json = body
 
-        request = build_ingest_request(
+        request = build_send_logs_request(
             rule_id=rule_id,
             stream=stream,
             api_version=api_version,
