@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from msrest import Deserializer, Serializer
 
-from azure.core import AsyncPipelineClient
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import PurviewCatalogClientConfiguration
 from .operations import CollectionOperations, DiscoveryOperations, EntityOperations, GlossaryOperations, LineageOperations, RelationshipOperations, TypesOperations
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
     """Purview Catalog Service is a fully managed cloud service whose users can discover the data
@@ -30,25 +30,25 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
     of Purview Catalog Service.
 
     :ivar entity: EntityOperations operations
-    :vartype entity: azure.purview.catalog.aio.operations.EntityOperations
+    :vartype entity: azure.purview.catalog.operations.EntityOperations
     :ivar glossary: GlossaryOperations operations
-    :vartype glossary: azure.purview.catalog.aio.operations.GlossaryOperations
+    :vartype glossary: azure.purview.catalog.operations.GlossaryOperations
     :ivar discovery: DiscoveryOperations operations
-    :vartype discovery: azure.purview.catalog.aio.operations.DiscoveryOperations
+    :vartype discovery: azure.purview.catalog.operations.DiscoveryOperations
     :ivar lineage: LineageOperations operations
-    :vartype lineage: azure.purview.catalog.aio.operations.LineageOperations
+    :vartype lineage: azure.purview.catalog.operations.LineageOperations
     :ivar relationship: RelationshipOperations operations
-    :vartype relationship: azure.purview.catalog.aio.operations.RelationshipOperations
+    :vartype relationship: azure.purview.catalog.operations.RelationshipOperations
     :ivar types: TypesOperations operations
-    :vartype types: azure.purview.catalog.aio.operations.TypesOperations
+    :vartype types: azure.purview.catalog.operations.TypesOperations
     :ivar collection: CollectionOperations operations
-    :vartype collection: azure.purview.catalog.aio.operations.CollectionOperations
+    :vartype collection: azure.purview.catalog.operations.CollectionOperations
     :param endpoint: The catalog endpoint of your Purview account. Example:
      https://{accountName}.purview.azure.com.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -58,37 +58,51 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         endpoint: str,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}/catalog/api'
         self._config = PurviewCatalogClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.entity = EntityOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.glossary = GlossaryOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.discovery = DiscoveryOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.lineage = LineageOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.relationship = RelationshipOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.types = TypesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.entity = EntityOperations(  # type: ignore # pylint: disable=abstract-class-instantiated
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.glossary = GlossaryOperations(  # type: ignore # pylint: disable=abstract-class-instantiated
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.discovery = DiscoveryOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.lineage = LineageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.relationship = RelationshipOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.types = TypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.collection = CollectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def send_request(
         self,
         request: HttpRequest,
         **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -96,7 +110,7 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -107,12 +121,15 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "PurviewCatalogClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> PurviewCatalogClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
