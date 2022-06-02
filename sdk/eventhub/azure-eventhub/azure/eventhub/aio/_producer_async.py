@@ -24,6 +24,7 @@ from .._utils import (
     transform_outbound_single_message,
 )
 from .._constants import TIMEOUT_SYMBOL
+from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 
@@ -173,11 +174,11 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]],
         span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
-        if isinstance(event_data, EventData):
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
             outgoing_event_data = transform_outbound_single_message(event_data, EventData)
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)
@@ -206,7 +207,7 @@ class EventHubProducer(
 
     async def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]],
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None
