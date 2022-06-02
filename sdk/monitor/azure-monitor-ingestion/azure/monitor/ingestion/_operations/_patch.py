@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, Any
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from .._patch import SendLogsStatus, SendLogsResult
+from .._models import SendLogsStatus, SendLogsResult
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
     def send_logs(self, rule_id: str, stream: str, body: List[Any], *, max_concurrency: int = None, **kwargs: Any) -> SendLogsResult:

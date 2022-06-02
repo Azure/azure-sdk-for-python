@@ -14,20 +14,6 @@ from ._client import MonitorIngestionClient as GeneratedClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-class SendLogsStatus(str, Enum):
-    SUCCESS = 'Success'
-    PARTIAL_FAILURE = 'PartialFailure'
-
-class SendLogsResult():
-    """The response for send_logs API.
-
-    :ivar SendLogsStatus status: Inditcates if the result is a success or a partial failure.
-    :ivar list failed_logs_index: If there is a failure, returns the index of the request.
-    """
-    def __init__(self, **kwargs):
-        self.status: SendLogsStatus = kwargs.get("status", None)
-        self.failed_logs_index: List[int] = kwargs.get('failed_logs_index', None)
-
 class LogsIngestionClient(GeneratedClient):
     """Azure Monitor Data Collection Python Client.
 
@@ -47,7 +33,7 @@ class LogsIngestionClient(GeneratedClient):
             authentication_policy=BearerTokenCredentialPolicy(credential, scope),
             **kwargs)
 
-__all__ = ['LogsIngestionClient', 'SendLogsStatus', 'SendLogsResult']
+__all__ = ['LogsIngestionClient']
 
 def patch_sdk():
     """Do not remove from this file.

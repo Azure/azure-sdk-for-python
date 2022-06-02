@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, Any
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from ..._patch import SendLogsStatus, SendLogsResult
+from ..._models import SendLogsStatus, SendLogsResult
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
     async def send_logs(self, rule_id: str, stream: str, body: List[Any], *, max_concurrency: int = None, **kwargs: Any) -> SendLogsResult:
@@ -31,7 +31,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         response = await super().send_logs(rule_id, stream, body, **kwargs)
         return response
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ['MonitorIngestionClientOperationsMixin']  # Add all objects you want publicly available to users at this package level
 
 def patch_sdk():
     """Do not remove from this file.

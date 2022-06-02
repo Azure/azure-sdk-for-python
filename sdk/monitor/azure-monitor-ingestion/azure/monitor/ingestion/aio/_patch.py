@@ -20,7 +20,7 @@ class LogsIngestionClient(GeneratedClient):
      https://dce-name.eastus-2.ingest.monitor.azure.com.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
