@@ -18,12 +18,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._node_type_skus_operations import build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class NodeTypeSkusOperations:
+    """NodeTypeSkusOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,21 +47,31 @@ class Operations:
     @distributed_trace
     def list(
         self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.OperationListResult"]:
-        """Lists all of the available Service Fabric resource provider API operations.
+    ) -> AsyncIterable["_models.NodeTypeListSkuResult"]:
+        """Gets a Service Fabric node type SKUs.
 
-        Get the list of available Service Fabric resource provider API operations.
+        Get a Service Fabric node type supported SKUs.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type.
+        :type node_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
+        :return: An iterator like instance of either NodeTypeListSkuResult or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.OperationListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeListSkuResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NodeTypeListSkuResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -70,6 +80,10 @@ class Operations:
             if not next_link:
                 
                 request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    node_type_name=node_type_name,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -79,6 +93,10 @@ class Operations:
             else:
                 
                 request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    node_type_name=node_type_name,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -88,7 +106,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("NodeTypeListSkuResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -115,4 +133,4 @@ class Operations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/providers/Microsoft.ServiceFabric/operations"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/nodeTypes/{nodeTypeName}/skus"}  # type: ignore
