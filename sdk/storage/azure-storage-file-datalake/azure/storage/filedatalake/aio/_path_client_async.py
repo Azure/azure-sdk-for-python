@@ -186,7 +186,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """
         lease_id = kwargs.get('lease_id', None)
         lease_duration = kwargs.get('lease_duration', None)
-        expires_on = kwargs.get('expires_on', None)
         if lease_id and not lease_duration:
             raise ValueError("Please specify a lease_id and a lease_duration.")
         if lease_duration and not lease_id:
