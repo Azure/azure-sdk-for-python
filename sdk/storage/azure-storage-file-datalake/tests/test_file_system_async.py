@@ -890,7 +890,6 @@ class FileSystemTest(StorageTestCase):
             files[2],
             files[3],
             files[4],
-            raise_on_any_failure=False
         )
 
         # Assert
@@ -934,7 +933,6 @@ class FileSystemTest(StorageTestCase):
             files[2],
             files[3],  # dir1 is not empty
             files[4],  # dir8 doesn't exist
-            raise_on_any_failure=False
         )
 
         # Assert
