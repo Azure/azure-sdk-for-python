@@ -136,7 +136,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
                 self._max_message_size_on_link = (
                     self._producers[  # type: ignore
                         ALL_PARTITIONS
-                    ]._handler.message_handler._link.peer_max_message_size
+                    ]._handler.message_handler._link.peer_max_message_size  # TODO: fix to fit pyamqp
                     or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
                 )
 

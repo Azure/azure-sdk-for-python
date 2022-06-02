@@ -18,22 +18,21 @@ from typing import (
     TYPE_CHECKING,
 )  # pylint: disable=unused-import
 
-from uamqp import types, constants, errors
-from uamqp import SendClient
-
 from azure.core.tracing import AbstractSpan
 
-from .exceptions import _error_handler, OperationTimeoutError
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
 from ._utils import (
     create_properties,
-    set_message_partition_key,
     trace_message,
     send_context_manager,
     transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
+
+if TYPE_CHECKING:
+    from uamqp import constants, SendClient
+    from ._transport._base import AmqpTransport
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,10 +41,10 @@ if TYPE_CHECKING:
     from ._producer_client import EventHubProducerClient
 
 
-def _set_partition_key(event_datas, partition_key):
-    # type: (Iterable[EventData], AnyStr) -> Iterable[EventData]
+def _set_partition_key(event_datas, partition_key, amqp_transport):
+    # type: (Iterable[EventData], AnyStr, AmqpTransport) -> Iterable[EventData]
     for ed in iter(event_datas):
-        set_message_partition_key(ed.message, partition_key)
+        amqp_transport.set_message_partition_key(ed.message, partition_key)
         yield ed
 
 
@@ -83,6 +82,8 @@ class EventHubProducer(
 
     def __init__(self, client, target, **kwargs):
         # type: (EventHubProducerClient, str, Any) -> None
+
+        self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
@@ -97,13 +98,11 @@ class EventHubProducer(
         self._target = target
         self._partition = partition
         self._timeout = send_timeout
-        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
+        self._idle_timeout = (idle_timeout * self._amqp_transport.IDLE_TIMEOUT_FACTOR) if idle_timeout else None
         self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint: disable=protected-access
-        )
+        self._retry_policy = self._amqp_transport.create_retry_policy(retry_total=self._client._config.max_retries)
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = []  # type: List[Any]
@@ -114,57 +113,35 @@ class EventHubProducer(
         self._outcome = None  # type: Optional[constants.MessageSendResult]
         self._condition = None  # type: Optional[Exception]
         self._lock = threading.Lock()
-        self._link_properties = {
-            types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
-        }
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._link_properties = self._amqp_transport.create_link_properties(TIMEOUT_SYMBOL, int(self._timeout * 1000))
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
-        self._handler = SendClient(
-            self._target,
+        self._handler = self._amqp_transport.create_send_client(
+            config=self._client._config,  # pylint:disable=protected-access
+            target=self._target,
             auth=auth,
-            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            msg_timeout=self._timeout * 1000,
+            network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             idle_timeout=self._idle_timeout,
-            error_policy=self._retry_policy,
+            retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,
-            properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            properties=create_properties(
+                self._client._config.user_agent, amqp_transport=self._amqp_transport    # pylint: disable=protected-access
+            ),
+            msg_timeout=self._timeout * 1000,
         )
 
     def _open_with_retry(self):
         # type: () -> None
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _set_msg_timeout(self, timeout_time, last_exception):
-        # type: (Optional[float], Optional[Exception]) -> None
-        if not timeout_time:
-            return
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                error = last_exception
-            else:
-                error = OperationTimeoutError("Send operation timed out")
-            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-            raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
-
     def _send_event_data(self, timeout_time=None, last_exception=None):
         # type: (Optional[float], Optional[Exception]) -> None
         if self._unsent_events:
             self._open()
-            self._set_msg_timeout(timeout_time, last_exception)
-            self._handler.queue_message(*self._unsent_events)  # type: ignore
-            self._handler.wait()  # type: ignore
-            self._unsent_events = self._handler.pending_messages  # type: ignore
-            if self._outcome != constants.MessageSendResult.Ok:
-                if self._outcome == constants.MessageSendResult.Timeout:
-                    self._condition = OperationTimeoutError("Send operation timed out")
-                if self._condition:
-                    raise self._condition
+            self._amqp_transport.send_messages(self, timeout_time, last_exception, _LOGGER)
 
     def _send_event_data_with_retry(self, timeout=None):
         # type: (Optional[float]) -> None
@@ -191,9 +168,11 @@ class EventHubProducer(
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
-            outgoing_event_data = transform_outbound_single_message(event_data, EventData, self._amqp_transport.to_outgoing_amqp_message)
+            outgoing_event_data = transform_outbound_single_message(
+                event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
+            )
             if partition_key:
-                set_message_partition_key(outgoing_event_data.message, partition_key)
+                self._amqp_transport.set_message_partition_key(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
@@ -206,15 +185,16 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                for event in self._amqp_transport.get_batch_message_data(event_data.message):   # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
+                    event_data = _set_partition_key(event_data, partition_key, self._amqp_transport)
                 event_data = _set_trace_message(event_data, span)
-                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
-        wrapper_event_data.message.on_send_complete = self._on_outcome
+                wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
+                    event_data, partition_key, self._amqp_transport.to_outgoing_amqp_message
+                )
         return wrapper_event_data
 
     def send(

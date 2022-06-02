@@ -24,7 +24,6 @@ from typing_extensions import TypedDict
 import six
 
 from ._utils import (
-    set_message_partition_key,
     trace_message,
     utc_from_timestamp,
     transform_outbound_single_message,
@@ -531,7 +530,7 @@ class EventDataBatch(object):
         self._partition_id = partition_id
         self._partition_key = partition_key
 
-        set_message_partition_key(self.message, self._partition_key)
+        self._amqp_transport.set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
 
@@ -604,7 +603,7 @@ class EventDataBatch(object):
                     "The partition key of event_data does not match the partition key of this batch."
                 )
             if not outgoing_event_data.partition_key:
-                set_message_partition_key(
+                self._amqp_transport.set_message_partition_key(
                     outgoing_event_data.message, self._partition_key
                 )
 

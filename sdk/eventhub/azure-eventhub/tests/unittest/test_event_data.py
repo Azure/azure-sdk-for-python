@@ -2,7 +2,7 @@ import platform
 import pytest
 import uamqp
 from packaging import version
-from azure.eventhub._transport._uamqp_transport import TransportMessage, UamqpTransport
+from azure.eventhub._transport._uamqp_transport import UamqpTransportMessage as TransportMessage, UamqpTransport
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 

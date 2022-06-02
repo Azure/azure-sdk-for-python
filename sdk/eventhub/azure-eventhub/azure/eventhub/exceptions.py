@@ -7,10 +7,7 @@ import six
 
 from uamqp import errors, compat
 
-from ._constants import NO_RETRY_ERRORS
-
 _LOGGER = logging.getLogger(__name__)
-
 
 def _error_handler(error):
     """
@@ -24,17 +21,16 @@ def _error_handler(error):
     :rtype: ~uamqp.errors.ErrorAction
     """
     if error.condition == b"com.microsoft:server-busy":
-        return errors.ErrorAction(retry=True, backoff=4)
+        return ErrorAction(retry=True, backoff=4)
     if error.condition == b"com.microsoft:timeout":
-        return errors.ErrorAction(retry=True, backoff=2)
+        return ErrorAction(retry=True, backoff=2)
     if error.condition == b"com.microsoft:operation-cancelled":
-        return errors.ErrorAction(retry=True)
+        return ErrorAction(retry=True)
     if error.condition == b"com.microsoft:container-close":
-        return errors.ErrorAction(retry=True, backoff=4)
+        return ErrorAction(retry=True, backoff=4)
     if error.condition in NO_RETRY_ERRORS:
-        return errors.ErrorAction(retry=False)
-    return errors.ErrorAction(retry=True)
-
+        return ErrorAction(retry=False)
+    return ErrorAction(retry=True)
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.
