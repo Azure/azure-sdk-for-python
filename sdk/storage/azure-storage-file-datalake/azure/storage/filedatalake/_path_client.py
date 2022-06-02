@@ -167,8 +167,10 @@ class PathClient(StorageAccountHostsMixin):
         if expires_on:
             try:
                 expires_on = convert_datetime_to_rfc1123(expires_on)
+                kwargs['expiry_options'] = 'Absolute'
             except AttributeError:
                 expires_on = str(expires_on)
+                kwargs['expiry_options'] = 'RelativeToNow'
 
         options = {
             'resource': resource_type,
@@ -235,14 +237,13 @@ class PathClient(StorageAccountHostsMixin):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change.
-        :keyword expiry_options:
-            Indicates mode of the expiry time.
-            Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
-        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
         :keyword expires_on:
             The time to set the file to expiry.
-            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
-            If the type of expires_on is datetime, it should be in UTC time.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
         :paramtype expires_on: datetime or int
         :keyword permissions:
             Optional and only valid if Hierarchical Namespace
@@ -278,32 +279,15 @@ class PathClient(StorageAccountHostsMixin):
         """
         lease_id = kwargs.get('lease_id', None)
         lease_duration = kwargs.get('lease_duration', None)
-        expires_on = kwargs.get('expires_on', None)
         if lease_id and not lease_duration:
             raise ValueError("Please specify a lease_id and a lease_duration.")
         if lease_duration and not lease_id:
             raise ValueError("Please specify a lease_id and a lease_duration.")
-        if expires_on:
-            if isinstance(expires_on, datetime):
-                options = self._create_path_options(
-                    resource_type,
-                    content_settings=content_settings,
-                    metadata=metadata,
-                    expiry_options='Absolute',
-                    **kwargs)
-            else:
-                options = self._create_path_options(
-                    resource_type,
-                    content_settings=content_settings,
-                    metadata=metadata,
-                    expiry_options='RelativeToNow',
-                    **kwargs)
-        else:
-            options = self._create_path_options(
-                resource_type,
-                content_settings=content_settings,
-                metadata=metadata,
-                **kwargs)
+        options = self._create_path_options(
+            resource_type,
+            content_settings=content_settings,
+            metadata=metadata,
+            **kwargs)
         try:
             return self._client.path.create(**options)
         except HttpResponseError as error:
