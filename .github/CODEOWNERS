@@ -6,7 +6,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @AlexGhiondea @jsquire
+/.github/                                       @jsquire
 
 ###########
 # SDK
@@ -30,7 +30,7 @@
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @rakshith91
 
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
@@ -102,7 +102,7 @@
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
+/sdk/eventgrid/                                                      @lmazuel @kashifkhan @swathipil @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -120,10 +120,10 @@
 /sdk/recoveryservices/                                               @DheerendraRathor
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @yunhaoling
+/sdk/schemaregistry/                                                 @kashifkhan
 
 # PRLabel: %Search
-/sdk/search/                                                         @kashifkhan
+/sdk/search/                                                         @rakshith91
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -132,7 +132,7 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
+/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @rakshith91
 
 # PRLabel: %Synapse
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
