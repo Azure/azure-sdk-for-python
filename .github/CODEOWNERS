@@ -132,7 +132,7 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @rakshith91
+/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
 /sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
