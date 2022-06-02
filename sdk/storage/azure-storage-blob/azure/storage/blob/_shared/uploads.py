@@ -159,7 +159,6 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         self.parallel = parallel
 
         # Stream management
-        self.stream_start = stream.tell() if parallel else None
         self.stream_lock = Lock() if parallel else None
 
         # Progress feedback

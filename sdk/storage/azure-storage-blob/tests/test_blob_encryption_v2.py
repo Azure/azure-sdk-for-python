@@ -284,7 +284,6 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             credential=storage_account_key,
             max_single_put_size=1024,
             max_block_size=4 * 1024 * 1024,
-            max_concurrency=3,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
@@ -293,7 +292,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        blob.upload_blob(content, overwrite=True, max_concurrency=3)
         data = blob.download_blob().readall()
 
         # Assert
@@ -501,7 +500,6 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             credential=storage_account_key,
             max_single_get_size=4 * 1024 * 1024,
             max_chunk_get_size=4 * 1024 * 1024,
-            max_concurrency=3,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
@@ -511,7 +509,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
 
         # Act
         blob.upload_blob(content, overwrite=True)
-        data = blob.download_blob().readall()
+        data = blob.download_blob(max_concurrency=3).readall()
 
         # Assert
         self.assertEqual(content, data)
@@ -592,3 +590,21 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
 
         # Assert
         self.assertEqual(len(content), total)
+
+    @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_large_blob(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = (b'abcde' * 100 * 1024 * 1024) + b'abc'  # 500 MiB + 3
+
+        # Act
+        blob.upload_blob(content, overwrite=True, max_concurrency=5)
+        data = blob.download_blob(max_concurrency=5).readall()
+
+        # Assert
+        self.assertEqual(content, data)

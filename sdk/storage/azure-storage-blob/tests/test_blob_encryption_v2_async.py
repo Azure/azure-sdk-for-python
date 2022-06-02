@@ -250,345 +250,361 @@ class StorageBlobEncryptionV2TestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, data)
 
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_put_blob_multi_region_chunked_size_equal_region(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_put_size=1024,
-    #         max_block_size=4 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_put_blob_multi_region_chunked_size_equal_region_concurrent(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_put_size=1024,
-    #         max_block_size=4 * 1024 * 1024,
-    #         max_concurrency=3,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_put_blob_multi_region_chunked_size_less_region(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_put_size=1024,
-    #         max_block_size=2 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_put_blob_multi_region_chunked_size_greater_region(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_put_size=1024,
-    #         max_block_size=6 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_single_region_beginning_to_middle(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcd' * 1024 * 1024  # 4 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=0, length=100000)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[:100000], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_single_region_middle_to_middle(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcd' * 1024 * 1024  # 4 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=100000, length=2000000)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[100000:2100000], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_single_region_middle_to_end(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcd' * 1024 * 1024  # 4 MiB
-    #     length = len(content)
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=length - 1000000, length=1000000)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[length - 1000000:], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_cross_region(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcdef' * 1024 * 1024  # 6 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=3*1024*1024, length=2*1024*1024)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[3*1024*1024:5*1024*1024], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_inside_second_region(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcdef' * 1024 * 1024  # 6 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=5 * 1024 * 1024, length=1024 * 1024)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[5 * 1024 * 1024:6 * 1024 * 1024], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_oversize_length(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcdef' * 1024 * 1024  # 6 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=1 * 1024 * 1024, length=7 * 1024 * 1024)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[1 * 1024 * 1024:], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_range_boundary(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     self.enable_encryption_v2(kek)
-    #
-    #     blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcdef' * 1024 * 1024  # 6 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob(offset=4 * 1024 * 1024 - 1)).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content[4 * 1024 * 1024 - 1:], data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_chunked_size_equal_region_size(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_get_size=4 * 1024 * 1024,
-    #         max_chunk_get_size=4 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_chunked_size_equal_region_size_concurrent(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_get_size=4 * 1024 * 1024,
-    #         max_chunk_get_size=4 * 1024 * 1024,
-    #         max_concurrency=3,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 4 * 1024 * 1024  # 20 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_chunked_size_less_than_region_size(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_get_size=4 * 1024 * 1024,
-    #         max_chunk_get_size=2 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_chunked_size_greater_than_region_size(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_get_size=4 * 1024 * 1024,
-    #         max_chunk_get_size=6 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     data = await (await blob.download_blob()).readall()
-    #
-    #     # Assert
-    #     self.assertEqual(content, data)
-    #
-    # @pytest.mark.live_test_only
-    # @BlobPreparer()
-    # async def test_get_blob_using_chunks_iter(self, storage_account_name, storage_account_key):
-    #     await self._setup(storage_account_name, storage_account_key)
-    #     kek = KeyWrapper('key1')
-    #     bsc = BlobServiceClient(
-    #         self.account_url(storage_account_name, "blob"),
-    #         credential=storage_account_key,
-    #         max_single_get_size=4 * 1024 * 1024,
-    #         max_chunk_get_size=4 * 1024 * 1024,
-    #         require_encryption=True,
-    #         encryption_version='2.0',
-    #         key_encryption_key=kek)
-    #
-    #     blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
-    #
-    #     # Act
-    #     await blob.upload_blob(content, overwrite=True)
-    #     chunks_iter = (await blob.download_blob()).chunks()
-    #
-    #     total = 0
-    #     async for chunk in chunks_iter:
-    #         self.assertEqual(content[total:total+len(chunk)], chunk)
-    #         total += len(chunk)
-    #
-    #     # Assert
-    #     self.assertEqual(len(content), total)
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_put_blob_multi_region_chunked_size_equal_region(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_put_size=1024,
+            max_block_size=4 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_put_blob_multi_region_chunked_size_equal_region_concurrent(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_put_size=1024,
+            max_block_size=4 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True, max_concurrency=3)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_put_blob_multi_region_chunked_size_less_region(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_put_size=1024,
+            max_block_size=2 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_put_blob_multi_region_chunked_size_greater_region(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_put_size=1024,
+            max_block_size=6 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_single_region_beginning_to_middle(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcd' * 1024 * 1024  # 4 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=0, length=100000)).readall()
+
+        # Assert
+        self.assertEqual(content[:100000], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_single_region_middle_to_middle(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcd' * 1024 * 1024  # 4 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=100000, length=2000000)).readall()
+
+        # Assert
+        self.assertEqual(content[100000:2100000], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_single_region_middle_to_end(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcd' * 1024 * 1024  # 4 MiB
+        length = len(content)
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=length - 1000000, length=1000000)).readall()
+
+        # Assert
+        self.assertEqual(content[length - 1000000:], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_cross_region(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=3*1024*1024, length=2*1024*1024)).readall()
+
+        # Assert
+        self.assertEqual(content[3*1024*1024:5*1024*1024], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_inside_second_region(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=5 * 1024 * 1024, length=1024 * 1024)).readall()
+
+        # Assert
+        self.assertEqual(content[5 * 1024 * 1024:6 * 1024 * 1024], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_oversize_length(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=1 * 1024 * 1024, length=7 * 1024 * 1024)).readall()
+
+        # Assert
+        self.assertEqual(content[1 * 1024 * 1024:], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_range_boundary(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcdef' * 1024 * 1024  # 6 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(offset=4 * 1024 * 1024 - 1)).readall()
+
+        # Assert
+        self.assertEqual(content[4 * 1024 * 1024 - 1:], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_chunked_size_equal_region_size(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * 1024 * 1024,
+            max_chunk_get_size=4 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_chunked_size_equal_region_size_concurrent(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * 1024 * 1024,
+            max_chunk_get_size=4 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 4 * 1024 * 1024  # 20 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob(max_concurrency=3)).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_chunked_size_less_than_region_size(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * 1024 * 1024,
+            max_chunk_get_size=2 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_chunked_size_greater_than_region_size(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * 1024 * 1024,
+            max_chunk_get_size=6 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_using_chunks_iter(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * 1024 * 1024,
+            max_chunk_get_size=4 * 1024 * 1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+
+        # Act
+        await blob.upload_blob(content, overwrite=True)
+        chunks_iter = (await blob.download_blob()).chunks()
+
+        total = 0
+        async for chunk in chunks_iter:
+            self.assertEqual(content[total:total+len(chunk)], chunk)
+            total += len(chunk)
+
+        # Assert
+        self.assertEqual(len(content), total)
+
+    @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_large_blob(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = (b'abcde' * 100 * 1024 * 1024) + b'abc'  # 500 MiB + 3
+
+        # Act
+        await blob.upload_blob(content, overwrite=True, max_concurrency=5)
+        data = await (await blob.download_blob(max_concurrency=5)).readall()
+
+        # Assert
+        self.assertEqual(content, data)
