@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b3 (2022-06-02)
+
+**Features**
+
+  - Added model AssessmentDayOfWeek
+  - Added model AutoBackupDaysOfWeek
+
 ## 1.0.0b2 (2022-03-02)
 
 **Features**
