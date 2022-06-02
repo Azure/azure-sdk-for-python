@@ -6,12 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+from typing import List, Any, Optional
 from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
 from .._models import SendLogsStatus, SendLogsResult
 
 class MonitorIngestionClientOperationsMixin(GeneratedOps):
-    def send_logs(self, rule_id: str, stream: str, body: List[Any], *, max_concurrency: int = None, **kwargs: Any) -> SendLogsResult:
+    def send_logs(self, rule_id: str, stream: str, body: List[Any], *, max_concurrency: Optional[int] = None, **kwargs: Any) -> SendLogsResult:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
