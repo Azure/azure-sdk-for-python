@@ -349,20 +349,19 @@ interactions:
 - request:
     body: "--===============0440666501650017511==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /fs2932d170b/file1? HTTP/1.1\r\nx-ms-date:
-      Thu, 02 Jun 2022 22:51:33 GMT\r\nx-ms-client-request-id: 8cfdea98-e2c6-11ec-8fe5-4851c58829e0\r\nAuthorization:
-      SharedKey storagename:V/VZeiMNOHdCrVeWw9KnXpnG+4UzwGYPcXqzLhqcALw=\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
+      Thu, 02 Jun 2022 22:51:33 GMT\r\nx-ms-client-request-id: 8cfdea98-e2c6-11ec-8fe5-4851c58829e0\r\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
       /fs2932d170b/file2? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 22:51:33 GMT\r\nx-ms-client-request-id:
-      8cfdea99-e2c6-11ec-9da2-4851c58829e0\r\nAuthorization: SharedKey storagename:Pe9zlNMjy74rTw1khuHICSYRqKM5Qm39322qEaKkIOI=\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
+      8cfdea99-e2c6-11ec-9da2-4851c58829e0\r\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
       /fs2932d170b/file3? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 22:51:33 GMT\r\nx-ms-client-request-id:
-      8cfdea9a-e2c6-11ec-9442-4851c58829e0\r\nAuthorization: SharedKey storagename:71nqqGnFHeMO9MGhoV9HtRFCNkQROjUAMT00iuo32uQ=\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
+      8cfdea9a-e2c6-11ec-9442-4851c58829e0\r\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 3\r\n\r\nDELETE
       /fs2932d170b/dir1? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 22:51:33 GMT\r\nx-ms-client-request-id:
-      8cfdea9b-e2c6-11ec-a1e6-4851c58829e0\r\nAuthorization: SharedKey storagename:Ls1kwHi3TmILg6crnjcilnULKnSvqMx2OOyi2gvrh40=\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
+      8cfdea9b-e2c6-11ec-a1e6-4851c58829e0\r\r\n\r\n\r\n--===============0440666501650017511==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 4\r\n\r\nDELETE
       /fs2932d170b/dir2? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 22:51:33 GMT\r\nx-ms-client-request-id:
-      8cfdea9c-e2c6-11ec-b94e-4851c58829e0\r\nAuthorization: SharedKey storagename:VknYvUvuj3T8q+MITuy9xIkKaM7mZXzAtMVBy9IpB7g=\r\n\r\n\r\n--===============0440666501650017511==--\r\n"
+      8cfdea9c-e2c6-11ec-b94e-4851c58829e0\r\r\n\r\n\r\n--===============0440666501650017511==--\r\n"
     headers:
       Content-Length:
       - '1815'

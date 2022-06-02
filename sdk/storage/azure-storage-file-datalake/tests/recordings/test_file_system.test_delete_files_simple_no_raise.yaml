@@ -480,24 +480,19 @@ interactions:
 - request:
     body: "--batch_79395630-e2c6-11ec-8c1f-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
       0\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/file1? HTTP/1.1\r\nx-ms-date:
-      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 7939cb0d-e2c6-11ec-adc2-4851c58829e0\r\nAuthorization:
-      SharedKey storagename:qPQlEdY0dIaLv1Dwk8hFmaOyuvwW0XNcxUYrYxeSLxM=\r\nContent-Length:
+      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 7939cb0d-e2c6-11ec-adc2-4851c58829e0\r\r\nContent-Length:
       0\r\n\r\n\r\n--batch_79395630-e2c6-11ec-8c1f-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
       1\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/file2? HTTP/1.1\r\nx-ms-date:
-      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 7939f076-e2c6-11ec-a360-4851c58829e0\r\nAuthorization:
-      SharedKey storagename:zKgRWF2w6JCwcAtYUFb8DqIRVZ/eWJ4YaTTewiC3DqA=\r\nContent-Length:
+      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 7939f076-e2c6-11ec-a360-4851c58829e0\r\r\nContent-Length:
       0\r\n\r\n\r\n--batch_79395630-e2c6-11ec-8c1f-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
       2\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/file3? HTTP/1.1\r\nx-ms-date:
-      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 793a180d-e2c6-11ec-841a-4851c58829e0\r\nAuthorization:
-      SharedKey storagename:aaVGnedtPP9tx/EYrDVQgdhjvef+HhVmImX9S+ucdwY=\r\nContent-Length:
+      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 793a180d-e2c6-11ec-841a-4851c58829e0\r\r\nContent-Length:
       0\r\n\r\n\r\n--batch_79395630-e2c6-11ec-8c1f-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
       3\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/dir1? HTTP/1.1\r\nx-ms-date:
-      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 793a180e-e2c6-11ec-9fca-4851c58829e0\r\nAuthorization:
-      SharedKey storagename:gTFcuNdHkXJ9Yw/4LG0aWCOHAsDDOQhqwX5zyyiRkO8=\r\nContent-Length:
+      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 793a180e-e2c6-11ec-9fca-4851c58829e0\r\r\nContent-Length:
       0\r\n\r\n\r\n--batch_79395630-e2c6-11ec-8c1f-4851c58829e0\r\nContent-Type: application/http\r\nContent-ID:
       4\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/dir2? HTTP/1.1\r\nx-ms-date:
-      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 793a180f-e2c6-11ec-95cf-4851c58829e0\r\nAuthorization:
-      SharedKey storagename:sUeWl+uxnJ5n+NGLH1Eib58vu0nNzuDtteUKNBrxUwQ=\r\nContent-Length:
+      Thu, 02 Jun 2022 22:51:00 GMT\r\nx-ms-client-request-id: 793a180f-e2c6-11ec-95cf-4851c58829e0\r\r\nContent-Length:
       0\r\n\r\n\r\n--batch_79395630-e2c6-11ec-8c1f-4851c58829e0--\r\n"
     headers:
       Accept:

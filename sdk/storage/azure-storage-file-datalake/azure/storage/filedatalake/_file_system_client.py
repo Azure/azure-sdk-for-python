@@ -909,8 +909,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 4
                 :caption: Deleting multiple files or empty directories.
         """
-        kwargs['raise_on_any_failure'] = False
-        results = self._container_client.delete_blobs(*files, **kwargs)
+        results = self._container_client.delete_blobs(raise_on_any_failure=False, *files, **kwargs)
 
         errors = []
         for result in results:

@@ -809,8 +809,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 4
                 :caption: Deleting multiple files or empty directories.
         """
-        kwargs['raise_on_any_failure'] = False
-        response = await self._container_client.delete_blobs(*files, **kwargs)
+        response = await self._container_client.delete_blobs(raise_on_any_failure=False, *files, **kwargs)
 
         errors = []
         async for result in response:
