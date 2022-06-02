@@ -102,7 +102,7 @@
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @kashifkhan @swathipil @rakshith91
+/sdk/eventgrid/                                                      @lmazuel @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
