@@ -16,8 +16,8 @@ from ._dns_management_client_enums import *
 class AaaaRecord(msrest.serialization.Model):
     """An AAAA record.
 
-    :param ipv6_address: The IPv6 address of this AAAA record.
-    :type ipv6_address: str
+    :ivar ipv6_address: The IPv6 address of this AAAA record.
+    :vartype ipv6_address: str
     """
 
     _attribute_map = {
@@ -30,6 +30,10 @@ class AaaaRecord(msrest.serialization.Model):
         ipv6_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ipv6_address: The IPv6 address of this AAAA record.
+        :paramtype ipv6_address: str
+        """
         super(AaaaRecord, self).__init__(**kwargs)
         self.ipv6_address = ipv6_address
 
@@ -37,8 +41,8 @@ class AaaaRecord(msrest.serialization.Model):
 class ARecord(msrest.serialization.Model):
     """An A record.
 
-    :param ipv4_address: The IPv4 address of this A record.
-    :type ipv4_address: str
+    :ivar ipv4_address: The IPv4 address of this A record.
+    :vartype ipv4_address: str
     """
 
     _attribute_map = {
@@ -51,6 +55,10 @@ class ARecord(msrest.serialization.Model):
         ipv4_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ipv4_address: The IPv4 address of this A record.
+        :paramtype ipv4_address: str
+        """
         super(ARecord, self).__init__(**kwargs)
         self.ipv4_address = ipv4_address
 
@@ -58,12 +66,12 @@ class ARecord(msrest.serialization.Model):
 class CaaRecord(msrest.serialization.Model):
     """A CAA record.
 
-    :param flags: The flags for this CAA record as an integer between 0 and 255.
-    :type flags: int
-    :param tag: The tag for this CAA record.
-    :type tag: str
-    :param value: The value for this CAA record.
-    :type value: str
+    :ivar flags: The flags for this CAA record as an integer between 0 and 255.
+    :vartype flags: int
+    :ivar tag: The tag for this CAA record.
+    :vartype tag: str
+    :ivar value: The value for this CAA record.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -80,6 +88,14 @@ class CaaRecord(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword flags: The flags for this CAA record as an integer between 0 and 255.
+        :paramtype flags: int
+        :keyword tag: The tag for this CAA record.
+        :paramtype tag: str
+        :keyword value: The value for this CAA record.
+        :paramtype value: str
+        """
         super(CaaRecord, self).__init__(**kwargs)
         self.flags = flags
         self.tag = tag
@@ -89,17 +105,17 @@ class CaaRecord(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.dns.v2018_03_01_preview.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.dns.v2018_03_01_preview.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -118,6 +134,19 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.dns.v2018_03_01_preview.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -128,8 +157,8 @@ class CloudErrorBody(msrest.serialization.Model):
 class CnameRecord(msrest.serialization.Model):
     """A CNAME record.
 
-    :param cname: The canonical name for this CNAME record.
-    :type cname: str
+    :ivar cname: The canonical name for this CNAME record.
+    :vartype cname: str
     """
 
     _attribute_map = {
@@ -142,6 +171,10 @@ class CnameRecord(msrest.serialization.Model):
         cname: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword cname: The canonical name for this CNAME record.
+        :paramtype cname: str
+        """
         super(CnameRecord, self).__init__(**kwargs)
         self.cname = cname
 
@@ -149,10 +182,10 @@ class CnameRecord(msrest.serialization.Model):
 class MxRecord(msrest.serialization.Model):
     """An MX record.
 
-    :param preference: The preference value for this MX record.
-    :type preference: int
-    :param exchange: The domain name of the mail host for this MX record.
-    :type exchange: str
+    :ivar preference: The preference value for this MX record.
+    :vartype preference: int
+    :ivar exchange: The domain name of the mail host for this MX record.
+    :vartype exchange: str
     """
 
     _attribute_map = {
@@ -167,6 +200,12 @@ class MxRecord(msrest.serialization.Model):
         exchange: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword preference: The preference value for this MX record.
+        :paramtype preference: int
+        :keyword exchange: The domain name of the mail host for this MX record.
+        :paramtype exchange: str
+        """
         super(MxRecord, self).__init__(**kwargs)
         self.preference = preference
         self.exchange = exchange
@@ -175,8 +214,8 @@ class MxRecord(msrest.serialization.Model):
 class NsRecord(msrest.serialization.Model):
     """An NS record.
 
-    :param nsdname: The name server name for this NS record.
-    :type nsdname: str
+    :ivar nsdname: The name server name for this NS record.
+    :vartype nsdname: str
     """
 
     _attribute_map = {
@@ -189,6 +228,10 @@ class NsRecord(msrest.serialization.Model):
         nsdname: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword nsdname: The name server name for this NS record.
+        :paramtype nsdname: str
+        """
         super(NsRecord, self).__init__(**kwargs)
         self.nsdname = nsdname
 
@@ -196,8 +239,8 @@ class NsRecord(msrest.serialization.Model):
 class PtrRecord(msrest.serialization.Model):
     """A PTR record.
 
-    :param ptrdname: The PTR target domain name for this PTR record.
-    :type ptrdname: str
+    :ivar ptrdname: The PTR target domain name for this PTR record.
+    :vartype ptrdname: str
     """
 
     _attribute_map = {
@@ -210,6 +253,10 @@ class PtrRecord(msrest.serialization.Model):
         ptrdname: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ptrdname: The PTR target domain name for this PTR record.
+        :paramtype ptrdname: str
+        """
         super(PtrRecord, self).__init__(**kwargs)
         self.ptrdname = ptrdname
 
@@ -225,34 +272,34 @@ class RecordSet(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the record set.
     :vartype type: str
-    :param etag: The etag of the record set.
-    :type etag: str
-    :param metadata: The metadata attached to the record set.
-    :type metadata: dict[str, str]
-    :param ttl: The TTL (time-to-live) of the records in the record set.
-    :type ttl: long
+    :ivar etag: The etag of the record set.
+    :vartype etag: str
+    :ivar metadata: The metadata attached to the record set.
+    :vartype metadata: dict[str, str]
+    :ivar ttl: The TTL (time-to-live) of the records in the record set.
+    :vartype ttl: long
     :ivar fqdn: Fully qualified domain name of the record set.
     :vartype fqdn: str
-    :param a_records: The list of A records in the record set.
-    :type a_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.ARecord]
-    :param aaaa_records: The list of AAAA records in the record set.
-    :type aaaa_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.AaaaRecord]
-    :param mx_records: The list of MX records in the record set.
-    :type mx_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.MxRecord]
-    :param ns_records: The list of NS records in the record set.
-    :type ns_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.NsRecord]
-    :param ptr_records: The list of PTR records in the record set.
-    :type ptr_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.PtrRecord]
-    :param srv_records: The list of SRV records in the record set.
-    :type srv_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.SrvRecord]
-    :param txt_records: The list of TXT records in the record set.
-    :type txt_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.TxtRecord]
-    :param cname_record: The CNAME record in the  record set.
-    :type cname_record: ~azure.mgmt.dns.v2018_03_01_preview.models.CnameRecord
-    :param soa_record: The SOA record in the record set.
-    :type soa_record: ~azure.mgmt.dns.v2018_03_01_preview.models.SoaRecord
-    :param caa_records: The list of CAA records in the record set.
-    :type caa_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.CaaRecord]
+    :ivar a_records: The list of A records in the record set.
+    :vartype a_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.ARecord]
+    :ivar aaaa_records: The list of AAAA records in the record set.
+    :vartype aaaa_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.AaaaRecord]
+    :ivar mx_records: The list of MX records in the record set.
+    :vartype mx_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.MxRecord]
+    :ivar ns_records: The list of NS records in the record set.
+    :vartype ns_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.NsRecord]
+    :ivar ptr_records: The list of PTR records in the record set.
+    :vartype ptr_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.PtrRecord]
+    :ivar srv_records: The list of SRV records in the record set.
+    :vartype srv_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.SrvRecord]
+    :ivar txt_records: The list of TXT records in the record set.
+    :vartype txt_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.TxtRecord]
+    :ivar cname_record: The CNAME record in the  record set.
+    :vartype cname_record: ~azure.mgmt.dns.v2018_03_01_preview.models.CnameRecord
+    :ivar soa_record: The SOA record in the record set.
+    :vartype soa_record: ~azure.mgmt.dns.v2018_03_01_preview.models.SoaRecord
+    :ivar caa_records: The list of CAA records in the record set.
+    :vartype caa_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.CaaRecord]
     """
 
     _validation = {
@@ -300,6 +347,34 @@ class RecordSet(msrest.serialization.Model):
         caa_records: Optional[List["CaaRecord"]] = None,
         **kwargs
     ):
+        """
+        :keyword etag: The etag of the record set.
+        :paramtype etag: str
+        :keyword metadata: The metadata attached to the record set.
+        :paramtype metadata: dict[str, str]
+        :keyword ttl: The TTL (time-to-live) of the records in the record set.
+        :paramtype ttl: long
+        :keyword a_records: The list of A records in the record set.
+        :paramtype a_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.ARecord]
+        :keyword aaaa_records: The list of AAAA records in the record set.
+        :paramtype aaaa_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.AaaaRecord]
+        :keyword mx_records: The list of MX records in the record set.
+        :paramtype mx_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.MxRecord]
+        :keyword ns_records: The list of NS records in the record set.
+        :paramtype ns_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.NsRecord]
+        :keyword ptr_records: The list of PTR records in the record set.
+        :paramtype ptr_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.PtrRecord]
+        :keyword srv_records: The list of SRV records in the record set.
+        :paramtype srv_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.SrvRecord]
+        :keyword txt_records: The list of TXT records in the record set.
+        :paramtype txt_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.TxtRecord]
+        :keyword cname_record: The CNAME record in the  record set.
+        :paramtype cname_record: ~azure.mgmt.dns.v2018_03_01_preview.models.CnameRecord
+        :keyword soa_record: The SOA record in the record set.
+        :paramtype soa_record: ~azure.mgmt.dns.v2018_03_01_preview.models.SoaRecord
+        :keyword caa_records: The list of CAA records in the record set.
+        :paramtype caa_records: list[~azure.mgmt.dns.v2018_03_01_preview.models.CaaRecord]
+        """
         super(RecordSet, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -325,8 +400,8 @@ class RecordSetListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Information about the record sets in the response.
-    :type value: list[~azure.mgmt.dns.v2018_03_01_preview.models.RecordSet]
+    :ivar value: Information about the record sets in the response.
+    :vartype value: list[~azure.mgmt.dns.v2018_03_01_preview.models.RecordSet]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -346,6 +421,10 @@ class RecordSetListResult(msrest.serialization.Model):
         value: Optional[List["RecordSet"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Information about the record sets in the response.
+        :paramtype value: list[~azure.mgmt.dns.v2018_03_01_preview.models.RecordSet]
+        """
         super(RecordSetListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -354,8 +433,8 @@ class RecordSetListResult(msrest.serialization.Model):
 class RecordSetUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to update a record set.
 
-    :param record_set: Specifies information about the record set being updated.
-    :type record_set: ~azure.mgmt.dns.v2018_03_01_preview.models.RecordSet
+    :ivar record_set: Specifies information about the record set being updated.
+    :vartype record_set: ~azure.mgmt.dns.v2018_03_01_preview.models.RecordSet
     """
 
     _attribute_map = {
@@ -368,6 +447,10 @@ class RecordSetUpdateParameters(msrest.serialization.Model):
         record_set: Optional["RecordSet"] = None,
         **kwargs
     ):
+        """
+        :keyword record_set: Specifies information about the record set being updated.
+        :paramtype record_set: ~azure.mgmt.dns.v2018_03_01_preview.models.RecordSet
+        """
         super(RecordSetUpdateParameters, self).__init__(**kwargs)
         self.record_set = record_set
 
@@ -403,6 +486,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -412,21 +497,21 @@ class Resource(msrest.serialization.Model):
 class SoaRecord(msrest.serialization.Model):
     """An SOA record.
 
-    :param host: The domain name of the authoritative name server for this SOA record.
-    :type host: str
-    :param email: The email contact for this SOA record.
-    :type email: str
-    :param serial_number: The serial number for this SOA record.
-    :type serial_number: long
-    :param refresh_time: The refresh value for this SOA record.
-    :type refresh_time: long
-    :param retry_time: The retry time for this SOA record.
-    :type retry_time: long
-    :param expire_time: The expire time for this SOA record.
-    :type expire_time: long
-    :param minimum_ttl: The minimum value for this SOA record. By convention this is used to
+    :ivar host: The domain name of the authoritative name server for this SOA record.
+    :vartype host: str
+    :ivar email: The email contact for this SOA record.
+    :vartype email: str
+    :ivar serial_number: The serial number for this SOA record.
+    :vartype serial_number: long
+    :ivar refresh_time: The refresh value for this SOA record.
+    :vartype refresh_time: long
+    :ivar retry_time: The retry time for this SOA record.
+    :vartype retry_time: long
+    :ivar expire_time: The expire time for this SOA record.
+    :vartype expire_time: long
+    :ivar minimum_ttl: The minimum value for this SOA record. By convention this is used to
      determine the negative caching duration.
-    :type minimum_ttl: long
+    :vartype minimum_ttl: long
     """
 
     _attribute_map = {
@@ -451,6 +536,23 @@ class SoaRecord(msrest.serialization.Model):
         minimum_ttl: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword host: The domain name of the authoritative name server for this SOA record.
+        :paramtype host: str
+        :keyword email: The email contact for this SOA record.
+        :paramtype email: str
+        :keyword serial_number: The serial number for this SOA record.
+        :paramtype serial_number: long
+        :keyword refresh_time: The refresh value for this SOA record.
+        :paramtype refresh_time: long
+        :keyword retry_time: The retry time for this SOA record.
+        :paramtype retry_time: long
+        :keyword expire_time: The expire time for this SOA record.
+        :paramtype expire_time: long
+        :keyword minimum_ttl: The minimum value for this SOA record. By convention this is used to
+         determine the negative caching duration.
+        :paramtype minimum_ttl: long
+        """
         super(SoaRecord, self).__init__(**kwargs)
         self.host = host
         self.email = email
@@ -464,14 +566,14 @@ class SoaRecord(msrest.serialization.Model):
 class SrvRecord(msrest.serialization.Model):
     """An SRV record.
 
-    :param priority: The priority value for this SRV record.
-    :type priority: int
-    :param weight: The weight value for this SRV record.
-    :type weight: int
-    :param port: The port value for this SRV record.
-    :type port: int
-    :param target: The target domain name for this SRV record.
-    :type target: str
+    :ivar priority: The priority value for this SRV record.
+    :vartype priority: int
+    :ivar weight: The weight value for this SRV record.
+    :vartype weight: int
+    :ivar port: The port value for this SRV record.
+    :vartype port: int
+    :ivar target: The target domain name for this SRV record.
+    :vartype target: str
     """
 
     _attribute_map = {
@@ -490,6 +592,16 @@ class SrvRecord(msrest.serialization.Model):
         target: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword priority: The priority value for this SRV record.
+        :paramtype priority: int
+        :keyword weight: The weight value for this SRV record.
+        :paramtype weight: int
+        :keyword port: The port value for this SRV record.
+        :paramtype port: int
+        :keyword target: The target domain name for this SRV record.
+        :paramtype target: str
+        """
         super(SrvRecord, self).__init__(**kwargs)
         self.priority = priority
         self.weight = weight
@@ -500,8 +612,8 @@ class SrvRecord(msrest.serialization.Model):
 class SubResource(msrest.serialization.Model):
     """A reference to a another resource.
 
-    :param id: Resource Id.
-    :type id: str
+    :ivar id: Resource Id.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -514,6 +626,10 @@ class SubResource(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Resource Id.
+        :paramtype id: str
+        """
         super(SubResource, self).__init__(**kwargs)
         self.id = id
 
@@ -533,10 +649,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -561,6 +677,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -569,8 +691,8 @@ class TrackedResource(Resource):
 class TxtRecord(msrest.serialization.Model):
     """A TXT record.
 
-    :param value: The text value of this TXT record.
-    :type value: list[str]
+    :ivar value: The text value of this TXT record.
+    :vartype value: list[str]
     """
 
     _attribute_map = {
@@ -583,6 +705,10 @@ class TxtRecord(msrest.serialization.Model):
         value: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The text value of this TXT record.
+        :paramtype value: list[str]
+        """
         super(TxtRecord, self).__init__(**kwargs)
         self.value = value
 
@@ -602,12 +728,12 @@ class Zone(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param etag: The etag of the zone.
-    :type etag: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar etag: The etag of the zone.
+    :vartype etag: str
     :ivar max_number_of_record_sets: The maximum number of record sets that can be created in this
      DNS zone.  This is a read-only property and any attempt to set this value will be ignored.
     :vartype max_number_of_record_sets: long
@@ -621,16 +747,17 @@ class Zone(TrackedResource):
     :ivar name_servers: The name servers for this DNS zone. This is a read-only property and any
      attempt to set this value will be ignored.
     :vartype name_servers: list[str]
-    :param zone_type: The type of this DNS zone (Public or Private). Possible values include:
+    :ivar zone_type: The type of this DNS zone (Public or Private). Possible values include:
      "Public", "Private". Default value: "Public".
-    :type zone_type: str or ~azure.mgmt.dns.v2018_03_01_preview.models.ZoneType
-    :param registration_virtual_networks: A list of references to virtual networks that register
+    :vartype zone_type: str or ~azure.mgmt.dns.v2018_03_01_preview.models.ZoneType
+    :ivar registration_virtual_networks: A list of references to virtual networks that register
      hostnames in this DNS zone. This is a only when ZoneType is Private.
-    :type registration_virtual_networks:
+    :vartype registration_virtual_networks:
      list[~azure.mgmt.dns.v2018_03_01_preview.models.SubResource]
-    :param resolution_virtual_networks: A list of references to virtual networks that resolve
+    :ivar resolution_virtual_networks: A list of references to virtual networks that resolve
      records in this DNS zone. This is a only when ZoneType is Private.
-    :type resolution_virtual_networks: list[~azure.mgmt.dns.v2018_03_01_preview.models.SubResource]
+    :vartype resolution_virtual_networks:
+     list[~azure.mgmt.dns.v2018_03_01_preview.models.SubResource]
     """
 
     _validation = {
@@ -671,6 +798,25 @@ class Zone(TrackedResource):
         resolution_virtual_networks: Optional[List["SubResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword etag: The etag of the zone.
+        :paramtype etag: str
+        :keyword zone_type: The type of this DNS zone (Public or Private). Possible values include:
+         "Public", "Private". Default value: "Public".
+        :paramtype zone_type: str or ~azure.mgmt.dns.v2018_03_01_preview.models.ZoneType
+        :keyword registration_virtual_networks: A list of references to virtual networks that register
+         hostnames in this DNS zone. This is a only when ZoneType is Private.
+        :paramtype registration_virtual_networks:
+         list[~azure.mgmt.dns.v2018_03_01_preview.models.SubResource]
+        :keyword resolution_virtual_networks: A list of references to virtual networks that resolve
+         records in this DNS zone. This is a only when ZoneType is Private.
+        :paramtype resolution_virtual_networks:
+         list[~azure.mgmt.dns.v2018_03_01_preview.models.SubResource]
+        """
         super(Zone, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.max_number_of_record_sets = None
@@ -687,8 +833,8 @@ class ZoneListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Information about the DNS zones.
-    :type value: list[~azure.mgmt.dns.v2018_03_01_preview.models.Zone]
+    :ivar value: Information about the DNS zones.
+    :vartype value: list[~azure.mgmt.dns.v2018_03_01_preview.models.Zone]
     :ivar next_link: The continuation token for the next page of results.
     :vartype next_link: str
     """
@@ -708,6 +854,10 @@ class ZoneListResult(msrest.serialization.Model):
         value: Optional[List["Zone"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Information about the DNS zones.
+        :paramtype value: list[~azure.mgmt.dns.v2018_03_01_preview.models.Zone]
+        """
         super(ZoneListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -716,8 +866,8 @@ class ZoneListResult(msrest.serialization.Model):
 class ZoneUpdate(msrest.serialization.Model):
     """Describes a request to update a DNS zone.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -730,5 +880,9 @@ class ZoneUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ZoneUpdate, self).__init__(**kwargs)
         self.tags = tags

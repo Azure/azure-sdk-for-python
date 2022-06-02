@@ -6,48 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ARecord
-    from ._models_py3 import AaaaRecord
-    from ._models_py3 import CaaRecord
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import CnameRecord
-    from ._models_py3 import MxRecord
-    from ._models_py3 import NsRecord
-    from ._models_py3 import PtrRecord
-    from ._models_py3 import RecordSet
-    from ._models_py3 import RecordSetListResult
-    from ._models_py3 import RecordSetUpdateParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import SoaRecord
-    from ._models_py3 import SrvRecord
-    from ._models_py3 import SubResource
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import TxtRecord
-    from ._models_py3 import Zone
-    from ._models_py3 import ZoneListResult
-    from ._models_py3 import ZoneUpdate
-except (SyntaxError, ImportError):
-    from ._models import ARecord  # type: ignore
-    from ._models import AaaaRecord  # type: ignore
-    from ._models import CaaRecord  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import CnameRecord  # type: ignore
-    from ._models import MxRecord  # type: ignore
-    from ._models import NsRecord  # type: ignore
-    from ._models import PtrRecord  # type: ignore
-    from ._models import RecordSet  # type: ignore
-    from ._models import RecordSetListResult  # type: ignore
-    from ._models import RecordSetUpdateParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SoaRecord  # type: ignore
-    from ._models import SrvRecord  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import TxtRecord  # type: ignore
-    from ._models import Zone  # type: ignore
-    from ._models import ZoneListResult  # type: ignore
-    from ._models import ZoneUpdate  # type: ignore
+from ._models_py3 import ARecord
+from ._models_py3 import AaaaRecord
+from ._models_py3 import CaaRecord
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import CnameRecord
+from ._models_py3 import MxRecord
+from ._models_py3 import NsRecord
+from ._models_py3 import PtrRecord
+from ._models_py3 import RecordSet
+from ._models_py3 import RecordSetListResult
+from ._models_py3 import RecordSetUpdateParameters
+from ._models_py3 import Resource
+from ._models_py3 import SoaRecord
+from ._models_py3 import SrvRecord
+from ._models_py3 import SubResource
+from ._models_py3 import TrackedResource
+from ._models_py3 import TxtRecord
+from ._models_py3 import Zone
+from ._models_py3 import ZoneListResult
+from ._models_py3 import ZoneUpdate
+
 
 from ._dns_management_client_enums import (
     RecordType,

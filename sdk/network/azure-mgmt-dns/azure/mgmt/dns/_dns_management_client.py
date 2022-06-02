@@ -11,10 +11,11 @@
 
 from typing import TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import DnsManagementClientConfiguration
 
@@ -23,7 +24,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -70,12 +70,10 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
         api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
+        base_url="https://management.azure.com",  # type: str
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = DnsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(DnsManagementClient, self).__init__(

@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class HttpStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HttpStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CONTINUE_ENUM = "Continue"
     SWITCHING_PROTOCOLS = "SwitchingProtocols"
@@ -76,13 +61,13 @@ class HttpStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class RecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RecordType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     A = "A"
     AAAA = "AAAA"
@@ -94,7 +79,7 @@ class RecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SRV = "SRV"
     TXT = "TXT"
 
-class ZoneType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ZoneType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of this DNS zone (Public or Private).
     """
 
