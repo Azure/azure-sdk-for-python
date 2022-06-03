@@ -9,10 +9,12 @@ except ImportError:
     import urlparse as parse  # type: ignore
 
 from typing import TYPE_CHECKING
-from .challenge_auth_policy import ChallengeAuthPolicy, ChallengeAuthPolicyBase
+from .challenge_auth_policy import ChallengeAuthPolicy
 from .client_base import KeyVaultClientBase
 from .http_challenge import HttpChallenge
-from . import http_challenge_cache as HttpChallengeCache
+from . import http_challenge_cache
+
+HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import
@@ -21,7 +23,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "ChallengeAuthPolicy",
-    "ChallengeAuthPolicyBase",
     "HttpChallenge",
     "HttpChallengeCache",
     "KeyVaultClientBase",
@@ -54,18 +55,22 @@ def parse_key_vault_id(source_id):
     try:
         parsed_uri = parse.urlparse(source_id)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not not a valid ID".format(source_id))
+        raise ValueError("'{}' is not a valid ID".format(source_id))
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not not a valid ID".format(source_id))
+        raise ValueError("'{}' is not a valid ID".format(source_id))
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not not a valid ID".format(source_id))
+        raise ValueError("'{}' is not a valid ID".format(source_id))
+
+    vault_url = "{}://{}".format(parsed_uri.scheme, parsed_uri.hostname)
+    if parsed_uri.port:
+        vault_url += f":{parsed_uri.port}"
 
     return KeyVaultResourceId(
         source_id=source_id,
-        vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
+        vault_url=vault_url,
         name=path[1],
         version=path[2] if len(path) == 3 else None,
     )

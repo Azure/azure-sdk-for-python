@@ -60,8 +60,6 @@ async def run():
 
     await credential.close()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run())
-
+asyncio.run(run())
 
 print("Send message is done.")

@@ -5,6 +5,6 @@
 # --------------------------------------------------------------------------
 
 # matches SEMVER
-VERSION = "1.0.0b1"
+VERSION = "1.0.0b2"
 
 SDK_MONIKER = "mixedreality-authentication/{}".format(VERSION)  # type: str

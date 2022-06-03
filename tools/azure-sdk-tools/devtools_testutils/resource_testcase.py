@@ -7,15 +7,14 @@ from collections import namedtuple
 import functools
 import os
 import datetime
-import time
 import logging
-from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.mgmt.resource import ResourceManagementClient
 
 from . import AzureMgmtPreparer
+from .sanitizers import add_general_regex_sanitizer
 
 
 logging.getLogger().setLevel(logging.INFO)
@@ -97,7 +96,11 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + name,
             )
         if name != self.moniker:
-            self.test_class_instance.scrubber.register_name_pair(name, self.moniker)
+            try:
+                self.test_class_instance.scrubber.register_name_pair(name, self.moniker)
+            # tests using the test proxy don't have a scrubber instance
+            except AttributeError:
+                add_general_regex_sanitizer(regex=name, value=self.moniker)
         return {
             self.parameter_name: self.resource,
             self.parameter_name_for_location: self.location,

@@ -1,8 +1,9 @@
 interactions:
 - request:
     body: '{"question": "Battery life", "top": 3, "filters": {"metadataFilter": {"metadata":
-      [["explicitlytaggedheading", "check the battery level"], ["explicitlytaggedheading",
-      "make your battery last"]]}, "logicalOperation": "OR"}}'
+      [{"key": "explicitlytaggedheading", "value": "check the battery level"}, {"key":
+      "explicitlytaggedheading", "value": "make your battery last"}], "logicalOperation":
+      "OR"}}}'
     headers:
       Accept:
       - application/json
@@ -11,19 +12,19 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '222'
+      - '254'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Check
         the battery level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
         can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.6905,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.6544,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
         level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
@@ -31,35 +32,28 @@ interactions:
         battery last**\\n\\nFor info on how to care for your battery and power supply,
         conserve power, and make your Surface battery last longer, see [Surface battery
         and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.5818,\n      \"id\": 27,\n
-        \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        on Surface.com.\",\n      \"confidenceScore\": 0.42950000000000005,\n      \"id\":
+        136,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    },\n    {\n      \"questions\": [\n        \"Desktop taskbar.\"\n
-        \     ],\n      \"answer\": \"**Desktop taskbar.**\\n\\nBattery status appears
-        at the right side of the taskbar. Select the battery icon for info about the
-        charging and battery status, including the percent remaining. \u272A\",\n
-        \     \"confidenceScore\": 0.36340000000000006,\n      \"id\": 26,\n      \"source\":
-        \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\": {},\n      \"dialog\":
-        {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
-        \ ]\n}"
+        []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 7884df53-4df8-488a-b78c-692ac7f4f783
+      - 5aeeb4c7-152c-4b8d-bfd4-acbf6c1c2d90
       content-length:
-      - '1622'
+      - '1143'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Thu, 30 Sep 2021 15:52:33 GMT
+      - Thu, 28 Oct 2021 03:30:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '700'
+      - '187'
     status:
       code: 200
       message: OK

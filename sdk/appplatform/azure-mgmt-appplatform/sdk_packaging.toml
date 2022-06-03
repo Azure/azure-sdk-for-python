@@ -1,8 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-appplatform"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Appplatform Management"
+package_pprint_name = "App Platform Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true

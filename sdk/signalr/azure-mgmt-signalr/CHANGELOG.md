@@ -1,5 +1,25 @@
 # Release History
 
+## 1.1.0 (2022-03-28)
+
+**Features**
+
+  - Added operation group SignalRCustomCertificatesOperations
+  - Added operation group SignalRCustomDomainsOperations
+  - Model SignalRResource has a new parameter live_trace_configuration
+
+## 1.0.0 (2021-11-01)
+
+**Features**
+
+  - Model SignalRResource has a new parameter disable_aad_auth
+  - Model SignalRResource has a new parameter host_name_prefix
+  - Model SignalRResource has a new parameter resource_log_configuration
+  - Model SignalRResource has a new parameter disable_local_auth
+  - Model SignalRResource has a new parameter public_network_access
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Added operation SignalROperations.list_skus
+
 ## 1.0.0b2 (2021-05-20)
 
 **Features**

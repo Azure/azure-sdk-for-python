@@ -10,100 +10,212 @@ try:
     from ._models_py3 import AccessPolicyEntity
     from ._models_py3 import AccessPolicyEntityCollection
     from ._models_py3 import AccountEncryption
+    from ._models_py3 import AudioEncoderAac
+    from ._models_py3 import AudioEncoderBase
     from ._models_py3 import AuthenticationBase
+    from ._models_py3 import CertificateSource
     from ._models_py3 import CheckNameAvailabilityRequest
     from ._models_py3 import CheckNameAvailabilityResponse
+    from ._models_py3 import CredentialsBase
     from ._models_py3 import EccTokenKey
     from ._models_py3 import EdgeModuleEntity
     from ._models_py3 import EdgeModuleEntityCollection
     from ._models_py3 import EdgeModuleProvisioningToken
+    from ._models_py3 import EncoderCustomPreset
+    from ._models_py3 import EncoderPresetBase
+    from ._models_py3 import EncoderProcessor
+    from ._models_py3 import EncoderSystemPreset
     from ._models_py3 import Endpoint
+    from ._models_py3 import EndpointBase
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import GroupLevelAccessControl
+    from ._models_py3 import IotHub
     from ._models_py3 import JwtAuthentication
     from ._models_py3 import KeyVaultProperties
     from ._models_py3 import ListProvisioningTokenInput
+    from ._models_py3 import LivePipeline
+    from ._models_py3 import LivePipelineCollection
+    from ._models_py3 import LivePipelineOperationStatus
+    from ._models_py3 import LivePipelineUpdate
     from ._models_py3 import LogSpecification
     from ._models_py3 import MetricDimension
     from ._models_py3 import MetricSpecification
+    from ._models_py3 import NetworkAccessControl
+    from ._models_py3 import NodeBase
+    from ._models_py3 import NodeInput
     from ._models_py3 import Operation
     from ._models_py3 import OperationCollection
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import ParameterDeclaration
+    from ._models_py3 import ParameterDefinition
+    from ._models_py3 import PemCertificateList
+    from ._models_py3 import PipelineJob
+    from ._models_py3 import PipelineJobCollection
+    from ._models_py3 import PipelineJobError
+    from ._models_py3 import PipelineJobOperationStatus
+    from ._models_py3 import PipelineJobUpdate
+    from ._models_py3 import PipelineTopology
+    from ._models_py3 import PipelineTopologyCollection
+    from ._models_py3 import PipelineTopologyUpdate
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import ProcessorNodeBase
     from ._models_py3 import Properties
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import ResourceIdentity
     from ._models_py3 import RsaTokenKey
+    from ._models_py3 import RtspSource
+    from ._models_py3 import SecureIotDeviceRemoteTunnel
     from ._models_py3 import ServiceSpecification
+    from ._models_py3 import SinkNodeBase
+    from ._models_py3 import Sku
+    from ._models_py3 import SourceNodeBase
     from ._models_py3 import StorageAccount
-    from ._models_py3 import SyncStorageKeysInput
     from ._models_py3 import SystemData
+    from ._models_py3 import TimeSequenceBase
+    from ._models_py3 import TlsEndpoint
+    from ._models_py3 import TlsValidationOptions
     from ._models_py3 import TokenClaim
     from ._models_py3 import TokenKey
     from ._models_py3 import TrackedResource
+    from ._models_py3 import TunnelBase
+    from ._models_py3 import UnsecuredEndpoint
     from ._models_py3 import UserAssignedManagedIdentity
+    from ._models_py3 import UsernamePasswordCredentials
     from ._models_py3 import VideoAnalyzer
     from ._models_py3 import VideoAnalyzerCollection
     from ._models_py3 import VideoAnalyzerIdentity
-    from ._models_py3 import VideoAnalyzerProperties
-    from ._models_py3 import VideoAnalyzerPropertiesUpdate
+    from ._models_py3 import VideoAnalyzerOperationStatus
+    from ._models_py3 import VideoAnalyzerPrivateEndpointConnectionOperationStatus
     from ._models_py3 import VideoAnalyzerUpdate
+    from ._models_py3 import VideoArchival
+    from ._models_py3 import VideoContentToken
+    from ._models_py3 import VideoContentUrls
+    from ._models_py3 import VideoCreationProperties
+    from ._models_py3 import VideoEncoderBase
+    from ._models_py3 import VideoEncoderH264
     from ._models_py3 import VideoEntity
     from ._models_py3 import VideoEntityCollection
     from ._models_py3 import VideoFlags
     from ._models_py3 import VideoMediaInfo
-    from ._models_py3 import VideoStreaming
-    from ._models_py3 import VideoStreamingToken
+    from ._models_py3 import VideoPreviewImageUrls
+    from ._models_py3 import VideoPublishingOptions
+    from ._models_py3 import VideoScale
+    from ._models_py3 import VideoSequenceAbsoluteTimeMarkers
+    from ._models_py3 import VideoSink
+    from ._models_py3 import VideoSource
 except (SyntaxError, ImportError):
     from ._models import AccessPolicyEntity  # type: ignore
     from ._models import AccessPolicyEntityCollection  # type: ignore
     from ._models import AccountEncryption  # type: ignore
+    from ._models import AudioEncoderAac  # type: ignore
+    from ._models import AudioEncoderBase  # type: ignore
     from ._models import AuthenticationBase  # type: ignore
+    from ._models import CertificateSource  # type: ignore
     from ._models import CheckNameAvailabilityRequest  # type: ignore
     from ._models import CheckNameAvailabilityResponse  # type: ignore
+    from ._models import CredentialsBase  # type: ignore
     from ._models import EccTokenKey  # type: ignore
     from ._models import EdgeModuleEntity  # type: ignore
     from ._models import EdgeModuleEntityCollection  # type: ignore
     from ._models import EdgeModuleProvisioningToken  # type: ignore
+    from ._models import EncoderCustomPreset  # type: ignore
+    from ._models import EncoderPresetBase  # type: ignore
+    from ._models import EncoderProcessor  # type: ignore
+    from ._models import EncoderSystemPreset  # type: ignore
     from ._models import Endpoint  # type: ignore
+    from ._models import EndpointBase  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import GroupLevelAccessControl  # type: ignore
+    from ._models import IotHub  # type: ignore
     from ._models import JwtAuthentication  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
     from ._models import ListProvisioningTokenInput  # type: ignore
+    from ._models import LivePipeline  # type: ignore
+    from ._models import LivePipelineCollection  # type: ignore
+    from ._models import LivePipelineOperationStatus  # type: ignore
+    from ._models import LivePipelineUpdate  # type: ignore
     from ._models import LogSpecification  # type: ignore
     from ._models import MetricDimension  # type: ignore
     from ._models import MetricSpecification  # type: ignore
+    from ._models import NetworkAccessControl  # type: ignore
+    from ._models import NodeBase  # type: ignore
+    from ._models import NodeInput  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationCollection  # type: ignore
     from ._models import OperationDisplay  # type: ignore
+    from ._models import ParameterDeclaration  # type: ignore
+    from ._models import ParameterDefinition  # type: ignore
+    from ._models import PemCertificateList  # type: ignore
+    from ._models import PipelineJob  # type: ignore
+    from ._models import PipelineJobCollection  # type: ignore
+    from ._models import PipelineJobError  # type: ignore
+    from ._models import PipelineJobOperationStatus  # type: ignore
+    from ._models import PipelineJobUpdate  # type: ignore
+    from ._models import PipelineTopology  # type: ignore
+    from ._models import PipelineTopologyCollection  # type: ignore
+    from ._models import PipelineTopologyUpdate  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionState  # type: ignore
+    from ._models import ProcessorNodeBase  # type: ignore
     from ._models import Properties  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceIdentity  # type: ignore
     from ._models import RsaTokenKey  # type: ignore
+    from ._models import RtspSource  # type: ignore
+    from ._models import SecureIotDeviceRemoteTunnel  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
+    from ._models import SinkNodeBase  # type: ignore
+    from ._models import Sku  # type: ignore
+    from ._models import SourceNodeBase  # type: ignore
     from ._models import StorageAccount  # type: ignore
-    from ._models import SyncStorageKeysInput  # type: ignore
     from ._models import SystemData  # type: ignore
+    from ._models import TimeSequenceBase  # type: ignore
+    from ._models import TlsEndpoint  # type: ignore
+    from ._models import TlsValidationOptions  # type: ignore
     from ._models import TokenClaim  # type: ignore
     from ._models import TokenKey  # type: ignore
     from ._models import TrackedResource  # type: ignore
+    from ._models import TunnelBase  # type: ignore
+    from ._models import UnsecuredEndpoint  # type: ignore
     from ._models import UserAssignedManagedIdentity  # type: ignore
+    from ._models import UsernamePasswordCredentials  # type: ignore
     from ._models import VideoAnalyzer  # type: ignore
     from ._models import VideoAnalyzerCollection  # type: ignore
     from ._models import VideoAnalyzerIdentity  # type: ignore
-    from ._models import VideoAnalyzerProperties  # type: ignore
-    from ._models import VideoAnalyzerPropertiesUpdate  # type: ignore
+    from ._models import VideoAnalyzerOperationStatus  # type: ignore
+    from ._models import VideoAnalyzerPrivateEndpointConnectionOperationStatus  # type: ignore
     from ._models import VideoAnalyzerUpdate  # type: ignore
+    from ._models import VideoArchival  # type: ignore
+    from ._models import VideoContentToken  # type: ignore
+    from ._models import VideoContentUrls  # type: ignore
+    from ._models import VideoCreationProperties  # type: ignore
+    from ._models import VideoEncoderBase  # type: ignore
+    from ._models import VideoEncoderH264  # type: ignore
     from ._models import VideoEntity  # type: ignore
     from ._models import VideoEntityCollection  # type: ignore
     from ._models import VideoFlags  # type: ignore
     from ._models import VideoMediaInfo  # type: ignore
-    from ._models import VideoStreaming  # type: ignore
-    from ._models import VideoStreamingToken  # type: ignore
+    from ._models import VideoPreviewImageUrls  # type: ignore
+    from ._models import VideoPublishingOptions  # type: ignore
+    from ._models import VideoScale  # type: ignore
+    from ._models import VideoSequenceAbsoluteTimeMarkers  # type: ignore
+    from ._models import VideoSink  # type: ignore
+    from ._models import VideoSource  # type: ignore
 
 from ._video_analyzer_enums import (
     AccessPolicyEccAlgo,
@@ -113,9 +225,22 @@ from ._video_analyzer_enums import (
     ActionType,
     CheckNameAvailabilityReason,
     CreatedByType,
+    EncoderSystemPresetType,
+    Kind,
+    LivePipelineState,
     MetricAggregationType,
     MetricUnit,
+    ParameterType,
+    PipelineJobState,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
+    ProvisioningState,
+    PublicNetworkAccess,
+    RtspTransport,
+    SkuName,
+    SkuTier,
     VideoAnalyzerEndpointType,
+    VideoScaleMode,
     VideoType,
 )
 
@@ -123,51 +248,107 @@ __all__ = [
     'AccessPolicyEntity',
     'AccessPolicyEntityCollection',
     'AccountEncryption',
+    'AudioEncoderAac',
+    'AudioEncoderBase',
     'AuthenticationBase',
+    'CertificateSource',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
+    'CredentialsBase',
     'EccTokenKey',
     'EdgeModuleEntity',
     'EdgeModuleEntityCollection',
     'EdgeModuleProvisioningToken',
+    'EncoderCustomPreset',
+    'EncoderPresetBase',
+    'EncoderProcessor',
+    'EncoderSystemPreset',
     'Endpoint',
+    'EndpointBase',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'GroupLevelAccessControl',
+    'IotHub',
     'JwtAuthentication',
     'KeyVaultProperties',
     'ListProvisioningTokenInput',
+    'LivePipeline',
+    'LivePipelineCollection',
+    'LivePipelineOperationStatus',
+    'LivePipelineUpdate',
     'LogSpecification',
     'MetricDimension',
     'MetricSpecification',
+    'NetworkAccessControl',
+    'NodeBase',
+    'NodeInput',
     'Operation',
     'OperationCollection',
     'OperationDisplay',
+    'ParameterDeclaration',
+    'ParameterDefinition',
+    'PemCertificateList',
+    'PipelineJob',
+    'PipelineJobCollection',
+    'PipelineJobError',
+    'PipelineJobOperationStatus',
+    'PipelineJobUpdate',
+    'PipelineTopology',
+    'PipelineTopologyCollection',
+    'PipelineTopologyUpdate',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
+    'ProcessorNodeBase',
     'Properties',
     'ProxyResource',
     'Resource',
     'ResourceIdentity',
     'RsaTokenKey',
+    'RtspSource',
+    'SecureIotDeviceRemoteTunnel',
     'ServiceSpecification',
+    'SinkNodeBase',
+    'Sku',
+    'SourceNodeBase',
     'StorageAccount',
-    'SyncStorageKeysInput',
     'SystemData',
+    'TimeSequenceBase',
+    'TlsEndpoint',
+    'TlsValidationOptions',
     'TokenClaim',
     'TokenKey',
     'TrackedResource',
+    'TunnelBase',
+    'UnsecuredEndpoint',
     'UserAssignedManagedIdentity',
+    'UsernamePasswordCredentials',
     'VideoAnalyzer',
     'VideoAnalyzerCollection',
     'VideoAnalyzerIdentity',
-    'VideoAnalyzerProperties',
-    'VideoAnalyzerPropertiesUpdate',
+    'VideoAnalyzerOperationStatus',
+    'VideoAnalyzerPrivateEndpointConnectionOperationStatus',
     'VideoAnalyzerUpdate',
+    'VideoArchival',
+    'VideoContentToken',
+    'VideoContentUrls',
+    'VideoCreationProperties',
+    'VideoEncoderBase',
+    'VideoEncoderH264',
     'VideoEntity',
     'VideoEntityCollection',
     'VideoFlags',
     'VideoMediaInfo',
-    'VideoStreaming',
-    'VideoStreamingToken',
+    'VideoPreviewImageUrls',
+    'VideoPublishingOptions',
+    'VideoScale',
+    'VideoSequenceAbsoluteTimeMarkers',
+    'VideoSink',
+    'VideoSource',
     'AccessPolicyEccAlgo',
     'AccessPolicyRole',
     'AccessPolicyRsaAlgo',
@@ -175,8 +356,21 @@ __all__ = [
     'ActionType',
     'CheckNameAvailabilityReason',
     'CreatedByType',
+    'EncoderSystemPresetType',
+    'Kind',
+    'LivePipelineState',
     'MetricAggregationType',
     'MetricUnit',
+    'ParameterType',
+    'PipelineJobState',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
+    'ProvisioningState',
+    'PublicNetworkAccess',
+    'RtspTransport',
+    'SkuName',
+    'SkuTier',
     'VideoAnalyzerEndpointType',
+    'VideoScaleMode',
     'VideoType',
 ]

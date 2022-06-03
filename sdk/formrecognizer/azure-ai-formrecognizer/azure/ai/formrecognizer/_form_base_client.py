@@ -23,6 +23,11 @@ if TYPE_CHECKING:
 class FormRecognizerClientBase(object):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         self._endpoint = endpoint
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)

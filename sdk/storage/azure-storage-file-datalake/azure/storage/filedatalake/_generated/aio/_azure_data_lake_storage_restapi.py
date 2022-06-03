@@ -6,20 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from copy import deepcopy
+from typing import Any, Awaitable
 
-from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
-from ._configuration import AzureDataLakeStorageRESTAPIConfiguration
-from .operations import ServiceOperations
-from .operations import FileSystemOperations
-from .operations import PathOperations
+from azure.core import AsyncPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+
 from .. import models
+from ._configuration import AzureDataLakeStorageRESTAPIConfiguration
+from .operations import FileSystemOperations, PathOperations, ServiceOperations
 
-
-class AzureDataLakeStorageRESTAPI(object):
+class AzureDataLakeStorageRESTAPI:
     """Azure Data Lake Storage provides storage for Hadoop and other big data workloads.
 
     :ivar service: ServiceOperations operations
@@ -28,47 +27,62 @@ class AzureDataLakeStorageRESTAPI(object):
     :vartype file_system: azure.storage.filedatalake.aio.operations.FileSystemOperations
     :ivar path: PathOperations operations
     :vartype path: azure.storage.filedatalake.aio.operations.PathOperations
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the
+     desired operation.
     :type url: str
+    :param base_url: Service URL. Default value is "".
+    :type base_url: str
+    :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
+     is "filesystem". Note that overriding this default value may result in unsupported behavior.
+    :paramtype resource: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(
         self,
         url: str,
+        base_url: str = "",
         **kwargs: Any
     ) -> None:
-        base_url = '{url}'
-        self._config = AzureDataLakeStorageRESTAPIConfiguration(url, **kwargs)
+        self._config = AzureDataLakeStorageRESTAPIConfiguration(url=url, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.file_system = FileSystemOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.path = PathOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.service = ServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.file_system = FileSystemOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.path = PathOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

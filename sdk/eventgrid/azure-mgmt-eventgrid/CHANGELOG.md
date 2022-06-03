@@ -1,5 +1,84 @@
 # Release History
 
+## 10.2.0b2 (2022-05-30)
+
+**Breaking changes**
+
+  - Operation DomainEventSubscriptionsOperations.list has a new parameter filter
+  - Operation DomainEventSubscriptionsOperations.list has a new parameter top
+  - Operation DomainTopicEventSubscriptionsOperations.list has a new parameter filter
+  - Operation DomainTopicEventSubscriptionsOperations.list has a new parameter top
+  - Operation TopicEventSubscriptionsOperations.list has a new parameter filter
+  - Operation TopicEventSubscriptionsOperations.list has a new parameter top
+
+## 10.2.0b1 (2022-04-07)
+
+**Features**
+
+  - Added operation group ChannelsOperations
+  - Added operation group DomainEventSubscriptionsOperations
+  - Added operation group DomainTopicEventSubscriptionsOperations
+  - Added operation group EventChannelsOperations
+  - Added operation group PartnerConfigurationsOperations
+  - Added operation group PartnerDestinationsOperations
+  - Added operation group PartnerNamespacesOperations
+  - Added operation group PartnerRegistrationsOperations
+  - Added operation group PartnerTopicEventSubscriptionsOperations
+  - Added operation group PartnerTopicsOperations
+  - Added operation group TopicEventSubscriptionsOperations
+  - Added operation group VerifiedPartnersOperations
+  - Model Domain has a new parameter data_residency_boundary
+  - Model Domain has a new parameter sku
+  - Model DomainUpdateParameters has a new parameter data_residency_boundary
+  - Model DomainUpdateParameters has a new parameter sku
+  - Model Operation has a new parameter is_data_action
+  - Model Topic has a new parameter data_residency_boundary
+  - Model Topic has a new parameter extended_location
+  - Model Topic has a new parameter kind
+  - Model Topic has a new parameter sku
+  - Model TopicUpdateParameters has a new parameter data_residency_boundary
+  - Model TopicUpdateParameters has a new parameter sku
+
+## 10.1.0 (2021-12-13)
+
+**Features**
+
+  - Added model NumberInRangeAdvancedFilter
+  - Added model StringNotContainsAdvancedFilter
+  - Added model NumberNotInRangeAdvancedFilter
+  - Added model IsNullOrUndefinedAdvancedFilter
+  - Added model IsNotNullAdvancedFilter
+  - Added model StringNotBeginsWithAdvancedFilter
+  - Added model StringNotEndsWithAdvancedFilter
+
+## 10.0.0 (2021-10-21)
+
+**Features**
+
+  - Model Domain has a new parameter disable_local_auth
+  - Model Domain has a new parameter auto_delete_topic_with_last_subscription
+  - Model Domain has a new parameter auto_create_topic_with_first_subscription
+  - Model Topic has a new parameter disable_local_auth
+  - Model DomainUpdateParameters has a new parameter disable_local_auth
+  - Model DomainUpdateParameters has a new parameter auto_delete_topic_with_last_subscription
+  - Model DomainUpdateParameters has a new parameter auto_create_topic_with_first_subscription
+  - Model ExtensionTopic has a new parameter system_data
+  - Model TopicUpdateParameters has a new parameter disable_local_auth
+
+**Breaking changes**
+
+  - Model Domain no longer has parameter sku
+  - Model Topic no longer has parameter sku
+  - Model Topic no longer has parameter extended_location
+  - Model Topic no longer has parameter kind
+  - Model DomainUpdateParameters no longer has parameter sku
+  - Model TopicUpdateParameters no longer has parameter sku
+  - Removed operation group EventChannelsOperations
+  - Removed operation group PartnerRegistrationsOperations
+  - Removed operation group PartnerTopicEventSubscriptionsOperations
+  - Removed operation group PartnerNamespacesOperations
+  - Removed operation group PartnerTopicsOperations
+
 ## 9.0.0 (2021-05-24)
 
 **Features**

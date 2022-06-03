@@ -1,5 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 ../../nspkg/azure-mixedreality-nspkg
 ../../core/azure-core
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 -e ../../../tools/azure-devtools

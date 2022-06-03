@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Dict, Any
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
+from ._generated.models import PostContentSchemaGrantType
 from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
@@ -29,13 +30,13 @@ class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
         pass
 
 
-class ACRExchangeClient(object):
+class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -73,7 +74,10 @@ class ACRExchangeClient(object):
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self._credential.get_token(*self.credential_scopes).token, **kwargs
+            grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
+            service=service,
+            access_token=self._credential.get_token(*self.credential_scopes).token,
+            **kwargs
         )
         return refresh_token.refresh_token
 

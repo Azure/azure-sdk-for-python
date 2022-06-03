@@ -21,6 +21,13 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
 )
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+    map_error
+)
 from azure.core.messaging import CloudEvent
 
 from ._models import EventGridEvent
@@ -31,6 +38,7 @@ from ._helpers import (
     _eventgrid_data_typecheck,
     _build_request,
     _cloud_event_to_generated,
+    _from_cncf_events,
 )
 from ._generated._event_grid_publisher_client import (
     EventGridPublisherClient as EventGridPublisherClientImpl,
@@ -58,7 +66,7 @@ if TYPE_CHECKING:
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
-class EventGridPublisherClient(object):
+class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-version-keyword
     """EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
@@ -192,14 +200,21 @@ class EventGridPublisherClient(object):
                     for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
-                pass  # means it's a dictionary
+                ## this is either a dictionary or a CNCF cloud event
+                events = [
+                    _from_cncf_events(e) for e in events
+                ]
             content_type = "application/cloudevents-batch+json; charset=utf-8"
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        self._client.send_request(  # pylint: disable=protected-access
+        response = self._client.send_request(  # pylint: disable=protected-access
             _build_request(self._endpoint, content_type, events), **kwargs
         )
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        if response.status_code != 200:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
 
     def close(self):
         # type: () -> None

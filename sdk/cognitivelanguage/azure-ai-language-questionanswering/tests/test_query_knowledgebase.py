@@ -14,13 +14,12 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.ai.language.questionanswering.operations._operations import build_query_text_request, build_query_knowledge_base_request
+from azure.ai.language.questionanswering._operations._operations import build_get_answers_request
 from azure.ai.language.questionanswering.models import (
-    QueryKnowledgeBaseOptions,
-    KnowledgeBaseAnswerRequestContext,
-    AnswerSpanRequest,
+    AnswersOptions,
+    KnowledgeBaseAnswerContext,
+    ShortAnswerOptions,
     MetadataFilter,
-    LogicalOperationKind,
     QueryFilters,
 )
 
@@ -38,7 +37,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 "previousQnAId": 4
             }
         }
-        request = build_query_knowledge_base_request(
+        request = build_get_answers_request(
             json=json_content,
             project_name=qna_project,
             deployment_name='test'
@@ -87,7 +86,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 "topAnswersWithSpan": 1
             }
         }
-        request = build_query_knowledge_base_request(
+        request = build_get_answers_request(
             json=json_content,
             project_name=qna_project,
             deployment_name='test'
@@ -128,17 +127,17 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = QueryKnowledgeBaseOptions(
+        query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgeBaseAnswerRequestContext(
-                previous_user_query="Meet Surface Pro 4",
+            answer_context=KnowledgeBaseAnswerContext(
+                previous_question="Meet Surface Pro 4",
                 previous_qna_id=4
             )
         )
 
         with client:
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -147,11 +146,11 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         assert output.answers
         for answer in output.answers:
             assert answer.answer
-            assert answer.confidence_score
-            assert answer.id
+            assert answer.confidence
+            assert answer.qna_id
             assert answer.source
             assert answer.metadata is not None
-            assert not answer.answer_span
+            assert not answer.short_answer
 
             assert answer.questions
             for question in answer.questions:
@@ -169,22 +168,21 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = QueryKnowledgeBaseOptions(
+        query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgeBaseAnswerRequestContext(
-                previous_user_query="Meet Surface Pro 4",
+            answer_context=KnowledgeBaseAnswerContext(
+                previous_question="Meet Surface Pro 4",
                 previous_qna_id=4
             ),
-            answer_span_request=AnswerSpanRequest(
-                enable=True,
-                confidence_score_threshold=0.1,
-                top_answers_with_span=2
+            short_answer_options=ShortAnswerOptions(
+                confidence_threshold=0.1,
+                top=2
             )
         )
 
         with client:
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -193,16 +191,16 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         assert output.answers
         for answer in output.answers:
             assert answer.answer
-            assert answer.confidence_score
-            assert answer.id
+            assert answer.confidence
+            assert answer.qna_id
             assert answer.source
             assert answer.metadata is not None
 
-            if answer.answer_span:
-                assert answer.answer_span.text
-                assert answer.answer_span.confidence_score
-                assert answer.answer_span.offset is not None
-                assert answer.answer_span.length
+            if answer.short_answer:
+                assert answer.short_answer.text
+                assert answer.short_answer.confidence
+                assert answer.short_answer.offset is not None
+                assert answer.short_answer.length
 
             assert answer.questions
             for question in answer.questions:
@@ -235,14 +233,14 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         }
 
         with client:
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
             )
 
         assert len(output.answers) == 2
-        confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
+        confident_answers = [a for a in output.answers if a.confidence > 0.9]
         assert len(confident_answers) == 1
         assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
@@ -250,23 +248,22 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
     def test_query_knowledgebase_overload(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         with client:
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 project_name=qna_project,
                 deployment_name='test',
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
-                confidence_score_threshold=0.2,
-                answer_span_request=AnswerSpanRequest(
-                    enable=True,
-                    confidence_score_threshold=0.2,
-                    top_answers_with_span=1
+                confidence_threshold=0.2,
+                short_answer_options=ShortAnswerOptions(
+                    confidence_threshold=0.2,
+                    top=1
                 ),
                 include_unstructured_sources=True
             )
 
         assert len(output.answers) == 2
-        confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
+        confident_answers = [a for a in output.answers if a.confidence > 0.9]
         assert len(confident_answers) == 1
         assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
@@ -274,65 +271,63 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
     def test_query_knowledgebase_with_followup(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         with client:
-            query_params = QueryKnowledgeBaseOptions(
+            query_params = AnswersOptions(
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
-                confidence_score_threshold=0.2,
-                answer_span_request=AnswerSpanRequest(
-                    enable=True,
-                    confidence_score_threshold=0.2,
-                    top_answers_with_span=1
+                confidence_threshold=0.2,
+                short_answer_options=ShortAnswerOptions(
+                    confidence_threshold=0.2,
+                    top=1
                 ),
                 include_unstructured_sources=True
             )
 
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
             )
-            confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
+            confident_answers = [a for a in output.answers if a.confidence > 0.9]
             assert len(confident_answers) == 1
             assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
-            query_params = QueryKnowledgeBaseOptions(
+            query_params = AnswersOptions(
                 question="How long it takes to charge Surface?",
                 top=3,
                 user_id="sd53lsY=",
-                confidence_score_threshold=0.2,
-                context=KnowledgeBaseAnswerRequestContext(
-                    previous_user_query="How long should my Surface battery last?",
-                    previous_qna_id=confident_answers[0].id
+                confidence_threshold=0.2,
+                answer_context=KnowledgeBaseAnswerContext(
+                    previous_question="How long should my Surface battery last?",
+                    previous_qna_id=confident_answers[0].qna_id
                 ),
-                answer_span_request=AnswerSpanRequest(
-                    enable=True,
-                    confidence_score_threshold=0.2,
-                    top_answers_with_span=1
+                short_answer_options=ShortAnswerOptions(
+                    confidence_threshold=0.2,
+                    top=1
                 ),
                 include_unstructured_sources=True
             )
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
             )
 
-            assert len(output.answers) == 2
-            confident_answers = [a for a in output.answers if a.confidence_score > 0.5]
+            assert output.answers
+            confident_answers = [a for a in output.answers if a.confidence > 0.5]
             assert len(confident_answers) == 1
-            assert confident_answers[0].answer_span.text == " two to four hours"
+            assert confident_answers[0].short_answer.text == " two to four hours"
 
 
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_only_id(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         with client:
-            query_params = QueryKnowledgeBaseOptions(
+            query_params = AnswersOptions(
                 qna_id=19
             )
 
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -346,7 +341,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
         with client:
             query_params = {"qna_id": 19}
 
-            output = client.query_knowledge_base(
+            output = client.get_answers(
                 query_params,
                 project_name=qna_project,
                 deployment_name='test'
@@ -357,23 +352,36 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
     def test_query_knowledgebase_overload_positional_and_kwarg(self):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):
-                client.query_knowledge_base("positional_one", "positional_two")
+                client.get_answers("positional_one", "positional_two")
             with pytest.raises(TypeError):
-                client.query_knowledge_base("positional_options_bag", options="options bag by name")
+                client.get_answers("positional_options_bag", options="options bag by name")
+            with pytest.raises(TypeError):
+                client.get_answers(
+                    options={'qnaId': 15},
+                    project_name="hello",
+                    deployment_name='test'
+                )
+            with pytest.raises(TypeError):
+                client.get_answers(
+                    {'qnaId': 15},
+                    question='Why?',
+                    project_name="hello",
+                    deployment_name='test'
+                )
 
     def test_query_knowledgebase_question_or_qna_id(self):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
 
-            options = QueryKnowledgeBaseOptions()
+            options = AnswersOptions()
             with pytest.raises(TypeError):
-                client.query_knowledge_base(
+                client.get_answers(
                     options,
                     project_name="hello",
                     deployment_name='test'
                 )
 
             with pytest.raises(TypeError):
-                client.query_knowledge_base(
+                client.get_answers(
                     project_name="hello",
                     deployment_name='test'
                 )
@@ -387,18 +395,45 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                     ("explicitlytaggedheading", "check the battery level"),
                     ("explicitlytaggedheading", "make your battery last")
                 ],
+                logical_operation="OR"
             ),
-            logical_operation=LogicalOperationKind.OR_ENUM
         )
         with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
-            response = client.query_knowledge_base(
+            response = client.get_answers(
                 project_name=qna_project,
                 deployment_name='test',
                 question="Battery life",
                 filters=filters,
                 top=3,
             )
-            assert len(response.answers) == 3
+            assert len(response.answers) == 2
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+            )
+            assert any(
+                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+            )
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_knowledgebase_filter_dict_params(self, qna_account, qna_key, qna_project):
+        filters = {
+            "metadataFilter": {
+                "metadata": [
+                    ("explicitlytaggedheading", "check the battery level"),
+                    ("explicitlytaggedheading", "make your battery last")
+                ],
+                "logicalOperation": "or"
+            },
+        }
+        with QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key)) as client:
+            response = client.get_answers(
+                project_name=qna_project,
+                deployment_name='test',
+                question="Battery life",
+                filters=filters,
+                top=3,
+            )
+            assert len(response.answers) == 2
             assert any(
                 [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
             )

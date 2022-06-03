@@ -4,7 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Any, Dict, Union
+from typing import ( # pylint: disable=unused-import
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING)
 
 try:
     from urllib.parse import urlparse, quote
@@ -23,9 +25,13 @@ from ._models import LocationMode, DirectoryProperties, AccessControlChangeResul
     AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
-    get_api_version
+    get_api_version, get_cpk_info
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
+
+if TYPE_CHECKING:
+    from ._models import ContentSettings
+    from ._models import FileProperties
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
@@ -33,6 +39,27 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 
 
 class PathClient(StorageAccountHostsMixin):
+    """A base client for interacting with a DataLake file/directory, even if the file/directory may not
+    yet exist.
+
+    :param str account_url:
+        The URI to the storage account.
+    :param str file_system_name:
+        The file system for the directory or files.
+    :param str file_path:
+        The whole file path, so that to interact with a specific file.
+        eg. "{directory}/{subdirectory}/{file}"
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    """
     def __init__(
             self, account_url,  # type: str
             file_system_name,  # type: str
@@ -84,12 +111,13 @@ class PathClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
         api_version = get_api_version(kwargs)
 
-        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
-                                                   pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=file_system_name,
+                                                   path=path_name, pipeline=self._pipeline)
         self._client._config.version = api_version  # pylint: disable=protected-access
 
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
             self._blob_client.url,
+            base_url=self._blob_client.url,
             file_system=file_system_name,
             path=path_name,
             pipeline=self._pipeline)
@@ -118,8 +146,11 @@ class PathClient(StorageAccountHostsMixin):
             quote(self.path_name, safe='~'),
             self._query_str)
 
-    def _create_path_options(self, resource_type, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _create_path_options(self, resource_type,
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
@@ -130,6 +161,8 @@ class PathClient(StorageAccountHostsMixin):
         if content_settings:
             path_http_headers = get_path_http_headers(content_settings)
 
+        cpk_info = get_cpk_info(self.scheme, kwargs)
+
         options = {
             'resource': resource_type,
             'properties': add_metadata_headers(metadata),
@@ -138,6 +171,7 @@ class PathClient(StorageAccountHostsMixin):
             'path_http_headers': path_http_headers,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_response_headers}
         options.update(kwargs)
@@ -195,9 +229,13 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Dict[str, Union[str, datetime]]
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._create_path_options(
             resource_type,
@@ -211,7 +249,7 @@ class PathClient(StorageAccountHostsMixin):
 
     @staticmethod
     def _delete_path_options(**kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        # type: (**Any) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -252,7 +290,8 @@ class PathClient(StorageAccountHostsMixin):
             The match condition to use upon the etag.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return: None
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._delete_path_options(**kwargs)
         try:
@@ -262,7 +301,7 @@ class PathClient(StorageAccountHostsMixin):
 
     @staticmethod
     def _set_access_control_options(owner=None, group=None, permissions=None, acl=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        # type: (...) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -636,8 +675,11 @@ class PathClient(StorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
-    def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _rename_path_options(self, rename_source,
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
@@ -755,6 +797,10 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file/directory was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties or FileProperties
@@ -776,7 +822,7 @@ class PathClient(StorageAccountHostsMixin):
         """
         Returns True if a path exists and returns False otherwise.
 
-        :kwarg int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -793,7 +839,7 @@ class PathClient(StorageAccountHostsMixin):
         :param metadata:
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
-        :type metadata: dict[str, str]
+        :type metadata: Dict[str, str]
         :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
@@ -815,6 +861,9 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).

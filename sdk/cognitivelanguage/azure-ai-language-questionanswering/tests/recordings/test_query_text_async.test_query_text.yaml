@@ -102,9 +102,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Battery Life  Get an
@@ -115,7 +115,7 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.01745828054845333,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.017458289861679077,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
         0.26247412,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
@@ -132,21 +132,21 @@ interactions:
         recommended alternative, though you might want to wait a few months for the
         rumored Surface Laptop 3.   Overall, the HP Envy 13 is a fantastic laptop
         that checks all the right boxes --- as long as you buy the 1080p model.\",\n
-        \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.0070572528056800365,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
         0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
-      apim-request-id: 51ce1817-cad9-4c5e-a2b3-4391b42b3211
-      content-length: '2146'
+      apim-request-id: a33278f1-4b95-4e5c-a3ec-87798e506ce0
+      content-length: '2148'
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=9
-      date: Thu, 30 Sep 2021 15:52:35 GMT
+      date: Thu, 28 Oct 2021 17:25:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '292'
+      x-envoy-upstream-service-time: '355'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
 version: 1

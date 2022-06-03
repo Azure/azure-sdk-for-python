@@ -4,19 +4,20 @@ Azure Cognitive Services Form Recognizer is a cloud service that uses machine le
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs and entities in addition to general layout from documents.
-- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents) using prebuilt models.
+- Read - Read page information and detected languages from documents.
+- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Form Recognizer resource][FR_or_CS_resource] to use this package.
 
@@ -27,24 +28,24 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2021-09-30-preview` version of the service.
+> Note: This version of the client library defaults to the `2022-01-30-preview` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b1 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
+|3.2.0b4 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
-> Note: Starting with version `2021-09-30-preview`, a new set of clients were introduced to leverage the newest features
+> Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
 > of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
-|2021-09-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-01-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
@@ -163,10 +164,12 @@ Use the `model` parameter to select the type of model for analysis.
 |-|-
 |`prebuilt-layout`| Text extraction, selection marks, tables
 |`prebuilt-document`| Text extraction, selection marks, tables, key-value pairs and entities
+|`prebuilt-read`|Text extraction and detected languages
 |`prebuilt-invoices`| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
 |`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
 |`prebuilt-idDocument`| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
 |`prebuilt-receipt`| Text extraction and pre-trained fields and values pertaining to English sales receipts
+|`prebuilt-tax.us.w2`| Text extraction and pre-trained fields and values pertaining to U.S. W-2 tax documents
 |`{custom-model-id}`| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
@@ -181,7 +184,7 @@ More information about analyzing documents, including supported features, locale
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
-Please note that models can also be built using a graphical user interface such as the [Form Recognizer Labeling Tool][labeling-tool].
+Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -348,8 +351,32 @@ for style in result.styles:
         print("Document contains handwritten content: ")
         print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
-print("----Selection marks found in document----")
 for page in result.pages:
+    print("----Analyzing document from page #{}----".format(page.page_number))
+    print(
+        "Page has width: {} and height: {}, measured with unit: {}".format(
+            page.width, page.height, page.unit
+        )
+    )
+
+    for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
+        print(
+            "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+                line_idx,
+                len(words),
+                line.content,
+                line.bounding_box,
+            )
+        )
+
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
+            )
+
     for selection_mark in page.selection_marks:
         print(
             "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
@@ -360,8 +387,10 @@ for page in result.pages:
         )
 ```
 
+- Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
+
 ### Using Prebuilt Models
-Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
+Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
 
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_document` method:
 
@@ -398,7 +427,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
-
+- Analyze U.S. W-2 tax documents using the `prebuilt-tax.us.w2` model (fields recognized by the service can be found [here][service_recognize_tax_documents]).
 
 ### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -417,7 +446,8 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
-    source=container_sas_url, model_id="my-first-model"
+    # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
+    source=container_sas_url, build_mode="template", model_id="my-first-model"
 )
 model = poller.result()
 
@@ -514,7 +544,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 
 account_info = document_model_admin_client.get_account_info()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_info.model_count, account_info.model_limit
+    account_info.document_model_count, account_info.document_model_limit
 ))
 
 # Here we get a paged list of all of our models
@@ -597,6 +627,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr-studio]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
 [fr-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
 [fr-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
 [fr-models]: https://aka.ms/azsdk/formrecognizer/models
@@ -617,7 +648,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 [service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
 [service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[service_recognize_tax_documents]: https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
+[service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md

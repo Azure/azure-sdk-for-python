@@ -48,7 +48,7 @@ class VideoAnalyzerConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2021-05-01-preview"
+        self.api_version = "2021-11-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-videoanalyzer/{}'.format(VERSION))
         self._configure(**kwargs)

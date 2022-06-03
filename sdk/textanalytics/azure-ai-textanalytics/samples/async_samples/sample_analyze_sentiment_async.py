@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -21,8 +19,8 @@ USAGE:
     python sample_analyze_sentiment_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -42,8 +40,8 @@ async def sample_analyze_sentiment_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
@@ -65,8 +63,8 @@ async def sample_analyze_sentiment_async():
 
     print("Let's visualize the sentiment of each of these documents")
     for idx, doc in enumerate(docs):
-        print("Document text: {}".format(documents[idx]))
-        print("Overall sentiment: {}".format(doc.sentiment))
+        print(f"Document text: {documents[idx]}")
+        print(f"Overall sentiment: {doc.sentiment}")
     # [END analyze_sentiment_async]
 
     print("Now, let us extract all of the positive reviews")
@@ -89,7 +87,7 @@ async def sample_analyze_sentiment_async():
     )
     positive_reviews_final = []
     for idx, review in enumerate(positive_reviews):
-        print("Looking at positive review #{}".format(idx + 1))
+        print(f"Looking at positive review #{idx + 1}")
         any_sentence_not_positive = False
         for sentence in review.sentences:
             print("...Sentence '{}' has sentiment '{}' with confidence scores '{}'".format(
@@ -111,5 +109,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

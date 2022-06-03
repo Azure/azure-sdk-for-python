@@ -1,5 +1,85 @@
 # Release History
 
+## 19.1.0 (2022-05-13)
+
+**Features**
+
+  - Added operation group TrustedAccessRoleBindingsOperations
+  - Added operation group TrustedAccessRolesOperations
+  - Model AgentPool has a new parameter enable_custom_ca_trust
+  - Model ContainerServiceNetworkProfile has a new parameter network_plugin_mode
+  - Model ManagedCluster has a new parameter storage_profile
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_custom_ca_trust
+  - Model NetworkProfileForSnapshot has a new parameter network_plugin_mode
+
+## 19.0.0 (2022-04-15)
+
+**Features**
+
+  - Added operation ManagedClustersOperations.begin_rotate_service_account_signing_keys
+  - Model AgentPool has a new parameter current_orchestrator_version
+  - Model ManagedCluster has a new parameter creation_data
+  - Model ManagedCluster has a new parameter ingress_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter current_orchestrator_version
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter current_orchestrator_version
+  - Model ManagedClusterHTTPProxyConfig has a new parameter effective_no_proxy
+  - Model ManagedClusterSecurityProfile has a new parameter workload_identity
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Operation AgentPoolsOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+  - Operation ManagedClustersOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+
+## 18.0.0 (2022-03-23)
+
+**Features**
+
+  - Added operation group ManagedClusterSnapshotsOperations
+  - Model ManagedCluster has a new parameter system_data
+  - Model ManagedClusterAccessProfile has a new parameter system_data
+  - Model ManagedClusterSecurityProfile has a new parameter azure_key_vault_kms
+  - Model Resource has a new parameter system_data
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_user_credentials has a new signature
+
+## 17.0.0 (2022-02-21)
+
+**Features**
+
+  - Model AgentPool has a new parameter capacity_reservation_group_id
+  - Model AgentPool has a new parameter host_group_id
+  - Model AgentPool has a new parameter message_of_the_day
+  - Model ManagedCluster has a new parameter current_kubernetes_version
+  - Model ManagedCluster has a new parameter enable_namespace_resources
+  - Model ManagedCluster has a new parameter oidc_issuer_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter host_group_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter host_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter message_of_the_day
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+
+## 16.4.0 (2021-11-25)
+
+**Features**
+
+  - Model ContainerServiceNetworkProfile has a new parameter service_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter pod_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter ip_families
+  - Model ManagedClusterLoadBalancerProfileManagedOutboundIPs has a new parameter count_ipv6
+
 ## 16.3.0 (2021-10-18)
 
 **Features**

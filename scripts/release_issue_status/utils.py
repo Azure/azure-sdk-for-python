@@ -3,6 +3,7 @@ import json
 import os
 import re
 import logging
+import urllib.parse
 
 from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
 from azure.devops.v6_0.pipelines import models
@@ -35,7 +36,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
         link = link.split(']')[0]
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
 
-    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link)
+    package_name, readme_link, output_folder = _get_pkname_and_readme_link(rest_repo, link, issue_info)
     # Check readme tag format
     if 'package' not in readme_tag:
         readme_tag = 'package-{}'.format(readme_tag)
@@ -53,7 +54,7 @@ def update_issue_body(sdk_repo, rest_repo, issue_number):
     return package_name, readme_link, output_folder
 
 
-def _get_pkname_and_readme_link(rest_repo, link):
+def _get_pkname_and_readme_link(rest_repo, link, issue_info):
     # change commit link to pull json link(i.e. https://github.com/Azure/azure-rest-api-specs/commit/77f5d3b5d2fbae17621ea124485788f496786758#diff-708c2fb843b022cac4af8c6f996a527440c1e0d328abb81f54670747bf14ab1a)
     pk_name = ''
     if 'commit' in link:
@@ -68,9 +69,14 @@ def _get_pkname_and_readme_link(rest_repo, link):
 
         # Get Readme link
         pr_info = rest_repo.get_pull(number=pr_number)
+        
+        if not pr_info.merged:
+            issue_info.create_comment(f' @{issue_info.user.login},please merge your pr first. {link}')
+            raise Exception('PR has not been merged')
+            
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
-            contents_url = pr_changed_file.contents_url
+            contents_url = urllib.parse.unquote(pr_changed_file.contents_url)
             if '/resource-manager' in contents_url:
                 try:
                     pk_url_name.add(re.findall(r'/specification/(.*?)/resource-manager/', contents_url)[0])
@@ -143,7 +149,7 @@ def get_pipeline_url(python_piplines, output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
+def run_pipeline(issue_link, pipeline_url, spec_readme):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -155,15 +161,19 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
         },
         "variables": {
             "BASE_BRANCH": {
-                "value": f"{sdk_issue_object.head.label}",
+                "value": "",
                 "isSecret": False
             },
             "ISSUE_LINK": {
-                "value": f"{issue_link}",
+                "value": issue_link,
                 "isSecret": False
             },
             "PIPELINE_LINK": {
-                "value": f"{pipeline_url}",
+                "value": pipeline_url,
+                "isSecret": False
+            },
+            "SPEC_README": {
+                "value": spec_readme,
                 "isSecret": False
             }
         }
@@ -176,7 +186,7 @@ def run_pipeline(issue_link, sdk_issue_object, pipeline_url):
     credentials = BasicAuthentication('', personal_access_token)
     run_parameters = models.RunPipelineParameters(**paramaters)
     client = PipelinesClient(base_url=organization_url, creds=credentials)
-    result = client.run_pipeline(project='internal',pipeline_id=2500,run_parameters=run_parameters)
+    result = client.run_pipeline(project='internal', pipeline_id=2500, run_parameters=run_parameters)
     if result.state == 'inProgress':
         return True
     else:

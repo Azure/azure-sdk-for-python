@@ -480,6 +480,12 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(blob_client.blob_name, "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg")
         self.assertEqual(blob_client.url, blob_emulator_url)
 
+    def test_from_blob_url_too_short_url(self):
+        """Test that a useful error message is obtained if user gives incorrect URL"""
+        url = "https://testaccount.blob.core.windows.net/containername/"
+        with pytest.raises(ValueError, match="Invalid URL"):
+            _ = BlobClient.from_blob_url(url)
+
     def test_create_client_for_emulator(self):
         container_client = ContainerClient(
             account_url='http://127.0.0.1:1000/devstoreaccount1',

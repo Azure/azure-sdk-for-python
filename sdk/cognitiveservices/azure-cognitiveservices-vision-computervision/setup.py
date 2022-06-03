@@ -80,8 +80,12 @@ setup(
         'azure.cognitiveservices',
         'azure.cognitiveservices.vision',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         'azure-common~=1.1',
     ],
     extras_require={

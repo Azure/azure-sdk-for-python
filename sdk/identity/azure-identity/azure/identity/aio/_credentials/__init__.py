@@ -14,6 +14,7 @@ from .client_secret import ClientSecretCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .vscode import VisualStudioCodeCredential
+from .client_assertion import ClientAssertionCredential
 
 
 __all__ = [
@@ -29,4 +30,5 @@ __all__ = [
     "OnBehalfOfCredential",
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
+    "ClientAssertionCredential",
 ]

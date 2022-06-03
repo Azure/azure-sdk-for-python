@@ -1,5 +1,19 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b2 (Unreleased)
 
-- Initial release.
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.0.0b1 (2021-11-12)
+
+### Features Added
+
+- Initial release with support for authenticating with Mixed Reality services.

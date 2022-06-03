@@ -68,7 +68,8 @@ class _RestRequestsTransportResponseBaseMixin(_HttpResponseBackcompatMixinBase):
         # be able to access the body directly without loading it first (like we have to do
         # in aiohttp). So here, we set self._content to self._internal_response.content,
         # which is similar to read, without the async call.
-        self._content = self._internal_response.content
+        if self._content is None:
+            self._content = self._internal_response.content
         return self._content
 
 class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl, _RestRequestsTransportResponseBaseMixin):

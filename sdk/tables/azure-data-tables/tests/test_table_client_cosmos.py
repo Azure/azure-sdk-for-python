@@ -7,11 +7,13 @@ import pytest
 import platform
 import sys
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables._error import _validate_cosmos_tablename
+from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
 from azure.data.tables import __version__ as  VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from _shared.testcase import (
     TableTestCase,
@@ -29,10 +31,10 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class TestTableClient(AzureTestCase, TableTestCase):
-
+class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")
     @cosmos_decorator
+    @recorded_by_proxy
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -52,6 +54,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
+    @recorded_by_proxy
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -89,6 +92,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
+    @recorded_by_proxy
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(
             self.account_url(tables_cosmos_account_name, "cosmos"),
@@ -105,6 +109,64 @@ class TestTableClient(AzureTestCase, TableTestCase):
         count = 0
         for table in tables:
             count += 1
+            
+    @pytest.mark.live_test_only
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
+        
+        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
+        invalid_table_names = ["\\", "//", "#", "?", "- "]
+        for invalid_name in invalid_table_names:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+            with pytest.raises(ValueError) as error:
+                client.create_table()
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.delete_table()
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            except HttpResponseError as error:
+                    # Delete table returns a MethodNotAllowed for tablename == "\"
+                    if error.error_code != 'MethodNotAllowed':
+                        raise
+            with pytest.raises(ValueError) as error:
+                client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.delete_entity("PK", "RK")
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            with pytest.raises(ValueError) as error:
+                batch = []
+                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                client.submit_transaction(batch)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            
+    @pytest.mark.live_test_only
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_table_name_errors_bad_length(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
+        
+        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
+        client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name="-"*255)
+        with pytest.raises(ValueError) as error:
+            client.create_table()
+        assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+        with pytest.raises(ResourceNotFoundError):
+            client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+        with pytest.raises(ResourceNotFoundError):
+            client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+        with pytest.raises(TableTransactionError) as error:
+            batch = []
+            batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+            client.submit_transaction(batch)
+        assert error.value.error_code == 'ResourceNotFound'
 
 
 class TestTableClientUnit(TableTestCase):
@@ -343,7 +405,7 @@ class TestTableClientUnit(TableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
-
+            assert service.scheme == 'https'
 
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self):
         # Arrange
@@ -423,6 +485,7 @@ class TestTableClientUnit(TableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+            assert service.scheme == 'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
@@ -430,6 +493,7 @@ class TestTableClientUnit(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -437,6 +501,7 @@ class TestTableClientUnit(TableTestCase):
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token.signature)
         assert service.account_name == "custom"
@@ -444,6 +509,7 @@ class TestTableClientUnit(TableTestCase):
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
     def test_create_table_client_with_complete_table_url(self):
         # Arrange
@@ -472,17 +538,6 @@ class TestTableClientUnit(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  self.tables_cosmos_account_name
 
-    def test_create_table_client_with_invalid_name(self):
-        # Arrange
-        table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_cosmos_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
-
     def test_error_with_malformed_conn_str(self):
         # Arrange
 
@@ -509,6 +564,7 @@ class TestTableClientUnit(TableTestCase):
         assert client.credential.named_key.name == 'localhost'
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         client = TableServiceClient("http://localhost:8902/", credential=emulator_credential)
         assert client.url == "http://localhost:8902"
@@ -516,6 +572,7 @@ class TestTableClientUnit(TableTestCase):
         assert client.credential.named_key.name == 'localhost'
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         table = TableClient.from_connection_string(emulator_connstr, 'tablename')
         assert table.url == "http://localhost:8902"
@@ -524,6 +581,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient("http://localhost:8902/", "tablename", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
@@ -532,6 +590,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
@@ -540,6 +599,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme == 'http'
 
     def test_closing_pipeline_client(self):
         # Arrange
@@ -566,3 +626,21 @@ class TestTableClientUnit(TableTestCase):
                 table_name='table')
 
             service.close()
+
+    def test_validate_cosmos_tablename(self):
+        _validate_cosmos_tablename("a")
+        _validate_cosmos_tablename("1")
+        _validate_cosmos_tablename("=-{}!@")
+        _validate_cosmos_tablename("a"*254)
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("\\")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("/")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("#")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("?")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("a ")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("a"*255)

@@ -64,10 +64,8 @@ class DetectLastAnomalySample(object):
 
         try:
             response = client.detect_last_point(request)
-        except AnomalyDetectorError as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
         except Exception as e:
-            print(e)
+            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
 
         if response.is_anomaly:
             print('The latest point is detected as anomaly.')

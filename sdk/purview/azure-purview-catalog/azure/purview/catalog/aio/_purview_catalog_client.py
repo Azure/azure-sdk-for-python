@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from ._configuration import PurviewCatalogClientConfiguration
 from .operations import CollectionOperations, DiscoveryOperations, EntityOperations, GlossaryOperations, LineageOperations, RelationshipOperations, TypesOperations
@@ -22,8 +23,11 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-class PurviewCatalogClient:
-    """Purview Catalog Service is a fully managed cloud service whose users can discover the data sources they need and understand the data sources they find. At the same time, Data Catalog helps organizations get more value from their existing investments. This spec defines REST API of Purview Catalog Service.
+class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
+    """Purview Catalog Service is a fully managed cloud service whose users can discover the data
+    sources they need and understand the data sources they find. At the same time, Data Catalog
+    helps organizations get more value from their existing investments. This spec defines REST API
+    of Purview Catalog Service.
 
     :ivar entity: EntityOperations operations
     :vartype entity: azure.purview.catalog.aio.operations.EntityOperations
@@ -44,6 +48,9 @@ class PurviewCatalogClient:
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -55,7 +62,7 @@ class PurviewCatalogClient:
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}/catalog/api'
-        self._config = PurviewCatalogClientConfiguration(endpoint, credential, **kwargs)
+        self._config = PurviewCatalogClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()

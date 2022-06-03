@@ -1,5 +1,13 @@
 # Release History
 
+## 16.1.0 (2022-02-24)
+
+**Features**
+
+  - Added operation BatchAccountOperations.get_detector
+  - Added operation BatchAccountOperations.list_detectors
+  - Model NetworkConfiguration has a new parameter dynamic_v_net_assignment_scope
+
 ## 16.0.0 (2021-07-30)
 
 **Features**

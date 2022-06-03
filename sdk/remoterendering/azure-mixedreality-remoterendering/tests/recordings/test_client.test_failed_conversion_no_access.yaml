@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mixedreality-authentication/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      X-MRC-CV:
+      - H9NLFwo+RveSJaH/6wrvL9
+    method: GET
+    uri: https://sts.eastus.mixedreality.azure.com/Accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/token?api-version=2019-02-28-preview
+  response:
+    body:
+      string: '{"AccessToken":"faketoken.eyJleHAiOjIxNDc0ODM2NDd9.faketoken"}'
+    headers:
+      cache-control:
+      - no-store,no-cache
+      content-length:
+      - '1240'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Mar 2021 11:54:26 GMT
+      ms-cv:
+      - H4xguOAWTEOTfQnT7MJHhw.0
+      pragma:
+      - no-cache
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"settings": {"inputLocation": {"storageContainerUri": "https://arrstorageaccount.blob.core.windows.net/test",
+      "blobPrefix": "Input", "relativeInputAssetPath": "testBox.fbx"}, "outputLocation":
+      {"storageContainerUri": "https://arrstorageaccount.blob.core.windows.net/test",
+      "blobPrefix": "b3bea9f9-db26-45af-a4a1-dc007c1c2ce9"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '325'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/b3bea9f9-db26-45af-a4a1-dc007c1c2ce9?api-version=2021-01-01
+  response:
+    body:
+      string: '{"error":{"code":"DelegatedResourceAccessError","message":"Error accessing
+        connected storage account due to insufficient permissions. Check if the Mixed
+        Reality resource has correct permissions assigned. Documentation on how to
+        link Remote Rendering Accounts to storage can be found here: https://docs.microsoft.com/azure/remote-rendering/how-tos/create-an-account#link-storage-accounts."}}'
+    headers:
+      api-supported-versions:
+      - 2021-01-01-preview, 2021-01-01
+      content-length:
+      - '390'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Mar 2021 11:54:27 GMT
+      ms-cv:
+      - cq5BbyP2UEO1b/xLwwujUg.0
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 403
+      message: Forbidden
+version: 1

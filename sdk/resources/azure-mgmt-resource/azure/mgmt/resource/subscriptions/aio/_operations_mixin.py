@@ -9,13 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core.exceptions import ARMErrorFormat
+from typing import Any, Optional
 
 
 class SubscriptionClientOperationsMixin(object):
@@ -31,8 +25,9 @@ class SubscriptionClientOperationsMixin(object):
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type.
-        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName
+         type. Default value is None.
+        :type resource_name_definition:
+         ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckResourceNameResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult

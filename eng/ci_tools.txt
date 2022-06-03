@@ -1,33 +1,32 @@
 # requirements leveraged by ci tools
-cryptography==3.1
+cryptography<4
 setuptools==44.1.0; python_version == '2.7'
 setuptools==46.4.0; python_version >= '3.5'
-virtualenv==20.0.23
+virtualenv==20.13.2
 wheel==0.37.0
 Jinja2==2.11.2
 packaging==20.4
 tox==3.15.0
 tox-monorepo==0.1.2
-twine==1.15.0; python_version == '2.7' or python_version == '3.5'
 twine==3.1.1; python_version >= '3.6'
 pathlib2==2.3.5
-readme-renderer[md]==25.0; python_version < '3.10'
-doc-warden==0.7.1
+doc-warden==0.7.2
 # we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
 coverage==4.5.4
 codecov==2.1.0
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
-pip==20.3
-black==21.6b0; python_version >= '3.6'
+pip==20.3.3
 wrapt<=1.12.1; python_version == '2.7'
+markupsafe==2.0.1; python_version > '2.7'
+markupsafe==1.1.1; python_version == '2.7'
 
 # python 3.10 pinned packages
 cffi==1.15.0rc2; python_version >= '3.10'
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
-pyOpenSSL==19.1.0
+pyOpenSSL==21.0.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0

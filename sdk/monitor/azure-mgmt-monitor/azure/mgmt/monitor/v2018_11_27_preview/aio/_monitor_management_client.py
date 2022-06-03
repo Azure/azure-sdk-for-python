@@ -6,48 +6,74 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from .. import models
+from ._configuration import MonitorManagementClientConfiguration
+from .operations import VMInsightsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import MonitorManagementClientConfiguration
-from .operations import VMInsightsOperations
-from .. import models
-
-
-class MonitorManagementClient(object):
+class MonitorManagementClient:
     """Monitor Management Client.
 
     :ivar vm_insights: VMInsightsOperations operations
-    :vartype vm_insights: $(python-base-namespace).v2018_11_27_preview.aio.operations.VMInsightsOperations
+    :vartype vm_insights:
+     $(python-base-namespace).v2018_11_27_preview.aio.operations.VMInsightsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :type base_url: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = MonitorManagementClientConfiguration(credential, **kwargs)
+        self._config = MonitorManagementClientConfiguration(credential=credential, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.vm_insights = VMInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.vm_insights = VMInsightsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

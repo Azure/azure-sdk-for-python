@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -191,7 +196,7 @@ def manage_provisioned_throughput(db, id):
         container = db.get_container_client(container=id)
 
         # now use its _self to query for Offers
-        offer = container.read_offer()
+        offer = container.get_throughput()
 
         print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
 
@@ -212,6 +217,7 @@ def read_Container(db, id):
 
     try:
         container = db.get_container_client(id)
+        container.read()
         print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
     except exceptions.CosmosResourceNotFoundError:

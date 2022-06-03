@@ -53,6 +53,7 @@ try:
     from ._models_py3 import ApplicationTypeImageStorePath
     from ._models_py3 import ApplicationTypeInfo
     from ._models_py3 import ApplicationTypeManifest
+    from ._models_py3 import ApplicationUpdateDescription
     from ._models_py3 import ApplicationUpgradeCompletedEvent
     from ._models_py3 import ApplicationUpgradeDescription
     from ._models_py3 import ApplicationUpgradeDomainCompletedEvent
@@ -145,6 +146,7 @@ try:
     from ._models_py3 import ContainerState
     from ._models_py3 import CreateComposeDeploymentDescription
     from ._models_py3 import CurrentUpgradeDomainProgressInfo
+    from ._models_py3 import CurrentUpgradeUnitsProgressInfo
     from ._models_py3 import DeactivationIntentDescription
     from ._models_py3 import DefaultExecutionPolicy
     from ._models_py3 import DeletePropertyBatchOperation
@@ -509,14 +511,17 @@ try:
     from ._models_py3 import UpdateClusterUpgradeDescription
     from ._models_py3 import UpdatePartitionLoadResult
     from ._models_py3 import UpgradeDomainDeltaNodesCheckHealthEvaluation
+    from ._models_py3 import UpgradeDomainDeployedApplicationsHealthEvaluation
     from ._models_py3 import UpgradeDomainInfo
     from ._models_py3 import UpgradeDomainNodesHealthEvaluation
     from ._models_py3 import UpgradeOrchestrationServiceState
     from ._models_py3 import UpgradeOrchestrationServiceStateSummary
+    from ._models_py3 import UpgradeUnitInfo
     from ._models_py3 import UploadChunkRange
     from ._models_py3 import UploadSession
     from ._models_py3 import UploadSessionInfo
     from ._models_py3 import UsageInfo
+    from ._models_py3 import ValidateClusterUpgradeResult
     from ._models_py3 import ValidationFailedChaosEvent
     from ._models_py3 import VolumeProviderParametersAzureFile
     from ._models_py3 import VolumeReference
@@ -570,6 +575,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationTypeImageStorePath
     from ._models import ApplicationTypeInfo
     from ._models import ApplicationTypeManifest
+    from ._models import ApplicationUpdateDescription
     from ._models import ApplicationUpgradeCompletedEvent
     from ._models import ApplicationUpgradeDescription
     from ._models import ApplicationUpgradeDomainCompletedEvent
@@ -662,6 +668,7 @@ except (SyntaxError, ImportError):
     from ._models import ContainerState
     from ._models import CreateComposeDeploymentDescription
     from ._models import CurrentUpgradeDomainProgressInfo
+    from ._models import CurrentUpgradeUnitsProgressInfo
     from ._models import DeactivationIntentDescription
     from ._models import DefaultExecutionPolicy
     from ._models import DeletePropertyBatchOperation
@@ -1026,14 +1033,17 @@ except (SyntaxError, ImportError):
     from ._models import UpdateClusterUpgradeDescription
     from ._models import UpdatePartitionLoadResult
     from ._models import UpgradeDomainDeltaNodesCheckHealthEvaluation
+    from ._models import UpgradeDomainDeployedApplicationsHealthEvaluation
     from ._models import UpgradeDomainInfo
     from ._models import UpgradeDomainNodesHealthEvaluation
     from ._models import UpgradeOrchestrationServiceState
     from ._models import UpgradeOrchestrationServiceStateSummary
+    from ._models import UpgradeUnitInfo
     from ._models import UploadChunkRange
     from ._models import UploadSession
     from ._models import UploadSessionInfo
     from ._models import UsageInfo
+    from ._models import ValidateClusterUpgradeResult
     from ._models import ValidationFailedChaosEvent
     from ._models import VolumeProviderParametersAzureFile
     from ._models import VolumeReference
@@ -1137,6 +1147,7 @@ from ._service_fabric_client_ap_is_enums import (
     SecretKind,
     ServiceCorrelationScheme,
     ServiceEndpointRole,
+    ServiceHostUpgradeImpact,
     ServiceKind,
     ServiceLoadMetricWeight,
     ServiceOperationName,
@@ -1155,6 +1166,7 @@ from ._service_fabric_client_ap_is_enums import (
     UpgradeSortOrder,
     UpgradeState,
     UpgradeType,
+    UpgradeUnitState,
     VolumeProvider,
 )
 
@@ -1202,6 +1214,7 @@ __all__ = [
     'ApplicationTypeImageStorePath',
     'ApplicationTypeInfo',
     'ApplicationTypeManifest',
+    'ApplicationUpdateDescription',
     'ApplicationUpgradeCompletedEvent',
     'ApplicationUpgradeDescription',
     'ApplicationUpgradeDomainCompletedEvent',
@@ -1294,6 +1307,7 @@ __all__ = [
     'ContainerState',
     'CreateComposeDeploymentDescription',
     'CurrentUpgradeDomainProgressInfo',
+    'CurrentUpgradeUnitsProgressInfo',
     'DeactivationIntentDescription',
     'DefaultExecutionPolicy',
     'DeletePropertyBatchOperation',
@@ -1658,14 +1672,17 @@ __all__ = [
     'UpdateClusterUpgradeDescription',
     'UpdatePartitionLoadResult',
     'UpgradeDomainDeltaNodesCheckHealthEvaluation',
+    'UpgradeDomainDeployedApplicationsHealthEvaluation',
     'UpgradeDomainInfo',
     'UpgradeDomainNodesHealthEvaluation',
     'UpgradeOrchestrationServiceState',
     'UpgradeOrchestrationServiceStateSummary',
+    'UpgradeUnitInfo',
     'UploadChunkRange',
     'UploadSession',
     'UploadSessionInfo',
     'UsageInfo',
+    'ValidateClusterUpgradeResult',
     'ValidationFailedChaosEvent',
     'VolumeProviderParametersAzureFile',
     'VolumeReference',
@@ -1687,6 +1704,7 @@ __all__ = [
     'UpgradeSortOrder',
     'FailureAction',
     'UpgradeDomainState',
+    'UpgradeUnitState',
     'UpgradeState',
     'NodeUpgradePhase',
     'FailureReason',
@@ -1760,6 +1778,7 @@ __all__ = [
     'RepairTaskHealthCheckState',
     'ScalingTriggerKind',
     'ScalingMechanismKind',
+    'ServiceHostUpgradeImpact',
     'ResourceStatus',
     'SecretKind',
     'VolumeProvider',

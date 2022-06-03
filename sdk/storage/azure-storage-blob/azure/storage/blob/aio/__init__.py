@@ -6,6 +6,7 @@
 
 import os
 
+from ._list_blobs_helper import BlobPrefix
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
 from ._blob_client_async import BlobClient
@@ -132,6 +133,7 @@ __all__ = [
     'upload_blob_to_url',
     'download_blob_from_url',
     'BlobServiceClient',
+    'BlobPrefix',
     'ContainerClient',
     'BlobClient',
     'BlobLeaseClient',

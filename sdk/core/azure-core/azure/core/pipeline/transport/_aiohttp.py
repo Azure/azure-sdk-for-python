@@ -28,10 +28,6 @@ from typing import (
     Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
 from collections.abc import AsyncIterator
-try:
-    import cchardet as chardet
-except ImportError:  # pragma: no cover
-    import chardet  # type: ignore
 
 import logging
 import asyncio
@@ -40,7 +36,7 @@ import aiohttp
 from multidict import CIMultiDict
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
 from azure.core.pipeline import Pipeline
 
 from ._base import HttpRequest
@@ -101,12 +97,14 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         if not self.session and self._session_owner:
             jar = aiohttp.DummyCookieJar()
-            self.session = aiohttp.ClientSession(
-                loop=self._loop,
-                trust_env=self._use_env_settings,
-                cookie_jar=jar,
-                auto_decompress=False,
-            )
+            clientsession_kwargs = {
+                "trust_env": self._use_env_settings,
+                "cookie_jar": jar,
+                "auto_decompress": False,
+            }
+            if self._loop is not None:
+                clientsession_kwargs["loop"] = self._loop
+            self.session = aiohttp.ClientSession(**clientsession_kwargs)
         if self.session is not None:
             await self.session.__aenter__()
 
@@ -304,6 +302,12 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         except _ResponseStopIteration:
             internal_response.close()
             raise StopAsyncIteration()
+        except aiohttp.client_exceptions.ClientPayloadError as err:
+            # This is the case that server closes connection before we finish the reading. aiohttp library
+            # raises ClientPayloadError.
+            _LOGGER.warning("Incomplete download: %s", err)
+            internal_response.close()
+            raise IncompleteReadError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -331,7 +335,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._content = None
-        self._decompressed_content = None
+        self._decompressed_content = False
         self._decompress = decompress
 
     def body(self) -> bytes:
@@ -373,6 +377,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
                     "Cannot guess the encoding of a not yet read body"
                 )
             else:
+                try:
+                    import cchardet as chardet
+                except ImportError:  # pragma: no cover
+                    try:
+                        import chardet  # type: ignore
+                    except ImportError:  # pragma: no cover
+                        import charset_normalizer as chardet  # type: ignore[no-redef]
                 encoding = chardet.detect(body)["encoding"]
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
@@ -381,7 +392,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
-        self._content = await self.internal_response.read()
+        try:
+            self._content = await self.internal_response.read()
+        except aiohttp.client_exceptions.ClientPayloadError as err:
+            # This is the case that server closes connection before we finish the reading. aiohttp library
+            # raises ClientPayloadError.
+            raise IncompleteReadError(err, error=err)
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.

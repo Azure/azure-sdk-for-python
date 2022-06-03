@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the action.
     """
 
     EMAIL_CONTACTS = "EmailContacts"
     AUTO_RENEW = "AutoRenew"
 
-class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeletionRecoveryLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Reflects the deletion recovery level currently in effect for keys in the current vault. If it
     contains 'Purgeable' the key can be permanently deleted by a privileged user; otherwise, only
     the system can purge the key, at the end of the retention interval.
@@ -76,7 +61,7 @@ class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: that the subscription itself cannot be cancelled.
     CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
 
-class JsonWebKeyCurveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonWebKeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName.
     """
 
@@ -89,7 +74,7 @@ class JsonWebKeyCurveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The SECG SECP256K1 elliptic curve.
     P256_K = "P-256K"
 
-class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonWebKeyEncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """algorithm identifier
     """
 
@@ -97,7 +82,7 @@ class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str
     RSA_OAEP256 = "RSA-OAEP-256"
     RSA1_5 = "RSA1_5"
 
-class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonWebKeyOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """JSON web key operations. For more information, see JsonWebKeyOperation.
     """
 
@@ -108,7 +93,7 @@ class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
 
-class JsonWebKeySignatureAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonWebKeySignatureAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The signing/verification algorithm identifier. For more information on possible algorithm
     types, see JsonWebKeySignatureAlgorithm.
     """
@@ -139,7 +124,7 @@ class JsonWebKeySignatureAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str,
     #: ECDSA using P-256K and SHA-256, as described in https://tools.ietf.org/html/rfc7518.
     ES256_K = "ES256K"
 
-class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonWebKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """JsonWebKey Key Type (kty), as defined in
     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40.
     """
@@ -155,7 +140,7 @@ class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Not supported in this version. Octet sequence (used to represent symmetric keys).
     OCT = "oct"
 
-class KeyUsageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyUsageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DIGITAL_SIGNATURE = "digitalSignature"
     NON_REPUDIATION = "nonRepudiation"
@@ -167,7 +152,7 @@ class KeyUsageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENCIPHER_ONLY = "encipherOnly"
     DECIPHER_ONLY = "decipherOnly"
 
-class SasTokenType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SasTokenType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of SAS token the SAS definition will create.
     """
 

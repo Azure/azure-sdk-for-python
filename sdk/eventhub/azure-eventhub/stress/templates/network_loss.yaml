@@ -16,7 +16,7 @@ spec:
   action: loss
   direction: to
   externalTargets:
-    - 'eh-stress-{{ .Release.Name }}-{{ .Release.Revision }}.servicebus.windows.net'
+    - 'servicebus.windows.net'
   mode: one
   selector:
     labelSelectors:

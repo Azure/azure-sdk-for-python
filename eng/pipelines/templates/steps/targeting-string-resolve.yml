@@ -1,0 +1,18 @@
+parameters:
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+
+steps:
+  - pwsh: |
+      $setting = "${{ parameters.BuildTargetingString }}"
+
+      # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
+      if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+          $setting = "$(BuildTargetingString)"
+      }
+
+      Write-Host "Setting TargetingString to $setting"
+      Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
+    displayName: Check override of targeting string
+    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))

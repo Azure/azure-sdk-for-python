@@ -1,5 +1,16 @@
 # Release History
 
+## 1.1.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
 ## 1.0.1 (2021-06-08)
 ### Bug Fixes
 - Fixed async client to use async bearer token credential policy instead of sync policy.

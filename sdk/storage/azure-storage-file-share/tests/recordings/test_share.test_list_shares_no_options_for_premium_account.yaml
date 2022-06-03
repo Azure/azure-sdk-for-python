@@ -65,7 +65,7 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://pyacrstoragestorname.file.core.windows.net/\"><Shares><Share><Name>sharec39b1818</Name><Properties><Last-Modified>Tue,
         10 Dec 2019 04:36:15 GMT</Last-Modified><Etag>\"0x8D77D2A7E0A0773\"</Etag><Quota>100</Quota><EnabledProtocols>SMB</EnabledProtocols><ProvisionedIops>100</ProvisionedIops><ProvisionedIngressMBps>44</ProvisionedIngressMBps><ProvisionedEgressMBps>66</ProvisionedEgressMBps><NextAllowedQuotaDowngradeTime>Tue,
-        10 Dec 2019 04:36:15 GMT</NextAllowedQuotaDowngradeTime></Properties></Share></Shares><NextMarker
+        10 Dec 2019 04:36:15 GMT</NextAllowedQuotaDowngradeTime><ProvisionedBandwidthMiBps>110</ProvisionedBandwidthMiBps></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:
@@ -107,7 +107,7 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://pyacrstoragestorname.file.core.windows.net/\"><Shares><Share><Name>sharec39b1818</Name><Properties><Last-Modified>Tue,
         10 Dec 2019 04:36:15 GMT</Last-Modified><Etag>\"0x8D77D2A7E0A0773\"</Etag><Quota>100</Quota><EnabledProtocols>SMB</EnabledProtocols><ProvisionedIops>100</ProvisionedIops><ProvisionedIngressMBps>44</ProvisionedIngressMBps><ProvisionedEgressMBps>66</ProvisionedEgressMBps><NextAllowedQuotaDowngradeTime>Tue,
-        10 Dec 2019 04:36:15 GMT</NextAllowedQuotaDowngradeTime></Properties></Share></Shares><NextMarker
+        10 Dec 2019 04:36:15 GMT</NextAllowedQuotaDowngradeTime><ProvisionedBandwidthMiBps>110</ProvisionedBandwidthMiBps></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       Content-Type:

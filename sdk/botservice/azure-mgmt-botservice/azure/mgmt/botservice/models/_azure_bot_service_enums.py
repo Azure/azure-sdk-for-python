@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ChannelName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ChannelName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ALEXA_CHANNEL = "AlexaChannel"
     FACEBOOK_CHANNEL = "FacebookChannel"
@@ -41,15 +26,16 @@ class ChannelName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SMS_CHANNEL = "SmsChannel"
     LINE_CHANNEL = "LineChannel"
     DIRECT_LINE_SPEECH_CHANNEL = "DirectLineSpeechChannel"
+    OUTLOOK_CHANNEL = "OutlookChannel"
 
-class Key(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Key(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines which key is to be regenerated
     """
 
     KEY1 = "key1"
     KEY2 = "key2"
 
-class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Kind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of bot service
     """
 
@@ -59,19 +45,61 @@ class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FUNCTION = "function"
     AZUREBOT = "azurebot"
 
-class RegenerateKeysChannelName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MsaAppType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Microsoft App Type for the bot
+    """
+
+    USER_ASSIGNED_MSI = "UserAssignedMSI"
+    SINGLE_TENANT = "SingleTenant"
+    MULTI_TENANT = "MultiTenant"
+
+class OperationResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of the operation being performed.
+    """
+
+    CANCELED = "Canceled"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    REQUESTED = "Requested"
+    RUNNING = "Running"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether the bot is in an isolated network
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class RegenerateKeysChannelName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     WEB_CHAT_CHANNEL = "WebChatChannel"
     DIRECT_LINE_CHANNEL = "DirectLineChannel"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The name of SKU.
     """
 
     F0 = "F0"
     S1 = "S1"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the sku tier. This is based on the SKU name.
     """
 

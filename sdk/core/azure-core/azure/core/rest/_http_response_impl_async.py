@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import AsyncIterator
+from typing import Any, AsyncIterator
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
 from ._http_response_impl import (
     _HttpResponseBaseImpl, _HttpResponseBackcompatMixinBase, _RestHttpClientTransportResponseBase
@@ -90,7 +90,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         await self._set_read_checks()
         return self._content
 
-    async def iter_raw(self) -> AsyncIterator[bytes]:
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
@@ -102,7 +102,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
             yield part
         await self.close()
 
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
@@ -145,10 +145,10 @@ class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase,
     """Create a Rest HTTPResponse from an http.client response.
     """
 
-    async def iter_bytes(self):
+    async def iter_bytes(self, **kwargs):
         raise TypeError("We do not support iter_bytes for this transport response")
 
-    async def iter_raw(self):
+    async def iter_raw(self, **kwargs):
         raise TypeError("We do not support iter_raw for this transport response")
 
     async def read(self):

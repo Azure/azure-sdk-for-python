@@ -1,20 +1,12 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
 
-import six
-
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
-    RecognizeEntitiesAction,
-    RecognizePiiEntitiesAction,
-    RecognizeLinkedEntitiesAction,
-    AnalyzeSentimentAction,
-    ExtractSummaryAction,
     _AnalyzeActionsType,
 )
 
@@ -31,13 +23,13 @@ def _validate_input(documents, hint, whole_input_hint):
     if not documents:
         raise ValueError("Input documents can not be empty or None")
 
-    if isinstance(documents, six.string_types):
+    if isinstance(documents, str):
         raise TypeError("Input documents cannot be a string.")
 
     if isinstance(documents, dict):
         raise TypeError("Input documents cannot be a dict")
 
-    if not all(isinstance(x, six.string_types) for x in documents):
+    if not all(isinstance(x, str) for x in documents):
         if not all(
             isinstance(x, (dict, TextDocumentInput, DetectLanguageInput))
             for x in documents
@@ -48,7 +40,7 @@ def _validate_input(documents, hint, whole_input_hint):
 
     request_batch = []
     for idx, doc in enumerate(documents):
-        if isinstance(doc, six.string_types):
+        if isinstance(doc, str):
             if hint == "country_hint" and whole_input_hint.lower() == "none":
                 whole_input_hint = ""
             document = {"id": str(idx), hint: whole_input_hint, "text": doc}
@@ -88,36 +80,23 @@ def _validate_input(documents, hint, whole_input_hint):
     return request_batch
 
 
-def _determine_action_type(action):
-    if isinstance(action, RecognizeEntitiesAction):
+def _determine_action_type(action):  # pylint: disable=too-many-return-statements
+    if action.__class__.__name__ in ["EntitiesTask", "EntitiesLROTask"]:
         return _AnalyzeActionsType.RECOGNIZE_ENTITIES
-    if isinstance(action, RecognizePiiEntitiesAction):
+    if action.__class__.__name__ in ["PiiTask", "PiiLROTask"]:
         return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-    if isinstance(action, RecognizeLinkedEntitiesAction):
+    if action.__class__.__name__ in ["EntityLinkingTask", "EntityLinkingLROTask"]:
         return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-    if isinstance(action, AnalyzeSentimentAction):
+    if action.__class__.__name__ in ["SentimentAnalysisTask", "SentimentAnalysisLROTask"]:
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
-    if isinstance(action, ExtractSummaryAction):
+    if action.__class__.__name__ == "ExtractiveSummarizationLROTask":
         return _AnalyzeActionsType.EXTRACT_SUMMARY
+    if action.__class__.__name__ == "CustomEntitiesLROTask":
+        return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
+    if action.__class__.__name__ == "CustomSingleLabelClassificationLROTask":
+        return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
+    if action.__class__.__name__ == "CustomMultiLabelClassificationLROTask":
+        return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
+    if action.__class__.__name__ == "HealthcareLROTask":
+        return _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
-
-
-def _check_string_index_type_arg(
-    string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"
-):
-    string_index_type = None
-
-    if api_version == "v3.0":
-        if string_index_type_arg is not None:
-            raise ValueError(
-                "'string_index_type' is only available for API version V3_1 and up"
-            )
-
-    else:
-        if string_index_type_arg is None:
-            string_index_type = string_index_type_default
-
-        else:
-            string_index_type = string_index_type_arg
-
-    return string_index_type

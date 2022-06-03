@@ -1,5 +1,45 @@
 # Release History
 
+## 10.0.0 (2022-05-26)
+
+**Features**
+
+  - Model Policies has a new parameter azure_ad_authentication_as_arm_policy
+  - Model Policies has a new parameter soft_delete_policy
+
+**Breaking changes**
+
+  - Model NetworkRuleSet no longer has parameter virtual_network_rules
+
+## 9.1.0 (2022-03-03)
+
+**Features**
+
+  - Added operation RegistriesOperations.begin_generate_credentials
+  - Model NetworkRuleSet has a new parameter virtual_network_rules
+  - Model Registry has a new parameter anonymous_pull_enabled
+  - Model RegistryUpdateParameters has a new parameter anonymous_pull_enabled
+
+## 9.0.0 (2022-01-19)
+
+**Features**
+
+  - Added operation RegistriesOperations.get_private_link_resource
+
+**Breaking changes**
+
+  - Model NetworkRuleSet no longer has parameter virtual_network_rules
+  - Model Registry no longer has parameter anonymous_pull_enabled
+  - Model RegistryUpdateParameters no longer has parameter anonymous_pull_enabled
+  - Removed operation RegistriesOperations.begin_generate_credentials
+
+## 8.2.0 (2021-10-26)
+
+**Features**
+
+  - Model ConnectedRegistryUpdateParameters has a new parameter notifications_list
+  - Model ConnectedRegistry has a new parameter notifications_list
+
 ## 8.1.0 (2021-07-22)
 
 **Features**

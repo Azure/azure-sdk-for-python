@@ -9,16 +9,17 @@
 from copy import deepcopy
 from typing import Any, Awaitable
 
+from msrest import Deserializer, Serializer
+
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import CommunicationNetworkTraversalClientConfiguration
 from .operations import CommunicationNetworkTraversalOperations
 
 class CommunicationNetworkTraversalClient:
-    """Azure Communication Networking Service.
+    """Azure Communication Network Traversal Service.
 
     :ivar communication_network_traversal: CommunicationNetworkTraversalOperations operations
     :vartype communication_network_traversal:
@@ -26,6 +27,9 @@ class CommunicationNetworkTraversalClient:
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com.
     :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -34,7 +38,7 @@ class CommunicationNetworkTraversalClient:
         **kwargs: Any
     ) -> None:
         _base_url = '{endpoint}'
-        self._config = CommunicationNetworkTraversalClientConfiguration(endpoint, **kwargs)
+        self._config = CommunicationNetworkTraversalClientConfiguration(endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

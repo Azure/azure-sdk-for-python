@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: logic
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-logic
       safeName: azuremgmtlogic

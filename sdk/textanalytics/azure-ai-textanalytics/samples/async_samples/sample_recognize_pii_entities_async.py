@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -20,8 +18,8 @@ USAGE:
     python sample_recognize_pii_entities_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -31,7 +29,7 @@ import asyncio
 async def sample_recognize_pii_entities_async():
     print(
         "In this sample we will be going through our customer's loan payment information and redacting "
-        "all PII (personally identifable information) before storing this information on our public website. "
+        "all PII (personally identifiable information) before storing this information on our public website. "
         "I'm also looking to explicitly extract the SSN information, so I can update my database with SSNs for "
         "our customers"
     )
@@ -39,8 +37,8 @@ async def sample_recognize_pii_entities_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -61,8 +59,8 @@ async def sample_recognize_pii_entities_async():
         "I also want to comb through all of the entities that got redacted"
     )
     for idx, doc in enumerate(docs):
-        print("Document text: {}".format(documents[idx]))
-        print("Redacted document text: {}".format(doc.redacted_text))
+        print(f"Document text: {documents[idx]}")
+        print(f"Redacted document text: {doc.redacted_text}")
         for entity in doc.entities:
             print("...Entity '{}' with category '{}' got redacted".format(
                 entity.text, entity.category
@@ -75,14 +73,14 @@ async def sample_recognize_pii_entities_async():
         "I also want to be fairly confident that what I'm storing is an SSN, so let's also "
         "ensure that we're > 60% positive the entity is a SSN"
     )
-    ssns = []
+    social_security_numbers = []
     for doc in docs:
         for entity in doc.entities:
             if entity.category == 'USSocialSecurityNumber' and entity.confidence_score >= 0.6:
-                ssns.append(entity.text)
+                social_security_numbers.append(entity.text)
 
     print("We have extracted the following SSNs as well: '{}'".format(
-        "', '".join(ssns)
+        "', '".join(social_security_numbers)
     ))
 
 
@@ -90,5 +88,4 @@ async def main():
     await sample_recognize_pii_entities_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

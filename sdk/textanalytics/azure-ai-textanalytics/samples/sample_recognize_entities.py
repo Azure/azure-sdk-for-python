@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -18,8 +16,8 @@ USAGE:
     python sample_recognize_entities.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -36,8 +34,8 @@ def sample_recognize_entities():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     reviews = [
@@ -54,7 +52,7 @@ def sample_recognize_entities():
 
     for idx, review in enumerate(result):
         for entity in review.entities:
-            print("Entity '{}' has category '{}'".format(entity.text, entity.category))
+            print(f"Entity '{entity.text}' has category '{entity.category}'")
     # [END recognize_entities]
             if entity.category == 'Organization':
                 organization_to_reviews.setdefault(entity.text, [])

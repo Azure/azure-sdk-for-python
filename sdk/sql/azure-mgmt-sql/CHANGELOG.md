@@ -1,5 +1,53 @@
 # Release History
 
+## 4.0.0b2 (2022-03-08)
+
+**Features**
+
+  - Added operation group DistributedAvailabilityGroupsOperations
+  - Added operation group IPv6FirewallRulesOperations
+  - Added operation group ServerTrustCertificatesOperations
+  - Model ElasticPool has a new parameter high_availability_replica_count
+  - Model ElasticPoolUpdate has a new parameter high_availability_replica_count
+
+**Breaking changes**
+
+  - Removed operation group OperationsHealthOperations
+
+## 4.0.0b1 (2021-12-21)
+
+**Features**
+
+  - Model ManagedInstanceUpdate has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter service_principal
+  - Model Database has a new parameter identity
+  - Model Database has a new parameter primary_delegated_identity_client_id
+  - Model Database has a new parameter federated_client_id
+  - Model ManagedInstance has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter service_principal
+  - Model DatabaseUpdate has a new parameter identity
+  - Model DatabaseUpdate has a new parameter primary_delegated_identity_client_id
+  - Model DatabaseUpdate has a new parameter federated_client_id
+  - Added operation TransparentDataEncryptionsOperations.list_by_database
+  - Added operation LedgerDigestUploadsOperations.begin_create_or_update
+  - Added operation LedgerDigestUploadsOperations.begin_disable
+  - Added operation ServerConnectionPoliciesOperations.list_by_server
+  - Added operation ServerConnectionPoliciesOperations.begin_create_or_update
+
+**Breaking changes**
+
+  - Operation TransparentDataEncryptionsOperations.create_or_update has a new signature
+  - Operation TransparentDataEncryptionsOperations.get has a new signature
+  - Model ManagedInstanceUpdate no longer has parameter storage_account_type
+  - Model ManagedInstance no longer has parameter storage_account_type
+  - Model RestorableDroppedDatabase no longer has parameter elastic_pool_id
+  - Removed operation LedgerDigestUploadsOperations.create_or_update
+  - Removed operation LedgerDigestUploadsOperations.disable
+  - Removed operation ServerConnectionPoliciesOperations.create_or_update
+  - Removed operation group TransparentDataEncryptionActivitiesOperations
+
 ## 3.0.1 (2021-07-15)
 
 **Bugfixes**

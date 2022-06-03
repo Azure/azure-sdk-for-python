@@ -52,7 +52,7 @@ class APIError(Model):
 
 
 class APIErrorException(HttpOperationError):
-    """Server responded with exception of type: 'APIError'.
+    """Server responsed with exception of type: 'APIError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -82,7 +82,7 @@ class ApplySnapshotRequest(Model):
     """
 
     _validation = {
-        'object_id': {'required': True},
+        'object_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
@@ -317,6 +317,12 @@ class FaceAttributes(Model):
     :type noise: ~azure.cognitiveservices.vision.face.models.Noise
     :param mask: Properties describing the presence of a mask on a given face.
     :type mask: ~azure.cognitiveservices.vision.face.models.Mask
+    :param quality_for_recognition: Properties describing the overall image
+     quality regarding whether the image being used in the detection is of
+     sufficient quality to attempt face recognition on. Possible values
+     include: 'Low', 'Medium', 'High'
+    :type quality_for_recognition: str or
+     ~azure.cognitiveservices.vision.face.models.QualityForRecognition
     """
 
     _attribute_map = {
@@ -335,6 +341,7 @@ class FaceAttributes(Model):
         'exposure': {'key': 'exposure', 'type': 'Exposure'},
         'noise': {'key': 'noise', 'type': 'Noise'},
         'mask': {'key': 'mask', 'type': 'Mask'},
+        'quality_for_recognition': {'key': 'qualityForRecognition', 'type': 'QualityForRecognition'},
     }
 
     def __init__(self, **kwargs):
@@ -354,6 +361,7 @@ class FaceAttributes(Model):
         self.exposure = kwargs.get('exposure', None)
         self.noise = kwargs.get('noise', None)
         self.mask = kwargs.get('mask', None)
+        self.quality_for_recognition = kwargs.get('quality_for_recognition', None)
 
 
 class FaceLandmarks(Model):
@@ -498,15 +506,22 @@ class FaceLandmarks(Model):
         self.under_lip_bottom = kwargs.get('under_lip_bottom', None)
 
 
-class NameAndUserDataContract(Model):
+class NonNullableNameAndNullableUserDataContract(Model):
     """A combination of user defined name and user specified data for the person,
     largePersonGroup/personGroup, and largeFaceList/faceList.
 
-    :param name: User defined name, maximum length is 128.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'user_data': {'max_length': 16384},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -514,16 +529,18 @@ class NameAndUserDataContract(Model):
     }
 
     def __init__(self, **kwargs):
-        super(NameAndUserDataContract, self).__init__(**kwargs)
+        super(NonNullableNameAndNullableUserDataContract, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.user_data = kwargs.get('user_data', None)
 
 
-class MetaDataContract(NameAndUserDataContract):
+class MetaDataContract(NonNullableNameAndNullableUserDataContract):
     """A combination of user defined name and user specified data and recognition
     model name for largePersonGroup/personGroup, and largeFaceList/faceList.
 
-    :param name: User defined name, maximum length is 128.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
@@ -533,6 +550,11 @@ class MetaDataContract(NameAndUserDataContract):
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'user_data': {'max_length': 16384},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -550,7 +572,7 @@ class FaceList(MetaDataContract):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: User defined name, maximum length is 128.
+    :param name: Required. User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
@@ -567,7 +589,9 @@ class FaceList(MetaDataContract):
     """
 
     _validation = {
-        'face_list_id': {'required': True},
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'user_data': {'max_length': 16384},
+        'face_list_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
@@ -687,6 +711,9 @@ class FindSimilarRequest(Model):
 
     _validation = {
         'face_id': {'required': True},
+        'face_list_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'large_face_list_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'face_ids': {'max_items': 1000},
         'max_num_of_candidates_returned': {'maximum': 1000, 'minimum': 1},
     }
 
@@ -720,7 +747,7 @@ class GroupRequest(Model):
     """
 
     _validation = {
-        'face_ids': {'required': True},
+        'face_ids': {'required': True, 'max_items': 1000},
     }
 
     _attribute_map = {
@@ -882,7 +909,7 @@ class IdentifyRequest(Model):
      time.
     :type large_person_group_id: str
     :param max_num_of_candidates_returned: The range of
-     maxNumOfCandidatesReturned is between 1 and 5 (default is 1). Default
+     maxNumOfCandidatesReturned is between 1 and 100 (default is 1). Default
      value: 1 .
     :type max_num_of_candidates_returned: int
     :param confidence_threshold: Confidence threshold of identification, used
@@ -892,8 +919,10 @@ class IdentifyRequest(Model):
     """
 
     _validation = {
-        'face_ids': {'required': True},
-        'max_num_of_candidates_returned': {'maximum': 5, 'minimum': 1},
+        'face_ids': {'required': True, 'max_items': 10},
+        'person_group_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'large_person_group_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'max_num_of_candidates_returned': {'maximum': 100, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -971,7 +1000,7 @@ class LargeFaceList(MetaDataContract):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: User defined name, maximum length is 128.
+    :param name: Required. User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
@@ -986,7 +1015,9 @@ class LargeFaceList(MetaDataContract):
     """
 
     _validation = {
-        'large_face_list_id': {'required': True},
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'user_data': {'max_length': 16384},
+        'large_face_list_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
@@ -1006,7 +1037,7 @@ class LargePersonGroup(MetaDataContract):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: User defined name, maximum length is 128.
+    :param name: Required. User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
@@ -1021,7 +1052,9 @@ class LargePersonGroup(MetaDataContract):
     """
 
     _validation = {
-        'large_person_group_id': {'required': True},
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'user_data': {'max_length': 16384},
+        'large_person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
@@ -1078,6 +1111,32 @@ class Mask(Model):
         super(Mask, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.nose_and_mouth_covered = kwargs.get('nose_and_mouth_covered', None)
+
+
+class NameAndUserDataContract(Model):
+    """A combination of user defined name and user specified data for the person,
+    largePersonGroup/personGroup, and largeFaceList/faceList.
+
+    :param name: User defined name, maximum length is 128.
+    :type name: str
+    :param user_data: User specified data. Length should not exceed 16KB.
+    :type user_data: str
+    """
+
+    _validation = {
+        'name': {'max_length': 128},
+        'user_data': {'max_length': 16384},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'user_data': {'key': 'userData', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NameAndUserDataContract, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.user_data = kwargs.get('user_data', None)
 
 
 class Noise(Model):
@@ -1209,6 +1268,7 @@ class PersistedFace(Model):
 
     _validation = {
         'persisted_face_id': {'required': True},
+        'user_data': {'max_length': 1024},
     }
 
     _attribute_map = {
@@ -1240,6 +1300,8 @@ class Person(NameAndUserDataContract):
     """
 
     _validation = {
+        'name': {'max_length': 128},
+        'user_data': {'max_length': 16384},
         'person_id': {'required': True},
     }
 
@@ -1261,7 +1323,7 @@ class PersonGroup(MetaDataContract):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: User defined name, maximum length is 128.
+    :param name: Required. User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
@@ -1276,7 +1338,9 @@ class PersonGroup(MetaDataContract):
     """
 
     _validation = {
-        'person_group_id': {'required': True},
+        'name': {'required': True, 'max_length': 128, 'min_length': 1},
+        'user_data': {'max_length': 16384},
+        'person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
@@ -1366,6 +1430,7 @@ class Snapshot(Model):
         'account': {'required': True},
         'type': {'required': True},
         'apply_scope': {'required': True},
+        'user_data': {'max_length': 16384},
         'created_time': {'required': True},
         'last_update_time': {'required': True},
     }
@@ -1416,8 +1481,9 @@ class TakeSnapshotRequest(Model):
 
     _validation = {
         'type': {'required': True},
-        'object_id': {'required': True},
+        'object_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'apply_scope': {'required': True},
+        'user_data': {'max_length': 16384},
     }
 
     _attribute_map = {
@@ -1498,6 +1564,10 @@ class UpdateFaceRequest(Model):
     :type user_data: str
     """
 
+    _validation = {
+        'user_data': {'max_length': 1024},
+    }
+
     _attribute_map = {
         'user_data': {'key': 'userData', 'type': 'str'},
     }
@@ -1520,6 +1590,10 @@ class UpdateSnapshotRequest(Model):
      Length should not exceed 16KB.
     :type user_data: str
     """
+
+    _validation = {
+        'user_data': {'max_length': 16384},
+    }
 
     _attribute_map = {
         'apply_scope': {'key': 'applyScope', 'type': '[str]'},
@@ -1586,6 +1660,8 @@ class VerifyFaceToPersonRequest(Model):
 
     _validation = {
         'face_id': {'required': True},
+        'person_group_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
+        'large_person_group_id': {'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
         'person_id': {'required': True},
     }
 

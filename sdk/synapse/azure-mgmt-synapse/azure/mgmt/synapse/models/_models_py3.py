@@ -46,6 +46,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -83,6 +85,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -99,29 +103,29 @@ class AttachedDatabaseConfiguration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
-    :param database_name: The name of the database which you would like to attach, use * if you
-     want to follow all current and future databases.
-    :type database_name: str
-    :param kusto_pool_resource_id: The resource id of the kusto pool where the databases you would
+    :ivar database_name: The name of the database which you would like to attach, use * if you want
+     to follow all current and future databases.
+    :vartype database_name: str
+    :ivar kusto_pool_resource_id: The resource id of the kusto pool where the databases you would
      like to attach reside.
-    :type kusto_pool_resource_id: str
+    :vartype kusto_pool_resource_id: str
     :ivar attached_database_names: The list of databases from the clusterResourceId which are
      currently attached to the kusto pool.
     :vartype attached_database_names: list[str]
-    :param default_principals_modification_kind: The default principals modification kind. Possible
+    :ivar default_principals_modification_kind: The default principals modification kind. Possible
      values include: "Union", "Replace", "None".
-    :type default_principals_modification_kind: str or
+    :vartype default_principals_modification_kind: str or
      ~azure.mgmt.synapse.models.DefaultPrincipalsModificationKind
-    :param table_level_sharing_properties: Table level sharing specifications.
-    :type table_level_sharing_properties: ~azure.mgmt.synapse.models.TableLevelSharingProperties
+    :ivar table_level_sharing_properties: Table level sharing specifications.
+    :vartype table_level_sharing_properties: ~azure.mgmt.synapse.models.TableLevelSharingProperties
     """
 
     _validation = {
@@ -157,6 +161,23 @@ class AttachedDatabaseConfiguration(ProxyResource):
         table_level_sharing_properties: Optional["TableLevelSharingProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword database_name: The name of the database which you would like to attach, use * if you
+         want to follow all current and future databases.
+        :paramtype database_name: str
+        :keyword kusto_pool_resource_id: The resource id of the kusto pool where the databases you
+         would like to attach reside.
+        :paramtype kusto_pool_resource_id: str
+        :keyword default_principals_modification_kind: The default principals modification kind.
+         Possible values include: "Union", "Replace", "None".
+        :paramtype default_principals_modification_kind: str or
+         ~azure.mgmt.synapse.models.DefaultPrincipalsModificationKind
+        :keyword table_level_sharing_properties: Table level sharing specifications.
+        :paramtype table_level_sharing_properties:
+         ~azure.mgmt.synapse.models.TableLevelSharingProperties
+        """
         super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
         self.location = location
         self.system_data = None
@@ -171,8 +192,8 @@ class AttachedDatabaseConfiguration(ProxyResource):
 class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
     """The list attached database configurations operation response.
 
-    :param value: The list of attached database configurations.
-    :type value: list[~azure.mgmt.synapse.models.AttachedDatabaseConfiguration]
+    :ivar value: The list of attached database configurations.
+    :vartype value: list[~azure.mgmt.synapse.models.AttachedDatabaseConfiguration]
     """
 
     _attribute_map = {
@@ -185,6 +206,10 @@ class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
         value: Optional[List["AttachedDatabaseConfiguration"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of attached database configurations.
+        :paramtype value: list[~azure.mgmt.synapse.models.AttachedDatabaseConfiguration]
+        """
         super(AttachedDatabaseConfigurationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -192,11 +217,11 @@ class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
 class AutoPauseProperties(msrest.serialization.Model):
     """Auto-pausing properties of a Big Data pool powered by Apache Spark.
 
-    :param delay_in_minutes: Number of minutes of idle time before the Big Data pool is
+    :ivar delay_in_minutes: Number of minutes of idle time before the Big Data pool is
      automatically paused.
-    :type delay_in_minutes: int
-    :param enabled: Whether auto-pausing is enabled for the Big Data pool.
-    :type enabled: bool
+    :vartype delay_in_minutes: int
+    :ivar enabled: Whether auto-pausing is enabled for the Big Data pool.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
@@ -211,6 +236,13 @@ class AutoPauseProperties(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword delay_in_minutes: Number of minutes of idle time before the Big Data pool is
+         automatically paused.
+        :paramtype delay_in_minutes: int
+        :keyword enabled: Whether auto-pausing is enabled for the Big Data pool.
+        :paramtype enabled: bool
+        """
         super(AutoPauseProperties, self).__init__(**kwargs)
         self.delay_in_minutes = delay_in_minutes
         self.enabled = enabled
@@ -219,12 +251,12 @@ class AutoPauseProperties(msrest.serialization.Model):
 class AutoScaleProperties(msrest.serialization.Model):
     """Auto-scaling properties of a Big Data pool powered by Apache Spark.
 
-    :param min_node_count: The minimum number of nodes the Big Data pool can support.
-    :type min_node_count: int
-    :param enabled: Whether automatic scaling is enabled for the Big Data pool.
-    :type enabled: bool
-    :param max_node_count: The maximum number of nodes the Big Data pool can support.
-    :type max_node_count: int
+    :ivar min_node_count: The minimum number of nodes the Big Data pool can support.
+    :vartype min_node_count: int
+    :ivar enabled: Whether automatic scaling is enabled for the Big Data pool.
+    :vartype enabled: bool
+    :ivar max_node_count: The maximum number of nodes the Big Data pool can support.
+    :vartype max_node_count: int
     """
 
     _attribute_map = {
@@ -241,6 +273,14 @@ class AutoScaleProperties(msrest.serialization.Model):
         max_node_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword min_node_count: The minimum number of nodes the Big Data pool can support.
+        :paramtype min_node_count: int
+        :keyword enabled: Whether automatic scaling is enabled for the Big Data pool.
+        :paramtype enabled: bool
+        :keyword max_node_count: The maximum number of nodes the Big Data pool can support.
+        :paramtype max_node_count: int
+        """
         super(AutoScaleProperties, self).__init__(**kwargs)
         self.min_node_count = min_node_count
         self.enabled = enabled
@@ -250,16 +290,16 @@ class AutoScaleProperties(msrest.serialization.Model):
 class AvailableRpOperation(msrest.serialization.Model):
     """An operation that is available in this resource provider.
 
-    :param display: Display properties of the operation.
-    :type display: ~azure.mgmt.synapse.models.AvailableRpOperationDisplayInfo
-    :param is_data_action: Whether this operation is a data action.
-    :type is_data_action: str
-    :param name: Operation name.
-    :type name: str
-    :param origin: Operation origin.
-    :type origin: str
-    :param service_specification: Operation service specification.
-    :type service_specification: ~azure.mgmt.synapse.models.OperationMetaServiceSpecification
+    :ivar display: Display properties of the operation.
+    :vartype display: ~azure.mgmt.synapse.models.AvailableRpOperationDisplayInfo
+    :ivar is_data_action: Whether this operation is a data action.
+    :vartype is_data_action: str
+    :ivar name: Operation name.
+    :vartype name: str
+    :ivar origin: Operation origin.
+    :vartype origin: str
+    :ivar service_specification: Operation service specification.
+    :vartype service_specification: ~azure.mgmt.synapse.models.OperationMetaServiceSpecification
     """
 
     _attribute_map = {
@@ -280,6 +320,18 @@ class AvailableRpOperation(msrest.serialization.Model):
         service_specification: Optional["OperationMetaServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Display properties of the operation.
+        :paramtype display: ~azure.mgmt.synapse.models.AvailableRpOperationDisplayInfo
+        :keyword is_data_action: Whether this operation is a data action.
+        :paramtype is_data_action: str
+        :keyword name: Operation name.
+        :paramtype name: str
+        :keyword origin: Operation origin.
+        :paramtype origin: str
+        :keyword service_specification: Operation service specification.
+        :paramtype service_specification: ~azure.mgmt.synapse.models.OperationMetaServiceSpecification
+        """
         super(AvailableRpOperation, self).__init__(**kwargs)
         self.display = display
         self.is_data_action = is_data_action
@@ -291,14 +343,14 @@ class AvailableRpOperation(msrest.serialization.Model):
 class AvailableRpOperationDisplayInfo(msrest.serialization.Model):
     """Description of an available operation.
 
-    :param description: Operation description.
-    :type description: str
-    :param resource: Resource type.
-    :type resource: str
-    :param provider: Resource provider name.
-    :type provider: str
-    :param operation: Operation name.
-    :type operation: str
+    :ivar description: Operation description.
+    :vartype description: str
+    :ivar resource: Resource type.
+    :vartype resource: str
+    :ivar provider: Resource provider name.
+    :vartype provider: str
+    :ivar operation: Operation name.
+    :vartype operation: str
     """
 
     _attribute_map = {
@@ -317,6 +369,16 @@ class AvailableRpOperationDisplayInfo(msrest.serialization.Model):
         operation: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: Operation description.
+        :paramtype description: str
+        :keyword resource: Resource type.
+        :paramtype resource: str
+        :keyword provider: Resource provider name.
+        :paramtype provider: str
+        :keyword operation: Operation name.
+        :paramtype operation: str
+        """
         super(AvailableRpOperationDisplayInfo, self).__init__(**kwargs)
         self.description = description
         self.resource = resource
@@ -337,8 +399,8 @@ class AzureADOnlyAuthentication(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :vartype azure_ad_only_authentication: bool
     :ivar state: property configuration state. Possible values include: "Consistent",
      "InConsistent", "Updating".
     :vartype state: str or ~azure.mgmt.synapse.models.StateValue
@@ -369,6 +431,10 @@ class AzureADOnlyAuthentication(ProxyResource):
         azure_ad_only_authentication: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+        :paramtype azure_ad_only_authentication: bool
+        """
         super(AzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = azure_ad_only_authentication
         self.state = None
@@ -400,6 +466,8 @@ class AzureADOnlyAuthenticationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureADOnlyAuthenticationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -410,15 +478,14 @@ class AzureCapacity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scale_type: Required. Scale type. Possible values include: "automatic", "manual",
-     "none".
-    :type scale_type: str or ~azure.mgmt.synapse.models.AzureScaleType
-    :param minimum: Required. Minimum allowed capacity.
-    :type minimum: int
-    :param maximum: Required. Maximum allowed capacity.
-    :type maximum: int
-    :param default: Required. The default capacity that would be used.
-    :type default: int
+    :ivar scale_type: Required. Scale type. Possible values include: "automatic", "manual", "none".
+    :vartype scale_type: str or ~azure.mgmt.synapse.models.AzureScaleType
+    :ivar minimum: Required. Minimum allowed capacity.
+    :vartype minimum: int
+    :ivar maximum: Required. Maximum allowed capacity.
+    :vartype maximum: int
+    :ivar default: Required. The default capacity that would be used.
+    :vartype default: int
     """
 
     _validation = {
@@ -444,6 +511,17 @@ class AzureCapacity(msrest.serialization.Model):
         default: int,
         **kwargs
     ):
+        """
+        :keyword scale_type: Required. Scale type. Possible values include: "automatic", "manual",
+         "none".
+        :paramtype scale_type: str or ~azure.mgmt.synapse.models.AzureScaleType
+        :keyword minimum: Required. Minimum allowed capacity.
+        :paramtype minimum: int
+        :keyword maximum: Required. Maximum allowed capacity.
+        :paramtype maximum: int
+        :keyword default: Required. The default capacity that would be used.
+        :paramtype default: int
+        """
         super(AzureCapacity, self).__init__(**kwargs)
         self.scale_type = scale_type
         self.minimum = minimum
@@ -486,6 +564,8 @@ class AzureEntityResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureEntityResource, self).__init__(**kwargs)
         self.etag = None
 
@@ -493,12 +573,12 @@ class AzureEntityResource(Resource):
 class AzureResourceSku(msrest.serialization.Model):
     """Azure resource SKU definition.
 
-    :param resource_type: Resource Namespace and Type.
-    :type resource_type: str
-    :param sku: The SKU details.
-    :type sku: ~azure.mgmt.synapse.models.AzureSku
-    :param capacity: The number of instances of the cluster.
-    :type capacity: ~azure.mgmt.synapse.models.AzureCapacity
+    :ivar resource_type: Resource Namespace and Type.
+    :vartype resource_type: str
+    :ivar sku: The SKU details.
+    :vartype sku: ~azure.mgmt.synapse.models.AzureSku
+    :ivar capacity: The number of instances of the cluster.
+    :vartype capacity: ~azure.mgmt.synapse.models.AzureCapacity
     """
 
     _attribute_map = {
@@ -515,6 +595,14 @@ class AzureResourceSku(msrest.serialization.Model):
         capacity: Optional["AzureCapacity"] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: Resource Namespace and Type.
+        :paramtype resource_type: str
+        :keyword sku: The SKU details.
+        :paramtype sku: ~azure.mgmt.synapse.models.AzureSku
+        :keyword capacity: The number of instances of the cluster.
+        :paramtype capacity: ~azure.mgmt.synapse.models.AzureCapacity
+        """
         super(AzureResourceSku, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.sku = sku
@@ -526,14 +614,14 @@ class AzureSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. SKU name. Possible values include: "Compute optimized", "Storage
+    :ivar name: Required. SKU name. Possible values include: "Compute optimized", "Storage
      optimized".
-    :type name: str or ~azure.mgmt.synapse.models.SkuName
-    :param capacity: The number of instances of the cluster.
-    :type capacity: int
-    :param size: Required. SKU size. Possible values include: "Extra small", "Small", "Medium",
+    :vartype name: str or ~azure.mgmt.synapse.models.SkuName
+    :ivar capacity: The number of instances of the cluster.
+    :vartype capacity: int
+    :ivar size: Required. SKU size. Possible values include: "Extra small", "Small", "Medium",
      "Large".
-    :type size: str or ~azure.mgmt.synapse.models.SkuSize
+    :vartype size: str or ~azure.mgmt.synapse.models.SkuSize
     """
 
     _validation = {
@@ -555,6 +643,16 @@ class AzureSku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. SKU name. Possible values include: "Compute optimized", "Storage
+         optimized".
+        :paramtype name: str or ~azure.mgmt.synapse.models.SkuName
+        :keyword capacity: The number of instances of the cluster.
+        :paramtype capacity: int
+        :keyword size: Required. SKU size. Possible values include: "Extra small", "Small", "Medium",
+         "Large".
+        :paramtype size: str or ~azure.mgmt.synapse.models.SkuSize
+        """
         super(AzureSku, self).__init__(**kwargs)
         self.name = name
         self.capacity = capacity
@@ -564,8 +662,8 @@ class AzureSku(msrest.serialization.Model):
 class BigDataPoolPatchInfo(msrest.serialization.Model):
     """Properties patch for a Big Data pool.
 
-    :param tags: A set of tags. Updated tags for the Big Data pool.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Updated tags for the Big Data pool.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -578,6 +676,10 @@ class BigDataPoolPatchInfo(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Updated tags for the Big Data pool.
+        :paramtype tags: dict[str, str]
+        """
         super(BigDataPoolPatchInfo, self).__init__(**kwargs)
         self.tags = tags
 
@@ -597,10 +699,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -625,6 +727,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -645,46 +753,46 @@ class BigDataPoolResourceInfo(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param provisioning_state: The state of the Big Data pool.
-    :type provisioning_state: str
-    :param auto_scale: Auto-scaling properties.
-    :type auto_scale: ~azure.mgmt.synapse.models.AutoScaleProperties
-    :param creation_date: The time when the Big Data pool was created.
-    :type creation_date: ~datetime.datetime
-    :param auto_pause: Auto-pausing properties.
-    :type auto_pause: ~azure.mgmt.synapse.models.AutoPauseProperties
-    :param is_compute_isolation_enabled: Whether compute isolation is required or not.
-    :type is_compute_isolation_enabled: bool
-    :param session_level_packages_enabled: Whether session level packages enabled.
-    :type session_level_packages_enabled: bool
-    :param cache_size: The cache size.
-    :type cache_size: int
-    :param dynamic_executor_allocation: Dynamic Executor Allocation.
-    :type dynamic_executor_allocation: ~azure.mgmt.synapse.models.DynamicExecutorAllocation
-    :param spark_events_folder: The Spark events folder.
-    :type spark_events_folder: str
-    :param node_count: The number of nodes in the Big Data pool.
-    :type node_count: int
-    :param library_requirements: Library version requirements.
-    :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
-    :param custom_libraries: List of custom libraries/packages associated with the spark pool.
-    :type custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
-    :param spark_config_properties: Spark configuration file to specify additional properties.
-    :type spark_config_properties: ~azure.mgmt.synapse.models.SparkConfigProperties
-    :param spark_version: The Apache Spark version.
-    :type spark_version: str
-    :param default_spark_log_folder: The default folder where Spark logs will be written.
-    :type default_spark_log_folder: str
-    :param node_size: The level of compute power that each node in the Big Data pool has. Possible
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar provisioning_state: The state of the Big Data pool.
+    :vartype provisioning_state: str
+    :ivar auto_scale: Auto-scaling properties.
+    :vartype auto_scale: ~azure.mgmt.synapse.models.AutoScaleProperties
+    :ivar creation_date: The time when the Big Data pool was created.
+    :vartype creation_date: ~datetime.datetime
+    :ivar auto_pause: Auto-pausing properties.
+    :vartype auto_pause: ~azure.mgmt.synapse.models.AutoPauseProperties
+    :ivar is_compute_isolation_enabled: Whether compute isolation is required or not.
+    :vartype is_compute_isolation_enabled: bool
+    :ivar session_level_packages_enabled: Whether session level packages enabled.
+    :vartype session_level_packages_enabled: bool
+    :ivar cache_size: The cache size.
+    :vartype cache_size: int
+    :ivar dynamic_executor_allocation: Dynamic Executor Allocation.
+    :vartype dynamic_executor_allocation: ~azure.mgmt.synapse.models.DynamicExecutorAllocation
+    :ivar spark_events_folder: The Spark events folder.
+    :vartype spark_events_folder: str
+    :ivar node_count: The number of nodes in the Big Data pool.
+    :vartype node_count: int
+    :ivar library_requirements: Library version requirements.
+    :vartype library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :ivar custom_libraries: List of custom libraries/packages associated with the spark pool.
+    :vartype custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
+    :ivar spark_config_properties: Spark configuration file to specify additional properties.
+    :vartype spark_config_properties: ~azure.mgmt.synapse.models.SparkConfigProperties
+    :ivar spark_version: The Apache Spark version.
+    :vartype spark_version: str
+    :ivar default_spark_log_folder: The default folder where Spark logs will be written.
+    :vartype default_spark_log_folder: str
+    :ivar node_size: The level of compute power that each node in the Big Data pool has. Possible
      values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge", "XXXLarge".
-    :type node_size: str or ~azure.mgmt.synapse.models.NodeSize
-    :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
+    :vartype node_size: str or ~azure.mgmt.synapse.models.NodeSize
+    :ivar node_size_family: The kind of nodes that the Big Data pool provides. Possible values
      include: "None", "MemoryOptimized", "HardwareAcceleratedFPGA", "HardwareAcceleratedGPU".
-    :type node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
+    :vartype node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
     :ivar last_succeeded_timestamp: The time when the Big Data pool was updated successfully.
     :vartype last_succeeded_timestamp: ~datetime.datetime
     """
@@ -694,6 +802,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'creation_date': {'readonly': True},
         'last_succeeded_timestamp': {'readonly': True},
     }
 
@@ -730,7 +839,6 @@ class BigDataPoolResourceInfo(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         provisioning_state: Optional[str] = None,
         auto_scale: Optional["AutoScaleProperties"] = None,
-        creation_date: Optional[datetime.datetime] = None,
         auto_pause: Optional["AutoPauseProperties"] = None,
         is_compute_isolation_enabled: Optional[bool] = None,
         session_level_packages_enabled: Optional[bool] = None,
@@ -747,10 +855,50 @@ class BigDataPoolResourceInfo(TrackedResource):
         node_size_family: Optional[Union[str, "NodeSizeFamily"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword provisioning_state: The state of the Big Data pool.
+        :paramtype provisioning_state: str
+        :keyword auto_scale: Auto-scaling properties.
+        :paramtype auto_scale: ~azure.mgmt.synapse.models.AutoScaleProperties
+        :keyword auto_pause: Auto-pausing properties.
+        :paramtype auto_pause: ~azure.mgmt.synapse.models.AutoPauseProperties
+        :keyword is_compute_isolation_enabled: Whether compute isolation is required or not.
+        :paramtype is_compute_isolation_enabled: bool
+        :keyword session_level_packages_enabled: Whether session level packages enabled.
+        :paramtype session_level_packages_enabled: bool
+        :keyword cache_size: The cache size.
+        :paramtype cache_size: int
+        :keyword dynamic_executor_allocation: Dynamic Executor Allocation.
+        :paramtype dynamic_executor_allocation: ~azure.mgmt.synapse.models.DynamicExecutorAllocation
+        :keyword spark_events_folder: The Spark events folder.
+        :paramtype spark_events_folder: str
+        :keyword node_count: The number of nodes in the Big Data pool.
+        :paramtype node_count: int
+        :keyword library_requirements: Library version requirements.
+        :paramtype library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+        :keyword custom_libraries: List of custom libraries/packages associated with the spark pool.
+        :paramtype custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
+        :keyword spark_config_properties: Spark configuration file to specify additional properties.
+        :paramtype spark_config_properties: ~azure.mgmt.synapse.models.SparkConfigProperties
+        :keyword spark_version: The Apache Spark version.
+        :paramtype spark_version: str
+        :keyword default_spark_log_folder: The default folder where Spark logs will be written.
+        :paramtype default_spark_log_folder: str
+        :keyword node_size: The level of compute power that each node in the Big Data pool has.
+         Possible values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge", "XXXLarge".
+        :paramtype node_size: str or ~azure.mgmt.synapse.models.NodeSize
+        :keyword node_size_family: The kind of nodes that the Big Data pool provides. Possible values
+         include: "None", "MemoryOptimized", "HardwareAcceleratedFPGA", "HardwareAcceleratedGPU".
+        :paramtype node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
+        """
         super(BigDataPoolResourceInfo, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = provisioning_state
         self.auto_scale = auto_scale
-        self.creation_date = creation_date
+        self.creation_date = None
         self.auto_pause = auto_pause
         self.is_compute_isolation_enabled = is_compute_isolation_enabled
         self.session_level_packages_enabled = session_level_packages_enabled
@@ -771,10 +919,10 @@ class BigDataPoolResourceInfo(TrackedResource):
 class BigDataPoolResourceInfoListResult(msrest.serialization.Model):
     """Collection of Big Data pool information.
 
-    :param next_link: Link to the next page of results.
-    :type next_link: str
-    :param value: List of Big Data pools.
-    :type value: list[~azure.mgmt.synapse.models.BigDataPoolResourceInfo]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    :ivar value: List of Big Data pools.
+    :vartype value: list[~azure.mgmt.synapse.models.BigDataPoolResourceInfo]
     """
 
     _attribute_map = {
@@ -789,6 +937,12 @@ class BigDataPoolResourceInfoListResult(msrest.serialization.Model):
         value: Optional[List["BigDataPoolResourceInfo"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
+        :keyword value: List of Big Data pools.
+        :paramtype value: list[~azure.mgmt.synapse.models.BigDataPoolResourceInfo]
+        """
         super(BigDataPoolResourceInfoListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -797,10 +951,10 @@ class BigDataPoolResourceInfoListResult(msrest.serialization.Model):
 class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """A request about whether a workspace name is available.
 
-    :param name: Workspace name.
-    :type name: str
-    :param type: Type: workspace.
-    :type type: str
+    :ivar name: Workspace name.
+    :vartype name: str
+    :ivar type: Type: workspace.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -815,6 +969,12 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Workspace name.
+        :paramtype name: str
+        :keyword type: Type: workspace.
+        :paramtype type: str
+        """
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -823,14 +983,14 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 class CheckNameAvailabilityResponse(msrest.serialization.Model):
     """A response saying whether the workspace name is available.
 
-    :param message: Validation message.
-    :type message: str
-    :param available: Whether the workspace name is available.
-    :type available: bool
-    :param reason: Reason the workspace name is or is not available.
-    :type reason: str
-    :param name: Workspace name.
-    :type name: str
+    :ivar message: Validation message.
+    :vartype message: str
+    :ivar available: Whether the workspace name is available.
+    :vartype available: bool
+    :ivar reason: Reason the workspace name is or is not available.
+    :vartype reason: str
+    :ivar name: Workspace name.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -849,6 +1009,16 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message: Validation message.
+        :paramtype message: str
+        :keyword available: Whether the workspace name is available.
+        :paramtype available: bool
+        :keyword reason: Reason the workspace name is or is not available.
+        :paramtype reason: str
+        :keyword name: Workspace name.
+        :paramtype name: str
+        """
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
         self.message = message
         self.available = available
@@ -859,16 +1029,16 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
 class CheckNameResult(msrest.serialization.Model):
     """The result returned from a check name availability request.
 
-    :param name_available: Specifies a Boolean value that indicates if the name is available.
-    :type name_available: bool
-    :param name: The name that was checked.
-    :type name: str
-    :param message: Message indicating an unavailable name due to a conflict, or a description of
+    :ivar name_available: Specifies a Boolean value that indicates if the name is available.
+    :vartype name_available: bool
+    :ivar name: The name that was checked.
+    :vartype name: str
+    :ivar message: Message indicating an unavailable name due to a conflict, or a description of
      the naming rules that are violated.
-    :type message: str
-    :param reason: Message providing the reason why the given name is invalid. Possible values
+    :vartype message: str
+    :ivar reason: Message providing the reason why the given name is invalid. Possible values
      include: "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.synapse.models.Reason
+    :vartype reason: str or ~azure.mgmt.synapse.models.Reason
     """
 
     _attribute_map = {
@@ -887,6 +1057,18 @@ class CheckNameResult(msrest.serialization.Model):
         reason: Optional[Union[str, "Reason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Specifies a Boolean value that indicates if the name is available.
+        :paramtype name_available: bool
+        :keyword name: The name that was checked.
+        :paramtype name: str
+        :keyword message: Message indicating an unavailable name due to a conflict, or a description of
+         the naming rules that are violated.
+        :paramtype message: str
+        :keyword reason: Message providing the reason why the given name is invalid. Possible values
+         include: "Invalid", "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.synapse.models.Reason
+        """
         super(CheckNameResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.name = name
@@ -910,16 +1092,16 @@ class ClusterPrincipalAssignment(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
-    :param principal_id: The principal ID assigned to the cluster principal. It can be a user
-     email, application ID, or security group name.
-    :type principal_id: str
-    :param role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
+    :ivar principal_id: The principal ID assigned to the cluster principal. It can be a user email,
+     application ID, or security group name.
+    :vartype principal_id: str
+    :ivar role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
      "AllDatabasesViewer".
-    :type role: str or ~azure.mgmt.synapse.models.ClusterPrincipalRole
-    :param tenant_id: The tenant id of the principal.
-    :type tenant_id: str
-    :param principal_type: Principal type. Possible values include: "App", "Group", "User".
-    :type principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
+    :vartype role: str or ~azure.mgmt.synapse.models.ClusterPrincipalRole
+    :ivar tenant_id: The tenant id of the principal.
+    :vartype tenant_id: str
+    :ivar principal_type: Principal type. Possible values include: "App", "Group", "User".
+    :vartype principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
     :ivar tenant_name: The tenant name of the principal.
     :vartype tenant_name: str
     :ivar principal_name: The principal name.
@@ -962,6 +1144,18 @@ class ClusterPrincipalAssignment(ProxyResource):
         principal_type: Optional[Union[str, "PrincipalType"]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: The principal ID assigned to the cluster principal. It can be a user
+         email, application ID, or security group name.
+        :paramtype principal_id: str
+        :keyword role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
+         "AllDatabasesViewer".
+        :paramtype role: str or ~azure.mgmt.synapse.models.ClusterPrincipalRole
+        :keyword tenant_id: The tenant id of the principal.
+        :paramtype tenant_id: str
+        :keyword principal_type: Principal type. Possible values include: "App", "Group", "User".
+        :paramtype principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
+        """
         super(ClusterPrincipalAssignment, self).__init__(**kwargs)
         self.system_data = None
         self.principal_id = principal_id
@@ -980,8 +1174,8 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Principal Assignment resource name.
-    :type name: str
+    :ivar name: Required. Principal Assignment resource name.
+    :vartype name: str
     :ivar type: The type of resource, Microsoft.Synapse/workspaces/kustoPools/principalAssignments.
      Has constant value: "Microsoft.Synapse/workspaces/kustoPools/principalAssignments".
     :vartype type: str
@@ -1005,6 +1199,10 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Principal Assignment resource name.
+        :paramtype name: str
+        """
         super(ClusterPrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -1012,8 +1210,8 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 class ClusterPrincipalAssignmentListResult(msrest.serialization.Model):
     """The list Kusto cluster principal assignments operation response.
 
-    :param value: The list of Kusto cluster principal assignments.
-    :type value: list[~azure.mgmt.synapse.models.ClusterPrincipalAssignment]
+    :ivar value: The list of Kusto cluster principal assignments.
+    :vartype value: list[~azure.mgmt.synapse.models.ClusterPrincipalAssignment]
     """
 
     _attribute_map = {
@@ -1026,6 +1224,10 @@ class ClusterPrincipalAssignmentListResult(msrest.serialization.Model):
         value: Optional[List["ClusterPrincipalAssignment"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto cluster principal assignments.
+        :paramtype value: list[~azure.mgmt.synapse.models.ClusterPrincipalAssignment]
+        """
         super(ClusterPrincipalAssignmentListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1038,8 +1240,8 @@ class CustomSetupBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of custom setup.Constant filled by server.
-    :type type: str
+    :ivar type: Required. The type of custom setup.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -1058,6 +1260,8 @@ class CustomSetupBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CustomSetupBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -1067,14 +1271,14 @@ class CmdkeySetup(CustomSetupBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of custom setup.Constant filled by server.
-    :type type: str
-    :param target_name: Required. The server name of data source access.
-    :type target_name: any
-    :param user_name: Required. The user name of data source access.
-    :type user_name: any
-    :param password: Required. The password of data source access.
-    :type password: ~azure.mgmt.synapse.models.SecretBase
+    :ivar type: Required. The type of custom setup.Constant filled by server.
+    :vartype type: str
+    :ivar target_name: Required. The server name of data source access.
+    :vartype target_name: any
+    :ivar user_name: Required. The user name of data source access.
+    :vartype user_name: any
+    :ivar password: Required. The password of data source access.
+    :vartype password: ~azure.mgmt.synapse.models.SecretBase
     """
 
     _validation = {
@@ -1099,6 +1303,14 @@ class CmdkeySetup(CustomSetupBase):
         password: "SecretBase",
         **kwargs
     ):
+        """
+        :keyword target_name: Required. The server name of data source access.
+        :paramtype target_name: any
+        :keyword user_name: Required. The user name of data source access.
+        :paramtype user_name: any
+        :keyword password: Required. The password of data source access.
+        :paramtype password: ~azure.mgmt.synapse.models.SecretBase
+        """
         super(CmdkeySetup, self).__init__(**kwargs)
         self.type = 'CmdkeySetup'  # type: str
         self.target_name = target_name
@@ -1111,12 +1323,12 @@ class ComponentSetup(CustomSetupBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of custom setup.Constant filled by server.
-    :type type: str
-    :param component_name: Required. The name of the 3rd party component.
-    :type component_name: str
-    :param license_key: The license key to activate the component.
-    :type license_key: ~azure.mgmt.synapse.models.SecretBase
+    :ivar type: Required. The type of custom setup.Constant filled by server.
+    :vartype type: str
+    :ivar component_name: Required. The name of the 3rd party component.
+    :vartype component_name: str
+    :ivar license_key: The license key to activate the component.
+    :vartype license_key: ~azure.mgmt.synapse.models.SecretBase
     """
 
     _validation = {
@@ -1137,6 +1349,12 @@ class ComponentSetup(CustomSetupBase):
         license_key: Optional["SecretBase"] = None,
         **kwargs
     ):
+        """
+        :keyword component_name: Required. The name of the 3rd party component.
+        :paramtype component_name: str
+        :keyword license_key: The license key to activate the component.
+        :paramtype license_key: ~azure.mgmt.synapse.models.SecretBase
+        """
         super(ComponentSetup, self).__init__(**kwargs)
         self.type = 'ComponentSetup'  # type: str
         self.component_name = component_name
@@ -1148,8 +1366,8 @@ class CreateSqlPoolRestorePointDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param restore_point_label: Required. The restore point label to apply.
-    :type restore_point_label: str
+    :ivar restore_point_label: Required. The restore point label to apply.
+    :vartype restore_point_label: str
     """
 
     _validation = {
@@ -1166,6 +1384,10 @@ class CreateSqlPoolRestorePointDefinition(msrest.serialization.Model):
         restore_point_label: str,
         **kwargs
     ):
+        """
+        :keyword restore_point_label: Required. The restore point label to apply.
+        :paramtype restore_point_label: str
+        """
         super(CreateSqlPoolRestorePointDefinition, self).__init__(**kwargs)
         self.restore_point_label = restore_point_label
 
@@ -1173,8 +1395,8 @@ class CreateSqlPoolRestorePointDefinition(msrest.serialization.Model):
 class CspWorkspaceAdminProperties(msrest.serialization.Model):
     """Initial workspace AAD admin properties for a CSP subscription.
 
-    :param initial_workspace_admin_object_id: AAD object ID of initial workspace admin.
-    :type initial_workspace_admin_object_id: str
+    :ivar initial_workspace_admin_object_id: AAD object ID of initial workspace admin.
+    :vartype initial_workspace_admin_object_id: str
     """
 
     _attribute_map = {
@@ -1187,6 +1409,10 @@ class CspWorkspaceAdminProperties(msrest.serialization.Model):
         initial_workspace_admin_object_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword initial_workspace_admin_object_id: AAD object ID of initial workspace admin.
+        :paramtype initial_workspace_admin_object_id: str
+        """
         super(CspWorkspaceAdminProperties, self).__init__(**kwargs)
         self.initial_workspace_admin_object_id = initial_workspace_admin_object_id
 
@@ -1198,10 +1424,10 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
 
     :ivar status: The customer managed key status on the workspace.
     :vartype status: str
-    :param key: The key object of the workspace.
-    :type key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
-    :param kek_identity: Key encryption key.
-    :type kek_identity: ~azure.mgmt.synapse.models.KekIdentityProperties
+    :ivar key: The key object of the workspace.
+    :vartype key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
+    :ivar kek_identity: Key encryption key.
+    :vartype kek_identity: ~azure.mgmt.synapse.models.KekIdentityProperties
     """
 
     _validation = {
@@ -1221,6 +1447,12 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
         kek_identity: Optional["KekIdentityProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword key: The key object of the workspace.
+        :paramtype key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
+        :keyword kek_identity: Key encryption key.
+        :paramtype kek_identity: ~azure.mgmt.synapse.models.KekIdentityProperties
+        """
         super(CustomerManagedKeyDetails, self).__init__(**kwargs)
         self.status = None
         self.key = key
@@ -1231,7 +1463,7 @@ class Database(ProxyResource):
     """Class representing a Kusto database.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ReadWriteDatabase.
+    sub-classes are: ReadOnlyFollowingDatabase, ReadWriteDatabase.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1245,11 +1477,11 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
-     include: "ReadWrite", "ReadOnlyFollowing".
-    :type kind: str or ~azure.mgmt.synapse.models.Kind
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the database.Constant filled by server. Possible values include:
+     "ReadWrite", "ReadOnlyFollowing".
+    :vartype kind: str or ~azure.mgmt.synapse.models.Kind
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
@@ -1273,7 +1505,7 @@ class Database(ProxyResource):
     }
 
     _subtype_map = {
-        'kind': {'ReadWrite': 'ReadWriteDatabase'}
+        'kind': {'ReadOnlyFollowing': 'ReadOnlyFollowingDatabase', 'ReadWrite': 'ReadWriteDatabase'}
     }
 
     def __init__(
@@ -1282,6 +1514,10 @@ class Database(ProxyResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        """
         super(Database, self).__init__(**kwargs)
         self.location = location
         self.kind = 'Database'  # type: str
@@ -1293,13 +1529,13 @@ class DatabaseCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource name.
-    :type name: str
-    :param type: Required. The type of resource, for instance
+    :ivar name: Required. Resource name.
+    :vartype name: str
+    :ivar type: Required. The type of resource, for instance
      Microsoft.Synapse/workspaces/kustoPools/databases. Possible values include:
      "Microsoft.Synapse/workspaces/kustoPools/databases",
      "Microsoft.Synapse/workspaces/kustoPools/attachedDatabaseConfigurations".
-    :type type: str or ~azure.mgmt.synapse.models.Type
+    :vartype type: str or ~azure.mgmt.synapse.models.Type
     """
 
     _validation = {
@@ -1319,6 +1555,15 @@ class DatabaseCheckNameRequest(msrest.serialization.Model):
         type: Union[str, "Type"],
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        :keyword type: Required. The type of resource, for instance
+         Microsoft.Synapse/workspaces/kustoPools/databases. Possible values include:
+         "Microsoft.Synapse/workspaces/kustoPools/databases",
+         "Microsoft.Synapse/workspaces/kustoPools/attachedDatabaseConfigurations".
+        :paramtype type: str or ~azure.mgmt.synapse.models.Type
+        """
         super(DatabaseCheckNameRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -1327,8 +1572,8 @@ class DatabaseCheckNameRequest(msrest.serialization.Model):
 class DatabaseListResult(msrest.serialization.Model):
     """The list Kusto databases operation response.
 
-    :param value: The list of Kusto databases.
-    :type value: list[~azure.mgmt.synapse.models.Database]
+    :ivar value: The list of Kusto databases.
+    :vartype value: list[~azure.mgmt.synapse.models.Database]
     """
 
     _attribute_map = {
@@ -1341,6 +1586,10 @@ class DatabaseListResult(msrest.serialization.Model):
         value: Optional[List["Database"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto databases.
+        :paramtype value: list[~azure.mgmt.synapse.models.Database]
+        """
         super(DatabaseListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1361,16 +1610,16 @@ class DatabasePrincipalAssignment(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
-    :param principal_id: The principal ID assigned to the database principal. It can be a user
+    :ivar principal_id: The principal ID assigned to the database principal. It can be a user
      email, application ID, or security group name.
-    :type principal_id: str
-    :param role: Database principal role. Possible values include: "Admin", "Ingestor", "Monitor",
+    :vartype principal_id: str
+    :ivar role: Database principal role. Possible values include: "Admin", "Ingestor", "Monitor",
      "User", "UnrestrictedViewer", "Viewer".
-    :type role: str or ~azure.mgmt.synapse.models.DatabasePrincipalRole
-    :param tenant_id: The tenant id of the principal.
-    :type tenant_id: str
-    :param principal_type: Principal type. Possible values include: "App", "Group", "User".
-    :type principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
+    :vartype role: str or ~azure.mgmt.synapse.models.DatabasePrincipalRole
+    :ivar tenant_id: The tenant id of the principal.
+    :vartype tenant_id: str
+    :ivar principal_type: Principal type. Possible values include: "App", "Group", "User".
+    :vartype principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
     :ivar tenant_name: The tenant name of the principal.
     :vartype tenant_name: str
     :ivar principal_name: The principal name.
@@ -1413,6 +1662,18 @@ class DatabasePrincipalAssignment(ProxyResource):
         principal_type: Optional[Union[str, "PrincipalType"]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: The principal ID assigned to the database principal. It can be a user
+         email, application ID, or security group name.
+        :paramtype principal_id: str
+        :keyword role: Database principal role. Possible values include: "Admin", "Ingestor",
+         "Monitor", "User", "UnrestrictedViewer", "Viewer".
+        :paramtype role: str or ~azure.mgmt.synapse.models.DatabasePrincipalRole
+        :keyword tenant_id: The tenant id of the principal.
+        :paramtype tenant_id: str
+        :keyword principal_type: Principal type. Possible values include: "App", "Group", "User".
+        :paramtype principal_type: str or ~azure.mgmt.synapse.models.PrincipalType
+        """
         super(DatabasePrincipalAssignment, self).__init__(**kwargs)
         self.system_data = None
         self.principal_id = principal_id
@@ -1431,8 +1692,8 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Principal Assignment resource name.
-    :type name: str
+    :ivar name: Required. Principal Assignment resource name.
+    :vartype name: str
     :ivar type: The type of resource,
      Microsoft.Synapse/workspaces/kustoPools/databases/principalAssignments. Has constant value:
      "Microsoft.Synapse/workspaces/kustoPools/databases/principalAssignments".
@@ -1457,6 +1718,10 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Principal Assignment resource name.
+        :paramtype name: str
+        """
         super(DatabasePrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -1464,8 +1729,8 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
     """The list Kusto database principal assignments operation response.
 
-    :param value: The list of Kusto database principal assignments.
-    :type value: list[~azure.mgmt.synapse.models.DatabasePrincipalAssignment]
+    :ivar value: The list of Kusto database principal assignments.
+    :vartype value: list[~azure.mgmt.synapse.models.DatabasePrincipalAssignment]
     """
 
     _attribute_map = {
@@ -1478,6 +1743,10 @@ class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
         value: Optional[List["DatabasePrincipalAssignment"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto database principal assignments.
+        :paramtype value: list[~azure.mgmt.synapse.models.DatabasePrincipalAssignment]
+        """
         super(DatabasePrincipalAssignmentListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1485,8 +1754,8 @@ class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
 class DatabaseStatistics(msrest.serialization.Model):
     """A class that contains database statistics information.
 
-    :param size: The database size - the total size of compressed data and index in bytes.
-    :type size: float
+    :ivar size: The database size - the total size of compressed data and index in bytes.
+    :vartype size: float
     """
 
     _attribute_map = {
@@ -1499,6 +1768,10 @@ class DatabaseStatistics(msrest.serialization.Model):
         size: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword size: The database size - the total size of compressed data and index in bytes.
+        :paramtype size: float
+        """
         super(DatabaseStatistics, self).__init__(**kwargs)
         self.size = size
 
@@ -1521,11 +1794,11 @@ class DataConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :vartype kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
@@ -1558,6 +1831,10 @@ class DataConnection(ProxyResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        """
         super(DataConnection, self).__init__(**kwargs)
         self.location = location
         self.kind = 'DataConnection'  # type: str
@@ -1571,8 +1848,8 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Data Connection name.
-    :type name: str
+    :ivar name: Required. Data Connection name.
+    :vartype name: str
     :ivar type: The type of resource,
      Microsoft.Synapse/workspaces/kustoPools/databases/dataConnections. Has constant value:
      "Microsoft.Synapse/workspaces/kustoPools/databases/dataConnections".
@@ -1597,6 +1874,10 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Data Connection name.
+        :paramtype name: str
+        """
         super(DataConnectionCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -1604,8 +1885,8 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
 class DataConnectionListResult(msrest.serialization.Model):
     """The list Kusto data connections operation response.
 
-    :param value: The list of Kusto data connections.
-    :type value: list[~azure.mgmt.synapse.models.DataConnection]
+    :ivar value: The list of Kusto data connections.
+    :vartype value: list[~azure.mgmt.synapse.models.DataConnection]
     """
 
     _attribute_map = {
@@ -1618,6 +1899,10 @@ class DataConnectionListResult(msrest.serialization.Model):
         value: Optional[List["DataConnection"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto data connections.
+        :paramtype value: list[~azure.mgmt.synapse.models.DataConnection]
+        """
         super(DataConnectionListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1625,10 +1910,10 @@ class DataConnectionListResult(msrest.serialization.Model):
 class DataConnectionValidation(msrest.serialization.Model):
     """Class representing an data connection validation.
 
-    :param data_connection_name: The name of the data connection.
-    :type data_connection_name: str
-    :param properties: The data connection properties to validate.
-    :type properties: ~azure.mgmt.synapse.models.DataConnection
+    :ivar data_connection_name: The name of the data connection.
+    :vartype data_connection_name: str
+    :ivar properties: The data connection properties to validate.
+    :vartype properties: ~azure.mgmt.synapse.models.DataConnection
     """
 
     _attribute_map = {
@@ -1643,6 +1928,12 @@ class DataConnectionValidation(msrest.serialization.Model):
         properties: Optional["DataConnection"] = None,
         **kwargs
     ):
+        """
+        :keyword data_connection_name: The name of the data connection.
+        :paramtype data_connection_name: str
+        :keyword properties: The data connection properties to validate.
+        :paramtype properties: ~azure.mgmt.synapse.models.DataConnection
+        """
         super(DataConnectionValidation, self).__init__(**kwargs)
         self.data_connection_name = data_connection_name
         self.properties = properties
@@ -1651,8 +1942,8 @@ class DataConnectionValidation(msrest.serialization.Model):
 class DataConnectionValidationListResult(msrest.serialization.Model):
     """The list Kusto data connection validation result.
 
-    :param value: The list of Kusto data connection validation errors.
-    :type value: list[~azure.mgmt.synapse.models.DataConnectionValidationResult]
+    :ivar value: The list of Kusto data connection validation errors.
+    :vartype value: list[~azure.mgmt.synapse.models.DataConnectionValidationResult]
     """
 
     _attribute_map = {
@@ -1665,6 +1956,10 @@ class DataConnectionValidationListResult(msrest.serialization.Model):
         value: Optional[List["DataConnectionValidationResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto data connection validation errors.
+        :paramtype value: list[~azure.mgmt.synapse.models.DataConnectionValidationResult]
+        """
         super(DataConnectionValidationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1672,8 +1967,8 @@ class DataConnectionValidationListResult(msrest.serialization.Model):
 class DataConnectionValidationResult(msrest.serialization.Model):
     """The result returned from a data connection validation request.
 
-    :param error_message: A message which indicates a problem in data connection validation.
-    :type error_message: str
+    :ivar error_message: A message which indicates a problem in data connection validation.
+    :vartype error_message: str
     """
 
     _attribute_map = {
@@ -1686,6 +1981,10 @@ class DataConnectionValidationResult(msrest.serialization.Model):
         error_message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword error_message: A message which indicates a problem in data connection validation.
+        :paramtype error_message: str
+        """
         super(DataConnectionValidationResult, self).__init__(**kwargs)
         self.error_message = error_message
 
@@ -1693,15 +1992,15 @@ class DataConnectionValidationResult(msrest.serialization.Model):
 class DataLakeStorageAccountDetails(msrest.serialization.Model):
     """Details of the data lake storage account associated with the workspace.
 
-    :param account_url: Account URL.
-    :type account_url: str
-    :param filesystem: Filesystem name.
-    :type filesystem: str
-    :param resource_id: ARM resource Id of this storage account.
-    :type resource_id: str
-    :param create_managed_private_endpoint: Create managed private endpoint to this storage account
+    :ivar account_url: Account URL.
+    :vartype account_url: str
+    :ivar filesystem: Filesystem name.
+    :vartype filesystem: str
+    :ivar resource_id: ARM resource Id of this storage account.
+    :vartype resource_id: str
+    :ivar create_managed_private_endpoint: Create managed private endpoint to this storage account
      or not.
-    :type create_managed_private_endpoint: bool
+    :vartype create_managed_private_endpoint: bool
     """
 
     _attribute_map = {
@@ -1720,6 +2019,17 @@ class DataLakeStorageAccountDetails(msrest.serialization.Model):
         create_managed_private_endpoint: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword account_url: Account URL.
+        :paramtype account_url: str
+        :keyword filesystem: Filesystem name.
+        :paramtype filesystem: str
+        :keyword resource_id: ARM resource Id of this storage account.
+        :paramtype resource_id: str
+        :keyword create_managed_private_endpoint: Create managed private endpoint to this storage
+         account or not.
+        :paramtype create_managed_private_endpoint: bool
+        """
         super(DataLakeStorageAccountDetails, self).__init__(**kwargs)
         self.account_url = account_url
         self.filesystem = filesystem
@@ -1746,13 +2056,13 @@ class DataMaskingPolicy(ProxyResource):
     :vartype kind: str
     :ivar managed_by: Fully qualified resource ID of the sql pool.
     :vartype managed_by: str
-    :param data_masking_state: The state of the data masking policy. Possible values include:
+    :ivar data_masking_state: The state of the data masking policy. Possible values include:
      "Disabled", "Enabled".
-    :type data_masking_state: str or ~azure.mgmt.synapse.models.DataMaskingState
-    :param exempt_principals: The list of the exempt principals. Specifies the semicolon-separated
+    :vartype data_masking_state: str or ~azure.mgmt.synapse.models.DataMaskingState
+    :ivar exempt_principals: The list of the exempt principals. Specifies the semicolon-separated
      list of database users for which the data masking policy does not apply. The specified users
      receive data results without masking for all of the database queries.
-    :type exempt_principals: str
+    :vartype exempt_principals: str
     :ivar application_principals: The list of the application principals. This is a legacy
      parameter and is no longer used.
     :vartype application_principals: str
@@ -1791,6 +2101,15 @@ class DataMaskingPolicy(ProxyResource):
         exempt_principals: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword data_masking_state: The state of the data masking policy. Possible values include:
+         "Disabled", "Enabled".
+        :paramtype data_masking_state: str or ~azure.mgmt.synapse.models.DataMaskingState
+        :keyword exempt_principals: The list of the exempt principals. Specifies the
+         semicolon-separated list of database users for which the data masking policy does not apply.
+         The specified users receive data results without masking for all of the database queries.
+        :paramtype exempt_principals: str
+        """
         super(DataMaskingPolicy, self).__init__(**kwargs)
         self.location = None
         self.kind = None
@@ -1820,38 +2139,38 @@ class DataMaskingRule(ProxyResource):
     :vartype kind: str
     :ivar id_properties_id: The rule Id.
     :vartype id_properties_id: str
-    :param alias_name: The alias name. This is a legacy parameter and is no longer used.
-    :type alias_name: str
-    :param rule_state: The rule state. Used to delete a rule. To delete an existing rule, specify
+    :ivar alias_name: The alias name. This is a legacy parameter and is no longer used.
+    :vartype alias_name: str
+    :ivar rule_state: The rule state. Used to delete a rule. To delete an existing rule, specify
      the schemaName, tableName, columnName, maskingFunction, and specify ruleState as disabled.
      However, if the rule doesn't already exist, the rule will be created with ruleState set to
      enabled, regardless of the provided value of ruleState. Possible values include: "Disabled",
      "Enabled".
-    :type rule_state: str or ~azure.mgmt.synapse.models.DataMaskingRuleState
-    :param schema_name: The schema name on which the data masking rule is applied.
-    :type schema_name: str
-    :param table_name: The table name on which the data masking rule is applied.
-    :type table_name: str
-    :param column_name: The column name on which the data masking rule is applied.
-    :type column_name: str
-    :param masking_function: The masking function that is used for the data masking rule. Possible
+    :vartype rule_state: str or ~azure.mgmt.synapse.models.DataMaskingRuleState
+    :ivar schema_name: The schema name on which the data masking rule is applied.
+    :vartype schema_name: str
+    :ivar table_name: The table name on which the data masking rule is applied.
+    :vartype table_name: str
+    :ivar column_name: The column name on which the data masking rule is applied.
+    :vartype column_name: str
+    :ivar masking_function: The masking function that is used for the data masking rule. Possible
      values include: "Default", "CCN", "Email", "Number", "SSN", "Text".
-    :type masking_function: str or ~azure.mgmt.synapse.models.DataMaskingFunction
-    :param number_from: The numberFrom property of the masking rule. Required if maskingFunction is
+    :vartype masking_function: str or ~azure.mgmt.synapse.models.DataMaskingFunction
+    :ivar number_from: The numberFrom property of the masking rule. Required if maskingFunction is
      set to Number, otherwise this parameter will be ignored.
-    :type number_from: str
-    :param number_to: The numberTo property of the data masking rule. Required if maskingFunction
-     is set to Number, otherwise this parameter will be ignored.
-    :type number_to: str
-    :param prefix_size: If maskingFunction is set to Text, the number of characters to show
-     unmasked in the beginning of the string. Otherwise, this parameter will be ignored.
-    :type prefix_size: str
-    :param suffix_size: If maskingFunction is set to Text, the number of characters to show
-     unmasked at the end of the string. Otherwise, this parameter will be ignored.
-    :type suffix_size: str
-    :param replacement_string: If maskingFunction is set to Text, the character to use for masking
+    :vartype number_from: str
+    :ivar number_to: The numberTo property of the data masking rule. Required if maskingFunction is
+     set to Number, otherwise this parameter will be ignored.
+    :vartype number_to: str
+    :ivar prefix_size: If maskingFunction is set to Text, the number of characters to show unmasked
+     in the beginning of the string. Otherwise, this parameter will be ignored.
+    :vartype prefix_size: str
+    :ivar suffix_size: If maskingFunction is set to Text, the number of characters to show unmasked
+     at the end of the string. Otherwise, this parameter will be ignored.
+    :vartype suffix_size: str
+    :ivar replacement_string: If maskingFunction is set to Text, the character to use for masking
      the unexposed part of the string. Otherwise, this parameter will be ignored.
-    :type replacement_string: str
+    :vartype replacement_string: str
     """
 
     _validation = {
@@ -1899,6 +2218,40 @@ class DataMaskingRule(ProxyResource):
         replacement_string: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword alias_name: The alias name. This is a legacy parameter and is no longer used.
+        :paramtype alias_name: str
+        :keyword rule_state: The rule state. Used to delete a rule. To delete an existing rule, specify
+         the schemaName, tableName, columnName, maskingFunction, and specify ruleState as disabled.
+         However, if the rule doesn't already exist, the rule will be created with ruleState set to
+         enabled, regardless of the provided value of ruleState. Possible values include: "Disabled",
+         "Enabled".
+        :paramtype rule_state: str or ~azure.mgmt.synapse.models.DataMaskingRuleState
+        :keyword schema_name: The schema name on which the data masking rule is applied.
+        :paramtype schema_name: str
+        :keyword table_name: The table name on which the data masking rule is applied.
+        :paramtype table_name: str
+        :keyword column_name: The column name on which the data masking rule is applied.
+        :paramtype column_name: str
+        :keyword masking_function: The masking function that is used for the data masking rule.
+         Possible values include: "Default", "CCN", "Email", "Number", "SSN", "Text".
+        :paramtype masking_function: str or ~azure.mgmt.synapse.models.DataMaskingFunction
+        :keyword number_from: The numberFrom property of the masking rule. Required if maskingFunction
+         is set to Number, otherwise this parameter will be ignored.
+        :paramtype number_from: str
+        :keyword number_to: The numberTo property of the data masking rule. Required if maskingFunction
+         is set to Number, otherwise this parameter will be ignored.
+        :paramtype number_to: str
+        :keyword prefix_size: If maskingFunction is set to Text, the number of characters to show
+         unmasked in the beginning of the string. Otherwise, this parameter will be ignored.
+        :paramtype prefix_size: str
+        :keyword suffix_size: If maskingFunction is set to Text, the number of characters to show
+         unmasked at the end of the string. Otherwise, this parameter will be ignored.
+        :paramtype suffix_size: str
+        :keyword replacement_string: If maskingFunction is set to Text, the character to use for
+         masking the unexposed part of the string. Otherwise, this parameter will be ignored.
+        :paramtype replacement_string: str
+        """
         super(DataMaskingRule, self).__init__(**kwargs)
         self.location = None
         self.kind = None
@@ -1919,8 +2272,8 @@ class DataMaskingRule(ProxyResource):
 class DataMaskingRuleListResult(msrest.serialization.Model):
     """The response to a list data masking rules request.
 
-    :param value: The list of Sql pool data masking rules.
-    :type value: list[~azure.mgmt.synapse.models.DataMaskingRule]
+    :ivar value: The list of Sql pool data masking rules.
+    :vartype value: list[~azure.mgmt.synapse.models.DataMaskingRule]
     """
 
     _attribute_map = {
@@ -1933,6 +2286,10 @@ class DataMaskingRuleListResult(msrest.serialization.Model):
         value: Optional[List["DataMaskingRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Sql pool data masking rules.
+        :paramtype value: list[~azure.mgmt.synapse.models.DataMaskingRule]
+        """
         super(DataMaskingRuleListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1972,29 +2329,155 @@ class DataWarehouseUserActivities(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DataWarehouseUserActivities, self).__init__(**kwargs)
         self.active_queries_count = None
+
+
+class DedicatedSQLminimalTlsSettings(ProxyResource):
+    """Dedicated Sql Minimal Tls Settings Info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar minimal_tls_version: The minimal tls version of the sql server.
+    :vartype minimal_tls_version: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        minimal_tls_version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword minimal_tls_version: The minimal tls version of the sql server.
+        :paramtype minimal_tls_version: str
+        """
+        super(DedicatedSQLminimalTlsSettings, self).__init__(**kwargs)
+        self.location = None
+        self.minimal_tls_version = minimal_tls_version
+
+
+class DedicatedSQLminimalTlsSettingsListResult(msrest.serialization.Model):
+    """A list of the server's dedicated sql minimal tls settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.synapse.models.DedicatedSQLminimalTlsSettings]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DedicatedSQLminimalTlsSettings]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DedicatedSQLminimalTlsSettingsListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class DedicatedSQLminimalTlsSettingsPatchInfo(msrest.serialization.Model):
+    """Dedicated SQL minimal tls settings patch info.
+
+    :ivar minimal_tls_version: minimal tls version.
+    :vartype minimal_tls_version: str
+    """
+
+    _attribute_map = {
+        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        minimal_tls_version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword minimal_tls_version: minimal tls version.
+        :paramtype minimal_tls_version: str
+        """
+        super(DedicatedSQLminimalTlsSettingsPatchInfo, self).__init__(**kwargs)
+        self.minimal_tls_version = minimal_tls_version
 
 
 class DynamicExecutorAllocation(msrest.serialization.Model):
     """Dynamic Executor Allocation Properties.
 
-    :param enabled: Indicates whether Dynamic Executor Allocation is enabled or not.
-    :type enabled: bool
+    :ivar enabled: Indicates whether Dynamic Executor Allocation is enabled or not.
+    :vartype enabled: bool
+    :ivar min_executors: The minimum number of executors alloted.
+    :vartype min_executors: int
+    :ivar max_executors: The maximum number of executors alloted.
+    :vartype max_executors: int
     """
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
+        'min_executors': {'key': 'minExecutors', 'type': 'int'},
+        'max_executors': {'key': 'maxExecutors', 'type': 'int'},
     }
 
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
+        min_executors: Optional[int] = None,
+        max_executors: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Indicates whether Dynamic Executor Allocation is enabled or not.
+        :paramtype enabled: bool
+        :keyword min_executors: The minimum number of executors alloted.
+        :paramtype min_executors: int
+        :keyword max_executors: The maximum number of executors alloted.
+        :paramtype max_executors: int
+        """
         super(DynamicExecutorAllocation, self).__init__(**kwargs)
         self.enabled = enabled
+        self.min_executors = min_executors
+        self.max_executors = max_executors
 
 
 class EncryptionDetails(msrest.serialization.Model):
@@ -2004,8 +2487,8 @@ class EncryptionDetails(msrest.serialization.Model):
 
     :ivar double_encryption_enabled: Double Encryption enabled.
     :vartype double_encryption_enabled: bool
-    :param cmk: Customer Managed Key Details.
-    :type cmk: ~azure.mgmt.synapse.models.CustomerManagedKeyDetails
+    :ivar cmk: Customer Managed Key Details.
+    :vartype cmk: ~azure.mgmt.synapse.models.CustomerManagedKeyDetails
     """
 
     _validation = {
@@ -2023,6 +2506,10 @@ class EncryptionDetails(msrest.serialization.Model):
         cmk: Optional["CustomerManagedKeyDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword cmk: Customer Managed Key Details.
+        :paramtype cmk: ~azure.mgmt.synapse.models.CustomerManagedKeyDetails
+        """
         super(EncryptionDetails, self).__init__(**kwargs)
         self.double_encryption_enabled = None
         self.cmk = cmk
@@ -2048,11 +2535,11 @@ class EncryptionProtector(ProxyResource):
     :vartype location: str
     :ivar subregion: Subregion of the encryption protector.
     :vartype subregion: str
-    :param server_key_name: The name of the server key.
-    :type server_key_name: str
-    :param server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+    :ivar server_key_name: The name of the server key.
+    :vartype server_key_name: str
+    :ivar server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
      Possible values include: "ServiceManaged", "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.synapse.models.ServerKeyType
+    :vartype server_key_type: str or ~azure.mgmt.synapse.models.ServerKeyType
     :ivar uri: The URI of the server key.
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
@@ -2090,6 +2577,13 @@ class EncryptionProtector(ProxyResource):
         server_key_type: Optional[Union[str, "ServerKeyType"]] = None,
         **kwargs
     ):
+        """
+        :keyword server_key_name: The name of the server key.
+        :paramtype server_key_name: str
+        :keyword server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+         Possible values include: "ServiceManaged", "AzureKeyVault".
+        :paramtype server_key_type: str or ~azure.mgmt.synapse.models.ServerKeyType
+        """
         super(EncryptionProtector, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -2125,6 +2619,8 @@ class EncryptionProtectorListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EncryptionProtectorListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2133,11 +2629,11 @@ class EncryptionProtectorListResult(msrest.serialization.Model):
 class EntityReference(msrest.serialization.Model):
     """The entity reference.
 
-    :param type: The type of this referenced entity. Possible values include:
+    :ivar type: The type of this referenced entity. Possible values include:
      "IntegrationRuntimeReference", "LinkedServiceReference".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEntityReferenceType
-    :param reference_name: The name of this referenced entity.
-    :type reference_name: str
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEntityReferenceType
+    :ivar reference_name: The name of this referenced entity.
+    :vartype reference_name: str
     """
 
     _attribute_map = {
@@ -2152,6 +2648,13 @@ class EntityReference(msrest.serialization.Model):
         reference_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of this referenced entity. Possible values include:
+         "IntegrationRuntimeReference", "LinkedServiceReference".
+        :paramtype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEntityReferenceType
+        :keyword reference_name: The name of this referenced entity.
+        :paramtype reference_name: str
+        """
         super(EntityReference, self).__init__(**kwargs)
         self.type = type
         self.reference_name = reference_name
@@ -2162,12 +2665,12 @@ class EnvironmentVariableSetup(CustomSetupBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of custom setup.Constant filled by server.
-    :type type: str
-    :param variable_name: Required. The name of the environment variable.
-    :type variable_name: str
-    :param variable_value: Required. The value of the environment variable.
-    :type variable_value: str
+    :ivar type: Required. The type of custom setup.Constant filled by server.
+    :vartype type: str
+    :ivar variable_name: Required. The name of the environment variable.
+    :vartype variable_name: str
+    :ivar variable_value: Required. The value of the environment variable.
+    :vartype variable_value: str
     """
 
     _validation = {
@@ -2189,6 +2692,12 @@ class EnvironmentVariableSetup(CustomSetupBase):
         variable_value: str,
         **kwargs
     ):
+        """
+        :keyword variable_name: Required. The name of the environment variable.
+        :paramtype variable_name: str
+        :keyword variable_value: Required. The value of the environment variable.
+        :paramtype variable_value: str
+        """
         super(EnvironmentVariableSetup, self).__init__(**kwargs)
         self.type = 'EnvironmentVariableSetup'  # type: str
         self.variable_name = variable_name
@@ -2220,6 +2729,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -2262,6 +2773,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -2273,8 +2786,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.synapse.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.synapse.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -2287,6 +2800,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.synapse.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -2306,39 +2823,38 @@ class EventGridDataConnection(DataConnection):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :vartype kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
-    :param storage_account_resource_id: The resource ID of the storage account where the data
+    :ivar storage_account_resource_id: The resource ID of the storage account where the data
      resides.
-    :type storage_account_resource_id: str
-    :param event_hub_resource_id: The resource ID where the event grid is configured to send
-     events.
-    :type event_hub_resource_id: str
-    :param consumer_group: The event hub consumer group.
-    :type consumer_group: str
-    :param table_name: The table where the data should be ingested. Optionally the table
+    :vartype storage_account_resource_id: str
+    :ivar event_hub_resource_id: The resource ID where the event grid is configured to send events.
+    :vartype event_hub_resource_id: str
+    :ivar consumer_group: The event hub consumer group.
+    :vartype consumer_group: str
+    :ivar table_name: The table where the data should be ingested. Optionally the table information
+     can be added to each message.
+    :vartype table_name: str
+    :ivar mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the mapping
      information can be added to each message.
-    :type table_name: str
-    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
-     mapping information can be added to each message.
-    :type mapping_rule_name: str
-    :param data_format: The data format of the message. Optionally the data format can be added to
+    :vartype mapping_rule_name: str
+    :ivar data_format: The data format of the message. Optionally the data format can be added to
      each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
      "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
      "W3CLOGFILE".
-    :type data_format: str or ~azure.mgmt.synapse.models.EventGridDataFormat
-    :param ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
+    :vartype data_format: str or ~azure.mgmt.synapse.models.EventGridDataFormat
+    :ivar ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
      should ignore the first record of every file.
-    :type ignore_first_record: bool
-    :param blob_storage_event_type: The name of blob storage event type to process. Possible values
+    :vartype ignore_first_record: bool
+    :ivar blob_storage_event_type: The name of blob storage event type to process. Possible values
      include: "Microsoft.Storage.BlobCreated", "Microsoft.Storage.BlobRenamed".
-    :type blob_storage_event_type: str or ~azure.mgmt.synapse.models.BlobStorageEventType
+    :vartype blob_storage_event_type: str or ~azure.mgmt.synapse.models.BlobStorageEventType
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
@@ -2385,6 +2901,35 @@ class EventGridDataConnection(DataConnection):
         blob_storage_event_type: Optional[Union[str, "BlobStorageEventType"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword storage_account_resource_id: The resource ID of the storage account where the data
+         resides.
+        :paramtype storage_account_resource_id: str
+        :keyword event_hub_resource_id: The resource ID where the event grid is configured to send
+         events.
+        :paramtype event_hub_resource_id: str
+        :keyword consumer_group: The event hub consumer group.
+        :paramtype consumer_group: str
+        :keyword table_name: The table where the data should be ingested. Optionally the table
+         information can be added to each message.
+        :paramtype table_name: str
+        :keyword mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+         mapping information can be added to each message.
+        :paramtype mapping_rule_name: str
+        :keyword data_format: The data format of the message. Optionally the data format can be added
+         to each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+         "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+         "W3CLOGFILE".
+        :paramtype data_format: str or ~azure.mgmt.synapse.models.EventGridDataFormat
+        :keyword ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
+         should ignore the first record of every file.
+        :paramtype ignore_first_record: bool
+        :keyword blob_storage_event_type: The name of blob storage event type to process. Possible
+         values include: "Microsoft.Storage.BlobCreated", "Microsoft.Storage.BlobRenamed".
+        :paramtype blob_storage_event_type: str or ~azure.mgmt.synapse.models.BlobStorageEventType
+        """
         super(EventGridDataConnection, self).__init__(location=location, **kwargs)
         self.kind = 'EventGrid'  # type: str
         self.storage_account_resource_id = storage_account_resource_id
@@ -2413,38 +2958,41 @@ class EventHubDataConnection(DataConnection):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :vartype kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
-    :param event_hub_resource_id: The resource ID of the event hub to be used to create a data
+    :ivar event_hub_resource_id: The resource ID of the event hub to be used to create a data
      connection.
-    :type event_hub_resource_id: str
-    :param consumer_group: The event hub consumer group.
-    :type consumer_group: str
-    :param table_name: The table where the data should be ingested. Optionally the table
+    :vartype event_hub_resource_id: str
+    :ivar consumer_group: The event hub consumer group.
+    :vartype consumer_group: str
+    :ivar table_name: The table where the data should be ingested. Optionally the table information
+     can be added to each message.
+    :vartype table_name: str
+    :ivar mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the mapping
      information can be added to each message.
-    :type table_name: str
-    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
-     mapping information can be added to each message.
-    :type mapping_rule_name: str
-    :param data_format: The data format of the message. Optionally the data format can be added to
+    :vartype mapping_rule_name: str
+    :ivar data_format: The data format of the message. Optionally the data format can be added to
      each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
      "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
      "W3CLOGFILE".
-    :type data_format: str or ~azure.mgmt.synapse.models.EventHubDataFormat
-    :param event_system_properties: System properties of the event hub.
-    :type event_system_properties: list[str]
-    :param compression: The event hub messages compression type. Possible values include: "None",
+    :vartype data_format: str or ~azure.mgmt.synapse.models.EventHubDataFormat
+    :ivar event_system_properties: System properties of the event hub.
+    :vartype event_system_properties: list[str]
+    :ivar compression: The event hub messages compression type. Possible values include: "None",
      "GZip".
-    :type compression: str or ~azure.mgmt.synapse.models.Compression
+    :vartype compression: str or ~azure.mgmt.synapse.models.Compression
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :ivar managed_identity_resource_id: The resource ID of a managed identity (system or user
+     assigned) to be used to authenticate with event hub.
+    :vartype managed_identity_resource_id: str
     """
 
     _validation = {
@@ -2471,6 +3019,7 @@ class EventHubDataConnection(DataConnection):
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
         'compression': {'key': 'properties.compression', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_identity_resource_id': {'key': 'properties.managedIdentityResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -2484,8 +3033,37 @@ class EventHubDataConnection(DataConnection):
         data_format: Optional[Union[str, "EventHubDataFormat"]] = None,
         event_system_properties: Optional[List[str]] = None,
         compression: Optional[Union[str, "Compression"]] = None,
+        managed_identity_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword event_hub_resource_id: The resource ID of the event hub to be used to create a data
+         connection.
+        :paramtype event_hub_resource_id: str
+        :keyword consumer_group: The event hub consumer group.
+        :paramtype consumer_group: str
+        :keyword table_name: The table where the data should be ingested. Optionally the table
+         information can be added to each message.
+        :paramtype table_name: str
+        :keyword mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+         mapping information can be added to each message.
+        :paramtype mapping_rule_name: str
+        :keyword data_format: The data format of the message. Optionally the data format can be added
+         to each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+         "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+         "W3CLOGFILE".
+        :paramtype data_format: str or ~azure.mgmt.synapse.models.EventHubDataFormat
+        :keyword event_system_properties: System properties of the event hub.
+        :paramtype event_system_properties: list[str]
+        :keyword compression: The event hub messages compression type. Possible values include: "None",
+         "GZip".
+        :paramtype compression: str or ~azure.mgmt.synapse.models.Compression
+        :keyword managed_identity_resource_id: The resource ID of a managed identity (system or user
+         assigned) to be used to authenticate with event hub.
+        :paramtype managed_identity_resource_id: str
+        """
         super(EventHubDataConnection, self).__init__(location=location, **kwargs)
         self.kind = 'EventHub'  # type: str
         self.event_hub_resource_id = event_hub_resource_id
@@ -2496,6 +3074,7 @@ class EventHubDataConnection(DataConnection):
         self.event_system_properties = event_system_properties
         self.compression = compression
         self.provisioning_state = None
+        self.managed_identity_resource_id = managed_identity_resource_id
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
@@ -2511,17 +3090,16 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param predicate_expression: Specifies condition of where clause when creating an audit.
-    :type predicate_expression: str
-    :param state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+    :ivar predicate_expression: Specifies condition of where clause when creating an audit.
+    :vartype predicate_expression: str
+    :ivar state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -2533,11 +3111,11 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -2605,13 +3183,13 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
      'isAzureMonitorTargetEnabled' as true.
@@ -2627,11 +3205,27 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
+    :vartype queue_delay_ms: int
+    :ivar is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled, devops
+     logs will be sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
+     'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
+    
+     When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit'
+     diagnostic logs category on the master database should also be created.
+    
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+    
+     For more information, see `Diagnostic Settings REST API
+     <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+     or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+    :vartype is_devops_audit_enabled: bool
     """
 
     _validation = {
@@ -2654,6 +3248,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'is_devops_audit_enabled': {'key': 'properties.isDevopsAuditEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -2669,8 +3264,148 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         is_storage_secondary_key_in_use: Optional[bool] = None,
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
+        is_devops_audit_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword predicate_expression: Specifies condition of where clause when creating an audit.
+        :paramtype predicate_expression: str
+        :keyword state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
+         'isAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        :keyword is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
+         devops logs will be sent to Azure Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
+         'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit'
+         diagnostic logs category on the master database should also be created.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_devops_audit_enabled: bool
+        """
         super(ExtendedServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.state = state
@@ -2682,6 +3417,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
         self.queue_delay_ms = queue_delay_ms
+        self.is_devops_audit_enabled = is_devops_audit_enabled
 
 
 class ExtendedServerBlobAuditingPolicyListResult(msrest.serialization.Model):
@@ -2709,6 +3445,8 @@ class ExtendedServerBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExtendedServerBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2727,17 +3465,16 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param predicate_expression: Specifies condition of where clause when creating an audit.
-    :type predicate_expression: str
-    :param state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+    :ivar predicate_expression: Specifies condition of where clause when creating an audit.
+    :vartype predicate_expression: str
+    :ivar state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -2749,11 +3486,11 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -2821,13 +3558,13 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
      'isAzureMonitorTargetEnabled' as true.
@@ -2843,11 +3580,11 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
+    :vartype queue_delay_ms: int
     """
 
     _validation = {
@@ -2887,6 +3624,129 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
         queue_delay_ms: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword predicate_expression: Specifies condition of where clause when creating an audit.
+        :paramtype predicate_expression: str
+        :keyword state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
+         'isAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        """
         super(ExtendedSqlPoolBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.state = state
@@ -2925,6 +3785,8 @@ class ExtendedSqlPoolBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExtendedSqlPoolBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2937,12 +3799,12 @@ class FollowerDatabaseDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kusto_pool_resource_id: Required. Resource id of the cluster that follows a database
+    :ivar kusto_pool_resource_id: Required. Resource id of the cluster that follows a database
      owned by this cluster.
-    :type kusto_pool_resource_id: str
-    :param attached_database_configuration_name: Required. Resource name of the attached database
+    :vartype kusto_pool_resource_id: str
+    :ivar attached_database_configuration_name: Required. Resource name of the attached database
      configuration in the follower cluster.
-    :type attached_database_configuration_name: str
+    :vartype attached_database_configuration_name: str
     :ivar database_name: The database name owned by this cluster that was followed. * in case
      following all databases.
     :vartype database_name: str
@@ -2967,6 +3829,14 @@ class FollowerDatabaseDefinition(msrest.serialization.Model):
         attached_database_configuration_name: str,
         **kwargs
     ):
+        """
+        :keyword kusto_pool_resource_id: Required. Resource id of the cluster that follows a database
+         owned by this cluster.
+        :paramtype kusto_pool_resource_id: str
+        :keyword attached_database_configuration_name: Required. Resource name of the attached database
+         configuration in the follower cluster.
+        :paramtype attached_database_configuration_name: str
+        """
         super(FollowerDatabaseDefinition, self).__init__(**kwargs)
         self.kusto_pool_resource_id = kusto_pool_resource_id
         self.attached_database_configuration_name = attached_database_configuration_name
@@ -2976,8 +3846,8 @@ class FollowerDatabaseDefinition(msrest.serialization.Model):
 class FollowerDatabaseListResult(msrest.serialization.Model):
     """The list Kusto database principals operation response.
 
-    :param value: The list of follower database result.
-    :type value: list[~azure.mgmt.synapse.models.FollowerDatabaseDefinition]
+    :ivar value: The list of follower database result.
+    :vartype value: list[~azure.mgmt.synapse.models.FollowerDatabaseDefinition]
     """
 
     _attribute_map = {
@@ -2990,6 +3860,10 @@ class FollowerDatabaseListResult(msrest.serialization.Model):
         value: Optional[List["FollowerDatabaseDefinition"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of follower database result.
+        :paramtype value: list[~azure.mgmt.synapse.models.FollowerDatabaseDefinition]
+        """
         super(FollowerDatabaseListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -3013,9 +3887,9 @@ class GeoBackupPolicy(ProxyResource):
     :vartype kind: str
     :ivar location: Backup policy location.
     :vartype location: str
-    :param state: Required. The state of the geo backup policy. Possible values include:
-     "Disabled", "Enabled".
-    :type state: str or ~azure.mgmt.synapse.models.GeoBackupPolicyState
+    :ivar state: Required. The state of the geo backup policy. Possible values include: "Disabled",
+     "Enabled".
+    :vartype state: str or ~azure.mgmt.synapse.models.GeoBackupPolicyState
     :ivar storage_type: The storage type of the geo backup policy.
     :vartype storage_type: str
     """
@@ -3046,6 +3920,11 @@ class GeoBackupPolicy(ProxyResource):
         state: Union[str, "GeoBackupPolicyState"],
         **kwargs
     ):
+        """
+        :keyword state: Required. The state of the geo backup policy. Possible values include:
+         "Disabled", "Enabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.GeoBackupPolicyState
+        """
         super(GeoBackupPolicy, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -3056,8 +3935,8 @@ class GeoBackupPolicy(ProxyResource):
 class GeoBackupPolicyListResult(msrest.serialization.Model):
     """The response to a list geo backup policies request.
 
-    :param value: The list of geo backup policies.
-    :type value: list[~azure.mgmt.synapse.models.GeoBackupPolicy]
+    :ivar value: The list of geo backup policies.
+    :vartype value: list[~azure.mgmt.synapse.models.GeoBackupPolicy]
     """
 
     _attribute_map = {
@@ -3070,6 +3949,10 @@ class GeoBackupPolicyListResult(msrest.serialization.Model):
         value: Optional[List["GeoBackupPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of geo backup policies.
+        :paramtype value: list[~azure.mgmt.synapse.models.GeoBackupPolicy]
+        """
         super(GeoBackupPolicyListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -3077,8 +3960,8 @@ class GeoBackupPolicyListResult(msrest.serialization.Model):
 class GetSsisObjectMetadataRequest(msrest.serialization.Model):
     """The request payload of get SSIS object metadata.
 
-    :param metadata_path: Metadata path.
-    :type metadata_path: str
+    :ivar metadata_path: Metadata path.
+    :vartype metadata_path: str
     """
 
     _attribute_map = {
@@ -3091,6 +3974,10 @@ class GetSsisObjectMetadataRequest(msrest.serialization.Model):
         metadata_path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword metadata_path: Metadata path.
+        :paramtype metadata_path: str
+        """
         super(GetSsisObjectMetadataRequest, self).__init__(**kwargs)
         self.metadata_path = metadata_path
 
@@ -3103,14 +3990,14 @@ class IntegrationRuntime(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
      include: "Managed", "SelfHosted".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
-    :param description: Integration runtime description.
-    :type description: str
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
+    :ivar description: Integration runtime description.
+    :vartype description: str
     """
 
     _validation = {
@@ -3134,6 +4021,13 @@ class IntegrationRuntime(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword description: Integration runtime description.
+        :paramtype description: str
+        """
         super(IntegrationRuntime, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type = 'IntegrationRuntime'  # type: str
@@ -3143,10 +4037,10 @@ class IntegrationRuntime(msrest.serialization.Model):
 class IntegrationRuntimeAuthKeys(msrest.serialization.Model):
     """The integration runtime authentication keys.
 
-    :param auth_key1: The primary integration runtime authentication key.
-    :type auth_key1: str
-    :param auth_key2: The secondary integration runtime authentication key.
-    :type auth_key2: str
+    :ivar auth_key1: The primary integration runtime authentication key.
+    :vartype auth_key1: str
+    :ivar auth_key2: The secondary integration runtime authentication key.
+    :vartype auth_key2: str
     """
 
     _attribute_map = {
@@ -3161,6 +4055,12 @@ class IntegrationRuntimeAuthKeys(msrest.serialization.Model):
         auth_key2: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword auth_key1: The primary integration runtime authentication key.
+        :paramtype auth_key1: str
+        :keyword auth_key2: The secondary integration runtime authentication key.
+        :paramtype auth_key2: str
+        """
         super(IntegrationRuntimeAuthKeys, self).__init__(**kwargs)
         self.auth_key1 = auth_key1
         self.auth_key2 = auth_key2
@@ -3169,24 +4069,24 @@ class IntegrationRuntimeAuthKeys(msrest.serialization.Model):
 class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
     """The compute resource properties for managed integration runtime.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param location: The location for managed integration runtime. The supported regions could be
+    :vartype additional_properties: dict[str, any]
+    :ivar location: The location for managed integration runtime. The supported regions could be
      found on
      https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
-    :type location: str
-    :param node_size: The node size requirement to managed integration runtime.
-    :type node_size: str
-    :param number_of_nodes: The required number of nodes for managed integration runtime.
-    :type number_of_nodes: int
-    :param max_parallel_executions_per_node: Maximum parallel executions count per node for managed
+    :vartype location: str
+    :ivar node_size: The node size requirement to managed integration runtime.
+    :vartype node_size: str
+    :ivar number_of_nodes: The required number of nodes for managed integration runtime.
+    :vartype number_of_nodes: int
+    :ivar max_parallel_executions_per_node: Maximum parallel executions count per node for managed
      integration runtime.
-    :type max_parallel_executions_per_node: int
-    :param data_flow_properties: Data flow properties for managed integration runtime.
-    :type data_flow_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeDataFlowProperties
-    :param v_net_properties: VNet properties for managed integration runtime.
-    :type v_net_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeVNetProperties
+    :vartype max_parallel_executions_per_node: int
+    :ivar data_flow_properties: Data flow properties for managed integration runtime.
+    :vartype data_flow_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeDataFlowProperties
+    :ivar v_net_properties: VNet properties for managed integration runtime.
+    :vartype v_net_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeVNetProperties
     """
 
     _validation = {
@@ -3216,6 +4116,27 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
         v_net_properties: Optional["IntegrationRuntimeVNetProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword location: The location for managed integration runtime. The supported regions could be
+         found on
+         https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
+        :paramtype location: str
+        :keyword node_size: The node size requirement to managed integration runtime.
+        :paramtype node_size: str
+        :keyword number_of_nodes: The required number of nodes for managed integration runtime.
+        :paramtype number_of_nodes: int
+        :keyword max_parallel_executions_per_node: Maximum parallel executions count per node for
+         managed integration runtime.
+        :paramtype max_parallel_executions_per_node: int
+        :keyword data_flow_properties: Data flow properties for managed integration runtime.
+        :paramtype data_flow_properties:
+         ~azure.mgmt.synapse.models.IntegrationRuntimeDataFlowProperties
+        :keyword v_net_properties: VNet properties for managed integration runtime.
+        :paramtype v_net_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeVNetProperties
+        """
         super(IntegrationRuntimeComputeProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.location = location
@@ -3231,9 +4152,9 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar service_token: The token generated in service. Callers use this token to authenticate to
      integration runtime.
     :vartype service_token: str
@@ -3276,6 +4197,11 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(IntegrationRuntimeConnectionInfo, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.service_token = None
@@ -3289,11 +4215,11 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
 class IntegrationRuntimeCustomSetupScriptProperties(msrest.serialization.Model):
     """Custom setup script properties for a managed dedicated integration runtime.
 
-    :param blob_container_uri: The URI of the Azure blob container that contains the custom setup
+    :ivar blob_container_uri: The URI of the Azure blob container that contains the custom setup
      script.
-    :type blob_container_uri: str
-    :param sas_token: The SAS token of the Azure blob container.
-    :type sas_token: ~azure.mgmt.synapse.models.SecureString
+    :vartype blob_container_uri: str
+    :ivar sas_token: The SAS token of the Azure blob container.
+    :vartype sas_token: ~azure.mgmt.synapse.models.SecureString
     """
 
     _attribute_map = {
@@ -3308,6 +4234,13 @@ class IntegrationRuntimeCustomSetupScriptProperties(msrest.serialization.Model):
         sas_token: Optional["SecureString"] = None,
         **kwargs
     ):
+        """
+        :keyword blob_container_uri: The URI of the Azure blob container that contains the custom setup
+         script.
+        :paramtype blob_container_uri: str
+        :keyword sas_token: The SAS token of the Azure blob container.
+        :paramtype sas_token: ~azure.mgmt.synapse.models.SecureString
+        """
         super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__(**kwargs)
         self.blob_container_uri = blob_container_uri
         self.sas_token = sas_token
@@ -3316,21 +4249,21 @@ class IntegrationRuntimeCustomSetupScriptProperties(msrest.serialization.Model):
 class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
     """Data flow properties for managed integration runtime.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param compute_type: Compute type of the cluster which will execute data flow job. Possible
+    :vartype additional_properties: dict[str, any]
+    :ivar compute_type: Compute type of the cluster which will execute data flow job. Possible
      values include: "General", "MemoryOptimized", "ComputeOptimized".
-    :type compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
-    :param core_count: Core count of the cluster which will execute data flow job. Supported values
+    :vartype compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
+    :ivar core_count: Core count of the cluster which will execute data flow job. Supported values
      are: 8, 16, 32, 48, 80, 144 and 272.
-    :type core_count: int
-    :param time_to_live: Time to live (in minutes) setting of the cluster which will execute data
+    :vartype core_count: int
+    :ivar time_to_live: Time to live (in minutes) setting of the cluster which will execute data
      flow job.
-    :type time_to_live: int
-    :param cleanup: Cluster will not be recycled and it will be used in next data flow activity run
+    :vartype time_to_live: int
+    :ivar cleanup: Cluster will not be recycled and it will be used in next data flow activity run
      until TTL (time to live) is reached if this is set as false. Default is true.
-    :type cleanup: bool
+    :vartype cleanup: bool
     """
 
     _validation = {
@@ -3355,6 +4288,23 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
         cleanup: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword compute_type: Compute type of the cluster which will execute data flow job. Possible
+         values include: "General", "MemoryOptimized", "ComputeOptimized".
+        :paramtype compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
+        :keyword core_count: Core count of the cluster which will execute data flow job. Supported
+         values are: 8, 16, 32, 48, 80, 144 and 272.
+        :paramtype core_count: int
+        :keyword time_to_live: Time to live (in minutes) setting of the cluster which will execute data
+         flow job.
+        :paramtype time_to_live: int
+        :keyword cleanup: Cluster will not be recycled and it will be used in next data flow activity
+         run until TTL (time to live) is reached if this is set as false. Default is true.
+        :paramtype cleanup: bool
+        """
         super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.compute_type = compute_type
@@ -3366,12 +4316,12 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
 class IntegrationRuntimeDataProxyProperties(msrest.serialization.Model):
     """Data proxy properties for a managed dedicated integration runtime.
 
-    :param connect_via: The self-hosted integration runtime reference.
-    :type connect_via: ~azure.mgmt.synapse.models.EntityReference
-    :param staging_linked_service: The staging linked service reference.
-    :type staging_linked_service: ~azure.mgmt.synapse.models.EntityReference
-    :param path: The path to contain the staged data in the Blob storage.
-    :type path: str
+    :ivar connect_via: The self-hosted integration runtime reference.
+    :vartype connect_via: ~azure.mgmt.synapse.models.EntityReference
+    :ivar staging_linked_service: The staging linked service reference.
+    :vartype staging_linked_service: ~azure.mgmt.synapse.models.EntityReference
+    :ivar path: The path to contain the staged data in the Blob storage.
+    :vartype path: str
     """
 
     _attribute_map = {
@@ -3388,6 +4338,14 @@ class IntegrationRuntimeDataProxyProperties(msrest.serialization.Model):
         path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword connect_via: The self-hosted integration runtime reference.
+        :paramtype connect_via: ~azure.mgmt.synapse.models.EntityReference
+        :keyword staging_linked_service: The staging linked service reference.
+        :paramtype staging_linked_service: ~azure.mgmt.synapse.models.EntityReference
+        :keyword path: The path to contain the staged data in the Blob storage.
+        :paramtype path: str
+        """
         super(IntegrationRuntimeDataProxyProperties, self).__init__(**kwargs)
         self.connect_via = connect_via
         self.staging_linked_service = staging_linked_service
@@ -3399,10 +4357,10 @@ class IntegrationRuntimeListResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of integration runtimes.
-    :type value: list[~azure.mgmt.synapse.models.IntegrationRuntimeResource]
-    :param next_link: The link to the next page of results, if any remaining results exist.
-    :type next_link: str
+    :ivar value: Required. List of integration runtimes.
+    :vartype value: list[~azure.mgmt.synapse.models.IntegrationRuntimeResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -3421,6 +4379,12 @@ class IntegrationRuntimeListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. List of integration runtimes.
+        :paramtype value: list[~azure.mgmt.synapse.models.IntegrationRuntimeResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
         super(IntegrationRuntimeListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3429,10 +4393,10 @@ class IntegrationRuntimeListResponse(msrest.serialization.Model):
 class IntegrationRuntimeMonitoringData(msrest.serialization.Model):
     """Get monitoring data response.
 
-    :param name: Integration runtime name.
-    :type name: str
-    :param nodes: Integration runtime node monitoring data.
-    :type nodes: list[~azure.mgmt.synapse.models.IntegrationRuntimeNodeMonitoringData]
+    :ivar name: Integration runtime name.
+    :vartype name: str
+    :ivar nodes: Integration runtime node monitoring data.
+    :vartype nodes: list[~azure.mgmt.synapse.models.IntegrationRuntimeNodeMonitoringData]
     """
 
     _attribute_map = {
@@ -3447,6 +4411,12 @@ class IntegrationRuntimeMonitoringData(msrest.serialization.Model):
         nodes: Optional[List["IntegrationRuntimeNodeMonitoringData"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Integration runtime name.
+        :paramtype name: str
+        :keyword nodes: Integration runtime node monitoring data.
+        :paramtype nodes: list[~azure.mgmt.synapse.models.IntegrationRuntimeNodeMonitoringData]
+        """
         super(IntegrationRuntimeMonitoringData, self).__init__(**kwargs)
         self.name = name
         self.nodes = nodes
@@ -3473,6 +4443,8 @@ class IntegrationRuntimeNodeIpAddress(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IntegrationRuntimeNodeIpAddress, self).__init__(**kwargs)
         self.ip_address = None
 
@@ -3482,9 +4454,9 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar available_memory_in_mb: Available memory (MB) on the integration runtime node.
@@ -3533,6 +4505,11 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(IntegrationRuntimeNodeMonitoringData, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.node_name = None
@@ -3548,10 +4525,10 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
 class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(msrest.serialization.Model):
     """Azure-SSIS integration runtime outbound network dependency endpoints for one category.
 
-    :param category: The category of outbound network dependency.
-    :type category: str
-    :param endpoints: The endpoints for outbound network dependency.
-    :type endpoints:
+    :ivar category: The category of outbound network dependency.
+    :vartype category: str
+    :ivar endpoints: The endpoints for outbound network dependency.
+    :vartype endpoints:
      list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint]
     """
 
@@ -3567,6 +4544,13 @@ class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(msrest.seria
         endpoints: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
         **kwargs
     ):
+        """
+        :keyword category: The category of outbound network dependency.
+        :paramtype category: str
+        :keyword endpoints: The endpoints for outbound network dependency.
+        :paramtype endpoints:
+         list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint]
+        """
         super(IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint, self).__init__(**kwargs)
         self.category = category
         self.endpoints = endpoints
@@ -3575,10 +4559,10 @@ class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(msrest.seria
 class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(msrest.serialization.Model):
     """The endpoint for Azure-SSIS integration runtime outbound network dependency.
 
-    :param domain_name: The domain name of endpoint.
-    :type domain_name: str
-    :param endpoint_details: The details of endpoint.
-    :type endpoint_details:
+    :ivar domain_name: The domain name of endpoint.
+    :vartype domain_name: str
+    :ivar endpoint_details: The details of endpoint.
+    :vartype endpoint_details:
      list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails]
     """
 
@@ -3594,6 +4578,13 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(msrest.serialization
         endpoint_details: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
         **kwargs
     ):
+        """
+        :keyword domain_name: The domain name of endpoint.
+        :paramtype domain_name: str
+        :keyword endpoint_details: The details of endpoint.
+        :paramtype endpoint_details:
+         list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails]
+        """
         super(IntegrationRuntimeOutboundNetworkDependenciesEndpoint, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.endpoint_details = endpoint_details
@@ -3602,8 +4593,8 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(msrest.serialization
 class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(msrest.serialization.Model):
     """The details of Azure-SSIS integration runtime outbound network dependency endpoint.
 
-    :param port: The port of endpoint.
-    :type port: int
+    :ivar port: The port of endpoint.
+    :vartype port: int
     """
 
     _attribute_map = {
@@ -3616,6 +4607,10 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(msrest.serial
         port: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword port: The port of endpoint.
+        :paramtype port: int
+        """
         super(IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails, self).__init__(**kwargs)
         self.port = port
 
@@ -3623,8 +4618,8 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(msrest.serial
 class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(msrest.serialization.Model):
     """Azure-SSIS integration runtime outbound network dependency endpoints.
 
-    :param value: The list of outbound network dependency endpoints.
-    :type value:
+    :ivar value: The list of outbound network dependency endpoints.
+    :vartype value:
      list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint]
     """
 
@@ -3638,6 +4633,11 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(msrest.seri
         value: Optional[List["IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of outbound network dependency endpoints.
+        :paramtype value:
+         list[~azure.mgmt.synapse.models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint]
+        """
         super(IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse, self).__init__(**kwargs)
         self.value = value
 
@@ -3645,9 +4645,9 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(msrest.seri
 class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
     """Parameters to regenerate the authentication key.
 
-    :param key_name: The name of the authentication key to regenerate. Possible values include:
+    :ivar key_name: The name of the authentication key to regenerate. Possible values include:
      "authKey1", "authKey2".
-    :type key_name: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAuthKeyName
+    :vartype key_name: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAuthKeyName
     """
 
     _attribute_map = {
@@ -3660,6 +4660,11 @@ class IntegrationRuntimeRegenerateKeyParameters(msrest.serialization.Model):
         key_name: Optional[Union[str, "IntegrationRuntimeAuthKeyName"]] = None,
         **kwargs
     ):
+        """
+        :keyword key_name: The name of the authentication key to regenerate. Possible values include:
+         "authKey1", "authKey2".
+        :paramtype key_name: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAuthKeyName
+        """
         super(IntegrationRuntimeRegenerateKeyParameters, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -3699,6 +4704,8 @@ class SubResource(AzureEntityResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubResource, self).__init__(**kwargs)
 
 
@@ -3719,8 +4726,8 @@ class IntegrationRuntimeResource(SubResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param properties: Required. Integration runtime properties.
-    :type properties: ~azure.mgmt.synapse.models.IntegrationRuntime
+    :ivar properties: Required. Integration runtime properties.
+    :vartype properties: ~azure.mgmt.synapse.models.IntegrationRuntime
     """
 
     _validation = {
@@ -3745,6 +4752,10 @@ class IntegrationRuntimeResource(SubResource):
         properties: "IntegrationRuntime",
         **kwargs
     ):
+        """
+        :keyword properties: Required. Integration runtime properties.
+        :paramtype properties: ~azure.mgmt.synapse.models.IntegrationRuntime
+        """
         super(IntegrationRuntimeResource, self).__init__(**kwargs)
         self.properties = properties
 
@@ -3752,20 +4763,20 @@ class IntegrationRuntimeResource(SubResource):
 class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
     """Catalog information for managed dedicated integration runtime.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param catalog_server_endpoint: The catalog database server URL.
-    :type catalog_server_endpoint: str
-    :param catalog_admin_user_name: The administrator user name of catalog database.
-    :type catalog_admin_user_name: str
-    :param catalog_admin_password: The password of the administrator user account of the catalog
+    :vartype additional_properties: dict[str, any]
+    :ivar catalog_server_endpoint: The catalog database server URL.
+    :vartype catalog_server_endpoint: str
+    :ivar catalog_admin_user_name: The administrator user name of catalog database.
+    :vartype catalog_admin_user_name: str
+    :ivar catalog_admin_password: The password of the administrator user account of the catalog
      database.
-    :type catalog_admin_password: ~azure.mgmt.synapse.models.SecureString
-    :param catalog_pricing_tier: The pricing tier for the catalog database. The valid values could
+    :vartype catalog_admin_password: ~azure.mgmt.synapse.models.SecureString
+    :ivar catalog_pricing_tier: The pricing tier for the catalog database. The valid values could
      be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible values
      include: "Basic", "Standard", "Premium", "PremiumRS".
-    :type catalog_pricing_tier: str or
+    :vartype catalog_pricing_tier: str or
      ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogPricingTier
     """
 
@@ -3791,6 +4802,23 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
         catalog_pricing_tier: Optional[Union[str, "IntegrationRuntimeSsisCatalogPricingTier"]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword catalog_server_endpoint: The catalog database server URL.
+        :paramtype catalog_server_endpoint: str
+        :keyword catalog_admin_user_name: The administrator user name of catalog database.
+        :paramtype catalog_admin_user_name: str
+        :keyword catalog_admin_password: The password of the administrator user account of the catalog
+         database.
+        :paramtype catalog_admin_password: ~azure.mgmt.synapse.models.SecureString
+        :keyword catalog_pricing_tier: The pricing tier for the catalog database. The valid values
+         could be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible
+         values include: "Basic", "Standard", "Premium", "PremiumRS".
+        :paramtype catalog_pricing_tier: str or
+         ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogPricingTier
+        """
         super(IntegrationRuntimeSsisCatalogInfo, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_server_endpoint = catalog_server_endpoint
@@ -3802,27 +4830,27 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
 class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
     """SSIS properties for managed integration runtime.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param catalog_info: Catalog information for managed dedicated integration runtime.
-    :type catalog_info: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
-    :param license_type: License type for bringing your own license scenario. Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar catalog_info: Catalog information for managed dedicated integration runtime.
+    :vartype catalog_info: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
+    :ivar license_type: License type for bringing your own license scenario. Possible values
      include: "BasePrice", "LicenseIncluded".
-    :type license_type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeLicenseType
-    :param custom_setup_script_properties: Custom setup script properties for a managed dedicated
+    :vartype license_type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeLicenseType
+    :ivar custom_setup_script_properties: Custom setup script properties for a managed dedicated
      integration runtime.
-    :type custom_setup_script_properties:
+    :vartype custom_setup_script_properties:
      ~azure.mgmt.synapse.models.IntegrationRuntimeCustomSetupScriptProperties
-    :param data_proxy_properties: Data proxy properties for a managed dedicated integration
-     runtime.
-    :type data_proxy_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeDataProxyProperties
-    :param edition: The edition for the SSIS Integration Runtime. Possible values include:
+    :ivar data_proxy_properties: Data proxy properties for a managed dedicated integration runtime.
+    :vartype data_proxy_properties:
+     ~azure.mgmt.synapse.models.IntegrationRuntimeDataProxyProperties
+    :ivar edition: The edition for the SSIS Integration Runtime. Possible values include:
      "Standard", "Enterprise".
-    :type edition: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEdition
-    :param express_custom_setup_properties: Custom setup without script properties for a SSIS
+    :vartype edition: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEdition
+    :ivar express_custom_setup_properties: Custom setup without script properties for a SSIS
      integration runtime.
-    :type express_custom_setup_properties: list[~azure.mgmt.synapse.models.CustomSetupBase]
+    :vartype express_custom_setup_properties: list[~azure.mgmt.synapse.models.CustomSetupBase]
     """
 
     _attribute_map = {
@@ -3847,6 +4875,30 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
         express_custom_setup_properties: Optional[List["CustomSetupBase"]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword catalog_info: Catalog information for managed dedicated integration runtime.
+        :paramtype catalog_info: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
+        :keyword license_type: License type for bringing your own license scenario. Possible values
+         include: "BasePrice", "LicenseIncluded".
+        :paramtype license_type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeLicenseType
+        :keyword custom_setup_script_properties: Custom setup script properties for a managed dedicated
+         integration runtime.
+        :paramtype custom_setup_script_properties:
+         ~azure.mgmt.synapse.models.IntegrationRuntimeCustomSetupScriptProperties
+        :keyword data_proxy_properties: Data proxy properties for a managed dedicated integration
+         runtime.
+        :paramtype data_proxy_properties:
+         ~azure.mgmt.synapse.models.IntegrationRuntimeDataProxyProperties
+        :keyword edition: The edition for the SSIS Integration Runtime. Possible values include:
+         "Standard", "Enterprise".
+        :paramtype edition: str or ~azure.mgmt.synapse.models.IntegrationRuntimeEdition
+        :keyword express_custom_setup_properties: Custom setup without script properties for a SSIS
+         integration runtime.
+        :paramtype express_custom_setup_properties: list[~azure.mgmt.synapse.models.CustomSetupBase]
+        """
         super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_info = catalog_info
@@ -3867,12 +4919,12 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
      include: "Managed", "SelfHosted".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
     :ivar data_factory_name: The workspace name which the integration runtime belong to.
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include: "Initial", "Stopped",
@@ -3904,6 +4956,11 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(IntegrationRuntimeStatus, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type = 'IntegrationRuntimeStatus'  # type: str
@@ -3920,8 +4977,8 @@ class IntegrationRuntimeStatusResponse(msrest.serialization.Model):
 
     :ivar name: The integration runtime name.
     :vartype name: str
-    :param properties: Required. Integration runtime properties.
-    :type properties: ~azure.mgmt.synapse.models.IntegrationRuntimeStatus
+    :ivar properties: Required. Integration runtime properties.
+    :vartype properties: ~azure.mgmt.synapse.models.IntegrationRuntimeStatus
     """
 
     _validation = {
@@ -3940,6 +4997,10 @@ class IntegrationRuntimeStatusResponse(msrest.serialization.Model):
         properties: "IntegrationRuntimeStatus",
         **kwargs
     ):
+        """
+        :keyword properties: Required. Integration runtime properties.
+        :paramtype properties: ~azure.mgmt.synapse.models.IntegrationRuntimeStatus
+        """
         super(IntegrationRuntimeStatusResponse, self).__init__(**kwargs)
         self.name = None
         self.properties = properties
@@ -3948,19 +5009,18 @@ class IntegrationRuntimeStatusResponse(msrest.serialization.Model):
 class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
     """VNet properties for managed integration runtime.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param v_net_id: The ID of the VNet that this integration runtime will join.
-    :type v_net_id: str
-    :param subnet: The name of the subnet this integration runtime will join.
-    :type subnet: str
-    :param public_i_ps: Resource IDs of the public IP addresses that this integration runtime will
+    :vartype additional_properties: dict[str, any]
+    :ivar v_net_id: The ID of the VNet that this integration runtime will join.
+    :vartype v_net_id: str
+    :ivar subnet: The name of the subnet this integration runtime will join.
+    :vartype subnet: str
+    :ivar public_i_ps: Resource IDs of the public IP addresses that this integration runtime will
      use.
-    :type public_i_ps: list[str]
-    :param subnet_id: The ID of subnet, to which this Azure-SSIS integration runtime will be
-     joined.
-    :type subnet_id: str
+    :vartype public_i_ps: list[str]
+    :ivar subnet_id: The ID of subnet, to which this Azure-SSIS integration runtime will be joined.
+    :vartype subnet_id: str
     """
 
     _attribute_map = {
@@ -3981,6 +5041,21 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
         subnet_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword v_net_id: The ID of the VNet that this integration runtime will join.
+        :paramtype v_net_id: str
+        :keyword subnet: The name of the subnet this integration runtime will join.
+        :paramtype subnet: str
+        :keyword public_i_ps: Resource IDs of the public IP addresses that this integration runtime
+         will use.
+        :paramtype public_i_ps: list[str]
+        :keyword subnet_id: The ID of subnet, to which this Azure-SSIS integration runtime will be
+         joined.
+        :paramtype subnet_id: str
+        """
         super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.v_net_id = v_net_id
@@ -4004,34 +5079,34 @@ class IotHubDataConnection(DataConnection):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
+    :vartype kind: str or ~azure.mgmt.synapse.models.DataConnectionKind
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
-    :param iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
+    :ivar iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
      connection.
-    :type iot_hub_resource_id: str
-    :param consumer_group: The iot hub consumer group.
-    :type consumer_group: str
-    :param table_name: The table where the data should be ingested. Optionally the table
+    :vartype iot_hub_resource_id: str
+    :ivar consumer_group: The iot hub consumer group.
+    :vartype consumer_group: str
+    :ivar table_name: The table where the data should be ingested. Optionally the table information
+     can be added to each message.
+    :vartype table_name: str
+    :ivar mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the mapping
      information can be added to each message.
-    :type table_name: str
-    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
-     mapping information can be added to each message.
-    :type mapping_rule_name: str
-    :param data_format: The data format of the message. Optionally the data format can be added to
+    :vartype mapping_rule_name: str
+    :ivar data_format: The data format of the message. Optionally the data format can be added to
      each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
      "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
      "W3CLOGFILE".
-    :type data_format: str or ~azure.mgmt.synapse.models.IotHubDataFormat
-    :param event_system_properties: System properties of the iot hub.
-    :type event_system_properties: list[str]
-    :param shared_access_policy_name: The name of the share access policy.
-    :type shared_access_policy_name: str
+    :vartype data_format: str or ~azure.mgmt.synapse.models.IotHubDataFormat
+    :ivar event_system_properties: System properties of the iot hub.
+    :vartype event_system_properties: list[str]
+    :ivar shared_access_policy_name: The name of the share access policy.
+    :vartype shared_access_policy_name: str
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
@@ -4076,6 +5151,30 @@ class IotHubDataConnection(DataConnection):
         shared_access_policy_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
+         connection.
+        :paramtype iot_hub_resource_id: str
+        :keyword consumer_group: The iot hub consumer group.
+        :paramtype consumer_group: str
+        :keyword table_name: The table where the data should be ingested. Optionally the table
+         information can be added to each message.
+        :paramtype table_name: str
+        :keyword mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+         mapping information can be added to each message.
+        :paramtype mapping_rule_name: str
+        :keyword data_format: The data format of the message. Optionally the data format can be added
+         to each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+         "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+         "W3CLOGFILE".
+        :paramtype data_format: str or ~azure.mgmt.synapse.models.IotHubDataFormat
+        :keyword event_system_properties: System properties of the iot hub.
+        :paramtype event_system_properties: list[str]
+        :keyword shared_access_policy_name: The name of the share access policy.
+        :paramtype shared_access_policy_name: str
+        """
         super(IotHubDataConnection, self).__init__(location=location, **kwargs)
         self.kind = 'IotHub'  # type: str
         self.iot_hub_resource_id = iot_hub_resource_id
@@ -4101,14 +5200,14 @@ class IpFirewallRuleInfo(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
+    :ivar end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
      greater than or equal to startIpAddress.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     :ivar provisioning_state: Resource provisioning state. Possible values include: "Provisioning",
      "Succeeded", "Deleting", "Failed", "DeleteError".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ProvisioningState
-    :param start_ip_address: The start IP address of the firewall rule. Must be IPv4 format.
-    :type start_ip_address: str
+    :ivar start_ip_address: The start IP address of the firewall rule. Must be IPv4 format.
+    :vartype start_ip_address: str
     """
 
     _validation = {
@@ -4134,6 +5233,13 @@ class IpFirewallRuleInfo(ProxyResource):
         start_ip_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
+         greater than or equal to startIpAddress.
+        :paramtype end_ip_address: str
+        :keyword start_ip_address: The start IP address of the firewall rule. Must be IPv4 format.
+        :paramtype start_ip_address: str
+        """
         super(IpFirewallRuleInfo, self).__init__(**kwargs)
         self.end_ip_address = end_ip_address
         self.provisioning_state = None
@@ -4143,10 +5249,10 @@ class IpFirewallRuleInfo(ProxyResource):
 class IpFirewallRuleInfoListResult(msrest.serialization.Model):
     """List of IP firewall rules.
 
-    :param next_link: Link to next page of results.
-    :type next_link: str
-    :param value: List of IP firewall rules.
-    :type value: list[~azure.mgmt.synapse.models.IpFirewallRuleInfo]
+    :ivar next_link: Link to next page of results.
+    :vartype next_link: str
+    :ivar value: List of IP firewall rules.
+    :vartype value: list[~azure.mgmt.synapse.models.IpFirewallRuleInfo]
     """
 
     _attribute_map = {
@@ -4161,6 +5267,12 @@ class IpFirewallRuleInfoListResult(msrest.serialization.Model):
         value: Optional[List["IpFirewallRuleInfo"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to next page of results.
+        :paramtype next_link: str
+        :keyword value: List of IP firewall rules.
+        :paramtype value: list[~azure.mgmt.synapse.models.IpFirewallRuleInfo]
+        """
         super(IpFirewallRuleInfoListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -4171,14 +5283,14 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
+    :ivar end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
      greater than or equal to startIpAddress.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     :ivar provisioning_state: Resource provisioning state. Possible values include: "Provisioning",
      "Succeeded", "Deleting", "Failed", "DeleteError".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ProvisioningState
-    :param start_ip_address: The start IP address of the firewall rule. Must be IPv4 format.
-    :type start_ip_address: str
+    :ivar start_ip_address: The start IP address of the firewall rule. Must be IPv4 format.
+    :vartype start_ip_address: str
     """
 
     _validation = {
@@ -4198,6 +5310,13 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
         start_ip_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
+         greater than or equal to startIpAddress.
+        :paramtype end_ip_address: str
+        :keyword start_ip_address: The start IP address of the firewall rule. Must be IPv4 format.
+        :paramtype start_ip_address: str
+        """
         super(IpFirewallRuleProperties, self).__init__(**kwargs)
         self.end_ip_address = end_ip_address
         self.provisioning_state = None
@@ -4207,11 +5326,11 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
 class KekIdentityProperties(msrest.serialization.Model):
     """Key encryption key properties.
 
-    :param user_assigned_identity: User assigned identity resource Id.
-    :type user_assigned_identity: str
-    :param use_system_assigned_identity: Boolean specifying whether to use system assigned identity
+    :ivar user_assigned_identity: User assigned identity resource Id.
+    :vartype user_assigned_identity: str
+    :ivar use_system_assigned_identity: Boolean specifying whether to use system assigned identity
      or not.
-    :type use_system_assigned_identity: any
+    :vartype use_system_assigned_identity: any
     """
 
     _attribute_map = {
@@ -4226,6 +5345,13 @@ class KekIdentityProperties(msrest.serialization.Model):
         use_system_assigned_identity: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword user_assigned_identity: User assigned identity resource Id.
+        :paramtype user_assigned_identity: str
+        :keyword use_system_assigned_identity: Boolean specifying whether to use system assigned
+         identity or not.
+        :paramtype use_system_assigned_identity: any
+        """
         super(KekIdentityProperties, self).__init__(**kwargs)
         self.user_assigned_identity = user_assigned_identity
         self.use_system_assigned_identity = use_system_assigned_identity
@@ -4244,10 +5370,10 @@ class Key(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param is_active_cmk: Used to activate the workspace after a customer managed key is provided.
-    :type is_active_cmk: bool
-    :param key_vault_url: The Key Vault Url of the workspace key.
-    :type key_vault_url: str
+    :ivar is_active_cmk: Used to activate the workspace after a customer managed key is provided.
+    :vartype is_active_cmk: bool
+    :ivar key_vault_url: The Key Vault Url of the workspace key.
+    :vartype key_vault_url: str
     """
 
     _validation = {
@@ -4271,6 +5397,13 @@ class Key(ProxyResource):
         key_vault_url: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword is_active_cmk: Used to activate the workspace after a customer managed key is
+         provided.
+        :paramtype is_active_cmk: bool
+        :keyword key_vault_url: The Key Vault Url of the workspace key.
+        :paramtype key_vault_url: str
+        """
         super(Key, self).__init__(**kwargs)
         self.is_active_cmk = is_active_cmk
         self.key_vault_url = key_vault_url
@@ -4279,10 +5412,10 @@ class Key(ProxyResource):
 class KeyInfoListResult(msrest.serialization.Model):
     """List of keys.
 
-    :param next_link: Link to the next page of results.
-    :type next_link: str
-    :param value: List of keys.
-    :type value: list[~azure.mgmt.synapse.models.Key]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    :ivar value: List of keys.
+    :vartype value: list[~azure.mgmt.synapse.models.Key]
     """
 
     _attribute_map = {
@@ -4297,6 +5430,12 @@ class KeyInfoListResult(msrest.serialization.Model):
         value: Optional[List["Key"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
+        :keyword value: List of keys.
+        :paramtype value: list[~azure.mgmt.synapse.models.Key]
+        """
         super(KeyInfoListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -4317,12 +5456,12 @@ class KustoPool(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param sku: Required. The SKU of the kusto pool.
-    :type sku: ~azure.mgmt.synapse.models.AzureSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: Required. The SKU of the kusto pool.
+    :vartype sku: ~azure.mgmt.synapse.models.AzureSku
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
@@ -4340,17 +5479,17 @@ class KustoPool(TrackedResource):
     :vartype data_ingestion_uri: str
     :ivar state_reason: The reason for the Kusto Pool's current state.
     :vartype state_reason: str
-    :param optimized_autoscale: Optimized auto scale definition.
-    :type optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
-    :param enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+    :ivar optimized_autoscale: Optimized auto scale definition.
+    :vartype optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
+    :ivar enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
      enabled.
-    :type enable_streaming_ingest: bool
-    :param enable_purge: A boolean value that indicates if the purge operations are enabled.
-    :type enable_purge: bool
+    :vartype enable_streaming_ingest: bool
+    :ivar enable_purge: A boolean value that indicates if the purge operations are enabled.
+    :vartype enable_purge: bool
     :ivar language_extensions: List of the Kusto Pool's language extensions.
     :vartype language_extensions: ~azure.mgmt.synapse.models.LanguageExtensionsList
-    :param workspace_uid: The workspace unique identifier.
-    :type workspace_uid: str
+    :ivar workspace_uid: The workspace unique identifier.
+    :vartype workspace_uid: str
     """
 
     _validation = {
@@ -4402,6 +5541,23 @@ class KustoPool(TrackedResource):
         workspace_uid: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: Required. The SKU of the kusto pool.
+        :paramtype sku: ~azure.mgmt.synapse.models.AzureSku
+        :keyword optimized_autoscale: Optimized auto scale definition.
+        :paramtype optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
+        :keyword enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+         enabled.
+        :paramtype enable_streaming_ingest: bool
+        :keyword enable_purge: A boolean value that indicates if the purge operations are enabled.
+        :paramtype enable_purge: bool
+        :keyword workspace_uid: The workspace unique identifier.
+        :paramtype workspace_uid: str
+        """
         super(KustoPool, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.etag = None
@@ -4425,8 +5581,8 @@ class KustoPoolCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Kusto Pool name.
-    :type name: str
+    :ivar name: Required. Kusto Pool name.
+    :vartype name: str
     :ivar type: The type of resource, Microsoft.Synapse/workspaces/kustoPools. Has constant value:
      "Microsoft.Synapse/workspaces/kustoPools".
     :vartype type: str
@@ -4450,6 +5606,10 @@ class KustoPoolCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Kusto Pool name.
+        :paramtype name: str
+        """
         super(KustoPoolCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -4457,8 +5617,8 @@ class KustoPoolCheckNameRequest(msrest.serialization.Model):
 class KustoPoolListResult(msrest.serialization.Model):
     """The list Kusto pools operation response.
 
-    :param value: The list of Kusto pools.
-    :type value: list[~azure.mgmt.synapse.models.KustoPool]
+    :ivar value: The list of Kusto pools.
+    :vartype value: list[~azure.mgmt.synapse.models.KustoPool]
     """
 
     _attribute_map = {
@@ -4471,6 +5631,10 @@ class KustoPoolListResult(msrest.serialization.Model):
         value: Optional[List["KustoPool"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto pools.
+        :paramtype value: list[~azure.mgmt.synapse.models.KustoPool]
+        """
         super(KustoPoolListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -4488,10 +5652,10 @@ class KustoPoolUpdate(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The SKU of the kusto pool.
-    :type sku: ~azure.mgmt.synapse.models.AzureSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The SKU of the kusto pool.
+    :vartype sku: ~azure.mgmt.synapse.models.AzureSku
     :ivar state: The state of the resource. Possible values include: "Creating", "Unavailable",
      "Running", "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating".
     :vartype state: str or ~azure.mgmt.synapse.models.State
@@ -4504,17 +5668,17 @@ class KustoPoolUpdate(Resource):
     :vartype data_ingestion_uri: str
     :ivar state_reason: The reason for the Kusto Pool's current state.
     :vartype state_reason: str
-    :param optimized_autoscale: Optimized auto scale definition.
-    :type optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
-    :param enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+    :ivar optimized_autoscale: Optimized auto scale definition.
+    :vartype optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
+    :ivar enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
      enabled.
-    :type enable_streaming_ingest: bool
-    :param enable_purge: A boolean value that indicates if the purge operations are enabled.
-    :type enable_purge: bool
+    :vartype enable_streaming_ingest: bool
+    :ivar enable_purge: A boolean value that indicates if the purge operations are enabled.
+    :vartype enable_purge: bool
     :ivar language_extensions: List of the Kusto Pool's language extensions.
     :vartype language_extensions: ~azure.mgmt.synapse.models.LanguageExtensionsList
-    :param workspace_uid: The workspace unique identifier.
-    :type workspace_uid: str
+    :ivar workspace_uid: The workspace unique identifier.
+    :vartype workspace_uid: str
     """
 
     _validation = {
@@ -4558,6 +5722,21 @@ class KustoPoolUpdate(Resource):
         workspace_uid: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The SKU of the kusto pool.
+        :paramtype sku: ~azure.mgmt.synapse.models.AzureSku
+        :keyword optimized_autoscale: Optimized auto scale definition.
+        :paramtype optimized_autoscale: ~azure.mgmt.synapse.models.OptimizedAutoscale
+        :keyword enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+         enabled.
+        :paramtype enable_streaming_ingest: bool
+        :keyword enable_purge: A boolean value that indicates if the purge operations are enabled.
+        :paramtype enable_purge: bool
+        :keyword workspace_uid: The workspace unique identifier.
+        :paramtype workspace_uid: str
+        """
         super(KustoPoolUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
@@ -4576,9 +5755,9 @@ class KustoPoolUpdate(Resource):
 class LanguageExtension(msrest.serialization.Model):
     """The language extension object.
 
-    :param language_extension_name: The language extension name. Possible values include: "PYTHON",
+    :ivar language_extension_name: The language extension name. Possible values include: "PYTHON",
      "R".
-    :type language_extension_name: str or ~azure.mgmt.synapse.models.LanguageExtensionName
+    :vartype language_extension_name: str or ~azure.mgmt.synapse.models.LanguageExtensionName
     """
 
     _attribute_map = {
@@ -4591,6 +5770,11 @@ class LanguageExtension(msrest.serialization.Model):
         language_extension_name: Optional[Union[str, "LanguageExtensionName"]] = None,
         **kwargs
     ):
+        """
+        :keyword language_extension_name: The language extension name. Possible values include:
+         "PYTHON", "R".
+        :paramtype language_extension_name: str or ~azure.mgmt.synapse.models.LanguageExtensionName
+        """
         super(LanguageExtension, self).__init__(**kwargs)
         self.language_extension_name = language_extension_name
 
@@ -4598,8 +5782,8 @@ class LanguageExtension(msrest.serialization.Model):
 class LanguageExtensionsList(msrest.serialization.Model):
     """The list of language extension objects.
 
-    :param value: The list of language extensions.
-    :type value: list[~azure.mgmt.synapse.models.LanguageExtension]
+    :ivar value: The list of language extensions.
+    :vartype value: list[~azure.mgmt.synapse.models.LanguageExtension]
     """
 
     _attribute_map = {
@@ -4612,6 +5796,10 @@ class LanguageExtensionsList(msrest.serialization.Model):
         value: Optional[List["LanguageExtension"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of language extensions.
+        :paramtype value: list[~azure.mgmt.synapse.models.LanguageExtension]
+        """
         super(LanguageExtensionsList, self).__init__(**kwargs)
         self.value = value
 
@@ -4621,16 +5809,16 @@ class LibraryInfo(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: Name of the library.
-    :type name: str
-    :param path: Storage blob path of library.
-    :type path: str
-    :param container_name: Storage blob container name.
-    :type container_name: str
-    :param uploaded_timestamp: The last update time of the library.
-    :type uploaded_timestamp: ~datetime.datetime
-    :param type: Type of the library.
-    :type type: str
+    :ivar name: Name of the library.
+    :vartype name: str
+    :ivar path: Storage blob path of library.
+    :vartype path: str
+    :ivar container_name: Storage blob container name.
+    :vartype container_name: str
+    :ivar uploaded_timestamp: The last update time of the library.
+    :vartype uploaded_timestamp: ~datetime.datetime
+    :ivar type: Type of the library.
+    :vartype type: str
     :ivar provisioning_status: Provisioning status of the library/package.
     :vartype provisioning_status: str
     :ivar creator_id: Creator Id of the library/package.
@@ -4662,6 +5850,18 @@ class LibraryInfo(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the library.
+        :paramtype name: str
+        :keyword path: Storage blob path of library.
+        :paramtype path: str
+        :keyword container_name: Storage blob container name.
+        :paramtype container_name: str
+        :keyword uploaded_timestamp: The last update time of the library.
+        :paramtype uploaded_timestamp: ~datetime.datetime
+        :keyword type: Type of the library.
+        :paramtype type: str
+        """
         super(LibraryInfo, self).__init__(**kwargs)
         self.name = name
         self.path = path
@@ -4677,10 +5877,10 @@ class LibraryListResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Library.
-    :type value: list[~azure.mgmt.synapse.models.LibraryResource]
-    :param next_link: The link to the next page of results, if any remaining results exist.
-    :type next_link: str
+    :ivar value: Required. List of Library.
+    :vartype value: list[~azure.mgmt.synapse.models.LibraryResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -4699,6 +5899,12 @@ class LibraryListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. List of Library.
+        :paramtype value: list[~azure.mgmt.synapse.models.LibraryResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
         super(LibraryListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -4711,10 +5917,10 @@ class LibraryRequirements(msrest.serialization.Model):
 
     :ivar time: The last update time of the library requirements file.
     :vartype time: ~datetime.datetime
-    :param content: The library requirements.
-    :type content: str
-    :param filename: The filename of the library requirements file.
-    :type filename: str
+    :ivar content: The library requirements.
+    :vartype content: str
+    :ivar filename: The filename of the library requirements file.
+    :vartype filename: str
     """
 
     _validation = {
@@ -4734,6 +5940,12 @@ class LibraryRequirements(msrest.serialization.Model):
         filename: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword content: The library requirements.
+        :paramtype content: str
+        :keyword filename: The filename of the library requirements file.
+        :paramtype filename: str
+        """
         super(LibraryRequirements, self).__init__(**kwargs)
         self.time = None
         self.content = content
@@ -4755,16 +5967,16 @@ class LibraryResource(SubResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param name_properties_name: Name of the library.
-    :type name_properties_name: str
-    :param path: Storage blob path of library.
-    :type path: str
-    :param container_name: Storage blob container name.
-    :type container_name: str
-    :param uploaded_timestamp: The last update time of the library.
-    :type uploaded_timestamp: ~datetime.datetime
-    :param type_properties_type: Type of the library.
-    :type type_properties_type: str
+    :ivar name_properties_name: Name of the library.
+    :vartype name_properties_name: str
+    :ivar path: Storage blob path of library.
+    :vartype path: str
+    :ivar container_name: Storage blob container name.
+    :vartype container_name: str
+    :ivar uploaded_timestamp: The last update time of the library.
+    :vartype uploaded_timestamp: ~datetime.datetime
+    :ivar type_properties_type: Type of the library.
+    :vartype type_properties_type: str
     :ivar provisioning_status: Provisioning status of the library/package.
     :vartype provisioning_status: str
     :ivar creator_id: Creator Id of the library/package.
@@ -4804,6 +6016,18 @@ class LibraryResource(SubResource):
         type_properties_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name_properties_name: Name of the library.
+        :paramtype name_properties_name: str
+        :keyword path: Storage blob path of library.
+        :paramtype path: str
+        :keyword container_name: Storage blob container name.
+        :paramtype container_name: str
+        :keyword uploaded_timestamp: The last update time of the library.
+        :paramtype uploaded_timestamp: ~datetime.datetime
+        :keyword type_properties_type: Type of the library.
+        :paramtype type_properties_type: str
+        """
         super(LibraryResource, self).__init__(**kwargs)
         self.name_properties_name = name_properties_name
         self.path = path
@@ -4853,6 +6077,8 @@ class LinkedIntegrationRuntime(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LinkedIntegrationRuntime, self).__init__(**kwargs)
         self.name = None
         self.subscription_id = None
@@ -4869,9 +6095,9 @@ class LinkedIntegrationRuntimeType(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param authorization_type: Required. The authorization type for integration runtime
+    :ivar authorization_type: Required. The authorization type for integration runtime
      sharing.Constant filled by server.
-    :type authorization_type: str
+    :vartype authorization_type: str
     """
 
     _validation = {
@@ -4890,6 +6116,8 @@ class LinkedIntegrationRuntimeType(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LinkedIntegrationRuntimeType, self).__init__(**kwargs)
         self.authorization_type = None  # type: Optional[str]
 
@@ -4899,11 +6127,11 @@ class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param authorization_type: Required. The authorization type for integration runtime
+    :ivar authorization_type: Required. The authorization type for integration runtime
      sharing.Constant filled by server.
-    :type authorization_type: str
-    :param key: Required. The key used for authorization.
-    :type key: ~azure.mgmt.synapse.models.SecureString
+    :vartype authorization_type: str
+    :ivar key: Required. The key used for authorization.
+    :vartype key: ~azure.mgmt.synapse.models.SecureString
     """
 
     _validation = {
@@ -4922,6 +6150,10 @@ class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
         key: "SecureString",
         **kwargs
     ):
+        """
+        :keyword key: Required. The key used for authorization.
+        :paramtype key: ~azure.mgmt.synapse.models.SecureString
+        """
         super(LinkedIntegrationRuntimeKeyAuthorization, self).__init__(**kwargs)
         self.authorization_type = 'Key'  # type: str
         self.key = key
@@ -4932,11 +6164,11 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param authorization_type: Required. The authorization type for integration runtime
+    :ivar authorization_type: Required. The authorization type for integration runtime
      sharing.Constant filled by server.
-    :type authorization_type: str
-    :param resource_id: Required. The resource identifier of the integration runtime to be shared.
-    :type resource_id: str
+    :vartype authorization_type: str
+    :ivar resource_id: Required. The resource identifier of the integration runtime to be shared.
+    :vartype resource_id: str
     """
 
     _validation = {
@@ -4955,6 +6187,11 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
         resource_id: str,
         **kwargs
     ):
+        """
+        :keyword resource_id: Required. The resource identifier of the integration runtime to be
+         shared.
+        :paramtype resource_id: str
+        """
         super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__(**kwargs)
         self.authorization_type = 'RBAC'  # type: str
         self.resource_id = resource_id
@@ -4963,8 +6200,8 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
 class ListResourceSkusResult(msrest.serialization.Model):
     """List of available SKUs for a Kusto Pool.
 
-    :param value: The collection of available SKUs for an existing resource.
-    :type value: list[~azure.mgmt.synapse.models.AzureResourceSku]
+    :ivar value: The collection of available SKUs for an existing resource.
+    :vartype value: list[~azure.mgmt.synapse.models.AzureResourceSku]
     """
 
     _attribute_map = {
@@ -4977,6 +6214,10 @@ class ListResourceSkusResult(msrest.serialization.Model):
         value: Optional[List["AzureResourceSku"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of available SKUs for an existing resource.
+        :paramtype value: list[~azure.mgmt.synapse.models.AzureResourceSku]
+        """
         super(ListResourceSkusResult, self).__init__(**kwargs)
         self.value = value
 
@@ -5006,6 +6247,8 @@ class ListSqlPoolSecurityAlertPolicies(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ListSqlPoolSecurityAlertPolicies, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5024,22 +6267,22 @@ class MaintenanceWindowOptions(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param is_enabled: Whether maintenance windows are enabled for the database.
-    :type is_enabled: bool
-    :param maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
+    :ivar is_enabled: Whether maintenance windows are enabled for the database.
+    :vartype is_enabled: bool
+    :ivar maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
      {Wednesday, 0, 24*\ 60}.
-    :type maintenance_window_cycles: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
-    :param min_duration_in_minutes: Minimum duration of maintenance window.
-    :type min_duration_in_minutes: int
-    :param default_duration_in_minutes: Default duration for maintenance window.
-    :type default_duration_in_minutes: int
-    :param min_cycles: Minimum number of maintenance windows cycles to be set on the database.
-    :type min_cycles: int
-    :param time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
-    :type time_granularity_in_minutes: int
-    :param allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
+    :vartype maintenance_window_cycles: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
+    :ivar min_duration_in_minutes: Minimum duration of maintenance window.
+    :vartype min_duration_in_minutes: int
+    :ivar default_duration_in_minutes: Default duration for maintenance window.
+    :vartype default_duration_in_minutes: int
+    :ivar min_cycles: Minimum number of maintenance windows cycles to be set on the database.
+    :vartype min_cycles: int
+    :ivar time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
+    :vartype time_granularity_in_minutes: int
+    :ivar allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
      windows per cycle.
-    :type allow_multiple_maintenance_windows_per_cycle: bool
+    :vartype allow_multiple_maintenance_windows_per_cycle: bool
     """
 
     _validation = {
@@ -5073,6 +6316,25 @@ class MaintenanceWindowOptions(ProxyResource):
         allow_multiple_maintenance_windows_per_cycle: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Whether maintenance windows are enabled for the database.
+        :paramtype is_enabled: bool
+        :keyword maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
+         {Wednesday, 0, 24*\ 60}.
+        :paramtype maintenance_window_cycles:
+         list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
+        :keyword min_duration_in_minutes: Minimum duration of maintenance window.
+        :paramtype min_duration_in_minutes: int
+        :keyword default_duration_in_minutes: Default duration for maintenance window.
+        :paramtype default_duration_in_minutes: int
+        :keyword min_cycles: Minimum number of maintenance windows cycles to be set on the database.
+        :paramtype min_cycles: int
+        :keyword time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
+        :paramtype time_granularity_in_minutes: int
+        :keyword allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
+         windows per cycle.
+        :paramtype allow_multiple_maintenance_windows_per_cycle: bool
+        """
         super(MaintenanceWindowOptions, self).__init__(**kwargs)
         self.is_enabled = is_enabled
         self.maintenance_window_cycles = maintenance_window_cycles
@@ -5096,8 +6358,8 @@ class MaintenanceWindows(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param time_ranges:
-    :type time_ranges: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
+    :ivar time_ranges:
+    :vartype time_ranges: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
     """
 
     _validation = {
@@ -5119,6 +6381,10 @@ class MaintenanceWindows(ProxyResource):
         time_ranges: Optional[List["MaintenanceWindowTimeRange"]] = None,
         **kwargs
     ):
+        """
+        :keyword time_ranges:
+        :paramtype time_ranges: list[~azure.mgmt.synapse.models.MaintenanceWindowTimeRange]
+        """
         super(MaintenanceWindows, self).__init__(**kwargs)
         self.time_ranges = time_ranges
 
@@ -5126,13 +6392,13 @@ class MaintenanceWindows(ProxyResource):
 class MaintenanceWindowTimeRange(msrest.serialization.Model):
     """Maintenance window time range.
 
-    :param day_of_week: Day of maintenance window. Possible values include: "Sunday", "Monday",
+    :ivar day_of_week: Day of maintenance window. Possible values include: "Sunday", "Monday",
      "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday".
-    :type day_of_week: str or ~azure.mgmt.synapse.models.DayOfWeek
-    :param start_time: Start time minutes offset from 12am.
-    :type start_time: str
-    :param duration: Duration of maintenance window in minutes.
-    :type duration: str
+    :vartype day_of_week: str or ~azure.mgmt.synapse.models.DayOfWeek
+    :ivar start_time: Start time minutes offset from 12am.
+    :vartype start_time: str
+    :ivar duration: Duration of maintenance window in minutes.
+    :vartype duration: str
     """
 
     _attribute_map = {
@@ -5149,6 +6415,15 @@ class MaintenanceWindowTimeRange(msrest.serialization.Model):
         duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword day_of_week: Day of maintenance window. Possible values include: "Sunday", "Monday",
+         "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday".
+        :paramtype day_of_week: str or ~azure.mgmt.synapse.models.DayOfWeek
+        :keyword start_time: Start time minutes offset from 12am.
+        :paramtype start_time: str
+        :keyword duration: Duration of maintenance window in minutes.
+        :paramtype duration: str
+        """
         super(MaintenanceWindowTimeRange, self).__init__(**kwargs)
         self.day_of_week = day_of_week
         self.start_time = start_time
@@ -5164,11 +6439,11 @@ class ManagedIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of the workspace managed identity.
     :vartype tenant_id: str
-    :param type: The type of managed identity for the workspace. Possible values include: "None",
+    :ivar type: The type of managed identity for the workspace. Possible values include: "None",
      "SystemAssigned", "SystemAssigned,UserAssigned".
-    :type type: str or ~azure.mgmt.synapse.models.ResourceIdentityType
-    :param user_assigned_identities: The user assigned managed identities.
-    :type user_assigned_identities: dict[str,
+    :vartype type: str or ~azure.mgmt.synapse.models.ResourceIdentityType
+    :ivar user_assigned_identities: The user assigned managed identities.
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.synapse.models.UserAssignedManagedIdentity]
     """
 
@@ -5191,6 +6466,14 @@ class ManagedIdentity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserAssignedManagedIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of managed identity for the workspace. Possible values include: "None",
+         "SystemAssigned", "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.synapse.models.ResourceIdentityType
+        :keyword user_assigned_identities: The user assigned managed identities.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.synapse.models.UserAssignedManagedIdentity]
+        """
         super(ManagedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -5211,8 +6494,8 @@ class ManagedIdentitySqlControlSettingsModel(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param grant_sql_control_to_managed_identity: Grant sql control to managed identity.
-    :type grant_sql_control_to_managed_identity:
+    :ivar grant_sql_control_to_managed_identity: Grant sql control to managed identity.
+    :vartype grant_sql_control_to_managed_identity:
      ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity
     """
 
@@ -5235,6 +6518,11 @@ class ManagedIdentitySqlControlSettingsModel(ProxyResource):
         grant_sql_control_to_managed_identity: Optional["ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity"] = None,
         **kwargs
     ):
+        """
+        :keyword grant_sql_control_to_managed_identity: Grant sql control to managed identity.
+        :paramtype grant_sql_control_to_managed_identity:
+         ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity
+        """
         super(ManagedIdentitySqlControlSettingsModel, self).__init__(**kwargs)
         self.grant_sql_control_to_managed_identity = grant_sql_control_to_managed_identity
 
@@ -5244,8 +6532,8 @@ class ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedId
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param desired_state: Desired state. Possible values include: "Enabled", "Disabled".
-    :type desired_state: str or
+    :ivar desired_state: Desired state. Possible values include: "Enabled", "Disabled".
+    :vartype desired_state: str or
      ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityDesiredState
     :ivar actual_state: Actual state. Possible values include: "Enabling", "Enabled", "Disabling",
      "Disabled", "Unknown".
@@ -5268,6 +6556,11 @@ class ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedId
         desired_state: Optional[Union[str, "ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityDesiredState"]] = None,
         **kwargs
     ):
+        """
+        :keyword desired_state: Desired state. Possible values include: "Enabled", "Disabled".
+        :paramtype desired_state: str or
+         ~azure.mgmt.synapse.models.ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentityDesiredState
+        """
         super(ManagedIdentitySqlControlSettingsModelPropertiesGrantSqlControlToManagedIdentity, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
@@ -5280,22 +6573,28 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
      include: "Managed", "SelfHosted".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
-    :param description: Integration runtime description.
-    :type description: str
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
+    :ivar description: Integration runtime description.
+    :vartype description: str
     :ivar state: Integration runtime state, only valid for managed dedicated integration runtime.
      Possible values include: "Initial", "Stopped", "Started", "Starting", "Stopping",
      "NeedRegistration", "Online", "Limited", "Offline", "AccessDenied".
     :vartype state: str or ~azure.mgmt.synapse.models.IntegrationRuntimeState
-    :param compute_properties: The compute resource for managed integration runtime.
-    :type compute_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeComputeProperties
-    :param ssis_properties: SSIS properties for managed integration runtime.
-    :type ssis_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisProperties
+    :ivar reference_name: The reference name of the managed virtual network.
+    :vartype reference_name: str
+    :ivar type_managed_virtual_network_type: The type of the managed virtual network.
+    :vartype type_managed_virtual_network_type: str
+    :ivar id: The id of the managed virtual network.
+    :vartype id: str
+    :ivar compute_properties: The compute resource for managed integration runtime.
+    :vartype compute_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeComputeProperties
+    :ivar ssis_properties: SSIS properties for managed integration runtime.
+    :vartype ssis_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisProperties
     """
 
     _validation = {
@@ -5308,6 +6607,9 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
+        'reference_name': {'key': 'managedVirtualNetwork.referenceName', 'type': 'str'},
+        'type_managed_virtual_network_type': {'key': 'managedVirtualNetwork.type', 'type': 'str'},
+        'id': {'key': 'managedVirtualNetwork.id', 'type': 'str'},
         'compute_properties': {'key': 'typeProperties.computeProperties', 'type': 'IntegrationRuntimeComputeProperties'},
         'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
     }
@@ -5317,13 +6619,36 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
         description: Optional[str] = None,
+        reference_name: Optional[str] = None,
+        type_managed_virtual_network_type: Optional[str] = None,
+        id: Optional[str] = None,
         compute_properties: Optional["IntegrationRuntimeComputeProperties"] = None,
         ssis_properties: Optional["IntegrationRuntimeSsisProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword description: Integration runtime description.
+        :paramtype description: str
+        :keyword reference_name: The reference name of the managed virtual network.
+        :paramtype reference_name: str
+        :keyword type_managed_virtual_network_type: The type of the managed virtual network.
+        :paramtype type_managed_virtual_network_type: str
+        :keyword id: The id of the managed virtual network.
+        :paramtype id: str
+        :keyword compute_properties: The compute resource for managed integration runtime.
+        :paramtype compute_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeComputeProperties
+        :keyword ssis_properties: SSIS properties for managed integration runtime.
+        :paramtype ssis_properties: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisProperties
+        """
         super(ManagedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.type = 'Managed'  # type: str
         self.state = None
+        self.reference_name = reference_name
+        self.type_managed_virtual_network_type = type_managed_virtual_network_type
+        self.id = id
         self.compute_properties = compute_properties
         self.ssis_properties = ssis_properties
 
@@ -5333,9 +6658,9 @@ class ManagedIntegrationRuntimeError(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar time: The time when the error occurred.
     :vartype time: ~datetime.datetime
     :ivar code: Error code.
@@ -5367,6 +6692,11 @@ class ManagedIntegrationRuntimeError(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(ManagedIntegrationRuntimeError, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.time = None
@@ -5380,16 +6710,16 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar node_id: The managed integration runtime node id.
     :vartype node_id: str
     :ivar status: The managed integration runtime node status. Possible values include: "Starting",
      "Available", "Recycling", "Unavailable".
     :vartype status: str or ~azure.mgmt.synapse.models.ManagedIntegrationRuntimeNodeStatus
-    :param errors: The errors that occurred on this integration runtime node.
-    :type errors: list[~azure.mgmt.synapse.models.ManagedIntegrationRuntimeError]
+    :ivar errors: The errors that occurred on this integration runtime node.
+    :vartype errors: list[~azure.mgmt.synapse.models.ManagedIntegrationRuntimeError]
     """
 
     _validation = {
@@ -5411,6 +6741,13 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
         errors: Optional[List["ManagedIntegrationRuntimeError"]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword errors: The errors that occurred on this integration runtime node.
+        :paramtype errors: list[~azure.mgmt.synapse.models.ManagedIntegrationRuntimeError]
+        """
         super(ManagedIntegrationRuntimeNode, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.node_id = None
@@ -5423,9 +6760,9 @@ class ManagedIntegrationRuntimeOperationResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar type: The operation type. Could be start or stop.
     :vartype type: str
     :ivar start_time: The start time of the operation.
@@ -5465,6 +6802,11 @@ class ManagedIntegrationRuntimeOperationResult(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(ManagedIntegrationRuntimeOperationResult, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type = None
@@ -5482,12 +6824,12 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
      include: "Managed", "SelfHosted".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
     :ivar data_factory_name: The workspace name which the integration runtime belong to.
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include: "Initial", "Stopped",
@@ -5531,6 +6873,11 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(ManagedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
         self.type = 'Managed'  # type: str
         self.create_time = None
@@ -5542,12 +6889,12 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 class ManagedVirtualNetworkSettings(msrest.serialization.Model):
     """Managed Virtual Network Settings.
 
-    :param prevent_data_exfiltration: Prevent Data Exfiltration.
-    :type prevent_data_exfiltration: bool
-    :param linked_access_check_on_target_resource: Linked Access Check On Target Resource.
-    :type linked_access_check_on_target_resource: bool
-    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For Linking.
-    :type allowed_aad_tenant_ids_for_linking: list[str]
+    :ivar prevent_data_exfiltration: Prevent Data Exfiltration.
+    :vartype prevent_data_exfiltration: bool
+    :ivar linked_access_check_on_target_resource: Linked Access Check On Target Resource.
+    :vartype linked_access_check_on_target_resource: bool
+    :ivar allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For Linking.
+    :vartype allowed_aad_tenant_ids_for_linking: list[str]
     """
 
     _attribute_map = {
@@ -5564,6 +6911,14 @@ class ManagedVirtualNetworkSettings(msrest.serialization.Model):
         allowed_aad_tenant_ids_for_linking: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword prevent_data_exfiltration: Prevent Data Exfiltration.
+        :paramtype prevent_data_exfiltration: bool
+        :keyword linked_access_check_on_target_resource: Linked Access Check On Target Resource.
+        :paramtype linked_access_check_on_target_resource: bool
+        :keyword allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For Linking.
+        :paramtype allowed_aad_tenant_ids_for_linking: list[str]
+        """
         super(ManagedVirtualNetworkSettings, self).__init__(**kwargs)
         self.prevent_data_exfiltration = prevent_data_exfiltration
         self.linked_access_check_on_target_resource = linked_access_check_on_target_resource
@@ -5583,10 +6938,10 @@ class MetadataSyncConfig(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param enabled: Indicates whether the metadata sync is enabled or disabled.
-    :type enabled: bool
-    :param sync_interval_in_minutes: The Sync Interval in minutes.
-    :type sync_interval_in_minutes: int
+    :ivar enabled: Indicates whether the metadata sync is enabled or disabled.
+    :vartype enabled: bool
+    :ivar sync_interval_in_minutes: The Sync Interval in minutes.
+    :vartype sync_interval_in_minutes: int
     """
 
     _validation = {
@@ -5610,6 +6965,12 @@ class MetadataSyncConfig(ProxyResource):
         sync_interval_in_minutes: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Indicates whether the metadata sync is enabled or disabled.
+        :paramtype enabled: bool
+        :keyword sync_interval_in_minutes: The Sync Interval in minutes.
+        :paramtype sync_interval_in_minutes: int
+        """
         super(MetadataSyncConfig, self).__init__(**kwargs)
         self.enabled = enabled
         self.sync_interval_in_minutes = sync_interval_in_minutes
@@ -5618,14 +6979,14 @@ class MetadataSyncConfig(ProxyResource):
 class Operation(msrest.serialization.Model):
     """A REST API operation.
 
-    :param name: This is of the format {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that describes the operation.
-    :type display: ~azure.mgmt.synapse.models.OperationDisplay
-    :param origin: The intended executor of the operation.
-    :type origin: str
-    :param properties: Any object.
-    :type properties: any
+    :ivar name: This is of the format {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that describes the operation.
+    :vartype display: ~azure.mgmt.synapse.models.OperationDisplay
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
+    :ivar properties: Any object.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -5644,6 +7005,16 @@ class Operation(msrest.serialization.Model):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: This is of the format {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that describes the operation.
+        :paramtype display: ~azure.mgmt.synapse.models.OperationDisplay
+        :keyword origin: The intended executor of the operation.
+        :paramtype origin: str
+        :keyword properties: Any object.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -5654,14 +7025,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that describes the operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param operation: For example: read, write, delete.
-    :type operation: str
-    :param resource: The resource type on which the operation is performed.
-    :type resource: str
-    :param description: The friendly name of the operation.
-    :type description: str
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar operation: For example: read, write, delete.
+    :vartype operation: str
+    :ivar resource: The resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar description: The friendly name of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -5680,6 +7051,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Friendly name of the resource provider.
+        :paramtype provider: str
+        :keyword operation: For example: read, write, delete.
+        :paramtype operation: str
+        :keyword resource: The resource type on which the operation is performed.
+        :paramtype resource: str
+        :keyword description: The friendly name of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.operation = operation
@@ -5692,8 +7073,8 @@ class OperationListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of operations supported by the resource provider.
-    :type value: list[~azure.mgmt.synapse.models.Operation]
+    :ivar value: The list of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.synapse.models.Operation]
     :ivar next_link: The URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -5713,6 +7094,10 @@ class OperationListResult(msrest.serialization.Model):
         value: Optional[List["Operation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of operations supported by the resource provider.
+        :paramtype value: list[~azure.mgmt.synapse.models.Operation]
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -5721,12 +7106,12 @@ class OperationListResult(msrest.serialization.Model):
 class OperationMetaLogSpecification(msrest.serialization.Model):
     """What is this?.
 
-    :param display_name: Log display name.
-    :type display_name: str
-    :param blob_duration: Time range the log covers.
-    :type blob_duration: str
-    :param name: Log unique name.
-    :type name: str
+    :ivar display_name: Log display name.
+    :vartype display_name: str
+    :ivar blob_duration: Time range the log covers.
+    :vartype blob_duration: str
+    :ivar name: Log unique name.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -5743,6 +7128,14 @@ class OperationMetaLogSpecification(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: Log display name.
+        :paramtype display_name: str
+        :keyword blob_duration: Time range the log covers.
+        :paramtype blob_duration: str
+        :keyword name: Log unique name.
+        :paramtype name: str
+        """
         super(OperationMetaLogSpecification, self).__init__(**kwargs)
         self.display_name = display_name
         self.blob_duration = blob_duration
@@ -5752,12 +7145,12 @@ class OperationMetaLogSpecification(msrest.serialization.Model):
 class OperationMetaMetricDimensionSpecification(msrest.serialization.Model):
     """What is this?.
 
-    :param display_name: Dimension display name.
-    :type display_name: str
-    :param name: Dimension unique name.
-    :type name: str
-    :param to_be_exported_for_shoebox: Whether this metric should be exported for Shoebox.
-    :type to_be_exported_for_shoebox: bool
+    :ivar display_name: Dimension display name.
+    :vartype display_name: str
+    :ivar name: Dimension unique name.
+    :vartype name: str
+    :ivar to_be_exported_for_shoebox: Whether this metric should be exported for Shoebox.
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
@@ -5774,6 +7167,14 @@ class OperationMetaMetricDimensionSpecification(msrest.serialization.Model):
         to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: Dimension display name.
+        :paramtype display_name: str
+        :keyword name: Dimension unique name.
+        :paramtype name: str
+        :keyword to_be_exported_for_shoebox: Whether this metric should be exported for Shoebox.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
         super(OperationMetaMetricDimensionSpecification, self).__init__(**kwargs)
         self.display_name = display_name
         self.name = name
@@ -5783,29 +7184,29 @@ class OperationMetaMetricDimensionSpecification(msrest.serialization.Model):
 class OperationMetaMetricSpecification(msrest.serialization.Model):
     """What is this?.
 
-    :param source_mdm_namespace: The source MDM namespace.
-    :type source_mdm_namespace: str
-    :param display_name: Metric display name.
-    :type display_name: str
-    :param name: Metric unique name.
-    :type name: str
-    :param aggregation_type: Metric aggregation type.
-    :type aggregation_type: str
-    :param display_description: Metric description.
-    :type display_description: str
-    :param source_mdm_account: The source MDM account.
-    :type source_mdm_account: str
-    :param enable_regional_mdm_account: Whether the regional MDM account is enabled.
-    :type enable_regional_mdm_account: bool
-    :param unit: Metric units.
-    :type unit: str
-    :param dimensions: Metric dimensions.
-    :type dimensions: list[~azure.mgmt.synapse.models.OperationMetaMetricDimensionSpecification]
-    :param supports_instance_level_aggregation: Whether the metric supports instance-level
+    :ivar source_mdm_namespace: The source MDM namespace.
+    :vartype source_mdm_namespace: str
+    :ivar display_name: Metric display name.
+    :vartype display_name: str
+    :ivar name: Metric unique name.
+    :vartype name: str
+    :ivar aggregation_type: Metric aggregation type.
+    :vartype aggregation_type: str
+    :ivar display_description: Metric description.
+    :vartype display_description: str
+    :ivar source_mdm_account: The source MDM account.
+    :vartype source_mdm_account: str
+    :ivar enable_regional_mdm_account: Whether the regional MDM account is enabled.
+    :vartype enable_regional_mdm_account: bool
+    :ivar unit: Metric units.
+    :vartype unit: str
+    :ivar dimensions: Metric dimensions.
+    :vartype dimensions: list[~azure.mgmt.synapse.models.OperationMetaMetricDimensionSpecification]
+    :ivar supports_instance_level_aggregation: Whether the metric supports instance-level
      aggregation.
-    :type supports_instance_level_aggregation: bool
-    :param metric_filter_pattern: Metric filter.
-    :type metric_filter_pattern: str
+    :vartype supports_instance_level_aggregation: bool
+    :ivar metric_filter_pattern: Metric filter.
+    :vartype metric_filter_pattern: str
     """
 
     _attribute_map = {
@@ -5838,6 +7239,32 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
         metric_filter_pattern: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source_mdm_namespace: The source MDM namespace.
+        :paramtype source_mdm_namespace: str
+        :keyword display_name: Metric display name.
+        :paramtype display_name: str
+        :keyword name: Metric unique name.
+        :paramtype name: str
+        :keyword aggregation_type: Metric aggregation type.
+        :paramtype aggregation_type: str
+        :keyword display_description: Metric description.
+        :paramtype display_description: str
+        :keyword source_mdm_account: The source MDM account.
+        :paramtype source_mdm_account: str
+        :keyword enable_regional_mdm_account: Whether the regional MDM account is enabled.
+        :paramtype enable_regional_mdm_account: bool
+        :keyword unit: Metric units.
+        :paramtype unit: str
+        :keyword dimensions: Metric dimensions.
+        :paramtype dimensions:
+         list[~azure.mgmt.synapse.models.OperationMetaMetricDimensionSpecification]
+        :keyword supports_instance_level_aggregation: Whether the metric supports instance-level
+         aggregation.
+        :paramtype supports_instance_level_aggregation: bool
+        :keyword metric_filter_pattern: Metric filter.
+        :paramtype metric_filter_pattern: str
+        """
         super(OperationMetaMetricSpecification, self).__init__(**kwargs)
         self.source_mdm_namespace = source_mdm_namespace
         self.display_name = display_name
@@ -5855,10 +7282,11 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
 class OperationMetaServiceSpecification(msrest.serialization.Model):
     """What is this?.
 
-    :param metric_specifications: Service metric specifications.
-    :type metric_specifications: list[~azure.mgmt.synapse.models.OperationMetaMetricSpecification]
-    :param log_specifications: Service log specifications.
-    :type log_specifications: list[~azure.mgmt.synapse.models.OperationMetaLogSpecification]
+    :ivar metric_specifications: Service metric specifications.
+    :vartype metric_specifications:
+     list[~azure.mgmt.synapse.models.OperationMetaMetricSpecification]
+    :ivar log_specifications: Service log specifications.
+    :vartype log_specifications: list[~azure.mgmt.synapse.models.OperationMetaLogSpecification]
     """
 
     _attribute_map = {
@@ -5873,6 +7301,13 @@ class OperationMetaServiceSpecification(msrest.serialization.Model):
         log_specifications: Optional[List["OperationMetaLogSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword metric_specifications: Service metric specifications.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.synapse.models.OperationMetaMetricSpecification]
+        :keyword log_specifications: Service log specifications.
+        :paramtype log_specifications: list[~azure.mgmt.synapse.models.OperationMetaLogSpecification]
+        """
         super(OperationMetaServiceSpecification, self).__init__(**kwargs)
         self.metric_specifications = metric_specifications
         self.log_specifications = log_specifications
@@ -5881,23 +7316,23 @@ class OperationMetaServiceSpecification(msrest.serialization.Model):
 class OperationResource(msrest.serialization.Model):
     """An operation.
 
-    :param id: Operation ID.
-    :type id: str
-    :param name: Operation name.
-    :type name: str
-    :param status: Operation status. Possible values include: "InProgress", "Succeeded", "Failed",
+    :ivar id: Operation ID.
+    :vartype id: str
+    :ivar name: Operation name.
+    :vartype name: str
+    :ivar status: Operation status. Possible values include: "InProgress", "Succeeded", "Failed",
      "Canceled".
-    :type status: str or ~azure.mgmt.synapse.models.OperationStatus
-    :param properties: Operation properties.
-    :type properties: any
-    :param error: Errors from the operation.
-    :type error: ~azure.mgmt.synapse.models.ErrorDetail
-    :param start_time: Operation start time.
-    :type start_time: ~datetime.datetime
-    :param end_time: Operation start time.
-    :type end_time: ~datetime.datetime
-    :param percent_complete: Completion percentage of the operation.
-    :type percent_complete: float
+    :vartype status: str or ~azure.mgmt.synapse.models.OperationStatus
+    :ivar properties: Operation properties.
+    :vartype properties: any
+    :ivar error: Errors from the operation.
+    :vartype error: ~azure.mgmt.synapse.models.ErrorDetail
+    :ivar start_time: Operation start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Operation start time.
+    :vartype end_time: ~datetime.datetime
+    :ivar percent_complete: Completion percentage of the operation.
+    :vartype percent_complete: float
     """
 
     _attribute_map = {
@@ -5924,6 +7359,25 @@ class OperationResource(msrest.serialization.Model):
         percent_complete: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword id: Operation ID.
+        :paramtype id: str
+        :keyword name: Operation name.
+        :paramtype name: str
+        :keyword status: Operation status. Possible values include: "InProgress", "Succeeded",
+         "Failed", "Canceled".
+        :paramtype status: str or ~azure.mgmt.synapse.models.OperationStatus
+        :keyword properties: Operation properties.
+        :paramtype properties: any
+        :keyword error: Errors from the operation.
+        :paramtype error: ~azure.mgmt.synapse.models.ErrorDetail
+        :keyword start_time: Operation start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Operation start time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword percent_complete: Completion percentage of the operation.
+        :paramtype percent_complete: float
+        """
         super(OperationResource, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -5940,15 +7394,15 @@ class OptimizedAutoscale(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of the template defined, for instance 1.
-    :type version: int
-    :param is_enabled: Required. A boolean value that indicate if the optimized autoscale feature
-     is enabled or not.
-    :type is_enabled: bool
-    :param minimum: Required. Minimum allowed instances count.
-    :type minimum: int
-    :param maximum: Required. Maximum allowed instances count.
-    :type maximum: int
+    :ivar version: Required. The version of the template defined, for instance 1.
+    :vartype version: int
+    :ivar is_enabled: Required. A boolean value that indicate if the optimized autoscale feature is
+     enabled or not.
+    :vartype is_enabled: bool
+    :ivar minimum: Required. Minimum allowed instances count.
+    :vartype minimum: int
+    :ivar maximum: Required. Maximum allowed instances count.
+    :vartype maximum: int
     """
 
     _validation = {
@@ -5974,6 +7428,17 @@ class OptimizedAutoscale(msrest.serialization.Model):
         maximum: int,
         **kwargs
     ):
+        """
+        :keyword version: Required. The version of the template defined, for instance 1.
+        :paramtype version: int
+        :keyword is_enabled: Required. A boolean value that indicate if the optimized autoscale feature
+         is enabled or not.
+        :paramtype is_enabled: bool
+        :keyword minimum: Required. Minimum allowed instances count.
+        :paramtype minimum: int
+        :keyword maximum: Required. Maximum allowed instances count.
+        :paramtype maximum: int
+        """
         super(OptimizedAutoscale, self).__init__(**kwargs)
         self.version = version
         self.is_enabled = is_enabled
@@ -6002,6 +7467,8 @@ class PrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -6019,11 +7486,11 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param private_endpoint: The private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: The private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection.
     :vartype provisioning_state: str
@@ -6052,6 +7519,14 @@ class PrivateEndpointConnection(ProxyResource):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -6061,10 +7536,10 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionForPrivateLinkHubBasicAutoGenerated(msrest.serialization.Model):
     """PrivateEndpointConnectionForPrivateLinkHubBasicAutoGenerated.
 
-    :param id:
-    :type id: str
-    :param properties: Properties of a private endpoint connection.
-    :type properties: ~azure.mgmt.synapse.models.PrivateEndpointConnectionProperties
+    :ivar id:
+    :vartype id: str
+    :ivar properties: Properties of a private endpoint connection.
+    :vartype properties: ~azure.mgmt.synapse.models.PrivateEndpointConnectionProperties
     """
 
     _attribute_map = {
@@ -6079,6 +7554,12 @@ class PrivateEndpointConnectionForPrivateLinkHubBasicAutoGenerated(msrest.serial
         properties: Optional["PrivateEndpointConnectionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword id:
+        :paramtype id: str
+        :keyword properties: Properties of a private endpoint connection.
+        :paramtype properties: ~azure.mgmt.synapse.models.PrivateEndpointConnectionProperties
+        """
         super(PrivateEndpointConnectionForPrivateLinkHubBasicAutoGenerated, self).__init__(**kwargs)
         self.id = id
         self.properties = properties
@@ -6087,14 +7568,14 @@ class PrivateEndpointConnectionForPrivateLinkHubBasicAutoGenerated(msrest.serial
 class PrivateEndpointConnectionForPrivateLinkHub(PrivateEndpointConnectionForPrivateLinkHubBasicAutoGenerated):
     """PrivateEndpointConnectionForPrivateLinkHub.
 
-    :param id:
-    :type id: str
-    :param properties: Properties of a private endpoint connection.
-    :type properties: ~azure.mgmt.synapse.models.PrivateEndpointConnectionProperties
-    :param name:
-    :type name: str
-    :param type:
-    :type type: str
+    :ivar id:
+    :vartype id: str
+    :ivar properties: Properties of a private endpoint connection.
+    :vartype properties: ~azure.mgmt.synapse.models.PrivateEndpointConnectionProperties
+    :ivar name:
+    :vartype name: str
+    :ivar type:
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -6113,6 +7594,16 @@ class PrivateEndpointConnectionForPrivateLinkHub(PrivateEndpointConnectionForPri
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id:
+        :paramtype id: str
+        :keyword properties: Properties of a private endpoint connection.
+        :paramtype properties: ~azure.mgmt.synapse.models.PrivateEndpointConnectionProperties
+        :keyword name:
+        :paramtype name: str
+        :keyword type:
+        :paramtype type: str
+        """
         super(PrivateEndpointConnectionForPrivateLinkHub, self).__init__(id=id, properties=properties, **kwargs)
         self.name = name
         self.type = type
@@ -6125,11 +7616,11 @@ class PrivateEndpointConnectionForPrivateLinkHubBasic(msrest.serialization.Model
 
     :ivar id: identifier.
     :vartype id: str
-    :param private_endpoint: The private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: The private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection.
     :vartype provisioning_state: str
@@ -6154,6 +7645,14 @@ class PrivateEndpointConnectionForPrivateLinkHubBasic(msrest.serialization.Model
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnectionForPrivateLinkHubBasic, self).__init__(**kwargs)
         self.id = None
         self.private_endpoint = private_endpoint
@@ -6164,10 +7663,10 @@ class PrivateEndpointConnectionForPrivateLinkHubBasic(msrest.serialization.Model
 class PrivateEndpointConnectionForPrivateLinkHubResourceCollectionResponse(msrest.serialization.Model):
     """PrivateEndpointConnectionForPrivateLinkHubResourceCollectionResponse.
 
-    :param value:
-    :type value: list[~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHub]
-    :param next_link:
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHub]
+    :ivar next_link:
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -6182,6 +7681,12 @@ class PrivateEndpointConnectionForPrivateLinkHubResourceCollectionResponse(msres
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHub]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
         super(PrivateEndpointConnectionForPrivateLinkHubResourceCollectionResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -6212,6 +7717,8 @@ class PrivateEndpointConnectionList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnectionList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6222,11 +7729,11 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param private_endpoint: The private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: The private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: Provisioning state of the private endpoint connection.
     :vartype provisioning_state: str
@@ -6249,6 +7756,14 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -6270,12 +7785,12 @@ class PrivateLinkHub(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param provisioning_state: PrivateLinkHub provisioning state.
-    :type provisioning_state: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar provisioning_state: PrivateLinkHub provisioning state.
+    :vartype provisioning_state: str
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHubBasic]
@@ -6307,6 +7822,14 @@ class PrivateLinkHub(TrackedResource):
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword provisioning_state: PrivateLinkHub provisioning state.
+        :paramtype provisioning_state: str
+        """
         super(PrivateLinkHub, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = provisioning_state
         self.private_endpoint_connections = None
@@ -6315,10 +7838,10 @@ class PrivateLinkHub(TrackedResource):
 class PrivateLinkHubInfoListResult(msrest.serialization.Model):
     """List of privateLinkHubs.
 
-    :param next_link: Link to the next page of results.
-    :type next_link: str
-    :param value: List of privateLinkHubs.
-    :type value: list[~azure.mgmt.synapse.models.PrivateLinkHub]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    :ivar value: List of privateLinkHubs.
+    :vartype value: list[~azure.mgmt.synapse.models.PrivateLinkHub]
     """
 
     _attribute_map = {
@@ -6333,6 +7856,12 @@ class PrivateLinkHubInfoListResult(msrest.serialization.Model):
         value: Optional[List["PrivateLinkHub"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
+        :keyword value: List of privateLinkHubs.
+        :paramtype value: list[~azure.mgmt.synapse.models.PrivateLinkHub]
+        """
         super(PrivateLinkHubInfoListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -6341,8 +7870,8 @@ class PrivateLinkHubInfoListResult(msrest.serialization.Model):
 class PrivateLinkHubPatchInfo(msrest.serialization.Model):
     """PrivateLinkHub patch details.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -6355,6 +7884,10 @@ class PrivateLinkHubPatchInfo(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(PrivateLinkHubPatchInfo, self).__init__(**kwargs)
         self.tags = tags
 
@@ -6394,6 +7927,8 @@ class PrivateLinkResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.properties = None
 
@@ -6423,6 +7958,8 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6457,6 +7994,8 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -6468,10 +8007,10 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param status: The private link service connection status.
-    :type status: str
-    :param description: The private link service connection description.
-    :type description: str
+    :ivar status: The private link service connection status.
+    :vartype status: str
+    :ivar description: The private link service connection description.
+    :vartype description: str
     :ivar actions_required: The actions required for private link service connection.
     :vartype actions_required: str
     """
@@ -6493,6 +8032,12 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: The private link service connection status.
+        :paramtype status: str
+        :keyword description: The private link service connection description.
+        :paramtype description: str
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -6502,8 +8047,8 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 class PurviewConfiguration(msrest.serialization.Model):
     """Purview Configuration.
 
-    :param purview_resource_id: Purview Resource ID.
-    :type purview_resource_id: str
+    :ivar purview_resource_id: Purview Resource ID.
+    :vartype purview_resource_id: str
     """
 
     _attribute_map = {
@@ -6516,6 +8061,10 @@ class PurviewConfiguration(msrest.serialization.Model):
         purview_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword purview_resource_id: Purview Resource ID.
+        :paramtype purview_resource_id: str
+        """
         super(PurviewConfiguration, self).__init__(**kwargs)
         self.purview_resource_id = purview_resource_id
 
@@ -6549,6 +8098,8 @@ class QueryInterval(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(QueryInterval, self).__init__(**kwargs)
         self.interval_start_time = None
         self.execution_count = None
@@ -6589,6 +8140,8 @@ class QueryMetric(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(QueryMetric, self).__init__(**kwargs)
         self.name = None
         self.display_name = None
@@ -6621,9 +8174,110 @@ class QueryStatistic(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(QueryStatistic, self).__init__(**kwargs)
         self.query_id = None
         self.intervals = None
+
+
+class ReadOnlyFollowingDatabase(Database):
+    """Class representing a read only following database.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the database.Constant filled by server. Possible values include:
+     "ReadWrite", "ReadOnlyFollowing".
+    :vartype kind: str or ~azure.mgmt.synapse.models.Kind
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.synapse.models.SystemData
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
+    :ivar soft_delete_period: The time the data should be kept before it stops being accessible to
+     queries in TimeSpan.
+    :vartype soft_delete_period: ~datetime.timedelta
+    :ivar hot_cache_period: The time the data should be kept in cache for fast queries in TimeSpan.
+    :vartype hot_cache_period: ~datetime.timedelta
+    :ivar statistics: The statistics of the database.
+    :vartype statistics: ~azure.mgmt.synapse.models.DatabaseStatistics
+    :ivar leader_cluster_resource_id: The name of the leader cluster.
+    :vartype leader_cluster_resource_id: str
+    :ivar attached_database_configuration_name: The name of the attached database configuration
+     cluster.
+    :vartype attached_database_configuration_name: str
+    :ivar principals_modification_kind: The principals modification kind of the database. Possible
+     values include: "Union", "Replace", "None".
+    :vartype principals_modification_kind: str or
+     ~azure.mgmt.synapse.models.PrincipalsModificationKind
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'soft_delete_period': {'readonly': True},
+        'statistics': {'readonly': True},
+        'leader_cluster_resource_id': {'readonly': True},
+        'attached_database_configuration_name': {'readonly': True},
+        'principals_modification_kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
+        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+        'leader_cluster_resource_id': {'key': 'properties.leaderClusterResourceId', 'type': 'str'},
+        'attached_database_configuration_name': {'key': 'properties.attachedDatabaseConfigurationName', 'type': 'str'},
+        'principals_modification_kind': {'key': 'properties.principalsModificationKind', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        hot_cache_period: Optional[datetime.timedelta] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword hot_cache_period: The time the data should be kept in cache for fast queries in
+         TimeSpan.
+        :paramtype hot_cache_period: ~datetime.timedelta
+        """
+        super(ReadOnlyFollowingDatabase, self).__init__(location=location, **kwargs)
+        self.kind = 'ReadOnlyFollowing'  # type: str
+        self.provisioning_state = None
+        self.soft_delete_period = None
+        self.hot_cache_period = hot_cache_period
+        self.statistics = None
+        self.leader_cluster_resource_id = None
+        self.attached_database_configuration_name = None
+        self.principals_modification_kind = None
 
 
 class ReadWriteDatabase(Database):
@@ -6641,23 +8295,22 @@ class ReadWriteDatabase(Database):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
-     include: "ReadWrite", "ReadOnlyFollowing".
-    :type kind: str or ~azure.mgmt.synapse.models.Kind
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the database.Constant filled by server. Possible values include:
+     "ReadWrite", "ReadOnlyFollowing".
+    :vartype kind: str or ~azure.mgmt.synapse.models.Kind
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.synapse.models.SystemData
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.synapse.models.ResourceProvisioningState
-    :param soft_delete_period: The time the data should be kept before it stops being accessible to
+    :ivar soft_delete_period: The time the data should be kept before it stops being accessible to
      queries in TimeSpan.
-    :type soft_delete_period: ~datetime.timedelta
-    :param hot_cache_period: The time the data should be kept in cache for fast queries in
-     TimeSpan.
-    :type hot_cache_period: ~datetime.timedelta
+    :vartype soft_delete_period: ~datetime.timedelta
+    :ivar hot_cache_period: The time the data should be kept in cache for fast queries in TimeSpan.
+    :vartype hot_cache_period: ~datetime.timedelta
     :ivar statistics: The statistics of the database.
     :vartype statistics: ~azure.mgmt.synapse.models.DatabaseStatistics
     :ivar is_followed: Indicates whether the database is followed.
@@ -6697,6 +8350,16 @@ class ReadWriteDatabase(Database):
         hot_cache_period: Optional[datetime.timedelta] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword soft_delete_period: The time the data should be kept before it stops being accessible
+         to queries in TimeSpan.
+        :paramtype soft_delete_period: ~datetime.timedelta
+        :keyword hot_cache_period: The time the data should be kept in cache for fast queries in
+         TimeSpan.
+        :paramtype hot_cache_period: ~datetime.timedelta
+        """
         super(ReadWriteDatabase, self).__init__(location=location, **kwargs)
         self.kind = 'ReadWrite'  # type: str
         self.provisioning_state = None
@@ -6719,14 +8382,14 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param op:  Possible values include: "enable", "disable".
-    :type op: str or ~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdateKind
-    :param schema: Schema name of the column to update.
-    :type schema: str
-    :param table: Table name of the column to update.
-    :type table: str
-    :param column: Column name to update.
-    :type column: str
+    :ivar op: Possible values include: "enable", "disable".
+    :vartype op: str or ~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdateKind
+    :ivar schema: Schema name of the column to update.
+    :vartype schema: str
+    :ivar table: Table name of the column to update.
+    :vartype table: str
+    :ivar column: Column name to update.
+    :vartype column: str
     """
 
     _validation = {
@@ -6754,6 +8417,16 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
         column: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword op: Possible values include: "enable", "disable".
+        :paramtype op: str or ~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdateKind
+        :keyword schema: Schema name of the column to update.
+        :paramtype schema: str
+        :keyword table: Table name of the column to update.
+        :paramtype table: str
+        :keyword column: Column name to update.
+        :paramtype column: str
+        """
         super(RecommendedSensitivityLabelUpdate, self).__init__(**kwargs)
         self.op = op
         self.schema = schema
@@ -6764,8 +8437,8 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
 class RecommendedSensitivityLabelUpdateList(msrest.serialization.Model):
     """A list of recommended sensitivity label update operations.
 
-    :param operations:
-    :type operations: list[~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdate]
+    :ivar operations:
+    :vartype operations: list[~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdate]
     """
 
     _attribute_map = {
@@ -6778,6 +8451,10 @@ class RecommendedSensitivityLabelUpdateList(msrest.serialization.Model):
         operations: Optional[List["RecommendedSensitivityLabelUpdate"]] = None,
         **kwargs
     ):
+        """
+        :keyword operations:
+        :paramtype operations: list[~azure.mgmt.synapse.models.RecommendedSensitivityLabelUpdate]
+        """
         super(RecommendedSensitivityLabelUpdateList, self).__init__(**kwargs)
         self.operations = operations
 
@@ -6830,6 +8507,8 @@ class RecoverableSqlPool(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecoverableSqlPool, self).__init__(**kwargs)
         self.edition = None
         self.service_level_objective = None
@@ -6862,6 +8541,8 @@ class RecoverableSqlPoolListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecoverableSqlPoolListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6870,8 +8551,8 @@ class RecoverableSqlPoolListResult(msrest.serialization.Model):
 class ReplaceAllFirewallRulesOperationResponse(msrest.serialization.Model):
     """An existing operation for replacing the firewall rules.
 
-    :param operation_id: The operation ID.
-    :type operation_id: str
+    :ivar operation_id: The operation ID.
+    :vartype operation_id: str
     """
 
     _attribute_map = {
@@ -6884,6 +8565,10 @@ class ReplaceAllFirewallRulesOperationResponse(msrest.serialization.Model):
         operation_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword operation_id: The operation ID.
+        :paramtype operation_id: str
+        """
         super(ReplaceAllFirewallRulesOperationResponse, self).__init__(**kwargs)
         self.operation_id = operation_id
 
@@ -6891,8 +8576,8 @@ class ReplaceAllFirewallRulesOperationResponse(msrest.serialization.Model):
 class ReplaceAllIpFirewallRulesRequest(msrest.serialization.Model):
     """Replace all IP firewall rules request.
 
-    :param ip_firewall_rules: IP firewall rule properties.
-    :type ip_firewall_rules: dict[str, ~azure.mgmt.synapse.models.IpFirewallRuleProperties]
+    :ivar ip_firewall_rules: IP firewall rule properties.
+    :vartype ip_firewall_rules: dict[str, ~azure.mgmt.synapse.models.IpFirewallRuleProperties]
     """
 
     _attribute_map = {
@@ -6905,6 +8590,10 @@ class ReplaceAllIpFirewallRulesRequest(msrest.serialization.Model):
         ip_firewall_rules: Optional[Dict[str, "IpFirewallRuleProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword ip_firewall_rules: IP firewall rule properties.
+        :paramtype ip_firewall_rules: dict[str, ~azure.mgmt.synapse.models.IpFirewallRuleProperties]
+        """
         super(ReplaceAllIpFirewallRulesRequest, self).__init__(**kwargs)
         self.ip_firewall_rules = ip_firewall_rules
 
@@ -6988,6 +8677,8 @@ class ReplicationLink(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ReplicationLink, self).__init__(**kwargs)
         self.location = None
         self.is_termination_allowed = None
@@ -7007,8 +8698,8 @@ class ReplicationLinkListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of Sql pool replication links housed in the Sql pool.
-    :type value: list[~azure.mgmt.synapse.models.ReplicationLink]
+    :ivar value: The list of Sql pool replication links housed in the Sql pool.
+    :vartype value: list[~azure.mgmt.synapse.models.ReplicationLink]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -7028,6 +8719,10 @@ class ReplicationLinkListResult(msrest.serialization.Model):
         value: Optional[List["ReplicationLink"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Sql pool replication links housed in the Sql pool.
+        :paramtype value: list[~azure.mgmt.synapse.models.ReplicationLink]
+        """
         super(ReplicationLinkListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -7038,8 +8733,8 @@ class ResourceMoveDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The target ID for the resource.
-    :type id: str
+    :ivar id: Required. The target ID for the resource.
+    :vartype id: str
     """
 
     _validation = {
@@ -7056,6 +8751,10 @@ class ResourceMoveDefinition(msrest.serialization.Model):
         id: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. The target ID for the resource.
+        :paramtype id: str
+        """
         super(ResourceMoveDefinition, self).__init__(**kwargs)
         self.id = id
 
@@ -7127,6 +8826,8 @@ class RestorableDroppedSqlPool(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorableDroppedSqlPool, self).__init__(**kwargs)
         self.location = None
         self.database_name = None
@@ -7144,8 +8845,8 @@ class RestorableDroppedSqlPoolListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A list of restorable dropped Sql pools.
-    :type value: list[~azure.mgmt.synapse.models.RestorableDroppedSqlPool]
+    :ivar value: Required. A list of restorable dropped Sql pools.
+    :vartype value: list[~azure.mgmt.synapse.models.RestorableDroppedSqlPool]
     """
 
     _validation = {
@@ -7162,6 +8863,10 @@ class RestorableDroppedSqlPoolListResult(msrest.serialization.Model):
         value: List["RestorableDroppedSqlPool"],
         **kwargs
     ):
+        """
+        :keyword value: Required. A list of restorable dropped Sql pools.
+        :paramtype value: list[~azure.mgmt.synapse.models.RestorableDroppedSqlPool]
+        """
         super(RestorableDroppedSqlPoolListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -7218,6 +8923,8 @@ class RestorePoint(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorePoint, self).__init__(**kwargs)
         self.location = None
         self.restore_point_type = None
@@ -7251,6 +8958,8 @@ class RestorePointListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorePointListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7264,8 +8973,8 @@ class SecretBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of the secret.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Type of the secret.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -7284,6 +8993,8 @@ class SecretBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecretBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -7293,10 +9004,10 @@ class SecureString(SecretBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of the secret.Constant filled by server.
-    :type type: str
-    :param value: Required. Value of secure string.
-    :type value: str
+    :ivar type: Required. Type of the secret.Constant filled by server.
+    :vartype type: str
+    :ivar value: Required. Value of secure string.
+    :vartype value: str
     """
 
     _validation = {
@@ -7315,6 +9026,10 @@ class SecureString(SecretBase):
         value: str,
         **kwargs
     ):
+        """
+        :keyword value: Required. Value of secure string.
+        :paramtype value: str
+        """
         super(SecureString, self).__init__(**kwargs)
         self.type = 'SecureString'  # type: str
         self.value = value
@@ -7325,16 +9040,16 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
      include: "Managed", "SelfHosted".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
-    :param description: Integration runtime description.
-    :type description: str
-    :param linked_info: Linked integration runtime type from data factory.
-    :type linked_info: ~azure.mgmt.synapse.models.LinkedIntegrationRuntimeType
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
+    :ivar description: Integration runtime description.
+    :vartype description: str
+    :ivar linked_info: Linked integration runtime type from data factory.
+    :vartype linked_info: ~azure.mgmt.synapse.models.LinkedIntegrationRuntimeType
     """
 
     _validation = {
@@ -7356,6 +9071,15 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
         linked_info: Optional["LinkedIntegrationRuntimeType"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword description: Integration runtime description.
+        :paramtype description: str
+        :keyword linked_info: Linked integration runtime type from data factory.
+        :paramtype linked_info: ~azure.mgmt.synapse.models.LinkedIntegrationRuntimeType
+        """
         super(SelfHostedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.type = 'SelfHosted'  # type: str
         self.linked_info = linked_info
@@ -7366,9 +9090,9 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar machine_name: Machine name of the integration runtime node.
@@ -7462,6 +9186,11 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(SelfHostedIntegrationRuntimeNode, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.node_name = None
@@ -7491,12 +9220,12 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar type: Required. Type of integration runtime.Constant filled by server. Possible values
      include: "Managed", "SelfHosted".
-    :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
+    :vartype type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
     :ivar data_factory_name: The workspace name which the integration runtime belong to.
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include: "Initial", "Stopped",
@@ -7517,8 +9246,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      ~azure.mgmt.synapse.models.IntegrationRuntimeInternalChannelEncryptionMode
     :ivar version: Version of the integration runtime.
     :vartype version: str
-    :param nodes: The list of nodes for this integration runtime.
-    :type nodes: list[~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNode]
+    :ivar nodes: The list of nodes for this integration runtime.
+    :vartype nodes: list[~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNode]
     :ivar scheduled_update_date: The date at which the integration runtime will be scheduled to
      update, in ISO8601 format.
     :vartype scheduled_update_date: ~datetime.datetime
@@ -7536,9 +9265,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype auto_update: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
     :ivar version_status: Status of the integration runtime version.
     :vartype version_status: str
-    :param links: The list of linked integration runtimes that are created to share with this
+    :ivar links: The list of linked integration runtimes that are created to share with this
      integration runtime.
-    :type links: list[~azure.mgmt.synapse.models.LinkedIntegrationRuntime]
+    :vartype links: list[~azure.mgmt.synapse.models.LinkedIntegrationRuntime]
     :ivar pushed_version: The version that the integration runtime is going to update to.
     :vartype pushed_version: str
     :ivar latest_version: The latest version on download center.
@@ -7546,6 +9275,10 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :ivar auto_update_eta: The estimated time when the self-hosted integration runtime will be
      updated.
     :vartype auto_update_eta: ~datetime.datetime
+    :ivar service_region: The service region of the integration runtime.
+    :vartype service_region: str
+    :ivar newer_versions: The newer versions on download center.
+    :vartype newer_versions: list[str]
     """
 
     _validation = {
@@ -7591,6 +9324,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'pushed_version': {'key': 'typeProperties.pushedVersion', 'type': 'str'},
         'latest_version': {'key': 'typeProperties.latestVersion', 'type': 'str'},
         'auto_update_eta': {'key': 'typeProperties.autoUpdateETA', 'type': 'iso-8601'},
+        'service_region': {'key': 'typeProperties.serviceRegion', 'type': 'str'},
+        'newer_versions': {'key': 'typeProperties.newerVersions', 'type': '[str]'},
     }
 
     def __init__(
@@ -7599,8 +9334,24 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         additional_properties: Optional[Dict[str, Any]] = None,
         nodes: Optional[List["SelfHostedIntegrationRuntimeNode"]] = None,
         links: Optional[List["LinkedIntegrationRuntime"]] = None,
+        service_region: Optional[str] = None,
+        newer_versions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword nodes: The list of nodes for this integration runtime.
+        :paramtype nodes: list[~azure.mgmt.synapse.models.SelfHostedIntegrationRuntimeNode]
+        :keyword links: The list of linked integration runtimes that are created to share with this
+         integration runtime.
+        :paramtype links: list[~azure.mgmt.synapse.models.LinkedIntegrationRuntime]
+        :keyword service_region: The service region of the integration runtime.
+        :paramtype service_region: str
+        :keyword newer_versions: The newer versions on download center.
+        :paramtype newer_versions: list[str]
+        """
         super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties, **kwargs)
         self.type = 'SelfHosted'  # type: str
         self.create_time = None
@@ -7620,6 +9371,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.pushed_version = None
         self.latest_version = None
         self.auto_update_eta = None
+        self.service_region = service_region
+        self.newer_versions = newer_versions
 
 
 class SensitivityLabel(ProxyResource):
@@ -7643,20 +9396,20 @@ class SensitivityLabel(ProxyResource):
     :vartype table_name: str
     :ivar column_name: The column name.
     :vartype column_name: str
-    :param label_name: The label name.
-    :type label_name: str
-    :param label_id: The label ID.
-    :type label_id: str
-    :param information_type: The information type.
-    :type information_type: str
-    :param information_type_id: The information type ID.
-    :type information_type_id: str
+    :ivar label_name: The label name.
+    :vartype label_name: str
+    :ivar label_id: The label ID.
+    :vartype label_id: str
+    :ivar information_type: The information type.
+    :vartype information_type: str
+    :ivar information_type_id: The information type ID.
+    :vartype information_type_id: str
     :ivar is_disabled: Is sensitivity recommendation disabled. Applicable for recommended
      sensitivity label only. Specifies whether the sensitivity recommendation on this column is
      disabled (dismissed) or not.
     :vartype is_disabled: bool
-    :param rank:  Possible values include: "None", "Low", "Medium", "High", "Critical".
-    :type rank: str or ~azure.mgmt.synapse.models.SensitivityLabelRank
+    :ivar rank: Possible values include: "None", "Low", "Medium", "High", "Critical".
+    :vartype rank: str or ~azure.mgmt.synapse.models.SensitivityLabelRank
     """
 
     _validation = {
@@ -7696,6 +9449,18 @@ class SensitivityLabel(ProxyResource):
         rank: Optional[Union[str, "SensitivityLabelRank"]] = None,
         **kwargs
     ):
+        """
+        :keyword label_name: The label name.
+        :paramtype label_name: str
+        :keyword label_id: The label ID.
+        :paramtype label_id: str
+        :keyword information_type: The information type.
+        :paramtype information_type: str
+        :keyword information_type_id: The information type ID.
+        :paramtype information_type_id: str
+        :keyword rank: Possible values include: "None", "Low", "Medium", "High", "Critical".
+        :paramtype rank: str or ~azure.mgmt.synapse.models.SensitivityLabelRank
+        """
         super(SensitivityLabel, self).__init__(**kwargs)
         self.managed_by = None
         self.schema_name = None
@@ -7734,6 +9499,8 @@ class SensitivityLabelListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SensitivityLabelListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7752,16 +9519,16 @@ class SensitivityLabelUpdate(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param op:  Possible values include: "set", "remove".
-    :type op: str or ~azure.mgmt.synapse.models.SensitivityLabelUpdateKind
-    :param schema: Schema name of the column to update.
-    :type schema: str
-    :param table: Table name of the column to update.
-    :type table: str
-    :param column: Column name to update.
-    :type column: str
-    :param sensitivity_label: The sensitivity label information to apply on a column.
-    :type sensitivity_label: ~azure.mgmt.synapse.models.SensitivityLabel
+    :ivar op: Possible values include: "set", "remove".
+    :vartype op: str or ~azure.mgmt.synapse.models.SensitivityLabelUpdateKind
+    :ivar schema: Schema name of the column to update.
+    :vartype schema: str
+    :ivar table: Table name of the column to update.
+    :vartype table: str
+    :ivar column: Column name to update.
+    :vartype column: str
+    :ivar sensitivity_label: The sensitivity label information to apply on a column.
+    :vartype sensitivity_label: ~azure.mgmt.synapse.models.SensitivityLabel
     """
 
     _validation = {
@@ -7791,6 +9558,18 @@ class SensitivityLabelUpdate(ProxyResource):
         sensitivity_label: Optional["SensitivityLabel"] = None,
         **kwargs
     ):
+        """
+        :keyword op: Possible values include: "set", "remove".
+        :paramtype op: str or ~azure.mgmt.synapse.models.SensitivityLabelUpdateKind
+        :keyword schema: Schema name of the column to update.
+        :paramtype schema: str
+        :keyword table: Table name of the column to update.
+        :paramtype table: str
+        :keyword column: Column name to update.
+        :paramtype column: str
+        :keyword sensitivity_label: The sensitivity label information to apply on a column.
+        :paramtype sensitivity_label: ~azure.mgmt.synapse.models.SensitivityLabel
+        """
         super(SensitivityLabelUpdate, self).__init__(**kwargs)
         self.op = op
         self.schema = schema
@@ -7802,8 +9581,8 @@ class SensitivityLabelUpdate(ProxyResource):
 class SensitivityLabelUpdateList(msrest.serialization.Model):
     """A list of sensitivity label update operations.
 
-    :param operations:
-    :type operations: list[~azure.mgmt.synapse.models.SensitivityLabelUpdate]
+    :ivar operations:
+    :vartype operations: list[~azure.mgmt.synapse.models.SensitivityLabelUpdate]
     """
 
     _attribute_map = {
@@ -7816,6 +9595,10 @@ class SensitivityLabelUpdateList(msrest.serialization.Model):
         operations: Optional[List["SensitivityLabelUpdate"]] = None,
         **kwargs
     ):
+        """
+        :keyword operations:
+        :paramtype operations: list[~azure.mgmt.synapse.models.SensitivityLabelUpdate]
+        """
         super(SensitivityLabelUpdateList, self).__init__(**kwargs)
         self.operations = operations
 
@@ -7833,15 +9616,14 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+    :ivar state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -7853,11 +9635,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -7925,13 +9707,13 @@ class ServerBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
      'isAzureMonitorTargetEnabled' as true.
@@ -7947,11 +9729,27 @@ class ServerBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
+    :vartype queue_delay_ms: int
+    :ivar is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled, devops
+     logs will be sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
+     'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
+    
+     When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit'
+     diagnostic logs category on the master database should also be created.
+    
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+    
+     For more information, see `Diagnostic Settings REST API
+     <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+     or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+    :vartype is_devops_audit_enabled: bool
     """
 
     _validation = {
@@ -7973,6 +9771,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'is_devops_audit_enabled': {'key': 'properties.isDevopsAuditEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -7987,8 +9786,146 @@ class ServerBlobAuditingPolicy(ProxyResource):
         is_storage_secondary_key_in_use: Optional[bool] = None,
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
+        is_devops_audit_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
+         'isAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        :keyword is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
+         devops logs will be sent to Azure Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
+         'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit'
+         diagnostic logs category on the master database should also be created.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_devops_audit_enabled: bool
+        """
         super(ServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.state = state
         self.storage_endpoint = storage_endpoint
@@ -7999,6 +9936,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
         self.queue_delay_ms = queue_delay_ms
+        self.is_devops_audit_enabled = is_devops_audit_enabled
 
 
 class ServerBlobAuditingPolicyListResult(msrest.serialization.Model):
@@ -8026,6 +9964,8 @@ class ServerBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8044,26 +9984,26 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param state: Specifies the state of the policy, whether it is enabled or disabled or a policy
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
      has not been applied yet on the specific server. Possible values include: "New", "Enabled",
      "Disabled".
-    :type state: str or ~azure.mgmt.synapse.models.SecurityAlertPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :vartype state: str or ~azure.mgmt.synapse.models.SecurityAlertPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     :ivar creation_time: Specifies the UTC creation time of the policy.
     :vartype creation_time: ~datetime.datetime
     """
@@ -8101,6 +10041,29 @@ class ServerSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
+         policy has not been applied yet on the specific server. Possible values include: "New",
+         "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.SecurityAlertPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
         self.state = state
         self.disabled_alerts = disabled_alerts
@@ -8137,6 +10100,8 @@ class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8187,6 +10152,8 @@ class ServerUsage(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerUsage, self).__init__(**kwargs)
         self.name = None
         self.resource_name = None
@@ -8204,8 +10171,8 @@ class ServerUsageListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of server metrics for the server.
-    :type value: list[~azure.mgmt.synapse.models.ServerUsage]
+    :ivar value: Required. The list of server metrics for the server.
+    :vartype value: list[~azure.mgmt.synapse.models.ServerUsage]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -8226,6 +10193,10 @@ class ServerUsageListResult(msrest.serialization.Model):
         value: List["ServerUsage"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of server metrics for the server.
+        :paramtype value: list[~azure.mgmt.synapse.models.ServerUsage]
+        """
         super(ServerUsageListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -8244,19 +10215,19 @@ class ServerVulnerabilityAssessment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param storage_container_path: A blob storage container path to hold the scan results (e.g.
+    :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
      https://myStorage.blob.core.windows.net/VaScans/).
-    :type storage_container_path: str
-    :param storage_container_sas_key: A shared access signature (SAS Key) that has read and write
+    :vartype storage_container_path: str
+    :ivar storage_container_sas_key: A shared access signature (SAS Key) that has read and write
      access to the blob container specified in 'storageContainerPath' parameter. If
      'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required.
-    :type storage_container_sas_key: str
-    :param storage_account_access_key: Specifies the identifier key of the storage account for
+    :vartype storage_container_sas_key: str
+    :ivar storage_account_access_key: Specifies the identifier key of the storage account for
      vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
      storageAccountAccessKey is required.
-    :type storage_account_access_key: str
-    :param recurring_scans: The recurring scans settings.
-    :type recurring_scans:
+    :vartype storage_account_access_key: str
+    :ivar recurring_scans: The recurring scans settings.
+    :vartype recurring_scans:
      ~azure.mgmt.synapse.models.VulnerabilityAssessmentRecurringScansProperties
     """
 
@@ -8285,6 +10256,22 @@ class ServerVulnerabilityAssessment(ProxyResource):
         recurring_scans: Optional["VulnerabilityAssessmentRecurringScansProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
+         https://myStorage.blob.core.windows.net/VaScans/).
+        :paramtype storage_container_path: str
+        :keyword storage_container_sas_key: A shared access signature (SAS Key) that has read and write
+         access to the blob container specified in 'storageContainerPath' parameter. If
+         'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required.
+        :paramtype storage_container_sas_key: str
+        :keyword storage_account_access_key: Specifies the identifier key of the storage account for
+         vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
+         storageAccountAccessKey is required.
+        :paramtype storage_account_access_key: str
+        :keyword recurring_scans: The recurring scans settings.
+        :paramtype recurring_scans:
+         ~azure.mgmt.synapse.models.VulnerabilityAssessmentRecurringScansProperties
+        """
         super(ServerVulnerabilityAssessment, self).__init__(**kwargs)
         self.storage_container_path = storage_container_path
         self.storage_container_sas_key = storage_container_sas_key
@@ -8317,6 +10304,8 @@ class ServerVulnerabilityAssessmentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerVulnerabilityAssessmentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8325,13 +10314,13 @@ class ServerVulnerabilityAssessmentListResult(msrest.serialization.Model):
 class Sku(msrest.serialization.Model):
     """SQL pool SKU.
 
-    :param tier: The service tier.
-    :type tier: str
-    :param name: The SKU name.
-    :type name: str
-    :param capacity: If the SKU supports scale out/in then the capacity integer should be included.
+    :ivar tier: The service tier.
+    :vartype tier: str
+    :ivar name: The SKU name.
+    :vartype name: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
      If scale out/in is not possible for the resource this may be omitted.
-    :type capacity: int
+    :vartype capacity: int
     """
 
     _attribute_map = {
@@ -8348,6 +10337,15 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword tier: The service tier.
+        :paramtype tier: str
+        :keyword name: The SKU name.
+        :paramtype name: str
+        :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
+         included. If scale out/in is not possible for the resource this may be omitted.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.tier = tier
         self.name = name
@@ -8395,6 +10393,8 @@ class SkuDescription(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuDescription, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
@@ -8425,6 +10425,8 @@ class SkuDescriptionList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuDescriptionList, self).__init__(**kwargs)
         self.value = None
 
@@ -8434,10 +10436,10 @@ class SkuLocationInfoItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The available location of the SKU.
-    :type location: str
-    :param zones: The available zone of the SKU.
-    :type zones: list[str]
+    :ivar location: Required. The available location of the SKU.
+    :vartype location: str
+    :ivar zones: The available zone of the SKU.
+    :vartype zones: list[str]
     """
 
     _validation = {
@@ -8456,6 +10458,12 @@ class SkuLocationInfoItem(msrest.serialization.Model):
         zones: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The available location of the SKU.
+        :paramtype location: str
+        :keyword zones: The available zone of the SKU.
+        :paramtype zones: list[str]
+        """
         super(SkuLocationInfoItem, self).__init__(**kwargs)
         self.location = location
         self.zones = zones
@@ -8468,13 +10476,13 @@ class SparkConfigProperties(msrest.serialization.Model):
 
     :ivar time: The last update time of the spark config properties file.
     :vartype time: ~datetime.datetime
-    :param content: The spark config properties.
-    :type content: str
-    :param filename: The filename of the spark config properties file.
-    :type filename: str
-    :param configuration_type: The type of the spark config properties file. Possible values
+    :ivar content: The spark config properties.
+    :vartype content: str
+    :ivar filename: The filename of the spark config properties file.
+    :vartype filename: str
+    :ivar configuration_type: The type of the spark config properties file. Possible values
      include: "File", "Artifact".
-    :type configuration_type: str or ~azure.mgmt.synapse.models.ConfigurationType
+    :vartype configuration_type: str or ~azure.mgmt.synapse.models.ConfigurationType
     """
 
     _validation = {
@@ -8496,6 +10504,15 @@ class SparkConfigProperties(msrest.serialization.Model):
         configuration_type: Optional[Union[str, "ConfigurationType"]] = None,
         **kwargs
     ):
+        """
+        :keyword content: The spark config properties.
+        :paramtype content: str
+        :keyword filename: The filename of the spark config properties file.
+        :paramtype filename: str
+        :keyword configuration_type: The type of the spark config properties file. Possible values
+         include: "File", "Artifact".
+        :paramtype configuration_type: str or ~azure.mgmt.synapse.models.ConfigurationType
+        """
         super(SparkConfigProperties, self).__init__(**kwargs)
         self.time = None
         self.content = content
@@ -8508,10 +10525,10 @@ class SparkConfigurationListResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of SparkConfiguration.
-    :type value: list[~azure.mgmt.synapse.models.SparkConfigurationResource]
-    :param next_link: The link to the next page of results, if any remaining results exist.
-    :type next_link: str
+    :ivar value: Required. List of SparkConfiguration.
+    :vartype value: list[~azure.mgmt.synapse.models.SparkConfigurationResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -8530,6 +10547,12 @@ class SparkConfigurationListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. List of SparkConfiguration.
+        :paramtype value: list[~azure.mgmt.synapse.models.SparkConfigurationResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
         super(SparkConfigurationListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -8552,18 +10575,18 @@ class SparkConfigurationResource(SubResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param description: Description about the SparkConfiguration.
-    :type description: str
-    :param configs: Required. SparkConfiguration configs.
-    :type configs: dict[str, str]
-    :param annotations: Annotations for SparkConfiguration.
-    :type annotations: list[str]
-    :param notes: additional Notes.
-    :type notes: str
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created: The timestamp of resource creation.
-    :type created: ~datetime.datetime
+    :ivar description: Description about the SparkConfiguration.
+    :vartype description: str
+    :ivar configs: Required. SparkConfiguration configs.
+    :vartype configs: dict[str, str]
+    :ivar annotations: Annotations for SparkConfiguration.
+    :vartype annotations: list[str]
+    :ivar notes: additional Notes.
+    :vartype notes: str
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created: The timestamp of resource creation.
+    :vartype created: ~datetime.datetime
     """
 
     _validation = {
@@ -8598,6 +10621,20 @@ class SparkConfigurationResource(SubResource):
         created: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description about the SparkConfiguration.
+        :paramtype description: str
+        :keyword configs: Required. SparkConfiguration configs.
+        :paramtype configs: dict[str, str]
+        :keyword annotations: Annotations for SparkConfiguration.
+        :paramtype annotations: list[str]
+        :keyword notes: additional Notes.
+        :paramtype notes: str
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created: The timestamp of resource creation.
+        :paramtype created: ~datetime.datetime
+        """
         super(SparkConfigurationResource, self).__init__(**kwargs)
         self.description = description
         self.configs = configs
@@ -8622,27 +10659,27 @@ class SqlPool(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param sku: SQL pool SKU.
-    :type sku: ~azure.mgmt.synapse.models.Sku
-    :param max_size_bytes: Maximum size in bytes.
-    :type max_size_bytes: long
-    :param collation: Collation mode.
-    :type collation: str
-    :param source_database_id: Source database to create from.
-    :type source_database_id: str
-    :param recoverable_database_id: Backup database to restore from.
-    :type recoverable_database_id: str
-    :param provisioning_state: Resource state.
-    :type provisioning_state: str
-    :param status: Resource status.
-    :type status: str
-    :param restore_point_in_time: Snapshot time to restore.
-    :type restore_point_in_time: ~datetime.datetime
-    :param create_mode: Specifies the mode of sql pool creation.
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: SQL pool SKU.
+    :vartype sku: ~azure.mgmt.synapse.models.Sku
+    :ivar max_size_bytes: Maximum size in bytes.
+    :vartype max_size_bytes: long
+    :ivar collation: Collation mode.
+    :vartype collation: str
+    :ivar source_database_id: Source database to create from.
+    :vartype source_database_id: str
+    :ivar recoverable_database_id: Backup database to restore from.
+    :vartype recoverable_database_id: str
+    :ivar provisioning_state: Resource state.
+    :vartype provisioning_state: str
+    :ivar status: Resource status.
+    :vartype status: str
+    :ivar restore_point_in_time: Snapshot time to restore.
+    :vartype restore_point_in_time: ~datetime.datetime
+    :ivar create_mode: Specifies the mode of sql pool creation.
     
      Default: regular sql pool creation.
     
@@ -8657,14 +10694,14 @@ class SqlPool(TrackedResource):
      should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate
      must be specified. Possible values include: "Default", "PointInTimeRestore", "Recovery",
      "Restore".
-    :type create_mode: str or ~azure.mgmt.synapse.models.CreateMode
-    :param creation_date: Date the SQL pool was created.
-    :type creation_date: ~datetime.datetime
-    :param storage_account_type: The storage account type used to store backups for this sql pool.
-     Possible values include: "GRS", "LRS", "ZRS".
-    :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
-    :param source_database_deletion_date: Specifies the time that the sql pool was deleted.
-    :type source_database_deletion_date: ~datetime.datetime
+    :vartype create_mode: str or ~azure.mgmt.synapse.models.CreateMode
+    :ivar creation_date: Date the SQL pool was created.
+    :vartype creation_date: ~datetime.datetime
+    :ivar storage_account_type: The storage account type used to store backups for this sql pool.
+     Possible values include: "GRS", "LRS". Default value: "GRS".
+    :vartype storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+    :ivar source_database_deletion_date: Specifies the time that the sql pool was deleted.
+    :vartype source_database_deletion_date: ~datetime.datetime
     """
 
     _validation = {
@@ -8672,6 +10709,8 @@ class SqlPool(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'status': {'readonly': True},
+        'creation_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -8701,18 +10740,57 @@ class SqlPool(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
         max_size_bytes: Optional[int] = None,
-        collation: Optional[str] = None,
+        collation: Optional[str] = "",
         source_database_id: Optional[str] = None,
         recoverable_database_id: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        status: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
         create_mode: Optional[Union[str, "CreateMode"]] = None,
-        creation_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        storage_account_type: Optional[Union[str, "StorageAccountType"]] = "GRS",
         source_database_deletion_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: SQL pool SKU.
+        :paramtype sku: ~azure.mgmt.synapse.models.Sku
+        :keyword max_size_bytes: Maximum size in bytes.
+        :paramtype max_size_bytes: long
+        :keyword collation: Collation mode.
+        :paramtype collation: str
+        :keyword source_database_id: Source database to create from.
+        :paramtype source_database_id: str
+        :keyword recoverable_database_id: Backup database to restore from.
+        :paramtype recoverable_database_id: str
+        :keyword provisioning_state: Resource state.
+        :paramtype provisioning_state: str
+        :keyword restore_point_in_time: Snapshot time to restore.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword create_mode: Specifies the mode of sql pool creation.
+        
+         Default: regular sql pool creation.
+        
+         PointInTimeRestore: Creates a sql pool by restoring a point in time backup of an existing sql
+         pool. sourceDatabaseId must be specified as the resource ID of the existing sql pool, and
+         restorePointInTime must be specified.
+        
+         Recovery: Creates a sql pool by a geo-replicated backup. sourceDatabaseId  must be specified
+         as the recoverableDatabaseId to restore.
+        
+         Restore: Creates a sql pool by restoring a backup of a deleted sql  pool. SourceDatabaseId
+         should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate
+         must be specified. Possible values include: "Default", "PointInTimeRestore", "Recovery",
+         "Restore".
+        :paramtype create_mode: str or ~azure.mgmt.synapse.models.CreateMode
+        :keyword storage_account_type: The storage account type used to store backups for this sql
+         pool. Possible values include: "GRS", "LRS". Default value: "GRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+        :keyword source_database_deletion_date: Specifies the time that the sql pool was deleted.
+        :paramtype source_database_deletion_date: ~datetime.datetime
+        """
         super(SqlPool, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.max_size_bytes = max_size_bytes
@@ -8720,10 +10798,10 @@ class SqlPool(TrackedResource):
         self.source_database_id = source_database_id
         self.recoverable_database_id = recoverable_database_id
         self.provisioning_state = provisioning_state
-        self.status = status
+        self.status = None
         self.restore_point_in_time = restore_point_in_time
         self.create_mode = create_mode
-        self.creation_date = creation_date
+        self.creation_date = None
         self.storage_account_type = storage_account_type
         self.source_database_deletion_date = source_database_deletion_date
 
@@ -8743,20 +10821,19 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
     :vartype type: str
     :ivar kind: Resource kind.
     :vartype kind: str
-    :param state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+    :ivar state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account. If state is Enabled and storageEndpoint is specified, storageAccountAccessKey is
-     required.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
+     If state is Enabled and storageEndpoint is specified, storageAccountAccessKey is required.
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -8824,13 +10901,13 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
      'isAzureMonitorTargetEnabled' as true.
@@ -8846,7 +10923,7 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
+    :vartype is_azure_monitor_target_enabled: bool
     """
 
     _validation = {
@@ -8881,9 +10958,115 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
         audit_actions_and_groups: Optional[List[str]] = None,
         storage_account_subscription_id: Optional[str] = None,
         is_storage_secondary_key_in_use: Optional[bool] = None,
-        is_azure_monitor_target_enabled: Optional[bool] = None,
+        is_azure_monitor_target_enabled: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account. If state is Enabled and storageEndpoint is specified, storageAccountAccessKey is
+         required.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'state' as 'Enabled' and
+         'isAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        """
         super(SqlPoolBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
         self.state = state
@@ -8921,6 +11104,8 @@ class SqlPoolBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8951,6 +11136,8 @@ class SqlPoolBlobAuditingPolicySqlPoolOperationListResult(msrest.serialization.M
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolBlobAuditingPolicySqlPoolOperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8969,12 +11156,12 @@ class SqlPoolColumn(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param column_type: The column data type. Possible values include: "image", "text",
+    :ivar column_type: The column data type. Possible values include: "image", "text",
      "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
      "int", "smalldatetime", "real", "money", "datetime", "float", "sql_variant", "ntext", "bit",
      "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
      "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname".
-    :type column_type: str or ~azure.mgmt.synapse.models.ColumnDataType
+    :vartype column_type: str or ~azure.mgmt.synapse.models.ColumnDataType
     :ivar is_computed: Indicates whether column value is computed or not.
     :vartype is_computed: bool
     """
@@ -9000,6 +11187,14 @@ class SqlPoolColumn(ProxyResource):
         column_type: Optional[Union[str, "ColumnDataType"]] = None,
         **kwargs
     ):
+        """
+        :keyword column_type: The column data type. Possible values include: "image", "text",
+         "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
+         "int", "smalldatetime", "real", "money", "datetime", "float", "sql_variant", "ntext", "bit",
+         "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
+         "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname".
+        :paramtype column_type: str or ~azure.mgmt.synapse.models.ColumnDataType
+        """
         super(SqlPoolColumn, self).__init__(**kwargs)
         self.column_type = column_type
         self.is_computed = None
@@ -9030,6 +11225,8 @@ class SqlPoolColumnListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolColumnListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9052,20 +11249,20 @@ class SqlPoolConnectionPolicy(ProxyResource):
     :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
-    :param security_enabled_access: The state of security access.
-    :type security_enabled_access: str
-    :param proxy_dns_name: The fully qualified host name of the auditing proxy.
-    :type proxy_dns_name: str
-    :param proxy_port: The port number of the auditing proxy.
-    :type proxy_port: str
-    :param visibility: The visibility of the auditing proxy.
-    :type visibility: str
-    :param use_server_default: Whether server default is enabled or disabled.
-    :type use_server_default: str
-    :param redirection_state: The state of proxy redirection.
-    :type redirection_state: str
-    :param state: The connection policy state.
-    :type state: str
+    :ivar security_enabled_access: The state of security access.
+    :vartype security_enabled_access: str
+    :ivar proxy_dns_name: The fully qualified host name of the auditing proxy.
+    :vartype proxy_dns_name: str
+    :ivar proxy_port: The port number of the auditing proxy.
+    :vartype proxy_port: str
+    :ivar visibility: The visibility of the auditing proxy.
+    :vartype visibility: str
+    :ivar use_server_default: Whether server default is enabled or disabled.
+    :vartype use_server_default: str
+    :ivar redirection_state: The state of proxy redirection.
+    :vartype redirection_state: str
+    :ivar state: The connection policy state.
+    :vartype state: str
     """
 
     _validation = {
@@ -9103,6 +11300,22 @@ class SqlPoolConnectionPolicy(ProxyResource):
         state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword security_enabled_access: The state of security access.
+        :paramtype security_enabled_access: str
+        :keyword proxy_dns_name: The fully qualified host name of the auditing proxy.
+        :paramtype proxy_dns_name: str
+        :keyword proxy_port: The port number of the auditing proxy.
+        :paramtype proxy_port: str
+        :keyword visibility: The visibility of the auditing proxy.
+        :paramtype visibility: str
+        :keyword use_server_default: Whether server default is enabled or disabled.
+        :paramtype use_server_default: str
+        :keyword redirection_state: The state of proxy redirection.
+        :paramtype redirection_state: str
+        :keyword state: The connection policy state.
+        :paramtype state: str
+        """
         super(SqlPoolConnectionPolicy, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -9118,10 +11331,10 @@ class SqlPoolConnectionPolicy(ProxyResource):
 class SqlPoolInfoListResult(msrest.serialization.Model):
     """List of SQL pools.
 
-    :param next_link: Link to the next page of results.
-    :type next_link: str
-    :param value: List of SQL pools.
-    :type value: list[~azure.mgmt.synapse.models.SqlPool]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    :ivar value: List of SQL pools.
+    :vartype value: list[~azure.mgmt.synapse.models.SqlPool]
     """
 
     _attribute_map = {
@@ -9136,6 +11349,12 @@ class SqlPoolInfoListResult(msrest.serialization.Model):
         value: Optional[List["SqlPool"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
+        :keyword value: List of SQL pools.
+        :paramtype value: list[~azure.mgmt.synapse.models.SqlPool]
+        """
         super(SqlPoolInfoListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -9229,6 +11448,8 @@ class SqlPoolOperation(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolOperation, self).__init__(**kwargs)
         self.database_name = None
         self.operation = None
@@ -9249,27 +11470,29 @@ class SqlPoolOperation(ProxyResource):
 class SqlPoolPatchInfo(msrest.serialization.Model):
     """A SQL Analytics pool patch info.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The geo-location where the resource lives.
-    :type location: str
-    :param sku: SQL pool SKU.
-    :type sku: ~azure.mgmt.synapse.models.Sku
-    :param max_size_bytes: Maximum size in bytes.
-    :type max_size_bytes: long
-    :param collation: Collation mode.
-    :type collation: str
-    :param source_database_id: Source database to create from.
-    :type source_database_id: str
-    :param recoverable_database_id: Backup database to restore from.
-    :type recoverable_database_id: str
-    :param provisioning_state: Resource state.
-    :type provisioning_state: str
-    :param status: Resource status.
-    :type status: str
-    :param restore_point_in_time: Snapshot time to restore.
-    :type restore_point_in_time: ~datetime.datetime
-    :param create_mode: Specifies the mode of sql pool creation.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: SQL pool SKU.
+    :vartype sku: ~azure.mgmt.synapse.models.Sku
+    :ivar max_size_bytes: Maximum size in bytes.
+    :vartype max_size_bytes: long
+    :ivar collation: Collation mode.
+    :vartype collation: str
+    :ivar source_database_id: Source database to create from.
+    :vartype source_database_id: str
+    :ivar recoverable_database_id: Backup database to restore from.
+    :vartype recoverable_database_id: str
+    :ivar provisioning_state: Resource state.
+    :vartype provisioning_state: str
+    :ivar status: Resource status.
+    :vartype status: str
+    :ivar restore_point_in_time: Snapshot time to restore.
+    :vartype restore_point_in_time: ~datetime.datetime
+    :ivar create_mode: Specifies the mode of sql pool creation.
     
      Default: regular sql pool creation.
     
@@ -9284,15 +11507,20 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
      should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate
      must be specified. Possible values include: "Default", "PointInTimeRestore", "Recovery",
      "Restore".
-    :type create_mode: str or ~azure.mgmt.synapse.models.CreateMode
-    :param creation_date: Date the SQL pool was created.
-    :type creation_date: ~datetime.datetime
-    :param storage_account_type: The storage account type used to store backups for this sql pool.
-     Possible values include: "GRS", "LRS", "ZRS".
-    :type storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
-    :param source_database_deletion_date: Specifies the time that the sql pool was deleted.
-    :type source_database_deletion_date: ~datetime.datetime
+    :vartype create_mode: str or ~azure.mgmt.synapse.models.CreateMode
+    :ivar creation_date: Date the SQL pool was created.
+    :vartype creation_date: ~datetime.datetime
+    :ivar storage_account_type: The storage account type used to store backups for this sql pool.
+     Possible values include: "GRS", "LRS". Default value: "GRS".
+    :vartype storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+    :ivar source_database_deletion_date: Specifies the time that the sql pool was deleted.
+    :vartype source_database_deletion_date: ~datetime.datetime
     """
+
+    _validation = {
+        'status': {'readonly': True},
+        'creation_date': {'readonly': True},
+    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -9318,18 +11546,57 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         location: Optional[str] = None,
         sku: Optional["Sku"] = None,
         max_size_bytes: Optional[int] = None,
-        collation: Optional[str] = None,
+        collation: Optional[str] = "",
         source_database_id: Optional[str] = None,
         recoverable_database_id: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        status: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
         create_mode: Optional[Union[str, "CreateMode"]] = None,
-        creation_date: Optional[datetime.datetime] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        storage_account_type: Optional[Union[str, "StorageAccountType"]] = "GRS",
         source_database_deletion_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: SQL pool SKU.
+        :paramtype sku: ~azure.mgmt.synapse.models.Sku
+        :keyword max_size_bytes: Maximum size in bytes.
+        :paramtype max_size_bytes: long
+        :keyword collation: Collation mode.
+        :paramtype collation: str
+        :keyword source_database_id: Source database to create from.
+        :paramtype source_database_id: str
+        :keyword recoverable_database_id: Backup database to restore from.
+        :paramtype recoverable_database_id: str
+        :keyword provisioning_state: Resource state.
+        :paramtype provisioning_state: str
+        :keyword restore_point_in_time: Snapshot time to restore.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword create_mode: Specifies the mode of sql pool creation.
+        
+         Default: regular sql pool creation.
+        
+         PointInTimeRestore: Creates a sql pool by restoring a point in time backup of an existing sql
+         pool. sourceDatabaseId must be specified as the resource ID of the existing sql pool, and
+         restorePointInTime must be specified.
+        
+         Recovery: Creates a sql pool by a geo-replicated backup. sourceDatabaseId  must be specified
+         as the recoverableDatabaseId to restore.
+        
+         Restore: Creates a sql pool by restoring a backup of a deleted sql  pool. SourceDatabaseId
+         should be the sql pool's original resource ID. SourceDatabaseId and sourceDatabaseDeletionDate
+         must be specified. Possible values include: "Default", "PointInTimeRestore", "Recovery",
+         "Restore".
+        :paramtype create_mode: str or ~azure.mgmt.synapse.models.CreateMode
+        :keyword storage_account_type: The storage account type used to store backups for this sql
+         pool. Possible values include: "GRS", "LRS". Default value: "GRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.synapse.models.StorageAccountType
+        :keyword source_database_deletion_date: Specifies the time that the sql pool was deleted.
+        :paramtype source_database_deletion_date: ~datetime.datetime
+        """
         super(SqlPoolPatchInfo, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -9339,10 +11606,10 @@ class SqlPoolPatchInfo(msrest.serialization.Model):
         self.source_database_id = source_database_id
         self.recoverable_database_id = recoverable_database_id
         self.provisioning_state = provisioning_state
-        self.status = status
+        self.status = None
         self.restore_point_in_time = restore_point_in_time
         self.create_mode = create_mode
-        self.creation_date = creation_date
+        self.creation_date = None
         self.storage_account_type = storage_account_type
         self.source_database_deletion_date = source_database_deletion_date
 
@@ -9378,6 +11645,8 @@ class SqlPoolSchema(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolSchema, self).__init__(**kwargs)
 
 
@@ -9406,6 +11675,8 @@ class SqlPoolSchemaListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolSchemaListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9424,26 +11695,26 @@ class SqlPoolSecurityAlertPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param state: Specifies the state of the policy, whether it is enabled or disabled or a policy
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
      has not been applied yet on the specific Sql pool. Possible values include: "New", "Enabled",
      "Disabled".
-    :type state: str or ~azure.mgmt.synapse.models.SecurityAlertPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :vartype state: str or ~azure.mgmt.synapse.models.SecurityAlertPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     :ivar creation_time: Specifies the UTC creation time of the policy.
     :vartype creation_time: ~datetime.datetime
     """
@@ -9481,6 +11752,29 @@ class SqlPoolSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
+         policy has not been applied yet on the specific Sql pool. Possible values include: "New",
+         "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.synapse.models.SecurityAlertPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(SqlPoolSecurityAlertPolicy, self).__init__(**kwargs)
         self.state = state
         self.disabled_alerts = disabled_alerts
@@ -9523,6 +11817,8 @@ class SqlPoolTable(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolTable, self).__init__(**kwargs)
 
 
@@ -9551,6 +11847,8 @@ class SqlPoolTableListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolTableListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9601,6 +11899,8 @@ class SqlPoolUsage(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolUsage, self).__init__(**kwargs)
         self.name = None
         self.resource_name = None
@@ -9618,8 +11918,8 @@ class SqlPoolUsageListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of usages for the Sql pool.
-    :type value: list[~azure.mgmt.synapse.models.SqlPoolUsage]
+    :ivar value: Required. The list of usages for the Sql pool.
+    :vartype value: list[~azure.mgmt.synapse.models.SqlPoolUsage]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -9640,6 +11940,10 @@ class SqlPoolUsageListResult(msrest.serialization.Model):
         value: List["SqlPoolUsage"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of usages for the Sql pool.
+        :paramtype value: list[~azure.mgmt.synapse.models.SqlPoolUsage]
+        """
         super(SqlPoolUsageListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -9658,20 +11962,20 @@ class SqlPoolVulnerabilityAssessment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param storage_container_path: A blob storage container path to hold the scan results (e.g.
+    :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
      https://myStorage.blob.core.windows.net/VaScans/).  It is required if server level
      vulnerability assessment policy doesn't set.
-    :type storage_container_path: str
-    :param storage_container_sas_key: A shared access signature (SAS Key) that has write access to
+    :vartype storage_container_path: str
+    :ivar storage_container_sas_key: A shared access signature (SAS Key) that has write access to
      the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey'
      isn't specified, StorageContainerSasKey is required.
-    :type storage_container_sas_key: str
-    :param storage_account_access_key: Specifies the identifier key of the storage account for
+    :vartype storage_container_sas_key: str
+    :ivar storage_account_access_key: Specifies the identifier key of the storage account for
      vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
      storageAccountAccessKey is required.
-    :type storage_account_access_key: str
-    :param recurring_scans: The recurring scans settings.
-    :type recurring_scans:
+    :vartype storage_account_access_key: str
+    :ivar recurring_scans: The recurring scans settings.
+    :vartype recurring_scans:
      ~azure.mgmt.synapse.models.VulnerabilityAssessmentRecurringScansProperties
     """
 
@@ -9700,6 +12004,23 @@ class SqlPoolVulnerabilityAssessment(ProxyResource):
         recurring_scans: Optional["VulnerabilityAssessmentRecurringScansProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
+         https://myStorage.blob.core.windows.net/VaScans/).  It is required if server level
+         vulnerability assessment policy doesn't set.
+        :paramtype storage_container_path: str
+        :keyword storage_container_sas_key: A shared access signature (SAS Key) that has write access
+         to the blob container specified in 'storageContainerPath' parameter. If
+         'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required.
+        :paramtype storage_container_sas_key: str
+        :keyword storage_account_access_key: Specifies the identifier key of the storage account for
+         vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
+         storageAccountAccessKey is required.
+        :paramtype storage_account_access_key: str
+        :keyword recurring_scans: The recurring scans settings.
+        :paramtype recurring_scans:
+         ~azure.mgmt.synapse.models.VulnerabilityAssessmentRecurringScansProperties
+        """
         super(SqlPoolVulnerabilityAssessment, self).__init__(**kwargs)
         self.storage_container_path = storage_container_path
         self.storage_container_sas_key = storage_container_sas_key
@@ -9732,6 +12053,8 @@ class SqlPoolVulnerabilityAssessmentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolVulnerabilityAssessmentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9750,8 +12073,8 @@ class SqlPoolVulnerabilityAssessmentRuleBaseline(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param baseline_results: The rule baseline result.
-    :type baseline_results:
+    :ivar baseline_results: The rule baseline result.
+    :vartype baseline_results:
      list[~azure.mgmt.synapse.models.SqlPoolVulnerabilityAssessmentRuleBaselineItem]
     """
 
@@ -9774,6 +12097,11 @@ class SqlPoolVulnerabilityAssessmentRuleBaseline(ProxyResource):
         baseline_results: Optional[List["SqlPoolVulnerabilityAssessmentRuleBaselineItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword baseline_results: The rule baseline result.
+        :paramtype baseline_results:
+         list[~azure.mgmt.synapse.models.SqlPoolVulnerabilityAssessmentRuleBaselineItem]
+        """
         super(SqlPoolVulnerabilityAssessmentRuleBaseline, self).__init__(**kwargs)
         self.baseline_results = baseline_results
 
@@ -9783,8 +12111,8 @@ class SqlPoolVulnerabilityAssessmentRuleBaselineItem(msrest.serialization.Model)
 
     All required parameters must be populated in order to send to Azure.
 
-    :param result: Required. The rule baseline result.
-    :type result: list[str]
+    :ivar result: Required. The rule baseline result.
+    :vartype result: list[str]
     """
 
     _validation = {
@@ -9801,6 +12129,10 @@ class SqlPoolVulnerabilityAssessmentRuleBaselineItem(msrest.serialization.Model)
         result: List[str],
         **kwargs
     ):
+        """
+        :keyword result: Required. The rule baseline result.
+        :paramtype result: list[str]
+        """
         super(SqlPoolVulnerabilityAssessmentRuleBaselineItem, self).__init__(**kwargs)
         self.result = result
 
@@ -9841,6 +12173,8 @@ class SqlPoolVulnerabilityAssessmentScansExport(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlPoolVulnerabilityAssessmentScansExport, self).__init__(**kwargs)
         self.exported_report_location = None
 
@@ -9853,15 +12187,15 @@ class SsisObjectMetadata(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of metadata.Constant filled by server.  Possible values include:
+    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
      "Folder", "Project", "Package", "Environment".
-    :type type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
-    :param id: Metadata id.
-    :type id: long
-    :param name: Metadata name.
-    :type name: str
-    :param description: Metadata description.
-    :type description: str
+    :vartype type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
+    :ivar id: Metadata id.
+    :vartype id: long
+    :ivar name: Metadata name.
+    :vartype name: str
+    :ivar description: Metadata description.
+    :vartype description: str
     """
 
     _validation = {
@@ -9887,6 +12221,14 @@ class SsisObjectMetadata(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Metadata id.
+        :paramtype id: long
+        :keyword name: Metadata name.
+        :paramtype name: str
+        :keyword description: Metadata description.
+        :paramtype description: str
+        """
         super(SsisObjectMetadata, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.id = id
@@ -9899,19 +12241,19 @@ class SsisEnvironment(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of metadata.Constant filled by server.  Possible values include:
+    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
      "Folder", "Project", "Package", "Environment".
-    :type type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
-    :param id: Metadata id.
-    :type id: long
-    :param name: Metadata name.
-    :type name: str
-    :param description: Metadata description.
-    :type description: str
-    :param folder_id: Folder id which contains environment.
-    :type folder_id: long
-    :param variables: Variable in environment.
-    :type variables: list[~azure.mgmt.synapse.models.SsisVariable]
+    :vartype type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
+    :ivar id: Metadata id.
+    :vartype id: long
+    :ivar name: Metadata name.
+    :vartype name: str
+    :ivar description: Metadata description.
+    :vartype description: str
+    :ivar folder_id: Folder id which contains environment.
+    :vartype folder_id: long
+    :ivar variables: Variable in environment.
+    :vartype variables: list[~azure.mgmt.synapse.models.SsisVariable]
     """
 
     _validation = {
@@ -9937,6 +12279,18 @@ class SsisEnvironment(SsisObjectMetadata):
         variables: Optional[List["SsisVariable"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Metadata id.
+        :paramtype id: long
+        :keyword name: Metadata name.
+        :paramtype name: str
+        :keyword description: Metadata description.
+        :paramtype description: str
+        :keyword folder_id: Folder id which contains environment.
+        :paramtype folder_id: long
+        :keyword variables: Variable in environment.
+        :paramtype variables: list[~azure.mgmt.synapse.models.SsisVariable]
+        """
         super(SsisEnvironment, self).__init__(id=id, name=name, description=description, **kwargs)
         self.type = 'Environment'  # type: str
         self.folder_id = folder_id
@@ -9946,14 +12300,14 @@ class SsisEnvironment(SsisObjectMetadata):
 class SsisEnvironmentReference(msrest.serialization.Model):
     """Ssis environment reference.
 
-    :param id: Environment reference id.
-    :type id: long
-    :param environment_folder_name: Environment folder name.
-    :type environment_folder_name: str
-    :param environment_name: Environment name.
-    :type environment_name: str
-    :param reference_type: Reference type.
-    :type reference_type: str
+    :ivar id: Environment reference id.
+    :vartype id: long
+    :ivar environment_folder_name: Environment folder name.
+    :vartype environment_folder_name: str
+    :ivar environment_name: Environment name.
+    :vartype environment_name: str
+    :ivar reference_type: Reference type.
+    :vartype reference_type: str
     """
 
     _attribute_map = {
@@ -9972,6 +12326,16 @@ class SsisEnvironmentReference(msrest.serialization.Model):
         reference_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Environment reference id.
+        :paramtype id: long
+        :keyword environment_folder_name: Environment folder name.
+        :paramtype environment_folder_name: str
+        :keyword environment_name: Environment name.
+        :paramtype environment_name: str
+        :keyword reference_type: Reference type.
+        :paramtype reference_type: str
+        """
         super(SsisEnvironmentReference, self).__init__(**kwargs)
         self.id = id
         self.environment_folder_name = environment_folder_name
@@ -9984,15 +12348,15 @@ class SsisFolder(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of metadata.Constant filled by server.  Possible values include:
+    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
      "Folder", "Project", "Package", "Environment".
-    :type type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
-    :param id: Metadata id.
-    :type id: long
-    :param name: Metadata name.
-    :type name: str
-    :param description: Metadata description.
-    :type description: str
+    :vartype type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
+    :ivar id: Metadata id.
+    :vartype id: long
+    :ivar name: Metadata name.
+    :vartype name: str
+    :ivar description: Metadata description.
+    :vartype description: str
     """
 
     _validation = {
@@ -10014,6 +12378,14 @@ class SsisFolder(SsisObjectMetadata):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Metadata id.
+        :paramtype id: long
+        :keyword name: Metadata name.
+        :paramtype name: str
+        :keyword description: Metadata description.
+        :paramtype description: str
+        """
         super(SsisFolder, self).__init__(id=id, name=name, description=description, **kwargs)
         self.type = 'Folder'  # type: str
 
@@ -10021,10 +12393,10 @@ class SsisFolder(SsisObjectMetadata):
 class SsisObjectMetadataListResponse(msrest.serialization.Model):
     """A list of SSIS object metadata.
 
-    :param value: List of SSIS object metadata.
-    :type value: list[~azure.mgmt.synapse.models.SsisObjectMetadata]
-    :param next_link: The link to the next page of results, if any remaining results exist.
-    :type next_link: str
+    :ivar value: List of SSIS object metadata.
+    :vartype value: list[~azure.mgmt.synapse.models.SsisObjectMetadata]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -10039,6 +12411,12 @@ class SsisObjectMetadataListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of SSIS object metadata.
+        :paramtype value: list[~azure.mgmt.synapse.models.SsisObjectMetadata]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
         super(SsisObjectMetadataListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -10047,14 +12425,14 @@ class SsisObjectMetadataListResponse(msrest.serialization.Model):
 class SsisObjectMetadataStatusResponse(msrest.serialization.Model):
     """The status of the operation.
 
-    :param status: The status of the operation.
-    :type status: str
-    :param name: The operation name.
-    :type name: str
-    :param properties: The operation properties.
-    :type properties: str
-    :param error: The operation error message.
-    :type error: str
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar name: The operation name.
+    :vartype name: str
+    :ivar properties: The operation properties.
+    :vartype properties: str
+    :ivar error: The operation error message.
+    :vartype error: str
     """
 
     _attribute_map = {
@@ -10073,6 +12451,16 @@ class SsisObjectMetadataStatusResponse(msrest.serialization.Model):
         error: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: The status of the operation.
+        :paramtype status: str
+        :keyword name: The operation name.
+        :paramtype name: str
+        :keyword properties: The operation properties.
+        :paramtype properties: str
+        :keyword error: The operation error message.
+        :paramtype error: str
+        """
         super(SsisObjectMetadataStatusResponse, self).__init__(**kwargs)
         self.status = status
         self.name = name
@@ -10085,23 +12473,23 @@ class SsisPackage(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of metadata.Constant filled by server.  Possible values include:
+    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
      "Folder", "Project", "Package", "Environment".
-    :type type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
-    :param id: Metadata id.
-    :type id: long
-    :param name: Metadata name.
-    :type name: str
-    :param description: Metadata description.
-    :type description: str
-    :param folder_id: Folder id which contains package.
-    :type folder_id: long
-    :param project_version: Project version which contains package.
-    :type project_version: long
-    :param project_id: Project id which contains package.
-    :type project_id: long
-    :param parameters: Parameters in package.
-    :type parameters: list[~azure.mgmt.synapse.models.SsisParameter]
+    :vartype type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
+    :ivar id: Metadata id.
+    :vartype id: long
+    :ivar name: Metadata name.
+    :vartype name: str
+    :ivar description: Metadata description.
+    :vartype description: str
+    :ivar folder_id: Folder id which contains package.
+    :vartype folder_id: long
+    :ivar project_version: Project version which contains package.
+    :vartype project_version: long
+    :ivar project_id: Project id which contains package.
+    :vartype project_id: long
+    :ivar parameters: Parameters in package.
+    :vartype parameters: list[~azure.mgmt.synapse.models.SsisParameter]
     """
 
     _validation = {
@@ -10131,6 +12519,22 @@ class SsisPackage(SsisObjectMetadata):
         parameters: Optional[List["SsisParameter"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Metadata id.
+        :paramtype id: long
+        :keyword name: Metadata name.
+        :paramtype name: str
+        :keyword description: Metadata description.
+        :paramtype description: str
+        :keyword folder_id: Folder id which contains package.
+        :paramtype folder_id: long
+        :keyword project_version: Project version which contains package.
+        :paramtype project_version: long
+        :keyword project_id: Project id which contains package.
+        :paramtype project_id: long
+        :keyword parameters: Parameters in package.
+        :paramtype parameters: list[~azure.mgmt.synapse.models.SsisParameter]
+        """
         super(SsisPackage, self).__init__(id=id, name=name, description=description, **kwargs)
         self.type = 'Package'  # type: str
         self.folder_id = folder_id
@@ -10142,30 +12546,30 @@ class SsisPackage(SsisObjectMetadata):
 class SsisParameter(msrest.serialization.Model):
     """Ssis parameter.
 
-    :param id: Parameter id.
-    :type id: long
-    :param name: Parameter name.
-    :type name: str
-    :param description: Parameter description.
-    :type description: str
-    :param data_type: Parameter type.
-    :type data_type: str
-    :param required: Whether parameter is required.
-    :type required: bool
-    :param sensitive: Whether parameter is sensitive.
-    :type sensitive: bool
-    :param design_default_value: Design default value of parameter.
-    :type design_default_value: str
-    :param default_value: Default value of parameter.
-    :type default_value: str
-    :param sensitive_default_value: Default sensitive value of parameter.
-    :type sensitive_default_value: str
-    :param value_type: Parameter value type.
-    :type value_type: str
-    :param value_set: Parameter value set.
-    :type value_set: bool
-    :param variable: Parameter reference variable.
-    :type variable: str
+    :ivar id: Parameter id.
+    :vartype id: long
+    :ivar name: Parameter name.
+    :vartype name: str
+    :ivar description: Parameter description.
+    :vartype description: str
+    :ivar data_type: Parameter type.
+    :vartype data_type: str
+    :ivar required: Whether parameter is required.
+    :vartype required: bool
+    :ivar sensitive: Whether parameter is sensitive.
+    :vartype sensitive: bool
+    :ivar design_default_value: Design default value of parameter.
+    :vartype design_default_value: str
+    :ivar default_value: Default value of parameter.
+    :vartype default_value: str
+    :ivar sensitive_default_value: Default sensitive value of parameter.
+    :vartype sensitive_default_value: str
+    :ivar value_type: Parameter value type.
+    :vartype value_type: str
+    :ivar value_set: Parameter value set.
+    :vartype value_set: bool
+    :ivar variable: Parameter reference variable.
+    :vartype variable: str
     """
 
     _attribute_map = {
@@ -10200,6 +12604,32 @@ class SsisParameter(msrest.serialization.Model):
         variable: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Parameter id.
+        :paramtype id: long
+        :keyword name: Parameter name.
+        :paramtype name: str
+        :keyword description: Parameter description.
+        :paramtype description: str
+        :keyword data_type: Parameter type.
+        :paramtype data_type: str
+        :keyword required: Whether parameter is required.
+        :paramtype required: bool
+        :keyword sensitive: Whether parameter is sensitive.
+        :paramtype sensitive: bool
+        :keyword design_default_value: Design default value of parameter.
+        :paramtype design_default_value: str
+        :keyword default_value: Default value of parameter.
+        :paramtype default_value: str
+        :keyword sensitive_default_value: Default sensitive value of parameter.
+        :paramtype sensitive_default_value: str
+        :keyword value_type: Parameter value type.
+        :paramtype value_type: str
+        :keyword value_set: Parameter value set.
+        :paramtype value_set: bool
+        :keyword variable: Parameter reference variable.
+        :paramtype variable: str
+        """
         super(SsisParameter, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -10220,23 +12650,23 @@ class SsisProject(SsisObjectMetadata):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of metadata.Constant filled by server.  Possible values include:
+    :ivar type: Required. Type of metadata.Constant filled by server. Possible values include:
      "Folder", "Project", "Package", "Environment".
-    :type type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
-    :param id: Metadata id.
-    :type id: long
-    :param name: Metadata name.
-    :type name: str
-    :param description: Metadata description.
-    :type description: str
-    :param folder_id: Folder id which contains project.
-    :type folder_id: long
-    :param version: Project version.
-    :type version: long
-    :param environment_refs: Environment reference in project.
-    :type environment_refs: list[~azure.mgmt.synapse.models.SsisEnvironmentReference]
-    :param parameters: Parameters in project.
-    :type parameters: list[~azure.mgmt.synapse.models.SsisParameter]
+    :vartype type: str or ~azure.mgmt.synapse.models.SsisObjectMetadataType
+    :ivar id: Metadata id.
+    :vartype id: long
+    :ivar name: Metadata name.
+    :vartype name: str
+    :ivar description: Metadata description.
+    :vartype description: str
+    :ivar folder_id: Folder id which contains project.
+    :vartype folder_id: long
+    :ivar version: Project version.
+    :vartype version: long
+    :ivar environment_refs: Environment reference in project.
+    :vartype environment_refs: list[~azure.mgmt.synapse.models.SsisEnvironmentReference]
+    :ivar parameters: Parameters in project.
+    :vartype parameters: list[~azure.mgmt.synapse.models.SsisParameter]
     """
 
     _validation = {
@@ -10266,6 +12696,22 @@ class SsisProject(SsisObjectMetadata):
         parameters: Optional[List["SsisParameter"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Metadata id.
+        :paramtype id: long
+        :keyword name: Metadata name.
+        :paramtype name: str
+        :keyword description: Metadata description.
+        :paramtype description: str
+        :keyword folder_id: Folder id which contains project.
+        :paramtype folder_id: long
+        :keyword version: Project version.
+        :paramtype version: long
+        :keyword environment_refs: Environment reference in project.
+        :paramtype environment_refs: list[~azure.mgmt.synapse.models.SsisEnvironmentReference]
+        :keyword parameters: Parameters in project.
+        :paramtype parameters: list[~azure.mgmt.synapse.models.SsisParameter]
+        """
         super(SsisProject, self).__init__(id=id, name=name, description=description, **kwargs)
         self.type = 'Project'  # type: str
         self.folder_id = folder_id
@@ -10277,20 +12723,20 @@ class SsisProject(SsisObjectMetadata):
 class SsisVariable(msrest.serialization.Model):
     """Ssis variable.
 
-    :param id: Variable id.
-    :type id: long
-    :param name: Variable name.
-    :type name: str
-    :param description: Variable description.
-    :type description: str
-    :param data_type: Variable type.
-    :type data_type: str
-    :param sensitive: Whether variable is sensitive.
-    :type sensitive: bool
-    :param value: Variable value.
-    :type value: str
-    :param sensitive_value: Variable sensitive value.
-    :type sensitive_value: str
+    :ivar id: Variable id.
+    :vartype id: long
+    :ivar name: Variable name.
+    :vartype name: str
+    :ivar description: Variable description.
+    :vartype description: str
+    :ivar data_type: Variable type.
+    :vartype data_type: str
+    :ivar sensitive: Whether variable is sensitive.
+    :vartype sensitive: bool
+    :ivar value: Variable value.
+    :vartype value: str
+    :ivar sensitive_value: Variable sensitive value.
+    :vartype sensitive_value: str
     """
 
     _attribute_map = {
@@ -10315,6 +12761,22 @@ class SsisVariable(msrest.serialization.Model):
         sensitive_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Variable id.
+        :paramtype id: long
+        :keyword name: Variable name.
+        :paramtype name: str
+        :keyword description: Variable description.
+        :paramtype description: str
+        :keyword data_type: Variable type.
+        :paramtype data_type: str
+        :keyword sensitive: Whether variable is sensitive.
+        :paramtype sensitive: bool
+        :keyword value: Variable value.
+        :paramtype value: str
+        :keyword sensitive_value: Variable sensitive value.
+        :paramtype sensitive_value: str
+        """
         super(SsisVariable, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -10328,20 +12790,20 @@ class SsisVariable(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -10364,6 +12826,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.synapse.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -10376,20 +12854,20 @@ class SystemData(msrest.serialization.Model):
 class TableLevelSharingProperties(msrest.serialization.Model):
     """Tables that will be included and excluded in the follower database.
 
-    :param tables_to_include: List of tables to include in the follower database.
-    :type tables_to_include: list[str]
-    :param tables_to_exclude: List of tables to exclude from the follower database.
-    :type tables_to_exclude: list[str]
-    :param external_tables_to_include: List of external tables to include in the follower database.
-    :type external_tables_to_include: list[str]
-    :param external_tables_to_exclude: List of external tables exclude from the follower database.
-    :type external_tables_to_exclude: list[str]
-    :param materialized_views_to_include: List of materialized views to include in the follower
+    :ivar tables_to_include: List of tables to include in the follower database.
+    :vartype tables_to_include: list[str]
+    :ivar tables_to_exclude: List of tables to exclude from the follower database.
+    :vartype tables_to_exclude: list[str]
+    :ivar external_tables_to_include: List of external tables to include in the follower database.
+    :vartype external_tables_to_include: list[str]
+    :ivar external_tables_to_exclude: List of external tables exclude from the follower database.
+    :vartype external_tables_to_exclude: list[str]
+    :ivar materialized_views_to_include: List of materialized views to include in the follower
      database.
-    :type materialized_views_to_include: list[str]
-    :param materialized_views_to_exclude: List of materialized views exclude from the follower
+    :vartype materialized_views_to_include: list[str]
+    :ivar materialized_views_to_exclude: List of materialized views exclude from the follower
      database.
-    :type materialized_views_to_exclude: list[str]
+    :vartype materialized_views_to_exclude: list[str]
     """
 
     _attribute_map = {
@@ -10412,6 +12890,24 @@ class TableLevelSharingProperties(msrest.serialization.Model):
         materialized_views_to_exclude: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword tables_to_include: List of tables to include in the follower database.
+        :paramtype tables_to_include: list[str]
+        :keyword tables_to_exclude: List of tables to exclude from the follower database.
+        :paramtype tables_to_exclude: list[str]
+        :keyword external_tables_to_include: List of external tables to include in the follower
+         database.
+        :paramtype external_tables_to_include: list[str]
+        :keyword external_tables_to_exclude: List of external tables exclude from the follower
+         database.
+        :paramtype external_tables_to_exclude: list[str]
+        :keyword materialized_views_to_include: List of materialized views to include in the follower
+         database.
+        :paramtype materialized_views_to_include: list[str]
+        :keyword materialized_views_to_exclude: List of materialized views exclude from the follower
+         database.
+        :paramtype materialized_views_to_exclude: list[str]
+        """
         super(TableLevelSharingProperties, self).__init__(**kwargs)
         self.tables_to_include = tables_to_include
         self.tables_to_exclude = tables_to_exclude
@@ -10473,6 +12969,8 @@ class TopQueries(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopQueries, self).__init__(**kwargs)
         self.aggregation_function = None
         self.execution_type = None
@@ -10489,8 +12987,8 @@ class TopQueriesListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of top queries.
-    :type value: list[~azure.mgmt.synapse.models.TopQueries]
+    :ivar value: Required. The list of top queries.
+    :vartype value: list[~azure.mgmt.synapse.models.TopQueries]
     """
 
     _validation = {
@@ -10507,6 +13005,10 @@ class TopQueriesListResult(msrest.serialization.Model):
         value: List["TopQueries"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of top queries.
+        :paramtype value: list[~azure.mgmt.synapse.models.TopQueries]
+        """
         super(TopQueriesListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -10526,9 +13028,9 @@ class TransparentDataEncryption(ProxyResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :param status: The status of the database transparent data encryption. Possible values include:
+    :ivar status: The status of the database transparent data encryption. Possible values include:
      "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.synapse.models.TransparentDataEncryptionStatus
+    :vartype status: str or ~azure.mgmt.synapse.models.TransparentDataEncryptionStatus
     """
 
     _validation = {
@@ -10552,6 +13054,11 @@ class TransparentDataEncryption(ProxyResource):
         status: Optional[Union[str, "TransparentDataEncryptionStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword status: The status of the database transparent data encryption. Possible values
+         include: "Enabled", "Disabled".
+        :paramtype status: str or ~azure.mgmt.synapse.models.TransparentDataEncryptionStatus
+        """
         super(TransparentDataEncryption, self).__init__(**kwargs)
         self.location = None
         self.status = status
@@ -10582,6 +13089,8 @@ class TransparentDataEncryptionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TransparentDataEncryptionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -10590,9 +13099,9 @@ class TransparentDataEncryptionListResult(msrest.serialization.Model):
 class UpdateIntegrationRuntimeNodeRequest(msrest.serialization.Model):
     """Update integration runtime node request.
 
-    :param concurrent_jobs_limit: The number of concurrent jobs permitted to run on the integration
+    :ivar concurrent_jobs_limit: The number of concurrent jobs permitted to run on the integration
      runtime node. Values between 1 and maxConcurrentJobs(inclusive) are allowed.
-    :type concurrent_jobs_limit: int
+    :vartype concurrent_jobs_limit: int
     """
 
     _validation = {
@@ -10609,6 +13118,11 @@ class UpdateIntegrationRuntimeNodeRequest(msrest.serialization.Model):
         concurrent_jobs_limit: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword concurrent_jobs_limit: The number of concurrent jobs permitted to run on the
+         integration runtime node. Values between 1 and maxConcurrentJobs(inclusive) are allowed.
+        :paramtype concurrent_jobs_limit: int
+        """
         super(UpdateIntegrationRuntimeNodeRequest, self).__init__(**kwargs)
         self.concurrent_jobs_limit = concurrent_jobs_limit
 
@@ -10616,13 +13130,13 @@ class UpdateIntegrationRuntimeNodeRequest(msrest.serialization.Model):
 class UpdateIntegrationRuntimeRequest(msrest.serialization.Model):
     """Update integration runtime request.
 
-    :param auto_update: Enables or disables the auto-update feature of the self-hosted integration
+    :ivar auto_update: Enables or disables the auto-update feature of the self-hosted integration
      runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Possible values include: "On",
      "Off".
-    :type auto_update: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
-    :param update_delay_offset: The time offset (in hours) in the day, e.g., PT03H is 3 hours. The
+    :vartype auto_update: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
+    :ivar update_delay_offset: The time offset (in hours) in the day, e.g., PT03H is 3 hours. The
      integration runtime auto update will happen on that time.
-    :type update_delay_offset: str
+    :vartype update_delay_offset: str
     """
 
     _attribute_map = {
@@ -10637,6 +13151,15 @@ class UpdateIntegrationRuntimeRequest(msrest.serialization.Model):
         update_delay_offset: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword auto_update: Enables or disables the auto-update feature of the self-hosted
+         integration runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Possible values
+         include: "On", "Off".
+        :paramtype auto_update: str or ~azure.mgmt.synapse.models.IntegrationRuntimeAutoUpdate
+        :keyword update_delay_offset: The time offset (in hours) in the day, e.g., PT03H is 3 hours.
+         The integration runtime auto update will happen on that time.
+        :paramtype update_delay_offset: str
+        """
         super(UpdateIntegrationRuntimeRequest, self).__init__(**kwargs)
         self.auto_update = auto_update
         self.update_delay_offset = update_delay_offset
@@ -10667,6 +13190,8 @@ class UserAssignedManagedIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserAssignedManagedIdentity, self).__init__(**kwargs)
         self.client_id = None
         self.principal_id = None
@@ -10675,8 +13200,8 @@ class UserAssignedManagedIdentity(msrest.serialization.Model):
 class VirtualNetworkProfile(msrest.serialization.Model):
     """Virtual Network Profile.
 
-    :param compute_subnet_id: Subnet ID used for computes in workspace.
-    :type compute_subnet_id: str
+    :ivar compute_subnet_id: Subnet ID used for computes in workspace.
+    :vartype compute_subnet_id: str
     """
 
     _attribute_map = {
@@ -10689,6 +13214,10 @@ class VirtualNetworkProfile(msrest.serialization.Model):
         compute_subnet_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword compute_subnet_id: Subnet ID used for computes in workspace.
+        :paramtype compute_subnet_id: str
+        """
         super(VirtualNetworkProfile, self).__init__(**kwargs)
         self.compute_subnet_id = compute_subnet_id
 
@@ -10696,13 +13225,13 @@ class VirtualNetworkProfile(msrest.serialization.Model):
 class VulnerabilityAssessmentRecurringScansProperties(msrest.serialization.Model):
     """Properties of a Vulnerability Assessment recurring scans.
 
-    :param is_enabled: Recurring scans state.
-    :type is_enabled: bool
-    :param email_subscription_admins: Specifies that the schedule scan notification will be is sent
+    :ivar is_enabled: Recurring scans state.
+    :vartype is_enabled: bool
+    :ivar email_subscription_admins: Specifies that the schedule scan notification will be is sent
      to the subscription administrators.
-    :type email_subscription_admins: bool
-    :param emails: Specifies an array of e-mail addresses to which the scan notification is sent.
-    :type emails: list[str]
+    :vartype email_subscription_admins: bool
+    :ivar emails: Specifies an array of e-mail addresses to which the scan notification is sent.
+    :vartype emails: list[str]
     """
 
     _attribute_map = {
@@ -10719,6 +13248,15 @@ class VulnerabilityAssessmentRecurringScansProperties(msrest.serialization.Model
         emails: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Recurring scans state.
+        :paramtype is_enabled: bool
+        :keyword email_subscription_admins: Specifies that the schedule scan notification will be is
+         sent to the subscription administrators.
+        :paramtype email_subscription_admins: bool
+        :keyword emails: Specifies an array of e-mail addresses to which the scan notification is sent.
+        :paramtype emails: list[str]
+        """
         super(VulnerabilityAssessmentRecurringScansProperties, self).__init__(**kwargs)
         self.is_enabled = is_enabled
         self.email_subscription_admins = email_subscription_admins
@@ -10750,6 +13288,8 @@ class VulnerabilityAssessmentScanError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VulnerabilityAssessmentScanError, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -10819,6 +13359,8 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(VulnerabilityAssessmentScanRecord, self).__init__(**kwargs)
         self.scan_id = None
         self.trigger_type = None
@@ -10855,6 +13397,8 @@ class VulnerabilityAssessmentScanRecordListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VulnerabilityAssessmentScanRecordListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -10873,18 +13417,18 @@ class WorkloadClassifier(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param member_name: The workload classifier member name.
-    :type member_name: str
-    :param label: The workload classifier label.
-    :type label: str
-    :param context: The workload classifier context.
-    :type context: str
-    :param start_time: The workload classifier start time for classification.
-    :type start_time: str
-    :param end_time: The workload classifier end time for classification.
-    :type end_time: str
-    :param importance: The workload classifier importance.
-    :type importance: str
+    :ivar member_name: The workload classifier member name.
+    :vartype member_name: str
+    :ivar label: The workload classifier label.
+    :vartype label: str
+    :ivar context: The workload classifier context.
+    :vartype context: str
+    :ivar start_time: The workload classifier start time for classification.
+    :vartype start_time: str
+    :ivar end_time: The workload classifier end time for classification.
+    :vartype end_time: str
+    :ivar importance: The workload classifier importance.
+    :vartype importance: str
     """
 
     _validation = {
@@ -10916,6 +13460,20 @@ class WorkloadClassifier(ProxyResource):
         importance: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword member_name: The workload classifier member name.
+        :paramtype member_name: str
+        :keyword label: The workload classifier label.
+        :paramtype label: str
+        :keyword context: The workload classifier context.
+        :paramtype context: str
+        :keyword start_time: The workload classifier start time for classification.
+        :paramtype start_time: str
+        :keyword end_time: The workload classifier end time for classification.
+        :paramtype end_time: str
+        :keyword importance: The workload classifier importance.
+        :paramtype importance: str
+        """
         super(WorkloadClassifier, self).__init__(**kwargs)
         self.member_name = member_name
         self.label = label
@@ -10950,6 +13508,8 @@ class WorkloadClassifierListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkloadClassifierListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -10968,18 +13528,18 @@ class WorkloadGroup(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param min_resource_percent: The workload group minimum percentage resource.
-    :type min_resource_percent: int
-    :param max_resource_percent: The workload group cap percentage resource.
-    :type max_resource_percent: int
-    :param min_resource_percent_per_request: The workload group request minimum grant percentage.
-    :type min_resource_percent_per_request: float
-    :param max_resource_percent_per_request: The workload group request maximum grant percentage.
-    :type max_resource_percent_per_request: float
-    :param importance: The workload group importance level.
-    :type importance: str
-    :param query_execution_timeout: The workload group query execution timeout.
-    :type query_execution_timeout: int
+    :ivar min_resource_percent: The workload group minimum percentage resource.
+    :vartype min_resource_percent: int
+    :ivar max_resource_percent: The workload group cap percentage resource.
+    :vartype max_resource_percent: int
+    :ivar min_resource_percent_per_request: The workload group request minimum grant percentage.
+    :vartype min_resource_percent_per_request: float
+    :ivar max_resource_percent_per_request: The workload group request maximum grant percentage.
+    :vartype max_resource_percent_per_request: float
+    :ivar importance: The workload group importance level.
+    :vartype importance: str
+    :ivar query_execution_timeout: The workload group query execution timeout.
+    :vartype query_execution_timeout: int
     """
 
     _validation = {
@@ -11011,6 +13571,20 @@ class WorkloadGroup(ProxyResource):
         query_execution_timeout: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword min_resource_percent: The workload group minimum percentage resource.
+        :paramtype min_resource_percent: int
+        :keyword max_resource_percent: The workload group cap percentage resource.
+        :paramtype max_resource_percent: int
+        :keyword min_resource_percent_per_request: The workload group request minimum grant percentage.
+        :paramtype min_resource_percent_per_request: float
+        :keyword max_resource_percent_per_request: The workload group request maximum grant percentage.
+        :paramtype max_resource_percent_per_request: float
+        :keyword importance: The workload group importance level.
+        :paramtype importance: str
+        :keyword query_execution_timeout: The workload group query execution timeout.
+        :paramtype query_execution_timeout: int
+        """
         super(WorkloadGroup, self).__init__(**kwargs)
         self.min_resource_percent = min_resource_percent
         self.max_resource_percent = max_resource_percent
@@ -11045,6 +13619,8 @@ class WorkloadGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkloadGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -11065,61 +13641,64 @@ class Workspace(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: Identity of the workspace.
-    :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
-    :param default_data_lake_storage: Workspace default data lake storage account details.
-    :type default_data_lake_storage: ~azure.mgmt.synapse.models.DataLakeStorageAccountDetails
-    :param sql_administrator_login_password: SQL administrator login password.
-    :type sql_administrator_login_password: str
-    :param managed_resource_group_name: Workspace managed resource group. The resource group name
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: Identity of the workspace.
+    :vartype identity: ~azure.mgmt.synapse.models.ManagedIdentity
+    :ivar default_data_lake_storage: Workspace default data lake storage account details.
+    :vartype default_data_lake_storage: ~azure.mgmt.synapse.models.DataLakeStorageAccountDetails
+    :ivar sql_administrator_login_password: SQL administrator login password.
+    :vartype sql_administrator_login_password: str
+    :ivar managed_resource_group_name: Workspace managed resource group. The resource group name
      uniquely identifies the resource group within the user subscriptionId. The resource group name
      must be no longer than 90 characters long, and must be alphanumeric characters
      (Char.IsLetterOrDigit()) and '-', '_', '(', ')' and'.'. Note that the name cannot end with '.'.
-    :type managed_resource_group_name: str
+    :vartype managed_resource_group_name: str
     :ivar provisioning_state: Resource provisioning state.
     :vartype provisioning_state: str
-    :param sql_administrator_login: Login for workspace SQL active directory administrator.
-    :type sql_administrator_login: str
-    :param virtual_network_profile: Virtual Network profile.
-    :type virtual_network_profile: ~azure.mgmt.synapse.models.VirtualNetworkProfile
-    :param connectivity_endpoints: Connectivity endpoints.
-    :type connectivity_endpoints: dict[str, str]
-    :param managed_virtual_network: Setting this to 'default' will ensure that all compute for this
+    :ivar sql_administrator_login: Login for workspace SQL active directory administrator.
+    :vartype sql_administrator_login: str
+    :ivar virtual_network_profile: Virtual Network profile.
+    :vartype virtual_network_profile: ~azure.mgmt.synapse.models.VirtualNetworkProfile
+    :ivar connectivity_endpoints: Connectivity endpoints.
+    :vartype connectivity_endpoints: dict[str, str]
+    :ivar managed_virtual_network: Setting this to 'default' will ensure that all compute for this
      workspace is in a virtual network managed on behalf of the user.
-    :type managed_virtual_network: str
-    :param private_endpoint_connections: Private endpoint connections to the workspace.
-    :type private_endpoint_connections: list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
-    :param encryption: The encryption details of the workspace.
-    :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+    :vartype managed_virtual_network: str
+    :ivar private_endpoint_connections: Private endpoint connections to the workspace.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
+    :ivar encryption: The encryption details of the workspace.
+    :vartype encryption: ~azure.mgmt.synapse.models.EncryptionDetails
     :ivar workspace_uid: The workspace unique identifier.
     :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags.
     :vartype extra_properties: dict[str, any]
-    :param managed_virtual_network_settings: Managed Virtual Network Settings.
-    :type managed_virtual_network_settings:
+    :ivar managed_virtual_network_settings: Managed Virtual Network Settings.
+    :vartype managed_virtual_network_settings:
      ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
-    :param workspace_repository_configuration: Git integration settings.
-    :type workspace_repository_configuration:
+    :ivar workspace_repository_configuration: Git integration settings.
+    :vartype workspace_repository_configuration:
      ~azure.mgmt.synapse.models.WorkspaceRepositoryConfiguration
-    :param purview_configuration: Purview Configuration.
-    :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
+    :ivar purview_configuration: Purview Configuration.
+    :vartype purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar adla_resource_id: The ADLA resource ID.
     :vartype adla_resource_id: str
-    :param public_network_access: Enable or Disable public network access to workspace. Possible
+    :ivar public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
-    :param csp_workspace_admin_properties: Initial workspace AAD admin properties for a CSP
+    :vartype public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+    :ivar csp_workspace_admin_properties: Initial workspace AAD admin properties for a CSP
      subscription.
-    :type csp_workspace_admin_properties: ~azure.mgmt.synapse.models.CspWorkspaceAdminProperties
+    :vartype csp_workspace_admin_properties: ~azure.mgmt.synapse.models.CspWorkspaceAdminProperties
     :ivar settings: Workspace settings.
     :vartype settings: dict[str, any]
-    :param azure_ad_only_authentication: Enable or Disable AzureADOnlyAuthentication on All
+    :ivar azure_ad_only_authentication: Enable or Disable AzureADOnlyAuthentication on All
      Workspace subresource.
-    :type azure_ad_only_authentication: bool
+    :vartype azure_ad_only_authentication: bool
+    :ivar trusted_service_bypass_enabled: Is trustedServiceBypassEnabled for the workspace.
+    :vartype trusted_service_bypass_enabled: bool
     """
 
     _validation = {
@@ -11161,6 +13740,7 @@ class Workspace(TrackedResource):
         'csp_workspace_admin_properties': {'key': 'properties.cspWorkspaceAdminProperties', 'type': 'CspWorkspaceAdminProperties'},
         'settings': {'key': 'properties.settings', 'type': '{object}'},
         'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+        'trusted_service_bypass_enabled': {'key': 'properties.trustedServiceBypassEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -11184,8 +13764,61 @@ class Workspace(TrackedResource):
         public_network_access: Optional[Union[str, "WorkspacePublicNetworkAccess"]] = None,
         csp_workspace_admin_properties: Optional["CspWorkspaceAdminProperties"] = None,
         azure_ad_only_authentication: Optional[bool] = None,
+        trusted_service_bypass_enabled: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: Identity of the workspace.
+        :paramtype identity: ~azure.mgmt.synapse.models.ManagedIdentity
+        :keyword default_data_lake_storage: Workspace default data lake storage account details.
+        :paramtype default_data_lake_storage: ~azure.mgmt.synapse.models.DataLakeStorageAccountDetails
+        :keyword sql_administrator_login_password: SQL administrator login password.
+        :paramtype sql_administrator_login_password: str
+        :keyword managed_resource_group_name: Workspace managed resource group. The resource group name
+         uniquely identifies the resource group within the user subscriptionId. The resource group name
+         must be no longer than 90 characters long, and must be alphanumeric characters
+         (Char.IsLetterOrDigit()) and '-', '_', '(', ')' and'.'. Note that the name cannot end with '.'.
+        :paramtype managed_resource_group_name: str
+        :keyword sql_administrator_login: Login for workspace SQL active directory administrator.
+        :paramtype sql_administrator_login: str
+        :keyword virtual_network_profile: Virtual Network profile.
+        :paramtype virtual_network_profile: ~azure.mgmt.synapse.models.VirtualNetworkProfile
+        :keyword connectivity_endpoints: Connectivity endpoints.
+        :paramtype connectivity_endpoints: dict[str, str]
+        :keyword managed_virtual_network: Setting this to 'default' will ensure that all compute for
+         this workspace is in a virtual network managed on behalf of the user.
+        :paramtype managed_virtual_network: str
+        :keyword private_endpoint_connections: Private endpoint connections to the workspace.
+        :paramtype private_endpoint_connections:
+         list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
+        :keyword encryption: The encryption details of the workspace.
+        :paramtype encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+        :keyword managed_virtual_network_settings: Managed Virtual Network Settings.
+        :paramtype managed_virtual_network_settings:
+         ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
+        :keyword workspace_repository_configuration: Git integration settings.
+        :paramtype workspace_repository_configuration:
+         ~azure.mgmt.synapse.models.WorkspaceRepositoryConfiguration
+        :keyword purview_configuration: Purview Configuration.
+        :paramtype purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
+        :keyword public_network_access: Enable or Disable public network access to workspace. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+        :keyword csp_workspace_admin_properties: Initial workspace AAD admin properties for a CSP
+         subscription.
+        :paramtype csp_workspace_admin_properties:
+         ~azure.mgmt.synapse.models.CspWorkspaceAdminProperties
+        :keyword azure_ad_only_authentication: Enable or Disable AzureADOnlyAuthentication on All
+         Workspace subresource.
+        :paramtype azure_ad_only_authentication: bool
+        :keyword trusted_service_bypass_enabled: Is trustedServiceBypassEnabled for the workspace.
+        :paramtype trusted_service_bypass_enabled: bool
+        """
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.default_data_lake_storage = default_data_lake_storage
@@ -11208,6 +13841,7 @@ class Workspace(TrackedResource):
         self.csp_workspace_admin_properties = csp_workspace_admin_properties
         self.settings = None
         self.azure_ad_only_authentication = azure_ad_only_authentication
+        self.trusted_service_bypass_enabled = trusted_service_bypass_enabled
 
 
 class WorkspaceAadAdminInfo(ProxyResource):
@@ -11223,14 +13857,14 @@ class WorkspaceAadAdminInfo(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tenant_id: Tenant ID of the workspace active directory administrator.
-    :type tenant_id: str
-    :param login: Login of the workspace active directory administrator.
-    :type login: str
-    :param administrator_type: Workspace active directory administrator type.
-    :type administrator_type: str
-    :param sid: Object ID of the workspace active directory administrator.
-    :type sid: str
+    :ivar tenant_id: Tenant ID of the workspace active directory administrator.
+    :vartype tenant_id: str
+    :ivar login: Login of the workspace active directory administrator.
+    :vartype login: str
+    :ivar administrator_type: Workspace active directory administrator type.
+    :vartype administrator_type: str
+    :ivar sid: Object ID of the workspace active directory administrator.
+    :vartype sid: str
     """
 
     _validation = {
@@ -11258,6 +13892,16 @@ class WorkspaceAadAdminInfo(ProxyResource):
         sid: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tenant_id: Tenant ID of the workspace active directory administrator.
+        :paramtype tenant_id: str
+        :keyword login: Login of the workspace active directory administrator.
+        :paramtype login: str
+        :keyword administrator_type: Workspace active directory administrator type.
+        :paramtype administrator_type: str
+        :keyword sid: Object ID of the workspace active directory administrator.
+        :paramtype sid: str
+        """
         super(WorkspaceAadAdminInfo, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.login = login
@@ -11268,10 +13912,10 @@ class WorkspaceAadAdminInfo(ProxyResource):
 class WorkspaceInfoListResult(msrest.serialization.Model):
     """List of workspaces.
 
-    :param next_link: Link to the next page of results.
-    :type next_link: str
-    :param value: List of workspaces.
-    :type value: list[~azure.mgmt.synapse.models.Workspace]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    :ivar value: List of workspaces.
+    :vartype value: list[~azure.mgmt.synapse.models.Workspace]
     """
 
     _attribute_map = {
@@ -11286,6 +13930,12 @@ class WorkspaceInfoListResult(msrest.serialization.Model):
         value: Optional[List["Workspace"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
+        :keyword value: List of workspaces.
+        :paramtype value: list[~azure.mgmt.synapse.models.Workspace]
+        """
         super(WorkspaceInfoListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -11294,10 +13944,10 @@ class WorkspaceInfoListResult(msrest.serialization.Model):
 class WorkspaceKeyDetails(msrest.serialization.Model):
     """Details of the customer managed key associated with the workspace.
 
-    :param name: Workspace Key sub-resource name.
-    :type name: str
-    :param key_vault_url: Workspace Key sub-resource key vault url.
-    :type key_vault_url: str
+    :ivar name: Workspace Key sub-resource name.
+    :vartype name: str
+    :ivar key_vault_url: Workspace Key sub-resource key vault url.
+    :vartype key_vault_url: str
     """
 
     _attribute_map = {
@@ -11312,6 +13962,12 @@ class WorkspaceKeyDetails(msrest.serialization.Model):
         key_vault_url: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Workspace Key sub-resource name.
+        :paramtype name: str
+        :keyword key_vault_url: Workspace Key sub-resource key vault url.
+        :paramtype key_vault_url: str
+        """
         super(WorkspaceKeyDetails, self).__init__(**kwargs)
         self.name = name
         self.key_vault_url = key_vault_url
@@ -11322,27 +13978,27 @@ class WorkspacePatchInfo(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The identity of the workspace.
-    :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
-    :param sql_administrator_login_password: SQL administrator login password.
-    :type sql_administrator_login_password: str
-    :param managed_virtual_network_settings: Managed Virtual Network Settings.
-    :type managed_virtual_network_settings:
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the workspace.
+    :vartype identity: ~azure.mgmt.synapse.models.ManagedIdentity
+    :ivar sql_administrator_login_password: SQL administrator login password.
+    :vartype sql_administrator_login_password: str
+    :ivar managed_virtual_network_settings: Managed Virtual Network Settings.
+    :vartype managed_virtual_network_settings:
      ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
-    :param workspace_repository_configuration: Git integration settings.
-    :type workspace_repository_configuration:
+    :ivar workspace_repository_configuration: Git integration settings.
+    :vartype workspace_repository_configuration:
      ~azure.mgmt.synapse.models.WorkspaceRepositoryConfiguration
-    :param purview_configuration: Purview Configuration.
-    :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
+    :ivar purview_configuration: Purview Configuration.
+    :vartype purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar provisioning_state: Resource provisioning state.
     :vartype provisioning_state: str
-    :param encryption: The encryption details of the workspace.
-    :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
-    :param public_network_access: Enable or Disable public network access to workspace. Possible
+    :ivar encryption: The encryption details of the workspace.
+    :vartype encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+    :ivar public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+    :vartype public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """
 
     _validation = {
@@ -11374,6 +14030,28 @@ class WorkspacePatchInfo(msrest.serialization.Model):
         public_network_access: Optional[Union[str, "WorkspacePublicNetworkAccess"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the workspace.
+        :paramtype identity: ~azure.mgmt.synapse.models.ManagedIdentity
+        :keyword sql_administrator_login_password: SQL administrator login password.
+        :paramtype sql_administrator_login_password: str
+        :keyword managed_virtual_network_settings: Managed Virtual Network Settings.
+        :paramtype managed_virtual_network_settings:
+         ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
+        :keyword workspace_repository_configuration: Git integration settings.
+        :paramtype workspace_repository_configuration:
+         ~azure.mgmt.synapse.models.WorkspaceRepositoryConfiguration
+        :keyword purview_configuration: Purview Configuration.
+        :paramtype purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
+        :keyword encryption: The encryption details of the workspace.
+        :paramtype encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+        :keyword public_network_access: Enable or Disable public network access to workspace. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+        """
         super(WorkspacePatchInfo, self).__init__(**kwargs)
         self.tags = tags
         self.identity = identity
@@ -11389,25 +14067,25 @@ class WorkspacePatchInfo(msrest.serialization.Model):
 class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
     """Git integration settings.
 
-    :param type: Type of workspace repositoryID configuration. Example WorkspaceVSTSConfiguration,
+    :ivar type: Type of workspace repositoryID configuration. Example WorkspaceVSTSConfiguration,
      WorkspaceGitHubConfiguration.
-    :type type: str
-    :param host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
-    :type host_name: str
-    :param account_name: Account name.
-    :type account_name: str
-    :param project_name: VSTS project name.
-    :type project_name: str
-    :param repository_name: Repository name.
-    :type repository_name: str
-    :param collaboration_branch: Collaboration branch.
-    :type collaboration_branch: str
-    :param root_folder: Root folder to use in the repository.
-    :type root_folder: str
-    :param last_commit_id: The last commit ID.
-    :type last_commit_id: str
-    :param tenant_id: The VSTS tenant ID.
-    :type tenant_id: str
+    :vartype type: str
+    :ivar host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
+    :vartype host_name: str
+    :ivar account_name: Account name.
+    :vartype account_name: str
+    :ivar project_name: VSTS project name.
+    :vartype project_name: str
+    :ivar repository_name: Repository name.
+    :vartype repository_name: str
+    :ivar collaboration_branch: Collaboration branch.
+    :vartype collaboration_branch: str
+    :ivar root_folder: Root folder to use in the repository.
+    :vartype root_folder: str
+    :ivar last_commit_id: The last commit ID.
+    :vartype last_commit_id: str
+    :ivar tenant_id: The VSTS tenant ID.
+    :vartype tenant_id: str
     """
 
     _attribute_map = {
@@ -11436,6 +14114,27 @@ class WorkspaceRepositoryConfiguration(msrest.serialization.Model):
         tenant_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: Type of workspace repositoryID configuration. Example
+         WorkspaceVSTSConfiguration, WorkspaceGitHubConfiguration.
+        :paramtype type: str
+        :keyword host_name: GitHub Enterprise host name. For example: https://github.mydomain.com.
+        :paramtype host_name: str
+        :keyword account_name: Account name.
+        :paramtype account_name: str
+        :keyword project_name: VSTS project name.
+        :paramtype project_name: str
+        :keyword repository_name: Repository name.
+        :paramtype repository_name: str
+        :keyword collaboration_branch: Collaboration branch.
+        :paramtype collaboration_branch: str
+        :keyword root_folder: Root folder to use in the repository.
+        :paramtype root_folder: str
+        :keyword last_commit_id: The last commit ID.
+        :paramtype last_commit_id: str
+        :keyword tenant_id: The VSTS tenant ID.
+        :paramtype tenant_id: str
+        """
         super(WorkspaceRepositoryConfiguration, self).__init__(**kwargs)
         self.type = type
         self.host_name = host_name

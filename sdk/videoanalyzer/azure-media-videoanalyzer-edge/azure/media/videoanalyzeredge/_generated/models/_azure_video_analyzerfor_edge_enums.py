@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class GrpcExtensionDataTransferMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GrpcExtensionDataTransferMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Data transfer mode: embedded or sharedMemory.
     """
 
@@ -39,7 +24,16 @@ class GrpcExtensionDataTransferMode(with_metaclass(_CaseInsensitiveEnumMeta, str
     #: sharing the same shared memory space.
     SHARED_MEMORY = "sharedMemory"
 
-class ImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class H264Profile(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The H264 Profile
+    """
+
+    BASELINE = "Baseline"
+    MAIN = "Main"
+    EXTENDED = "Extended"
+    HIGH = "High"
+
+class ImageFormatRawPixelFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Pixel format to be applied to the raw image.
     """
 
@@ -66,7 +60,7 @@ class ImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     #: Packed BGRA 8:8:8:8, 32bpp, BGRABGRA.
     BGRA = "bgra"
 
-class ImageScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImageScaleMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the image scaling mode to be applied. Default mode is 'pad'.
     """
 
@@ -82,7 +76,7 @@ class ImageScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Stretches the original image so it resized to the specified dimensions.
     STRETCH = "stretch"
 
-class LivePipelineState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LivePipelineState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current pipeline state (read-only).
     """
 
@@ -98,7 +92,7 @@ class LivePipelineState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The live pipeline is transitioning into the inactive state.
     DEACTIVATING = "deactivating"
 
-class MotionDetectionSensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MotionDetectionSensitivity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Motion detection sensitivity: low, medium, high.
     """
 
@@ -109,7 +103,16 @@ class MotionDetectionSensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: High sensitivity.
     HIGH = "high"
 
-class ObjectTrackingAccuracy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MPEG4Profile(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The MPEG4 Profile
+    """
+
+    #: Simple Profile.
+    SP = "SP"
+    #: Advanced Simple Profile.
+    ASP = "ASP"
+
+class ObjectTrackingAccuracy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Object tracker accuracy: low, medium, high. Higher accuracy leads to higher CPU consumption in
     average.
     """
@@ -121,7 +124,14 @@ class ObjectTrackingAccuracy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: High accuracy.
     HIGH = "high"
 
-class OutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OnvifSystemDateTimeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """An enum value determining whether the date time was configured using NTP or manual.
+    """
+
+    NTP = "Ntp"
+    MANUAL = "Manual"
+
+class OutputSelectorOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operator to compare properties by.
     """
 
@@ -130,14 +140,14 @@ class OutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: The property is not of the type defined by value.
     IS_NOT = "isNot"
 
-class OutputSelectorProperty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OutputSelectorProperty(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The property of the data stream to be used as the selection criteria.
     """
 
     #: The stream's MIME type or subtype: audio, video or application.
     MEDIA_TYPE = "mediaType"
 
-class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the parameter.
     """
 
@@ -152,7 +162,7 @@ class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The parameter's value is a boolean value that is either true or false.
     BOOL = "bool"
 
-class RtspTransport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RtspTransport(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When using TCP, the RTP
     packets are interleaved on the TCP RTSP connection. When using HTTP, the RTSP messages are
     exchanged through long lived HTTP connections, and the RTP packages are interleaved in the HTTP
@@ -166,7 +176,7 @@ class RtspTransport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: channel.
     TCP = "tcp"
 
-class SpatialAnalysisOperationFocus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SpatialAnalysisOperationFocus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operation focus type.
     """
 
@@ -177,7 +187,7 @@ class SpatialAnalysisOperationFocus(with_metaclass(_CaseInsensitiveEnumMeta, str
     #: The footprint.
     FOOTPRINT = "footprint"
 
-class SpatialAnalysisPersonCountEventTrigger(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SpatialAnalysisPersonCountEventTrigger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The event trigger type.
     """
 
@@ -186,7 +196,7 @@ class SpatialAnalysisPersonCountEventTrigger(with_metaclass(_CaseInsensitiveEnum
     #: Interval trigger.
     INTERVAL = "interval"
 
-class SpatialAnalysisPersonDistanceEventTrigger(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SpatialAnalysisPersonDistanceEventTrigger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The event trigger type.
     """
 
@@ -195,7 +205,7 @@ class SpatialAnalysisPersonDistanceEventTrigger(with_metaclass(_CaseInsensitiveE
     #: Interval trigger.
     INTERVAL = "interval"
 
-class SpatialAnalysisPersonZoneCrossingEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SpatialAnalysisPersonZoneCrossingEventType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The event type.
     """
 
@@ -203,3 +213,14 @@ class SpatialAnalysisPersonZoneCrossingEventType(with_metaclass(_CaseInsensitive
     ZONE_CROSSING = "zoneCrossing"
     #: Zone dwell time event type.
     ZONE_DWELL_TIME = "zoneDwellTime"
+
+class VideoEncoding(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The video codec used by the Media Profile.
+    """
+
+    #: The Media Profile uses JPEG encoding.
+    JPEG = "JPEG"
+    #: The Media Profile uses H264 encoding.
+    H264 = "H264"
+    #: The Media Profile uses MPEG4 encoding.
+    MPEG4 = "MPEG4"

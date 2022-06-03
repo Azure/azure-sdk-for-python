@@ -6,12 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._device_update_operations import DeviceUpdateOperationsMixin
 from ._accounts_operations import AccountsOperations
 from ._instances_operations import InstancesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_endpoint_connection_proxies_operations import PrivateEndpointConnectionProxiesOperations
 from ._operations import Operations
 
 __all__ = [
+    'DeviceUpdateOperationsMixin',
     'AccountsOperations',
     'InstancesOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'PrivateEndpointConnectionProxiesOperations',
     'Operations',
 ]

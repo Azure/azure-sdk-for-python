@@ -8,12 +8,13 @@
 
 try:
     from ._models_py3 import AlignPolicy
-    from ._models_py3 import AnomalyContributor
     from ._models_py3 import AnomalyDetectorError
+    from ._models_py3 import AnomalyInterpretation
     from ._models_py3 import AnomalyState
     from ._models_py3 import AnomalyValue
     from ._models_py3 import ChangePointDetectRequest
     from ._models_py3 import ChangePointDetectResponse
+    from ._models_py3 import CorrelationChanges
     from ._models_py3 import DetectRequest
     from ._models_py3 import DetectionRequest
     from ._models_py3 import DetectionResult
@@ -22,6 +23,8 @@ try:
     from ._models_py3 import EntireDetectResponse
     from ._models_py3 import ErrorResponse
     from ._models_py3 import LastDetectResponse
+    from ._models_py3 import LastDetectionRequest
+    from ._models_py3 import LastDetectionResult
     from ._models_py3 import Model
     from ._models_py3 import ModelInfo
     from ._models_py3 import ModelList
@@ -29,14 +32,16 @@ try:
     from ._models_py3 import ModelState
     from ._models_py3 import TimeSeriesPoint
     from ._models_py3 import VariableState
+    from ._models_py3 import VariableValues
 except (SyntaxError, ImportError):
     from ._models import AlignPolicy  # type: ignore
-    from ._models import AnomalyContributor  # type: ignore
     from ._models import AnomalyDetectorError  # type: ignore
+    from ._models import AnomalyInterpretation  # type: ignore
     from ._models import AnomalyState  # type: ignore
     from ._models import AnomalyValue  # type: ignore
     from ._models import ChangePointDetectRequest  # type: ignore
     from ._models import ChangePointDetectResponse  # type: ignore
+    from ._models import CorrelationChanges  # type: ignore
     from ._models import DetectRequest  # type: ignore
     from ._models import DetectionRequest  # type: ignore
     from ._models import DetectionResult  # type: ignore
@@ -45,6 +50,8 @@ except (SyntaxError, ImportError):
     from ._models import EntireDetectResponse  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import LastDetectResponse  # type: ignore
+    from ._models import LastDetectionRequest  # type: ignore
+    from ._models import LastDetectionResult  # type: ignore
     from ._models import Model  # type: ignore
     from ._models import ModelInfo  # type: ignore
     from ._models import ModelList  # type: ignore
@@ -52,24 +59,27 @@ except (SyntaxError, ImportError):
     from ._models import ModelState  # type: ignore
     from ._models import TimeSeriesPoint  # type: ignore
     from ._models import VariableState  # type: ignore
+    from ._models import VariableValues  # type: ignore
 
 from ._anomaly_detector_client_enums import (
     AlignMode,
     AnomalyDetectorErrorCodes,
     DetectionStatus,
     FillNAMethod,
+    ImputeMode,
     ModelStatus,
     TimeGranularity,
 )
 
 __all__ = [
     'AlignPolicy',
-    'AnomalyContributor',
     'AnomalyDetectorError',
+    'AnomalyInterpretation',
     'AnomalyState',
     'AnomalyValue',
     'ChangePointDetectRequest',
     'ChangePointDetectResponse',
+    'CorrelationChanges',
     'DetectRequest',
     'DetectionRequest',
     'DetectionResult',
@@ -78,6 +88,8 @@ __all__ = [
     'EntireDetectResponse',
     'ErrorResponse',
     'LastDetectResponse',
+    'LastDetectionRequest',
+    'LastDetectionResult',
     'Model',
     'ModelInfo',
     'ModelList',
@@ -85,10 +97,12 @@ __all__ = [
     'ModelState',
     'TimeSeriesPoint',
     'VariableState',
+    'VariableValues',
     'AlignMode',
     'AnomalyDetectorErrorCodes',
     'DetectionStatus',
     'FillNAMethod',
+    'ImputeMode',
     'ModelStatus',
     'TimeGranularity',
 ]

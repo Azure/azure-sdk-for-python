@@ -6,248 +6,315 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import uuid
+import functools
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
     EmailNotificationHook,
     WebNotificationHook,
 )
-from base_testcase import TestMetricsAdvisorAdministrationClientBase
+from devtools_testutils import recorded_by_proxy
+from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    def test_create_email_hook(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_create_email_hook(self, client, variables):
         email_hook_name = self.create_random_name("testemailhook")
+        if self.is_live:
+            variables["email_hook_name"] = email_hook_name
         try:
-            email_hook = self.admin_client.create_hook(
+            email_hook = client.create_hook(
                 hook=EmailNotificationHook(
-                    name=email_hook_name,
+                    name=variables["email_hook_name"],
                     emails_to_alert=["yournamehere@microsoft.com"],
                     description="my email hook",
                     external_link="external link"
                 )
             )
-            self.assertIsNotNone(email_hook.id)
-            self.assertIsNotNone(email_hook.name)
-            self.assertIsNotNone(email_hook.admins)
-            self.assertEqual(email_hook.emails_to_alert, ["yournamehere@microsoft.com"])
-            self.assertEqual(email_hook.description, "my email hook")
-            self.assertEqual(email_hook.external_link, "external link")
-            self.assertEqual(email_hook.hook_type, "Email")
+            if self.is_live:
+                variables["email_hook_id"] = email_hook.id
+            assert email_hook.id is not None
+            assert email_hook.name is not None
+            assert email_hook.admins is not None
+            assert email_hook.emails_to_alert == ["yournamehere@microsoft.com"]
+            assert email_hook.description == "my email hook"
+            assert email_hook.external_link == "external link"
+            assert email_hook.hook_type == "Email"
+
         finally:
-            self.admin_client.delete_hook(email_hook.id)
+            self.clean_up(client.delete_hook, variables, key="email_hook_id")
 
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_hook(email_hook.id)
+            with pytest.raises(ResourceNotFoundError):
+                client.get_hook(variables["email_hook_id"])
+        return variables
 
-    def test_create_web_hook(self):
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_create_web_hook(self, client, variables):
         web_hook_name = self.create_random_name("testwebhook")
+        if self.is_live:
+            variables["web_hook_name"] = web_hook_name
         try:
-            web_hook = self.admin_client.create_hook(
+            web_hook = client.create_hook(
                 hook=WebNotificationHook(
-                    name=web_hook_name,
+                    name=variables["web_hook_name"],
                     endpoint="https://httpbin.org/post",
                     description="my web hook",
                     external_link="external link"
                 )
             )
-            self.assertIsNotNone(web_hook.id)
-            self.assertIsNotNone(web_hook.name)
-            self.assertIsNotNone(web_hook.admins)
-            self.assertEqual(web_hook.endpoint, "https://httpbin.org/post")
-            self.assertEqual(web_hook.description, "my web hook")
-            self.assertEqual(web_hook.external_link, "external link")
-            self.assertEqual(web_hook.hook_type, "Webhook")
+            if self.is_live:
+                variables["web_hook_id"] = web_hook.id
+            assert web_hook.id is not None
+            assert web_hook.name is not None
+            assert web_hook.admins is not None
+            assert web_hook.endpoint == "https://httpbin.org/post"
+            assert web_hook.description == "my web hook"
+            assert web_hook.external_link == "external link"
+            assert web_hook.hook_type == "Webhook"
         finally:
-            self.admin_client.delete_hook(web_hook.id)
+            self.clean_up(client.delete_hook, variables, key="web_hook_id")
 
-            with self.assertRaises(ResourceNotFoundError):
-                self.admin_client.get_hook(web_hook.id)
+            with pytest.raises(ResourceNotFoundError):
+                client.get_hook(variables["web_hook_id"])
+        return variables
 
-    def test_list_hooks(self):
-        hooks = self.admin_client.list_hooks()
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy
+    def test_list_hooks(self, client):
+        hooks = client.list_hooks()
         assert len(list(hooks)) > 0
 
-    def test_update_email_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_with_model(self, client, variables):
+        hook = client.get_hook(variables["email_hook_id"])
         try:
-            hook = self._create_email_hook_for_update(name)
-            hook.name = "update"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            hook.name = variables["hook_updated_name"]
             hook.description = "update"
             hook.external_link = "update"
             hook.emails_to_alert = ["myemail@m.com"]
 
-            self.admin_client.update_hook(hook)
-            updated = self.admin_client.get_hook(hook.id)
+            client.update_hook(hook)
+            updated = client.get_hook(variables["email_hook_id"])
 
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update")
-            self.assertEqual(updated.external_link, "update")
-            self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.description == "update"
+            assert updated.external_link == "update"
+            assert updated.emails_to_alert == ["myemail@m.com"]
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="email_hook_id")
+        return variables
 
-    def test_update_email_hook_with_kwargs(self):
-        name = self.create_random_name("testhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_with_kwargs(self, client, variables):
         try:
-            hook = self._create_email_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            client.update_hook(
+                variables["email_hook_id"],
                 hook_type="Email",
-                name="update",
+                name=variables["hook_updated_name"],
                 description="update",
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update")
-            self.assertEqual(updated.external_link, "update")
-            self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
+            updated = client.get_hook(variables["email_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.description == "update"
+            assert updated.external_link == "update"
+            assert updated.emails_to_alert == ["myemail@m.com"]
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="email_hook_id")
+        return variables
 
-    def test_update_email_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_with_model_and_kwargs(self, client, variables):
         try:
-            hook = self._create_email_hook_for_update(name)
-
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            hook = client.get_hook(variables["email_hook_id"])
             hook.name = "don't update me"
             hook.description = "don't update me"
             hook.emails_to_alert = []
-            self.admin_client.update_hook(
+            client.update_hook(
                 hook,
                 hook_type="Email",
-                name="update",
+                name=variables["hook_updated_name"],
                 description="update",
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update")
-            self.assertEqual(updated.external_link, "update")
-            self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
+            updated = client.get_hook(variables["email_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.description == "update"
+            assert updated.external_link == "update"
+            assert updated.emails_to_alert == ["myemail@m.com"]
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="email_hook_id")
+        return variables
 
-    def test_update_email_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(email_hook=True)
+    @recorded_by_proxy
+    def test_update_email_hook_by_resetting_properties(self, client, variables):
         try:
-            hook = self._create_email_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            client.update_hook(
+                variables["email_hook_id"],
                 hook_type="Email",
-                name="reset",
+                name=variables["hook_updated_name"],
                 description=None,
                 external_link=None,
             )
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "reset")
+            updated = client.get_hook(variables["email_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
 
             # sending null, but not clearing properties
-            # self.assertEqual(updated.description, "")
-            # self.assertEqual(updated.external_link, "")
+            # assert updated.description == ""
+            # assert updated.external_link == ""
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="email_hook_id")
+        return variables
 
-    def test_update_web_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_with_model(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-            hook.name = "update"
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            hook = client.get_hook(variables["web_hook_id"])
+            hook.name = variables["hook_updated_name"]
             hook.description = "update"
             hook.external_link = "update"
             hook.username = "myusername"
             hook.password = "password"
 
-            self.admin_client.update_hook(hook)
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update")
-            self.assertEqual(updated.external_link, "update")
-            self.assertEqual(updated.username, "myusername")
+            client.update_hook(hook)
+            updated = client.get_hook(variables["web_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.description == "update"
+            assert updated.external_link == "update"
+            assert updated.username == "myusername"
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="web_hook_id")
+        return variables
 
-    def test_update_web_hook_with_kwargs(self):
-        name = self.create_random_name("testwebhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_with_kwargs(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            client.update_hook(
+                variables["web_hook_id"],
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
-                name="update",
+                name=variables["hook_updated_name"],
                 description="update",
                 external_link="update",
                 username="myusername",
                 password="password"
             )
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "update")
-            self.assertEqual(updated.external_link, "update")
-            self.assertEqual(updated.username, "myusername")
+            updated = client.get_hook(variables["web_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.description == "update"
+            assert updated.external_link == "update"
+            assert updated.username == "myusername"
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="web_hook_id")
+        return variables
 
-    def test_update_web_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testwebhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_with_model_and_kwargs(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            hook = client.get_hook(variables["web_hook_id"])
             hook.name = "don't update me"
             hook.description = "updateMe"
             hook.username = "don't update me"
             hook.password = "don't update me"
             hook.endpoint = "don't update me"
-            self.admin_client.update_hook(
+            client.update_hook(
                 hook,
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
-                name="update",
+                name=variables["hook_updated_name"],
                 external_link="update",
                 username="myusername",
                 password="password"
             )
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.description, "updateMe")
-            self.assertEqual(updated.external_link, "update")
-            self.assertEqual(updated.username, "myusername")
+            updated = client.get_hook(variables["web_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.description == "updateMe"
+            assert updated.external_link == "update"
+            assert updated.username == "myusername"
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="web_hook_id")
+        return variables
 
-    def test_update_web_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer(web_hook=True)
+    @recorded_by_proxy
+    def test_update_web_hook_by_resetting_properties(self, client, variables):
         try:
-            hook = self._create_web_hook_for_update(name)
-            self.admin_client.update_hook(
-                hook.id,
+            update_name = "update" + str(uuid.uuid4())
+            if self.is_live:
+                variables["hook_updated_name"] = update_name
+            client.update_hook(
+                variables["web_hook_id"],
                 hook_type="Web",
-                name="reset",
+                name=variables["hook_updated_name"],
                 description=None,
                 endpoint="https://httpbin.org/post",
                 external_link=None,
                 username="myusername",
                 password=None
             )
-            updated = self.admin_client.get_hook(hook.id)
-            self.assertEqual(updated.name, "reset")
-            self.assertEqual(updated.password, "")
+            updated = client.get_hook(variables["web_hook_id"])
+            assert updated.name == variables["hook_updated_name"]
+            assert updated.password == ""
 
             # sending null, but not clearing properties
-            # self.assertEqual(updated.description, "")
-            # self.assertEqual(updated.external_link, "")
+            # assert updated.description == ""
+            # assert updated.external_link == ""
 
         finally:
-            self.admin_client.delete_hook(hook.id)
+            self.clean_up(client.delete_hook, variables, key="web_hook_id")
+        return variables

@@ -65,7 +65,11 @@ async def _claim_and_list_ownership(connection_str, container_name):
             ownership['last_modified_time'] = time.time()
             ownership_list.append(ownership)
 
-        await checkpoint_store.claim_ownership(ownership_list)
+        claimed_ownership = await checkpoint_store.claim_ownership(ownership_list)
+        for i in range(ownership_cnt):
+            assert ownership_list[i]['partition_id'] == str(i)
+            assert claimed_ownership[i]['partition_id'] == str(i)
+            assert ownership_list[i] != claimed_ownership[i]
 
         ownership_list = await checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,

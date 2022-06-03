@@ -1,5 +1,33 @@
 # Release History
 
+## 10.0.0 (2022-05-24)
+
+**Breaking changes**
+
+  - Model Key no longer has parameter release_policy
+  - Model Key no longer has parameter rotation_policy
+  - Model KeyProperties no longer has parameter release_policy
+  - Model KeyProperties no longer has parameter rotation_policy
+
+## 9.3.0 (2021-11-11)
+
+**Features**
+
+  - Added some enum value
+
+
+## 9.2.0 (2021-10-15)
+
+**Features**
+
+  - Model VaultProperties has a new parameter public_network_access
+  - Model VaultPatchProperties has a new parameter public_network_access
+  - Model KeyAttributes has a new parameter exportable
+  - Model Key has a new parameter release_policy
+  - Model Key has a new parameter rotation_policy
+  - Model KeyProperties has a new parameter release_policy
+  - Model KeyProperties has a new parameter rotation_policy
+
 ## 9.1.0 (2021-08-26)
 
 **Features**

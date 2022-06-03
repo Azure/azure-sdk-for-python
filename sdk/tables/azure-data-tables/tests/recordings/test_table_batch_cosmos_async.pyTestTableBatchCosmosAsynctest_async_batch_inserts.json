@@ -1,0 +1,204 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "32",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:47:20 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "90b87f3f-5889-11ec-a583-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:47:20 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022TableName\u0022: \u0022uttable54c83128\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Thu, 09 Dec 2021 00:47:26 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A26.4099335Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttable54c83128\u0027)",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "5ff23220-b0c1-4f2d-b50d-d4b93e04aa47"
+      },
+      "ResponseBody": {
+        "TableName": "uttable54c83128",
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables/@Element"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "6328",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "951fac84-5889-11ec-a030-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDANCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfOTY2Nzg4MDUtMGNmNi00NjQzLTg0NWQtNWIxNmYzMmI2MmRkDQoNCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nMCcpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiMCIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDENCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nMScpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiMSIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDINCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nMicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiMiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDMNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nMycpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiMyIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDQNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nNCcpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiNCIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDUNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nNScpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiNSIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDYNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nNicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiNiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDcNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nNycpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiNyIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDgNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nOCcpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiOCIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDkNCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3Ntb3MuYXp1cmUuY29tL3V0dGFibGU1NGM4MzEyOChQYXJ0aXRpb25LZXk9J2FzeW5jX2luc2VydHMnLFJvd0tleT0nOScpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDEyNA0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDo0NzoyNyBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6NDc6MjcgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogImFzeW5jX2luc2VydHMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiOSIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzk2Njc4ODA1LTBjZjYtNDY0My04NDVkLTViMTZmMzJiNjJkZC0tDQoNCi0tYmF0Y2hfMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwLS0NCg==",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
+        "Date": "Thu, 09 Dec 2021 00:47:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "8a04f80b-356c-45a6-a289-58750ffd2955"
+      },
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlXzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMA0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzhhOTdkMGQyLWJmYWMtNDYzNC1iN2ZiLWMwN2Q0ODJhZDQ0ZQ0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzhhOTdkMGQyLWJmYWMtNDYzNC1iN2ZiLWMwN2Q0ODJhZDQ0ZQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSAyMDQgTm8gQ29udGVudA0KRVRhZzogVy8iZGF0ZXRpbWUnMjAyMS0xMi0wOVQwMCUzQTQ3JTNBMjcuMjA4NDQ4N1onIg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpDb250ZW50LUlEOiAxDQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV84YTk3ZDBkMi1iZmFjLTQ2MzQtYjdmYi1jMDdkNDgyYWQ0NGUKQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IGJpbmFyeQoKSFRUUC8xLjEgMjA0IE5vIENvbnRlbnQNCkVUYWc6IFcvImRhdGV0aW1lJzIwMjEtMTItMDlUMDAlM0E0NyUzQTI3LjIwOTA2MzFaJyINCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1JRDogMg0KDQoNCi0tY2hhbmdlc2V0cmVzcG9uc2VfOGE5N2QwZDItYmZhYy00NjM0LWI3ZmItYzA3ZDQ4MmFkNDRlCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cApDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkKCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBNDclM0EyNy4yMDk1NzUxWiciDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkNvbnRlbnQtSUQ6IDMNCg0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzhhOTdkMGQyLWJmYWMtNDYzNC1iN2ZiLWMwN2Q0ODJhZDQ0ZQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSAyMDQgTm8gQ29udGVudA0KRVRhZzogVy8iZGF0ZXRpbWUnMjAyMS0xMi0wOVQwMCUzQTQ3JTNBMjcuMjA5OTg0N1onIg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpDb250ZW50LUlEOiA0DQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV84YTk3ZDBkMi1iZmFjLTQ2MzQtYjdmYi1jMDdkNDgyYWQ0NGUKQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IGJpbmFyeQoKSFRUUC8xLjEgMjA0IE5vIENvbnRlbnQNCkVUYWc6IFcvImRhdGV0aW1lJzIwMjEtMTItMDlUMDAlM0E0NyUzQTI3LjIxMDQ5NjdaJyINCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1JRDogNQ0KDQoNCi0tY2hhbmdlc2V0cmVzcG9uc2VfOGE5N2QwZDItYmZhYy00NjM0LWI3ZmItYzA3ZDQ4MmFkNDRlCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cApDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkKCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBNDclM0EyNy4yMTA5MDYzWiciDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkNvbnRlbnQtSUQ6IDYNCg0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzhhOTdkMGQyLWJmYWMtNDYzNC1iN2ZiLWMwN2Q0ODJhZDQ0ZQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSAyMDQgTm8gQ29udGVudA0KRVRhZzogVy8iZGF0ZXRpbWUnMjAyMS0xMi0wOVQwMCUzQTQ3JTNBMjcuMjExMzE1OVonIg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpDb250ZW50LUlEOiA3DQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV84YTk3ZDBkMi1iZmFjLTQ2MzQtYjdmYi1jMDdkNDgyYWQ0NGUKQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IGJpbmFyeQoKSFRUUC8xLjEgMjA0IE5vIENvbnRlbnQNCkVUYWc6IFcvImRhdGV0aW1lJzIwMjEtMTItMDlUMDAlM0E0NyUzQTI3LjIxMTgyNzlaJyINCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1JRDogOA0KDQoNCi0tY2hhbmdlc2V0cmVzcG9uc2VfOGE5N2QwZDItYmZhYy00NjM0LWI3ZmItYzA3ZDQ4MmFkNDRlCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cApDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkKCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBNDclM0EyNy4yMTIyMzc1WiciDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkNvbnRlbnQtSUQ6IDkNCg0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzhhOTdkMGQyLWJmYWMtNDYzNC1iN2ZiLWMwN2Q0ODJhZDQ0ZQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSAyMDQgTm8gQ29udGVudA0KRVRhZzogVy8iZGF0ZXRpbWUnMjAyMS0xMi0wOVQwMCUzQTQ3JTNBMjcuMjEyNzQ5NVonIg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpDb250ZW50LUlEOiAxMA0KDQoNCi0tY2hhbmdlc2V0cmVzcG9uc2VfOGE5N2QwZDItYmZhYy00NjM0LWI3ZmItYzA3ZDQ4MmFkNDRlLS0KLS1iYXRjaHJlc3BvbnNlXzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMC0tDQo="
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/uttable54c83128()?$filter=PartitionKey eq \u0027async_inserts\u0027",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "9537a243-5889-11ec-85eb-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Thu, 09 Dec 2021 00:47:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "28273aaa-7d5e-44e7-8ca3-103e396b9b35"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2084487Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "0",
+            "Timestamp": "2021-12-09T00:47:27.2084487Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2090631Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "1",
+            "Timestamp": "2021-12-09T00:47:27.2090631Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2095751Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "2",
+            "Timestamp": "2021-12-09T00:47:27.2095751Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2099847Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "3",
+            "Timestamp": "2021-12-09T00:47:27.2099847Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2104967Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "4",
+            "Timestamp": "2021-12-09T00:47:27.2104967Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2109063Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "5",
+            "Timestamp": "2021-12-09T00:47:27.2109063Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2113159Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "6",
+            "Timestamp": "2021-12-09T00:47:27.2113159Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2118279Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "7",
+            "Timestamp": "2021-12-09T00:47:27.2118279Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2122375Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "8",
+            "Timestamp": "2021-12-09T00:47:27.2122375Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A47%3A27.2127495Z\u0027\u0022",
+            "PartitionKey": "async_inserts",
+            "RowKey": "9",
+            "Timestamp": "2021-12-09T00:47:27.2127495Z"
+          }
+        ],
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#uttable54c83128"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "9541b757-5889-11ec-a716-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Thu, 09 Dec 2021 00:47:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "2502bbac-bfe9-436a-80b8-7d6812ad86ba"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "TableName": "uttable54c83128"
+          }
+        ],
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttable54c83128\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Dec 2021 00:47:28 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "954b9f87-5889-11ec-a5e2-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:47:28 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Thu, 09 Dec 2021 00:47:27 GMT",
+        "x-ms-request-id": "4880bdeb-55f9-4841-96d8-6a202f81806f"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

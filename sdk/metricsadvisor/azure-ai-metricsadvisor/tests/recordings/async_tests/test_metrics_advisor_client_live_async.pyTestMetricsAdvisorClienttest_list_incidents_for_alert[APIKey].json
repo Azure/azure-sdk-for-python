@@ -1,0 +1,91 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/metrics_advisor_anomaly_alert_configuration_id/alerts/metrics_advisor_alert_id/incidents",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "6b6b36fd-5e0d-11ec-9a9c-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "204083d6-f867-4207-996f-6c6162bdcea8",
+        "Content-Length": "1565",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:47 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "399",
+        "X-Request-ID": "204083d6-f867-4207-996f-6c6162bdcea8"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "incidentId": "30612c95b4c216ef418956c5c6162691-metrics_advisor_alert_id",
+            "startTime": "2021-09-07T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Tianjin",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 18544.0,
+              "expectedValueOfRootNode": 18573.49119556344
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "incidentId": "4ec127166abf8387b2874bae49734ab1-metrics_advisor_alert_id",
+            "startTime": "2021-09-06T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "__SUM__",
+                "category": "__SUM__"
+              }
+            },
+            "property": {
+              "maxSeverity": "High",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 65120708.60000002,
+              "expectedValueOfRootNode": 60928226.58873364
+            }
+          },
+          {
+            "dataFeedId": "metrics_advisor_data_feed_id",
+            "metricId": "metrics_advisor_metric_id",
+            "anomalyDetectionConfigurationId": "metrics_advisor_anomaly_detection_configuration_id",
+            "incidentId": "efe6bdf61f01a37d8ddbb133afde0756-metrics_advisor_alert_id",
+            "startTime": "2021-09-07T00:00:00Z",
+            "lastTime": "2021-09-07T00:00:00Z",
+            "rootNode": {
+              "dimension": {
+                "region": "Istanbul",
+                "category": "Home \u0026 Garden"
+              }
+            },
+            "property": {
+              "maxSeverity": "Low",
+              "incidentStatus": "Active",
+              "valueOfRootNode": 10715.2,
+              "expectedValueOfRootNode": 9806.569582296583
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

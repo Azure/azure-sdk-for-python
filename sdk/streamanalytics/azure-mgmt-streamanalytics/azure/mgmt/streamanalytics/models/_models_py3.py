@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -15,123 +15,18 @@ import msrest.serialization
 from ._stream_analytics_management_client_enums import *
 
 
-class FunctionProperties(msrest.serialization.Model):
-    """The properties that are associated with a function.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AggregateFunctionProperties, ScalarFunctionProperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Indicates the type of function.Constant filled by server.
-    :type type: str
-    :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
-     to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
-    :vartype etag: str
-    :param inputs:
-    :type inputs: list[~stream_analytics_management_client.models.FunctionInput]
-    :param output: Describes the output of a function.
-    :type output: ~stream_analytics_management_client.models.FunctionOutput
-    :param binding: The physical binding of the function. For example, in the Azure Machine
-     Learning web service’s case, this describes the endpoint.
-    :type binding: ~stream_analytics_management_client.models.FunctionBinding
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'inputs': {'key': 'properties.inputs', 'type': '[FunctionInput]'},
-        'output': {'key': 'properties.output', 'type': 'FunctionOutput'},
-        'binding': {'key': 'properties.binding', 'type': 'FunctionBinding'},
-    }
-
-    _subtype_map = {
-        'type': {'Aggregate': 'AggregateFunctionProperties', 'Scalar': 'ScalarFunctionProperties'}
-    }
-
-    def __init__(
-        self,
-        *,
-        inputs: Optional[List["FunctionInput"]] = None,
-        output: Optional["FunctionOutput"] = None,
-        binding: Optional["FunctionBinding"] = None,
-        **kwargs
-    ):
-        super(FunctionProperties, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
-        self.etag = None
-        self.inputs = inputs
-        self.output = output
-        self.binding = binding
-
-
-class AggregateFunctionProperties(FunctionProperties):
-    """The properties that are associated with an aggregate function.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Indicates the type of function.Constant filled by server.
-    :type type: str
-    :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
-     to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
-    :vartype etag: str
-    :param inputs:
-    :type inputs: list[~stream_analytics_management_client.models.FunctionInput]
-    :param output: Describes the output of a function.
-    :type output: ~stream_analytics_management_client.models.FunctionOutput
-    :param binding: The physical binding of the function. For example, in the Azure Machine
-     Learning web service’s case, this describes the endpoint.
-    :type binding: ~stream_analytics_management_client.models.FunctionBinding
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'inputs': {'key': 'properties.inputs', 'type': '[FunctionInput]'},
-        'output': {'key': 'properties.output', 'type': 'FunctionOutput'},
-        'binding': {'key': 'properties.binding', 'type': 'FunctionBinding'},
-    }
-
-    def __init__(
-        self,
-        *,
-        inputs: Optional[List["FunctionInput"]] = None,
-        output: Optional["FunctionOutput"] = None,
-        binding: Optional["FunctionBinding"] = None,
-        **kwargs
-    ):
-        super(AggregateFunctionProperties, self).__init__(inputs=inputs, output=output, binding=binding, **kwargs)
-        self.type = 'Aggregate'  # type: str
-
-
 class Serialization(msrest.serialization.Model):
     """Describes how data from an input is serialized or how data is serialized when written to an output.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AvroSerialization, CsvSerialization, CustomClrSerialization, JsonSerialization, ParquetSerialization.
+    sub-classes are: AvroSerialization, CsvSerialization, JsonSerialization, ParquetSerialization.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of serialization that the input or output uses.
-     Required on PUT (CreateOrReplace) requests.Constant filled by server.  Possible values include:
-     "Csv", "Avro", "Json", "CustomClr", "Parquet".
-    :type type: str or ~stream_analytics_management_client.models.EventSerializationType
+    :ivar type: Required. Indicates the type of serialization that the input or output uses.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server. Possible values include:
+     "Csv", "Avro", "Json", "Parquet".
+    :vartype type: str or ~stream_analytics_management_client.models.EventSerializationType
     """
 
     _validation = {
@@ -143,13 +38,15 @@ class Serialization(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'Avro': 'AvroSerialization', 'Csv': 'CsvSerialization', 'CustomClr': 'CustomClrSerialization', 'Json': 'JsonSerialization', 'Parquet': 'ParquetSerialization'}
+        'type': {'Avro': 'AvroSerialization', 'Csv': 'CsvSerialization', 'Json': 'JsonSerialization', 'Parquet': 'ParquetSerialization'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(Serialization, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -159,13 +56,13 @@ class AvroSerialization(Serialization):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of serialization that the input or output uses.
-     Required on PUT (CreateOrReplace) requests.Constant filled by server.  Possible values include:
-     "Csv", "Avro", "Json", "CustomClr", "Parquet".
-    :type type: str or ~stream_analytics_management_client.models.EventSerializationType
-    :param properties: The properties that are associated with the Avro serialization type.
-     Required on PUT (CreateOrReplace) requests.
-    :type properties: object
+    :ivar type: Required. Indicates the type of serialization that the input or output uses.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server. Possible values include:
+     "Csv", "Avro", "Json", "Parquet".
+    :vartype type: str or ~stream_analytics_management_client.models.EventSerializationType
+    :ivar properties: The properties that are associated with the Avro serialization type. Required
+     on PUT (CreateOrReplace) requests.
+    :vartype properties: any
     """
 
     _validation = {
@@ -180,9 +77,14 @@ class AvroSerialization(Serialization):
     def __init__(
         self,
         *,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword properties: The properties that are associated with the Avro serialization type.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype properties: any
+        """
         super(AvroSerialization, self).__init__(**kwargs)
         self.type = 'Avro'  # type: str
         self.properties = properties
@@ -192,13 +94,13 @@ class OutputDataSource(msrest.serialization.Model):
     """Describes the data source that output will be written to.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionOutputDataSource, AzureDataLakeStoreOutputDataSource, EventHubV2OutputDataSource, EventHubOutputDataSource, ServiceBusQueueOutputDataSource, ServiceBusTopicOutputDataSource, AzureSynapseOutputDataSource, AzureSqlDatabaseOutputDataSource, BlobOutputDataSource, DocumentDbOutputDataSource, AzureTableOutputDataSource, PowerBIOutputDataSource.
+    sub-classes are: AzureDataLakeStoreOutputDataSource, EventHubV2OutputDataSource, EventHubOutputDataSource, ServiceBusQueueOutputDataSource, ServiceBusTopicOutputDataSource, AzureSynapseOutputDataSource, AzureSqlDatabaseOutputDataSource, BlobOutputDataSource, DocumentDbOutputDataSource, AzureTableOutputDataSource, PowerBIOutputDataSource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
+    :vartype type: str
     """
 
     _validation = {
@@ -210,13 +112,15 @@ class OutputDataSource(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'Microsoft.AzureFunction': 'AzureFunctionOutputDataSource', 'Microsoft.DataLake/Accounts': 'AzureDataLakeStoreOutputDataSource', 'Microsoft.EventHub/EventHub': 'EventHubV2OutputDataSource', 'Microsoft.ServiceBus/EventHub': 'EventHubOutputDataSource', 'Microsoft.ServiceBus/Queue': 'ServiceBusQueueOutputDataSource', 'Microsoft.ServiceBus/Topic': 'ServiceBusTopicOutputDataSource', 'Microsoft.Sql/Server/DataWarehouse': 'AzureSynapseOutputDataSource', 'Microsoft.Sql/Server/Database': 'AzureSqlDatabaseOutputDataSource', 'Microsoft.Storage/Blob': 'BlobOutputDataSource', 'Microsoft.Storage/DocumentDB': 'DocumentDbOutputDataSource', 'Microsoft.Storage/Table': 'AzureTableOutputDataSource', 'PowerBI': 'PowerBIOutputDataSource'}
+        'type': {'Microsoft.DataLake/Accounts': 'AzureDataLakeStoreOutputDataSource', 'Microsoft.EventHub/EventHub': 'EventHubV2OutputDataSource', 'Microsoft.ServiceBus/EventHub': 'EventHubOutputDataSource', 'Microsoft.ServiceBus/Queue': 'ServiceBusQueueOutputDataSource', 'Microsoft.ServiceBus/Topic': 'ServiceBusTopicOutputDataSource', 'Microsoft.Sql/Server/DataWarehouse': 'AzureSynapseOutputDataSource', 'Microsoft.Sql/Server/Database': 'AzureSqlDatabaseOutputDataSource', 'Microsoft.Storage/Blob': 'BlobOutputDataSource', 'Microsoft.Storage/DocumentDB': 'DocumentDbOutputDataSource', 'Microsoft.Storage/Table': 'AzureTableOutputDataSource', 'PowerBI': 'PowerBIOutputDataSource'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(OutputDataSource, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -226,42 +130,43 @@ class AzureDataLakeStoreOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param refresh_token: A refresh token that can be used to obtain a valid access token that can
+    :vartype type: str
+    :ivar refresh_token: A refresh token that can be used to obtain a valid access token that can
      then be used to authenticate with the data source. A valid refresh token is currently only
      obtainable via the Azure Portal. It is recommended to put a dummy string value here when
      creating the data source and then going to the Azure Portal to authenticate the data source
      which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
      requests.
-    :type refresh_token: str
-    :param token_user_principal_name: The user principal name (UPN) of the user that was used to
+    :vartype refresh_token: str
+    :ivar token_user_principal_name: The user principal name (UPN) of the user that was used to
      obtain the refresh token. Use this property to help remember which user was used to obtain the
      refresh token.
-    :type token_user_principal_name: str
-    :param token_user_display_name: The user display name of the user that was used to obtain the
+    :vartype token_user_principal_name: str
+    :ivar token_user_display_name: The user display name of the user that was used to obtain the
      refresh token. Use this property to help remember which user was used to obtain the refresh
      token.
-    :type token_user_display_name: str
-    :param account_name: The name of the Azure Data Lake Store account. Required on PUT
+    :vartype token_user_display_name: str
+    :ivar account_name: The name of the Azure Data Lake Store account. Required on PUT
      (CreateOrReplace) requests.
-    :type account_name: str
-    :param tenant_id: The tenant id of the user used to obtain the refresh token. Required on PUT
+    :vartype account_name: str
+    :ivar tenant_id: The tenant id of the user used to obtain the refresh token. Required on PUT
      (CreateOrReplace) requests.
-    :type tenant_id: str
-    :param file_path_prefix: The location of the file to which the output should be written to.
+    :vartype tenant_id: str
+    :ivar file_path_prefix: The location of the file to which the output should be written to.
      Required on PUT (CreateOrReplace) requests.
-    :type file_path_prefix: str
-    :param date_format: The date format. Wherever {date} appears in filePathPrefix, the value of
+    :vartype file_path_prefix: str
+    :ivar date_format: The date format. Wherever {date} appears in filePathPrefix, the value of
      this property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in filePathPrefix, the value of
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in filePathPrefix, the value of
      this property is used as the time format instead.
-    :type time_format: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype time_format: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _validation = {
@@ -295,6 +200,42 @@ class AzureDataLakeStoreOutputDataSource(OutputDataSource):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
+         can then be used to authenticate with the data source. A valid refresh token is currently only
+         obtainable via the Azure Portal. It is recommended to put a dummy string value here when
+         creating the data source and then going to the Azure Portal to authenticate the data source
+         which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype refresh_token: str
+        :keyword token_user_principal_name: The user principal name (UPN) of the user that was used to
+         obtain the refresh token. Use this property to help remember which user was used to obtain the
+         refresh token.
+        :paramtype token_user_principal_name: str
+        :keyword token_user_display_name: The user display name of the user that was used to obtain the
+         refresh token. Use this property to help remember which user was used to obtain the refresh
+         token.
+        :paramtype token_user_display_name: str
+        :keyword account_name: The name of the Azure Data Lake Store account. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype account_name: str
+        :keyword tenant_id: The tenant id of the user used to obtain the refresh token. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype tenant_id: str
+        :keyword file_path_prefix: The location of the file to which the output should be written to.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype file_path_prefix: str
+        :keyword date_format: The date format. Wherever {date} appears in filePathPrefix, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in filePathPrefix, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(AzureDataLakeStoreOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.DataLake/Accounts'  # type: str
         self.refresh_token = refresh_token
@@ -311,21 +252,21 @@ class AzureDataLakeStoreOutputDataSource(OutputDataSource):
 class OAuthBasedDataSourceProperties(msrest.serialization.Model):
     """The properties that are associated with data sources that use OAuth as their authentication model.
 
-    :param refresh_token: A refresh token that can be used to obtain a valid access token that can
+    :ivar refresh_token: A refresh token that can be used to obtain a valid access token that can
      then be used to authenticate with the data source. A valid refresh token is currently only
      obtainable via the Azure Portal. It is recommended to put a dummy string value here when
      creating the data source and then going to the Azure Portal to authenticate the data source
      which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
      requests.
-    :type refresh_token: str
-    :param token_user_principal_name: The user principal name (UPN) of the user that was used to
+    :vartype refresh_token: str
+    :ivar token_user_principal_name: The user principal name (UPN) of the user that was used to
      obtain the refresh token. Use this property to help remember which user was used to obtain the
      refresh token.
-    :type token_user_principal_name: str
-    :param token_user_display_name: The user display name of the user that was used to obtain the
+    :vartype token_user_principal_name: str
+    :ivar token_user_display_name: The user display name of the user that was used to obtain the
      refresh token. Use this property to help remember which user was used to obtain the refresh
      token.
-    :type token_user_display_name: str
+    :vartype token_user_display_name: str
     """
 
     _attribute_map = {
@@ -342,6 +283,23 @@ class OAuthBasedDataSourceProperties(msrest.serialization.Model):
         token_user_display_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
+         can then be used to authenticate with the data source. A valid refresh token is currently only
+         obtainable via the Azure Portal. It is recommended to put a dummy string value here when
+         creating the data source and then going to the Azure Portal to authenticate the data source
+         which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype refresh_token: str
+        :keyword token_user_principal_name: The user principal name (UPN) of the user that was used to
+         obtain the refresh token. Use this property to help remember which user was used to obtain the
+         refresh token.
+        :paramtype token_user_principal_name: str
+        :keyword token_user_display_name: The user display name of the user that was used to obtain the
+         refresh token. Use this property to help remember which user was used to obtain the refresh
+         token.
+        :paramtype token_user_display_name: str
+        """
         super(OAuthBasedDataSourceProperties, self).__init__(**kwargs)
         self.refresh_token = refresh_token
         self.token_user_principal_name = token_user_principal_name
@@ -351,39 +309,40 @@ class OAuthBasedDataSourceProperties(msrest.serialization.Model):
 class AzureDataLakeStoreOutputDataSourceProperties(OAuthBasedDataSourceProperties):
     """The properties that are associated with an Azure Data Lake Store.
 
-    :param refresh_token: A refresh token that can be used to obtain a valid access token that can
+    :ivar refresh_token: A refresh token that can be used to obtain a valid access token that can
      then be used to authenticate with the data source. A valid refresh token is currently only
      obtainable via the Azure Portal. It is recommended to put a dummy string value here when
      creating the data source and then going to the Azure Portal to authenticate the data source
      which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
      requests.
-    :type refresh_token: str
-    :param token_user_principal_name: The user principal name (UPN) of the user that was used to
+    :vartype refresh_token: str
+    :ivar token_user_principal_name: The user principal name (UPN) of the user that was used to
      obtain the refresh token. Use this property to help remember which user was used to obtain the
      refresh token.
-    :type token_user_principal_name: str
-    :param token_user_display_name: The user display name of the user that was used to obtain the
+    :vartype token_user_principal_name: str
+    :ivar token_user_display_name: The user display name of the user that was used to obtain the
      refresh token. Use this property to help remember which user was used to obtain the refresh
      token.
-    :type token_user_display_name: str
-    :param account_name: The name of the Azure Data Lake Store account. Required on PUT
+    :vartype token_user_display_name: str
+    :ivar account_name: The name of the Azure Data Lake Store account. Required on PUT
      (CreateOrReplace) requests.
-    :type account_name: str
-    :param tenant_id: The tenant id of the user used to obtain the refresh token. Required on PUT
+    :vartype account_name: str
+    :ivar tenant_id: The tenant id of the user used to obtain the refresh token. Required on PUT
      (CreateOrReplace) requests.
-    :type tenant_id: str
-    :param file_path_prefix: The location of the file to which the output should be written to.
+    :vartype tenant_id: str
+    :ivar file_path_prefix: The location of the file to which the output should be written to.
      Required on PUT (CreateOrReplace) requests.
-    :type file_path_prefix: str
-    :param date_format: The date format. Wherever {date} appears in filePathPrefix, the value of
+    :vartype file_path_prefix: str
+    :ivar date_format: The date format. Wherever {date} appears in filePathPrefix, the value of
      this property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in filePathPrefix, the value of
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in filePathPrefix, the value of
      this property is used as the time format instead.
-    :type time_format: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype time_format: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -412,6 +371,42 @@ class AzureDataLakeStoreOutputDataSourceProperties(OAuthBasedDataSourcePropertie
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
+         can then be used to authenticate with the data source. A valid refresh token is currently only
+         obtainable via the Azure Portal. It is recommended to put a dummy string value here when
+         creating the data source and then going to the Azure Portal to authenticate the data source
+         which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype refresh_token: str
+        :keyword token_user_principal_name: The user principal name (UPN) of the user that was used to
+         obtain the refresh token. Use this property to help remember which user was used to obtain the
+         refresh token.
+        :paramtype token_user_principal_name: str
+        :keyword token_user_display_name: The user display name of the user that was used to obtain the
+         refresh token. Use this property to help remember which user was used to obtain the refresh
+         token.
+        :paramtype token_user_display_name: str
+        :keyword account_name: The name of the Azure Data Lake Store account. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype account_name: str
+        :keyword tenant_id: The tenant id of the user used to obtain the refresh token. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype tenant_id: str
+        :keyword file_path_prefix: The location of the file to which the output should be written to.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype file_path_prefix: str
+        :keyword date_format: The date format. Wherever {date} appears in filePathPrefix, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in filePathPrefix, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(AzureDataLakeStoreOutputDataSourceProperties, self).__init__(refresh_token=refresh_token, token_user_principal_name=token_user_principal_name, token_user_display_name=token_user_display_name, **kwargs)
         self.account_name = account_name
         self.tenant_id = tenant_id
@@ -421,72 +416,16 @@ class AzureDataLakeStoreOutputDataSourceProperties(OAuthBasedDataSourcePropertie
         self.authentication_mode = authentication_mode
 
 
-class AzureFunctionOutputDataSource(OutputDataSource):
-    """Defines the metadata of AzureFunctionOutputDataSource.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Indicates the type of data source output will be written to. Required on
-     PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param function_app_name: The name of your Azure Functions app.
-    :type function_app_name: str
-    :param function_name: The name of the function in your Azure Functions app.
-    :type function_name: str
-    :param api_key: If you want to use an Azure Function from another subscription, you can do so
-     by providing the key to access your function.
-    :type api_key: str
-    :param max_batch_size: A property that lets you set the maximum size for each output batch
-     that's sent to your Azure function. The input unit is in bytes. By default, this value is
-     262,144 bytes (256 KB).
-    :type max_batch_size: float
-    :param max_batch_count: A property that lets you specify the maximum number of events in each
-     batch that's sent to Azure Functions. The default value is 100.
-    :type max_batch_count: float
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'function_app_name': {'key': 'properties.functionAppName', 'type': 'str'},
-        'function_name': {'key': 'properties.functionName', 'type': 'str'},
-        'api_key': {'key': 'properties.apiKey', 'type': 'str'},
-        'max_batch_size': {'key': 'properties.maxBatchSize', 'type': 'float'},
-        'max_batch_count': {'key': 'properties.maxBatchCount', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        *,
-        function_app_name: Optional[str] = None,
-        function_name: Optional[str] = None,
-        api_key: Optional[str] = None,
-        max_batch_size: Optional[float] = None,
-        max_batch_count: Optional[float] = None,
-        **kwargs
-    ):
-        super(AzureFunctionOutputDataSource, self).__init__(**kwargs)
-        self.type = 'Microsoft.AzureFunction'  # type: str
-        self.function_app_name = function_app_name
-        self.function_name = function_name
-        self.api_key = api_key
-        self.max_batch_size = max_batch_size
-        self.max_batch_count = max_batch_count
-
-
 class FunctionBinding(msrest.serialization.Model):
     """The physical binding of the function. For example, in the Azure Machine Learning web service’s case, this describes the endpoint.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureMachineLearningStudioFunctionBinding, AzureMachineLearningServiceFunctionBinding, CSharpFunctionBinding, JavaScriptFunctionBinding.
+    sub-classes are: AzureMachineLearningWebServiceFunctionBinding, JavaScriptFunctionBinding.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the function binding type.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Indicates the function binding type.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -498,42 +437,42 @@ class FunctionBinding(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'Microsoft.MachineLearning/WebService': 'AzureMachineLearningStudioFunctionBinding', 'Microsoft.MachineLearningServices': 'AzureMachineLearningServiceFunctionBinding', 'Microsoft.StreamAnalytics/CLRUdf': 'CSharpFunctionBinding', 'Microsoft.StreamAnalytics/JavascriptUdf': 'JavaScriptFunctionBinding'}
+        'type': {'Microsoft.MachineLearning/WebService': 'AzureMachineLearningWebServiceFunctionBinding', 'Microsoft.StreamAnalytics/JavascriptUdf': 'JavaScriptFunctionBinding'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(FunctionBinding, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
 
-class AzureMachineLearningServiceFunctionBinding(FunctionBinding):
+class AzureMachineLearningWebServiceFunctionBinding(FunctionBinding):
     """The binding to an Azure Machine Learning web service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the function binding type.Constant filled by server.
-    :type type: str
-    :param endpoint: The Request-Response execute endpoint of the Azure Machine Learning web
-     service.
-    :type endpoint: str
-    :param api_key: The API key used to authenticate with Request-Response endpoint.
-    :type api_key: str
-    :param inputs: The inputs for the Azure Machine Learning web service endpoint.
-    :type inputs:
-     list[~stream_analytics_management_client.models.AzureMachineLearningServiceInputColumn]
-    :param outputs: A list of outputs from the Azure Machine Learning web service endpoint
+    :ivar type: Required. Indicates the function binding type.Constant filled by server.
+    :vartype type: str
+    :ivar endpoint: The Request-Response execute endpoint of the Azure Machine Learning web
+     service. Find out more here:
+     https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-consume-web-services#request-response-service-rrs.
+    :vartype endpoint: str
+    :ivar api_key: The API key used to authenticate with Request-Response endpoint.
+    :vartype api_key: str
+    :ivar inputs: The inputs for the Azure Machine Learning web service endpoint.
+    :vartype inputs:
+     ~stream_analytics_management_client.models.AzureMachineLearningWebServiceInputs
+    :ivar outputs: A list of outputs from the Azure Machine Learning web service endpoint
      execution.
-    :type outputs:
-     list[~stream_analytics_management_client.models.AzureMachineLearningServiceOutputColumn]
-    :param batch_size: Number between 1 and 10000 describing maximum number of rows for every Azure
+    :vartype outputs:
+     list[~stream_analytics_management_client.models.AzureMachineLearningWebServiceOutputColumn]
+    :ivar batch_size: Number between 1 and 10000 describing maximum number of rows for every Azure
      ML RRS execute request. Default is 1000.
-    :type batch_size: int
-    :param number_of_parallel_requests: The number of parallel requests that will be sent per
-     partition of your job to the machine learning service. Default is 1.
-    :type number_of_parallel_requests: int
+    :vartype batch_size: int
     """
 
     _validation = {
@@ -544,228 +483,8 @@ class AzureMachineLearningServiceFunctionBinding(FunctionBinding):
         'type': {'key': 'type', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'api_key': {'key': 'properties.apiKey', 'type': 'str'},
-        'inputs': {'key': 'properties.inputs', 'type': '[AzureMachineLearningServiceInputColumn]'},
-        'outputs': {'key': 'properties.outputs', 'type': '[AzureMachineLearningServiceOutputColumn]'},
-        'batch_size': {'key': 'properties.batchSize', 'type': 'int'},
-        'number_of_parallel_requests': {'key': 'properties.numberOfParallelRequests', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        endpoint: Optional[str] = None,
-        api_key: Optional[str] = None,
-        inputs: Optional[List["AzureMachineLearningServiceInputColumn"]] = None,
-        outputs: Optional[List["AzureMachineLearningServiceOutputColumn"]] = None,
-        batch_size: Optional[int] = None,
-        number_of_parallel_requests: Optional[int] = None,
-        **kwargs
-    ):
-        super(AzureMachineLearningServiceFunctionBinding, self).__init__(**kwargs)
-        self.type = 'Microsoft.MachineLearningServices'  # type: str
-        self.endpoint = endpoint
-        self.api_key = api_key
-        self.inputs = inputs
-        self.outputs = outputs
-        self.batch_size = batch_size
-        self.number_of_parallel_requests = number_of_parallel_requests
-
-
-class FunctionRetrieveDefaultDefinitionParameters(msrest.serialization.Model):
-    """Parameters used to specify the type of function to retrieve the default definition for.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters, AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters, CSharpFunctionRetrieveDefaultDefinitionParameters, JavaScriptFunctionRetrieveDefaultDefinitionParameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param binding_type: Required. Indicates the function binding type.Constant filled by server.
-    :type binding_type: str
-    """
-
-    _validation = {
-        'binding_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'binding_type': {'key': 'bindingType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'binding_type': {'Microsoft.MachineLearning/WebService': 'AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters', 'Microsoft.MachineLearningServices': 'AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters', 'Microsoft.StreamAnalytics/CLRUdf': 'CSharpFunctionRetrieveDefaultDefinitionParameters', 'Microsoft.StreamAnalytics/JavascriptUdf': 'JavaScriptFunctionRetrieveDefaultDefinitionParameters'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
-        self.binding_type = None  # type: Optional[str]
-
-
-class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
-    """The parameters needed to retrieve the default function definition for an Azure Machine Learning web service function.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param binding_type: Required. Indicates the function binding type.Constant filled by server.
-    :type binding_type: str
-    :param execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
-     web service.
-    :type execute_endpoint: str
-    :ivar udf_type: The function type. Default value: "Scalar".
-    :vartype udf_type: str
-    """
-
-    _validation = {
-        'binding_type': {'required': True},
-        'udf_type': {'constant': True},
-    }
-
-    _attribute_map = {
-        'binding_type': {'key': 'bindingType', 'type': 'str'},
-        'execute_endpoint': {'key': 'bindingRetrievalProperties.executeEndpoint', 'type': 'str'},
-        'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
-    }
-
-    udf_type = "Scalar"
-
-    def __init__(
-        self,
-        *,
-        execute_endpoint: Optional[str] = None,
-        **kwargs
-    ):
-        super(AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
-        self.binding_type = 'Microsoft.MachineLearningServices'  # type: str
-        self.execute_endpoint = execute_endpoint
-
-
-class AzureMachineLearningServiceInputColumn(msrest.serialization.Model):
-    """Describes an input column for the Azure Machine Learning web service endpoint.
-
-    :param name: The name of the input column.
-    :type name: str
-    :param data_type: The (Azure Machine Learning supported) data type of the input column.
-    :type data_type: str
-    :param map_to: The zero based index of the function parameter this input maps to.
-    :type map_to: int
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'map_to': {'key': 'mapTo', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        data_type: Optional[str] = None,
-        map_to: Optional[int] = None,
-        **kwargs
-    ):
-        super(AzureMachineLearningServiceInputColumn, self).__init__(**kwargs)
-        self.name = name
-        self.data_type = data_type
-        self.map_to = map_to
-
-
-class AzureMachineLearningServiceInputs(msrest.serialization.Model):
-    """The inputs for the Azure Machine Learning web service endpoint.
-
-    :param name: The name of the input. This is the name provided while authoring the endpoint.
-    :type name: str
-    :param column_names: A list of input columns for the Azure Machine Learning web service
-     endpoint.
-    :type column_names:
-     list[~stream_analytics_management_client.models.AzureMachineLearningServiceInputColumn]
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'column_names': {'key': 'columnNames', 'type': '[AzureMachineLearningServiceInputColumn]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        column_names: Optional[List["AzureMachineLearningServiceInputColumn"]] = None,
-        **kwargs
-    ):
-        super(AzureMachineLearningServiceInputs, self).__init__(**kwargs)
-        self.name = name
-        self.column_names = column_names
-
-
-class AzureMachineLearningServiceOutputColumn(msrest.serialization.Model):
-    """Describes an output column for the Azure Machine Learning web service endpoint.
-
-    :param name: The name of the output column.
-    :type name: str
-    :param data_type: The (Azure Machine Learning supported) data type of the output column.
-    :type data_type: str
-    :param map_to: The zero based index of the function parameter this input maps to.
-    :type map_to: int
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'map_to': {'key': 'mapTo', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        data_type: Optional[str] = None,
-        map_to: Optional[int] = None,
-        **kwargs
-    ):
-        super(AzureMachineLearningServiceOutputColumn, self).__init__(**kwargs)
-        self.name = name
-        self.data_type = data_type
-        self.map_to = map_to
-
-
-class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
-    """The binding to an Azure Machine Learning Studio.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Indicates the function binding type.Constant filled by server.
-    :type type: str
-    :param endpoint: The Request-Response execute endpoint of the Azure Machine Learning Studio.
-     Find out more here: https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-
-     consume-web-services#request-response-service-rrs.
-    :type endpoint: str
-    :param api_key: The API key used to authenticate with Request-Response endpoint.
-    :type api_key: str
-    :param inputs: The inputs for the Azure Machine Learning Studio endpoint.
-    :type inputs: ~stream_analytics_management_client.models.AzureMachineLearningStudioInputs
-    :param outputs: A list of outputs from the Azure Machine Learning Studio endpoint execution.
-    :type outputs:
-     list[~stream_analytics_management_client.models.AzureMachineLearningStudioOutputColumn]
-    :param batch_size: Number between 1 and 10000 describing maximum number of rows for every Azure
-     ML RRS execute request. Default is 1000.
-    :type batch_size: int
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'api_key': {'key': 'properties.apiKey', 'type': 'str'},
-        'inputs': {'key': 'properties.inputs', 'type': 'AzureMachineLearningStudioInputs'},
-        'outputs': {'key': 'properties.outputs', 'type': '[AzureMachineLearningStudioOutputColumn]'},
+        'inputs': {'key': 'properties.inputs', 'type': 'AzureMachineLearningWebServiceInputs'},
+        'outputs': {'key': 'properties.outputs', 'type': '[AzureMachineLearningWebServiceOutputColumn]'},
         'batch_size': {'key': 'properties.batchSize', 'type': 'int'},
     }
 
@@ -774,12 +493,30 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
         *,
         endpoint: Optional[str] = None,
         api_key: Optional[str] = None,
-        inputs: Optional["AzureMachineLearningStudioInputs"] = None,
-        outputs: Optional[List["AzureMachineLearningStudioOutputColumn"]] = None,
+        inputs: Optional["AzureMachineLearningWebServiceInputs"] = None,
+        outputs: Optional[List["AzureMachineLearningWebServiceOutputColumn"]] = None,
         batch_size: Optional[int] = None,
         **kwargs
     ):
-        super(AzureMachineLearningStudioFunctionBinding, self).__init__(**kwargs)
+        """
+        :keyword endpoint: The Request-Response execute endpoint of the Azure Machine Learning web
+         service. Find out more here:
+         https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-consume-web-services#request-response-service-rrs.
+        :paramtype endpoint: str
+        :keyword api_key: The API key used to authenticate with Request-Response endpoint.
+        :paramtype api_key: str
+        :keyword inputs: The inputs for the Azure Machine Learning web service endpoint.
+        :paramtype inputs:
+         ~stream_analytics_management_client.models.AzureMachineLearningWebServiceInputs
+        :keyword outputs: A list of outputs from the Azure Machine Learning web service endpoint
+         execution.
+        :paramtype outputs:
+         list[~stream_analytics_management_client.models.AzureMachineLearningWebServiceOutputColumn]
+        :keyword batch_size: Number between 1 and 10000 describing maximum number of rows for every
+         Azure ML RRS execute request. Default is 1000.
+        :paramtype batch_size: int
+        """
+        super(AzureMachineLearningWebServiceFunctionBinding, self).__init__(**kwargs)
         self.type = 'Microsoft.MachineLearning/WebService'  # type: str
         self.endpoint = endpoint
         self.api_key = api_key
@@ -788,26 +525,58 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
         self.batch_size = batch_size
 
 
-class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
-    """The parameters needed to retrieve the default function definition for an Azure Machine Learning Studio function.
+class FunctionRetrieveDefaultDefinitionParameters(msrest.serialization.Model):
+    """Parameters used to specify the type of function to retrieve the default definition for.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureMachineLearningWebServiceFunctionRetrieveDefaultDefinitionParameters, JavaScriptFunctionRetrieveDefaultDefinitionParameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param binding_type: Required. Indicates the function binding type.Constant filled by server.
-    :type binding_type: str
-    :param execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
-     Studio. Find out more here: https://docs.microsoft.com/en-us/azure/machine-learning/machine-
-     learning-consume-web-services#request-response-service-rrs.
-    :type execute_endpoint: str
-    :ivar udf_type: The function type. Default value: "Scalar".
+    :ivar binding_type: Required. Indicates the function binding type.Constant filled by server.
+    :vartype binding_type: str
+    """
+
+    _validation = {
+        'binding_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'binding_type': {'key': 'bindingType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'binding_type': {'Microsoft.MachineLearning/WebService': 'AzureMachineLearningWebServiceFunctionRetrieveDefaultDefinitionParameters', 'Microsoft.StreamAnalytics/JavascriptUdf': 'JavaScriptFunctionRetrieveDefaultDefinitionParameters'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(FunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
+        self.binding_type = None  # type: Optional[str]
+
+
+class AzureMachineLearningWebServiceFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
+    """The parameters needed to retrieve the default function definition for an Azure Machine Learning web service function.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar binding_type: Required. Indicates the function binding type.Constant filled by server.
+    :vartype binding_type: str
+    :ivar execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning web
+     service. Find out more here:
+     https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-consume-web-services#request-response-service-rrs.
+    :vartype execute_endpoint: str
+    :ivar udf_type: The function type. The only acceptable values to pass in are None and "Scalar".
+     The default value is None.
     :vartype udf_type: str
     """
 
     _validation = {
         'binding_type': {'required': True},
-        'udf_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -816,30 +585,39 @@ class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(Func
         'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
     }
 
-    udf_type = "Scalar"
-
     def __init__(
         self,
         *,
         execute_endpoint: Optional[str] = None,
+        udf_type: Optional[str] = None,
         **kwargs
     ):
-        super(AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
+        """
+        :keyword execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
+         web service. Find out more here:
+         https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-consume-web-services#request-response-service-rrs.
+        :paramtype execute_endpoint: str
+        :keyword udf_type: The function type. The only acceptable values to pass in are None and
+         "Scalar". The default value is None.
+        :paramtype udf_type: str
+        """
+        super(AzureMachineLearningWebServiceFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
         self.binding_type = 'Microsoft.MachineLearning/WebService'  # type: str
         self.execute_endpoint = execute_endpoint
+        self.udf_type = udf_type
 
 
-class AzureMachineLearningStudioInputColumn(msrest.serialization.Model):
-    """Describes an input column for the Azure Machine Learning Studio endpoint.
+class AzureMachineLearningWebServiceInputColumn(msrest.serialization.Model):
+    """Describes an input column for the Azure Machine Learning web service endpoint.
 
-    :param name: The name of the input column.
-    :type name: str
-    :param data_type: The (Azure Machine Learning supported) data type of the input column. A list
-     of valid  Azure Machine Learning data types are described at https://msdn.microsoft.com/en-
-     us/library/azure/dn905923.aspx .
-    :type data_type: str
-    :param map_to: The zero based index of the function parameter this input maps to.
-    :type map_to: int
+    :ivar name: The name of the input column.
+    :vartype name: str
+    :ivar data_type: The (Azure Machine Learning supported) data type of the input column. A list
+     of valid  Azure Machine Learning data types are described at
+     https://msdn.microsoft.com/en-us/library/azure/dn905923.aspx .
+    :vartype data_type: str
+    :ivar map_to: The zero based index of the function parameter this input maps to.
+    :vartype map_to: int
     """
 
     _attribute_map = {
@@ -856,48 +634,67 @@ class AzureMachineLearningStudioInputColumn(msrest.serialization.Model):
         map_to: Optional[int] = None,
         **kwargs
     ):
-        super(AzureMachineLearningStudioInputColumn, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the input column.
+        :paramtype name: str
+        :keyword data_type: The (Azure Machine Learning supported) data type of the input column. A
+         list of valid  Azure Machine Learning data types are described at
+         https://msdn.microsoft.com/en-us/library/azure/dn905923.aspx .
+        :paramtype data_type: str
+        :keyword map_to: The zero based index of the function parameter this input maps to.
+        :paramtype map_to: int
+        """
+        super(AzureMachineLearningWebServiceInputColumn, self).__init__(**kwargs)
         self.name = name
         self.data_type = data_type
         self.map_to = map_to
 
 
-class AzureMachineLearningStudioInputs(msrest.serialization.Model):
-    """The inputs for the Azure Machine Learning Studio endpoint.
+class AzureMachineLearningWebServiceInputs(msrest.serialization.Model):
+    """The inputs for the Azure Machine Learning web service endpoint.
 
-    :param name: The name of the input. This is the name provided while authoring the endpoint.
-    :type name: str
-    :param column_names: A list of input columns for the Azure Machine Learning Studio endpoint.
-    :type column_names:
-     list[~stream_analytics_management_client.models.AzureMachineLearningStudioInputColumn]
+    :ivar name: The name of the input. This is the name provided while authoring the endpoint.
+    :vartype name: str
+    :ivar column_names: A list of input columns for the Azure Machine Learning web service
+     endpoint.
+    :vartype column_names:
+     list[~stream_analytics_management_client.models.AzureMachineLearningWebServiceInputColumn]
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'column_names': {'key': 'columnNames', 'type': '[AzureMachineLearningStudioInputColumn]'},
+        'column_names': {'key': 'columnNames', 'type': '[AzureMachineLearningWebServiceInputColumn]'},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        column_names: Optional[List["AzureMachineLearningStudioInputColumn"]] = None,
+        column_names: Optional[List["AzureMachineLearningWebServiceInputColumn"]] = None,
         **kwargs
     ):
-        super(AzureMachineLearningStudioInputs, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the input. This is the name provided while authoring the endpoint.
+        :paramtype name: str
+        :keyword column_names: A list of input columns for the Azure Machine Learning web service
+         endpoint.
+        :paramtype column_names:
+         list[~stream_analytics_management_client.models.AzureMachineLearningWebServiceInputColumn]
+        """
+        super(AzureMachineLearningWebServiceInputs, self).__init__(**kwargs)
         self.name = name
         self.column_names = column_names
 
 
-class AzureMachineLearningStudioOutputColumn(msrest.serialization.Model):
-    """Describes an output column for the Azure Machine Learning Studio endpoint.
+class AzureMachineLearningWebServiceOutputColumn(msrest.serialization.Model):
+    """Describes an output column for the Azure Machine Learning web service endpoint.
 
-    :param name: The name of the output column.
-    :type name: str
-    :param data_type: The (Azure Machine Learning supported) data type of the output column. A list
-     of valid  Azure Machine Learning data types are described at https://msdn.microsoft.com/en-
-     us/library/azure/dn905923.aspx .
-    :type data_type: str
+    :ivar name: The name of the output column.
+    :vartype name: str
+    :ivar data_type: The (Azure Machine Learning supported) data type of the output column. A list
+     of valid  Azure Machine Learning data types are described at
+     https://msdn.microsoft.com/en-us/library/azure/dn905923.aspx .
+    :vartype data_type: str
     """
 
     _attribute_map = {
@@ -912,7 +709,15 @@ class AzureMachineLearningStudioOutputColumn(msrest.serialization.Model):
         data_type: Optional[str] = None,
         **kwargs
     ):
-        super(AzureMachineLearningStudioOutputColumn, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the output column.
+        :paramtype name: str
+        :keyword data_type: The (Azure Machine Learning supported) data type of the output column. A
+         list of valid  Azure Machine Learning data types are described at
+         https://msdn.microsoft.com/en-us/library/azure/dn905923.aspx .
+        :paramtype data_type: str
+        """
+        super(AzureMachineLearningWebServiceOutputColumn, self).__init__(**kwargs)
         self.name = name
         self.data_type = data_type
 
@@ -920,30 +725,30 @@ class AzureMachineLearningStudioOutputColumn(msrest.serialization.Model):
 class AzureSqlDatabaseDataSourceProperties(msrest.serialization.Model):
     """The properties that are associated with an Azure SQL database data source.
 
-    :param server: The name of the SQL server containing the Azure SQL database. Required on PUT
+    :ivar server: The name of the SQL server containing the Azure SQL database. Required on PUT
      (CreateOrReplace) requests.
-    :type server: str
-    :param database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
-     requests.
-    :type database: str
-    :param user: The user name that will be used to connect to the Azure SQL database. Required on
+    :vartype server: str
+    :ivar database: The name of the Azure SQL database. Required on PUT (CreateOrReplace) requests.
+    :vartype database: str
+    :ivar user: The user name that will be used to connect to the Azure SQL database. Required on
      PUT (CreateOrReplace) requests.
-    :type user: str
-    :param password: The password that will be used to connect to the Azure SQL database. Required
+    :vartype user: str
+    :ivar password: The password that will be used to connect to the Azure SQL database. Required
      on PUT (CreateOrReplace) requests.
-    :type password: str
-    :param table: The name of the table in the Azure SQL database. Required on PUT
-     (CreateOrReplace) requests.
-    :type table: str
-    :param max_batch_count: Max Batch count for write to Sql database, the default value is 10,000.
+    :vartype password: str
+    :ivar table: The name of the table in the Azure SQL database. Required on PUT (CreateOrReplace)
+     requests.
+    :vartype table: str
+    :ivar max_batch_count: Max Batch count for write to Sql database, the default value is 10,000.
      Optional on PUT requests.
-    :type max_batch_count: float
-    :param max_writer_count: Max Write r count, currently only 1(single writer) and 0(based on
-     query partition) are available. Optional on PUT requests.
-    :type max_writer_count: float
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype max_batch_count: float
+    :ivar max_writer_count: Max Writer count, currently only 1(single writer) and 0(based on query
+     partition) are available. Optional on PUT requests.
+    :vartype max_writer_count: float
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -970,6 +775,33 @@ class AzureSqlDatabaseDataSourceProperties(msrest.serialization.Model):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype server: str
+        :keyword database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword user: The user name that will be used to connect to the Azure SQL database. Required
+         on PUT (CreateOrReplace) requests.
+        :paramtype user: str
+        :keyword password: The password that will be used to connect to the Azure SQL database.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype password: str
+        :keyword table: The name of the table in the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword max_batch_count: Max Batch count for write to Sql database, the default value is
+         10,000. Optional on PUT requests.
+        :paramtype max_batch_count: float
+        :keyword max_writer_count: Max Writer count, currently only 1(single writer) and 0(based on
+         query partition) are available. Optional on PUT requests.
+        :paramtype max_writer_count: float
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(AzureSqlDatabaseDataSourceProperties, self).__init__(**kwargs)
         self.server = server
         self.database = database
@@ -986,33 +818,33 @@ class AzureSqlDatabaseOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param server: The name of the SQL server containing the Azure SQL database. Required on PUT
+    :vartype type: str
+    :ivar server: The name of the SQL server containing the Azure SQL database. Required on PUT
      (CreateOrReplace) requests.
-    :type server: str
-    :param database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
-     requests.
-    :type database: str
-    :param user: The user name that will be used to connect to the Azure SQL database. Required on
+    :vartype server: str
+    :ivar database: The name of the Azure SQL database. Required on PUT (CreateOrReplace) requests.
+    :vartype database: str
+    :ivar user: The user name that will be used to connect to the Azure SQL database. Required on
      PUT (CreateOrReplace) requests.
-    :type user: str
-    :param password: The password that will be used to connect to the Azure SQL database. Required
+    :vartype user: str
+    :ivar password: The password that will be used to connect to the Azure SQL database. Required
      on PUT (CreateOrReplace) requests.
-    :type password: str
-    :param table: The name of the table in the Azure SQL database. Required on PUT
-     (CreateOrReplace) requests.
-    :type table: str
-    :param max_batch_count: Max Batch count for write to Sql database, the default value is 10,000.
+    :vartype password: str
+    :ivar table: The name of the table in the Azure SQL database. Required on PUT (CreateOrReplace)
+     requests.
+    :vartype table: str
+    :ivar max_batch_count: Max Batch count for write to Sql database, the default value is 10,000.
      Optional on PUT requests.
-    :type max_batch_count: float
-    :param max_writer_count: Max Write r count, currently only 1(single writer) and 0(based on
-     query partition) are available. Optional on PUT requests.
-    :type max_writer_count: float
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype max_batch_count: float
+    :ivar max_writer_count: Max Writer count, currently only 1(single writer) and 0(based on query
+     partition) are available. Optional on PUT requests.
+    :vartype max_writer_count: float
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _validation = {
@@ -1044,6 +876,33 @@ class AzureSqlDatabaseOutputDataSource(OutputDataSource):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype server: str
+        :keyword database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword user: The user name that will be used to connect to the Azure SQL database. Required
+         on PUT (CreateOrReplace) requests.
+        :paramtype user: str
+        :keyword password: The password that will be used to connect to the Azure SQL database.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype password: str
+        :keyword table: The name of the table in the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword max_batch_count: Max Batch count for write to Sql database, the default value is
+         10,000. Optional on PUT requests.
+        :paramtype max_batch_count: float
+        :keyword max_writer_count: Max Writer count, currently only 1(single writer) and 0(based on
+         query partition) are available. Optional on PUT requests.
+        :paramtype max_writer_count: float
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(AzureSqlDatabaseOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Sql/Server/Database'  # type: str
         self.server = server
@@ -1059,30 +918,30 @@ class AzureSqlDatabaseOutputDataSource(OutputDataSource):
 class AzureSqlDatabaseOutputDataSourceProperties(AzureSqlDatabaseDataSourceProperties):
     """The properties that are associated with an Azure SQL database output.
 
-    :param server: The name of the SQL server containing the Azure SQL database. Required on PUT
+    :ivar server: The name of the SQL server containing the Azure SQL database. Required on PUT
      (CreateOrReplace) requests.
-    :type server: str
-    :param database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
-     requests.
-    :type database: str
-    :param user: The user name that will be used to connect to the Azure SQL database. Required on
+    :vartype server: str
+    :ivar database: The name of the Azure SQL database. Required on PUT (CreateOrReplace) requests.
+    :vartype database: str
+    :ivar user: The user name that will be used to connect to the Azure SQL database. Required on
      PUT (CreateOrReplace) requests.
-    :type user: str
-    :param password: The password that will be used to connect to the Azure SQL database. Required
+    :vartype user: str
+    :ivar password: The password that will be used to connect to the Azure SQL database. Required
      on PUT (CreateOrReplace) requests.
-    :type password: str
-    :param table: The name of the table in the Azure SQL database. Required on PUT
-     (CreateOrReplace) requests.
-    :type table: str
-    :param max_batch_count: Max Batch count for write to Sql database, the default value is 10,000.
+    :vartype password: str
+    :ivar table: The name of the table in the Azure SQL database. Required on PUT (CreateOrReplace)
+     requests.
+    :vartype table: str
+    :ivar max_batch_count: Max Batch count for write to Sql database, the default value is 10,000.
      Optional on PUT requests.
-    :type max_batch_count: float
-    :param max_writer_count: Max Write r count, currently only 1(single writer) and 0(based on
-     query partition) are available. Optional on PUT requests.
-    :type max_writer_count: float
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype max_batch_count: float
+    :ivar max_writer_count: Max Writer count, currently only 1(single writer) and 0(based on query
+     partition) are available. Optional on PUT requests.
+    :vartype max_writer_count: float
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -1109,6 +968,33 @@ class AzureSqlDatabaseOutputDataSourceProperties(AzureSqlDatabaseDataSourcePrope
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype server: str
+        :keyword database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword user: The user name that will be used to connect to the Azure SQL database. Required
+         on PUT (CreateOrReplace) requests.
+        :paramtype user: str
+        :keyword password: The password that will be used to connect to the Azure SQL database.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype password: str
+        :keyword table: The name of the table in the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword max_batch_count: Max Batch count for write to Sql database, the default value is
+         10,000. Optional on PUT requests.
+        :paramtype max_batch_count: float
+        :keyword max_writer_count: Max Writer count, currently only 1(single writer) and 0(based on
+         query partition) are available. Optional on PUT requests.
+        :paramtype max_writer_count: float
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(AzureSqlDatabaseOutputDataSourceProperties, self).__init__(server=server, database=database, user=user, password=password, table=table, max_batch_count=max_batch_count, max_writer_count=max_writer_count, authentication_mode=authentication_mode, **kwargs)
 
 
@@ -1120,9 +1006,9 @@ class ReferenceInputDataSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing reference data.
+    :ivar type: Required. Indicates the type of input data source containing reference data.
      Required on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
+    :vartype type: str
     """
 
     _validation = {
@@ -1141,6 +1027,8 @@ class ReferenceInputDataSource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ReferenceInputDataSource, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -1150,12 +1038,37 @@ class AzureSqlReferenceInputDataSource(ReferenceInputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing reference data.
+    :ivar type: Required. Indicates the type of input data source containing reference data.
      Required on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param properties:
-    :type properties:
-     ~stream_analytics_management_client.models.AzureSqlReferenceInputDataSourceProperties
+    :vartype type: str
+    :ivar server: This element is associated with the datasource element. This is the name of the
+     server that contains the database that will be written to.
+    :vartype server: str
+    :ivar database: This element is associated with the datasource element. This is the name of the
+     database that output will be written to.
+    :vartype database: str
+    :ivar user: This element is associated with the datasource element. This is the user name that
+     will be used to connect to the SQL Database instance.
+    :vartype user: str
+    :ivar password: This element is associated with the datasource element. This is the password
+     that will be used to connect to the SQL Database instance.
+    :vartype password: str
+    :ivar table: This element is associated with the datasource element. The name of the table in
+     the Azure SQL database..
+    :vartype table: str
+    :ivar refresh_type: Indicates the type of data refresh option. Possible values include:
+     "Static", "RefreshPeriodicallyWithFull", "RefreshPeriodicallyWithDelta".
+    :vartype refresh_type: str or ~stream_analytics_management_client.models.RefreshType
+    :ivar refresh_rate: This element is associated with the datasource element. This indicates how
+     frequently the data will be fetched from the database. It is of DateTime format.
+    :vartype refresh_rate: str
+    :ivar full_snapshot_query: This element is associated with the datasource element. This query
+     is used to fetch data from the sql database.
+    :vartype full_snapshot_query: str
+    :ivar delta_snapshot_query: This element is associated with the datasource element. This query
+     is used to fetch incremental changes from the SQL database. To use this option, we recommend
+     using temporal tables in Azure SQL Database.
+    :vartype delta_snapshot_query: str
     """
 
     _validation = {
@@ -1164,64 +1077,15 @@ class AzureSqlReferenceInputDataSource(ReferenceInputDataSource):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AzureSqlReferenceInputDataSourceProperties'},
-    }
-
-    def __init__(
-        self,
-        *,
-        properties: Optional["AzureSqlReferenceInputDataSourceProperties"] = None,
-        **kwargs
-    ):
-        super(AzureSqlReferenceInputDataSource, self).__init__(**kwargs)
-        self.type = 'Microsoft.Sql/Server/Database'  # type: str
-        self.properties = properties
-
-
-class AzureSqlReferenceInputDataSourceProperties(msrest.serialization.Model):
-    """AzureSqlReferenceInputDataSourceProperties.
-
-    :param server: This element is associated with the datasource element. This is the name of the
-     server that contains the database that will be written to.
-    :type server: str
-    :param database: This element is associated with the datasource element. This is the name of
-     the database that output will be written to.
-    :type database: str
-    :param user: This element is associated with the datasource element. This is the user name that
-     will be used to connect to the SQL Database instance.
-    :type user: str
-    :param password: This element is associated with the datasource element. This is the password
-     that will be used to connect to the SQL Database instance.
-    :type password: str
-    :param table: This element is associated with the datasource element. The name of the table in
-     the Azure SQL database..
-    :type table: str
-    :param refresh_type: This element is associated with the datasource element. This element is of
-     enum type. It indicates what kind of data refresh option do we want to
-     use:Static/RefreshPeriodicallyWithFull/RefreshPeriodicallyWithDelta.
-    :type refresh_type: str
-    :param refresh_rate: This element is associated with the datasource element. This indicates how
-     frequently the data will be fetched from the database. It is of DateTime format.
-    :type refresh_rate: str
-    :param full_snapshot_query: This element is associated with the datasource element. This query
-     is used to fetch data from the sql database.
-    :type full_snapshot_query: str
-    :param delta_snapshot_query: This element is associated with the datasource element. This query
-     is used to fetch incremental changes from the SQL database. To use this option, we recommend
-     using temporal tables in Azure SQL Database.
-    :type delta_snapshot_query: str
-    """
-
-    _attribute_map = {
-        'server': {'key': 'server', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'user': {'key': 'user', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'table': {'key': 'table', 'type': 'str'},
-        'refresh_type': {'key': 'refreshType', 'type': 'str'},
-        'refresh_rate': {'key': 'refreshRate', 'type': 'str'},
-        'full_snapshot_query': {'key': 'fullSnapshotQuery', 'type': 'str'},
-        'delta_snapshot_query': {'key': 'deltaSnapshotQuery', 'type': 'str'},
+        'server': {'key': 'properties.server', 'type': 'str'},
+        'database': {'key': 'properties.database', 'type': 'str'},
+        'user': {'key': 'properties.user', 'type': 'str'},
+        'password': {'key': 'properties.password', 'type': 'str'},
+        'table': {'key': 'properties.table', 'type': 'str'},
+        'refresh_type': {'key': 'properties.refreshType', 'type': 'str'},
+        'refresh_rate': {'key': 'properties.refreshRate', 'type': 'str'},
+        'full_snapshot_query': {'key': 'properties.fullSnapshotQuery', 'type': 'str'},
+        'delta_snapshot_query': {'key': 'properties.deltaSnapshotQuery', 'type': 'str'},
     }
 
     def __init__(
@@ -1232,13 +1096,44 @@ class AzureSqlReferenceInputDataSourceProperties(msrest.serialization.Model):
         user: Optional[str] = None,
         password: Optional[str] = None,
         table: Optional[str] = None,
-        refresh_type: Optional[str] = None,
+        refresh_type: Optional[Union[str, "RefreshType"]] = None,
         refresh_rate: Optional[str] = None,
         full_snapshot_query: Optional[str] = None,
         delta_snapshot_query: Optional[str] = None,
         **kwargs
     ):
-        super(AzureSqlReferenceInputDataSourceProperties, self).__init__(**kwargs)
+        """
+        :keyword server: This element is associated with the datasource element. This is the name of
+         the server that contains the database that will be written to.
+        :paramtype server: str
+        :keyword database: This element is associated with the datasource element. This is the name of
+         the database that output will be written to.
+        :paramtype database: str
+        :keyword user: This element is associated with the datasource element. This is the user name
+         that will be used to connect to the SQL Database instance.
+        :paramtype user: str
+        :keyword password: This element is associated with the datasource element. This is the password
+         that will be used to connect to the SQL Database instance.
+        :paramtype password: str
+        :keyword table: This element is associated with the datasource element. The name of the table
+         in the Azure SQL database..
+        :paramtype table: str
+        :keyword refresh_type: Indicates the type of data refresh option. Possible values include:
+         "Static", "RefreshPeriodicallyWithFull", "RefreshPeriodicallyWithDelta".
+        :paramtype refresh_type: str or ~stream_analytics_management_client.models.RefreshType
+        :keyword refresh_rate: This element is associated with the datasource element. This indicates
+         how frequently the data will be fetched from the database. It is of DateTime format.
+        :paramtype refresh_rate: str
+        :keyword full_snapshot_query: This element is associated with the datasource element. This
+         query is used to fetch data from the sql database.
+        :paramtype full_snapshot_query: str
+        :keyword delta_snapshot_query: This element is associated with the datasource element. This
+         query is used to fetch incremental changes from the SQL database. To use this option, we
+         recommend using temporal tables in Azure SQL Database.
+        :paramtype delta_snapshot_query: str
+        """
+        super(AzureSqlReferenceInputDataSource, self).__init__(**kwargs)
+        self.type = 'Microsoft.Sql/Server/Database'  # type: str
         self.server = server
         self.database = database
         self.user = user
@@ -1253,21 +1148,20 @@ class AzureSqlReferenceInputDataSourceProperties(msrest.serialization.Model):
 class AzureSynapseDataSourceProperties(msrest.serialization.Model):
     """The properties that are associated with an Azure SQL database data source.
 
-    :param server: The name of the SQL server containing the Azure SQL database. Required on PUT
+    :ivar server: The name of the SQL server containing the Azure SQL database. Required on PUT
      (CreateOrReplace) requests.
-    :type server: str
-    :param database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+    :vartype server: str
+    :ivar database: The name of the Azure SQL database. Required on PUT (CreateOrReplace) requests.
+    :vartype database: str
+    :ivar table: The name of the table in the Azure SQL database. Required on PUT (CreateOrReplace)
      requests.
-    :type database: str
-    :param table: The name of the table in the Azure SQL database. Required on PUT
-     (CreateOrReplace) requests.
-    :type table: str
-    :param user: The user name that will be used to connect to the Azure SQL database. Required on
+    :vartype table: str
+    :ivar user: The user name that will be used to connect to the Azure SQL database. Required on
      PUT (CreateOrReplace) requests.
-    :type user: str
-    :param password: The password that will be used to connect to the Azure SQL database. Required
+    :vartype user: str
+    :ivar password: The password that will be used to connect to the Azure SQL database. Required
      on PUT (CreateOrReplace) requests.
-    :type password: str
+    :vartype password: str
     """
 
     _attribute_map = {
@@ -1288,6 +1182,23 @@ class AzureSynapseDataSourceProperties(msrest.serialization.Model):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype server: str
+        :keyword database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword table: The name of the table in the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword user: The user name that will be used to connect to the Azure SQL database. Required
+         on PUT (CreateOrReplace) requests.
+        :paramtype user: str
+        :keyword password: The password that will be used to connect to the Azure SQL database.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype password: str
+        """
         super(AzureSynapseDataSourceProperties, self).__init__(**kwargs)
         self.server = server
         self.database = database
@@ -1301,24 +1212,23 @@ class AzureSynapseOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param server: The name of the SQL server containing the Azure SQL database. Required on PUT
+    :vartype type: str
+    :ivar server: The name of the SQL server containing the Azure SQL database. Required on PUT
      (CreateOrReplace) requests.
-    :type server: str
-    :param database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+    :vartype server: str
+    :ivar database: The name of the Azure SQL database. Required on PUT (CreateOrReplace) requests.
+    :vartype database: str
+    :ivar table: The name of the table in the Azure SQL database. Required on PUT (CreateOrReplace)
      requests.
-    :type database: str
-    :param table: The name of the table in the Azure SQL database. Required on PUT
-     (CreateOrReplace) requests.
-    :type table: str
-    :param user: The user name that will be used to connect to the Azure SQL database. Required on
+    :vartype table: str
+    :ivar user: The user name that will be used to connect to the Azure SQL database. Required on
      PUT (CreateOrReplace) requests.
-    :type user: str
-    :param password: The password that will be used to connect to the Azure SQL database. Required
+    :vartype user: str
+    :ivar password: The password that will be used to connect to the Azure SQL database. Required
      on PUT (CreateOrReplace) requests.
-    :type password: str
+    :vartype password: str
     """
 
     _validation = {
@@ -1344,6 +1254,23 @@ class AzureSynapseOutputDataSource(OutputDataSource):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype server: str
+        :keyword database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword table: The name of the table in the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword user: The user name that will be used to connect to the Azure SQL database. Required
+         on PUT (CreateOrReplace) requests.
+        :paramtype user: str
+        :keyword password: The password that will be used to connect to the Azure SQL database.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype password: str
+        """
         super(AzureSynapseOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Sql/Server/DataWarehouse'  # type: str
         self.server = server
@@ -1356,21 +1283,20 @@ class AzureSynapseOutputDataSource(OutputDataSource):
 class AzureSynapseOutputDataSourceProperties(AzureSynapseDataSourceProperties):
     """The properties that are associated with an Azure Synapse output.
 
-    :param server: The name of the SQL server containing the Azure SQL database. Required on PUT
+    :ivar server: The name of the SQL server containing the Azure SQL database. Required on PUT
      (CreateOrReplace) requests.
-    :type server: str
-    :param database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+    :vartype server: str
+    :ivar database: The name of the Azure SQL database. Required on PUT (CreateOrReplace) requests.
+    :vartype database: str
+    :ivar table: The name of the table in the Azure SQL database. Required on PUT (CreateOrReplace)
      requests.
-    :type database: str
-    :param table: The name of the table in the Azure SQL database. Required on PUT
-     (CreateOrReplace) requests.
-    :type table: str
-    :param user: The user name that will be used to connect to the Azure SQL database. Required on
+    :vartype table: str
+    :ivar user: The user name that will be used to connect to the Azure SQL database. Required on
      PUT (CreateOrReplace) requests.
-    :type user: str
-    :param password: The password that will be used to connect to the Azure SQL database. Required
+    :vartype user: str
+    :ivar password: The password that will be used to connect to the Azure SQL database. Required
      on PUT (CreateOrReplace) requests.
-    :type password: str
+    :vartype password: str
     """
 
     _attribute_map = {
@@ -1391,6 +1317,23 @@ class AzureSynapseOutputDataSourceProperties(AzureSynapseDataSourceProperties):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword server: The name of the SQL server containing the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype server: str
+        :keyword database: The name of the Azure SQL database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword table: The name of the table in the Azure SQL database. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword user: The user name that will be used to connect to the Azure SQL database. Required
+         on PUT (CreateOrReplace) requests.
+        :paramtype user: str
+        :keyword password: The password that will be used to connect to the Azure SQL database.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype password: str
+        """
         super(AzureSynapseOutputDataSourceProperties, self).__init__(server=server, database=database, table=table, user=user, password=password, **kwargs)
 
 
@@ -1399,30 +1342,30 @@ class AzureTableOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
+    :vartype type: str
+    :ivar account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
      requests.
-    :type account_name: str
-    :param account_key: The account key for the Azure Storage account. Required on PUT
+    :vartype account_name: str
+    :ivar account_key: The account key for the Azure Storage account. Required on PUT
      (CreateOrReplace) requests.
-    :type account_key: str
-    :param table: The name of the Azure Table. Required on PUT (CreateOrReplace) requests.
-    :type table: str
-    :param partition_key: This element indicates the name of a column from the SELECT statement in
+    :vartype account_key: str
+    :ivar table: The name of the Azure Table. Required on PUT (CreateOrReplace) requests.
+    :vartype table: str
+    :ivar partition_key: This element indicates the name of a column from the SELECT statement in
      the query that will be used as the partition key for the Azure Table. Required on PUT
      (CreateOrReplace) requests.
-    :type partition_key: str
-    :param row_key: This element indicates the name of a column from the SELECT statement in the
+    :vartype partition_key: str
+    :ivar row_key: This element indicates the name of a column from the SELECT statement in the
      query that will be used as the row key for the Azure Table. Required on PUT (CreateOrReplace)
      requests.
-    :type row_key: str
-    :param columns_to_remove: If specified, each item in the array is the name of a column to
-     remove (if present) from output event entities.
-    :type columns_to_remove: list[str]
-    :param batch_size: The number of rows to write to the Azure Table at a time.
-    :type batch_size: int
+    :vartype row_key: str
+    :ivar columns_to_remove: If specified, each item in the array is the name of a column to remove
+     (if present) from output event entities.
+    :vartype columns_to_remove: list[str]
+    :ivar batch_size: The number of rows to write to the Azure Table at a time.
+    :vartype batch_size: int
     """
 
     _validation = {
@@ -1452,6 +1395,29 @@ class AzureTableOutputDataSource(OutputDataSource):
         batch_size: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype account_name: str
+        :keyword account_key: The account key for the Azure Storage account. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype account_key: str
+        :keyword table: The name of the Azure Table. Required on PUT (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword partition_key: This element indicates the name of a column from the SELECT statement
+         in the query that will be used as the partition key for the Azure Table. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype partition_key: str
+        :keyword row_key: This element indicates the name of a column from the SELECT statement in the
+         query that will be used as the row key for the Azure Table. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype row_key: str
+        :keyword columns_to_remove: If specified, each item in the array is the name of a column to
+         remove (if present) from output event entities.
+        :paramtype columns_to_remove: list[str]
+        :keyword batch_size: The number of rows to write to the Azure Table at a time.
+        :paramtype batch_size: int
+        """
         super(AzureTableOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Storage/Table'  # type: str
         self.account_name = account_name
@@ -1466,26 +1432,26 @@ class AzureTableOutputDataSource(OutputDataSource):
 class BlobDataSourceProperties(msrest.serialization.Model):
     """The properties that are associated with a blob data source.
 
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
+    :vartype time_format: str
     """
 
     _attribute_map = {
@@ -1506,6 +1472,28 @@ class BlobDataSourceProperties(msrest.serialization.Model):
         time_format: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        """
         super(BlobDataSourceProperties, self).__init__(**kwargs)
         self.storage_accounts = storage_accounts
         self.container = container
@@ -1519,32 +1507,33 @@ class BlobOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :vartype type: str
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype time_format: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _validation = {
@@ -1572,6 +1561,32 @@ class BlobOutputDataSource(OutputDataSource):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(BlobOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Storage/Blob'  # type: str
         self.storage_accounts = storage_accounts
@@ -1585,29 +1600,30 @@ class BlobOutputDataSource(OutputDataSource):
 class BlobOutputDataSourceProperties(BlobDataSourceProperties):
     """The properties that are associated with a blob output.
 
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype time_format: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -1630,6 +1646,32 @@ class BlobOutputDataSourceProperties(BlobDataSourceProperties):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(BlobOutputDataSourceProperties, self).__init__(storage_accounts=storage_accounts, container=container, path_pattern=path_pattern, date_format=date_format, time_format=time_format, **kwargs)
         self.authentication_mode = authentication_mode
 
@@ -1639,29 +1681,29 @@ class BlobReferenceInputDataSource(ReferenceInputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing reference data.
+    :ivar type: Required. Indicates the type of input data source containing reference data.
      Required on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :vartype type: str
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
+    :vartype time_format: str
     """
 
     _validation = {
@@ -1687,6 +1729,28 @@ class BlobReferenceInputDataSource(ReferenceInputDataSource):
         time_format: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        """
         super(BlobReferenceInputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Storage/Blob'  # type: str
         self.storage_accounts = storage_accounts
@@ -1699,26 +1763,26 @@ class BlobReferenceInputDataSource(ReferenceInputDataSource):
 class BlobReferenceInputDataSourceProperties(BlobDataSourceProperties):
     """The properties that are associated with a blob input containing reference data.
 
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
+    :vartype time_format: str
     """
 
     _attribute_map = {
@@ -1739,6 +1803,28 @@ class BlobReferenceInputDataSourceProperties(BlobDataSourceProperties):
         time_format: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        """
         super(BlobReferenceInputDataSourceProperties, self).__init__(storage_accounts=storage_accounts, container=container, path_pattern=path_pattern, date_format=date_format, time_format=time_format, **kwargs)
 
 
@@ -1750,9 +1836,9 @@ class StreamInputDataSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing stream data. Required
+    :ivar type: Required. Indicates the type of input data source containing stream data. Required
      on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
+    :vartype type: str
     """
 
     _validation = {
@@ -1771,6 +1857,8 @@ class StreamInputDataSource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StreamInputDataSource, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -1780,32 +1868,31 @@ class BlobStreamInputDataSource(StreamInputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing stream data. Required
+    :ivar type: Required. Indicates the type of input data source containing stream data. Required
      on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :vartype type: str
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
-    :param source_partition_count: The partition count of the blob input data source. Range 1 -
-     256.
-    :type source_partition_count: int
+    :vartype time_format: str
+    :ivar source_partition_count: The partition count of the blob input data source. Range 1 - 256.
+    :vartype source_partition_count: int
     """
 
     _validation = {
@@ -1833,6 +1920,31 @@ class BlobStreamInputDataSource(StreamInputDataSource):
         source_partition_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        :keyword source_partition_count: The partition count of the blob input data source. Range 1 -
+         256.
+        :paramtype source_partition_count: int
+        """
         super(BlobStreamInputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Storage/Blob'  # type: str
         self.storage_accounts = storage_accounts
@@ -1846,29 +1958,28 @@ class BlobStreamInputDataSource(StreamInputDataSource):
 class BlobStreamInputDataSourceProperties(BlobDataSourceProperties):
     """The properties that are associated with a blob input containing stream data.
 
-    :param storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+    :ivar storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
      (CreateOrReplace) requests.
-    :type storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
-    :param container: The name of a container within the associated Storage account. This container
+    :vartype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+    :ivar container: The name of a container within the associated Storage account. This container
      contains either the blob(s) to be read from or written to. Required on PUT (CreateOrReplace)
      requests.
-    :type container: str
-    :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+    :vartype container: str
+    :ivar path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
-    :type path_pattern: str
-    :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
+    :vartype path_pattern: str
+    :ivar date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
-    :type date_format: str
-    :param time_format: The time format. Wherever {time} appears in pathPattern, the value of this
+    :vartype date_format: str
+    :ivar time_format: The time format. Wherever {time} appears in pathPattern, the value of this
      property is used as the time format instead.
-    :type time_format: str
-    :param source_partition_count: The partition count of the blob input data source. Range 1 -
-     256.
-    :type source_partition_count: int
+    :vartype time_format: str
+    :ivar source_partition_count: The partition count of the blob input data source. Range 1 - 256.
+    :vartype source_partition_count: int
     """
 
     _attribute_map = {
@@ -1891,12 +2002,37 @@ class BlobStreamInputDataSourceProperties(BlobDataSourceProperties):
         source_partition_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword storage_accounts: A list of one or more Azure Storage accounts. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype storage_accounts: list[~stream_analytics_management_client.models.StorageAccount]
+        :keyword container: The name of a container within the associated Storage account. This
+         container contains either the blob(s) to be read from or written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype container: str
+        :keyword path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
+         against which blob names will be matched to determine whether or not they should be included as
+         input or output to the job. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+         detailed explanation and example.
+        :paramtype path_pattern: str
+        :keyword date_format: The date format. Wherever {date} appears in pathPattern, the value of
+         this property is used as the date format instead.
+        :paramtype date_format: str
+        :keyword time_format: The time format. Wherever {time} appears in pathPattern, the value of
+         this property is used as the time format instead.
+        :paramtype time_format: str
+        :keyword source_partition_count: The partition count of the blob input data source. Range 1 -
+         256.
+        :paramtype source_partition_count: int
+        """
         super(BlobStreamInputDataSourceProperties, self).__init__(storage_accounts=storage_accounts, container=container, path_pattern=path_pattern, date_format=date_format, time_format=time_format, **kwargs)
         self.source_partition_count = source_partition_count
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """The base resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1926,6 +2062,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1945,10 +2083,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -1972,6 +2110,12 @@ class TrackedResource(Resource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1990,19 +2134,32 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The geo-location where the resource lives.
-    :type location: str
-    :param sku: The SKU of the cluster. This determines the size/capacity of the cluster. Required
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: The SKU of the cluster. This determines the size/capacity of the cluster. Required
      on PUT (CreateOrUpdate) requests.
-    :type sku: ~stream_analytics_management_client.models.ClusterSku
+    :vartype sku: ~stream_analytics_management_client.models.ClusterSku
     :ivar etag: The current entity tag for the cluster. This is an opaque string. You can use it to
      detect whether the resource has changed between requests. You can also use it in the If-Match
      or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
-    :param properties: The properties associated with a Stream Analytics cluster.
-    :type properties: ~stream_analytics_management_client.models.ClusterProperties
+    :ivar created_date: The date this cluster was created.
+    :vartype created_date: ~datetime.datetime
+    :ivar cluster_id: Unique identifier for the cluster.
+    :vartype cluster_id: str
+    :ivar provisioning_state: The status of the cluster provisioning. The three terminal states
+     are: Succeeded, Failed and Canceled. Possible values include: "Succeeded", "Failed",
+     "Canceled", "InProgress".
+    :vartype provisioning_state: str or
+     ~stream_analytics_management_client.models.ClusterProvisioningState
+    :ivar capacity_allocated: Represents the number of streaming units currently being used on the
+     cluster.
+    :vartype capacity_allocated: int
+    :ivar capacity_assigned: Represents the sum of the SUs of all streaming jobs associated with
+     the cluster. If all of the jobs were running, this would be the capacity allocated.
+    :vartype capacity_assigned: int
     """
 
     _validation = {
@@ -2010,6 +2167,11 @@ class Cluster(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'created_date': {'readonly': True},
+        'cluster_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'capacity_allocated': {'readonly': True},
+        'capacity_assigned': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2020,7 +2182,11 @@ class Cluster(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'ClusterSku'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ClusterProperties'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
+        'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'capacity_allocated': {'key': 'properties.capacityAllocated', 'type': 'int'},
+        'capacity_assigned': {'key': 'properties.capacityAssigned', 'type': 'int'},
     }
 
     def __init__(
@@ -2029,20 +2195,32 @@ class Cluster(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         sku: Optional["ClusterSku"] = None,
-        properties: Optional["ClusterProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: The SKU of the cluster. This determines the size/capacity of the cluster.
+         Required on PUT (CreateOrUpdate) requests.
+        :paramtype sku: ~stream_analytics_management_client.models.ClusterSku
+        """
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.etag = None
-        self.properties = properties
+        self.created_date = None
+        self.cluster_id = None
+        self.provisioning_state = None
+        self.capacity_allocated = None
+        self.capacity_assigned = None
 
 
 class ClusterInfo(msrest.serialization.Model):
     """The properties associated with a Stream Analytics cluster.
 
-    :param id: The resource id of cluster.
-    :type id: str
+    :ivar id: The resource id of cluster.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -2055,6 +2233,10 @@ class ClusterInfo(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource id of cluster.
+        :paramtype id: str
+        """
         super(ClusterInfo, self).__init__(**kwargs)
         self.id = id
 
@@ -2090,6 +2272,8 @@ class ClusterJob(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ClusterJob, self).__init__(**kwargs)
         self.id = None
         self.streaming_units = None
@@ -2121,6 +2305,8 @@ class ClusterJobListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ClusterJobListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2151,71 +2337,23 @@ class ClusterListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ClusterListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ClusterProperties(msrest.serialization.Model):
-    """The properties associated with a Stream Analytics cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar created_date: The date this cluster was created.
-    :vartype created_date: ~datetime.datetime
-    :ivar cluster_id: Unique identifier for the cluster.
-    :vartype cluster_id: str
-    :ivar provisioning_state: The status of the cluster provisioning. The three terminal states
-     are: Succeeded, Failed and Canceled. Possible values include: "Succeeded", "Failed",
-     "Canceled", "InProgress".
-    :vartype provisioning_state: str or
-     ~stream_analytics_management_client.models.ClusterProvisioningState
-    :ivar capacity_allocated: Represents the number of streaming units currently being used on the
-     cluster.
-    :vartype capacity_allocated: int
-    :ivar capacity_assigned: Represents the sum of the SUs of all streaming jobs associated with
-     the cluster. If all of the jobs were running, this would be the capacity allocated.
-    :vartype capacity_assigned: int
-    """
-
-    _validation = {
-        'created_date': {'readonly': True},
-        'cluster_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'capacity_allocated': {'readonly': True},
-        'capacity_assigned': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'created_date': {'key': 'createdDate', 'type': 'iso-8601'},
-        'cluster_id': {'key': 'clusterId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'capacity_allocated': {'key': 'capacityAllocated', 'type': 'int'},
-        'capacity_assigned': {'key': 'capacityAssigned', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ClusterProperties, self).__init__(**kwargs)
-        self.created_date = None
-        self.cluster_id = None
-        self.provisioning_state = None
-        self.capacity_allocated = None
-        self.capacity_assigned = None
-
-
 class ClusterSku(msrest.serialization.Model):
     """The SKU of the cluster. This determines the size/capacity of the cluster. Required on PUT (CreateOrUpdate) requests.
 
-    :param name: Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests.
+    :ivar name: Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests.
      Possible values include: "Default".
-    :type name: str or ~stream_analytics_management_client.models.ClusterSkuName
-    :param capacity: Denotes the number of streaming units the cluster can support. Valid values
-     for this property are multiples of 36 with a minimum value of 36 and maximum value of 216.
-     Required on PUT (CreateOrUpdate) requests.
-    :type capacity: int
+    :vartype name: str or ~stream_analytics_management_client.models.ClusterSkuName
+    :ivar capacity: Denotes the number of streaming units the cluster can support. Valid values for
+     this property are multiples of 36 with a minimum value of 36 and maximum value of 216. Required
+     on PUT (CreateOrUpdate) requests.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -2234,6 +2372,15 @@ class ClusterSku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate)
+         requests. Possible values include: "Default".
+        :paramtype name: str or ~stream_analytics_management_client.models.ClusterSkuName
+        :keyword capacity: Denotes the number of streaming units the cluster can support. Valid values
+         for this property are multiples of 36 with a minimum value of 36 and maximum value of 216.
+         Required on PUT (CreateOrUpdate) requests.
+        :paramtype capacity: int
+        """
         super(ClusterSku, self).__init__(**kwargs)
         self.name = name
         self.capacity = capacity
@@ -2244,8 +2391,9 @@ class Compression(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required.
-    :type type: str
+    :ivar type: Required. Indicates the type of compression that the input uses. Required on PUT
+     (CreateOrReplace) requests. Possible values include: "None", "GZip", "Deflate".
+    :vartype type: str or ~stream_analytics_management_client.models.CompressionType
     """
 
     _validation = {
@@ -2259,96 +2407,16 @@ class Compression(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: str,
+        type: Union[str, "CompressionType"],
         **kwargs
     ):
+        """
+        :keyword type: Required. Indicates the type of compression that the input uses. Required on PUT
+         (CreateOrReplace) requests. Possible values include: "None", "GZip", "Deflate".
+        :paramtype type: str or ~stream_analytics_management_client.models.CompressionType
+        """
         super(Compression, self).__init__(**kwargs)
         self.type = type
-
-
-class CSharpFunctionBinding(FunctionBinding):
-    """The binding to a CSharp function.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Indicates the function binding type.Constant filled by server.
-    :type type: str
-    :param script: The Csharp code containing a single function definition.
-    :type script: str
-    :param dll_path: The Csharp code containing a single function definition.
-    :type dll_path: str
-    :param class_property: The Csharp code containing a single function definition.
-    :type class_property: str
-    :param method: The Csharp code containing a single function definition.
-    :type method: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'script': {'key': 'properties.script', 'type': 'str'},
-        'dll_path': {'key': 'properties.dllPath', 'type': 'str'},
-        'class_property': {'key': 'properties.class', 'type': 'str'},
-        'method': {'key': 'properties.method', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        script: Optional[str] = None,
-        dll_path: Optional[str] = None,
-        class_property: Optional[str] = None,
-        method: Optional[str] = None,
-        **kwargs
-    ):
-        super(CSharpFunctionBinding, self).__init__(**kwargs)
-        self.type = 'Microsoft.StreamAnalytics/CLRUdf'  # type: str
-        self.script = script
-        self.dll_path = dll_path
-        self.class_property = class_property
-        self.method = method
-
-
-class CSharpFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
-    """The parameters needed to retrieve the default function definition for a CSharp function.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param binding_type: Required. Indicates the function binding type.Constant filled by server.
-    :type binding_type: str
-    :param script: The CSharp code containing a single function definition.
-    :type script: str
-    :ivar udf_type: The function type. Default value: "Scalar".
-    :vartype udf_type: str
-    """
-
-    _validation = {
-        'binding_type': {'required': True},
-        'udf_type': {'constant': True},
-    }
-
-    _attribute_map = {
-        'binding_type': {'key': 'bindingType', 'type': 'str'},
-        'script': {'key': 'bindingRetrievalProperties.script', 'type': 'str'},
-        'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
-    }
-
-    udf_type = "Scalar"
-
-    def __init__(
-        self,
-        *,
-        script: Optional[str] = None,
-        **kwargs
-    ):
-        super(CSharpFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
-        self.binding_type = 'Microsoft.StreamAnalytics/CLRUdf'  # type: str
-        self.script = script
 
 
 class CsvSerialization(Serialization):
@@ -2356,19 +2424,20 @@ class CsvSerialization(Serialization):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of serialization that the input or output uses.
-     Required on PUT (CreateOrReplace) requests.Constant filled by server.  Possible values include:
-     "Csv", "Avro", "Json", "CustomClr", "Parquet".
-    :type type: str or ~stream_analytics_management_client.models.EventSerializationType
-    :param field_delimiter: Specifies the delimiter that will be used to separate comma-separated
-     value (CSV) records. See https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-
-     analytics-input or https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-
-     output for a list of supported values. Required on PUT (CreateOrReplace) requests.
-    :type field_delimiter: str
-    :param encoding: Specifies the encoding of the incoming data in the case of input and the
+    :ivar type: Required. Indicates the type of serialization that the input or output uses.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server. Possible values include:
+     "Csv", "Avro", "Json", "Parquet".
+    :vartype type: str or ~stream_analytics_management_client.models.EventSerializationType
+    :ivar field_delimiter: Specifies the delimiter that will be used to separate comma-separated
+     value (CSV) records. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a list of
+     supported values. Required on PUT (CreateOrReplace) requests.
+    :vartype field_delimiter: str
+    :ivar encoding: Specifies the encoding of the incoming data in the case of input and the
      encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
      Possible values include: "UTF8".
-    :type encoding: str or ~stream_analytics_management_client.models.Encoding
+    :vartype encoding: str or ~stream_analytics_management_client.models.Encoding
     """
 
     _validation = {
@@ -2388,48 +2457,22 @@ class CsvSerialization(Serialization):
         encoding: Optional[Union[str, "Encoding"]] = None,
         **kwargs
     ):
+        """
+        :keyword field_delimiter: Specifies the delimiter that will be used to separate comma-separated
+         value (CSV) records. See
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a list of
+         supported values. Required on PUT (CreateOrReplace) requests.
+        :paramtype field_delimiter: str
+        :keyword encoding: Specifies the encoding of the incoming data in the case of input and the
+         encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
+         Possible values include: "UTF8".
+        :paramtype encoding: str or ~stream_analytics_management_client.models.Encoding
+        """
         super(CsvSerialization, self).__init__(**kwargs)
         self.type = 'Csv'  # type: str
         self.field_delimiter = field_delimiter
         self.encoding = encoding
-
-
-class CustomClrSerialization(Serialization):
-    """Describes how data from an input is serialized or how data is serialized when written to an output in custom format.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Indicates the type of serialization that the input or output uses.
-     Required on PUT (CreateOrReplace) requests.Constant filled by server.  Possible values include:
-     "Csv", "Avro", "Json", "CustomClr", "Parquet".
-    :type type: str or ~stream_analytics_management_client.models.EventSerializationType
-    :param serialization_dll_path: The serialization library path.
-    :type serialization_dll_path: str
-    :param serialization_class_name: The serialization class name.
-    :type serialization_class_name: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'serialization_dll_path': {'key': 'properties.serializationDllPath', 'type': 'str'},
-        'serialization_class_name': {'key': 'properties.serializationClassName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        serialization_dll_path: Optional[str] = None,
-        serialization_class_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(CustomClrSerialization, self).__init__(**kwargs)
-        self.type = 'CustomClr'  # type: str
-        self.serialization_dll_path = serialization_dll_path
-        self.serialization_class_name = serialization_class_name
 
 
 class DiagnosticCondition(msrest.serialization.Model):
@@ -2463,6 +2506,8 @@ class DiagnosticCondition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DiagnosticCondition, self).__init__(**kwargs)
         self.since = None
         self.code = None
@@ -2491,6 +2536,8 @@ class Diagnostics(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Diagnostics, self).__init__(**kwargs)
         self.conditions = None
 
@@ -2500,31 +2547,31 @@ class DocumentDbOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param account_id: The DocumentDB account name or ID. Required on PUT (CreateOrReplace)
+    :vartype type: str
+    :ivar account_id: The DocumentDB account name or ID. Required on PUT (CreateOrReplace)
      requests.
-    :type account_id: str
-    :param account_key: The account key for the DocumentDB account. Required on PUT
+    :vartype account_id: str
+    :ivar account_key: The account key for the DocumentDB account. Required on PUT
      (CreateOrReplace) requests.
-    :type account_key: str
-    :param database: The name of the DocumentDB database. Required on PUT (CreateOrReplace)
+    :vartype account_key: str
+    :ivar database: The name of the DocumentDB database. Required on PUT (CreateOrReplace)
      requests.
-    :type database: str
-    :param collection_name_pattern: The collection name pattern for the collections to be used. The
+    :vartype database: str
+    :ivar collection_name_pattern: The collection name pattern for the collections to be used. The
      collection name format can be constructed using the optional {partition} token, where
-     partitions start from 0. See the DocumentDB section of https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for more information. Required on PUT
-     (CreateOrReplace) requests.
-    :type collection_name_pattern: str
-    :param partition_key: The name of the field in output events used to specify the key for
+     partitions start from 0. See the DocumentDB section of
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for more
+     information. Required on PUT (CreateOrReplace) requests.
+    :vartype collection_name_pattern: str
+    :ivar partition_key: The name of the field in output events used to specify the key for
      partitioning output across collections. If 'collectionNamePattern' contains the {partition}
      token, this property is required to be specified.
-    :type partition_key: str
-    :param document_id: The name of the field in output events used to specify the primary key
-     which insert or update operations are based on.
-    :type document_id: str
+    :vartype partition_key: str
+    :ivar document_id: The name of the field in output events used to specify the primary key which
+     insert or update operations are based on.
+    :vartype document_id: str
     """
 
     _validation = {
@@ -2552,6 +2599,30 @@ class DocumentDbOutputDataSource(OutputDataSource):
         document_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword account_id: The DocumentDB account name or ID. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype account_id: str
+        :keyword account_key: The account key for the DocumentDB account. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype account_key: str
+        :keyword database: The name of the DocumentDB database. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype database: str
+        :keyword collection_name_pattern: The collection name pattern for the collections to be used.
+         The collection name format can be constructed using the optional {partition} token, where
+         partitions start from 0. See the DocumentDB section of
+         https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for more
+         information. Required on PUT (CreateOrReplace) requests.
+        :paramtype collection_name_pattern: str
+        :keyword partition_key: The name of the field in output events used to specify the key for
+         partitioning output across collections. If 'collectionNamePattern' contains the {partition}
+         token, this property is required to be specified.
+        :paramtype partition_key: str
+        :keyword document_id: The name of the field in output events used to specify the primary key
+         which insert or update operations are based on.
+        :paramtype document_id: str
+        """
         super(DocumentDbOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Storage/DocumentDB'  # type: str
         self.account_id = account_id
@@ -2565,35 +2636,78 @@ class DocumentDbOutputDataSource(OutputDataSource):
 class Error(msrest.serialization.Model):
     """Common error representation.
 
-    :param error: Error definition properties.
-    :type error: ~stream_analytics_management_client.models.ErrorAutoGenerated
+    :ivar error: Error definition properties.
+    :vartype error: ~stream_analytics_management_client.models.ErrorError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorAutoGenerated'},
+        'error': {'key': 'error', 'type': 'ErrorError'},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["ErrorAutoGenerated"] = None,
+        error: Optional["ErrorError"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Error definition properties.
+        :paramtype error: ~stream_analytics_management_client.models.ErrorError
+        """
         super(Error, self).__init__(**kwargs)
         self.error = error
 
 
-class ErrorAutoGenerated(msrest.serialization.Model):
+class ErrorDetails(msrest.serialization.Model):
+    """Common error details representation.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar target: Error target.
+    :vartype target: str
+    :ivar message: Error message.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        target: Optional[str] = None,
+        message: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword target: Error target.
+        :paramtype target: str
+        :keyword message: Error message.
+        :paramtype message: str
+        """
+        super(ErrorDetails, self).__init__(**kwargs)
+        self.code = code
+        self.target = target
+        self.message = message
+
+
+class ErrorError(msrest.serialization.Model):
     """Error definition properties.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message.
-    :type message: str
-    :param target: Error target.
-    :type target: str
-    :param details: Error details.
-    :type details: list[~stream_analytics_management_client.models.ErrorDetails]
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar target: Error target.
+    :vartype target: str
+    :ivar details: Error details.
+    :vartype details: list[~stream_analytics_management_client.models.ErrorDetails]
     """
 
     _attribute_map = {
@@ -2612,42 +2726,21 @@ class ErrorAutoGenerated(msrest.serialization.Model):
         details: Optional[List["ErrorDetails"]] = None,
         **kwargs
     ):
-        super(ErrorAutoGenerated, self).__init__(**kwargs)
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message.
+        :paramtype message: str
+        :keyword target: Error target.
+        :paramtype target: str
+        :keyword details: Error details.
+        :paramtype details: list[~stream_analytics_management_client.models.ErrorDetails]
+        """
+        super(ErrorError, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
-
-
-class ErrorDetails(msrest.serialization.Model):
-    """Common error details representation.
-
-    :param code: Error code.
-    :type code: str
-    :param target: Error target.
-    :type target: str
-    :param message: Error message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        target: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = code
-        self.target = target
-        self.message = message
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -2675,6 +2768,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -2683,18 +2778,19 @@ class ErrorResponse(msrest.serialization.Model):
 class ServiceBusDataSourceProperties(msrest.serialization.Model):
     """The common properties that are associated with Service Bus data sources (Queues, Topics, Event Hubs, etc.).
 
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -2713,6 +2809,21 @@ class ServiceBusDataSourceProperties(msrest.serialization.Model):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(ServiceBusDataSourceProperties, self).__init__(**kwargs)
         self.service_bus_namespace = service_bus_namespace
         self.shared_access_policy_name = shared_access_policy_name
@@ -2723,20 +2834,21 @@ class ServiceBusDataSourceProperties(msrest.serialization.Model):
 class EventHubDataSourceProperties(ServiceBusDataSourceProperties):
     """The common properties that are associated with Event Hub data sources.
 
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
     """
 
     _attribute_map = {
@@ -2757,6 +2869,23 @@ class EventHubDataSourceProperties(ServiceBusDataSourceProperties):
         event_hub_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        """
         super(EventHubDataSourceProperties, self).__init__(service_bus_namespace=service_bus_namespace, shared_access_policy_name=shared_access_policy_name, shared_access_policy_key=shared_access_policy_key, authentication_mode=authentication_mode, **kwargs)
         self.event_hub_name = event_hub_name
 
@@ -2766,28 +2895,29 @@ class EventHubOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :vartype type: str
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
-    :param partition_key: The key/column that is used to determine to which partition to send event
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
+    :ivar partition_key: The key/column that is used to determine to which partition to send event
      data.
-    :type partition_key: str
-    :param property_columns:
-    :type property_columns: list[str]
+    :vartype partition_key: str
+    :ivar property_columns: The properties associated with this Event Hub output.
+    :vartype property_columns: list[str]
     """
 
     _validation = {
@@ -2817,6 +2947,28 @@ class EventHubOutputDataSource(OutputDataSource):
         property_columns: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        :keyword partition_key: The key/column that is used to determine to which partition to send
+         event data.
+        :paramtype partition_key: str
+        :keyword property_columns: The properties associated with this Event Hub output.
+        :paramtype property_columns: list[str]
+        """
         super(EventHubOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.ServiceBus/EventHub'  # type: str
         self.service_bus_namespace = service_bus_namespace
@@ -2831,25 +2983,26 @@ class EventHubOutputDataSource(OutputDataSource):
 class EventHubOutputDataSourceProperties(EventHubDataSourceProperties):
     """The properties that are associated with an Event Hub output.
 
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
-    :param partition_key: The key/column that is used to determine to which partition to send event
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
+    :ivar partition_key: The key/column that is used to determine to which partition to send event
      data.
-    :type partition_key: str
-    :param property_columns:
-    :type property_columns: list[str]
+    :vartype partition_key: str
+    :ivar property_columns: The properties associated with this Event Hub output.
+    :vartype property_columns: list[str]
     """
 
     _attribute_map = {
@@ -2874,6 +3027,28 @@ class EventHubOutputDataSourceProperties(EventHubDataSourceProperties):
         property_columns: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        :keyword partition_key: The key/column that is used to determine to which partition to send
+         event data.
+        :paramtype partition_key: str
+        :keyword property_columns: The properties associated with this Event Hub output.
+        :paramtype property_columns: list[str]
+        """
         super(EventHubOutputDataSourceProperties, self).__init__(service_bus_namespace=service_bus_namespace, shared_access_policy_name=shared_access_policy_name, shared_access_policy_key=shared_access_policy_key, authentication_mode=authentication_mode, event_hub_name=event_hub_name, **kwargs)
         self.partition_key = partition_key
         self.property_columns = property_columns
@@ -2884,28 +3059,29 @@ class EventHubStreamInputDataSource(StreamInputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing stream data. Required
+    :ivar type: Required. Indicates the type of input data source containing stream data. Required
      on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :vartype type: str
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
-    :param consumer_group_name: The name of an Event Hub Consumer Group that should be used to read
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: The name of an Event Hub Consumer Group that should be used to read
      events from the Event Hub. Specifying distinct consumer group names for multiple inputs allows
      each of those inputs to receive the same events from the Event Hub. If not specified, the input
      uses the Event Hub’s default consumer group.
-    :type consumer_group_name: str
+    :vartype consumer_group_name: str
     """
 
     _validation = {
@@ -2933,6 +3109,28 @@ class EventHubStreamInputDataSource(StreamInputDataSource):
         consumer_group_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: The name of an Event Hub Consumer Group that should be used to
+         read events from the Event Hub. Specifying distinct consumer group names for multiple inputs
+         allows each of those inputs to receive the same events from the Event Hub. If not specified,
+         the input uses the Event Hub’s default consumer group.
+        :paramtype consumer_group_name: str
+        """
         super(EventHubStreamInputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.ServiceBus/EventHub'  # type: str
         self.service_bus_namespace = service_bus_namespace
@@ -2946,25 +3144,26 @@ class EventHubStreamInputDataSource(StreamInputDataSource):
 class EventHubStreamInputDataSourceProperties(EventHubDataSourceProperties):
     """The properties that are associated with a Event Hub input containing stream data.
 
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
-    :param consumer_group_name: The name of an Event Hub Consumer Group that should be used to read
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: The name of an Event Hub Consumer Group that should be used to read
      events from the Event Hub. Specifying distinct consumer group names for multiple inputs allows
      each of those inputs to receive the same events from the Event Hub. If not specified, the input
      uses the Event Hub’s default consumer group.
-    :type consumer_group_name: str
+    :vartype consumer_group_name: str
     """
 
     _attribute_map = {
@@ -2987,6 +3186,28 @@ class EventHubStreamInputDataSourceProperties(EventHubDataSourceProperties):
         consumer_group_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: The name of an Event Hub Consumer Group that should be used to
+         read events from the Event Hub. Specifying distinct consumer group names for multiple inputs
+         allows each of those inputs to receive the same events from the Event Hub. If not specified,
+         the input uses the Event Hub’s default consumer group.
+        :paramtype consumer_group_name: str
+        """
         super(EventHubStreamInputDataSourceProperties, self).__init__(service_bus_namespace=service_bus_namespace, shared_access_policy_name=shared_access_policy_name, shared_access_policy_key=shared_access_policy_key, authentication_mode=authentication_mode, event_hub_name=event_hub_name, **kwargs)
         self.consumer_group_name = consumer_group_name
 
@@ -2996,28 +3217,29 @@ class EventHubV2OutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :vartype type: str
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
-    :param partition_key: The key/column that is used to determine to which partition to send event
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
+    :ivar partition_key: The key/column that is used to determine to which partition to send event
      data.
-    :type partition_key: str
-    :param property_columns:
-    :type property_columns: list[str]
+    :vartype partition_key: str
+    :ivar property_columns: The properties associated with this Event Hub output.
+    :vartype property_columns: list[str]
     """
 
     _validation = {
@@ -3047,6 +3269,28 @@ class EventHubV2OutputDataSource(OutputDataSource):
         property_columns: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        :keyword partition_key: The key/column that is used to determine to which partition to send
+         event data.
+        :paramtype partition_key: str
+        :keyword property_columns: The properties associated with this Event Hub output.
+        :paramtype property_columns: list[str]
+        """
         super(EventHubV2OutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.EventHub/EventHub'  # type: str
         self.service_bus_namespace = service_bus_namespace
@@ -3063,28 +3307,29 @@ class EventHubV2StreamInputDataSource(StreamInputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing stream data. Required
+    :ivar type: Required. Indicates the type of input data source containing stream data. Required
      on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :vartype type: str
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
-    :type event_hub_name: str
-    :param consumer_group_name: The name of an Event Hub Consumer Group that should be used to read
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+    :vartype event_hub_name: str
+    :ivar consumer_group_name: The name of an Event Hub Consumer Group that should be used to read
      events from the Event Hub. Specifying distinct consumer group names for multiple inputs allows
      each of those inputs to receive the same events from the Event Hub. If not specified, the input
      uses the Event Hub’s default consumer group.
-    :type consumer_group_name: str
+    :vartype consumer_group_name: str
     """
 
     _validation = {
@@ -3112,6 +3357,28 @@ class EventHubV2StreamInputDataSource(StreamInputDataSource):
         consumer_group_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword event_hub_name: The name of the Event Hub. Required on PUT (CreateOrReplace) requests.
+        :paramtype event_hub_name: str
+        :keyword consumer_group_name: The name of an Event Hub Consumer Group that should be used to
+         read events from the Event Hub. Specifying distinct consumer group names for multiple inputs
+         allows each of those inputs to receive the same events from the Event Hub. If not specified,
+         the input uses the Event Hub’s default consumer group.
+        :paramtype consumer_group_name: str
+        """
         super(EventHubV2StreamInputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.EventHub/EventHub'  # type: str
         self.service_bus_namespace = service_bus_namespace
@@ -3122,37 +3389,6 @@ class EventHubV2StreamInputDataSource(StreamInputDataSource):
         self.consumer_group_name = consumer_group_name
 
 
-class External(msrest.serialization.Model):
-    """The storage account where the custom code artifacts are located.
-
-    :param storage_account: The properties that are associated with an Azure Storage account.
-    :type storage_account: ~stream_analytics_management_client.models.StorageAccount
-    :param container:
-    :type container: str
-    :param path:
-    :type path: str
-    """
-
-    _attribute_map = {
-        'storage_account': {'key': 'storageAccount', 'type': 'StorageAccount'},
-        'container': {'key': 'container', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        storage_account: Optional["StorageAccount"] = None,
-        container: Optional[str] = None,
-        path: Optional[str] = None,
-        **kwargs
-    ):
-        super(External, self).__init__(**kwargs)
-        self.storage_account = storage_account
-        self.container = container
-        self.path = path
-
-
 class SubResource(msrest.serialization.Model):
     """The base sub-resource model definition.
 
@@ -3160,8 +3396,8 @@ class SubResource(msrest.serialization.Model):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
     """
@@ -3183,6 +3419,10 @@ class SubResource(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        """
         super(SubResource, self).__init__(**kwargs)
         self.id = None
         self.name = name
@@ -3196,12 +3436,12 @@ class Function(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The properties that are associated with a function.
-    :type properties: ~stream_analytics_management_client.models.FunctionProperties
+    :ivar properties: The properties that are associated with a function.
+    :vartype properties: ~stream_analytics_management_client.models.FunctionProperties
     """
 
     _validation = {
@@ -3223,6 +3463,12 @@ class Function(SubResource):
         properties: Optional["FunctionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        :keyword properties: The properties that are associated with a function.
+        :paramtype properties: ~stream_analytics_management_client.models.FunctionProperties
+        """
         super(Function, self).__init__(name=name, **kwargs)
         self.properties = properties
 
@@ -3230,13 +3476,13 @@ class Function(SubResource):
 class FunctionInput(msrest.serialization.Model):
     """Describes one input parameter of a function.
 
-    :param data_type: The (Azure Stream Analytics supported) data type of the function input
+    :ivar data_type: The (Azure Stream Analytics supported) data type of the function input
      parameter. A list of valid Azure Stream Analytics data types are described at
      https://msdn.microsoft.com/en-us/library/azure/dn835065.aspx.
-    :type data_type: str
-    :param is_configuration_parameter: A flag indicating if the parameter is a configuration
+    :vartype data_type: str
+    :ivar is_configuration_parameter: A flag indicating if the parameter is a configuration
      parameter. True if this input parameter is expected to be a constant. Default is false.
-    :type is_configuration_parameter: bool
+    :vartype is_configuration_parameter: bool
     """
 
     _attribute_map = {
@@ -3251,6 +3497,15 @@ class FunctionInput(msrest.serialization.Model):
         is_configuration_parameter: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword data_type: The (Azure Stream Analytics supported) data type of the function input
+         parameter. A list of valid Azure Stream Analytics data types are described at
+         https://msdn.microsoft.com/en-us/library/azure/dn835065.aspx.
+        :paramtype data_type: str
+        :keyword is_configuration_parameter: A flag indicating if the parameter is a configuration
+         parameter. True if this input parameter is expected to be a constant. Default is false.
+        :paramtype is_configuration_parameter: bool
+        """
         super(FunctionInput, self).__init__(**kwargs)
         self.data_type = data_type
         self.is_configuration_parameter = is_configuration_parameter
@@ -3281,6 +3536,8 @@ class FunctionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FunctionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3289,10 +3546,10 @@ class FunctionListResult(msrest.serialization.Model):
 class FunctionOutput(msrest.serialization.Model):
     """Describes the output of a function.
 
-    :param data_type: The (Azure Stream Analytics supported) data type of the function output. A
-     list of valid Azure Stream Analytics data types are described at https://msdn.microsoft.com/en-
-     us/library/azure/dn835065.aspx.
-    :type data_type: str
+    :ivar data_type: The (Azure Stream Analytics supported) data type of the function output. A
+     list of valid Azure Stream Analytics data types are described at
+     https://msdn.microsoft.com/en-us/library/azure/dn835065.aspx.
+    :vartype data_type: str
     """
 
     _attribute_map = {
@@ -3305,19 +3562,68 @@ class FunctionOutput(msrest.serialization.Model):
         data_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword data_type: The (Azure Stream Analytics supported) data type of the function output. A
+         list of valid Azure Stream Analytics data types are described at
+         https://msdn.microsoft.com/en-us/library/azure/dn835065.aspx.
+        :paramtype data_type: str
+        """
         super(FunctionOutput, self).__init__(**kwargs)
         self.data_type = data_type
+
+
+class FunctionProperties(msrest.serialization.Model):
+    """The properties that are associated with a function.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ScalarFunctionProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Indicates the type of function.Constant filled by server.
+    :vartype type: str
+    :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
+     to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Scalar': 'ScalarFunctionProperties'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(FunctionProperties, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+        self.etag = None
 
 
 class Identity(msrest.serialization.Model):
     """Describes how identity is verified.
 
-    :param tenant_id:
-    :type tenant_id: str
-    :param principal_id:
-    :type principal_id: str
-    :param type:
-    :type type: str
+    :ivar tenant_id: The identity tenantId.
+    :vartype tenant_id: str
+    :ivar principal_id: The identity principal ID.
+    :vartype principal_id: str
+    :ivar type: The identity type.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -3334,6 +3640,14 @@ class Identity(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tenant_id: The identity tenantId.
+        :paramtype tenant_id: str
+        :keyword principal_id: The identity principal ID.
+        :paramtype principal_id: str
+        :keyword type: The identity type.
+        :paramtype type: str
+        """
         super(Identity, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.principal_id = principal_id
@@ -3347,13 +3661,13 @@ class Input(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The properties that are associated with an input. Required on PUT
+    :ivar properties: The properties that are associated with an input. Required on PUT
      (CreateOrReplace) requests.
-    :type properties: ~stream_analytics_management_client.models.InputProperties
+    :vartype properties: ~stream_analytics_management_client.models.InputProperties
     """
 
     _validation = {
@@ -3375,6 +3689,13 @@ class Input(SubResource):
         properties: Optional["InputProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        :keyword properties: The properties that are associated with an input. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype properties: ~stream_analytics_management_client.models.InputProperties
+        """
         super(Input, self).__init__(name=name, **kwargs)
         self.properties = properties
 
@@ -3404,6 +3725,8 @@ class InputListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(InputListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3419,12 +3742,12 @@ class InputProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates whether the input is a source of reference data or stream
-     data. Required on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param serialization: Describes how data from an input is serialized or how data is serialized
+    :ivar type: Required. Indicates whether the input is a source of reference data or stream data.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server.
+    :vartype type: str
+    :ivar serialization: Describes how data from an input is serialized or how data is serialized
      when written to an output. Required on PUT (CreateOrReplace) requests.
-    :type serialization: ~stream_analytics_management_client.models.Serialization
+    :vartype serialization: ~stream_analytics_management_client.models.Serialization
     :ivar diagnostics: Describes conditions applicable to the Input, Output, or the job overall,
      that warrant customer attention.
     :vartype diagnostics: ~stream_analytics_management_client.models.Diagnostics
@@ -3432,11 +3755,11 @@ class InputProperties(msrest.serialization.Model):
      detect whether the resource has changed between requests. You can also use it in the If-Match
      or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
-    :param compression: Describes how input data is compressed.
-    :type compression: ~stream_analytics_management_client.models.Compression
-    :param partition_key: partitionKey Describes a key in the input data which is used for
+    :ivar compression: Describes how input data is compressed.
+    :vartype compression: ~stream_analytics_management_client.models.Compression
+    :ivar partition_key: partitionKey Describes a key in the input data which is used for
      partitioning the input data.
-    :type partition_key: str
+    :vartype partition_key: str
     """
 
     _validation = {
@@ -3466,6 +3789,16 @@ class InputProperties(msrest.serialization.Model):
         partition_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword serialization: Describes how data from an input is serialized or how data is
+         serialized when written to an output. Required on PUT (CreateOrReplace) requests.
+        :paramtype serialization: ~stream_analytics_management_client.models.Serialization
+        :keyword compression: Describes how input data is compressed.
+        :paramtype compression: ~stream_analytics_management_client.models.Compression
+        :keyword partition_key: partitionKey Describes a key in the input data which is used for
+         partitioning the input data.
+        :paramtype partition_key: str
+        """
         super(InputProperties, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.serialization = serialization
@@ -3480,25 +3813,25 @@ class IoTHubStreamInputDataSource(StreamInputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of input data source containing stream data. Required
+    :ivar type: Required. Indicates the type of input data source containing stream data. Required
      on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param iot_hub_namespace: The name or the URI of the IoT Hub. Required on PUT (CreateOrReplace)
+    :vartype type: str
+    :ivar iot_hub_namespace: The name or the URI of the IoT Hub. Required on PUT (CreateOrReplace)
      requests.
-    :type iot_hub_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the IoT Hub. This policy
+    :vartype iot_hub_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the IoT Hub. This policy
      must contain at least the Service connect permission. Required on PUT (CreateOrReplace)
      requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param consumer_group_name: The name of an IoT Hub Consumer Group that should be used to read
+    :vartype shared_access_policy_key: str
+    :ivar consumer_group_name: The name of an IoT Hub Consumer Group that should be used to read
      events from the IoT Hub. If not specified, the input uses the Iot Hub’s default consumer group.
-    :type consumer_group_name: str
-    :param endpoint: The IoT Hub endpoint to connect to (ie. messages/events,
+    :vartype consumer_group_name: str
+    :ivar endpoint: The IoT Hub endpoint to connect to (ie. messages/events,
      messages/operationsMonitoringEvents, etc.).
-    :type endpoint: str
+    :vartype endpoint: str
     """
 
     _validation = {
@@ -3524,6 +3857,24 @@ class IoTHubStreamInputDataSource(StreamInputDataSource):
         endpoint: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword iot_hub_namespace: The name or the URI of the IoT Hub. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype iot_hub_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the IoT Hub. This policy
+         must contain at least the Service connect permission. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword consumer_group_name: The name of an IoT Hub Consumer Group that should be used to read
+         events from the IoT Hub. If not specified, the input uses the Iot Hub’s default consumer group.
+        :paramtype consumer_group_name: str
+        :keyword endpoint: The IoT Hub endpoint to connect to (ie. messages/events,
+         messages/operationsMonitoringEvents, etc.).
+        :paramtype endpoint: str
+        """
         super(IoTHubStreamInputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.Devices/IotHubs'  # type: str
         self.iot_hub_namespace = iot_hub_namespace
@@ -3538,11 +3889,11 @@ class JavaScriptFunctionBinding(FunctionBinding):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the function binding type.Constant filled by server.
-    :type type: str
-    :param script: The JavaScript code containing a single function definition. For example:
+    :ivar type: Required. Indicates the function binding type.Constant filled by server.
+    :vartype type: str
+    :ivar script: The JavaScript code containing a single function definition. For example:
      'function (x, y) { return x + y; }'.
-    :type script: str
+    :vartype script: str
     """
 
     _validation = {
@@ -3560,6 +3911,11 @@ class JavaScriptFunctionBinding(FunctionBinding):
         script: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword script: The JavaScript code containing a single function definition. For example:
+         'function (x, y) { return x + y; }'.
+        :paramtype script: str
+        """
         super(JavaScriptFunctionBinding, self).__init__(**kwargs)
         self.type = 'Microsoft.StreamAnalytics/JavascriptUdf'  # type: str
         self.script = script
@@ -3568,22 +3924,20 @@ class JavaScriptFunctionBinding(FunctionBinding):
 class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
     """The parameters needed to retrieve the default function definition for a JavaScript function.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param binding_type: Required. Indicates the function binding type.Constant filled by server.
-    :type binding_type: str
-    :param script: The JavaScript code containing a single function definition. For example:
+    :ivar binding_type: Required. Indicates the function binding type.Constant filled by server.
+    :vartype binding_type: str
+    :ivar script: The JavaScript code containing a single function definition. For example:
      'function (x, y) { return x + y; }'.
-    :type script: str
-    :ivar udf_type: The function type. Default value: "Scalar".
+    :vartype script: str
+    :ivar udf_type: The function type. The only acceptable values to pass in are None and "Scalar".
+     The default value is None.
     :vartype udf_type: str
     """
 
     _validation = {
         'binding_type': {'required': True},
-        'udf_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -3592,28 +3946,36 @@ class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefa
         'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
     }
 
-    udf_type = "Scalar"
-
     def __init__(
         self,
         *,
         script: Optional[str] = None,
+        udf_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword script: The JavaScript code containing a single function definition. For example:
+         'function (x, y) { return x + y; }'.
+        :paramtype script: str
+        :keyword udf_type: The function type. The only acceptable values to pass in are None and
+         "Scalar". The default value is None.
+        :paramtype udf_type: str
+        """
         super(JavaScriptFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
         self.binding_type = 'Microsoft.StreamAnalytics/JavascriptUdf'  # type: str
         self.script = script
+        self.udf_type = udf_type
 
 
 class StorageAccount(msrest.serialization.Model):
     """The properties that are associated with an Azure Storage account.
 
-    :param account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
+    :ivar account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
      requests.
-    :type account_name: str
-    :param account_key: The account key for the Azure Storage account. Required on PUT
+    :vartype account_name: str
+    :ivar account_key: The account key for the Azure Storage account. Required on PUT
      (CreateOrReplace) requests.
-    :type account_key: str
+    :vartype account_key: str
     """
 
     _attribute_map = {
@@ -3628,6 +3990,14 @@ class StorageAccount(msrest.serialization.Model):
         account_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype account_name: str
+        :keyword account_key: The account key for the Azure Storage account. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype account_key: str
+        """
         super(StorageAccount, self).__init__(**kwargs)
         self.account_name = account_name
         self.account_key = account_key
@@ -3636,15 +4006,16 @@ class StorageAccount(msrest.serialization.Model):
 class JobStorageAccount(StorageAccount):
     """The properties that are associated with an Azure Storage account with MSI.
 
-    :param account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
+    :ivar account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
      requests.
-    :type account_name: str
-    :param account_key: The account key for the Azure Storage account. Required on PUT
+    :vartype account_name: str
+    :ivar account_key: The account key for the Azure Storage account. Required on PUT
      (CreateOrReplace) requests.
-    :type account_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype account_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -3661,6 +4032,18 @@ class JobStorageAccount(StorageAccount):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword account_name: The name of the Azure Storage account. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype account_name: str
+        :keyword account_key: The account key for the Azure Storage account. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype account_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(JobStorageAccount, self).__init__(account_name=account_name, account_key=account_key, **kwargs)
         self.authentication_mode = authentication_mode
 
@@ -3670,21 +4053,22 @@ class JsonSerialization(Serialization):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of serialization that the input or output uses.
-     Required on PUT (CreateOrReplace) requests.Constant filled by server.  Possible values include:
-     "Csv", "Avro", "Json", "CustomClr", "Parquet".
-    :type type: str or ~stream_analytics_management_client.models.EventSerializationType
-    :param encoding: Specifies the encoding of the incoming data in the case of input and the
+    :ivar type: Required. Indicates the type of serialization that the input or output uses.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server. Possible values include:
+     "Csv", "Avro", "Json", "Parquet".
+    :vartype type: str or ~stream_analytics_management_client.models.EventSerializationType
+    :ivar encoding: Specifies the encoding of the incoming data in the case of input and the
      encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
      Possible values include: "UTF8".
-    :type encoding: str or ~stream_analytics_management_client.models.Encoding
-    :param format: This property only applies to JSON serialization of outputs only. It is not
+    :vartype encoding: str or ~stream_analytics_management_client.models.Encoding
+    :ivar format: This property only applies to JSON serialization of outputs only. It is not
      applicable to inputs. This property specifies the format of the JSON the output will be written
      in. The currently supported values are 'lineSeparated' indicating the output will be formatted
      by having each JSON object separated by a new line and 'array' indicating the output will be
      formatted as an array of JSON objects. Default value is 'lineSeparated' if left null. Possible
      values include: "LineSeparated", "Array".
-    :type format: str or ~stream_analytics_management_client.models.JsonOutputSerializationFormat
+    :vartype format: str or
+     ~stream_analytics_management_client.models.JsonOutputSerializationFormat
     """
 
     _validation = {
@@ -3704,6 +4088,20 @@ class JsonSerialization(Serialization):
         format: Optional[Union[str, "JsonOutputSerializationFormat"]] = None,
         **kwargs
     ):
+        """
+        :keyword encoding: Specifies the encoding of the incoming data in the case of input and the
+         encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
+         Possible values include: "UTF8".
+        :paramtype encoding: str or ~stream_analytics_management_client.models.Encoding
+        :keyword format: This property only applies to JSON serialization of outputs only. It is not
+         applicable to inputs. This property specifies the format of the JSON the output will be written
+         in. The currently supported values are 'lineSeparated' indicating the output will be formatted
+         by having each JSON object separated by a new line and 'array' indicating the output will be
+         formatted as an array of JSON objects. Default value is 'lineSeparated' if left null. Possible
+         values include: "LineSeparated", "Array".
+        :paramtype format: str or
+         ~stream_analytics_management_client.models.JsonOutputSerializationFormat
+        """
         super(JsonSerialization, self).__init__(**kwargs)
         self.type = 'Json'  # type: str
         self.encoding = encoding
@@ -3717,6 +4115,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: The name of the operation being performed on this particular object.
     :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     :ivar display: Contains the localized display information for this particular operation /
      action.
     :vartype display: ~stream_analytics_management_client.models.OperationDisplay
@@ -3729,15 +4129,23 @@ class Operation(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
     def __init__(
         self,
+        *,
+        is_data_action: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
+        self.is_data_action = is_data_action
         self.display = None
 
 
@@ -3775,6 +4183,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -3808,6 +4218,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3820,20 +4232,20 @@ class Output(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param datasource: Describes the data source that output will be written to. Required on PUT
+    :ivar datasource: Describes the data source that output will be written to. Required on PUT
      (CreateOrReplace) requests.
-    :type datasource: ~stream_analytics_management_client.models.OutputDataSource
-    :param time_window:
-    :type time_window: str
-    :param size_window:
-    :type size_window: float
-    :param serialization: Describes how data from an input is serialized or how data is serialized
+    :vartype datasource: ~stream_analytics_management_client.models.OutputDataSource
+    :ivar time_window: The time frame for filtering Stream Analytics job outputs.
+    :vartype time_window: str
+    :ivar size_window: The size window to constrain a Stream Analytics output to.
+    :vartype size_window: float
+    :ivar serialization: Describes how data from an input is serialized or how data is serialized
      when written to an output. Required on PUT (CreateOrReplace) requests.
-    :type serialization: ~stream_analytics_management_client.models.Serialization
+    :vartype serialization: ~stream_analytics_management_client.models.Serialization
     :ivar diagnostics: Describes conditions applicable to the Input, Output, or the job overall,
      that warrant customer attention.
     :vartype diagnostics: ~stream_analytics_management_client.models.Diagnostics
@@ -3872,6 +4284,20 @@ class Output(SubResource):
         serialization: Optional["Serialization"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        :keyword datasource: Describes the data source that output will be written to. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype datasource: ~stream_analytics_management_client.models.OutputDataSource
+        :keyword time_window: The time frame for filtering Stream Analytics job outputs.
+        :paramtype time_window: str
+        :keyword size_window: The size window to constrain a Stream Analytics output to.
+        :paramtype size_window: float
+        :keyword serialization: Describes how data from an input is serialized or how data is
+         serialized when written to an output. Required on PUT (CreateOrReplace) requests.
+        :paramtype serialization: ~stream_analytics_management_client.models.Serialization
+        """
         super(Output, self).__init__(name=name, **kwargs)
         self.datasource = datasource
         self.time_window = time_window
@@ -3906,6 +4332,8 @@ class OutputListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OutputListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3916,13 +4344,13 @@ class ParquetSerialization(Serialization):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of serialization that the input or output uses.
-     Required on PUT (CreateOrReplace) requests.Constant filled by server.  Possible values include:
-     "Csv", "Avro", "Json", "CustomClr", "Parquet".
-    :type type: str or ~stream_analytics_management_client.models.EventSerializationType
-    :param properties: The properties that are associated with the Parquet serialization type.
+    :ivar type: Required. Indicates the type of serialization that the input or output uses.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server. Possible values include:
+     "Csv", "Avro", "Json", "Parquet".
+    :vartype type: str or ~stream_analytics_management_client.models.EventSerializationType
+    :ivar properties: The properties that are associated with the Parquet serialization type.
      Required on PUT (CreateOrReplace) requests.
-    :type properties: object
+    :vartype properties: any
     """
 
     _validation = {
@@ -3937,9 +4365,14 @@ class ParquetSerialization(Serialization):
     def __init__(
         self,
         *,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword properties: The properties that are associated with the Parquet serialization type.
+         Required on PUT (CreateOrReplace) requests.
+        :paramtype properties: any
+        """
         super(ParquetSerialization, self).__init__(**kwargs)
         self.type = 'Parquet'  # type: str
         self.properties = properties
@@ -3950,37 +4383,38 @@ class PowerBIOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param refresh_token: A refresh token that can be used to obtain a valid access token that can
+    :vartype type: str
+    :ivar refresh_token: A refresh token that can be used to obtain a valid access token that can
      then be used to authenticate with the data source. A valid refresh token is currently only
      obtainable via the Azure Portal. It is recommended to put a dummy string value here when
      creating the data source and then going to the Azure Portal to authenticate the data source
      which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
      requests.
-    :type refresh_token: str
-    :param token_user_principal_name: The user principal name (UPN) of the user that was used to
+    :vartype refresh_token: str
+    :ivar token_user_principal_name: The user principal name (UPN) of the user that was used to
      obtain the refresh token. Use this property to help remember which user was used to obtain the
      refresh token.
-    :type token_user_principal_name: str
-    :param token_user_display_name: The user display name of the user that was used to obtain the
+    :vartype token_user_principal_name: str
+    :ivar token_user_display_name: The user display name of the user that was used to obtain the
      refresh token. Use this property to help remember which user was used to obtain the refresh
      token.
-    :type token_user_display_name: str
-    :param dataset: The name of the Power BI dataset. Required on PUT (CreateOrReplace) requests.
-    :type dataset: str
-    :param table: The name of the Power BI table under the specified dataset. Required on PUT
+    :vartype token_user_display_name: str
+    :ivar dataset: The name of the Power BI dataset. Required on PUT (CreateOrReplace) requests.
+    :vartype dataset: str
+    :ivar table: The name of the Power BI table under the specified dataset. Required on PUT
      (CreateOrReplace) requests.
-    :type table: str
-    :param group_id: The ID of the Power BI group.
-    :type group_id: str
-    :param group_name: The name of the Power BI group. Use this property to help remember which
+    :vartype table: str
+    :ivar group_id: The ID of the Power BI group.
+    :vartype group_id: str
+    :ivar group_name: The name of the Power BI group. Use this property to help remember which
      specific Power BI group id was used.
-    :type group_name: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype group_name: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _validation = {
@@ -4012,6 +4446,37 @@ class PowerBIOutputDataSource(OutputDataSource):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
+         can then be used to authenticate with the data source. A valid refresh token is currently only
+         obtainable via the Azure Portal. It is recommended to put a dummy string value here when
+         creating the data source and then going to the Azure Portal to authenticate the data source
+         which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype refresh_token: str
+        :keyword token_user_principal_name: The user principal name (UPN) of the user that was used to
+         obtain the refresh token. Use this property to help remember which user was used to obtain the
+         refresh token.
+        :paramtype token_user_principal_name: str
+        :keyword token_user_display_name: The user display name of the user that was used to obtain the
+         refresh token. Use this property to help remember which user was used to obtain the refresh
+         token.
+        :paramtype token_user_display_name: str
+        :keyword dataset: The name of the Power BI dataset. Required on PUT (CreateOrReplace) requests.
+        :paramtype dataset: str
+        :keyword table: The name of the Power BI table under the specified dataset. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword group_id: The ID of the Power BI group.
+        :paramtype group_id: str
+        :keyword group_name: The name of the Power BI group. Use this property to help remember which
+         specific Power BI group id was used.
+        :paramtype group_name: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(PowerBIOutputDataSource, self).__init__(**kwargs)
         self.type = 'PowerBI'  # type: str
         self.refresh_token = refresh_token
@@ -4027,34 +4492,35 @@ class PowerBIOutputDataSource(OutputDataSource):
 class PowerBIOutputDataSourceProperties(OAuthBasedDataSourceProperties):
     """The properties that are associated with a Power BI output.
 
-    :param refresh_token: A refresh token that can be used to obtain a valid access token that can
+    :ivar refresh_token: A refresh token that can be used to obtain a valid access token that can
      then be used to authenticate with the data source. A valid refresh token is currently only
      obtainable via the Azure Portal. It is recommended to put a dummy string value here when
      creating the data source and then going to the Azure Portal to authenticate the data source
      which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
      requests.
-    :type refresh_token: str
-    :param token_user_principal_name: The user principal name (UPN) of the user that was used to
+    :vartype refresh_token: str
+    :ivar token_user_principal_name: The user principal name (UPN) of the user that was used to
      obtain the refresh token. Use this property to help remember which user was used to obtain the
      refresh token.
-    :type token_user_principal_name: str
-    :param token_user_display_name: The user display name of the user that was used to obtain the
+    :vartype token_user_principal_name: str
+    :ivar token_user_display_name: The user display name of the user that was used to obtain the
      refresh token. Use this property to help remember which user was used to obtain the refresh
      token.
-    :type token_user_display_name: str
-    :param dataset: The name of the Power BI dataset. Required on PUT (CreateOrReplace) requests.
-    :type dataset: str
-    :param table: The name of the Power BI table under the specified dataset. Required on PUT
+    :vartype token_user_display_name: str
+    :ivar dataset: The name of the Power BI dataset. Required on PUT (CreateOrReplace) requests.
+    :vartype dataset: str
+    :ivar table: The name of the Power BI table under the specified dataset. Required on PUT
      (CreateOrReplace) requests.
-    :type table: str
-    :param group_id: The ID of the Power BI group.
-    :type group_id: str
-    :param group_name: The name of the Power BI group. Use this property to help remember which
+    :vartype table: str
+    :ivar group_id: The ID of the Power BI group.
+    :vartype group_id: str
+    :ivar group_name: The name of the Power BI group. Use this property to help remember which
      specific Power BI group id was used.
-    :type group_name: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype group_name: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
     """
 
     _attribute_map = {
@@ -4081,200 +4547,43 @@ class PowerBIOutputDataSourceProperties(OAuthBasedDataSourceProperties):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword refresh_token: A refresh token that can be used to obtain a valid access token that
+         can then be used to authenticate with the data source. A valid refresh token is currently only
+         obtainable via the Azure Portal. It is recommended to put a dummy string value here when
+         creating the data source and then going to the Azure Portal to authenticate the data source
+         which will update this property with a valid refresh token. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype refresh_token: str
+        :keyword token_user_principal_name: The user principal name (UPN) of the user that was used to
+         obtain the refresh token. Use this property to help remember which user was used to obtain the
+         refresh token.
+        :paramtype token_user_principal_name: str
+        :keyword token_user_display_name: The user display name of the user that was used to obtain the
+         refresh token. Use this property to help remember which user was used to obtain the refresh
+         token.
+        :paramtype token_user_display_name: str
+        :keyword dataset: The name of the Power BI dataset. Required on PUT (CreateOrReplace) requests.
+        :paramtype dataset: str
+        :keyword table: The name of the Power BI table under the specified dataset. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype table: str
+        :keyword group_id: The ID of the Power BI group.
+        :paramtype group_id: str
+        :keyword group_name: The name of the Power BI group. Use this property to help remember which
+         specific Power BI group id was used.
+        :paramtype group_name: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        """
         super(PowerBIOutputDataSourceProperties, self).__init__(refresh_token=refresh_token, token_user_principal_name=token_user_principal_name, token_user_display_name=token_user_display_name, **kwargs)
         self.dataset = dataset
         self.table = table
         self.group_id = group_id
         self.group_name = group_name
         self.authentication_mode = authentication_mode
-
-
-class PrivateEndpoint(Resource):
-    """Complete information about the private endpoint.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param properties: The properties associated with a private endpoint.
-    :type properties: ~stream_analytics_management_client.models.PrivateEndpointProperties
-    :ivar etag: Unique opaque string (generally a GUID) that represents the metadata state of the
-     resource (private endpoint) and changes whenever the resource is updated. Required on PUT
-     (CreateOrUpdate) requests.
-    :vartype etag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateEndpointProperties'},
-        'etag': {'key': 'etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        properties: Optional["PrivateEndpointProperties"] = None,
-        **kwargs
-    ):
-        super(PrivateEndpoint, self).__init__(**kwargs)
-        self.properties = properties
-        self.etag = None
-
-
-class PrivateEndpointListResult(msrest.serialization.Model):
-    """A list of private endpoints.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: A list of private endpoints.
-    :vartype value: list[~stream_analytics_management_client.models.PrivateEndpoint]
-    :ivar next_link: The URL to fetch the next set of private endpoints.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpointListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
-class PrivateEndpointProperties(msrest.serialization.Model):
-    """The properties associated with a private endpoint.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar created_date: The date when this private endpoint was created.
-    :vartype created_date: str
-    :param manual_private_link_service_connections: A list of connections to the remote resource.
-     Immutable after it is set.
-    :type manual_private_link_service_connections:
-     list[~stream_analytics_management_client.models.PrivateLinkServiceConnection]
-    """
-
-    _validation = {
-        'created_date': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'created_date': {'key': 'createdDate', 'type': 'str'},
-        'manual_private_link_service_connections': {'key': 'manualPrivateLinkServiceConnections', 'type': '[PrivateLinkServiceConnection]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        manual_private_link_service_connections: Optional[List["PrivateLinkServiceConnection"]] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointProperties, self).__init__(**kwargs)
-        self.created_date = None
-        self.manual_private_link_service_connections = manual_private_link_service_connections
-
-
-class PrivateLinkConnectionState(msrest.serialization.Model):
-    """A collection of read-only information about the state of the connection to the private remote resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the remote resource/service.
-    :vartype status: str
-    :ivar description: The reason for approval/rejection of the connection.
-    :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
-     updates on the consumer.
-    :vartype actions_required: str
-    """
-
-    _validation = {
-        'status': {'readonly': True},
-        'description': {'readonly': True},
-        'actions_required': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkConnectionState, self).__init__(**kwargs)
-        self.status = None
-        self.description = None
-        self.actions_required = None
-
-
-class PrivateLinkServiceConnection(msrest.serialization.Model):
-    """A grouping of information about the connection to the remote resource.
-
-    :param private_link_service_id: The resource id of the private link service. Required on PUT
-     (CreateOrUpdate) requests.
-    :type private_link_service_id: str
-    :param group_ids: The ID(s) of the group(s) obtained from the remote resource that this private
-     endpoint should connect to. Required on PUT (CreateOrUpdate) requests.
-    :type group_ids: list[str]
-    :param request_message: A message passed to the owner of the remote resource with this
-     connection request. Restricted to 140 chars.
-    :type request_message: str
-    :param private_link_service_connection_state: A collection of read-only information about the
-     state of the connection to the private remote resource.
-    :type private_link_service_connection_state:
-     ~stream_analytics_management_client.models.PrivateLinkConnectionState
-    """
-
-    _attribute_map = {
-        'private_link_service_id': {'key': 'properties.privateLinkServiceId', 'type': 'str'},
-        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
-        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
-    }
-
-    def __init__(
-        self,
-        *,
-        private_link_service_id: Optional[str] = None,
-        group_ids: Optional[List[str]] = None,
-        request_message: Optional[str] = None,
-        private_link_service_connection_state: Optional["PrivateLinkConnectionState"] = None,
-        **kwargs
-    ):
-        super(PrivateLinkServiceConnection, self).__init__(**kwargs)
-        self.private_link_service_id = private_link_service_id
-        self.group_ids = group_ids
-        self.request_message = request_message
-        self.private_link_service_connection_state = private_link_service_connection_state
 
 
 class ProxyResource(Resource):
@@ -4308,7 +4617,198 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
+
+
+class PrivateEndpoint(ProxyResource):
+    """Complete information about the private endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Unique opaque string (generally a GUID) that represents the metadata state of the
+     resource (private endpoint) and changes whenever the resource is updated. Required on PUT
+     (CreateOrUpdate) requests.
+    :vartype etag: str
+    :ivar created_date: The date when this private endpoint was created.
+    :vartype created_date: str
+    :ivar manual_private_link_service_connections: A list of connections to the remote resource.
+     Immutable after it is set.
+    :vartype manual_private_link_service_connections:
+     list[~stream_analytics_management_client.models.PrivateLinkServiceConnection]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'created_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
+        'manual_private_link_service_connections': {'key': 'properties.manualPrivateLinkServiceConnections', 'type': '[PrivateLinkServiceConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        manual_private_link_service_connections: Optional[List["PrivateLinkServiceConnection"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword manual_private_link_service_connections: A list of connections to the remote resource.
+         Immutable after it is set.
+        :paramtype manual_private_link_service_connections:
+         list[~stream_analytics_management_client.models.PrivateLinkServiceConnection]
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.etag = None
+        self.created_date = None
+        self.manual_private_link_service_connections = manual_private_link_service_connections
+
+
+class PrivateEndpointListResult(msrest.serialization.Model):
+    """A list of private endpoints.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of private endpoints.
+    :vartype value: list[~stream_analytics_management_client.models.PrivateEndpoint]
+    :ivar next_link: The URL to fetch the next set of private endpoints.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpoint]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PrivateEndpointListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class PrivateLinkConnectionState(msrest.serialization.Model):
+    """A collection of read-only information about the state of the connection to the private remote resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the remote resource/service.
+    :vartype status: str
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'description': {'readonly': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PrivateLinkConnectionState, self).__init__(**kwargs)
+        self.status = None
+        self.description = None
+        self.actions_required = None
+
+
+class PrivateLinkServiceConnection(msrest.serialization.Model):
+    """A grouping of information about the connection to the remote resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar private_link_service_id: The resource id of the private link service. Required on PUT
+     (CreateOrUpdate) requests.
+    :vartype private_link_service_id: str
+    :ivar group_ids: The ID(s) of the group(s) obtained from the remote resource that this private
+     endpoint should connect to. Required on PUT (CreateOrUpdate) requests.
+    :vartype group_ids: list[str]
+    :ivar request_message: A message passed to the owner of the remote resource with this
+     connection request. Restricted to 140 chars.
+    :vartype request_message: str
+    :ivar private_link_service_connection_state: A collection of read-only information about the
+     state of the connection to the private remote resource.
+    :vartype private_link_service_connection_state:
+     ~stream_analytics_management_client.models.PrivateLinkConnectionState
+    """
+
+    _validation = {
+        'request_message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_link_service_id': {'key': 'properties.privateLinkServiceId', 'type': 'str'},
+        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
+        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_link_service_id: Optional[str] = None,
+        group_ids: Optional[List[str]] = None,
+        private_link_service_connection_state: Optional["PrivateLinkConnectionState"] = None,
+        **kwargs
+    ):
+        """
+        :keyword private_link_service_id: The resource id of the private link service. Required on PUT
+         (CreateOrUpdate) requests.
+        :paramtype private_link_service_id: str
+        :keyword group_ids: The ID(s) of the group(s) obtained from the remote resource that this
+         private endpoint should connect to. Required on PUT (CreateOrUpdate) requests.
+        :paramtype group_ids: list[str]
+        :keyword private_link_service_connection_state: A collection of read-only information about the
+         state of the connection to the private remote resource.
+        :paramtype private_link_service_connection_state:
+         ~stream_analytics_management_client.models.PrivateLinkConnectionState
+        """
+        super(PrivateLinkServiceConnection, self).__init__(**kwargs)
+        self.private_link_service_id = private_link_service_id
+        self.group_ids = group_ids
+        self.request_message = None
+        self.private_link_service_connection_state = private_link_service_connection_state
 
 
 class ReferenceInputProperties(InputProperties):
@@ -4318,12 +4818,12 @@ class ReferenceInputProperties(InputProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates whether the input is a source of reference data or stream
-     data. Required on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param serialization: Describes how data from an input is serialized or how data is serialized
+    :ivar type: Required. Indicates whether the input is a source of reference data or stream data.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server.
+    :vartype type: str
+    :ivar serialization: Describes how data from an input is serialized or how data is serialized
      when written to an output. Required on PUT (CreateOrReplace) requests.
-    :type serialization: ~stream_analytics_management_client.models.Serialization
+    :vartype serialization: ~stream_analytics_management_client.models.Serialization
     :ivar diagnostics: Describes conditions applicable to the Input, Output, or the job overall,
      that warrant customer attention.
     :vartype diagnostics: ~stream_analytics_management_client.models.Diagnostics
@@ -4331,14 +4831,14 @@ class ReferenceInputProperties(InputProperties):
      detect whether the resource has changed between requests. You can also use it in the If-Match
      or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
-    :param compression: Describes how input data is compressed.
-    :type compression: ~stream_analytics_management_client.models.Compression
-    :param partition_key: partitionKey Describes a key in the input data which is used for
+    :ivar compression: Describes how input data is compressed.
+    :vartype compression: ~stream_analytics_management_client.models.Compression
+    :ivar partition_key: partitionKey Describes a key in the input data which is used for
      partitioning the input data.
-    :type partition_key: str
-    :param datasource: Describes an input data source that contains reference data. Required on PUT
+    :vartype partition_key: str
+    :ivar datasource: Describes an input data source that contains reference data. Required on PUT
      (CreateOrReplace) requests.
-    :type datasource: ~stream_analytics_management_client.models.ReferenceInputDataSource
+    :vartype datasource: ~stream_analytics_management_client.models.ReferenceInputDataSource
     """
 
     _validation = {
@@ -4366,6 +4866,19 @@ class ReferenceInputProperties(InputProperties):
         datasource: Optional["ReferenceInputDataSource"] = None,
         **kwargs
     ):
+        """
+        :keyword serialization: Describes how data from an input is serialized or how data is
+         serialized when written to an output. Required on PUT (CreateOrReplace) requests.
+        :paramtype serialization: ~stream_analytics_management_client.models.Serialization
+        :keyword compression: Describes how input data is compressed.
+        :paramtype compression: ~stream_analytics_management_client.models.Compression
+        :keyword partition_key: partitionKey Describes a key in the input data which is used for
+         partitioning the input data.
+        :paramtype partition_key: str
+        :keyword datasource: Describes an input data source that contains reference data. Required on
+         PUT (CreateOrReplace) requests.
+        :paramtype datasource: ~stream_analytics_management_client.models.ReferenceInputDataSource
+        """
         super(ReferenceInputProperties, self).__init__(serialization=serialization, compression=compression, partition_key=partition_key, **kwargs)
         self.type = 'Reference'  # type: str
         self.datasource = datasource
@@ -4396,6 +4909,8 @@ class ResourceTestStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceTestStatus, self).__init__(**kwargs)
         self.status = None
         self.error = None
@@ -4408,19 +4923,19 @@ class ScalarFunctionProperties(FunctionProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of function.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Indicates the type of function.Constant filled by server.
+    :vartype type: str
     :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
-     to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
+     to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
-    :param inputs:
-    :type inputs: list[~stream_analytics_management_client.models.FunctionInput]
-    :param output: Describes the output of a function.
-    :type output: ~stream_analytics_management_client.models.FunctionOutput
-    :param binding: The physical binding of the function. For example, in the Azure Machine
-     Learning web service’s case, this describes the endpoint.
-    :type binding: ~stream_analytics_management_client.models.FunctionBinding
+    :ivar inputs: A list of inputs describing the parameters of the function.
+    :vartype inputs: list[~stream_analytics_management_client.models.FunctionInput]
+    :ivar output: The output of the function.
+    :vartype output: ~stream_analytics_management_client.models.FunctionOutput
+    :ivar binding: The physical binding of the function. For example, in the Azure Machine Learning
+     web service’s case, this describes the endpoint.
+    :vartype binding: ~stream_analytics_management_client.models.FunctionBinding
     """
 
     _validation = {
@@ -4444,8 +4959,47 @@ class ScalarFunctionProperties(FunctionProperties):
         binding: Optional["FunctionBinding"] = None,
         **kwargs
     ):
-        super(ScalarFunctionProperties, self).__init__(inputs=inputs, output=output, binding=binding, **kwargs)
+        """
+        :keyword inputs: A list of inputs describing the parameters of the function.
+        :paramtype inputs: list[~stream_analytics_management_client.models.FunctionInput]
+        :keyword output: The output of the function.
+        :paramtype output: ~stream_analytics_management_client.models.FunctionOutput
+        :keyword binding: The physical binding of the function. For example, in the Azure Machine
+         Learning web service’s case, this describes the endpoint.
+        :paramtype binding: ~stream_analytics_management_client.models.FunctionBinding
+        """
+        super(ScalarFunctionProperties, self).__init__(**kwargs)
         self.type = 'Scalar'  # type: str
+        self.inputs = inputs
+        self.output = output
+        self.binding = binding
+
+
+class ScaleStreamingJobParameters(msrest.serialization.Model):
+    """Parameters supplied to the Scale Streaming Job operation.
+
+    :ivar streaming_units: Specifies the number of streaming units that the streaming job will
+     scale to.
+    :vartype streaming_units: int
+    """
+
+    _attribute_map = {
+        'streaming_units': {'key': 'streamingUnits', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        streaming_units: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword streaming_units: Specifies the number of streaming units that the streaming job will
+         scale to.
+        :paramtype streaming_units: int
+        """
+        super(ScaleStreamingJobParameters, self).__init__(**kwargs)
+        self.streaming_units = streaming_units
 
 
 class ServiceBusQueueOutputDataSource(OutputDataSource):
@@ -4453,29 +5007,33 @@ class ServiceBusQueueOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :vartype type: str
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param queue_name: The name of the Service Bus Queue. Required on PUT (CreateOrReplace)
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar queue_name: The name of the Service Bus Queue. Required on PUT (CreateOrReplace)
      requests.
-    :type queue_name: str
-    :param property_columns: A string array of the names of output columns to be attached to
-     Service Bus messages as custom properties.
-    :type property_columns: list[str]
-    :param system_property_columns: Dictionary of :code:`<string>`.
-    :type system_property_columns: dict[str, str]
+    :vartype queue_name: str
+    :ivar property_columns: A string array of the names of output columns to be attached to Service
+     Bus messages as custom properties.
+    :vartype property_columns: list[str]
+    :ivar system_property_columns: The system properties associated with the Service Bus Queue. The
+     following system properties are supported: ReplyToSessionId, ContentType, To, Subject,
+     CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId, ReplyTo,
+     Label, ScheduledEnqueueTimeUtc.
+    :vartype system_property_columns: any
     """
 
     _validation = {
@@ -4490,7 +5048,7 @@ class ServiceBusQueueOutputDataSource(OutputDataSource):
         'authentication_mode': {'key': 'properties.authenticationMode', 'type': 'str'},
         'queue_name': {'key': 'properties.queueName', 'type': 'str'},
         'property_columns': {'key': 'properties.propertyColumns', 'type': '[str]'},
-        'system_property_columns': {'key': 'properties.systemPropertyColumns', 'type': '{str}'},
+        'system_property_columns': {'key': 'properties.systemPropertyColumns', 'type': 'object'},
     }
 
     def __init__(
@@ -4502,9 +5060,35 @@ class ServiceBusQueueOutputDataSource(OutputDataSource):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         queue_name: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
-        system_property_columns: Optional[Dict[str, str]] = None,
+        system_property_columns: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword queue_name: The name of the Service Bus Queue. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype queue_name: str
+        :keyword property_columns: A string array of the names of output columns to be attached to
+         Service Bus messages as custom properties.
+        :paramtype property_columns: list[str]
+        :keyword system_property_columns: The system properties associated with the Service Bus Queue.
+         The following system properties are supported: ReplyToSessionId, ContentType, To, Subject,
+         CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId, ReplyTo,
+         Label, ScheduledEnqueueTimeUtc.
+        :paramtype system_property_columns: any
+        """
         super(ServiceBusQueueOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.ServiceBus/Queue'  # type: str
         self.service_bus_namespace = service_bus_namespace
@@ -4519,26 +5103,30 @@ class ServiceBusQueueOutputDataSource(OutputDataSource):
 class ServiceBusQueueOutputDataSourceProperties(ServiceBusDataSourceProperties):
     """The properties that are associated with a Service Bus Queue output.
 
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param queue_name: The name of the Service Bus Queue. Required on PUT (CreateOrReplace)
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar queue_name: The name of the Service Bus Queue. Required on PUT (CreateOrReplace)
      requests.
-    :type queue_name: str
-    :param property_columns: A string array of the names of output columns to be attached to
-     Service Bus messages as custom properties.
-    :type property_columns: list[str]
-    :param system_property_columns: Dictionary of :code:`<string>`.
-    :type system_property_columns: dict[str, str]
+    :vartype queue_name: str
+    :ivar property_columns: A string array of the names of output columns to be attached to Service
+     Bus messages as custom properties.
+    :vartype property_columns: list[str]
+    :ivar system_property_columns: The system properties associated with the Service Bus Queue. The
+     following system properties are supported: ReplyToSessionId, ContentType, To, Subject,
+     CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId, ReplyTo,
+     Label, ScheduledEnqueueTimeUtc.
+    :vartype system_property_columns: any
     """
 
     _attribute_map = {
@@ -4548,7 +5136,7 @@ class ServiceBusQueueOutputDataSourceProperties(ServiceBusDataSourceProperties):
         'authentication_mode': {'key': 'authenticationMode', 'type': 'str'},
         'queue_name': {'key': 'queueName', 'type': 'str'},
         'property_columns': {'key': 'propertyColumns', 'type': '[str]'},
-        'system_property_columns': {'key': 'systemPropertyColumns', 'type': '{str}'},
+        'system_property_columns': {'key': 'systemPropertyColumns', 'type': 'object'},
     }
 
     def __init__(
@@ -4560,9 +5148,35 @@ class ServiceBusQueueOutputDataSourceProperties(ServiceBusDataSourceProperties):
         authentication_mode: Optional[Union[str, "AuthenticationMode"]] = None,
         queue_name: Optional[str] = None,
         property_columns: Optional[List[str]] = None,
-        system_property_columns: Optional[Dict[str, str]] = None,
+        system_property_columns: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword queue_name: The name of the Service Bus Queue. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype queue_name: str
+        :keyword property_columns: A string array of the names of output columns to be attached to
+         Service Bus messages as custom properties.
+        :paramtype property_columns: list[str]
+        :keyword system_property_columns: The system properties associated with the Service Bus Queue.
+         The following system properties are supported: ReplyToSessionId, ContentType, To, Subject,
+         CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId, ReplyTo,
+         Label, ScheduledEnqueueTimeUtc.
+        :paramtype system_property_columns: any
+        """
         super(ServiceBusQueueOutputDataSourceProperties, self).__init__(service_bus_namespace=service_bus_namespace, shared_access_policy_name=shared_access_policy_name, shared_access_policy_key=shared_access_policy_key, authentication_mode=authentication_mode, **kwargs)
         self.queue_name = queue_name
         self.property_columns = property_columns
@@ -4574,29 +5188,33 @@ class ServiceBusTopicOutputDataSource(OutputDataSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates the type of data source output will be written to. Required on
+    :ivar type: Required. Indicates the type of data source output will be written to. Required on
      PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :vartype type: str
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param topic_name: The name of the Service Bus Topic. Required on PUT (CreateOrReplace)
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar topic_name: The name of the Service Bus Topic. Required on PUT (CreateOrReplace)
      requests.
-    :type topic_name: str
-    :param property_columns: A string array of the names of output columns to be attached to
-     Service Bus messages as custom properties.
-    :type property_columns: list[str]
-    :param system_property_columns: Dictionary of :code:`<string>`.
-    :type system_property_columns: dict[str, str]
+    :vartype topic_name: str
+    :ivar property_columns: A string array of the names of output columns to be attached to Service
+     Bus messages as custom properties.
+    :vartype property_columns: list[str]
+    :ivar system_property_columns: The system properties associated with the Service Bus Topic
+     Output. The following system properties are supported: ReplyToSessionId, ContentType, To,
+     Subject, CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId,
+     ReplyTo, Label, ScheduledEnqueueTimeUtc.
+    :vartype system_property_columns: dict[str, str]
     """
 
     _validation = {
@@ -4626,6 +5244,32 @@ class ServiceBusTopicOutputDataSource(OutputDataSource):
         system_property_columns: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword topic_name: The name of the Service Bus Topic. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype topic_name: str
+        :keyword property_columns: A string array of the names of output columns to be attached to
+         Service Bus messages as custom properties.
+        :paramtype property_columns: list[str]
+        :keyword system_property_columns: The system properties associated with the Service Bus Topic
+         Output. The following system properties are supported: ReplyToSessionId, ContentType, To,
+         Subject, CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId,
+         ReplyTo, Label, ScheduledEnqueueTimeUtc.
+        :paramtype system_property_columns: dict[str, str]
+        """
         super(ServiceBusTopicOutputDataSource, self).__init__(**kwargs)
         self.type = 'Microsoft.ServiceBus/Topic'  # type: str
         self.service_bus_namespace = service_bus_namespace
@@ -4640,26 +5284,30 @@ class ServiceBusTopicOutputDataSource(OutputDataSource):
 class ServiceBusTopicOutputDataSourceProperties(ServiceBusDataSourceProperties):
     """The properties that are associated with a Service Bus Topic output.
 
-    :param service_bus_namespace: The namespace that is associated with the desired Event Hub,
+    :ivar service_bus_namespace: The namespace that is associated with the desired Event Hub,
      Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type service_bus_namespace: str
-    :param shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
+    :vartype service_bus_namespace: str
+    :ivar shared_access_policy_name: The shared access policy name for the Event Hub, Service Bus
      Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_name: str
-    :param shared_access_policy_key: The shared access policy key for the specified shared access
+    :vartype shared_access_policy_name: str
+    :ivar shared_access_policy_key: The shared access policy key for the specified shared access
      policy. Required on PUT (CreateOrReplace) requests.
-    :type shared_access_policy_key: str
-    :param authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+    :vartype shared_access_policy_key: str
+    :ivar authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
      "ConnectionString".
-    :type authentication_mode: str or ~stream_analytics_management_client.models.AuthenticationMode
-    :param topic_name: The name of the Service Bus Topic. Required on PUT (CreateOrReplace)
+    :vartype authentication_mode: str or
+     ~stream_analytics_management_client.models.AuthenticationMode
+    :ivar topic_name: The name of the Service Bus Topic. Required on PUT (CreateOrReplace)
      requests.
-    :type topic_name: str
-    :param property_columns: A string array of the names of output columns to be attached to
-     Service Bus messages as custom properties.
-    :type property_columns: list[str]
-    :param system_property_columns: Dictionary of :code:`<string>`.
-    :type system_property_columns: dict[str, str]
+    :vartype topic_name: str
+    :ivar property_columns: A string array of the names of output columns to be attached to Service
+     Bus messages as custom properties.
+    :vartype property_columns: list[str]
+    :ivar system_property_columns: The system properties associated with the Service Bus Topic
+     Output. The following system properties are supported: ReplyToSessionId, ContentType, To,
+     Subject, CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId,
+     ReplyTo, Label, ScheduledEnqueueTimeUtc.
+    :vartype system_property_columns: dict[str, str]
     """
 
     _attribute_map = {
@@ -4684,26 +5332,79 @@ class ServiceBusTopicOutputDataSourceProperties(ServiceBusDataSourceProperties):
         system_property_columns: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword service_bus_namespace: The namespace that is associated with the desired Event Hub,
+         Service Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype service_bus_namespace: str
+        :keyword shared_access_policy_name: The shared access policy name for the Event Hub, Service
+         Bus Queue, Service Bus Topic, etc. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_name: str
+        :keyword shared_access_policy_key: The shared access policy key for the specified shared access
+         policy. Required on PUT (CreateOrReplace) requests.
+        :paramtype shared_access_policy_key: str
+        :keyword authentication_mode: Authentication Mode. Possible values include: "Msi", "UserToken",
+         "ConnectionString".
+        :paramtype authentication_mode: str or
+         ~stream_analytics_management_client.models.AuthenticationMode
+        :keyword topic_name: The name of the Service Bus Topic. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype topic_name: str
+        :keyword property_columns: A string array of the names of output columns to be attached to
+         Service Bus messages as custom properties.
+        :paramtype property_columns: list[str]
+        :keyword system_property_columns: The system properties associated with the Service Bus Topic
+         Output. The following system properties are supported: ReplyToSessionId, ContentType, To,
+         Subject, CorrelationId, TimeToLive, PartitionKey, SessionId, ScheduledEnqueueTime, MessageId,
+         ReplyTo, Label, ScheduledEnqueueTimeUtc.
+        :paramtype system_property_columns: dict[str, str]
+        """
         super(ServiceBusTopicOutputDataSourceProperties, self).__init__(service_bus_namespace=service_bus_namespace, shared_access_policy_name=shared_access_policy_name, shared_access_policy_key=shared_access_policy_key, authentication_mode=authentication_mode, **kwargs)
         self.topic_name = topic_name
         self.property_columns = property_columns
         self.system_property_columns = system_property_columns
 
 
+class Sku(msrest.serialization.Model):
+    """The properties that are associated with a SKU.
+
+    :ivar name: The name of the SKU. Required on PUT (CreateOrReplace) requests. Possible values
+     include: "Standard".
+    :vartype name: str or ~stream_analytics_management_client.models.SkuName
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "SkuName"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the SKU. Required on PUT (CreateOrReplace) requests. Possible values
+         include: "Standard".
+        :paramtype name: str or ~stream_analytics_management_client.models.SkuName
+        """
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
+
+
 class StartStreamingJobParameters(msrest.serialization.Model):
     """Parameters supplied to the Start Streaming Job operation.
 
-    :param output_start_mode: Value may be JobStartTime, CustomTime, or LastOutputEventTime to
+    :ivar output_start_mode: Value may be JobStartTime, CustomTime, or LastOutputEventTime to
      indicate whether the starting point of the output event stream should start whenever the job is
      started, start at a custom user time stamp specified via the outputStartTime property, or start
      from the last event output time. Possible values include: "JobStartTime", "CustomTime",
      "LastOutputEventTime".
-    :type output_start_mode: str or ~stream_analytics_management_client.models.OutputStartMode
-    :param output_start_time: Value is either an ISO-8601 formatted time stamp that indicates the
+    :vartype output_start_mode: str or ~stream_analytics_management_client.models.OutputStartMode
+    :ivar output_start_time: Value is either an ISO-8601 formatted time stamp that indicates the
      starting point of the output event stream, or null to indicate that the output event stream
      will start whenever the streaming job is started. This property must have a value if
      outputStartMode is set to CustomTime.
-    :type output_start_time: ~datetime.datetime
+    :vartype output_start_time: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -4718,6 +5419,19 @@ class StartStreamingJobParameters(msrest.serialization.Model):
         output_start_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword output_start_mode: Value may be JobStartTime, CustomTime, or LastOutputEventTime to
+         indicate whether the starting point of the output event stream should start whenever the job is
+         started, start at a custom user time stamp specified via the outputStartTime property, or start
+         from the last event output time. Possible values include: "JobStartTime", "CustomTime",
+         "LastOutputEventTime".
+        :paramtype output_start_mode: str or ~stream_analytics_management_client.models.OutputStartMode
+        :keyword output_start_time: Value is either an ISO-8601 formatted time stamp that indicates the
+         starting point of the output event stream, or null to indicate that the output event stream
+         will start whenever the streaming job is started. This property must have a value if
+         outputStartMode is set to CustomTime.
+        :paramtype output_start_time: ~datetime.datetime
+        """
         super(StartStreamingJobParameters, self).__init__(**kwargs)
         self.output_start_mode = output_start_mode
         self.output_start_time = output_start_time
@@ -4736,15 +5450,15 @@ class StreamingJob(TrackedResource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: The geo-location where the resource lives.
-    :type location: str
-    :param identity: Describes the system-assigned managed identity assigned to this job that can
-     be used to authenticate with inputs and outputs.
-    :type identity: ~stream_analytics_management_client.models.Identity
-    :param sku: Describes the SKU of the streaming job. Required on PUT (CreateOrReplace) requests.
-    :type sku: ~stream_analytics_management_client.models.StreamingJobSku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: Describes the system-assigned managed identity assigned to this job that can be
+     used to authenticate with inputs and outputs.
+    :vartype identity: ~stream_analytics_management_client.models.Identity
+    :ivar sku: Describes the SKU of the streaming job. Required on PUT (CreateOrReplace) requests.
+    :vartype sku: ~stream_analytics_management_client.models.Sku
     :ivar job_id: A GUID uniquely identifying the streaming job. This GUID is generated upon
      creation of the streaming job.
     :vartype job_id: str
@@ -4752,87 +5466,87 @@ class StreamingJob(TrackedResource):
     :vartype provisioning_state: str
     :ivar job_state: Describes the state of the streaming job.
     :vartype job_state: str
-    :param job_type: Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'. Possible
+    :ivar job_type: Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'. Possible
      values include: "Cloud", "Edge".
-    :type job_type: str or ~stream_analytics_management_client.models.JobType
-    :param output_start_mode: This property should only be utilized when it is desired that the job
+    :vartype job_type: str or ~stream_analytics_management_client.models.JobType
+    :ivar output_start_mode: This property should only be utilized when it is desired that the job
      be started immediately upon creation. Value may be JobStartTime, CustomTime, or
      LastOutputEventTime to indicate whether the starting point of the output event stream should
      start whenever the job is started, start at a custom user time stamp specified via the
      outputStartTime property, or start from the last event output time. Possible values include:
      "JobStartTime", "CustomTime", "LastOutputEventTime".
-    :type output_start_mode: str or ~stream_analytics_management_client.models.OutputStartMode
-    :param output_start_time: Value is either an ISO-8601 formatted time stamp that indicates the
+    :vartype output_start_mode: str or ~stream_analytics_management_client.models.OutputStartMode
+    :ivar output_start_time: Value is either an ISO-8601 formatted time stamp that indicates the
      starting point of the output event stream, or null to indicate that the output event stream
      will start whenever the streaming job is started. This property must have a value if
      outputStartMode is set to CustomTime.
-    :type output_start_time: ~datetime.datetime
+    :vartype output_start_time: ~datetime.datetime
     :ivar last_output_event_time: Value is either an ISO-8601 formatted timestamp indicating the
      last output event time of the streaming job or null indicating that output has not yet been
      produced. In case of multiple outputs or multiple streams, this shows the latest value in that
      set.
     :vartype last_output_event_time: ~datetime.datetime
-    :param events_out_of_order_policy: Indicates the policy to apply to events that arrive out of
+    :ivar events_out_of_order_policy: Indicates the policy to apply to events that arrive out of
      order in the input event stream. Possible values include: "Adjust", "Drop".
-    :type events_out_of_order_policy: str or
+    :vartype events_out_of_order_policy: str or
      ~stream_analytics_management_client.models.EventsOutOfOrderPolicy
-    :param output_error_policy: Indicates the policy to apply to events that arrive at the output
+    :ivar output_error_policy: Indicates the policy to apply to events that arrive at the output
      and cannot be written to the external storage due to being malformed (missing column values,
      column values of wrong type or size). Possible values include: "Stop", "Drop".
-    :type output_error_policy: str or ~stream_analytics_management_client.models.OutputErrorPolicy
-    :param events_out_of_order_max_delay_in_seconds: The maximum tolerable delay in seconds where
+    :vartype output_error_policy: str or
+     ~stream_analytics_management_client.models.OutputErrorPolicy
+    :ivar events_out_of_order_max_delay_in_seconds: The maximum tolerable delay in seconds where
      out-of-order events can be adjusted to be back in order.
-    :type events_out_of_order_max_delay_in_seconds: int
-    :param events_late_arrival_max_delay_in_seconds: The maximum tolerable delay in seconds where
+    :vartype events_out_of_order_max_delay_in_seconds: int
+    :ivar events_late_arrival_max_delay_in_seconds: The maximum tolerable delay in seconds where
      events arriving late could be included.  Supported range is -1 to 1814399 (20.23:59:59 days)
      and -1 is used to specify wait indefinitely. If the property is absent, it is interpreted to
      have a value of -1.
-    :type events_late_arrival_max_delay_in_seconds: int
-    :param data_locale: The data locale of the stream analytics job. Value should be the name of a
-     supported .NET Culture from the set https://msdn.microsoft.com/en-
-     us/library/system.globalization.culturetypes(v=vs.110).aspx. Defaults to 'en-US' if none
-     specified.
-    :type data_locale: str
-    :param compatibility_level: Controls certain runtime behaviors of the streaming job. Possible
-     values include: "1.0".
-    :type compatibility_level: str or ~stream_analytics_management_client.models.CompatibilityLevel
+    :vartype events_late_arrival_max_delay_in_seconds: int
+    :ivar data_locale: The data locale of the stream analytics job. Value should be the name of a
+     supported .NET Culture from the set
+     https://msdn.microsoft.com/en-us/library/system.globalization.culturetypes(v=vs.110).aspx.
+     Defaults to 'en-US' if none specified.
+    :vartype data_locale: str
+    :ivar compatibility_level: Controls certain runtime behaviors of the streaming job. Possible
+     values include: "1.0", "1.2".
+    :vartype compatibility_level: str or
+     ~stream_analytics_management_client.models.CompatibilityLevel
     :ivar created_date: Value is an ISO-8601 formatted UTC timestamp indicating when the streaming
      job was created.
     :vartype created_date: ~datetime.datetime
-    :param inputs: A list of one or more inputs to the streaming job. The name property for each
+    :ivar inputs: A list of one or more inputs to the streaming job. The name property for each
      input is required when specifying this property in a PUT request. This property cannot be
      modify via a PATCH operation. You must use the PATCH API available for the individual input.
-    :type inputs: list[~stream_analytics_management_client.models.Input]
-    :param transformation: Indicates the query and the number of streaming units to use for the
+    :vartype inputs: list[~stream_analytics_management_client.models.Input]
+    :ivar transformation: Indicates the query and the number of streaming units to use for the
      streaming job. The name property of the transformation is required when specifying this
      property in a PUT request. This property cannot be modify via a PATCH operation. You must use
      the PATCH API available for the individual transformation.
-    :type transformation: ~stream_analytics_management_client.models.Transformation
-    :param outputs: A list of one or more outputs for the streaming job. The name property for each
+    :vartype transformation: ~stream_analytics_management_client.models.Transformation
+    :ivar outputs: A list of one or more outputs for the streaming job. The name property for each
      output is required when specifying this property in a PUT request. This property cannot be
      modify via a PATCH operation. You must use the PATCH API available for the individual output.
-    :type outputs: list[~stream_analytics_management_client.models.Output]
-    :param functions: A list of one or more functions for the streaming job. The name property for
+    :vartype outputs: list[~stream_analytics_management_client.models.Output]
+    :ivar functions: A list of one or more functions for the streaming job. The name property for
      each function is required when specifying this property in a PUT request. This property cannot
      be modify via a PATCH operation. You must use the PATCH API available for the individual
      transformation.
-    :type functions: list[~stream_analytics_management_client.models.Function]
+    :vartype functions: list[~stream_analytics_management_client.models.Function]
     :ivar etag: The current entity tag for the streaming job. This is an opaque string. You can use
-     it to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
+     it to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
-    :param job_storage_account: The properties that are associated with an Azure Storage account
+    :ivar job_storage_account: The properties that are associated with an Azure Storage account
      with MSI.
-    :type job_storage_account: ~stream_analytics_management_client.models.JobStorageAccount
+    :vartype job_storage_account: ~stream_analytics_management_client.models.JobStorageAccount
     :ivar content_storage_policy: Valid values are JobStorageAccount and SystemAccount. If set to
      JobStorageAccount, this requires the user to also specify jobStorageAccount property. .
      Possible values include: "SystemAccount", "JobStorageAccount".
     :vartype content_storage_policy: str or
      ~stream_analytics_management_client.models.ContentStoragePolicy
-    :param externals: The storage account where the custom code artifacts are located.
-    :type externals: ~stream_analytics_management_client.models.External
-    :param cluster: The cluster which streaming jobs will run on.
-    :type cluster: ~stream_analytics_management_client.models.ClusterInfo
+    :ivar cluster: The cluster which streaming jobs will run on.
+    :vartype cluster: ~stream_analytics_management_client.models.ClusterInfo
     """
 
     _validation = {
@@ -4845,7 +5559,6 @@ class StreamingJob(TrackedResource):
         'last_output_event_time': {'readonly': True},
         'created_date': {'readonly': True},
         'etag': {'readonly': True},
-        'content_storage_policy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4855,7 +5568,7 @@ class StreamingJob(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'Identity'},
-        'sku': {'key': 'properties.sku', 'type': 'StreamingJobSku'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'job_id': {'key': 'properties.jobId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'job_state': {'key': 'properties.jobState', 'type': 'str'},
@@ -4877,7 +5590,6 @@ class StreamingJob(TrackedResource):
         'etag': {'key': 'properties.etag', 'type': 'str'},
         'job_storage_account': {'key': 'properties.jobStorageAccount', 'type': 'JobStorageAccount'},
         'content_storage_policy': {'key': 'properties.contentStoragePolicy', 'type': 'str'},
-        'externals': {'key': 'properties.externals', 'type': 'External'},
         'cluster': {'key': 'properties.cluster', 'type': 'ClusterInfo'},
     }
 
@@ -4887,7 +5599,7 @@ class StreamingJob(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         identity: Optional["Identity"] = None,
-        sku: Optional["StreamingJobSku"] = None,
+        sku: Optional["Sku"] = None,
         job_type: Optional[Union[str, "JobType"]] = None,
         output_start_mode: Optional[Union[str, "OutputStartMode"]] = None,
         output_start_time: Optional[datetime.datetime] = None,
@@ -4902,10 +5614,91 @@ class StreamingJob(TrackedResource):
         outputs: Optional[List["Output"]] = None,
         functions: Optional[List["Function"]] = None,
         job_storage_account: Optional["JobStorageAccount"] = None,
-        externals: Optional["External"] = None,
+        content_storage_policy: Optional[Union[str, "ContentStoragePolicy"]] = None,
         cluster: Optional["ClusterInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: Describes the system-assigned managed identity assigned to this job that can
+         be used to authenticate with inputs and outputs.
+        :paramtype identity: ~stream_analytics_management_client.models.Identity
+        :keyword sku: Describes the SKU of the streaming job. Required on PUT (CreateOrReplace)
+         requests.
+        :paramtype sku: ~stream_analytics_management_client.models.Sku
+        :keyword job_type: Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'.
+         Possible values include: "Cloud", "Edge".
+        :paramtype job_type: str or ~stream_analytics_management_client.models.JobType
+        :keyword output_start_mode: This property should only be utilized when it is desired that the
+         job be started immediately upon creation. Value may be JobStartTime, CustomTime, or
+         LastOutputEventTime to indicate whether the starting point of the output event stream should
+         start whenever the job is started, start at a custom user time stamp specified via the
+         outputStartTime property, or start from the last event output time. Possible values include:
+         "JobStartTime", "CustomTime", "LastOutputEventTime".
+        :paramtype output_start_mode: str or ~stream_analytics_management_client.models.OutputStartMode
+        :keyword output_start_time: Value is either an ISO-8601 formatted time stamp that indicates the
+         starting point of the output event stream, or null to indicate that the output event stream
+         will start whenever the streaming job is started. This property must have a value if
+         outputStartMode is set to CustomTime.
+        :paramtype output_start_time: ~datetime.datetime
+        :keyword events_out_of_order_policy: Indicates the policy to apply to events that arrive out of
+         order in the input event stream. Possible values include: "Adjust", "Drop".
+        :paramtype events_out_of_order_policy: str or
+         ~stream_analytics_management_client.models.EventsOutOfOrderPolicy
+        :keyword output_error_policy: Indicates the policy to apply to events that arrive at the output
+         and cannot be written to the external storage due to being malformed (missing column values,
+         column values of wrong type or size). Possible values include: "Stop", "Drop".
+        :paramtype output_error_policy: str or
+         ~stream_analytics_management_client.models.OutputErrorPolicy
+        :keyword events_out_of_order_max_delay_in_seconds: The maximum tolerable delay in seconds where
+         out-of-order events can be adjusted to be back in order.
+        :paramtype events_out_of_order_max_delay_in_seconds: int
+        :keyword events_late_arrival_max_delay_in_seconds: The maximum tolerable delay in seconds where
+         events arriving late could be included.  Supported range is -1 to 1814399 (20.23:59:59 days)
+         and -1 is used to specify wait indefinitely. If the property is absent, it is interpreted to
+         have a value of -1.
+        :paramtype events_late_arrival_max_delay_in_seconds: int
+        :keyword data_locale: The data locale of the stream analytics job. Value should be the name of
+         a supported .NET Culture from the set
+         https://msdn.microsoft.com/en-us/library/system.globalization.culturetypes(v=vs.110).aspx.
+         Defaults to 'en-US' if none specified.
+        :paramtype data_locale: str
+        :keyword compatibility_level: Controls certain runtime behaviors of the streaming job. Possible
+         values include: "1.0", "1.2".
+        :paramtype compatibility_level: str or
+         ~stream_analytics_management_client.models.CompatibilityLevel
+        :keyword inputs: A list of one or more inputs to the streaming job. The name property for each
+         input is required when specifying this property in a PUT request. This property cannot be
+         modify via a PATCH operation. You must use the PATCH API available for the individual input.
+        :paramtype inputs: list[~stream_analytics_management_client.models.Input]
+        :keyword transformation: Indicates the query and the number of streaming units to use for the
+         streaming job. The name property of the transformation is required when specifying this
+         property in a PUT request. This property cannot be modify via a PATCH operation. You must use
+         the PATCH API available for the individual transformation.
+        :paramtype transformation: ~stream_analytics_management_client.models.Transformation
+        :keyword outputs: A list of one or more outputs for the streaming job. The name property for
+         each output is required when specifying this property in a PUT request. This property cannot be
+         modify via a PATCH operation. You must use the PATCH API available for the individual output.
+        :paramtype outputs: list[~stream_analytics_management_client.models.Output]
+        :keyword functions: A list of one or more functions for the streaming job. The name property
+         for each function is required when specifying this property in a PUT request. This property
+         cannot be modify via a PATCH operation. You must use the PATCH API available for the individual
+         transformation.
+        :paramtype functions: list[~stream_analytics_management_client.models.Function]
+        :keyword job_storage_account: The properties that are associated with an Azure Storage account
+         with MSI.
+        :paramtype job_storage_account: ~stream_analytics_management_client.models.JobStorageAccount
+        :keyword content_storage_policy: Valid values are JobStorageAccount and SystemAccount. If set
+         to JobStorageAccount, this requires the user to also specify jobStorageAccount property. .
+         Possible values include: "SystemAccount", "JobStorageAccount".
+        :paramtype content_storage_policy: str or
+         ~stream_analytics_management_client.models.ContentStoragePolicy
+        :keyword cluster: The cluster which streaming jobs will run on.
+        :paramtype cluster: ~stream_analytics_management_client.models.ClusterInfo
+        """
         super(StreamingJob, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
@@ -4929,8 +5722,7 @@ class StreamingJob(TrackedResource):
         self.functions = functions
         self.etag = None
         self.job_storage_account = job_storage_account
-        self.content_storage_policy = None
-        self.externals = externals
+        self.content_storage_policy = content_storage_policy
         self.cluster = cluster
 
 
@@ -4959,31 +5751,11 @@ class StreamingJobListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StreamingJobListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
-
-
-class StreamingJobSku(msrest.serialization.Model):
-    """The properties that are associated with a SKU.
-
-    :param name: The name of the SKU. Required on PUT (CreateOrReplace) requests. Possible values
-     include: "Standard".
-    :type name: str or ~stream_analytics_management_client.models.StreamingJobSkuName
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "StreamingJobSkuName"]] = None,
-        **kwargs
-    ):
-        super(StreamingJobSku, self).__init__(**kwargs)
-        self.name = name
 
 
 class StreamInputProperties(InputProperties):
@@ -4993,12 +5765,12 @@ class StreamInputProperties(InputProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Indicates whether the input is a source of reference data or stream
-     data. Required on PUT (CreateOrReplace) requests.Constant filled by server.
-    :type type: str
-    :param serialization: Describes how data from an input is serialized or how data is serialized
+    :ivar type: Required. Indicates whether the input is a source of reference data or stream data.
+     Required on PUT (CreateOrReplace) requests.Constant filled by server.
+    :vartype type: str
+    :ivar serialization: Describes how data from an input is serialized or how data is serialized
      when written to an output. Required on PUT (CreateOrReplace) requests.
-    :type serialization: ~stream_analytics_management_client.models.Serialization
+    :vartype serialization: ~stream_analytics_management_client.models.Serialization
     :ivar diagnostics: Describes conditions applicable to the Input, Output, or the job overall,
      that warrant customer attention.
     :vartype diagnostics: ~stream_analytics_management_client.models.Diagnostics
@@ -5006,14 +5778,14 @@ class StreamInputProperties(InputProperties):
      detect whether the resource has changed between requests. You can also use it in the If-Match
      or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
-    :param compression: Describes how input data is compressed.
-    :type compression: ~stream_analytics_management_client.models.Compression
-    :param partition_key: partitionKey Describes a key in the input data which is used for
+    :ivar compression: Describes how input data is compressed.
+    :vartype compression: ~stream_analytics_management_client.models.Compression
+    :ivar partition_key: partitionKey Describes a key in the input data which is used for
      partitioning the input data.
-    :type partition_key: str
-    :param datasource: Describes an input data source that contains stream data. Required on PUT
+    :vartype partition_key: str
+    :ivar datasource: Describes an input data source that contains stream data. Required on PUT
      (CreateOrReplace) requests.
-    :type datasource: ~stream_analytics_management_client.models.StreamInputDataSource
+    :vartype datasource: ~stream_analytics_management_client.models.StreamInputDataSource
     """
 
     _validation = {
@@ -5041,6 +5813,19 @@ class StreamInputProperties(InputProperties):
         datasource: Optional["StreamInputDataSource"] = None,
         **kwargs
     ):
+        """
+        :keyword serialization: Describes how data from an input is serialized or how data is
+         serialized when written to an output. Required on PUT (CreateOrReplace) requests.
+        :paramtype serialization: ~stream_analytics_management_client.models.Serialization
+        :keyword compression: Describes how input data is compressed.
+        :paramtype compression: ~stream_analytics_management_client.models.Compression
+        :keyword partition_key: partitionKey Describes a key in the input data which is used for
+         partitioning the input data.
+        :paramtype partition_key: str
+        :keyword datasource: Describes an input data source that contains stream data. Required on PUT
+         (CreateOrReplace) requests.
+        :paramtype datasource: ~stream_analytics_management_client.models.StreamInputDataSource
+        """
         super(StreamInputProperties, self).__init__(serialization=serialization, compression=compression, partition_key=partition_key, **kwargs)
         self.type = 'Stream'  # type: str
         self.datasource = datasource
@@ -5053,8 +5838,8 @@ class SubscriptionQuota(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar max_count: The max permitted usage of this resource.
@@ -5084,6 +5869,10 @@ class SubscriptionQuota(SubResource):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        """
         super(SubscriptionQuota, self).__init__(name=name, **kwargs)
         self.max_count = None
         self.current_count = None
@@ -5110,6 +5899,8 @@ class SubscriptionQuotasListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubscriptionQuotasListResult, self).__init__(**kwargs)
         self.value = None
 
@@ -5121,16 +5912,18 @@ class Transformation(SubResource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param streaming_units: Specifies the number of streaming units that the streaming job uses.
-    :type streaming_units: int
-    :param query: Specifies the query that will be run in the streaming job. You can learn more
+    :ivar streaming_units: Specifies the number of streaming units that the streaming job uses.
+    :vartype streaming_units: int
+    :ivar valid_streaming_units: Specifies the valid streaming units a streaming job can scale to.
+    :vartype valid_streaming_units: list[int]
+    :ivar query: Specifies the query that will be run in the streaming job. You can learn more
      about the Stream Analytics Query Language (SAQL) here:
      https://msdn.microsoft.com/library/azure/dn834998 . Required on PUT (CreateOrReplace) requests.
-    :type query: str
+    :vartype query: str
     :ivar etag: The current entity tag for the transformation. This is an opaque string. You can
      use it to detect whether the resource has changed between requests. You can also use it in the
      If-Match or If-None-Match headers for write operations for optimistic concurrency.
@@ -5148,6 +5941,7 @@ class Transformation(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'streaming_units': {'key': 'properties.streamingUnits', 'type': 'int'},
+        'valid_streaming_units': {'key': 'properties.validStreamingUnits', 'type': '[int]'},
         'query': {'key': 'properties.query', 'type': 'str'},
         'etag': {'key': 'properties.etag', 'type': 'str'},
     }
@@ -5157,10 +5951,25 @@ class Transformation(SubResource):
         *,
         name: Optional[str] = None,
         streaming_units: Optional[int] = None,
+        valid_streaming_units: Optional[List[int]] = None,
         query: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        :keyword streaming_units: Specifies the number of streaming units that the streaming job uses.
+        :paramtype streaming_units: int
+        :keyword valid_streaming_units: Specifies the valid streaming units a streaming job can scale
+         to.
+        :paramtype valid_streaming_units: list[int]
+        :keyword query: Specifies the query that will be run in the streaming job. You can learn more
+         about the Stream Analytics Query Language (SAQL) here:
+         https://msdn.microsoft.com/library/azure/dn834998 . Required on PUT (CreateOrReplace) requests.
+        :paramtype query: str
+        """
         super(Transformation, self).__init__(name=name, **kwargs)
         self.streaming_units = streaming_units
+        self.valid_streaming_units = valid_streaming_units
         self.query = query
         self.etag = None

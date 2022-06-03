@@ -30,11 +30,11 @@ The following are code samples that show common scenario operations with the Azu
     * Manage Container Provisioned Throughput
     * List all Container resources in a Database
 
+
 * [document_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py) - Example demonstrating basic CRUD operations on an Item resource.
 
-* [nonpartitioned_container_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/nonpartitioned_container_operations.py) - Example demonstrating basic CRUD operations on a Item resource in a non-partitioned Container.
 
-* [index_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py)- Example demonstrating how to manage the indexing policy of a Container.
+* [index_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py) - Example demonstrating basic CRUD operations on a Item resource in a non-partitioned Container.
 
 
 * [change_feed_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/change_feed_management.py) - Example demontrating how to consume the Change Feed and iterate on the results.
@@ -46,7 +46,7 @@ The following are code samples that show common scenario operations with the Azu
 * [multi-master operations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/MultiMasterOperations) - Example demonstrating multi-master operations.
 
 ## Prerequisites
-* Python 2.7 or 3.5.3+
+* Python 3.6+
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure Cosmos DB account](https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account) to run these samples.
 

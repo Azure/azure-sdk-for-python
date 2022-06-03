@@ -15,7 +15,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 ### Install packages
@@ -29,7 +29,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
+* Python 3.6 or later
 * A Key Vault. If you need to create one, you can use the
 [Azure Cloud Shell][azure_cloud_shell] to create one with these commands
 (replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
@@ -241,8 +241,11 @@ print(deleted_key.deleted_date)
 ```
 
 ### Configure automatic key rotation
-`update_key_rotation_policy` allows you to configure automatic key rotation for a key by specifying a rotation policy.
-In addition, `rotate_key` allows you to rotate a key on-demand by creating a new version of the given key.
+[update_key_rotation_policy](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.5.0b5/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient.update_key_rotation_policy)
+allows you to configure automatic key rotation for a key by specifying a rotation policy.
+In addition,
+[rotate_key](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.5.0b5/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient.rotate_key)
+allows you to rotate a key on-demand by creating a new version of the given key.
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -307,7 +310,7 @@ See the
 for more details of the cryptography API.
 
 ### Async API
-This library includes a complete async API supported on Python 3. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
@@ -377,6 +380,11 @@ async for key in keys:
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-keys`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a key that doesn't exist in the vault, [KeyClient][key_client_docs]

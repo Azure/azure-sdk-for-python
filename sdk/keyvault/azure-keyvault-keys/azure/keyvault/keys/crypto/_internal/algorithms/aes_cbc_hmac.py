@@ -19,11 +19,11 @@ class _AesCbcHmacCryptoTransform(AuthenticatedCryptoTransform):
 
         self._aes_key = key[: len(key) // 2]
         self._hmac_key = key[len(key) // 2 :]
-        hash_algo = {256: hashes.SHA256(), 384: hashes.SHA384(), 512: hashes.SHA512()}[len(key) * 8]
+        hash_algorithm = {256: hashes.SHA256(), 384: hashes.SHA384(), 512: hashes.SHA512()}[len(key) * 8]
 
         self._cipher = Cipher(algorithms.AES(self._aes_key), modes.CBC(iv), backend=default_backend())
         self._tag = auth_tag or bytearray()
-        self._hmac = hmac.HMAC(self._hmac_key, hash_algo, backend=default_backend())
+        self._hmac = hmac.HMAC(self._hmac_key, hash_algorithm, backend=default_backend())
         self._auth_data_length = _int_to_fixed_length_bigendian_bytes(len(auth_data) * 8, 8)
 
         # prime the hash

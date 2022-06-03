@@ -229,3 +229,41 @@ def test_error_reading(client):
     response.read()
     assert response.content == b""
     # try giving a really slow response, see what happens
+
+def test_pass_kwarg_to_iter_bytes(client):
+    request = HttpRequest("GET", "/basic/string")
+    response = client.send_request(request, stream=True)
+    for part in response.iter_bytes(chunk_size=5):
+        assert part
+
+def test_pass_kwarg_to_iter_raw(client):
+    request = HttpRequest("GET", "/basic/string")
+    response = client.send_request(request, stream=True)
+    for part in response.iter_raw(chunk_size=5):
+        assert part
+
+def test_decompress_compressed_header(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/gzip")
+    response = client.send_request(request)
+    content = response.read()
+    assert content == b"hello world"
+    assert response.content == content
+    assert response.text() == "hello world"
+
+def test_decompress_compressed_header_stream(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/gzip")
+    response = client.send_request(request, stream=True)
+    content = response.read()
+    assert content == b"hello world"
+    assert response.content == content
+    assert response.text() == "hello world"
+
+def test_decompress_compressed_header_stream_body_content(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/gzip")
+    response = client.send_request(request, stream=True)
+    response.read()
+    content = response.content
+    assert content == response.body()

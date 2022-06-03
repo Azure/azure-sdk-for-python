@@ -11,13 +11,16 @@ def delete_database(database_id):
     try:
         client = cosmos_client.CosmosClient(host, masterKey, "Session", connection_policy=connectionPolicy)
     # This is to soft-fail the teardown while cosmos tests are not running automatically
-    except Exception:
+    except Exception as exception:
+        print("Error while initialing the client", exception)
         pass
     else:
         try:
+            print("Deleting database with id : ", database_id)
             client.delete_database(database_id)
-            print("Deleted " + database_id)
-        except exceptions.CosmosResourceNotFoundError:
+            print("Deleted : ", database_id)
+        except exceptions.CosmosResourceNotFoundError as exception:
+            print("Error while deleting database", exception)
             pass
     print("Clean up completed!")
 

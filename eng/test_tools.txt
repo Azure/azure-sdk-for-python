@@ -1,4 +1,4 @@
-pip==20.3
+cryptography<4
 
 # python 3.10 pinned packages
 cffi==1.15.0rc2; python_version >= '3.10'
@@ -15,23 +15,26 @@ pytest-xdist==1.32.0
 coverage==4.5.4
 bandit==1.6.2
 protobuf==3.17.3; python_version == '2.7'
-wrapt<=1.12.1; python_version == '2.7'
+chardet>=2.0,<5.0
+cmarkgfm<0.7.0
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
 readme-renderer[md]==25.0
-pyOpenSSL==19.1.0
+pyOpenSSL==21.0.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
 pyyaml==5.3.1
 packaging==20.4
-wheel==0.37.0
 Jinja2==2.11.2
+markupsafe==2.0.1; python_version > '2.7'
+markupsafe==1.1.1; python_version == '2.7'
+wrapt==1.12.1
 
 # Locking pylint and required packages
 pylint==1.8.4; python_version < '3.4'
-pylint==2.5.2; python_version >= '3.4'
+pylint==2.9.3; python_version >= '3.6'
 
 # python-dotenv
 python-dotenv==0.15.0

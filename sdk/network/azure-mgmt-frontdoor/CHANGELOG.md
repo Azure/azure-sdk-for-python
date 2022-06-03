@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.1 (2022-03-29)
+
+**Fixes**
+
+- Fix duplicated description in annotation
+
 ## 1.0.0 (2021-03-26)
 
  - GA release

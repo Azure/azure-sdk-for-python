@@ -21,6 +21,8 @@ class CommunicationIdentityClientConfiguration(Configuration):
 
     :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -28,12 +30,14 @@ class CommunicationIdentityClientConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-03-07"
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'communicationidentityclient/{}'.format(VERSION))
         self._configure(**kwargs)
 

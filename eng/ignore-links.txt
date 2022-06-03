@@ -4,3 +4,4 @@ https://pypi.org/project/azure-digitaltwins-core
 https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations
 https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}
 https://pypi.org/project/azure-messaging-webpubsubservice/
+https://github.com/Azure/azure-rest-api-specs-pr

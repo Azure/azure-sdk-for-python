@@ -4,10 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
-from threading import Lock
-from enum import Enum
 
-from uamqp import Connection, TransportType, c_uamqp
+from uamqp import Connection
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAuth

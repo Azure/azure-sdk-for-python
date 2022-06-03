@@ -101,6 +101,21 @@ def test_get_token(stderr):
         assert "timeout" in kwargs
 
 
+@pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
+def test_get_token_tenant_id(stderr):
+    expected_access_token = "access"
+    expected_expires_on = 1617923581
+    scope = "scope"
+    stdout = "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
+
+    Popen = get_mock_Popen(stdout=stdout, stderr=stderr)
+    with patch(POPEN, Popen):
+        token = AzurePowerShellCredential().get_token(scope, tenant_id="tenant_id")
+
+    assert token.token == expected_access_token
+    assert token.expires_on == expected_expires_on
+
+
 def test_ignores_extraneous_stdout_content():
     expected_access_token = "access"
     expected_expires_on = 1617923581

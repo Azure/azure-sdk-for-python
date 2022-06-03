@@ -16,7 +16,7 @@ class HttpxGetTest(PerfStressTest):
         await type(self).client.aclose()
 
     async def run_async(self):
-        response = await type(self).client.get(self.Arguments.url)
+        response = await type(self).client.get(self.args.url)
         _ = response.text
 
     @staticmethod

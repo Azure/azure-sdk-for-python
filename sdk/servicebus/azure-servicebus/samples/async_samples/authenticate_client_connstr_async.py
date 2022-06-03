@@ -19,8 +19,6 @@ export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys li
 ```
 """
 
-# pylint: disable=C0111
-
 from azure.servicebus.aio import ServiceBusClient
 
 import os
@@ -32,5 +30,4 @@ async def run():
     async with ServiceBusClient.from_connection_string(connstr) as client:
         pass # Client is now initialized and can be used.
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run())
+asyncio.run(run())

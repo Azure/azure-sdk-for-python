@@ -28,18 +28,20 @@
 
 
 import unittest
+import pytest
 
 import azure.mgmt.network
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-@unittest.skip("Fix it later.")
-class MgmtNetworkTest(AzureMgmtTestCase):
 
-    def setUp(self):
-        super(MgmtNetworkTest, self).setUp()
+@pytest.mark.live_test_only
+@pytest.mark.skip(reason="cost too much time which influence pipeline")
+class TestMgmtNetwork(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
@@ -149,7 +151,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         try:
             result = result.result()
         except HttpResponseError as e:
-            self.assertEqual(str(e), "(InternalServerError) An error occurred.")
+            assert str(e) == "(InternalServerError) An error occurred."
         return result
 
     def create_vm(self, group_name, location, vm_name, network_name, subnet_name, interface_name):
@@ -286,8 +288,9 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network_watcher_troubleshoot(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
 
         NETWORK_WATCHER_NAME = self.get_resource_name("networkwatcher")
@@ -338,9 +341,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @unittest.skip("NsgsNotAppliedOnNic")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network_watcher_ip_flow(self, resource_group):
         
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         NETWORK_WATCHER_NAME = self.get_resource_name("networkwatcher")
         VIRTUAL_NETWORK_NAME = self.get_resource_name("virtualnetwork")
@@ -381,8 +385,9 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
  
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network_watcher_flow_log(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
 
         NETWORK_WATCHER_NAME = self.get_resource_name("networkwatcher")
@@ -462,9 +467,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network_watcher_monitor(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         NETWORK_WATCHER_NAME = self.get_resource_name("networkwatcher")
         VIRTUAL_NETWORK_NAME = self.get_resource_name("virtualnetwork")
@@ -607,9 +613,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network_watcher_packet_capture(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         NETWORK_WATCHER_NAME = self.get_resource_name("networkwatcher")
         VIRTUAL_NETWORK_NAME = self.get_resource_name("virtualnetwork")
@@ -672,9 +679,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network_watcher(self, resource_group):
         
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         NETWORK_WATCHER_NAME = self.get_resource_name("networkwatcher")
         VIRTUAL_NETWORK_NAME = self.get_resource_name("virtualnetwork")
@@ -807,9 +815,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
 
         VIRTUAL_NETWORK_NAME = self.get_resource_name("virtualnetwork")

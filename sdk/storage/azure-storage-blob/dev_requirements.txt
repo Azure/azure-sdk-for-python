@@ -4,4 +4,4 @@
 ../../core/azure-core
 azure-identity
 -e ../../storage/azure-mgmt-storage
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0

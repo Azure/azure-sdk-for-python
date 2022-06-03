@@ -66,6 +66,7 @@ async def create_authentication(client):
         timeout=client._config.auth_timeout,
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
+        refresh_window=300,
     )
 
 

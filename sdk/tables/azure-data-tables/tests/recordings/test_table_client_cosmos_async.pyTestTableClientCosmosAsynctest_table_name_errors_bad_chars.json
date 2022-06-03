@@ -1,0 +1,1593 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "099de829-9f8e-11ec-800b-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "\\"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:11 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "57194694-e8d5-42f2-9eae-12ee3f7a75a0"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027\\\u0027.\nRequestID:57194694-e8d5-42f2-9eae-12ee3f7a75a0\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "099de829-9f8e-11ec-800b-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "\\"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:11 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "4468a595-c84e-458f-9ddc-6a28aaa643b0"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027\\\u0027.\nRequestID:4468a595-c84e-458f-9ddc-6a28aaa643b0\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "099de829-9f8e-11ec-800b-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "\\"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "573a9096-ba0d-40d6-aee4-5b9ae08d0f25"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027\\\u0027.\nRequestID:573a9096-ba0d-40d6-aee4-5b9ae08d0f25\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "099de829-9f8e-11ec-800b-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:13 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "\\"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "c6ac206f-ea25-48b4-afe5-4437e320d560"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027\\\u0027.\nRequestID:c6ac206f-ea25-48b4-afe5-4437e320d560\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027%5C\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0cd47c31-9f8e-11ec-843c-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 405,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "5202690e-e610-4a89-a0bf-d351325432ca"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "MethodNotAllowed",
+          "message": {
+            "lang": "en-us",
+            "value": "RequestHandler.Delete\r\nActivityId: f32a5911-1d2a-446f-9976-c71bc11d6415, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:5202690e-e610-4a89-a0bf-d351325432ca\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%5C",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0cd752f7-9f8e-11ec-b48c-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "1230ad97-effa-4280-bfbd-93962185e750"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB\nwed, 09 mar 2022 09:48:16 gmt\n\n\u0027\r\nActivityId: f073e63b-768e-4048-bbc4-8ab9a825b520, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:1230ad97-effa-4280-bfbd-93962185e750\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%5C(PartitionKey=\u0027foo\u0027,RowKey=\u0027foo\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-client-request-id": "0ce3fd8d-9f8e-11ec-af44-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "eb099872-9e3d-4796-b2ff-971a56cd8670"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB\nwed, 09 mar 2022 09:48:16 gmt\n\n\u0027\r\nActivityId: 801735c3-1361-4086-a606-9ec146a72c78, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:eb099872-9e3d-4796-b2ff-971a56cd8670\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%5C(PartitionKey=\u0027PK\u0027,RowKey=\u0027RK\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "If-Match": "*",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0ce6c1f4-9f8e-11ec-97b5-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "4f750d49-e692-4b21-88b1-a1a6051dc90c"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB\nwed, 09 mar 2022 09:48:16 gmt\n\n\u0027\r\nActivityId: a2f55711-deb1-4ef5-9f3e-f9ed0e2e7432, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:4f750d49-e692-4b21-88b1-a1a6051dc90c\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "814",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0ce98738-9f8e-11ec-a01e-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF9mMzQ5YWQ4OC1jYWQ2LTRiNjYtODg1MS1lY2Y2NDY3YjU4ODMNCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfMDdkNzA2YzktNzJhMy00NTI0LWFkOWQtZGQxMWNiOTc4YWZjDQoNCi0tY2hhbmdlc2V0XzA3ZDcwNmM5LTcyYTMtNDUyNC1hZDlkLWRkMTFjYjk3OGFmYw0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLyU1QyhQYXJ0aXRpb25LZXk9J0EnLFJvd0tleT0nQicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDExMg0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogV2VkLCAwOSBNYXIgMjAyMiAwOTo0ODoxOSBHTVQNCkRhdGU6IFdlZCwgMDkgTWFyIDIwMjIgMDk6NDg6MTkgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIkEiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiQiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0XzA3ZDcwNmM5LTcyYTMtNDUyNC1hZDlkLWRkMTFjYjk3OGFmYy0tDQoNCi0tYmF0Y2hfZjM0OWFkODgtY2FkNi00YjY2LTg4NTEtZWNmNjQ2N2I1ODgzLS0NCg==",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "e220a2a9-a8c7-421c-9440-d81675c32a62"
+      },
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlXzk4YzA0NDUzLTgwMWYtNDEwNC04OTVlLWIzZWEzOGQ1OTVhMw0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzJiY2U5YzhiLTM5NDAtNDRhMC04M2M4LTVjOTNhNTkzYmEzNA0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzJiY2U5YzhiLTM5NDAtNDRhMC04M2M4LTVjOTNhNTkzYmEzNApDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSA0MDEgVW5hdXRob3JpemVkDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9ZnVsbG1ldGFkYXRhDQoNCnsib2RhdGEuZXJyb3IiOnsiY29kZSI6IlVuYXV0aG9yaXplZCIsIm1lc3NhZ2UiOnsibGFuZyI6ImVuLXVzIiwidmFsdWUiOiJUaGUgaW5wdXQgYXV0aG9yaXphdGlvbiB0b2tlbiBjYW4ndCBzZXJ2ZSB0aGUgcmVxdWVzdC4gVGhlIHdyb25nIGtleSBpcyBiZWluZyB1c2VkIG9yIHRoZSBleHBlY3RlZCBwYXlsb2FkIGlzIG5vdCBidWlsdCBhcyBwZXIgdGhlIHByb3RvY29sLiBGb3IgbW9yZSBpbmZvOiBodHRwczovL2FrYS5tcy9jb3Ntb3NkYi10c2ctdW5hdXRob3JpemVkLiBTZXJ2ZXIgdXNlZCB0aGUgZm9sbG93aW5nIHBheWxvYWQgdG8gc2lnbjogJ2dldFxuY29sbHNcbmRicy9UYWJsZXNEQlxud2VkLCAwOSBtYXIgMjAyMiAwOTo0ODoxNiBnbXRcblxuJ1xyXG5BY3Rpdml0eUlkOiAwNjg4MDk0Yy01MWU5LTRlNzQtYmUyZC0zZWY1NTI0NDAwNGUsIE1pY3Jvc29mdC5BenVyZS5Eb2N1bWVudHMuQ29tbW9uLzIuMTQuMCwgZG9jdW1lbnRkYi1kb3RuZXQtc2RrLzIuMTQuMCBIb3N0LzY0LWJpdCBNaWNyb3NvZnRXaW5kb3dzTlQvMTAuMC4xOTA0MS4wXG5SZXF1ZXN0SUQ6ZTIyMGEyYTktYThjNy00MjFjLTk0NDAtZDgxNjc1YzMyYTYyXG4ifX19DQotLWNoYW5nZXNldHJlc3BvbnNlXzJiY2U5YzhiLTM5NDAtNDRhMC04M2M4LTVjOTNhNTkzYmEzNC0tCi0tYmF0Y2hyZXNwb25zZV85OGMwNDQ1My04MDFmLTQxMDQtODk1ZS1iM2VhMzhkNTk1YTMtLQ0K"
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0cee46a0-9f8e-11ec-b661-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "//"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "d879b0f3-178e-410f-9c7f-85f8f45c8154"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027/\u0027.\nRequestID:d879b0f3-178e-410f-9c7f-85f8f45c8154\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0cee46a0-9f8e-11ec-b661-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "//"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:16 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "b5d884a7-5f19-4152-bdd1-5bc66cf1ab6c"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027/\u0027.\nRequestID:b5d884a7-5f19-4152-bdd1-5bc66cf1ab6c\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0cee46a0-9f8e-11ec-b661-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "//"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:18 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "719083b3-e292-407e-a902-ff6182204591"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027/\u0027.\nRequestID:719083b3-e292-407e-a902-ff6182204591\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0cee46a0-9f8e-11ec-b661-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:19 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "//"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "4e7d81a7-3403-430c-8341-9f3463e50bbf"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027/\u0027.\nRequestID:4e7d81a7-3403-430c-8341-9f3463e50bbf\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027%2F%2F\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fdd79cf-9f8e-11ec-935a-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "161b53b7-bcb9-4c76-8e5e-3cdaa18ae306"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "Request url is invalid.\r\nActivityId: 161b53b7-bcb9-4c76-8e5e-3cdaa18ae306, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:161b53b7-bcb9-4c76-8e5e-3cdaa18ae306\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%2F%2F",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fdf6113-9f8e-11ec-a3bc-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "c873c846-a907-4450-a895-1af5689f31f8"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "Request url is invalid.\r\nActivityId: c873c846-a907-4450-a895-1af5689f31f8, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:c873c846-a907-4450-a895-1af5689f31f8\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%2F%2F(PartitionKey=\u0027foo\u0027,RowKey=\u0027foo\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-client-request-id": "0fe7c007-9f8e-11ec-84cd-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "b19f8e95-71dd-46a4-92d7-37c82dc00263"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "One of the input values is invalid.\r\nActivityId: b19f8e95-71dd-46a4-92d7-37c82dc00263, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:b19f8e95-71dd-46a4-92d7-37c82dc00263\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%2F%2F(PartitionKey=\u0027PK\u0027,RowKey=\u0027RK\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "If-Match": "*",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fe9730e-9f8e-11ec-81f7-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "3eed8277-e857-4a67-887d-1a5ba966a292"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "One of the input values is invalid.\r\nActivityId: 3eed8277-e857-4a67-887d-1a5ba966a292, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:3eed8277-e857-4a67-887d-1a5ba966a292\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "817",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0febc08e-9f8e-11ec-98f5-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF84NjIyZWRlMC02OGU5LTRhZWMtODAxNi1jZGRiMDdmMjNjODUNCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfZTA5MGE2NTMtMGVkOS00MmMzLTgwNmItNmRhODkzOGZiZmIwDQoNCi0tY2hhbmdlc2V0X2UwOTBhNjUzLTBlZDktNDJjMy04MDZiLTZkYTg5MzhmYmZiMA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLyUyRiUyRihQYXJ0aXRpb25LZXk9J0EnLFJvd0tleT0nQicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDExMg0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogV2VkLCAwOSBNYXIgMjAyMiAwOTo0ODoyNCBHTVQNCkRhdGU6IFdlZCwgMDkgTWFyIDIwMjIgMDk6NDg6MjQgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIkEiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiQiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0X2UwOTBhNjUzLTBlZDktNDJjMy04MDZiLTZkYTg5MzhmYmZiMC0tDQoNCi0tYmF0Y2hfODYyMmVkZTAtNjhlOS00YWVjLTgwMTYtY2RkYjA3ZjIzYzg1LS0NCg==",
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "1caae20b-5dea-4b0b-8e1a-2026266fad12"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InvalidInput",
+          "message": {
+            "lang": "en-us",
+            "value": "One of the input values is invalid.\r\nActivityId: 1caae20b-5dea-4b0b-8e1a-2026266fad12, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:1caae20b-5dea-4b0b-8e1a-2026266fad12\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fedbc02-9f8e-11ec-a031-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "#"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "b41c226e-9cc3-46f3-9ad6-c1495bb4b618"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027#\u0027.\nRequestID:b41c226e-9cc3-46f3-9ad6-c1495bb4b618\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fedbc02-9f8e-11ec-a031-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "#"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:21 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "439af512-ae11-40b6-ae34-ec3d3f573760"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027#\u0027.\nRequestID:439af512-ae11-40b6-ae34-ec3d3f573760\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fedbc02-9f8e-11ec-a031-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "#"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:23 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "cf8be3cb-246d-4c34-bd63-d2628795d0a2"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027#\u0027.\nRequestID:cf8be3cb-246d-4c34-bd63-d2628795d0a2\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0fedbc02-9f8e-11ec-a031-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "#"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "3d804f36-f472-4365-bfdd-9f74bf3f8ba8"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027#\u0027.\nRequestID:3d804f36-f472-4365-bfdd-9f74bf3f8ba8\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027%23\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12dc009f-9f8e-11ec-aeea-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 405,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "cb2ae68e-b705-4f42-acd3-8fdf2273bd97"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "MethodNotAllowed",
+          "message": {
+            "lang": "en-us",
+            "value": "RequestHandler.Delete\r\nActivityId: 6450ec2e-fe64-4c58-b5f3-7010bc55677f, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:cb2ae68e-b705-4f42-acd3-8fdf2273bd97\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%23",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12dead55-9f8e-11ec-a2a6-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "166ef929-a7df-4154-a0b7-7d3ff55d773f"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB\nwed, 09 mar 2022 09:48:27 gmt\n\n\u0027\r\nActivityId: 7f7d6694-43e8-455f-8fdb-0d4d540a23fe, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:166ef929-a7df-4154-a0b7-7d3ff55d773f\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%23(PartitionKey=\u0027foo\u0027,RowKey=\u0027foo\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-client-request-id": "12ea3f67-9f8e-11ec-9548-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "dd60ec8e-650e-4c6c-9170-fac5d9505690"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB\nwed, 09 mar 2022 09:48:27 gmt\n\n\u0027\r\nActivityId: 2fb6dbad-3746-42ed-8ef7-2ebf56b89529, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:dd60ec8e-650e-4c6c-9170-fac5d9505690\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%23(PartitionKey=\u0027PK\u0027,RowKey=\u0027RK\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "If-Match": "*",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12ece6fa-9f8e-11ec-809e-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "33506932-9306-47a9-abdf-b8e2b0175669"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB\nwed, 09 mar 2022 09:48:27 gmt\n\n\u0027\r\nActivityId: d90ae07b-85d6-4c1a-8e01-3b1a58c1c763, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:33506932-9306-47a9-abdf-b8e2b0175669\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "814",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12ef9092-9f8e-11ec-a933-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF83NWQxZDVjZC05MDliLTRkYTgtOTdhYS1lOTZkNTMwNmE2OTENCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfOWRjN2FjNDUtYzUwMy00MGNmLWIwNTItYmNkMTBjOWE4YjZkDQoNCi0tY2hhbmdlc2V0XzlkYzdhYzQ1LWM1MDMtNDBjZi1iMDUyLWJjZDEwYzlhOGI2ZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLyUyMyhQYXJ0aXRpb25LZXk9J0EnLFJvd0tleT0nQicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDExMg0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogV2VkLCAwOSBNYXIgMjAyMiAwOTo0ODoyOSBHTVQNCkRhdGU6IFdlZCwgMDkgTWFyIDIwMjIgMDk6NDg6MjkgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIkEiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiQiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0XzlkYzdhYzQ1LWM1MDMtNDBjZi1iMDUyLWJjZDEwYzlhOGI2ZC0tDQoNCi0tYmF0Y2hfNzVkMWQ1Y2QtOTA5Yi00ZGE4LTk3YWEtZTk2ZDUzMDZhNjkxLS0NCg==",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "28449d09-e0a0-4dc0-8f41-5811294bbc71"
+      },
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlX2ExNDE3NzkzLWZkNzgtNGUyZS05M2RhLWZhOWYzYjc5YTBlOQ0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzdjZmUwM2YxLWE0NjYtNGQ0ZS1hZWUyLTNlYTcwYzYyNzRhNg0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzdjZmUwM2YxLWE0NjYtNGQ0ZS1hZWUyLTNlYTcwYzYyNzRhNgpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSA0MDEgVW5hdXRob3JpemVkDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9ZnVsbG1ldGFkYXRhDQoNCnsib2RhdGEuZXJyb3IiOnsiY29kZSI6IlVuYXV0aG9yaXplZCIsIm1lc3NhZ2UiOnsibGFuZyI6ImVuLXVzIiwidmFsdWUiOiJUaGUgaW5wdXQgYXV0aG9yaXphdGlvbiB0b2tlbiBjYW4ndCBzZXJ2ZSB0aGUgcmVxdWVzdC4gVGhlIHdyb25nIGtleSBpcyBiZWluZyB1c2VkIG9yIHRoZSBleHBlY3RlZCBwYXlsb2FkIGlzIG5vdCBidWlsdCBhcyBwZXIgdGhlIHByb3RvY29sLiBGb3IgbW9yZSBpbmZvOiBodHRwczovL2FrYS5tcy9jb3Ntb3NkYi10c2ctdW5hdXRob3JpemVkLiBTZXJ2ZXIgdXNlZCB0aGUgZm9sbG93aW5nIHBheWxvYWQgdG8gc2lnbjogJ2dldFxuY29sbHNcbmRicy9UYWJsZXNEQlxud2VkLCAwOSBtYXIgMjAyMiAwOTo0ODoyNyBnbXRcblxuJ1xyXG5BY3Rpdml0eUlkOiA1ZGU5ZjRkMy1iMWM0LTRiOWUtODE5NS1jOWE3MjI4NGE1ZDMsIE1pY3Jvc29mdC5BenVyZS5Eb2N1bWVudHMuQ29tbW9uLzIuMTQuMCwgZG9jdW1lbnRkYi1kb3RuZXQtc2RrLzIuMTQuMCBIb3N0LzY0LWJpdCBNaWNyb3NvZnRXaW5kb3dzTlQvMTAuMC4xOTA0MS4wXG5SZXF1ZXN0SUQ6Mjg0NDlkMDktZTBhMC00ZGMwLThmNDEtNTgxMTI5NGJiYzcxXG4ifX19DQotLWNoYW5nZXNldHJlc3BvbnNlXzdjZmUwM2YxLWE0NjYtNGQ0ZS1hZWUyLTNlYTcwYzYyNzRhNi0tCi0tYmF0Y2hyZXNwb25zZV9hMTQxNzc5My1mZDc4LTRlMmUtOTNkYS1mYTlmM2I3OWEwZTktLQ0K"
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12f25360-9f8e-11ec-a86c-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "?"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "75f5a2fe-8d4e-4801-8963-01790e129f34"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027?\u0027.\nRequestID:75f5a2fe-8d4e-4801-8963-01790e129f34\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12f25360-9f8e-11ec-a86c-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "?"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:26 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "ad2ce25f-12e3-44fa-951e-022e1ce47869"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027?\u0027.\nRequestID:ad2ce25f-12e3-44fa-951e-022e1ce47869\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12f25360-9f8e-11ec-a86c-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "?"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:28 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "67034aec-21fd-463f-b66d-b1cd91a1a4ff"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027?\u0027.\nRequestID:67034aec-21fd-463f-b66d-b1cd91a1a4ff\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "18",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "12f25360-9f8e-11ec-a86c-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:29 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "?"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "2da80a05-3146-4c48-9168-1183140a51aa"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name presented contains invalid character \u0027?\u0027.\nRequestID:2da80a05-3146-4c48-9168-1183140a51aa\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027%3F\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "15e8192c-9f8e-11ec-84cc-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 405,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "d6aa830a-fe6d-49d0-84b4-b53caec1e37f"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "MethodNotAllowed",
+          "message": {
+            "lang": "en-us",
+            "value": "RequestHandler.Delete\r\nActivityId: 22ec4844-cb86-45fc-b7a6-527fac70b5cd, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:d6aa830a-fe6d-49d0-84b4-b53caec1e37f\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%3F",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "15eb3365-9f8e-11ec-b4ee-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "eee6cdfe-1e89-46f6-9724-5f1e92006aa3"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "Message: {\u0022Errors\u0022:[\u0022The MAC signature found in the HTTP request is not the same as the computed signature. Server used following string to sign - \u0027get\\ncolls\\ndbs\\/TablesDB\\nwed, 09 mar 2022 09:48:32 gmt\\n\\n\u0027. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-mac-signature\u0022,\u0022The MAC signature found in the HTTP request is not the same as the computed signature. Server used following string to sign - \u0027get\\ncolls\\ndbs\\/TablesDB\\nwed, 09 mar 2022 09:48:32 gmt\\n\\n\u0027. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-mac-signature\u0022]}\r\nActivityId: f1a01016-5092-4878-83fe-4ef04fda32d0, Request URI: /apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876929s, RequestStats: \r\nRequestStartTime: 2022-03-09T09:48:32.1150217Z, RequestEndTime: 2022-03-09T09:48:32.1249507Z,  Number of regions attempted:1\r\n{\u0022systemHistory\u0022:[{\u0022dateUtc\u0022:\u00222022-03-09T09:47:32.3341030Z\u0022,\u0022cpu\u0022:0.621,\u0022memory\u0022:484818672.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0208,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:47:42.3442860Z\u0022,\u0022cpu\u0022:2.280,\u0022memory\u0022:486200192.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0372,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:47:52.3543451Z\u0022,\u0022cpu\u0022:0.447,\u0022memory\u0022:486070972.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0186,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:02.3644906Z\u0022,\u0022cpu\u0022:0.696,\u0022memory\u0022:485860888.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0207,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:12.3747117Z\u0022,\u0022cpu\u0022:0.922,\u0022memory\u0022:484951896.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0122,\u0022availableThreads\u0022:32765,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:22.3848673Z\u0022,\u0022cpu\u0022:0.619,\u0022memory\u0022:484561268.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0209,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}}]}\r\nRequestStart: 2022-03-09T09:48:32.1150217Z; ResponseTime: 2022-03-09T09:48:32.1249507Z; StoreResult: StorePhysicalAddress: rntbd://10.0.0.24:11000/apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876929s, LSN: 52, GlobalCommittedLsn: 52, PartitionKeyRangeId: , IsValid: True, StatusCode: 401, SubStatusCode: 0, RequestCharge: 0, ItemLSN: -1, SessionToken: -1#52, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.336, ActivityId: f1a01016-5092-4878-83fe-4ef04fda32d0, RetryAfterInMs: , TransportRequestTimeline: {\u0022requestTimeline\u0022:[{\u0022event\u0022: \u0022Created\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1150217Z\u0022, \u0022durationInMs\u0022: 0.0085},{\u0022event\u0022: \u0022ChannelAcquisitionStarted\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1150302Z\u0022, \u0022durationInMs\u0022: 0.0031},{\u0022event\u0022: \u0022Pipelined\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1150333Z\u0022, \u0022durationInMs\u0022: 0.2168},{\u0022event\u0022: \u0022Transit Time\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1152501Z\u0022, \u0022durationInMs\u0022: 0.6385},{\u0022event\u0022: \u0022Received\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1158886Z\u0022, \u0022durationInMs\u0022: 0.0719},{\u0022event\u0022: \u0022Completed\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1159605Z\u0022, \u0022durationInMs\u0022: 0}],\u0022requestSizeInBytes\u0022:469,\u0022responseMetadataSizeInBytes\u0022:124,\u0022responseBodySizeInBytes\u0022:510};\r\n ResourceType: Collection, OperationType: ReadFeed\r\nRequestStart: 2022-03-09T09:48:32.1150217Z; ResponseTime: 2022-03-09T09:48:32.1249507Z; StoreResult: StorePhysicalAddress: rntbd://10.0.0.23:11300/apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876928s, LSN: 52, GlobalCommittedLsn: 52, PartitionKeyRangeId: , IsValid: True, StatusCode: 401, SubStatusCode: 0, RequestCharge: 0, ItemLSN: -1, SessionToken: -1#52, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.273, ActivityId: f1a01016-5092-4878-83fe-4ef04fda32d0, RetryAfterInMs: , TransportRequestTimeline: {\u0022requestTimeline\u0022:[{\u0022event\u0022: \u0022Created\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1150217Z\u0022, \u0022durationInMs\u0022: 0.0065},{\u0022event\u0022: \u0022ChannelAcquisitionStarted\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1150282Z\u0022, \u0022durationInMs\u0022: 0.0018},{\u0022event\u0022: \u0022Pipelined\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1150300Z\u0022, \u0022durationInMs\u0022: 0.1684},{\u0022event\u0022: \u0022Transit Time\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1151984Z\u0022, \u0022durationInMs\u0022: 0.6881},{\u0022event\u0022: \u0022Received\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1158865Z\u0022, \u0022durationInMs\u0022: 0.0595},{\u0022event\u0022: \u0022Completed\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1159460Z\u0022, \u0022durationInMs\u0022: 0}],\u0022requestSizeInBytes\u0022:469,\u0022responseMetadataSizeInBytes\u0022:124,\u0022responseBodySizeInBytes\u0022:510};\r\n ResourceType: Collection, OperationType: ReadFeed\r\n, SDK: Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:eee6cdfe-1e89-46f6-9724-5f1e92006aa3\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%3F(PartitionKey=\u0027foo\u0027,RowKey=\u0027foo\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-client-request-id": "15f734be-9f8e-11ec-bf56-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "f9efd461-a256-4bfe-84ad-c08f887629eb"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "Message: {\u0022Errors\u0022:[\u0022The MAC signature found in the HTTP request is not the same as the computed signature. Server used following string to sign - \u0027get\\ncolls\\ndbs\\/TablesDB\\nwed, 09 mar 2022 09:48:32 gmt\\n\\n\u0027. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-mac-signature\u0022,\u0022The MAC signature found in the HTTP request is not the same as the computed signature. Server used following string to sign - \u0027get\\ncolls\\ndbs\\/TablesDB\\nwed, 09 mar 2022 09:48:32 gmt\\n\\n\u0027. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-mac-signature\u0022]}\r\nActivityId: a7f12c76-c029-42ab-ba15-6b7bc172c1cf, Request URI: /apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876928s, RequestStats: \r\nRequestStartTime: 2022-03-09T09:48:32.1450216Z, RequestEndTime: 2022-03-09T09:48:32.1450216Z,  Number of regions attempted:1\r\n{\u0022systemHistory\u0022:[{\u0022dateUtc\u0022:\u00222022-03-09T09:47:32.3341030Z\u0022,\u0022cpu\u0022:0.621,\u0022memory\u0022:484818672.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0208,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:47:42.3442860Z\u0022,\u0022cpu\u0022:2.280,\u0022memory\u0022:486200192.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0372,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:47:52.3543451Z\u0022,\u0022cpu\u0022:0.447,\u0022memory\u0022:486070972.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0186,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:02.3644906Z\u0022,\u0022cpu\u0022:0.696,\u0022memory\u0022:485860888.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0207,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:12.3747117Z\u0022,\u0022cpu\u0022:0.922,\u0022memory\u0022:484951896.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0122,\u0022availableThreads\u0022:32765,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:22.3848673Z\u0022,\u0022cpu\u0022:0.619,\u0022memory\u0022:484561268.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0209,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}}]}\r\nRequestStart: 2022-03-09T09:48:32.1450216Z; ResponseTime: 2022-03-09T09:48:32.1450216Z; StoreResult: StorePhysicalAddress: rntbd://10.0.0.23:11300/apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876928s, LSN: 52, GlobalCommittedLsn: 52, PartitionKeyRangeId: , IsValid: True, StatusCode: 401, SubStatusCode: 0, RequestCharge: 0, ItemLSN: -1, SessionToken: -1#52, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.383, ActivityId: a7f12c76-c029-42ab-ba15-6b7bc172c1cf, RetryAfterInMs: , TransportRequestTimeline: {\u0022requestTimeline\u0022:[{\u0022event\u0022: \u0022Created\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450216Z\u0022, \u0022durationInMs\u0022: 0.009},{\u0022event\u0022: \u0022ChannelAcquisitionStarted\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450306Z\u0022, \u0022durationInMs\u0022: 0.0027},{\u0022event\u0022: \u0022Pipelined\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450333Z\u0022, \u0022durationInMs\u0022: 0.1067},{\u0022event\u0022: \u0022Transit Time\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1451400Z\u0022, \u0022durationInMs\u0022: 1.035},{\u0022event\u0022: \u0022Received\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1461750Z\u0022, \u0022durationInMs\u0022: 0.1169},{\u0022event\u0022: \u0022Completed\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1462919Z\u0022, \u0022durationInMs\u0022: 0}],\u0022requestSizeInBytes\u0022:469,\u0022responseMetadataSizeInBytes\u0022:124,\u0022responseBodySizeInBytes\u0022:510};\r\n ResourceType: Collection, OperationType: ReadFeed\r\nRequestStart: 2022-03-09T09:48:32.1450216Z; ResponseTime: 2022-03-09T09:48:32.1450216Z; StoreResult: StorePhysicalAddress: rntbd://10.0.0.28:11300/apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336015624328s, LSN: 52, GlobalCommittedLsn: 52, PartitionKeyRangeId: , IsValid: True, StatusCode: 401, SubStatusCode: 0, RequestCharge: 0, ItemLSN: -1, SessionToken: -1#52, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.285, ActivityId: a7f12c76-c029-42ab-ba15-6b7bc172c1cf, RetryAfterInMs: , TransportRequestTimeline: {\u0022requestTimeline\u0022:[{\u0022event\u0022: \u0022Created\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450216Z\u0022, \u0022durationInMs\u0022: 0.0052},{\u0022event\u0022: \u0022ChannelAcquisitionStarted\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450268Z\u0022, \u0022durationInMs\u0022: 0.0018},{\u0022event\u0022: \u0022Pipelined\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450286Z\u0022, \u0022durationInMs\u0022: 0.0692},{\u0022event\u0022: \u0022Transit Time\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1450978Z\u0022, \u0022durationInMs\u0022: 0.8053},{\u0022event\u0022: \u0022Received\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1459031Z\u0022, \u0022durationInMs\u0022: 0.1465},{\u0022event\u0022: \u0022Completed\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1460496Z\u0022, \u0022durationInMs\u0022: 0}],\u0022requestSizeInBytes\u0022:469,\u0022responseMetadataSizeInBytes\u0022:124,\u0022responseBodySizeInBytes\u0022:510};\r\n ResourceType: Collection, OperationType: ReadFeed\r\n, SDK: Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:f9efd461-a256-4bfe-84ad-c08f887629eb\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/%3F(PartitionKey=\u0027PK\u0027,RowKey=\u0027RK\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "If-Match": "*",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "15fa7aeb-9f8e-11ec-a2bc-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "5e47c325-c139-414a-942c-114700de9711"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "Message: {\u0022Errors\u0022:[\u0022The MAC signature found in the HTTP request is not the same as the computed signature. Server used following string to sign - \u0027get\\ncolls\\ndbs\\/TablesDB\\nwed, 09 mar 2022 09:48:32 gmt\\n\\n\u0027. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-mac-signature\u0022,\u0022The MAC signature found in the HTTP request is not the same as the computed signature. Server used following string to sign - \u0027get\\ncolls\\ndbs\\/TablesDB\\nwed, 09 mar 2022 09:48:32 gmt\\n\\n\u0027. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-mac-signature\u0022]}\r\nActivityId: c37815a5-f564-4b3c-8194-8f6db4daad32, Request URI: /apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336015624328s, RequestStats: \r\nRequestStartTime: 2022-03-09T09:48:32.1650226Z, RequestEndTime: 2022-03-09T09:48:32.1650226Z,  Number of regions attempted:1\r\n{\u0022systemHistory\u0022:[{\u0022dateUtc\u0022:\u00222022-03-09T09:47:32.3341030Z\u0022,\u0022cpu\u0022:0.621,\u0022memory\u0022:484818672.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0208,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:47:42.3442860Z\u0022,\u0022cpu\u0022:2.280,\u0022memory\u0022:486200192.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0372,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:47:52.3543451Z\u0022,\u0022cpu\u0022:0.447,\u0022memory\u0022:486070972.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0186,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:02.3644906Z\u0022,\u0022cpu\u0022:0.696,\u0022memory\u0022:485860888.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0207,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:12.3747117Z\u0022,\u0022cpu\u0022:0.922,\u0022memory\u0022:484951896.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0122,\u0022availableThreads\u0022:32765,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}},{\u0022dateUtc\u0022:\u00222022-03-09T09:48:22.3848673Z\u0022,\u0022cpu\u0022:0.619,\u0022memory\u0022:484561268.000,\u0022threadInfo\u0022:{\u0022isThreadStarving\u0022:\u0022False\u0022,\u0022threadWaitIntervalInMs\u0022:0.0209,\u0022availableThreads\u0022:32766,\u0022minThreads\u0022:52,\u0022maxThreads\u0022:32767}}]}\r\nRequestStart: 2022-03-09T09:48:32.1650226Z; ResponseTime: 2022-03-09T09:48:32.1650226Z; StoreResult: StorePhysicalAddress: rntbd://10.0.0.28:11300/apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336015624328s, LSN: 52, GlobalCommittedLsn: 52, PartitionKeyRangeId: , IsValid: True, StatusCode: 401, SubStatusCode: 0, RequestCharge: 0, ItemLSN: -1, SessionToken: -1#52, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.28, ActivityId: c37815a5-f564-4b3c-8194-8f6db4daad32, RetryAfterInMs: , TransportRequestTimeline: {\u0022requestTimeline\u0022:[{\u0022event\u0022: \u0022Created\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1650226Z\u0022, \u0022durationInMs\u0022: 0.0081},{\u0022event\u0022: \u0022ChannelAcquisitionStarted\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1650307Z\u0022, \u0022durationInMs\u0022: 0.0024},{\u0022event\u0022: \u0022Pipelined\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1650331Z\u0022, \u0022durationInMs\u0022: 0.1551},{\u0022event\u0022: \u0022Transit Time\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1651882Z\u0022, \u0022durationInMs\u0022: 0.6439},{\u0022event\u0022: \u0022Received\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1658321Z\u0022, \u0022durationInMs\u0022: 0.134},{\u0022event\u0022: \u0022Completed\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1659661Z\u0022, \u0022durationInMs\u0022: 0}],\u0022requestSizeInBytes\u0022:469,\u0022responseMetadataSizeInBytes\u0022:124,\u0022responseBodySizeInBytes\u0022:510};\r\n ResourceType: Collection, OperationType: ReadFeed\r\nRequestStart: 2022-03-09T09:48:32.1650226Z; ResponseTime: 2022-03-09T09:48:32.1650226Z; StoreResult: StorePhysicalAddress: rntbd://10.0.0.24:11000/apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876929s, LSN: 52, GlobalCommittedLsn: 52, PartitionKeyRangeId: , IsValid: True, StatusCode: 401, SubStatusCode: 0, RequestCharge: 0, ItemLSN: -1, SessionToken: -1#52, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.268, ActivityId: c37815a5-f564-4b3c-8194-8f6db4daad32, RetryAfterInMs: , TransportRequestTimeline: {\u0022requestTimeline\u0022:[{\u0022event\u0022: \u0022Created\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1650226Z\u0022, \u0022durationInMs\u0022: 0.0055},{\u0022event\u0022: \u0022ChannelAcquisitionStarted\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1650281Z\u0022, \u0022durationInMs\u0022: 0.0016},{\u0022event\u0022: \u0022Pipelined\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1650297Z\u0022, \u0022durationInMs\u0022: 0.1288},{\u0022event\u0022: \u0022Transit Time\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1651585Z\u0022, \u0022durationInMs\u0022: 0.594},{\u0022event\u0022: \u0022Received\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1657525Z\u0022, \u0022durationInMs\u0022: 0.1297},{\u0022event\u0022: \u0022Completed\u0022, \u0022startTimeUtc\u0022: \u00222022-03-09T09:48:32.1658822Z\u0022, \u0022durationInMs\u0022: 0}],\u0022requestSizeInBytes\u0022:469,\u0022responseMetadataSizeInBytes\u0022:124,\u0022responseBodySizeInBytes\u0022:510};\r\n ResourceType: Collection, OperationType: ReadFeed\r\n, SDK: Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:5e47c325-c139-414a-942c-114700de9711\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "814",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "15ff8b80-9f8e-11ec-80a1-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF9iOWE0ODAzMy03MGZjLTRlMGUtODMzNS01YWMzNTNjMjQzZjgNCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfZTRjYjBkMTItOTcwZC00OTQ0LWI3OGEtOTU2YzNmODliN2QxDQoNCi0tY2hhbmdlc2V0X2U0Y2IwZDEyLTk3MGQtNDk0NC1iNzhhLTk1NmMzZjg5YjdkMQ0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLyUzRihQYXJ0aXRpb25LZXk9J0EnLFJvd0tleT0nQicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDExMg0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogV2VkLCAwOSBNYXIgMjAyMiAwOTo0ODozNCBHTVQNCkRhdGU6IFdlZCwgMDkgTWFyIDIwMjIgMDk6NDg6MzQgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIkEiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiQiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0X2U0Y2IwZDEyLTk3MGQtNDk0NC1iNzhhLTk1NmMzZjg5YjdkMS0tDQoNCi0tYmF0Y2hfYjlhNDgwMzMtNzBmYy00ZTBlLTgzMzUtNWFjMzUzYzI0M2Y4LS0NCg==",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "a5a73c20-9607-492f-898d-68b6d3d3d30c"
+      },
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlXzU3MzMzZDBjLTNkMTYtNDBmYi05NzVhLTZmMGU0MDFlZDI4Ng0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzA4MGEwZTFkLTE1NTctNDNjMy04N2U1LTgyZjYxMmU0ZTgwMw0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzA4MGEwZTFkLTE1NTctNDNjMy04N2U1LTgyZjYxMmU0ZTgwMwpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSA0MDEgVW5hdXRob3JpemVkDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9ZnVsbG1ldGFkYXRhDQoNCnsib2RhdGEuZXJyb3IiOnsiY29kZSI6IlVuYXV0aG9yaXplZCIsIm1lc3NhZ2UiOnsibGFuZyI6ImVuLXVzIiwidmFsdWUiOiJNZXNzYWdlOiB7XCJFcnJvcnNcIjpbXCJUaGUgTUFDIHNpZ25hdHVyZSBmb3VuZCBpbiB0aGUgSFRUUCByZXF1ZXN0IGlzIG5vdCB0aGUgc2FtZSBhcyB0aGUgY29tcHV0ZWQgc2lnbmF0dXJlLiBTZXJ2ZXIgdXNlZCBmb2xsb3dpbmcgc3RyaW5nIHRvIHNpZ24gLSAnZ2V0XFxuY29sbHNcXG5kYnNcXC9UYWJsZXNEQlxcbndlZCwgMDkgbWFyIDIwMjIgMDk6NDg6MzIgZ210XFxuXFxuJy4gTGVhcm4gbW9yZTogaHR0cHM6XFwvXFwvYWthLm1zXFwvY29zbW9zZGItdHNnLW1hYy1zaWduYXR1cmVcIixcIlRoZSBNQUMgc2lnbmF0dXJlIGZvdW5kIGluIHRoZSBIVFRQIHJlcXVlc3QgaXMgbm90IHRoZSBzYW1lIGFzIHRoZSBjb21wdXRlZCBzaWduYXR1cmUuIFNlcnZlciB1c2VkIGZvbGxvd2luZyBzdHJpbmcgdG8gc2lnbiAtICdnZXRcXG5jb2xsc1xcbmRic1xcL1RhYmxlc0RCXFxud2VkLCAwOSBtYXIgMjAyMiAwOTo0ODozMiBnbXRcXG5cXG4nLiBMZWFybiBtb3JlOiBodHRwczpcXC9cXC9ha2EubXNcXC9jb3Ntb3NkYi10c2ctbWFjLXNpZ25hdHVyZVwiXX1cclxuQWN0aXZpdHlJZDogMWI3NzNkOWQtN2NiMi00YjlhLWI1NTUtM2FkYjZiMmIyZmYxLCBSZXF1ZXN0IFVSSTogL2FwcHMvOWM5NjdhMmItN2IwZC00ZjQ5LWEzOGQtMzZmMTM5MWZkYTg2L3NlcnZpY2VzLzVmMjQzNmMwLWJmMzAtNDAxNi05NTQyLTUwZjRhZDc2N2FmNC9wYXJ0aXRpb25zL2Q5YTY2ODg4LWRiMjItNGMzYy1hNDMyLTBlYzY2MTNmZDAwYi9yZXBsaWNhcy8xMzI5MDMzMzYwNjE4NzY5MjlzLCBSZXF1ZXN0U3RhdHM6IFxyXG5SZXF1ZXN0U3RhcnRUaW1lOiAyMDIyLTAzLTA5VDA5OjQ4OjMyLjI0NDk1NDJaLCBSZXF1ZXN0RW5kVGltZTogMjAyMi0wMy0wOVQwOTo0ODozMi4yNDQ5NTQyWiwgIE51bWJlciBvZiByZWdpb25zIGF0dGVtcHRlZDoxXHJcbntcInN5c3RlbUhpc3RvcnlcIjpbe1wiZGF0ZVV0Y1wiOlwiMjAyMi0wMy0wOVQwOTo0NzozMi4zMzQxMDMwWlwiLFwiY3B1XCI6MC42MjEsXCJtZW1vcnlcIjo0ODQ4MTg2NzIuMDAwLFwidGhyZWFkSW5mb1wiOntcImlzVGhyZWFkU3RhcnZpbmdcIjpcIkZhbHNlXCIsXCJ0aHJlYWRXYWl0SW50ZXJ2YWxJbk1zXCI6MC4wMjA4LFwiYXZhaWxhYmxlVGhyZWFkc1wiOjMyNzY2LFwibWluVGhyZWFkc1wiOjUyLFwibWF4VGhyZWFkc1wiOjMyNzY3fX0se1wiZGF0ZVV0Y1wiOlwiMjAyMi0wMy0wOVQwOTo0Nzo0Mi4zNDQyODYwWlwiLFwiY3B1XCI6Mi4yODAsXCJtZW1vcnlcIjo0ODYyMDAxOTIuMDAwLFwidGhyZWFkSW5mb1wiOntcImlzVGhyZWFkU3RhcnZpbmdcIjpcIkZhbHNlXCIsXCJ0aHJlYWRXYWl0SW50ZXJ2YWxJbk1zXCI6MC4wMzcyLFwiYXZhaWxhYmxlVGhyZWFkc1wiOjMyNzY2LFwibWluVGhyZWFkc1wiOjUyLFwibWF4VGhyZWFkc1wiOjMyNzY3fX0se1wiZGF0ZVV0Y1wiOlwiMjAyMi0wMy0wOVQwOTo0Nzo1Mi4zNTQzNDUxWlwiLFwiY3B1XCI6MC40NDcsXCJtZW1vcnlcIjo0ODYwNzA5NzIuMDAwLFwidGhyZWFkSW5mb1wiOntcImlzVGhyZWFkU3RhcnZpbmdcIjpcIkZhbHNlXCIsXCJ0aHJlYWRXYWl0SW50ZXJ2YWxJbk1zXCI6MC4wMTg2LFwiYXZhaWxhYmxlVGhyZWFkc1wiOjMyNzY2LFwibWluVGhyZWFkc1wiOjUyLFwibWF4VGhyZWFkc1wiOjMyNzY3fX0se1wiZGF0ZVV0Y1wiOlwiMjAyMi0wMy0wOVQwOTo0ODowMi4zNjQ0OTA2WlwiLFwiY3B1XCI6MC42OTYsXCJtZW1vcnlcIjo0ODU4NjA4ODguMDAwLFwidGhyZWFkSW5mb1wiOntcImlzVGhyZWFkU3RhcnZpbmdcIjpcIkZhbHNlXCIsXCJ0aHJlYWRXYWl0SW50ZXJ2YWxJbk1zXCI6MC4wMjA3LFwiYXZhaWxhYmxlVGhyZWFkc1wiOjMyNzY2LFwibWluVGhyZWFkc1wiOjUyLFwibWF4VGhyZWFkc1wiOjMyNzY3fX0se1wiZGF0ZVV0Y1wiOlwiMjAyMi0wMy0wOVQwOTo0ODoxMi4zNzQ3MTE3WlwiLFwiY3B1XCI6MC45MjIsXCJtZW1vcnlcIjo0ODQ5NTE4OTYuMDAwLFwidGhyZWFkSW5mb1wiOntcImlzVGhyZWFkU3RhcnZpbmdcIjpcIkZhbHNlXCIsXCJ0aHJlYWRXYWl0SW50ZXJ2YWxJbk1zXCI6MC4wMTIyLFwiYXZhaWxhYmxlVGhyZWFkc1wiOjMyNzY1LFwibWluVGhyZWFkc1wiOjUyLFwibWF4VGhyZWFkc1wiOjMyNzY3fX0se1wiZGF0ZVV0Y1wiOlwiMjAyMi0wMy0wOVQwOTo0ODoyMi4zODQ4NjczWlwiLFwiY3B1XCI6MC42MTksXCJtZW1vcnlcIjo0ODQ1NjEyNjguMDAwLFwidGhyZWFkSW5mb1wiOntcImlzVGhyZWFkU3RhcnZpbmdcIjpcIkZhbHNlXCIsXCJ0aHJlYWRXYWl0SW50ZXJ2YWxJbk1zXCI6MC4wMjA5LFwiYXZhaWxhYmxlVGhyZWFkc1wiOjMyNzY2LFwibWluVGhyZWFkc1wiOjUyLFwibWF4VGhyZWFkc1wiOjMyNzY3fX1dfVxyXG5SZXF1ZXN0U3RhcnQ6IDIwMjItMDMtMDlUMDk6NDg6MzIuMjQ0OTU0Mlo7IFJlc3BvbnNlVGltZTogMjAyMi0wMy0wOVQwOTo0ODozMi4yNDQ5NTQyWjsgU3RvcmVSZXN1bHQ6IFN0b3JlUGh5c2ljYWxBZGRyZXNzOiBybnRiZDovLzEwLjAuMC4yNDoxMTAwMC9hcHBzLzljOTY3YTJiLTdiMGQtNGY0OS1hMzhkLTM2ZjEzOTFmZGE4Ni9zZXJ2aWNlcy81ZjI0MzZjMC1iZjMwLTQwMTYtOTU0Mi01MGY0YWQ3NjdhZjQvcGFydGl0aW9ucy9kOWE2Njg4OC1kYjIyLTRjM2MtYTQzMi0wZWM2NjEzZmQwMGIvcmVwbGljYXMvMTMyOTAzMzM2MDYxODc2OTI5cywgTFNOOiA1MiwgR2xvYmFsQ29tbWl0dGVkTHNuOiA1MiwgUGFydGl0aW9uS2V5UmFuZ2VJZDogLCBJc1ZhbGlkOiBUcnVlLCBTdGF0dXNDb2RlOiA0MDEsIFN1YlN0YXR1c0NvZGU6IDAsIFJlcXVlc3RDaGFyZ2U6IDAsIEl0ZW1MU046IC0xLCBTZXNzaW9uVG9rZW46IC0xIzUyLCBVc2luZ0xvY2FsTFNOOiBGYWxzZSwgVHJhbnNwb3J0RXhjZXB0aW9uOiBudWxsLCBCRUxhdGVuY3lNczogMC4zMDIsIEFjdGl2aXR5SWQ6IDFiNzczZDlkLTdjYjItNGI5YS1iNTU1LTNhZGI2YjJiMmZmMSwgUmV0cnlBZnRlckluTXM6ICwgVHJhbnNwb3J0UmVxdWVzdFRpbWVsaW5lOiB7XCJyZXF1ZXN0VGltZWxpbmVcIjpbe1wiZXZlbnRcIjogXCJDcmVhdGVkXCIsIFwic3RhcnRUaW1lVXRjXCI6IFwiMjAyMi0wMy0wOVQwOTo0ODozMi4yNDQ5NTQyWlwiLCBcImR1cmF0aW9uSW5Nc1wiOiAwLjAwODR9LHtcImV2ZW50XCI6IFwiQ2hhbm5lbEFjcXVpc2l0aW9uU3RhcnRlZFwiLCBcInN0YXJ0VGltZVV0Y1wiOiBcIjIwMjItMDMtMDlUMDk6NDg6MzIuMjQ0OTYyNlpcIiwgXCJkdXJhdGlvbkluTXNcIjogMC4wMDI5fSx7XCJldmVudFwiOiBcIlBpcGVsaW5lZFwiLCBcInN0YXJ0VGltZVV0Y1wiOiBcIjIwMjItMDMtMDlUMDk6NDg6MzIuMjQ0OTY1NVpcIiwgXCJkdXJhdGlvbkluTXNcIjogMC4yMDIyfSx7XCJldmVudFwiOiBcIlRyYW5zaXQgVGltZVwiLCBcInN0YXJ0VGltZVV0Y1wiOiBcIjIwMjItMDMtMDlUMDk6NDg6MzIuMjQ1MTY3N1pcIiwgXCJkdXJhdGlvbkluTXNcIjogMC44NjA2fSx7XCJldmVudFwiOiBcIlJlY2VpdmVkXCIsIFwic3RhcnRUaW1lVXRjXCI6IFwiMjAyMi0wMy0wOVQwOTo0ODozMi4yNDYwMjgzWlwiLCBcImR1cmF0aW9uSW5Nc1wiOiAwLjE0NH0se1wiZXZlbnRcIjogXCJDb21wbGV0ZWRcIiwgXCJzdGFydFRpbWVVdGNcIjogXCIyMDIyLTAzLTA5VDA5OjQ4OjMyLjI0NjE3MjNaXCIsIFwiZHVyYXRpb25Jbk1zXCI6IDB9XSxcInJlcXVlc3RTaXplSW5CeXRlc1wiOjQ2OSxcInJlc3BvbnNlTWV0YWRhdGFTaXplSW5CeXRlc1wiOjEyNCxcInJlc3BvbnNlQm9keVNpemVJbkJ5dGVzXCI6NTEwfTtcclxuIFJlc291cmNlVHlwZTogQ29sbGVjdGlvbiwgT3BlcmF0aW9uVHlwZTogUmVhZEZlZWRcclxuUmVxdWVzdFN0YXJ0OiAyMDIyLTAzLTA5VDA5OjQ4OjMyLjI0NDk1NDJaOyBSZXNwb25zZVRpbWU6IDIwMjItMDMtMDlUMDk6NDg6MzIuMjQ0OTU0Mlo7IFN0b3JlUmVzdWx0OiBTdG9yZVBoeXNpY2FsQWRkcmVzczogcm50YmQ6Ly8xMC4wLjAuMjM6MTEzMDAvYXBwcy85Yzk2N2EyYi03YjBkLTRmNDktYTM4ZC0zNmYxMzkxZmRhODYvc2VydmljZXMvNWYyNDM2YzAtYmYzMC00MDE2LTk1NDItNTBmNGFkNzY3YWY0L3BhcnRpdGlvbnMvZDlhNjY4ODgtZGIyMi00YzNjLWE0MzItMGVjNjYxM2ZkMDBiL3JlcGxpY2FzLzEzMjkwMzMzNjA2MTg3NjkyOHMsIExTTjogNTIsIEdsb2JhbENvbW1pdHRlZExzbjogNTIsIFBhcnRpdGlvbktleVJhbmdlSWQ6ICwgSXNWYWxpZDogVHJ1ZSwgU3RhdHVzQ29kZTogNDAxLCBTdWJTdGF0dXNDb2RlOiAwLCBSZXF1ZXN0Q2hhcmdlOiAwLCBJdGVtTFNOOiAtMSwgU2Vzc2lvblRva2VuOiAtMSM1MiwgVXNpbmdMb2NhbExTTjogRmFsc2UsIFRyYW5zcG9ydEV4Y2VwdGlvbjogbnVsbCwgQkVMYXRlbmN5TXM6IDAuNjEzLCBBY3Rpdml0eUlkOiAxYjc3M2Q5ZC03Y2IyLTRiOWEtYjU1NS0zYWRiNmIyYjJmZjEsIFJldHJ5QWZ0ZXJJbk1zOiAsIFRyYW5zcG9ydFJlcXVlc3RUaW1lbGluZToge1wicmVxdWVzdFRpbWVsaW5lXCI6W3tcImV2ZW50XCI6IFwiQ3JlYXRlZFwiLCBcInN0YXJ0VGltZVV0Y1wiOiBcIjIwMjItMDMtMDlUMDk6NDg6MzIuMjQ0OTU0MlpcIiwgXCJkdXJhdGlvbkluTXNcIjogMC4wMDU4fSx7XCJldmVudFwiOiBcIkNoYW5uZWxBY3F1aXNpdGlvblN0YXJ0ZWRcIiwgXCJzdGFydFRpbWVVdGNcIjogXCIyMDIyLTAzLTA5VDA5OjQ4OjMyLjI0NDk2MDBaXCIsIFwiZHVyYXRpb25Jbk1zXCI6IDAuMDAxOH0se1wiZXZlbnRcIjogXCJQaXBlbGluZWRcIiwgXCJzdGFydFRpbWVVdGNcIjogXCIyMDIyLTAzLTA5VDA5OjQ4OjMyLjI0NDk2MThaXCIsIFwiZHVyYXRpb25Jbk1zXCI6IDAuMTM4NX0se1wiZXZlbnRcIjogXCJUcmFuc2l0IFRpbWVcIiwgXCJzdGFydFRpbWVVdGNcIjogXCIyMDIyLTAzLTA5VDA5OjQ4OjMyLjI0NTEwMDNaXCIsIFwiZHVyYXRpb25Jbk1zXCI6IDEuMjU3OX0se1wiZXZlbnRcIjogXCJSZWNlaXZlZFwiLCBcInN0YXJ0VGltZVV0Y1wiOiBcIjIwMjItMDMtMDlUMDk6NDg6MzIuMjQ2MzU4MlpcIiwgXCJkdXJhdGlvbkluTXNcIjogMC4wNDk5fSx7XCJldmVudFwiOiBcIkNvbXBsZXRlZFwiLCBcInN0YXJ0VGltZVV0Y1wiOiBcIjIwMjItMDMtMDlUMDk6NDg6MzIuMjQ2NDA4MVpcIiwgXCJkdXJhdGlvbkluTXNcIjogMH1dLFwicmVxdWVzdFNpemVJbkJ5dGVzXCI6NDY5LFwicmVzcG9uc2VNZXRhZGF0YVNpemVJbkJ5dGVzXCI6MTI0LFwicmVzcG9uc2VCb2R5U2l6ZUluQnl0ZXNcIjo1MTB9O1xyXG4gUmVzb3VyY2VUeXBlOiBDb2xsZWN0aW9uLCBPcGVyYXRpb25UeXBlOiBSZWFkRmVlZFxyXG4sIFNESzogTWljcm9zb2Z0LkF6dXJlLkRvY3VtZW50cy5Db21tb24vMi4xNC4wLCBkb2N1bWVudGRiLWRvdG5ldC1zZGsvMi4xNC4wIEhvc3QvNjQtYml0IE1pY3Jvc29mdFdpbmRvd3NOVC8xMC4wLjE5MDQxLjBcblJlcXVlc3RJRDphNWE3M2MyMC05NjA3LTQ5MmYtODk4ZC02OGI2ZDNkM2QzMGNcbiJ9fX0NCi0tY2hhbmdlc2V0cmVzcG9uc2VfMDgwYTBlMWQtMTU1Ny00M2MzLTg3ZTUtODJmNjEyZTRlODAzLS0KLS1iYXRjaHJlc3BvbnNlXzU3MzMzZDBjLTNkMTYtNDBmYi05NzVhLTZmMGU0MDFlZDI4Ni0tDQo="
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "160b9e6e-9f8e-11ec-a4bb-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "- "
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "7c648a24-06d0-4625-9840-381a499ac0a3"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name can\u0027t end with space.\nRequestID:7c648a24-06d0-4625-9840-381a499ac0a3\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "160b9e6e-9f8e-11ec-a4bb-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "- "
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:31 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "2bef4709-35a1-4851-a0ea-bdb08f803196"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name can\u0027t end with space.\nRequestID:2bef4709-35a1-4851-a0ea-bdb08f803196\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "160b9e6e-9f8e-11ec-a4bb-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "- "
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "900671e3-60d4-4b18-8f8c-fb0d35214842"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name can\u0027t end with space.\nRequestID:900671e3-60d4-4b18-8f8c-fb0d35214842\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "19",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "160b9e6e-9f8e-11ec-a4bb-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:34 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "- "
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:36 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "1907d613-4ee1-4ee3-ab8c-109170eab195"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "InternalServerError",
+          "message": {
+            "lang": "en-us",
+            "value": "The resource name can\u0027t end with space.\nRequestID:1907d613-4ee1-4ee3-ab8c-109170eab195\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027-%20\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1905a25a-9f8e-11ec-a564-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:36 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "c913a192-b69c-458c-9079-e791e0ef9f25"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027delete\ncolls\ndbs/TablesDB/colls/-\nwed, 09 mar 2022 09:48:37 gmt\n\n\u0027\r\nActivityId: 9f55686d-ead7-4597-a34c-bf6b913cbe89, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:c913a192-b69c-458c-9079-e791e0ef9f25\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/-%20",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "190883c7-9f8e-11ec-86cc-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:36 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "ba6632fc-9c8e-4ef4-88f6-b03a39cef898"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB/colls/-\nwed, 09 mar 2022 09:48:37 gmt\n\n\u0027\r\nActivityId: e913ca4b-7352-44a6-8bb8-3fd9ec701366, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:ba6632fc-9c8e-4ef4-88f6-b03a39cef898\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/-%20(PartitionKey=\u0027foo\u0027,RowKey=\u0027foo\u0027)",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "116",
+        "Content-Type": "application/json",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "X-HTTP-Method": "MERGE",
+        "x-ms-client-request-id": "190ba7a7-9f8e-11ec-b869-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "PartitionKey": "foo",
+        "PartitionKey@odata.type": "Edm.String",
+        "RowKey": "foo",
+        "RowKey@odata.type": "Edm.String"
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Wed, 09 Mar 2022 09:48:36 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "dbefa96a-f58b-44dd-874d-6e56140167cb"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB/colls/-\nwed, 09 mar 2022 09:48:37 gmt\n\n\u0027\r\nActivityId: fd0f9092-58e0-406c-ac22-0385bdd874d6, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:dbefa96a-f58b-44dd-874d-6e56140167cb\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/-%20(PartitionKey=\u0027PK\u0027,RowKey=\u0027RK\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "If-Match": "*",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "190dfcc4-9f8e-11ec-aba1-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=fullmetadata",
+        "Date": "Wed, 09 Mar 2022 09:48:36 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "7d44294e-da2a-4893-8f4d-a80a6ecedcb6"
+      },
+      "ResponseBody": {
+        "odata.error": {
+          "code": "Unauthorized",
+          "message": {
+            "lang": "en-us",
+            "value": "The input authorization token can\u0027t serve the request. The wrong key is being used or the expected payload is not built as per the protocol. For more info: https://aka.ms/cosmosdb-tsg-unauthorized. Server used the following payload to sign: \u0027get\ncolls\ndbs/TablesDB/colls/-\nwed, 09 mar 2022 09:48:37 gmt\n\n\u0027\r\nActivityId: 0c6f8e0a-5c7a-4f1f-bd77-d3f8c582fcea, Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:7d44294e-da2a-4893-8f4d-a80a6ecedcb6\n"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "815",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1911456d-9f8e-11ec-b750-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:48:39 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF9jOWVmNGUzZC02MTllLTQ2NmItOWE2OC1kODIwOGViZjllNTcNCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfZjc3ZTBhNGQtZmQyNS00YzI3LTg1YzMtNThmZTk2YmQ2ZDkyDQoNCi0tY2hhbmdlc2V0X2Y3N2UwYTRkLWZkMjUtNGMyNy04NWMzLTU4ZmU5NmJkNmQ5Mg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLy0lMjAoUGFydGl0aW9uS2V5PSdBJyxSb3dLZXk9J0InKSBIVFRQLzEuMQ0KeC1tcy12ZXJzaW9uOiAyMDE5LTAyLTAyDQpEYXRhU2VydmljZVZlcnNpb246IDMuMA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpBY2NlcHQ6IGFwcGxpY2F0aW9uL2pzb24NCkNvbnRlbnQtTGVuZ3RoOiAxMTINClgtSFRUUC1NZXRob2Q6IE1FUkdFDQp4LW1zLWRhdGU6IFdlZCwgMDkgTWFyIDIwMjIgMDk6NDg6MzkgR01UDQpEYXRlOiBXZWQsIDA5IE1hciAyMDIyIDA5OjQ4OjM5IEdNVA0KDQp7IlBhcnRpdGlvbktleSI6ICJBIiwgIlBhcnRpdGlvbktleUBvZGF0YS50eXBlIjogIkVkbS5TdHJpbmciLCAiUm93S2V5IjogIkIiLCAiUm93S2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyJ9DQotLWNoYW5nZXNldF9mNzdlMGE0ZC1mZDI1LTRjMjctODVjMy01OGZlOTZiZDZkOTItLQ0KDQotLWJhdGNoX2M5ZWY0ZTNkLTYxOWUtNDY2Yi05YTY4LWQ4MjA4ZWJmOWU1Ny0tDQo=",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
+        "Date": "Wed, 09 Mar 2022 09:48:36 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "33669067-d110-4437-9607-a16896dee9f9"
+      },
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlXzE3NDcyMTAxLWQ2NzAtNGMxZi05MDIwLTIwNDk3N2FhNDVjYg0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzA5ZTgzYWM0LWUyZTUtNGM1Ni1iNGVlLTkzYmZmZTc0Yzk5Yw0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzA5ZTgzYWM0LWUyZTUtNGM1Ni1iNGVlLTkzYmZmZTc0Yzk5YwpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSA0MDEgVW5hdXRob3JpemVkDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9ZnVsbG1ldGFkYXRhDQoNCnsib2RhdGEuZXJyb3IiOnsiY29kZSI6IlVuYXV0aG9yaXplZCIsIm1lc3NhZ2UiOnsibGFuZyI6ImVuLXVzIiwidmFsdWUiOiJUaGUgaW5wdXQgYXV0aG9yaXphdGlvbiB0b2tlbiBjYW4ndCBzZXJ2ZSB0aGUgcmVxdWVzdC4gVGhlIHdyb25nIGtleSBpcyBiZWluZyB1c2VkIG9yIHRoZSBleHBlY3RlZCBwYXlsb2FkIGlzIG5vdCBidWlsdCBhcyBwZXIgdGhlIHByb3RvY29sLiBGb3IgbW9yZSBpbmZvOiBodHRwczovL2FrYS5tcy9jb3Ntb3NkYi10c2ctdW5hdXRob3JpemVkLiBTZXJ2ZXIgdXNlZCB0aGUgZm9sbG93aW5nIHBheWxvYWQgdG8gc2lnbjogJ2dldFxuY29sbHNcbmRicy9UYWJsZXNEQi9jb2xscy8tXG53ZWQsIDA5IG1hciAyMDIyIDA5OjQ4OjM3IGdtdFxuXG4nXHJcbkFjdGl2aXR5SWQ6IGQ0YmVkMTA0LTgxZDMtNGJhMS04MjIxLTYwYWM1ZDQ1NzMxNCwgTWljcm9zb2Z0LkF6dXJlLkRvY3VtZW50cy5Db21tb24vMi4xNC4wLCBkb2N1bWVudGRiLWRvdG5ldC1zZGsvMi4xNC4wIEhvc3QvNjQtYml0IE1pY3Jvc29mdFdpbmRvd3NOVC8xMC4wLjE5MDQxLjBcblJlcXVlc3RJRDozMzY2OTA2Ny1kMTEwLTQ0MzctOTYwNy1hMTY4OTZkZWU5ZjlcbiJ9fX0NCi0tY2hhbmdlc2V0cmVzcG9uc2VfMDllODNhYzQtZTJlNS00YzU2LWI0ZWUtOTNiZmZlNzRjOTljLS0KLS1iYXRjaHJlc3BvbnNlXzE3NDcyMTAxLWQ2NzAtNGMxZi05MDIwLTIwNDk3N2FhNDVjYi0tDQo="
+    }
+  ],
+  "Variables": {}
+}

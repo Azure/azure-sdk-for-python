@@ -24,7 +24,7 @@ class ServiceBusManagementClientOperationsMixin:
         topic_name: str,
         skip: Optional[int] = 0,
         top: Optional[int] = 100,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Get the details about the subscriptions of the given topic.
@@ -93,7 +93,7 @@ class ServiceBusManagementClientOperationsMixin:
         subscription_name: str,
         skip: Optional[int] = 0,
         top: Optional[int] = 100,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Get the details about the rules of the given topic subscription.
@@ -164,7 +164,7 @@ class ServiceBusManagementClientOperationsMixin:
         entity_type: str,
         skip: Optional[int] = 0,
         top: Optional[int] = 100,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Get the details about the entities of the given Service Bus namespace.

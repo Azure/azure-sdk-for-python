@@ -22,10 +22,7 @@ from unittest_helpers import mock_response
 from datetime import datetime
 import calendar
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import Mock, patch
 
 def _convert_datetime_to_utc_int(input):
     return int(calendar.timegm(input.utctimetuple()))

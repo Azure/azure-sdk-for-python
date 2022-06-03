@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -17,8 +15,8 @@ USAGE:
     python sample_alternative_document_input_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -29,8 +27,8 @@ async def sample_alternative_document_input():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
@@ -47,10 +45,10 @@ async def sample_alternative_document_input():
 
     for idx, doc in enumerate(result):
         if not doc.is_error:
-            print("Document text: {}".format(documents[idx]))
-            print("Language detected: {}".format(doc.primary_language.name))
-            print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-            print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
+            print(f"Document text: {documents[idx]}")
+            print(f"Language detected: {doc.primary_language.name}")
+            print(f"ISO6391 name: {doc.primary_language.iso6391_name}")
+            print(f"Confidence score: {doc.primary_language.confidence_score}\n")
         if doc.is_error:
             print(doc.id, doc.error)
 
@@ -60,5 +58,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

@@ -24,26 +24,29 @@
 #
 # --------------------------------------------------------------------------
 from ._schema import SchemaProperties, Schema
+from ._constants import SchemaFormat
 
 
 def _parse_schema_properties_dict(response):
     return {
-        'id': response.headers.get('schema-id'),
-        'format': response.headers.get('serialization-type'),
-        'version': int(response.headers.get('schema-version'))
+        "id": response.headers.get("schema-id"),
+        "group_name": response.headers.get("schema-group-name"),
+        "name": response.headers.get("schema-name")
     }
 
 
-def _parse_response_schema_properties(response):
+def _parse_response_schema_properties(response, format):
+    # pylint:disable=redefined-builtin
     properties_dict = _parse_schema_properties_dict(response)
-    properties_dict['id'] = response.json()["id"]
-    return SchemaProperties(
-        **properties_dict
-    )
+    properties_dict["format"] = SchemaFormat(format)
+    return SchemaProperties(**properties_dict)
 
 
 def _parse_response_schema(response):
+    # pylint:disable=redefined-builtin
+    schema_props_dict = _parse_schema_properties_dict(response)
+    format = response.headers.get("content-type").split("serialization=")[1]
+    schema_props_dict["format"] = SchemaFormat(format)
     return Schema(
-        schema_definition=response.text(),
-        properties=SchemaProperties(**_parse_schema_properties_dict(response))
+        definition=response.text(), properties=SchemaProperties(**schema_props_dict)
     )

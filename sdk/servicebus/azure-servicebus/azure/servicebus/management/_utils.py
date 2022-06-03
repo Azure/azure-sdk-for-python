@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any
+from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
 
 from . import _constants as constants
+from ._api_version import DEFAULT_VERSION
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
@@ -84,7 +85,7 @@ def get_next_template(list_func, *args, **kwargs):
     """
     start_index = kwargs.pop("start_index", 0)
     max_page_size = kwargs.pop("max_page_size", 100)
-    api_version = constants.API_VERSION
+    api_version = kwargs.pop("api_version", DEFAULT_VERSION)
     if args[0]:
         queries = urlparse.parse_qs(urlparse.urlparse(args[0]).query)
         start_index = int(queries[constants.LIST_OP_SKIP][0])
@@ -334,7 +335,7 @@ def _validate_topic_subscription_and_rule_types(
 def _normalize_entity_path_to_full_path_if_needed(
     entity_path, fully_qualified_namespace
 ):
-    # type: (str, str) -> str
+    # type: (Optional[str], str) -> Optional[str]
     if not entity_path:
         return entity_path
     parsed = urlparse.urlparse(entity_path)

@@ -1,6 +1,8 @@
 # Azure Video Analyzer Edge client library for Python
 
-Azure Video Analyzer provides a platform to build intelligent video applications that span the edge and the cloud. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services in the cloud or the edge. It is designed to be an extensible platform, enabling you to connect different video analysis edge modules (such as Cognitive services containers, custom edge modules built by you with open-source machine learning models or custom models trained with your own data) to it and use them to analyze live video without worrying about the complexity of building and running a live video pipeline.
+Deprecated. We’re retiring the Azure Video Analyzer preview service, you're advised to transition your applications off of Video Analyzer by 01 December 2022. This SDK is not longer maintained.
+
+Azure Video Analyzer is an [Azure Applied AI Service][applied-ai-service] that provides a platform for you to build intelligent video applications that can span both edge and cloud infrastructures. The platform offers the capability to capture, record, and analyze live video along with publishing the results, video and video analytics, to Azure services at the edge or in the cloud. It is designed to be an extensible platform, enabling you to connect different video inferencing edge modules such as Cognitive services modules, or custom inferencing modules that have been trained with your own data using either open-source machine learning or [Azure Machine Learning][machine-learning].
 
 Use the client library for Video Analyzer Edge to:
 
@@ -21,13 +23,15 @@ pip install azure-media-videoanalyzer-edge
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- 3.6 or later is required to use this package.
 - You need an active [Azure subscription][azure_sub], and a IoT device connection string to use this package.
 - To interact with Azure IoT Hub you will need to run `pip install azure-iot-hub`
 - You will need to use the version of the SDK that corresponds to the version of the Video Analyzer Edge module you are using.
 
     | SDK  | Video Analyzer edge module  |
     |---|---|
+    | 1.0.0b3  | 1.1  |
+    | 1.0.0b2  | 1.0  |
     | 1.0.0b1  | 1.0  |
 
 ### Creating a pipeline topology and making requests
@@ -59,15 +63,14 @@ To create a pipeline topology you need to define sources and sinks.
 user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="testusername")
 password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="testpassword")
 url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
-hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
 #Source and Sink
 source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
 node = NodeInput(node_name="rtspSource")
-sink = IotHubMessageSink("msgSink", nodeInput, "${hubSinkOutputName}")
-
+sink = VideoSink(name="videoSink", inputs=[node], video_name="video", local_media_cache_path="/var/lib/videoanalyzer/tmp/", local_media_cache_maximum_size_mi_b="1024");
+    
 pipeline_topology_properties = PipelineTopologyProperties()
-pipeline_topology_properties.parameters = [user_name_param, password_param, url_param, hub_param]
+pipeline_topology_properties.parameters = [user_name_param, password_param, url_param]
 pipeline_topology_properties.sources = [source]
 pipeline_topology_properties.sinks = [sink]
 pipeline_topology = PipelineTopology(name=pipeline_topology_name,properties=pipeline_topology_properties)
@@ -142,9 +145,11 @@ additional questions or comments.
 [doc_pipelines]: https://go.microsoft.com/fwlink/?linkid=2162396
 [package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer
-[samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
+[samples]: https://go.microsoft.com/fwlink/?linkid=2162278
 [doc_product]: https://go.microsoft.com/fwlink/?linkid=2162396
 [doc_direct_methods]: https://go.microsoft.com/fwlink/?linkid=2162396
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
+[applied-ai-service]: https://azure.microsoft.com/product-categories/applied-ai-services/#services
+[machine-learning]: https://azure.microsoft.com/services/machine-learning

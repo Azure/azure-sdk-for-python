@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-08-01",
-    "total_api_version_list": ["2021-08-01"],
+    "chosen_version": "2021-11-01",
+    "total_api_version_list": ["2021-11-01"],
     "client": {
         "name": "AzureArcDataManagementClient",
         "filename": "_azure_arc_data_management_client",

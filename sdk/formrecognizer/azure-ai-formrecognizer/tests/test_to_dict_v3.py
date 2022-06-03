@@ -5,20 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
-import functools
-from datetime import datetime
 from azure.ai.formrecognizer import _models
-from azure.ai.formrecognizer import (
-    FormRecognizerClient,
-    FormContentType,
-    FormTrainingClient,
-)
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
-
-GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestToDict(FormRecognizerTest):
@@ -53,8 +41,21 @@ class TestToDict(FormRecognizerTest):
         }
         assert d == final
 
-    def test_document_element_to_dict(self):
-        model = _models.DocumentElement(
+    def test_currency_value_to_dict(self):
+        model = _models.CurrencyValue(
+            amount=5.01,
+            symbol="$",
+        )
+
+        d = model.to_dict()
+        final = {
+            "amount": 5.01,
+            "symbol": "$",
+        }
+        assert d == final
+
+    def test_document_content_element_to_dict(self):
+        model = _models.DocumentContentElement(
             content="sample",
             bounding_box=[
                 _models.Point(1427.0, 1669.0),
@@ -62,7 +63,12 @@ class TestToDict(FormRecognizerTest):
                 _models.Point(1527.0, 1698.0),
                 _models.Point(1427.0, 1698.0),
             ],
+            span=_models.DocumentSpan(
+                offset=5,
+                length=2,
+            ),
             kind="word",
+            confidence=0.99,
         )
 
         d = model.to_dict()
@@ -74,6 +80,11 @@ class TestToDict(FormRecognizerTest):
                 {"x": 1527.0, "y": 1698.0},
                 {"x": 1427.0, "y": 1698.0},
             ],
+            "span": {
+                "offset": 5,
+                "length": 2,
+            },
+            "confidence": 0.99,
             "kind": "word",
         }
         assert d == final
@@ -950,6 +961,8 @@ class TestToDict(FormRecognizerTest):
             last_updated_on="1994-11-05T13:20:30Z",
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
         )
 
         d = model.to_dict()
@@ -962,6 +975,8 @@ class TestToDict(FormRecognizerTest):
             "last_updated_on": "1994-11-05T13:20:30Z",
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
+            "api_version": "2022-01-30-preview",
+            "tags": {"test": "value"},
         }
 
         assert d == final
@@ -1007,6 +1022,15 @@ class TestToDict(FormRecognizerTest):
             api_version="2021-07-30-preview",
             model_id="modelId1",
             content="Sample\nFile content.",
+            languages=[
+                _models.DocumentLanguage(
+                    language_code="en",
+                    spans=[
+                        _models.DocumentSpan(offset=5, length=2),
+                    ],
+                    confidence=0.99,
+                ),
+            ],
             pages=[
                 _models.DocumentPage(
                     page_number=1,
@@ -1233,6 +1257,18 @@ class TestToDict(FormRecognizerTest):
             "api_version": "2021-07-30-preview",
             "model_id": "modelId1",
             "content": "Sample\nFile content.",
+            "languages": [
+                {
+                    "language_code": "en",
+                    "spans": [
+                        {
+                            "offset": 5,
+                            "length": 2,
+                        },
+                    ],
+                    "confidence": 0.99,
+                }
+            ],
             "pages": [
                 {
                     "page_number": 1,
@@ -1535,6 +1571,8 @@ class TestToDict(FormRecognizerTest):
 
     def test_model_operation_to_dict(self):
         model = _models.ModelOperation(
+            api_version="2022-01-30-preview",
+            tags={},
             operation_id="id123",
             status="succeeded",
             percent_completed=100,
@@ -1543,11 +1581,14 @@ class TestToDict(FormRecognizerTest):
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
             result=_models.DocumentModel(
+                api_version="2022-01-30-preview",
+                tags={},
                 description="my description",
                 created_on="1994-11-05T13:15:30Z",
                 model_id="prebuilt-invoice",
                 doc_types={
                     "prebuilt-invoice": _models.DocTypeInfo(
+                        build_mode="template",
                         description="my description",
                         field_confidence={"CustomerName": 95},
                         field_schema={
@@ -1622,6 +1663,8 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
+            "api_version": "2022-01-30-preview",
+            "tags": {},
             "operation_id": "id123",
             "status": "succeeded",
             "percent_completed": 100,
@@ -1630,11 +1673,14 @@ class TestToDict(FormRecognizerTest):
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
             "result": {
+                "api_version": "2022-01-30-preview",
+                "tags": {},
                 "description": "my description",
                 "created_on": "1994-11-05T13:15:30Z",
                 "model_id": "prebuilt-invoice",
                 "doc_types": {
                     "prebuilt-invoice": {
+                        "build_mode": "template",
                         "description": "my description",
                         "field_confidence": {"CustomerName": 95},
                         "field_schema": {
@@ -1716,6 +1762,7 @@ class TestToDict(FormRecognizerTest):
     def test_doc_type_info_to_dict(self):
         model = _models.DocTypeInfo(
             description="my description",
+            build_mode="neural",
             field_confidence={"CustomerName": 95},
             field_schema={
                 "prebuilt-invoice": {
@@ -1769,6 +1816,7 @@ class TestToDict(FormRecognizerTest):
 
         final = {
             "description": "my description",
+            "build_mode": "neural",
             "field_confidence": {"CustomerName": 95},
             "field_schema": {
                 "prebuilt-invoice": {
@@ -1825,8 +1873,11 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
             doc_types={
                 "prebuilt-invoice": _models.DocTypeInfo(
+                    build_mode="template",
                     description="my description",
                     field_confidence={"CustomerName": 95},
                     field_schema={
@@ -1885,8 +1936,11 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
+            "api_version": "2022-01-30-preview",
+            "tags": {"test": "value"},
             "doc_types": {
                 "prebuilt-invoice": {
+                    "build_mode": "template",
                     "description": "my description",
                     "field_confidence": {"CustomerName": 95},
                     "field_schema": {
@@ -1946,6 +2000,8 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
         )
 
         d = model.to_dict()
@@ -1954,16 +2010,18 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
+            "api_version": "2022-01-30-preview",
+            "tags": {"test": "value"},
         }
 
         assert d == final
 
     def test_account_info_to_dict(self):
-        model = _models.AccountInfo(model_limit=5000, model_count=10)
+        model = _models.AccountInfo(document_model_limit=5000, document_model_count=10)
 
         d = model.to_dict()
 
-        final = {"model_limit": 5000, "model_count": 10}
+        final = {"document_model_limit": 5000, "document_model_count": 10}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

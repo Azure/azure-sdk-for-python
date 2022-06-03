@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -9,17 +8,14 @@ import time
 import datetime
 import uuid
 from devtools_testutils import (
-    AzureTestCase,
-)
-from azure_devtools.scenario_tests import (
-    RecordingProcessor,
-    ReplayableTest
+    AzureRecordedTestCase,
+    set_custom_default_matcher
 )
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
-class Document(object):
+class Document:
     """Represents a document to be uploaded to source/target container"""
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", str(uuid.uuid4()))
@@ -35,63 +31,19 @@ class Document(object):
         return result
 
 
-class OperationLocationReplacer(RecordingProcessor):
-    """Replace the location/operation location uri in a request/response body."""
+class DocumentTranslationTest(AzureRecordedTestCase):
 
-    def __init__(self):
-        self._replacement = "https://redacted.cognitiveservices.azure.com/translator/"
+    @property
+    def storage_name(self):
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
 
-    def process_response(self, response):
-        try:
-            headers = response['headers']
-            if 'operation-location' in headers:
-                location_header = "operation-location"
-                if isinstance(headers[location_header], list):
-                    suffix = headers[location_header][0].split("/translator/")[1]
-                    response['headers'][location_header] = [self._replacement + suffix]
-                else:
-                    suffix = headers[location_header].split("/translator/")[1]
-                    response['headers'][location_header] = self._replacement + suffix
-            url = response["url"]
-            if url is not None:
-                suffix = url.split("/translator/")[1]
-                response['url'] = self._replacement + suffix
-            return response
-        except (KeyError, ValueError):
-            return response
+    @property
+    def storage_endpoint(self):
+        return "https://" + self.storage_name + ".blob.core.windows.net/"
 
-
-class DocumentTranslationTest(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
-
-    def __init__(self, method_name):
-        super(DocumentTranslationTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(OperationLocationReplacer())
-        self.storage_name = os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
-        self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
-        self.storage_key = os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")
-        self.scrubber.register_name_pair(
-            self.storage_endpoint, "https://redacted.blob.core.windows.net/"
-        )
-        self.scrubber.register_name_pair(
-            self.storage_name, "redacted"
-        )
-        self.scrubber.register_name_pair(
-            self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
-        )
-
-    def get_oauth_endpoint(self):
-        return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("TRANSLATION_TENANT_ID"),
-                os.getenv("TRANSLATION_CLIENT_ID"),
-                os.getenv("TRANSLATION_CLIENT_SECRET"),
-            )
+    @property
+    def storage_key(self):
+        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY", "fakeZmFrZV9hY29jdW50X2tleQ==")
 
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
@@ -100,37 +52,36 @@ class DocumentTranslationTest(AzureTestCase):
         else:
             container_client.upload_blob(name=data.prefix + data.name + data.suffix, data=data.data)
 
-    def create_source_container(self, data):
-        # for offline tests
-        if not self.is_live:
-            return "dummy_string"
+    def create_source_container(self, data, variables={}, **kwargs):
+        container_suffix = kwargs.get("container_suffix", "")
+        var_key = "source_container_name" + container_suffix
+        if self.is_live:
+            self.source_container_name = variables[var_key] = "src" + str(uuid.uuid4())
+            container_client = ContainerClient(self.storage_endpoint, variables[var_key],
+                                               self.storage_key)
+            container_client.create_container()
 
-        # for actual live tests
-        self.source_container_name = "src" + str(uuid.uuid4())
-        container_client = ContainerClient(self.storage_endpoint, self.source_container_name,
-                                           self.storage_key)
-        container_client.create_container()
-
-        self.upload_documents(data, container_client)
-        return self.generate_sas_url(self.source_container_name, "rl")
-
-    def create_target_container(self, data=None):
-        # for offline tests
-        if not self.is_live:
-            return "dummy_string"
-
-        # for actual live tests
-        self.target_container_name = "target" + str(uuid.uuid4())
-        container_client = ContainerClient(self.storage_endpoint, self.target_container_name,
-                                           self.storage_key)
-        container_client.create_container()
-        if data:
             self.upload_documents(data, container_client)
+        return self.generate_sas_url(variables[var_key], "rl")
 
-        return self.generate_sas_url(self.target_container_name, "wl")
+    def create_target_container(self, data=None, variables={}, **kwargs):
+        container_suffix = kwargs.get("container_suffix", "")
+        var_key = "target_container_name" + container_suffix
+        if self.is_live:
+            self.target_container_name = variables[var_key] = "target" + str(uuid.uuid4())
+            container_client = ContainerClient(self.storage_endpoint, variables[var_key],
+                                               self.storage_key)
+            container_client.create_container()
+            if data:
+                self.upload_documents(data, container_client)
+
+        return self.generate_sas_url(variables[var_key], "wl")
 
     def generate_sas_url(self, container_name, permission):
-
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         sas_token = self.generate_sas(
             generate_container_sas,
             account_name=self.storage_name,
@@ -152,18 +103,21 @@ class DocumentTranslationTest(AzureTestCase):
         status = kwargs.pop("statuses", ["Succeeded"])
         ids = kwargs.pop("ids", None)
         # specific assertions
-        self.assertIn(doc_details.status, status)
+        assert doc_details.status in status
         if target_language:
-            self.assertEqual(doc_details.translated_to, target_language)
+            assert doc_details.translated_to == target_language
         # generic assertions
-        self.assertIn(doc_details.id, ids) if ids else self.assertIsNotNone(doc_details.id)
-        self.assertIsNotNone(doc_details.id)
-        self.assertIsNotNone(doc_details.source_document_url)
-        self.assertIsNotNone(doc_details.translated_document_url)
-        self.assertIsNotNone(doc_details.translation_progress)
-        self.assertIsNotNone(doc_details.characters_charged)
-        self.assertIsNotNone(doc_details.created_on)
-        self.assertIsNotNone(doc_details.last_updated_on)
+        if ids:
+            assert doc_details.id in ids
+        else:
+            assert doc_details.id is not None
+        assert doc_details.id is not None
+        assert doc_details.source_document_url is not None
+        assert doc_details.translated_document_url is not None
+        assert doc_details.translation_progress is not None
+        assert doc_details.characters_charged is not None
+        assert doc_details.created_on is not None
+        assert doc_details.last_updated_on is not None
 
     def _validate_translation_metadata(self, poller, **kwargs):
         status = kwargs.pop("status", None)
@@ -176,21 +130,41 @@ class DocumentTranslationTest(AzureTestCase):
         
         # status
         p = poller.status()
-        self.assertEqual(poller.status(), status) if status else self.assertIsNotNone(poller.status())
+        if status:
+            assert poller.status() == status
         # docs count
 
         if poller.done():
-            self.assertEqual(poller.details.documents_total_count, total) if total else self.assertIsNotNone(poller.details.documents_total_count)
-            self.assertEqual(poller.details.documents_failed_count, failed) if failed else self.assertIsNotNone(poller.details.documents_failed_count)
-            self.assertEqual(poller.details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(poller.details.documents_succeeded_count)
-            self.assertEqual(poller.details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(poller.details.documents_in_progress_count)
-            self.assertEqual(poller.details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(poller.details.documents_not_yet_started_count)
-            self.assertEqual(poller.details.documents_canceled_count, canceled) if canceled else self.assertIsNotNone(poller.details.documents_canceled_count)
+            if total:
+                assert poller.details.documents_total_count == total
+            else:
+                assert poller.details.documents_total_count is not None
+            if failed:
+                assert poller.details.documents_failed_count == failed
+            else:
+                assert poller.details.documents_failed_count is not None
+            if succeeded:
+                assert poller.details.documents_succeeded_count == succeeded
+            else:
+                assert poller.details.documents_succeeded_count is not None
+            if inprogress:
+                assert poller.details.documents_in_progress_count == inprogress
+            else:
+                assert poller.details.documents_in_progress_count is not None
+            if notstarted:
+                assert poller.details.documents_not_started_count == notstarted
+            else:
+                assert poller.details.documents_not_started_count is not None
+            if canceled:
+                assert poller.details.documents_canceled_count == canceled
+            else:
+                assert poller.details.documents_canceled_count is not None
+
             # generic assertions
-            self.assertIsNotNone(poller.details.id)
-            self.assertIsNotNone(poller.details.created_on)
-            self.assertIsNotNone(poller.details.last_updated_on)
-            self.assertIsNotNone(poller.details.total_characters_charged)
+            assert poller.details.id is not None
+            assert poller.details.created_on is not None
+            assert poller.details.last_updated_on is not None
+            assert poller.details.total_characters_charged is not None
 
     def _validate_translations(self, job_details, **kwargs):
         status = kwargs.pop("status", None)
@@ -202,41 +176,55 @@ class DocumentTranslationTest(AzureTestCase):
         canceled = kwargs.pop('canceled', None)
 
         # status
-        self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
+        if status:
+            assert job_details.status == status
+        else:
+            assert job_details.status is not None
         # docs count
 
-        self.assertEqual(job_details.documents_total_count, total) if total else self.assertIsNotNone(
-            job_details.documents_total_count)
-        self.assertEqual(job_details.documents_failed_count, failed) if failed else self.assertIsNotNone(
-            job_details.documents_failed_count)
-        self.assertEqual(job_details.documents_succeeded_count,
-                         succeeded) if succeeded else self.assertIsNotNone(job_details.documents_succeeded_count)
-        self.assertEqual(job_details.documents_in_progress_count,
-                         inprogress) if inprogress else self.assertIsNotNone(
-            job_details.documents_in_progress_count)
-        self.assertEqual(job_details.documents_not_yet_started_count,
-                         notstarted) if notstarted else self.assertIsNotNone(
-            job_details.documents_not_yet_started_count)
-        self.assertEqual(job_details.documents_canceled_count,
-                         canceled) if canceled else self.assertIsNotNone(job_details.documents_canceled_count)
+        if total:
+            assert job_details.documents_total_count == total
+        else:
+            assert job_details.documents_total_count is not None
+        if failed:
+            assert job_details.documents_failed_count == failed
+        else:
+            assert job_details.documents_failed_count is not None
+        if succeeded:
+            assert job_details.documents_succeeded_count == succeeded
+        else:
+            assert job_details.documents_succeeded_count is not None
+        if inprogress:
+            assert job_details.documents_in_progress_count == inprogress
+        else:
+            assert job_details.documents_in_progress_count is not None
+        if notstarted:
+            assert job_details.documents_not_started_count == notstarted
+        else:
+            assert job_details.documents_not_started_count is not None
+        if canceled:
+            assert job_details.documents_canceled_count == canceled
+        else:
+            assert job_details.documents_canceled_count is not None
+
         # generic assertions
-        self.assertIsNotNone(job_details.id)
-        self.assertIsNotNone(job_details.created_on)
-        self.assertIsNotNone(job_details.last_updated_on)
-        self.assertIsNotNone(job_details.total_characters_charged)
+        assert job_details.id is not None
+        assert job_details.created_on is not None
+        assert job_details.last_updated_on is not None
+        assert job_details.total_characters_charged is not None
 
     def _validate_format(self, format):
-        self.assertIsNotNone(format.file_format)
-        self.assertIsNotNone(format.file_extensions)
-        self.assertIsNotNone(format.content_types)
+        assert format.file_format is not None
+        assert format.file_extensions is not None
+        assert format.content_types is not None
 
 
     # client helpers
     def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count, language=None):
         # submit job
         poller = client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
-        self.assertIsNotNone(poller.details.id)
+        assert poller.id is not None
+        assert poller.details.id is not None
         # wait for result
         result = poller.result()
         # validate
@@ -247,15 +235,17 @@ class DocumentTranslationTest(AzureTestCase):
         
 
     def _begin_multiple_translations(self, client, operations_count, **kwargs):
+        container_suffix = kwargs.pop('container_suffix', "")
+        variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', True)
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
         docs_per_operation = kwargs.pop('docs_per_operation', 2)
         result_job_ids = []
         for i in range(operations_count):
             # prepare containers and test data
             blob_data = Document.create_dummy_docs(docs_per_operation)
-            source_container_sas_url = self.create_source_container(data=blob_data)
-            target_container_sas_url = self.create_target_container()
+            source_container_sas_url = self.create_source_container(data=blob_data, variables=variables, container_suffix=str(i)+container_suffix)
+            target_container_sas_url = self.create_target_container(variables=variables, container_suffix=str(i)+container_suffix)
 
             # prepare translation inputs
             translation_inputs = [
@@ -264,7 +254,7 @@ class DocumentTranslationTest(AzureTestCase):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code=language_code
+                            language=language
                         )
                     ]
                 )
@@ -272,7 +262,7 @@ class DocumentTranslationTest(AzureTestCase):
 
             # submit multiple jobs
             poller = client.begin_translation(translation_inputs)
-            self.assertIsNotNone(poller.id)
+            assert poller.id is not None
             if wait_for_operation:
                 result = poller.result()
             else:
@@ -282,14 +272,15 @@ class DocumentTranslationTest(AzureTestCase):
         return result_job_ids
 
     def _begin_and_validate_translation_with_multiple_docs(self, client, docs_count, **kwargs):
-        # get input parms
+        # get input params
         wait_for_operation = kwargs.pop('wait', False)
-        language_code = kwargs.pop('language_code', "es")
+        variables = kwargs.get('variables', {})
+        language = kwargs.pop('language', "es")
 
         # prepare containers and test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -298,7 +289,7 @@ class DocumentTranslationTest(AzureTestCase):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code=language_code
+                        language=language
                     )
                 ]
             )
@@ -306,7 +297,7 @@ class DocumentTranslationTest(AzureTestCase):
 
         # submit job
         poller = client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
+        assert poller.id is not None
         # wait for result
         if wait_for_operation:
             result = poller.result()

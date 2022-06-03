@@ -117,7 +117,7 @@ if __name__ == "__main__":
     package_dir = os.path.abspath(args.package_root)
     output_directory = os.path.join(target_dir, "unzipped/docgen")
 
-    pkg_name, namespace, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
+    pkg_name, namespace, pkg_version, _, _ = get_package_details(os.path.join(package_dir, 'setup.py'))
 
     if should_build_docs(pkg_name):
         if is_mgmt_package(pkg_name):

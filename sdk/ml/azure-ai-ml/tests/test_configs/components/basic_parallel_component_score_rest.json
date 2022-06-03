@@ -1,0 +1,72 @@
+{
+    "id": "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/components/test_389889218331/versions/0.0.1",
+    "name": null,
+    "type": null,
+    "properties": {
+        "description": null,
+        "tags": null,
+        "properties": {},
+        "isAnonymous": false,
+        "componentSpec": {
+            "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
+            "name": "batch_score",
+            "version": "1.0.0",
+            "type": "parallel",
+            "display_name": "BatchScore",
+            "description": "parallel component for batch score",
+            "inputs": {
+                "score_input": {
+                    "name": "score_input",
+                    "optional": "False",
+                    "description": "The data to be split and scored in parallel.",
+                    "type": "mltable"
+                },
+                "label": {
+                    "type": "uri_file",
+                    "description": "Other reference data for batch scoring, e.g. labels.",
+                    "optional": false
+                },
+                "score_model": {
+                    "type": "custom_model",
+                    "description": "The model for batch score.",
+                    "optional": false
+                }
+            },
+            "outputs": {
+                "scored_result": {
+                    "type": "mltable"
+                },
+                "scoring_summary": {
+                    "type": "uri_file"
+                }
+            },
+            "resources": {
+                "instance_count": 2
+            },
+            "retry_settings": {
+                "max_retries": 10,
+                "timeout": 3
+            },
+            "max_concurrency_per_instance": 12,
+            "error_threshold": 10,
+            "mini_batch_error_threshold": 5,
+            "logging_level": "DEBUG",
+            "mini_batch_size": "10kb",
+            "input_data": "${{inputs.score_input}}",
+            "task": {
+                "type": "function",
+                "code": "../python",
+                "entry_script": "pass_through.py",
+                "args": "--label ${{inputs.label}} --model ${{inputs.score_model}} --output_scored_result ${{outputs.scored_result}}",
+                "append_row_to": "${{outputs.scoring_summary}}",
+                "environment": "azureml:AzureML-Minimal:2"
+            }
+        }
+    },
+    "systemData": {
+        "createdAt": "2022-03-11T02:58:14.9644668Z",
+        "createdBy": "Xiaoran Li",
+        "createdByType": "User",
+        "lastModifiedAt": "2022-03-11T02:58:15.7637279Z"
+    }
+}

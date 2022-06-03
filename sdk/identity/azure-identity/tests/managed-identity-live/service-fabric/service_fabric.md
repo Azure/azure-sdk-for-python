@@ -163,7 +163,7 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-
 
 ### Give the applications access to your key vault
 
-If the applications were accessed now, they would report an error. This is because their managed identities don't have permission to access secrets in the key vault you created. 
+If the applications were accessed now, they would report an error. This is because their managed identities don't have permission to access secrets in the key vault you created.
 
 To grant them access:
 
@@ -248,16 +248,16 @@ Verify in a browser:
 2. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
 3. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
 4. When you find an application entry, click the "+" sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
-5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` shows `PASSED`.
+5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` and `test_managed_identity_live_async` show `PASSED`.
 
-This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.5, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
+This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.9, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
 
 1. Remove each application from the cluster. In the Service Fabric Explorer, expand the Applications tab and sfmitestsystemType tab. Click on "fabric:/sfmitestsystem", and in the application page, use the "Actions" tab at the top right to delete the application.
 2. Now, remove the other application. Click on "fabric:/sfmitestuser" and use the "Actions" tab to delete the application.
-3. Re-build the docker images, targeting Python 3.5 with `--build-arg`. In your command prompt, run:
+3. Re-build the docker images, targeting Python 3.9 with `--build-arg`. In your command prompt, run:
 ```
-docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestsystem ..
-docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestuser ..
+docker build --no-cache --build-arg PYTHON_VERSION=3.9 -t $ACR_NAME.azurecr.io/sfmitestsystem ..
+docker build --no-cache --build-arg PYTHON_VERSION=3.9 -t $ACR_NAME.azurecr.io/sfmitestuser ..
 ```
 4. Publish the new images to your ACR:
 ```

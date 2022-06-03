@@ -14,6 +14,9 @@ parameters:
 - name: EmulatorStartParameters
   type: string
   default: ''
+- name: TestProxy
+  type: boolean
+  default: false
 
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -30,12 +33,9 @@ stages:
     - job: Emulator
       strategy:
         matrix:
-          Windows_Python35:
+          Windows_Python36:
             OSVmImage: 'windows-2019'
-            PythonVersion: '3.5'
-          Windows_Python27:
-            OSVmImage: 'windows-2019'
-            PythonVersion: '2.7'
+            PythonVersion: '3.6'
       pool:
         vmImage: $(OSVmImage)
 

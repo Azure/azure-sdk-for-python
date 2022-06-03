@@ -1,5 +1,47 @@
 # Release History
 
+## 21.1.0 (2022-05-05)
+
+**Features**
+
+  - GA `azure.mgmt.resource.changes`
+
+
+## 21.1.0b1 (2022-04-19)
+
+**Features**
+
+  - Added operation TemplateSpecVersionsOperations.get_built_in
+  - Added operation TemplateSpecVersionsOperations.list_built_ins
+  - Added operation TemplateSpecsOperations.get_built_in
+  - Added operation TemplateSpecsOperations.list_built_ins
+  - Added operation group ChangesOperations
+  - Combined operation files into one.
+
+**Fixes**
+
+  - Fixed duplicated query parameters in pageable operation(for more details, see https://github.com/Azure/azure-sdk-for-python/issues/23828)
+
+## 21.0.0 (2022-03-22)
+
+**Features**
+
+  - Added operation PrivateLinkAssociationOperations.list
+  - Added operation ResourceManagementPrivateLinkOperations.list_by_resource_group
+
+**Breaking changes**
+
+  - Operation PrivateLinkAssociationOperations.get has a new signature
+
+## 20.1.0 (2022-01-25)
+
+**Features**
+
+  - Added operation SubscriptionsOperations.check_zone_peers
+  - Added operation group PrivateLinkAssociationOperations
+  - Added operation group ResourceManagementPrivateLinkOperations
+  - Model ProviderResourceType has a new parameter zone_mappings
+
 ## 20.0.0 (2021-09-03)
 
 **Features**

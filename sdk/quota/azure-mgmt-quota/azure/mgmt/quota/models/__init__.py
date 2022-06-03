@@ -14,7 +14,6 @@ try:
     from ._models_py3 import ExceptionResponse
     from ._models_py3 import LimitJsonObject
     from ._models_py3 import LimitObject
-    from ._models_py3 import LimitValue
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationList
     from ._models_py3 import OperationResponse
@@ -42,7 +41,6 @@ except (SyntaxError, ImportError):
     from ._models import ExceptionResponse  # type: ignore
     from ._models import LimitJsonObject  # type: ignore
     from ._models import LimitObject  # type: ignore
-    from ._models import LimitValue  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationList  # type: ignore
     from ._models import OperationResponse  # type: ignore
@@ -78,7 +76,6 @@ __all__ = [
     'ExceptionResponse',
     'LimitJsonObject',
     'LimitObject',
-    'LimitValue',
     'OperationDisplay',
     'OperationList',
     'OperationResponse',

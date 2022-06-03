@@ -16,7 +16,6 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
-    get_trace_export_result,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem, TrackResponse
@@ -293,21 +292,6 @@ class TestBaseExporter(unittest.TestCase):
         status = self._base._transmit([])
         self.assertEqual(status, ExportResult.SUCCESS)
 
-    def test_get_trace_export_result(self):
-        self.assertEqual(
-            get_trace_export_result(ExportResult.SUCCESS),
-            SpanExportResult.SUCCESS,
-        )
-        self.assertEqual(
-            get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE),
-            SpanExportResult.FAILURE,
-        )
-        self.assertEqual(
-            get_trace_export_result(ExportResult.FAILED_RETRYABLE),
-            SpanExportResult.FAILURE,
-        )
-        self.assertEqual(get_trace_export_result(None), None)
-
 
 class MockResponse:
     def __init__(self, status_code, text, headers={}, reason="test", content="{}"):
@@ -316,3 +300,8 @@ class MockResponse:
         self.headers = headers
         self.reason = reason
         self.content = content
+        self.raw = MockRaw()
+
+class MockRaw:
+    def __init__(self):
+        self.enforce_content_length = False

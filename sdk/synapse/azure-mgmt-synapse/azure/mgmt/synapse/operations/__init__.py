@@ -51,6 +51,7 @@ from ._workspace_managed_sql_server_vulnerability_assessments_operations import 
 from ._workspace_managed_sql_server_encryption_protector_operations import WorkspaceManagedSqlServerEncryptionProtectorOperations
 from ._workspace_managed_sql_server_usages_operations import WorkspaceManagedSqlServerUsagesOperations
 from ._workspace_managed_sql_server_recoverable_sql_pools_operations import WorkspaceManagedSqlServerRecoverableSqlPoolsOperations
+from ._workspace_managed_sql_server_dedicated_sql_minimal_tls_settings_operations import WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
 from ._workspaces_operations import WorkspacesOperations
 from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
 from ._workspace_sql_aad_admins_operations import WorkspaceSqlAadAdminsOperations
@@ -71,7 +72,6 @@ from ._integration_runtime_status_operations import IntegrationRuntimeStatusOper
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._spark_configurations_operations import SparkConfigurationsOperations
 from ._kusto_operations_operations import KustoOperationsOperations
-from ._kusto_pool_operations import KustoPoolOperations
 from ._kusto_pools_operations import KustoPoolsOperations
 from ._kusto_pool_child_resource_operations import KustoPoolChildResourceOperations
 from ._kusto_pool_attached_database_configurations_operations import KustoPoolAttachedDatabaseConfigurationsOperations
@@ -126,6 +126,7 @@ __all__ = [
     'WorkspaceManagedSqlServerEncryptionProtectorOperations',
     'WorkspaceManagedSqlServerUsagesOperations',
     'WorkspaceManagedSqlServerRecoverableSqlPoolsOperations',
+    'WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations',
     'WorkspacesOperations',
     'WorkspaceAadAdminsOperations',
     'WorkspaceSqlAadAdminsOperations',
@@ -146,7 +147,6 @@ __all__ = [
     'SparkConfigurationOperations',
     'SparkConfigurationsOperations',
     'KustoOperationsOperations',
-    'KustoPoolOperations',
     'KustoPoolsOperations',
     'KustoPoolChildResourceOperations',
     'KustoPoolAttachedDatabaseConfigurationsOperations',

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class SearchClientConfiguration(Configuration):
+class SearchClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for SearchClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,6 +27,9 @@ class SearchClientConfiguration(Configuration):
     :type endpoint: str
     :param index_name: The name of the index.
     :type index_name: str
+    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -36,15 +39,17 @@ class SearchClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(SearchClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-04-30-Preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if index_name is None:
             raise ValueError("Parameter 'index_name' must not be None.")
-        super(SearchClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.index_name = index_name
-        self.api_version = "2021-04-30-Preview"
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'search-documents/{}'.format(VERSION))
         self._configure(**kwargs)
 

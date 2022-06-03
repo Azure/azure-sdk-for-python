@@ -13,14 +13,18 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class CommunicationNetworkTraversalClientConfiguration(Configuration):
+class CommunicationNetworkTraversalClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for CommunicationNetworkTraversalClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
+    :param endpoint: The communication resource, for example
+     https://my-resource.communication.azure.com.
     :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -28,12 +32,14 @@ class CommunicationNetworkTraversalClientConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(CommunicationNetworkTraversalClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(CommunicationNetworkTraversalClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-06-21-preview"
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'communicationnetworktraversalclient/{}'.format(VERSION))
         self._configure(**kwargs)
 

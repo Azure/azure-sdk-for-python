@@ -383,7 +383,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         with self.assertRaises(HttpResponseError) as e:
             await queue.peek_messages()
 
-        self.assertEqual(str(e.exception), "Decryption failed.")
+        assert "Decryption failed." in str(e.exception)
 
         invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.get_kid = valid_key.get_kid
@@ -522,7 +522,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
             async for m in queue.receive_messages():
                 messages.append(m)
 
-        self.assertEqual(str(e.exception), "Decryption failed.")
+        assert "Decryption failed." in str(e.exception)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

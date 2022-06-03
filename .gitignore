@@ -44,6 +44,7 @@ pylint-*.out.txt
 coverage-*.xml
 stderr.txt
 stdout.txt
+_proxy_log_*.log
 
 # tox environment folders
 .tox/
@@ -92,6 +93,7 @@ src/build
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
 venv/
+.venv/
 code_reports
 
 # Azure Storage test credentials
@@ -99,6 +101,10 @@ sdk/storage/azure-storage-blob/tests/settings/settings_real.py
 sdk/storage/azure-storage-queue/tests/settings/settings_real.py
 sdk/storage/azure-storage-file-share/tests/settings/settings_real.py
 sdk/storage/azure-storage-file-datalake/tests/settings/settings_real.py
+
+# azure-ai-ml test configs
+!sdk/ml/azure-ai-ml/tests/test_configs/environment/*
+!sdk/ml/azure-ai-ml/tests/test_configs/*/*/environment*
 
 
 # The locations below are deprecated - keep to prevent any accidental secrets leakage ==========

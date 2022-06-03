@@ -9,30 +9,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 22 Jun 2021 18:58:52 GMT
+      - Tue, 02 Nov 2021 10:40:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
   response:
     body:
       string: '{"identity": {"id": "sanitized"}, "accessToken": {"token": "sanitized",
-        "expiresOn": "2021-06-23T18:58:52.2693039+00:00"}}'
+        "expiresOn": "2021-11-03T10:40:49.5297855+00:00"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1
+        2021-03-31-preview1, 2021-10-31-preview
+      content-length: '920'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Jun 2021 18:58:52 GMT
-      ms-cv: XTjYc9kgYUu7zZ6B8Rdsgg.0
+      date: Tue, 02 Nov 2021 10:40:49 GMT
+      ms-cv: r7xO+pn36UecYwA9ibBrCA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 220ms
+      x-processing-time: 166ms
     status:
       code: 201
       message: Created
-    url: https://smstestapp.communication.azure.com/identities?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
 version: 1

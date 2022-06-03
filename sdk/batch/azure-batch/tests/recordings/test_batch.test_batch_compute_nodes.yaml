@@ -9,25 +9,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:19:44 GMT
+      - Fri, 21 Jan 2022 23:48:44 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-01-01.15.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:34.7574688Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
-        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:34.7574688Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
+        \   {\r\n      \"id\":\"tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T23:46:25.312997Z\",\"lastBootTime\":\"2022-01-21T23:46:24.621649Z\",\"allocationTime\":\"2022-01-21T23:46:09.4332268Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.97.88.3\",\"publicFQDN\":\"dns68c80e8b-2b1f-4443-8431-a80d1ce60ca5-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-21T23:46:24.621649Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T23:46:25.120216Z\",\"lastBootTime\":\"2022-01-21T23:46:24.638346Z\",\"allocationTime\":\"2022-01-21T23:46:09.4332268Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.97.88.3\",\"publicFQDN\":\"dns68c80e8b-2b1f-4443-8431-a80d1ce60ca5-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-21T23:46:24.638346Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
         \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -35,9 +35,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:19:43 GMT
+      - Fri, 21 Jan 2022 23:48:43 GMT
       request-id:
-      - 020a630a-f2d2-4276-afc0-25e052c00808
+      - 729adf7a-c411-4579-98de-e410f5060999
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -59,120 +59,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:19:54 GMT
+      - Fri, 21 Jan 2022 23:48:45 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:45.2702459Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
-        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:50.718683Z\",\"lastBootTime\":\"2021-07-30T12:19:50.324824Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2021-07-30T12:19:50.324824Z\",\"version\":\"1.9.14\"\r\n
-        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
-        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
-    headers:
-      content-type:
-      - application/json;odata=minimalmetadata
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Fri, 30 Jul 2021 12:19:54 GMT
-      request-id:
-      - fa77d1f6-9569-4eec-aa5a-19198571ef4b
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
-    method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2021-06-01.14.0
-  response:
-    body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:54.876064Z\",\"lastBootTime\":\"2021-07-30T12:19:54.348905Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2021-07-30T12:19:54.348905Z\",\"version\":\"1.9.14\"\r\n
-        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
-        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:50.718683Z\",\"lastBootTime\":\"2021-07-30T12:19:50.324824Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2021-07-30T12:19:50.324824Z\",\"version\":\"1.9.14\"\r\n
-        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
-        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
-    headers:
-      content-type:
-      - application/json;odata=minimalmetadata
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Fri, 30 Jul 2021 12:20:03 GMT
-      request-id:
-      - adce4773-9ba4-4d6a-ba1f-8493351e6882
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
-    method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d?api-version=2021-06-01.14.0
-  response:
-    body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes/@Element\",\"id\":\"tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2021-07-30T12:19:54.876064Z\",\"lastBootTime\":\"2021-07-30T12:19:54.348905Z\",\"allocationTime\":\"2021-07-30T12:19:34.7574688Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d\",\"vmSize\":\"standard_d1_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \   \"inboundEndpoints\":[\r\n      {\r\n        \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.248.102.238\",\"publicFQDN\":\"dns32f6fc77-4947-4688-a81b-d7bdcfc310a4-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
-        \     }\r\n    ]\r\n  },\"nodeAgentInfo\":{\r\n    \"lastUpdateTime\":\"2021-07-30T12:19:54.348905Z\",\"version\":\"1.9.14\"\r\n
-        \ },\"virtualMachineInfo\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"16.04.202106110\"\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes/@Element\",\"id\":\"tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T23:46:25.312997Z\",\"lastBootTime\":\"2022-01-21T23:46:24.621649Z\",\"allocationTime\":\"2022-01-21T23:46:09.4332268Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \   \"inboundEndpoints\":[\r\n      {\r\n        \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.97.88.3\",\"publicFQDN\":\"dns68c80e8b-2b1f-4443-8431-a80d1ce60ca5-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \     }\r\n    ]\r\n  },\"nodeAgentInfo\":{\r\n    \"lastUpdateTime\":\"2022-01-21T23:46:24.621649Z\",\"version\":\"1.9.22\"\r\n
+        \ },\"virtualMachineInfo\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       content-type:
@@ -180,9 +80,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:03 GMT
+      - Fri, 21 Jan 2022 23:48:44 GMT
       request-id:
-      - c6195dd0-23ca-47db-bf3d-6d111b9853a4
+      - 56adb55c-af91-4ce3-adbb-e53bb11e5612
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -195,8 +95,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"containerUrl": "https://test.blob.core.windows.net:443/test-container",
-      "startTime": "2021-07-30T12:14:04.671388Z"}'
+    body: '{"containerUrl": "https://computecontainer.blob.core.windows.net/", "startTime":
+      "2022-01-21T23:42:52.967674Z"}'
     headers:
       Accept:
       - application/json
@@ -205,30 +105,30 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '117'
+      - '111'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:48:55 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/uploadbatchservicelogs?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/uploadbatchservicelogs?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult\",\"virtualDirectoryName\":\"batch-22F0D521D1CC8CAB/test_batch_test_batch_compute_nodesff3f0e45/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/f905c482-0cdc-486e-add7-b5aff713dacc\",\"numberOfFilesUploaded\":4\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult\",\"virtualDirectoryName\":\"batch-22F04B46AA221C14/test_batch_test_batch_compute_nodesff3f0e45/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/eefc85a4-a970-4980-91c5-58ae924c85b2\",\"numberOfFilesUploaded\":4\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:48:55 GMT
       request-id:
-      - f905c482-0cdc-486e-add7-b5aff713dacc
+      - eefc85a4-a970-4980-91c5-58ae924c85b2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -254,26 +154,26 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:28 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/disablescheduling?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/disablescheduling?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/disablescheduling
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/disablescheduling
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:27 GMT
       request-id:
-      - bb81072e-7389-48bc-acb2-aacffb61f12c
+      - d972939f-2860-4c3d-8480-4762324e09ab
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -297,26 +197,26 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:28 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/enablescheduling?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/enablescheduling?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/enablescheduling
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/enablescheduling
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:27 GMT
       request-id:
-      - 2721af1f-b631-455c-8147-f120a4f4de16
+      - a04a82ba-6c82-4810-8736-f8ce1ae53879
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -342,26 +242,26 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:20:05 GMT
+      - Fri, 21 Jan 2022 23:49:28 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/reboot?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/reboot?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d/reboot
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/reboot
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:28 GMT
       request-id:
-      - 4919a257-c7ed-411b-851a-c56398abfb54
+      - 058ebf6b-5c0f-4b58-8246-83fb22983970
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -387,19 +287,19 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:20:05 GMT
+      - Fri, 21 Jan 2022 23:49:29 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d/reimage?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d/reimage?api-version=2022-01-01.15.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"OperationNotValidOnNode\",\"message\":{\r\n
         \   \"lang\":\"en-US\",\"value\":\"The specified operation is not valid on
-        the node.\\nRequestId:4ce9c859-9506-4172-89e7-1b172155b56c\\nTime:2021-07-30T12:20:05.1525476Z\"\r\n
+        the node.\\nRequestId:c93812ba-2298-4faf-b74c-00857f0adedd\\nTime:2022-01-21T23:49:28.9117614Z\"\r\n
         \ },\"values\":[\r\n    {\r\n      \"key\":\"Reason\",\"value\":\"Operation
         reimage can be invoked only on pools created with cloudServiceConfiguration\"\r\n
         \   }\r\n  ]\r\n}"
@@ -411,9 +311,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:28 GMT
       request-id:
-      - 4ce9c859-9506-4172-89e7-1b172155b56c
+      - c93812ba-2298-4faf-b74c-00857f0adedd
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -424,8 +324,8 @@ interactions:
       code: 409
       message: The specified operation is not valid on the node.
 - request:
-    body: '{"nodeList": ["tvmps_7d3d3e847ce97013fa3a80b50d395b0c3c5a35e773f6bf427ddf66d85f7d6502_d",
-      "tvmps_912d3d05da2649f1fb103acdd76b2856e3029cc9c53802e0c7e68accd0239f6a_d"]}'
+    body: '{"nodeList": ["tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d",
+      "tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d"]}'
     headers:
       Accept:
       - application/json
@@ -438,14 +338,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:20:05 GMT
+      - Fri, 21 Jan 2022 23:49:29 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/removenodes?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/removenodes?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -455,13 +355,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:20:04 GMT
+      - Fri, 21 Jan 2022 23:49:28 GMT
       etag:
-      - '0x8D953545CFEFA03'
+      - '0x8D9DD38AA070034'
       last-modified:
-      - Fri, 30 Jul 2021 12:20:05 GMT
+      - Fri, 21 Jan 2022 23:49:29 GMT
       request-id:
-      - 4b81f91e-c00e-4783-92e4-4fe453a07fb0
+      - 71fb8a63-6e56-40df-b4f4-aceaa9c5d3e7
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

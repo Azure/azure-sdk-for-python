@@ -19,8 +19,8 @@ class ActivateApplicationPackageParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param format: Required. The format of the application package binary file.
-    :type format: str
+    :ivar format: Required. The format of the application package binary file.
+    :vartype format: str
     """
 
     _validation = {
@@ -37,6 +37,10 @@ class ActivateApplicationPackageParameters(msrest.serialization.Model):
         format: str,
         **kwargs
     ):
+        """
+        :keyword format: Required. The format of the application package binary file.
+        :paramtype format: str
+        """
         super(ActivateApplicationPackageParameters, self).__init__(**kwargs)
         self.format = format
 
@@ -74,6 +78,8 @@ class ProxyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -94,14 +100,14 @@ class Application(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param display_name: The display name for the application.
-    :type display_name: str
-    :param allow_updates: A value indicating whether packages within the application may be
+    :ivar display_name: The display name for the application.
+    :vartype display_name: str
+    :ivar allow_updates: A value indicating whether packages within the application may be
      overwritten using the same version string.
-    :type allow_updates: bool
-    :param default_version: The package to use if a client requests the application but does not
+    :vartype allow_updates: bool
+    :ivar default_version: The package to use if a client requests the application but does not
      specify a version. This property can only be set to the name of an existing package.
-    :type default_version: str
+    :vartype default_version: str
     """
 
     _validation = {
@@ -129,6 +135,16 @@ class Application(ProxyResource):
         default_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: The display name for the application.
+        :paramtype display_name: str
+        :keyword allow_updates: A value indicating whether packages within the application may be
+         overwritten using the same version string.
+        :paramtype allow_updates: bool
+        :keyword default_version: The package to use if a client requests the application but does not
+         specify a version. This property can only be set to the name of an existing package.
+        :paramtype default_version: str
+        """
         super(Application, self).__init__(**kwargs)
         self.display_name = display_name
         self.allow_updates = allow_updates
@@ -190,6 +206,8 @@ class ApplicationPackage(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ApplicationPackage, self).__init__(**kwargs)
         self.state = None
         self.format = None
@@ -203,14 +221,14 @@ class ApplicationPackageReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The ID of the application package to install. This must be inside the same
+    :ivar id: Required. The ID of the application package to install. This must be inside the same
      batch account as the pool. This can either be a reference to a specific version or the default
      version if one exists.
-    :type id: str
-    :param version: If this is omitted, and no default version is specified for this application,
+    :vartype id: str
+    :ivar version: If this is omitted, and no default version is specified for this application,
      the request fails with the error code InvalidApplicationPackageReferences. If you are calling
      the REST API directly, the HTTP status code is 409.
-    :type version: str
+    :vartype version: str
     """
 
     _validation = {
@@ -229,6 +247,16 @@ class ApplicationPackageReference(msrest.serialization.Model):
         version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. The ID of the application package to install. This must be inside the
+         same batch account as the pool. This can either be a reference to a specific version or the
+         default version if one exists.
+        :paramtype id: str
+        :keyword version: If this is omitted, and no default version is specified for this application,
+         the request fails with the error code InvalidApplicationPackageReferences. If you are calling
+         the REST API directly, the HTTP status code is 409.
+        :paramtype version: str
+        """
         super(ApplicationPackageReference, self).__init__(**kwargs)
         self.id = id
         self.version = version
@@ -239,13 +267,13 @@ class AutoScaleRun(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param evaluation_time: Required. The time at which the autoscale formula was last evaluated.
-    :type evaluation_time: ~datetime.datetime
-    :param results: Each variable value is returned in the form $variable=value, and variables are
+    :ivar evaluation_time: Required. The time at which the autoscale formula was last evaluated.
+    :vartype evaluation_time: ~datetime.datetime
+    :ivar results: Each variable value is returned in the form $variable=value, and variables are
      separated by semicolons.
-    :type results: str
-    :param error: An error that occurred when autoscaling a pool.
-    :type error: ~azure.mgmt.batch.models.AutoScaleRunError
+    :vartype results: str
+    :ivar error: An error that occurred when autoscaling a pool.
+    :vartype error: ~azure.mgmt.batch.models.AutoScaleRunError
     """
 
     _validation = {
@@ -266,6 +294,15 @@ class AutoScaleRun(msrest.serialization.Model):
         error: Optional["AutoScaleRunError"] = None,
         **kwargs
     ):
+        """
+        :keyword evaluation_time: Required. The time at which the autoscale formula was last evaluated.
+        :paramtype evaluation_time: ~datetime.datetime
+        :keyword results: Each variable value is returned in the form $variable=value, and variables
+         are separated by semicolons.
+        :paramtype results: str
+        :keyword error: An error that occurred when autoscaling a pool.
+        :paramtype error: ~azure.mgmt.batch.models.AutoScaleRunError
+        """
         super(AutoScaleRun, self).__init__(**kwargs)
         self.evaluation_time = evaluation_time
         self.results = results
@@ -277,14 +314,14 @@ class AutoScaleRunError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. An identifier for the error. Codes are invariant and are intended to be
+    :ivar code: Required. An identifier for the error. Codes are invariant and are intended to be
      consumed programmatically.
-    :type code: str
-    :param message: Required. A message describing the error, intended to be suitable for display
-     in a user interface.
-    :type message: str
-    :param details: Additional details about the error.
-    :type details: list[~azure.mgmt.batch.models.AutoScaleRunError]
+    :vartype code: str
+    :ivar message: Required. A message describing the error, intended to be suitable for display in
+     a user interface.
+    :vartype message: str
+    :ivar details: Additional details about the error.
+    :vartype details: list[~azure.mgmt.batch.models.AutoScaleRunError]
     """
 
     _validation = {
@@ -306,6 +343,16 @@ class AutoScaleRunError(msrest.serialization.Model):
         details: Optional[List["AutoScaleRunError"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. An identifier for the error. Codes are invariant and are intended to
+         be consumed programmatically.
+        :paramtype code: str
+        :keyword message: Required. A message describing the error, intended to be suitable for display
+         in a user interface.
+        :paramtype message: str
+        :keyword details: Additional details about the error.
+        :paramtype details: list[~azure.mgmt.batch.models.AutoScaleRunError]
+        """
         super(AutoScaleRunError, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -317,10 +364,10 @@ class AutoScaleSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param formula: Required. A formula for the desired number of compute nodes in the pool.
-    :type formula: str
-    :param evaluation_interval: If omitted, the default value is 15 minutes (PT15M).
-    :type evaluation_interval: ~datetime.timedelta
+    :ivar formula: Required. A formula for the desired number of compute nodes in the pool.
+    :vartype formula: str
+    :ivar evaluation_interval: If omitted, the default value is 15 minutes (PT15M).
+    :vartype evaluation_interval: ~datetime.timedelta
     """
 
     _validation = {
@@ -339,6 +386,12 @@ class AutoScaleSettings(msrest.serialization.Model):
         evaluation_interval: Optional[datetime.timedelta] = None,
         **kwargs
     ):
+        """
+        :keyword formula: Required. A formula for the desired number of compute nodes in the pool.
+        :paramtype formula: str
+        :keyword evaluation_interval: If omitted, the default value is 15 minutes (PT15M).
+        :paramtype evaluation_interval: ~datetime.timedelta
+        """
         super(AutoScaleSettings, self).__init__(**kwargs)
         self.formula = formula
         self.evaluation_interval = evaluation_interval
@@ -349,16 +402,16 @@ class AutoStorageBaseProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_account_id: Required. The resource ID of the storage account to be used for
+    :ivar storage_account_id: Required. The resource ID of the storage account to be used for
      auto-storage account.
-    :type storage_account_id: str
-    :param authentication_mode: The authentication mode which the Batch service will use to manage
+    :vartype storage_account_id: str
+    :ivar authentication_mode: The authentication mode which the Batch service will use to manage
      the auto-storage account. Possible values include: "StorageKeys",
      "BatchAccountManagedIdentity". Default value: "StorageKeys".
-    :type authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
-    :param node_identity_reference: The identity referenced here must be assigned to pools which
+    :vartype authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
+    :ivar node_identity_reference: The identity referenced here must be assigned to pools which
      have compute nodes that need access to auto-storage.
-    :type node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+    :vartype node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _validation = {
@@ -379,6 +432,18 @@ class AutoStorageBaseProperties(msrest.serialization.Model):
         node_identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_account_id: Required. The resource ID of the storage account to be used for
+         auto-storage account.
+        :paramtype storage_account_id: str
+        :keyword authentication_mode: The authentication mode which the Batch service will use to
+         manage the auto-storage account. Possible values include: "StorageKeys",
+         "BatchAccountManagedIdentity". Default value: "StorageKeys".
+        :paramtype authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
+        :keyword node_identity_reference: The identity referenced here must be assigned to pools which
+         have compute nodes that need access to auto-storage.
+        :paramtype node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+        """
         super(AutoStorageBaseProperties, self).__init__(**kwargs)
         self.storage_account_id = storage_account_id
         self.authentication_mode = authentication_mode
@@ -390,19 +455,19 @@ class AutoStorageProperties(AutoStorageBaseProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_account_id: Required. The resource ID of the storage account to be used for
+    :ivar storage_account_id: Required. The resource ID of the storage account to be used for
      auto-storage account.
-    :type storage_account_id: str
-    :param authentication_mode: The authentication mode which the Batch service will use to manage
+    :vartype storage_account_id: str
+    :ivar authentication_mode: The authentication mode which the Batch service will use to manage
      the auto-storage account. Possible values include: "StorageKeys",
      "BatchAccountManagedIdentity". Default value: "StorageKeys".
-    :type authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
-    :param node_identity_reference: The identity referenced here must be assigned to pools which
+    :vartype authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
+    :ivar node_identity_reference: The identity referenced here must be assigned to pools which
      have compute nodes that need access to auto-storage.
-    :type node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
-    :param last_key_sync: Required. The UTC time at which storage keys were last synchronized with
+    :vartype node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+    :ivar last_key_sync: Required. The UTC time at which storage keys were last synchronized with
      the Batch account.
-    :type last_key_sync: ~datetime.datetime
+    :vartype last_key_sync: ~datetime.datetime
     """
 
     _validation = {
@@ -426,6 +491,21 @@ class AutoStorageProperties(AutoStorageBaseProperties):
         node_identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_account_id: Required. The resource ID of the storage account to be used for
+         auto-storage account.
+        :paramtype storage_account_id: str
+        :keyword authentication_mode: The authentication mode which the Batch service will use to
+         manage the auto-storage account. Possible values include: "StorageKeys",
+         "BatchAccountManagedIdentity". Default value: "StorageKeys".
+        :paramtype authentication_mode: str or ~azure.mgmt.batch.models.AutoStorageAuthenticationMode
+        :keyword node_identity_reference: The identity referenced here must be assigned to pools which
+         have compute nodes that need access to auto-storage.
+        :paramtype node_identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+        :keyword last_key_sync: Required. The UTC time at which storage keys were last synchronized
+         with the Batch account.
+        :paramtype last_key_sync: ~datetime.datetime
+        """
         super(AutoStorageProperties, self).__init__(storage_account_id=storage_account_id, authentication_mode=authentication_mode, node_identity_reference=node_identity_reference, **kwargs)
         self.last_key_sync = last_key_sync
 
@@ -433,15 +513,15 @@ class AutoStorageProperties(AutoStorageBaseProperties):
 class AutoUserSpecification(msrest.serialization.Model):
     """Specifies the parameters for the auto user that runs a task on the Batch service.
 
-    :param scope: The default value is Pool. If the pool is running Windows a value of Task should
+    :ivar scope: The default value is Pool. If the pool is running Windows a value of Task should
      be specified if stricter isolation between tasks is required. For example, if the task mutates
      the registry in a way which could impact other tasks, or if certificates have been specified on
      the pool which should not be accessible by normal tasks but should be accessible by start
      tasks. Possible values include: "Task", "Pool".
-    :type scope: str or ~azure.mgmt.batch.models.AutoUserScope
-    :param elevation_level: The default value is nonAdmin. Possible values include: "NonAdmin",
+    :vartype scope: str or ~azure.mgmt.batch.models.AutoUserScope
+    :ivar elevation_level: The default value is nonAdmin. Possible values include: "NonAdmin",
      "Admin".
-    :type elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
+    :vartype elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
     """
 
     _attribute_map = {
@@ -456,6 +536,17 @@ class AutoUserSpecification(msrest.serialization.Model):
         elevation_level: Optional[Union[str, "ElevationLevel"]] = None,
         **kwargs
     ):
+        """
+        :keyword scope: The default value is Pool. If the pool is running Windows a value of Task
+         should be specified if stricter isolation between tasks is required. For example, if the task
+         mutates the registry in a way which could impact other tasks, or if certificates have been
+         specified on the pool which should not be accessible by normal tasks but should be accessible
+         by start tasks. Possible values include: "Task", "Pool".
+        :paramtype scope: str or ~azure.mgmt.batch.models.AutoUserScope
+        :keyword elevation_level: The default value is nonAdmin. Possible values include: "NonAdmin",
+         "Admin".
+        :paramtype elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
+        """
         super(AutoUserSpecification, self).__init__(**kwargs)
         self.scope = scope
         self.elevation_level = elevation_level
@@ -466,24 +557,24 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The Azure Storage Account name.
-    :type account_name: str
-    :param container_name: Required. The Azure Blob Storage Container name.
-    :type container_name: str
-    :param account_key: This property is mutually exclusive with both sasKey and identity; exactly
+    :ivar account_name: Required. The Azure Storage Account name.
+    :vartype account_name: str
+    :ivar container_name: Required. The Azure Blob Storage Container name.
+    :vartype container_name: str
+    :ivar account_key: This property is mutually exclusive with both sasKey and identity; exactly
      one must be specified.
-    :type account_key: str
-    :param sas_key: This property is mutually exclusive with both accountKey and identity; exactly
+    :vartype account_key: str
+    :ivar sas_key: This property is mutually exclusive with both accountKey and identity; exactly
      one must be specified.
-    :type sas_key: str
-    :param blobfuse_options: These are 'net use' options in Windows and 'mount' options in Linux.
-    :type blobfuse_options: str
-    :param relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
+    :vartype sas_key: str
+    :ivar blobfuse_options: These are 'net use' options in Windows and 'mount' options in Linux.
+    :vartype blobfuse_options: str
+    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
      directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
-    :type relative_mount_path: str
-    :param identity_reference: This property is mutually exclusive with both accountKey and sasKey;
+    :vartype relative_mount_path: str
+    :ivar identity_reference: This property is mutually exclusive with both accountKey and sasKey;
      exactly one must be specified.
-    :type identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _validation = {
@@ -514,6 +605,26 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
+        """
+        :keyword account_name: Required. The Azure Storage Account name.
+        :paramtype account_name: str
+        :keyword container_name: Required. The Azure Blob Storage Container name.
+        :paramtype container_name: str
+        :keyword account_key: This property is mutually exclusive with both sasKey and identity;
+         exactly one must be specified.
+        :paramtype account_key: str
+        :keyword sas_key: This property is mutually exclusive with both accountKey and identity;
+         exactly one must be specified.
+        :paramtype sas_key: str
+        :keyword blobfuse_options: These are 'net use' options in Windows and 'mount' options in Linux.
+        :paramtype blobfuse_options: str
+        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
+         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :paramtype relative_mount_path: str
+        :keyword identity_reference: This property is mutually exclusive with both accountKey and
+         sasKey; exactly one must be specified.
+        :paramtype identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+        """
         super(AzureBlobFileSystemConfiguration, self).__init__(**kwargs)
         self.account_name = account_name
         self.container_name = container_name
@@ -529,18 +640,17 @@ class AzureFileShareConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The Azure Storage account name.
-    :type account_name: str
-    :param azure_file_url: Required. This is of the form
-     'https://{account}.file.core.windows.net/'.
-    :type azure_file_url: str
-    :param account_key: Required. The Azure Storage account key.
-    :type account_key: str
-    :param relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
+    :ivar account_name: Required. The Azure Storage account name.
+    :vartype account_name: str
+    :ivar azure_file_url: Required. This is of the form 'https://{account}.file.core.windows.net/'.
+    :vartype azure_file_url: str
+    :ivar account_key: Required. The Azure Storage account key.
+    :vartype account_key: str
+    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
      directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
-    :type relative_mount_path: str
-    :param mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
-    :type mount_options: str
+    :vartype relative_mount_path: str
+    :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+    :vartype mount_options: str
     """
 
     _validation = {
@@ -568,6 +678,20 @@ class AzureFileShareConfiguration(msrest.serialization.Model):
         mount_options: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword account_name: Required. The Azure Storage account name.
+        :paramtype account_name: str
+        :keyword azure_file_url: Required. This is of the form
+         'https://{account}.file.core.windows.net/'.
+        :paramtype azure_file_url: str
+        :keyword account_key: Required. The Azure Storage account key.
+        :paramtype account_key: str
+        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
+         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :paramtype relative_mount_path: str
+        :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+        :paramtype mount_options: str
+        """
         super(AzureFileShareConfiguration, self).__init__(**kwargs)
         self.account_name = account_name
         self.azure_file_url = azure_file_url
@@ -613,6 +737,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -636,8 +762,8 @@ class BatchAccount(Resource):
     :vartype location: str
     :ivar tags: A set of tags. The tags of the resource.
     :vartype tags: dict[str, str]
-    :param identity: The identity of the Batch account.
-    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+    :ivar identity: The identity of the Batch account.
+    :vartype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     :ivar account_endpoint: The account endpoint used to interact with the Batch service.
     :vartype account_endpoint: str
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
@@ -744,6 +870,10 @@ class BatchAccount(Resource):
         identity: Optional["BatchAccountIdentity"] = None,
         **kwargs
     ):
+        """
+        :keyword identity: The identity of the Batch account.
+        :paramtype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+        """
         super(BatchAccount, self).__init__(**kwargs)
         self.identity = identity
         self.account_endpoint = None
@@ -768,34 +898,34 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The region in which to create the account.
-    :type location: str
-    :param tags: A set of tags. The user-specified tags associated with the account.
-    :type tags: dict[str, str]
-    :param identity: The identity of the Batch account.
-    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
-    :param auto_storage: The properties related to the auto-storage account.
-    :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
-    :param pool_allocation_mode: The pool allocation mode also affects how clients may authenticate
+    :ivar location: Required. The region in which to create the account.
+    :vartype location: str
+    :ivar tags: A set of tags. The user-specified tags associated with the account.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the Batch account.
+    :vartype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+    :ivar auto_storage: The properties related to the auto-storage account.
+    :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+    :ivar pool_allocation_mode: The pool allocation mode also affects how clients may authenticate
      to the Batch Service API. If the mode is BatchService, clients may authenticate using access
      keys or Azure Active Directory. If the mode is UserSubscription, clients must use Azure Active
      Directory. The default is BatchService. Possible values include: "BatchService",
      "UserSubscription".
-    :type pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
-    :param key_vault_reference: A reference to the Azure key vault associated with the Batch
+    :vartype pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
+    :ivar key_vault_reference: A reference to the Azure key vault associated with the Batch
      account.
-    :type key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
-    :param public_network_access: If not specified, the default value is 'enabled'. Possible values
+    :vartype key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
+    :ivar public_network_access: If not specified, the default value is 'enabled'. Possible values
      include: "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
-    :param encryption: Configures how customer data is encrypted inside the Batch account. By
+    :vartype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :ivar encryption: Configures how customer data is encrypted inside the Batch account. By
      default, accounts are encrypted using a Microsoft managed key. For additional control, a
      customer-managed key can be used instead.
-    :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
-    :param allowed_authentication_modes: List of allowed authentication modes for the Batch account
+    :vartype encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :ivar allowed_authentication_modes: List of allowed authentication modes for the Batch account
      that can be used to authenticate with the data plane. This does not affect authentication with
      the control plane.
-    :type allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
+    :vartype allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
     """
 
     _validation = {
@@ -828,6 +958,37 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         allowed_authentication_modes: Optional[List[Union[str, "AuthenticationMode"]]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The region in which to create the account.
+        :paramtype location: str
+        :keyword tags: A set of tags. The user-specified tags associated with the account.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the Batch account.
+        :paramtype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+        :keyword auto_storage: The properties related to the auto-storage account.
+        :paramtype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+        :keyword pool_allocation_mode: The pool allocation mode also affects how clients may
+         authenticate to the Batch Service API. If the mode is BatchService, clients may authenticate
+         using access keys or Azure Active Directory. If the mode is UserSubscription, clients must use
+         Azure Active Directory. The default is BatchService. Possible values include: "BatchService",
+         "UserSubscription".
+        :paramtype pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
+        :keyword key_vault_reference: A reference to the Azure key vault associated with the Batch
+         account.
+        :paramtype key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
+        :keyword public_network_access: If not specified, the default value is 'enabled'. Possible
+         values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+        :keyword encryption: Configures how customer data is encrypted inside the Batch account. By
+         default, accounts are encrypted using a Microsoft managed key. For additional control, a
+         customer-managed key can be used instead.
+        :paramtype encryption: ~azure.mgmt.batch.models.EncryptionProperties
+        :keyword allowed_authentication_modes: List of allowed authentication modes for the Batch
+         account that can be used to authenticate with the data plane. This does not affect
+         authentication with the control plane.
+        :paramtype allowed_authentication_modes: list[str or
+         ~azure.mgmt.batch.models.AuthenticationMode]
+        """
         super(BatchAccountCreateParameters, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -853,11 +1014,11 @@ class BatchAccountIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant id associated with the Batch account. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :param type: Required. The type of identity used for the Batch account. Possible values
-     include: "SystemAssigned", "UserAssigned", "None".
-    :type type: str or ~azure.mgmt.batch.models.ResourceIdentityType
-    :param user_assigned_identities: The list of user identities associated with the Batch account.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
+    :ivar type: Required. The type of identity used for the Batch account. Possible values include:
+     "SystemAssigned", "UserAssigned", "None".
+    :vartype type: str or ~azure.mgmt.batch.models.ResourceIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the Batch account.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
     """
 
     _validation = {
@@ -880,6 +1041,14 @@ class BatchAccountIdentity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentities"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. The type of identity used for the Batch account. Possible values
+         include: "SystemAssigned", "UserAssigned", "None".
+        :paramtype type: str or ~azure.mgmt.batch.models.ResourceIdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the Batch
+         account.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
+        """
         super(BatchAccountIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -916,6 +1085,8 @@ class BatchAccountKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BatchAccountKeys, self).__init__(**kwargs)
         self.account_name = None
         self.primary = None
@@ -925,10 +1096,10 @@ class BatchAccountKeys(msrest.serialization.Model):
 class BatchAccountListResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
-    :param value: The collection of Batch accounts returned by the listing operation.
-    :type value: list[~azure.mgmt.batch.models.BatchAccount]
-    :param next_link: The continuation token.
-    :type next_link: str
+    :ivar value: The collection of Batch accounts returned by the listing operation.
+    :vartype value: list[~azure.mgmt.batch.models.BatchAccount]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -943,6 +1114,12 @@ class BatchAccountListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of Batch accounts returned by the listing operation.
+        :paramtype value: list[~azure.mgmt.batch.models.BatchAccount]
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
         super(BatchAccountListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -953,9 +1130,9 @@ class BatchAccountRegenerateKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. The type of account key to regenerate. Possible values include:
+    :ivar key_name: Required. The type of account key to regenerate. Possible values include:
      "Primary", "Secondary".
-    :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
+    :vartype key_name: str or ~azure.mgmt.batch.models.AccountKeyType
     """
 
     _validation = {
@@ -972,6 +1149,11 @@ class BatchAccountRegenerateKeyParameters(msrest.serialization.Model):
         key_name: Union[str, "AccountKeyType"],
         **kwargs
     ):
+        """
+        :keyword key_name: Required. The type of account key to regenerate. Possible values include:
+         "Primary", "Secondary".
+        :paramtype key_name: str or ~azure.mgmt.batch.models.AccountKeyType
+        """
         super(BatchAccountRegenerateKeyParameters, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -979,20 +1161,20 @@ class BatchAccountRegenerateKeyParameters(msrest.serialization.Model):
 class BatchAccountUpdateParameters(msrest.serialization.Model):
     """Parameters for updating an Azure Batch account.
 
-    :param tags: A set of tags. The user-specified tags associated with the account.
-    :type tags: dict[str, str]
-    :param identity: The identity of the Batch account.
-    :type identity: ~azure.mgmt.batch.models.BatchAccountIdentity
-    :param auto_storage: The properties related to the auto-storage account.
-    :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
-    :param encryption: Configures how customer data is encrypted inside the Batch account. By
+    :ivar tags: A set of tags. The user-specified tags associated with the account.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the Batch account.
+    :vartype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+    :ivar auto_storage: The properties related to the auto-storage account.
+    :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+    :ivar encryption: Configures how customer data is encrypted inside the Batch account. By
      default, accounts are encrypted using a Microsoft managed key. For additional control, a
      customer-managed key can be used instead.
-    :type encryption: ~azure.mgmt.batch.models.EncryptionProperties
-    :param allowed_authentication_modes: List of allowed authentication modes for the Batch account
+    :vartype encryption: ~azure.mgmt.batch.models.EncryptionProperties
+    :ivar allowed_authentication_modes: List of allowed authentication modes for the Batch account
      that can be used to authenticate with the data plane. This does not affect authentication with
      the control plane.
-    :type allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
+    :vartype allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
     """
 
     _attribute_map = {
@@ -1013,6 +1195,23 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         allowed_authentication_modes: Optional[List[Union[str, "AuthenticationMode"]]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The user-specified tags associated with the account.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the Batch account.
+        :paramtype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+        :keyword auto_storage: The properties related to the auto-storage account.
+        :paramtype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
+        :keyword encryption: Configures how customer data is encrypted inside the Batch account. By
+         default, accounts are encrypted using a Microsoft managed key. For additional control, a
+         customer-managed key can be used instead.
+        :paramtype encryption: ~azure.mgmt.batch.models.EncryptionProperties
+        :keyword allowed_authentication_modes: List of allowed authentication modes for the Batch
+         account that can be used to authenticate with the data plane. This does not affect
+         authentication with the control plane.
+        :paramtype allowed_authentication_modes: list[str or
+         ~azure.mgmt.batch.models.AuthenticationMode]
+        """
         super(BatchAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.identity = identity
@@ -1043,6 +1242,8 @@ class BatchLocationQuota(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BatchLocationQuota, self).__init__(**kwargs)
         self.account_quota = None
 
@@ -1052,11 +1253,11 @@ class BatchPoolIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of identity used for the Batch Pool. Possible values include:
+    :ivar type: Required. The type of identity used for the Batch Pool. Possible values include:
      "UserAssigned", "None".
-    :type type: str or ~azure.mgmt.batch.models.PoolIdentityType
-    :param user_assigned_identities: The list of user identities associated with the Batch pool.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
+    :vartype type: str or ~azure.mgmt.batch.models.PoolIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the Batch pool.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
     """
 
     _validation = {
@@ -1075,6 +1276,13 @@ class BatchPoolIdentity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentities"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. The type of identity used for the Batch Pool. Possible values include:
+         "UserAssigned", "None".
+        :paramtype type: str or ~azure.mgmt.batch.models.PoolIdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the Batch pool.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.batch.models.UserAssignedIdentities]
+        """
         super(BatchPoolIdentity, self).__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
@@ -1093,15 +1301,15 @@ class Certificate(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param thumbprint_algorithm: This must match the first portion of the certificate name.
+    :ivar thumbprint_algorithm: This must match the first portion of the certificate name.
      Currently required to be 'SHA1'.
-    :type thumbprint_algorithm: str
-    :param thumbprint: This must match the thumbprint from the name.
-    :type thumbprint: str
-    :param format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+    :vartype thumbprint_algorithm: str
+    :ivar thumbprint: This must match the thumbprint from the name.
+    :vartype thumbprint: str
+    :ivar format: The format of the certificate - either Pfx or Cer. If omitted, the default is
      Pfx. Possible values include: "Pfx", "Cer".
-    :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :ivar provisioning_state:  Possible values include: "Succeeded", "Deleting", "Failed".
+    :vartype format: str or ~azure.mgmt.batch.models.CertificateFormat
+    :ivar provisioning_state: Possible values include: "Succeeded", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.batch.models.CertificateProvisioningState
     :ivar provisioning_state_transition_time: The time at which the certificate entered its current
      state.
@@ -1157,6 +1365,16 @@ class Certificate(ProxyResource):
         format: Optional[Union[str, "CertificateFormat"]] = None,
         **kwargs
     ):
+        """
+        :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
+         Currently required to be 'SHA1'.
+        :paramtype thumbprint_algorithm: str
+        :keyword thumbprint: This must match the thumbprint from the name.
+        :paramtype thumbprint: str
+        :keyword format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+         Pfx. Possible values include: "Pfx", "Cer".
+        :paramtype format: str or ~azure.mgmt.batch.models.CertificateFormat
+        """
         super(Certificate, self).__init__(**kwargs)
         self.thumbprint_algorithm = thumbprint_algorithm
         self.thumbprint = thumbprint
@@ -1172,14 +1390,14 @@ class Certificate(ProxyResource):
 class CertificateBaseProperties(msrest.serialization.Model):
     """Base certificate properties.
 
-    :param thumbprint_algorithm: This must match the first portion of the certificate name.
+    :ivar thumbprint_algorithm: This must match the first portion of the certificate name.
      Currently required to be 'SHA1'.
-    :type thumbprint_algorithm: str
-    :param thumbprint: This must match the thumbprint from the name.
-    :type thumbprint: str
-    :param format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+    :vartype thumbprint_algorithm: str
+    :ivar thumbprint: This must match the thumbprint from the name.
+    :vartype thumbprint: str
+    :ivar format: The format of the certificate - either Pfx or Cer. If omitted, the default is
      Pfx. Possible values include: "Pfx", "Cer".
-    :type format: str or ~azure.mgmt.batch.models.CertificateFormat
+    :vartype format: str or ~azure.mgmt.batch.models.CertificateFormat
     """
 
     _attribute_map = {
@@ -1196,6 +1414,16 @@ class CertificateBaseProperties(msrest.serialization.Model):
         format: Optional[Union[str, "CertificateFormat"]] = None,
         **kwargs
     ):
+        """
+        :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
+         Currently required to be 'SHA1'.
+        :paramtype thumbprint_algorithm: str
+        :keyword thumbprint: This must match the thumbprint from the name.
+        :paramtype thumbprint: str
+        :keyword format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+         Pfx. Possible values include: "Pfx", "Cer".
+        :paramtype format: str or ~azure.mgmt.batch.models.CertificateFormat
+        """
         super(CertificateBaseProperties, self).__init__(**kwargs)
         self.thumbprint_algorithm = thumbprint_algorithm
         self.thumbprint = thumbprint
@@ -1215,18 +1443,18 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param thumbprint_algorithm: This must match the first portion of the certificate name.
+    :ivar thumbprint_algorithm: This must match the first portion of the certificate name.
      Currently required to be 'SHA1'.
-    :type thumbprint_algorithm: str
-    :param thumbprint: This must match the thumbprint from the name.
-    :type thumbprint: str
-    :param format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+    :vartype thumbprint_algorithm: str
+    :ivar thumbprint: This must match the thumbprint from the name.
+    :vartype thumbprint: str
+    :ivar format: The format of the certificate - either Pfx or Cer. If omitted, the default is
      Pfx. Possible values include: "Pfx", "Cer".
-    :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :param data: The maximum size is 10KB.
-    :type data: str
-    :param password: This must not be specified if the certificate format is Cer.
-    :type password: str
+    :vartype format: str or ~azure.mgmt.batch.models.CertificateFormat
+    :ivar data: The maximum size is 10KB.
+    :vartype data: str
+    :ivar password: This must not be specified if the certificate format is Cer.
+    :vartype password: str
     """
 
     _validation = {
@@ -1258,6 +1486,20 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
+         Currently required to be 'SHA1'.
+        :paramtype thumbprint_algorithm: str
+        :keyword thumbprint: This must match the thumbprint from the name.
+        :paramtype thumbprint: str
+        :keyword format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+         Pfx. Possible values include: "Pfx", "Cer".
+        :paramtype format: str or ~azure.mgmt.batch.models.CertificateFormat
+        :keyword data: The maximum size is 10KB.
+        :paramtype data: str
+        :keyword password: This must not be specified if the certificate format is Cer.
+        :paramtype password: str
+        """
         super(CertificateCreateOrUpdateParameters, self).__init__(**kwargs)
         self.thumbprint_algorithm = thumbprint_algorithm
         self.thumbprint = thumbprint
@@ -1271,18 +1513,18 @@ class CertificateCreateOrUpdateProperties(CertificateBaseProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param thumbprint_algorithm: This must match the first portion of the certificate name.
+    :ivar thumbprint_algorithm: This must match the first portion of the certificate name.
      Currently required to be 'SHA1'.
-    :type thumbprint_algorithm: str
-    :param thumbprint: This must match the thumbprint from the name.
-    :type thumbprint: str
-    :param format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+    :vartype thumbprint_algorithm: str
+    :ivar thumbprint: This must match the thumbprint from the name.
+    :vartype thumbprint: str
+    :ivar format: The format of the certificate - either Pfx or Cer. If omitted, the default is
      Pfx. Possible values include: "Pfx", "Cer".
-    :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :param data: Required. The maximum size is 10KB.
-    :type data: str
-    :param password: This must not be specified if the certificate format is Cer.
-    :type password: str
+    :vartype format: str or ~azure.mgmt.batch.models.CertificateFormat
+    :ivar data: Required. The maximum size is 10KB.
+    :vartype data: str
+    :ivar password: This must not be specified if the certificate format is Cer.
+    :vartype password: str
     """
 
     _validation = {
@@ -1307,6 +1549,20 @@ class CertificateCreateOrUpdateProperties(CertificateBaseProperties):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
+         Currently required to be 'SHA1'.
+        :paramtype thumbprint_algorithm: str
+        :keyword thumbprint: This must match the thumbprint from the name.
+        :paramtype thumbprint: str
+        :keyword format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+         Pfx. Possible values include: "Pfx", "Cer".
+        :paramtype format: str or ~azure.mgmt.batch.models.CertificateFormat
+        :keyword data: Required. The maximum size is 10KB.
+        :paramtype data: str
+        :keyword password: This must not be specified if the certificate format is Cer.
+        :paramtype password: str
+        """
         super(CertificateCreateOrUpdateProperties, self).__init__(thumbprint_algorithm=thumbprint_algorithm, thumbprint=thumbprint, format=format, **kwargs)
         self.data = data
         self.password = password
@@ -1317,15 +1573,15 @@ class CertificateProperties(CertificateBaseProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param thumbprint_algorithm: This must match the first portion of the certificate name.
+    :ivar thumbprint_algorithm: This must match the first portion of the certificate name.
      Currently required to be 'SHA1'.
-    :type thumbprint_algorithm: str
-    :param thumbprint: This must match the thumbprint from the name.
-    :type thumbprint: str
-    :param format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+    :vartype thumbprint_algorithm: str
+    :ivar thumbprint: This must match the thumbprint from the name.
+    :vartype thumbprint: str
+    :ivar format: The format of the certificate - either Pfx or Cer. If omitted, the default is
      Pfx. Possible values include: "Pfx", "Cer".
-    :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :ivar provisioning_state:  Possible values include: "Succeeded", "Deleting", "Failed".
+    :vartype format: str or ~azure.mgmt.batch.models.CertificateFormat
+    :ivar provisioning_state: Possible values include: "Succeeded", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.batch.models.CertificateProvisioningState
     :ivar provisioning_state_transition_time: The time at which the certificate entered its current
      state.
@@ -1373,6 +1629,16 @@ class CertificateProperties(CertificateBaseProperties):
         format: Optional[Union[str, "CertificateFormat"]] = None,
         **kwargs
     ):
+        """
+        :keyword thumbprint_algorithm: This must match the first portion of the certificate name.
+         Currently required to be 'SHA1'.
+        :paramtype thumbprint_algorithm: str
+        :keyword thumbprint: This must match the thumbprint from the name.
+        :paramtype thumbprint: str
+        :keyword format: The format of the certificate - either Pfx or Cer. If omitted, the default is
+         Pfx. Possible values include: "Pfx", "Cer".
+        :paramtype format: str or ~azure.mgmt.batch.models.CertificateFormat
+        """
         super(CertificateProperties, self).__init__(thumbprint_algorithm=thumbprint_algorithm, thumbprint=thumbprint, format=format, **kwargs)
         self.provisioning_state = None
         self.provisioning_state_transition_time = None
@@ -1387,10 +1653,10 @@ class CertificateReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The fully qualified ID of the certificate to install on the pool. This
-     must be inside the same batch account as the pool.
-    :type id: str
-    :param store_location: The default value is currentUser. This property is applicable only for
+    :ivar id: Required. The fully qualified ID of the certificate to install on the pool. This must
+     be inside the same batch account as the pool.
+    :vartype id: str
+    :ivar store_location: The default value is currentUser. This property is applicable only for
      pools configured with Windows nodes (that is, created with cloudServiceConfiguration, or with
      virtualMachineConfiguration using a Windows image reference). For Linux compute nodes, the
      certificates are stored in a directory inside the task working directory and an environment
@@ -1398,16 +1664,16 @@ class CertificateReference(msrest.serialization.Model):
      certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
      directory (e.g., /home/{user-name}/certs) and certificates are placed in that directory.
      Possible values include: "CurrentUser", "LocalMachine".
-    :type store_location: str or ~azure.mgmt.batch.models.CertificateStoreLocation
-    :param store_name: This property is applicable only for pools configured with Windows nodes
+    :vartype store_location: str or ~azure.mgmt.batch.models.CertificateStoreLocation
+    :ivar store_name: This property is applicable only for pools configured with Windows nodes
      (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration using a
      Windows image reference). Common store names include: My, Root, CA, Trust, Disallowed,
      TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
      used. The default value is My.
-    :type store_name: str
-    :param visibility: Which user accounts on the compute node should have access to the private
+    :vartype store_name: str
+    :ivar visibility: Which user accounts on the compute node should have access to the private
      data of the certificate.
-    :type visibility: list[str or ~azure.mgmt.batch.models.CertificateVisibility]
+    :vartype visibility: list[str or ~azure.mgmt.batch.models.CertificateVisibility]
     """
 
     _validation = {
@@ -1430,6 +1696,29 @@ class CertificateReference(msrest.serialization.Model):
         visibility: Optional[List[Union[str, "CertificateVisibility"]]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. The fully qualified ID of the certificate to install on the pool. This
+         must be inside the same batch account as the pool.
+        :paramtype id: str
+        :keyword store_location: The default value is currentUser. This property is applicable only for
+         pools configured with Windows nodes (that is, created with cloudServiceConfiguration, or with
+         virtualMachineConfiguration using a Windows image reference). For Linux compute nodes, the
+         certificates are stored in a directory inside the task working directory and an environment
+         variable AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this location. For
+         certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
+         directory (e.g., /home/{user-name}/certs) and certificates are placed in that directory.
+         Possible values include: "CurrentUser", "LocalMachine".
+        :paramtype store_location: str or ~azure.mgmt.batch.models.CertificateStoreLocation
+        :keyword store_name: This property is applicable only for pools configured with Windows nodes
+         (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration using a
+         Windows image reference). Common store names include: My, Root, CA, Trust, Disallowed,
+         TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
+         used. The default value is My.
+        :paramtype store_name: str
+        :keyword visibility: Which user accounts on the compute node should have access to the private
+         data of the certificate.
+        :paramtype visibility: list[str or ~azure.mgmt.batch.models.CertificateVisibility]
+        """
         super(CertificateReference, self).__init__(**kwargs)
         self.id = id
         self.store_location = store_location
@@ -1444,8 +1733,8 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name to check for availability.
-    :type name: str
+    :ivar name: Required. The name to check for availability.
+    :vartype name: str
     :ivar type: The resource type. Has constant value: "Microsoft.Batch/batchAccounts".
     :vartype type: str
     """
@@ -1468,6 +1757,10 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name to check for availability.
+        :paramtype name: str
+        """
         super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
 
@@ -1505,6 +1798,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
@@ -1516,17 +1811,17 @@ class CIFSMountConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param username: Required. The user to use for authentication against the CIFS file system.
-    :type username: str
-    :param source: Required. The URI of the file system to mount.
-    :type source: str
-    :param relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
+    :ivar username: Required. The user to use for authentication against the CIFS file system.
+    :vartype username: str
+    :ivar source: Required. The URI of the file system to mount.
+    :vartype source: str
+    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
      directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
-    :type relative_mount_path: str
-    :param mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
-    :type mount_options: str
-    :param password: Required. The password to use for authentication against the CIFS file system.
-    :type password: str
+    :vartype relative_mount_path: str
+    :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+    :vartype mount_options: str
+    :ivar password: Required. The password to use for authentication against the CIFS file system.
+    :vartype password: str
     """
 
     _validation = {
@@ -1554,6 +1849,20 @@ class CIFSMountConfiguration(msrest.serialization.Model):
         mount_options: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword username: Required. The user to use for authentication against the CIFS file system.
+        :paramtype username: str
+        :keyword source: Required. The URI of the file system to mount.
+        :paramtype source: str
+        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
+         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :paramtype relative_mount_path: str
+        :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+        :paramtype mount_options: str
+        :keyword password: Required. The password to use for authentication against the CIFS file
+         system.
+        :paramtype password: str
+        """
         super(CIFSMountConfiguration, self).__init__(**kwargs)
         self.username = username
         self.source = source
@@ -1565,17 +1874,17 @@ class CIFSMountConfiguration(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.batch.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.batch.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -1594,6 +1903,19 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.batch.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -1606,15 +1928,15 @@ class CloudServiceConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param os_family: Required. Possible values are: 2 - OS Family 2, equivalent to Windows Server
+    :ivar os_family: Required. Possible values are: 2 - OS Family 2, equivalent to Windows Server
      2008 R2 SP1. 3 - OS Family 3, equivalent to Windows Server 2012. 4 - OS Family 4, equivalent to
      Windows Server 2012 R2. 5 - OS Family 5, equivalent to Windows Server 2016. 6 - OS Family 6,
      equivalent to Windows Server 2019. For more information, see Azure Guest OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
-    :type os_family: str
-    :param os_version: The default value is * which specifies the latest operating system version
+    :vartype os_family: str
+    :ivar os_version: The default value is * which specifies the latest operating system version
      for the specified OS family.
-    :type os_version: str
+    :vartype os_version: str
     """
 
     _validation = {
@@ -1633,6 +1955,18 @@ class CloudServiceConfiguration(msrest.serialization.Model):
         os_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword os_family: Required. Possible values are: 2 - OS Family 2, equivalent to Windows
+         Server 2008 R2 SP1. 3 - OS Family 3, equivalent to Windows Server 2012. 4 - OS Family 4,
+         equivalent to Windows Server 2012 R2. 5 - OS Family 5, equivalent to Windows Server 2016. 6 -
+         OS Family 6, equivalent to Windows Server 2019. For more information, see Azure Guest OS
+         Releases
+         (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
+        :paramtype os_family: str
+        :keyword os_version: The default value is * which specifies the latest operating system version
+         for the specified OS family.
+        :paramtype os_version: str
+        """
         super(CloudServiceConfiguration, self).__init__(**kwargs)
         self.os_family = os_family
         self.os_version = os_version
@@ -1641,8 +1975,8 @@ class CloudServiceConfiguration(msrest.serialization.Model):
 class ComputeNodeIdentityReference(msrest.serialization.Model):
     """The reference to a user assigned identity associated with the Batch pool which a compute node will use.
 
-    :param resource_id: The ARM resource id of the user assigned identity.
-    :type resource_id: str
+    :ivar resource_id: The ARM resource id of the user assigned identity.
+    :vartype resource_id: str
     """
 
     _attribute_map = {
@@ -1655,6 +1989,10 @@ class ComputeNodeIdentityReference(msrest.serialization.Model):
         resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: The ARM resource id of the user assigned identity.
+        :paramtype resource_id: str
+        """
         super(ComputeNodeIdentityReference, self).__init__(**kwargs)
         self.resource_id = resource_id
 
@@ -1668,13 +2006,13 @@ class ContainerConfiguration(msrest.serialization.Model):
 
     :ivar type: The container technology to be used. Has constant value: "DockerCompatible".
     :vartype type: str
-    :param container_image_names: This is the full image reference, as would be specified to
-     "docker pull". An image will be sourced from the default Docker registry unless the image is
-     fully qualified with an alternative registry.
-    :type container_image_names: list[str]
-    :param container_registries: If any images must be downloaded from a private registry which
+    :ivar container_image_names: This is the full image reference, as would be specified to "docker
+     pull". An image will be sourced from the default Docker registry unless the image is fully
+     qualified with an alternative registry.
+    :vartype container_image_names: list[str]
+    :ivar container_registries: If any images must be downloaded from a private registry which
      requires credentials, then those credentials must be provided here.
-    :type container_registries: list[~azure.mgmt.batch.models.ContainerRegistry]
+    :vartype container_registries: list[~azure.mgmt.batch.models.ContainerRegistry]
     """
 
     _validation = {
@@ -1696,6 +2034,15 @@ class ContainerConfiguration(msrest.serialization.Model):
         container_registries: Optional[List["ContainerRegistry"]] = None,
         **kwargs
     ):
+        """
+        :keyword container_image_names: This is the full image reference, as would be specified to
+         "docker pull". An image will be sourced from the default Docker registry unless the image is
+         fully qualified with an alternative registry.
+        :paramtype container_image_names: list[str]
+        :keyword container_registries: If any images must be downloaded from a private registry which
+         requires credentials, then those credentials must be provided here.
+        :paramtype container_registries: list[~azure.mgmt.batch.models.ContainerRegistry]
+        """
         super(ContainerConfiguration, self).__init__(**kwargs)
         self.container_image_names = container_image_names
         self.container_registries = container_registries
@@ -1704,15 +2051,15 @@ class ContainerConfiguration(msrest.serialization.Model):
 class ContainerRegistry(msrest.serialization.Model):
     """A private container registry.
 
-    :param user_name: The user name to log into the registry server.
-    :type user_name: str
-    :param password: The password to log into the registry server.
-    :type password: str
-    :param registry_server: If omitted, the default is "docker.io".
-    :type registry_server: str
-    :param identity_reference: The reference to a user assigned identity associated with the Batch
+    :ivar user_name: The user name to log into the registry server.
+    :vartype user_name: str
+    :ivar password: The password to log into the registry server.
+    :vartype password: str
+    :ivar registry_server: If omitted, the default is "docker.io".
+    :vartype registry_server: str
+    :ivar identity_reference: The reference to a user assigned identity associated with the Batch
      pool which a compute node will use.
-    :type identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _attribute_map = {
@@ -1731,6 +2078,17 @@ class ContainerRegistry(msrest.serialization.Model):
         identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
+        """
+        :keyword user_name: The user name to log into the registry server.
+        :paramtype user_name: str
+        :keyword password: The password to log into the registry server.
+        :paramtype password: str
+        :keyword registry_server: If omitted, the default is "docker.io".
+        :paramtype registry_server: str
+        :keyword identity_reference: The reference to a user assigned identity associated with the
+         Batch pool which a compute node will use.
+        :paramtype identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+        """
         super(ContainerRegistry, self).__init__(**kwargs)
         self.user_name = user_name
         self.password = password
@@ -1743,10 +2101,10 @@ class DataDisk(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param lun: Required. The lun is used to uniquely identify each data disk. If attaching
-     multiple disks, each should have a distinct lun. The value must be between 0 and 63, inclusive.
-    :type lun: int
-    :param caching: Values are:
+    :ivar lun: Required. The lun is used to uniquely identify each data disk. If attaching multiple
+     disks, each should have a distinct lun. The value must be between 0 and 63, inclusive.
+    :vartype lun: int
+    :ivar caching: Values are:
     
       none - The caching mode for the disk is not enabled.
       readOnly - The caching mode for the disk is read only.
@@ -1755,15 +2113,15 @@ class DataDisk(msrest.serialization.Model):
       The default value for caching is none. For information about the caching options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: "None", "ReadOnly", "ReadWrite".
-    :type caching: str or ~azure.mgmt.batch.models.CachingType
-    :param disk_size_gb: Required. The initial disk size in GB when creating new data disk.
-    :type disk_size_gb: int
-    :param storage_account_type: If omitted, the default is "Standard_LRS". Values are:
+    :vartype caching: str or ~azure.mgmt.batch.models.CachingType
+    :ivar disk_size_gb: Required. The initial disk size in GB when creating new data disk.
+    :vartype disk_size_gb: int
+    :ivar storage_account_type: If omitted, the default is "Standard_LRS". Values are:
     
       Standard_LRS - The data disk should use standard locally redundant storage.
       Premium_LRS - The data disk should use premium locally redundant storage. Possible values
      include: "Standard_LRS", "Premium_LRS".
-    :type storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
+    :vartype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
     """
 
     _validation = {
@@ -1787,6 +2145,29 @@ class DataDisk(msrest.serialization.Model):
         storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
         **kwargs
     ):
+        """
+        :keyword lun: Required. The lun is used to uniquely identify each data disk. If attaching
+         multiple disks, each should have a distinct lun. The value must be between 0 and 63, inclusive.
+        :paramtype lun: int
+        :keyword caching: Values are:
+        
+          none - The caching mode for the disk is not enabled.
+          readOnly - The caching mode for the disk is read only.
+          readWrite - The caching mode for the disk is read and write.
+        
+          The default value for caching is none. For information about the caching options see:
+         https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
+         Possible values include: "None", "ReadOnly", "ReadWrite".
+        :paramtype caching: str or ~azure.mgmt.batch.models.CachingType
+        :keyword disk_size_gb: Required. The initial disk size in GB when creating new data disk.
+        :paramtype disk_size_gb: int
+        :keyword storage_account_type: If omitted, the default is "Standard_LRS". Values are:
+        
+          Standard_LRS - The data disk should use standard locally redundant storage.
+          Premium_LRS - The data disk should use premium locally redundant storage. Possible values
+         include: "Standard_LRS", "Premium_LRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
+        """
         super(DataDisk, self).__init__(**kwargs)
         self.lun = lun
         self.caching = caching
@@ -1799,17 +2180,17 @@ class DeleteCertificateError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. An identifier for the error. Codes are invariant and are intended to be
+    :ivar code: Required. An identifier for the error. Codes are invariant and are intended to be
      consumed programmatically.
-    :type code: str
-    :param message: Required. A message describing the error, intended to be suitable for display
-     in a user interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype code: str
+    :ivar message: Required. A message describing the error, intended to be suitable for display in
+     a user interface.
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.batch.models.DeleteCertificateError]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.batch.models.DeleteCertificateError]
     """
 
     _validation = {
@@ -1833,6 +2214,19 @@ class DeleteCertificateError(msrest.serialization.Model):
         details: Optional[List["DeleteCertificateError"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. An identifier for the error. Codes are invariant and are intended to
+         be consumed programmatically.
+        :paramtype code: str
+        :keyword message: Required. A message describing the error, intended to be suitable for display
+         in a user interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.batch.models.DeleteCertificateError]
+        """
         super(DeleteCertificateError, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -1843,13 +2237,13 @@ class DeleteCertificateError(msrest.serialization.Model):
 class DeploymentConfiguration(msrest.serialization.Model):
     """Deployment configuration properties.
 
-    :param cloud_service_configuration: This property and virtualMachineConfiguration are mutually
+    :ivar cloud_service_configuration: This property and virtualMachineConfiguration are mutually
      exclusive and one of the properties must be specified. This property cannot be specified if the
      Batch account was created with its poolAllocationMode property set to 'UserSubscription'.
-    :type cloud_service_configuration: ~azure.mgmt.batch.models.CloudServiceConfiguration
-    :param virtual_machine_configuration: This property and cloudServiceConfiguration are mutually
+    :vartype cloud_service_configuration: ~azure.mgmt.batch.models.CloudServiceConfiguration
+    :ivar virtual_machine_configuration: This property and cloudServiceConfiguration are mutually
      exclusive and one of the properties must be specified.
-    :type virtual_machine_configuration: ~azure.mgmt.batch.models.VirtualMachineConfiguration
+    :vartype virtual_machine_configuration: ~azure.mgmt.batch.models.VirtualMachineConfiguration
     """
 
     _attribute_map = {
@@ -1864,15 +2258,103 @@ class DeploymentConfiguration(msrest.serialization.Model):
         virtual_machine_configuration: Optional["VirtualMachineConfiguration"] = None,
         **kwargs
     ):
+        """
+        :keyword cloud_service_configuration: This property and virtualMachineConfiguration are
+         mutually exclusive and one of the properties must be specified. This property cannot be
+         specified if the Batch account was created with its poolAllocationMode property set to
+         'UserSubscription'.
+        :paramtype cloud_service_configuration: ~azure.mgmt.batch.models.CloudServiceConfiguration
+        :keyword virtual_machine_configuration: This property and cloudServiceConfiguration are
+         mutually exclusive and one of the properties must be specified.
+        :paramtype virtual_machine_configuration: ~azure.mgmt.batch.models.VirtualMachineConfiguration
+        """
         super(DeploymentConfiguration, self).__init__(**kwargs)
         self.cloud_service_configuration = cloud_service_configuration
         self.virtual_machine_configuration = virtual_machine_configuration
 
 
+class DetectorListResult(msrest.serialization.Model):
+    """Values returned by the List operation.
+
+    :ivar value: The collection of Batch account detectors returned by the listing operation.
+    :vartype value: list[~azure.mgmt.batch.models.DetectorResponse]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DetectorResponse]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["DetectorResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The collection of Batch account detectors returned by the listing operation.
+        :paramtype value: list[~azure.mgmt.batch.models.DetectorResponse]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super(DetectorListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DetectorResponse(ProxyResource):
+    """Contains the information for a detector.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
+    :ivar value: A base64 encoded string that represents the content of a detector.
+    :vartype value: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A base64 encoded string that represents the content of a detector.
+        :paramtype value: str
+        """
+        super(DetectorResponse, self).__init__(**kwargs)
+        self.value = value
+
+
 class DiffDiskSettings(msrest.serialization.Model):
     """Specifies the ephemeral Disk Settings for the operating system disk used by the virtual machine.
 
-    :param placement: This property can be used by user in the request to choose which location the
+    :ivar placement: This property can be used by user in the request to choose which location the
      operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning. For
      more information on Ephemeral OS disk size requirements, please refer to Ephemeral OS disk size
      requirements for Windows VMs at
@@ -1880,7 +2362,7 @@ class DiffDiskSettings(msrest.serialization.Model):
      and Linux VMs at
      https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
      The only acceptable values to pass in are None and "CacheDisk". The default value is None.
-    :type placement: str
+    :vartype placement: str
     """
 
     _attribute_map = {
@@ -1893,6 +2375,17 @@ class DiffDiskSettings(msrest.serialization.Model):
         placement: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword placement: This property can be used by user in the request to choose which location
+         the operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning.
+         For more information on Ephemeral OS disk size requirements, please refer to Ephemeral OS disk
+         size requirements for Windows VMs at
+         https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+         and Linux VMs at
+         https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
+         The only acceptable values to pass in are None and "CacheDisk". The default value is None.
+        :paramtype placement: str
+        """
         super(DiffDiskSettings, self).__init__(**kwargs)
         self.placement = placement
 
@@ -1900,9 +2393,9 @@ class DiffDiskSettings(msrest.serialization.Model):
 class DiskEncryptionConfiguration(msrest.serialization.Model):
     """The disk encryption configuration applied on compute nodes in the pool. Disk encryption configuration is not supported on Linux pool created with Virtual Machine Image or Shared Image Gallery Image.
 
-    :param targets: On Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk" and
+    :ivar targets: On Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk" and
      "TemporaryDisk" must be specified.
-    :type targets: list[str or ~azure.mgmt.batch.models.DiskEncryptionTarget]
+    :vartype targets: list[str or ~azure.mgmt.batch.models.DiskEncryptionTarget]
     """
 
     _attribute_map = {
@@ -1915,6 +2408,11 @@ class DiskEncryptionConfiguration(msrest.serialization.Model):
         targets: Optional[List[Union[str, "DiskEncryptionTarget"]]] = None,
         **kwargs
     ):
+        """
+        :keyword targets: On Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk"
+         and "TemporaryDisk" must be specified.
+        :paramtype targets: list[str or ~azure.mgmt.batch.models.DiskEncryptionTarget]
+        """
         super(DiskEncryptionConfiguration, self).__init__(**kwargs)
         self.targets = targets
 
@@ -1922,11 +2420,11 @@ class DiskEncryptionConfiguration(msrest.serialization.Model):
 class EncryptionProperties(msrest.serialization.Model):
     """Configures how customer data is encrypted inside the Batch account. By default, accounts are encrypted using a Microsoft managed key. For additional control, a customer-managed key can be used instead.
 
-    :param key_source: Type of the key source. Possible values include: "Microsoft.Batch",
+    :ivar key_source: Type of the key source. Possible values include: "Microsoft.Batch",
      "Microsoft.KeyVault".
-    :type key_source: str or ~azure.mgmt.batch.models.KeySource
-    :param key_vault_properties: Additional details when using Microsoft.KeyVault.
-    :type key_vault_properties: ~azure.mgmt.batch.models.KeyVaultProperties
+    :vartype key_source: str or ~azure.mgmt.batch.models.KeySource
+    :ivar key_vault_properties: Additional details when using Microsoft.KeyVault.
+    :vartype key_vault_properties: ~azure.mgmt.batch.models.KeyVaultProperties
     """
 
     _attribute_map = {
@@ -1941,6 +2439,13 @@ class EncryptionProperties(msrest.serialization.Model):
         key_vault_properties: Optional["KeyVaultProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword key_source: Type of the key source. Possible values include: "Microsoft.Batch",
+         "Microsoft.KeyVault".
+        :paramtype key_source: str or ~azure.mgmt.batch.models.KeySource
+        :keyword key_vault_properties: Additional details when using Microsoft.KeyVault.
+        :paramtype key_vault_properties: ~azure.mgmt.batch.models.KeyVaultProperties
+        """
         super(EncryptionProperties, self).__init__(**kwargs)
         self.key_source = key_source
         self.key_vault_properties = key_vault_properties
@@ -1977,6 +2482,8 @@ class EndpointDependency(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EndpointDependency, self).__init__(**kwargs)
         self.domain_name = None
         self.description = None
@@ -2004,6 +2511,8 @@ class EndpointDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EndpointDetail, self).__init__(**kwargs)
         self.port = None
 
@@ -2013,10 +2522,10 @@ class EnvironmentSetting(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable.
-    :type name: str
-    :param value: The value of the environment variable.
-    :type value: str
+    :ivar name: Required. The name of the environment variable.
+    :vartype name: str
+    :ivar value: The value of the environment variable.
+    :vartype value: str
     """
 
     _validation = {
@@ -2035,6 +2544,12 @@ class EnvironmentSetting(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the environment variable.
+        :paramtype name: str
+        :keyword value: The value of the environment variable.
+        :paramtype value: str
+        """
         super(EnvironmentSetting, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -2043,20 +2558,21 @@ class EnvironmentSetting(msrest.serialization.Model):
 class FixedScaleSettings(msrest.serialization.Model):
     """Fixed scale settings for the pool.
 
-    :param resize_timeout: The default value is 15 minutes. Timeout values use ISO 8601 format. For
+    :ivar resize_timeout: The default value is 15 minutes. Timeout values use ISO 8601 format. For
      example, use PT10M for 10 minutes. The minimum value is 5 minutes. If you specify a value less
      than 5 minutes, the Batch service rejects the request with an error; if you are calling the
      REST API directly, the HTTP status code is 400 (Bad Request).
-    :type resize_timeout: ~datetime.timedelta
-    :param target_dedicated_nodes: At least one of targetDedicatedNodes, targetLowPriorityNodes
+    :vartype resize_timeout: ~datetime.timedelta
+    :ivar target_dedicated_nodes: At least one of targetDedicatedNodes, targetLowPriorityNodes must
+     be set.
+    :vartype target_dedicated_nodes: int
+    :ivar target_low_priority_nodes: At least one of targetDedicatedNodes, targetLowPriorityNodes
      must be set.
-    :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: At least one of targetDedicatedNodes, targetLowPriorityNodes
-     must be set.
-    :type target_low_priority_nodes: int
-    :param node_deallocation_option: If omitted, the default value is Requeue. Possible values
+    :vartype target_low_priority_nodes: int
+    :ivar node_deallocation_option: If omitted, the default value is Requeue. Possible values
      include: "Requeue", "Terminate", "TaskCompletion", "RetainedData".
-    :type node_deallocation_option: str or ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
+    :vartype node_deallocation_option: str or
+     ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
     """
 
     _attribute_map = {
@@ -2075,6 +2591,23 @@ class FixedScaleSettings(msrest.serialization.Model):
         node_deallocation_option: Optional[Union[str, "ComputeNodeDeallocationOption"]] = None,
         **kwargs
     ):
+        """
+        :keyword resize_timeout: The default value is 15 minutes. Timeout values use ISO 8601 format.
+         For example, use PT10M for 10 minutes. The minimum value is 5 minutes. If you specify a value
+         less than 5 minutes, the Batch service rejects the request with an error; if you are calling
+         the REST API directly, the HTTP status code is 400 (Bad Request).
+        :paramtype resize_timeout: ~datetime.timedelta
+        :keyword target_dedicated_nodes: At least one of targetDedicatedNodes, targetLowPriorityNodes
+         must be set.
+        :paramtype target_dedicated_nodes: int
+        :keyword target_low_priority_nodes: At least one of targetDedicatedNodes,
+         targetLowPriorityNodes must be set.
+        :paramtype target_low_priority_nodes: int
+        :keyword node_deallocation_option: If omitted, the default value is Requeue. Possible values
+         include: "Requeue", "Terminate", "TaskCompletion", "RetainedData".
+        :paramtype node_deallocation_option: str or
+         ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
+        """
         super(FixedScaleSettings, self).__init__(**kwargs)
         self.resize_timeout = resize_timeout
         self.target_dedicated_nodes = target_dedicated_nodes
@@ -2085,20 +2618,20 @@ class FixedScaleSettings(msrest.serialization.Model):
 class ImageReference(msrest.serialization.Model):
     """A reference to an Azure Virtual Machines Marketplace image or the Azure Image resource of a custom Virtual Machine. To get the list of all imageReferences verified by Azure Batch, see the 'List supported node agent SKUs' operation.
 
-    :param publisher: For example, Canonical or MicrosoftWindowsServer.
-    :type publisher: str
-    :param offer: For example, UbuntuServer or WindowsServer.
-    :type offer: str
-    :param sku: For example, 18.04-LTS or 2019-Datacenter.
-    :type sku: str
-    :param version: A value of 'latest' can be specified to select the latest version of an image.
+    :ivar publisher: For example, Canonical or MicrosoftWindowsServer.
+    :vartype publisher: str
+    :ivar offer: For example, UbuntuServer or WindowsServer.
+    :vartype offer: str
+    :ivar sku: For example, 18.04-LTS or 2022-datacenter.
+    :vartype sku: str
+    :ivar version: A value of 'latest' can be specified to select the latest version of an image.
      If omitted, the default is 'latest'.
-    :type version: str
-    :param id: This property is mutually exclusive with other properties. The Shared Image Gallery
+    :vartype version: str
+    :ivar id: This property is mutually exclusive with other properties. The Shared Image Gallery
      image must have replicas in the same region as the Azure Batch account. For information about
      the firewall settings for the Batch node agent to communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
-    :type id: str
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -2119,6 +2652,22 @@ class ImageReference(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword publisher: For example, Canonical or MicrosoftWindowsServer.
+        :paramtype publisher: str
+        :keyword offer: For example, UbuntuServer or WindowsServer.
+        :paramtype offer: str
+        :keyword sku: For example, 18.04-LTS or 2022-datacenter.
+        :paramtype sku: str
+        :keyword version: A value of 'latest' can be specified to select the latest version of an
+         image. If omitted, the default is 'latest'.
+        :paramtype version: str
+        :keyword id: This property is mutually exclusive with other properties. The Shared Image
+         Gallery image must have replicas in the same region as the Azure Batch account. For information
+         about the firewall settings for the Batch node agent to communicate with the Batch service see
+         https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+        :paramtype id: str
+        """
         super(ImageReference, self).__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
@@ -2132,33 +2681,33 @@ class InboundNatPool(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name must be unique within a Batch pool, can contain letters,
+    :ivar name: Required. The name must be unique within a Batch pool, can contain letters,
      numbers, underscores, periods, and hyphens. Names must start with a letter or number, must end
      with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values
      are provided the request fails with HTTP status code 400.
-    :type name: str
-    :param protocol: Required. The protocol of the endpoint. Possible values include: "TCP", "UDP".
-    :type protocol: str or ~azure.mgmt.batch.models.InboundEndpointProtocol
-    :param backend_port: Required. This must be unique within a Batch pool. Acceptable values are
+    :vartype name: str
+    :ivar protocol: Required. The protocol of the endpoint. Possible values include: "TCP", "UDP".
+    :vartype protocol: str or ~azure.mgmt.batch.models.InboundEndpointProtocol
+    :ivar backend_port: Required. This must be unique within a Batch pool. Acceptable values are
      between 1 and 65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any reserved
      values are provided the request fails with HTTP status code 400.
-    :type backend_port: int
-    :param frontend_port_range_start: Required. Acceptable values range between 1 and 65534 except
+    :vartype backend_port: int
+    :ivar frontend_port_range_start: Required. Acceptable values range between 1 and 65534 except
      ports from 50000 to 55000 which are reserved. All ranges within a pool must be distinct and
      cannot overlap. If any reserved or overlapping values are provided the request fails with HTTP
      status code 400.
-    :type frontend_port_range_start: int
-    :param frontend_port_range_end: Required. Acceptable values range between 1 and 65534 except
+    :vartype frontend_port_range_start: int
+    :ivar frontend_port_range_end: Required. Acceptable values range between 1 and 65534 except
      ports from 50000 to 55000 which are reserved by the Batch service. All ranges within a pool
      must be distinct and cannot overlap. If any reserved or overlapping values are provided the
      request fails with HTTP status code 400.
-    :type frontend_port_range_end: int
-    :param network_security_group_rules: The maximum number of rules that can be specified across
+    :vartype frontend_port_range_end: int
+    :ivar network_security_group_rules: The maximum number of rules that can be specified across
      all the endpoints on a Batch pool is 25. If no network security group rules are specified, a
      default rule will be created to allow inbound access to the specified backendPort. If the
      maximum number of network security group rules is exceeded the request fails with HTTP status
      code 400.
-    :type network_security_group_rules: list[~azure.mgmt.batch.models.NetworkSecurityGroupRule]
+    :vartype network_security_group_rules: list[~azure.mgmt.batch.models.NetworkSecurityGroupRule]
     """
 
     _validation = {
@@ -2189,6 +2738,37 @@ class InboundNatPool(msrest.serialization.Model):
         network_security_group_rules: Optional[List["NetworkSecurityGroupRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name must be unique within a Batch pool, can contain letters,
+         numbers, underscores, periods, and hyphens. Names must start with a letter or number, must end
+         with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values
+         are provided the request fails with HTTP status code 400.
+        :paramtype name: str
+        :keyword protocol: Required. The protocol of the endpoint. Possible values include: "TCP",
+         "UDP".
+        :paramtype protocol: str or ~azure.mgmt.batch.models.InboundEndpointProtocol
+        :keyword backend_port: Required. This must be unique within a Batch pool. Acceptable values are
+         between 1 and 65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any reserved
+         values are provided the request fails with HTTP status code 400.
+        :paramtype backend_port: int
+        :keyword frontend_port_range_start: Required. Acceptable values range between 1 and 65534
+         except ports from 50000 to 55000 which are reserved. All ranges within a pool must be distinct
+         and cannot overlap. If any reserved or overlapping values are provided the request fails with
+         HTTP status code 400.
+        :paramtype frontend_port_range_start: int
+        :keyword frontend_port_range_end: Required. Acceptable values range between 1 and 65534 except
+         ports from 50000 to 55000 which are reserved by the Batch service. All ranges within a pool
+         must be distinct and cannot overlap. If any reserved or overlapping values are provided the
+         request fails with HTTP status code 400.
+        :paramtype frontend_port_range_end: int
+        :keyword network_security_group_rules: The maximum number of rules that can be specified across
+         all the endpoints on a Batch pool is 25. If no network security group rules are specified, a
+         default rule will be created to allow inbound access to the specified backendPort. If the
+         maximum number of network security group rules is exceeded the request fails with HTTP status
+         code 400.
+        :paramtype network_security_group_rules:
+         list[~azure.mgmt.batch.models.NetworkSecurityGroupRule]
+        """
         super(InboundNatPool, self).__init__(**kwargs)
         self.name = name
         self.protocol = protocol
@@ -2201,14 +2781,14 @@ class InboundNatPool(msrest.serialization.Model):
 class KeyVaultProperties(msrest.serialization.Model):
     """KeyVault configuration when using an encryption KeySource of Microsoft.KeyVault.
 
-    :param key_identifier: Full path to the versioned secret. Example
+    :ivar key_identifier: Full path to the versioned secret. Example
      https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053. To be usable
      the following prerequisites must be met:
     
       The Batch Account has a System Assigned identity
       The account identity has been granted Key/Get, Key/Unwrap and Key/Wrap permissions
       The KeyVault has soft-delete and purge protection enabled.
-    :type key_identifier: str
+    :vartype key_identifier: str
     """
 
     _attribute_map = {
@@ -2221,6 +2801,16 @@ class KeyVaultProperties(msrest.serialization.Model):
         key_identifier: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_identifier: Full path to the versioned secret. Example
+         https://mykeyvault.vault.azure.net/keys/testkey/6e34a81fef704045975661e297a4c053. To be usable
+         the following prerequisites must be met:
+        
+          The Batch Account has a System Assigned identity
+          The account identity has been granted Key/Get, Key/Unwrap and Key/Wrap permissions
+          The KeyVault has soft-delete and purge protection enabled.
+        :paramtype key_identifier: str
+        """
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_identifier = key_identifier
 
@@ -2230,10 +2820,10 @@ class KeyVaultReference(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The resource ID of the Azure key vault associated with the Batch account.
-    :type id: str
-    :param url: Required. The URL of the Azure key vault associated with the Batch account.
-    :type url: str
+    :ivar id: Required. The resource ID of the Azure key vault associated with the Batch account.
+    :vartype id: str
+    :ivar url: Required. The URL of the Azure key vault associated with the Batch account.
+    :vartype url: str
     """
 
     _validation = {
@@ -2253,6 +2843,13 @@ class KeyVaultReference(msrest.serialization.Model):
         url: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. The resource ID of the Azure key vault associated with the Batch
+         account.
+        :paramtype id: str
+        :keyword url: Required. The URL of the Azure key vault associated with the Batch account.
+        :paramtype url: str
+        """
         super(KeyVaultReference, self).__init__(**kwargs)
         self.id = id
         self.url = url
@@ -2261,19 +2858,19 @@ class KeyVaultReference(msrest.serialization.Model):
 class LinuxUserConfiguration(msrest.serialization.Model):
     """Properties used to create a user account on a Linux node.
 
-    :param uid: The uid and gid properties must be specified together or not at all. If not
+    :ivar uid: The uid and gid properties must be specified together or not at all. If not
      specified the underlying operating system picks the uid.
-    :type uid: int
-    :param gid: The uid and gid properties must be specified together or not at all. If not
+    :vartype uid: int
+    :ivar gid: The uid and gid properties must be specified together or not at all. If not
      specified the underlying operating system picks the gid.
-    :type gid: int
-    :param ssh_private_key: The private key must not be password protected. The private key is used
+    :vartype gid: int
+    :ivar ssh_private_key: The private key must not be password protected. The private key is used
      to automatically configure asymmetric-key based authentication for SSH between nodes in a Linux
      pool when the pool's enableInterNodeCommunication property is true (it is ignored if
      enableInterNodeCommunication is false). It does this by placing the key pair into the user's
      .ssh directory. If not specified, password-less SSH is not configured between nodes (no
      modification of the user's .ssh directory is done).
-    :type ssh_private_key: str
+    :vartype ssh_private_key: str
     """
 
     _attribute_map = {
@@ -2290,6 +2887,21 @@ class LinuxUserConfiguration(msrest.serialization.Model):
         ssh_private_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword uid: The uid and gid properties must be specified together or not at all. If not
+         specified the underlying operating system picks the uid.
+        :paramtype uid: int
+        :keyword gid: The uid and gid properties must be specified together or not at all. If not
+         specified the underlying operating system picks the gid.
+        :paramtype gid: int
+        :keyword ssh_private_key: The private key must not be password protected. The private key is
+         used to automatically configure asymmetric-key based authentication for SSH between nodes in a
+         Linux pool when the pool's enableInterNodeCommunication property is true (it is ignored if
+         enableInterNodeCommunication is false). It does this by placing the key pair into the user's
+         .ssh directory. If not specified, password-less SSH is not configured between nodes (no
+         modification of the user's .ssh directory is done).
+        :paramtype ssh_private_key: str
+        """
         super(LinuxUserConfiguration, self).__init__(**kwargs)
         self.uid = uid
         self.gid = gid
@@ -2299,10 +2911,10 @@ class LinuxUserConfiguration(msrest.serialization.Model):
 class ListApplicationPackagesResult(msrest.serialization.Model):
     """The result of performing list application packages.
 
-    :param value: The list of application packages.
-    :type value: list[~azure.mgmt.batch.models.ApplicationPackage]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of application packages.
+    :vartype value: list[~azure.mgmt.batch.models.ApplicationPackage]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2317,6 +2929,12 @@ class ListApplicationPackagesResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of application packages.
+        :paramtype value: list[~azure.mgmt.batch.models.ApplicationPackage]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(ListApplicationPackagesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2325,10 +2943,10 @@ class ListApplicationPackagesResult(msrest.serialization.Model):
 class ListApplicationsResult(msrest.serialization.Model):
     """The result of performing list applications.
 
-    :param value: The list of applications.
-    :type value: list[~azure.mgmt.batch.models.Application]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of applications.
+    :vartype value: list[~azure.mgmt.batch.models.Application]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2343,6 +2961,12 @@ class ListApplicationsResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of applications.
+        :paramtype value: list[~azure.mgmt.batch.models.Application]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(ListApplicationsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2351,10 +2975,10 @@ class ListApplicationsResult(msrest.serialization.Model):
 class ListCertificatesResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
-    :param value: The collection of returned certificates.
-    :type value: list[~azure.mgmt.batch.models.Certificate]
-    :param next_link: The continuation token.
-    :type next_link: str
+    :ivar value: The collection of returned certificates.
+    :vartype value: list[~azure.mgmt.batch.models.Certificate]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2369,6 +2993,12 @@ class ListCertificatesResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of returned certificates.
+        :paramtype value: list[~azure.mgmt.batch.models.Certificate]
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
         super(ListCertificatesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2377,10 +3007,10 @@ class ListCertificatesResult(msrest.serialization.Model):
 class ListPoolsResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
-    :param value: The collection of returned pools.
-    :type value: list[~azure.mgmt.batch.models.Pool]
-    :param next_link: The continuation token.
-    :type next_link: str
+    :ivar value: The collection of returned pools.
+    :vartype value: list[~azure.mgmt.batch.models.Pool]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2395,6 +3025,12 @@ class ListPoolsResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of returned pools.
+        :paramtype value: list[~azure.mgmt.batch.models.Pool]
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
         super(ListPoolsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2403,10 +3039,10 @@ class ListPoolsResult(msrest.serialization.Model):
 class ListPrivateEndpointConnectionsResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
-    :param value: The collection of returned private endpoint connection.
-    :type value: list[~azure.mgmt.batch.models.PrivateEndpointConnection]
-    :param next_link: The continuation token.
-    :type next_link: str
+    :ivar value: The collection of returned private endpoint connection.
+    :vartype value: list[~azure.mgmt.batch.models.PrivateEndpointConnection]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2421,6 +3057,12 @@ class ListPrivateEndpointConnectionsResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of returned private endpoint connection.
+        :paramtype value: list[~azure.mgmt.batch.models.PrivateEndpointConnection]
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
         super(ListPrivateEndpointConnectionsResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2429,10 +3071,10 @@ class ListPrivateEndpointConnectionsResult(msrest.serialization.Model):
 class ListPrivateLinkResourcesResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
-    :param value: The collection of returned private link resources.
-    :type value: list[~azure.mgmt.batch.models.PrivateLinkResource]
-    :param next_link: The continuation token.
-    :type next_link: str
+    :ivar value: The collection of returned private link resources.
+    :vartype value: list[~azure.mgmt.batch.models.PrivateLinkResource]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2447,6 +3089,12 @@ class ListPrivateLinkResourcesResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of returned private link resources.
+        :paramtype value: list[~azure.mgmt.batch.models.PrivateLinkResource]
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
         super(ListPrivateLinkResourcesResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2457,10 +3105,10 @@ class MetadataItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the metadata item.
-    :type name: str
-    :param value: Required. The value of the metadata item.
-    :type value: str
+    :ivar name: Required. The name of the metadata item.
+    :vartype name: str
+    :ivar value: Required. The value of the metadata item.
+    :vartype value: str
     """
 
     _validation = {
@@ -2480,6 +3128,12 @@ class MetadataItem(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the metadata item.
+        :paramtype name: str
+        :keyword value: Required. The value of the metadata item.
+        :paramtype value: str
+        """
         super(MetadataItem, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -2488,17 +3142,17 @@ class MetadataItem(msrest.serialization.Model):
 class MountConfiguration(msrest.serialization.Model):
     """The file system to mount on each node.
 
-    :param azure_blob_file_system_configuration: This property is mutually exclusive with all other
+    :ivar azure_blob_file_system_configuration: This property is mutually exclusive with all other
      properties.
-    :type azure_blob_file_system_configuration:
+    :vartype azure_blob_file_system_configuration:
      ~azure.mgmt.batch.models.AzureBlobFileSystemConfiguration
-    :param nfs_mount_configuration: This property is mutually exclusive with all other properties.
-    :type nfs_mount_configuration: ~azure.mgmt.batch.models.NFSMountConfiguration
-    :param cifs_mount_configuration: This property is mutually exclusive with all other properties.
-    :type cifs_mount_configuration: ~azure.mgmt.batch.models.CIFSMountConfiguration
-    :param azure_file_share_configuration: This property is mutually exclusive with all other
+    :ivar nfs_mount_configuration: This property is mutually exclusive with all other properties.
+    :vartype nfs_mount_configuration: ~azure.mgmt.batch.models.NFSMountConfiguration
+    :ivar cifs_mount_configuration: This property is mutually exclusive with all other properties.
+    :vartype cifs_mount_configuration: ~azure.mgmt.batch.models.CIFSMountConfiguration
+    :ivar azure_file_share_configuration: This property is mutually exclusive with all other
      properties.
-    :type azure_file_share_configuration: ~azure.mgmt.batch.models.AzureFileShareConfiguration
+    :vartype azure_file_share_configuration: ~azure.mgmt.batch.models.AzureFileShareConfiguration
     """
 
     _attribute_map = {
@@ -2517,6 +3171,21 @@ class MountConfiguration(msrest.serialization.Model):
         azure_file_share_configuration: Optional["AzureFileShareConfiguration"] = None,
         **kwargs
     ):
+        """
+        :keyword azure_blob_file_system_configuration: This property is mutually exclusive with all
+         other properties.
+        :paramtype azure_blob_file_system_configuration:
+         ~azure.mgmt.batch.models.AzureBlobFileSystemConfiguration
+        :keyword nfs_mount_configuration: This property is mutually exclusive with all other
+         properties.
+        :paramtype nfs_mount_configuration: ~azure.mgmt.batch.models.NFSMountConfiguration
+        :keyword cifs_mount_configuration: This property is mutually exclusive with all other
+         properties.
+        :paramtype cifs_mount_configuration: ~azure.mgmt.batch.models.CIFSMountConfiguration
+        :keyword azure_file_share_configuration: This property is mutually exclusive with all other
+         properties.
+        :paramtype azure_file_share_configuration: ~azure.mgmt.batch.models.AzureFileShareConfiguration
+        """
         super(MountConfiguration, self).__init__(**kwargs)
         self.azure_blob_file_system_configuration = azure_blob_file_system_configuration
         self.nfs_mount_configuration = nfs_mount_configuration
@@ -2527,7 +3196,7 @@ class MountConfiguration(msrest.serialization.Model):
 class NetworkConfiguration(msrest.serialization.Model):
     """The network configuration for a pool.
 
-    :param subnet_id: The virtual network must be in the same region and subscription as the Azure
+    :ivar subnet_id: The virtual network must be in the same region and subscription as the Azure
      Batch account. The specified subnet should have enough free IP addresses to accommodate the
      number of nodes in the pool. If the subnet doesn't have enough free IP addresses, the pool will
      partially allocate compute nodes and a resize error will occur. The 'MicrosoftAzureBatch'
@@ -2544,17 +3213,22 @@ class NetworkConfiguration(msrest.serialization.Model):
      connections to Azure Storage on port 443. For cloudServiceConfiguration pools, only 'classic'
      VNETs are supported. For more details see:
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
-    :type subnet_id: str
-    :param endpoint_configuration: Pool endpoint configuration is only supported on pools with the
+    :vartype subnet_id: str
+    :ivar dynamic_v_net_assignment_scope: The scope of dynamic vnet assignment. Possible values
+     include: "none", "job".
+    :vartype dynamic_v_net_assignment_scope: str or
+     ~azure.mgmt.batch.models.DynamicVNetAssignmentScope
+    :ivar endpoint_configuration: Pool endpoint configuration is only supported on pools with the
      virtualMachineConfiguration property.
-    :type endpoint_configuration: ~azure.mgmt.batch.models.PoolEndpointConfiguration
-    :param public_ip_address_configuration: This property is only supported on Pools with the
+    :vartype endpoint_configuration: ~azure.mgmt.batch.models.PoolEndpointConfiguration
+    :ivar public_ip_address_configuration: This property is only supported on Pools with the
      virtualMachineConfiguration property.
-    :type public_ip_address_configuration: ~azure.mgmt.batch.models.PublicIPAddressConfiguration
+    :vartype public_ip_address_configuration: ~azure.mgmt.batch.models.PublicIPAddressConfiguration
     """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'dynamic_v_net_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'str'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
         'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
     }
@@ -2563,12 +3237,45 @@ class NetworkConfiguration(msrest.serialization.Model):
         self,
         *,
         subnet_id: Optional[str] = None,
+        dynamic_v_net_assignment_scope: Optional[Union[str, "DynamicVNetAssignmentScope"]] = None,
         endpoint_configuration: Optional["PoolEndpointConfiguration"] = None,
         public_ip_address_configuration: Optional["PublicIPAddressConfiguration"] = None,
         **kwargs
     ):
+        """
+        :keyword subnet_id: The virtual network must be in the same region and subscription as the
+         Azure Batch account. The specified subnet should have enough free IP addresses to accommodate
+         the number of nodes in the pool. If the subnet doesn't have enough free IP addresses, the pool
+         will partially allocate compute nodes and a resize error will occur. The 'MicrosoftAzureBatch'
+         service principal must have the 'Classic Virtual Machine Contributor' Role-Based Access Control
+         (RBAC) role for the specified VNet. The specified subnet must allow communication from the
+         Azure Batch service to be able to schedule tasks on the compute nodes. This can be verified by
+         checking if the specified VNet has any associated Network Security Groups (NSG). If
+         communication to the compute nodes in the specified subnet is denied by an NSG, then the Batch
+         service will set the state of the compute nodes to unusable. If the specified VNet has any
+         associated Network Security Groups (NSG), then a few reserved system ports must be enabled for
+         inbound communication. For pools created with a virtual machine configuration, enable ports
+         29876 and 29877, as well as port 22 for Linux and port 3389 for Windows. For pools created with
+         a cloud service configuration, enable ports 10100, 20100, and 30100. Also enable outbound
+         connections to Azure Storage on port 443. For cloudServiceConfiguration pools, only 'classic'
+         VNETs are supported. For more details see:
+         https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+        :paramtype subnet_id: str
+        :keyword dynamic_v_net_assignment_scope: The scope of dynamic vnet assignment. Possible values
+         include: "none", "job".
+        :paramtype dynamic_v_net_assignment_scope: str or
+         ~azure.mgmt.batch.models.DynamicVNetAssignmentScope
+        :keyword endpoint_configuration: Pool endpoint configuration is only supported on pools with
+         the virtualMachineConfiguration property.
+        :paramtype endpoint_configuration: ~azure.mgmt.batch.models.PoolEndpointConfiguration
+        :keyword public_ip_address_configuration: This property is only supported on Pools with the
+         virtualMachineConfiguration property.
+        :paramtype public_ip_address_configuration:
+         ~azure.mgmt.batch.models.PublicIPAddressConfiguration
+        """
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = subnet_id
+        self.dynamic_v_net_assignment_scope = dynamic_v_net_assignment_scope
         self.endpoint_configuration = endpoint_configuration
         self.public_ip_address_configuration = public_ip_address_configuration
 
@@ -2578,24 +3285,24 @@ class NetworkSecurityGroupRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param priority: Required. Priorities within a pool must be unique and are evaluated in order
-     of priority. The lower the number the higher the priority. For example, rules could be
-     specified with order numbers of 150, 250, and 350. The rule with the order number of 150 takes
-     precedence over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any
-     reserved or duplicate values are provided the request fails with HTTP status code 400.
-    :type priority: int
-    :param access: Required. The action that should be taken for a specified IP address, subnet
+    :ivar priority: Required. Priorities within a pool must be unique and are evaluated in order of
+     priority. The lower the number the higher the priority. For example, rules could be specified
+     with order numbers of 150, 250, and 350. The rule with the order number of 150 takes precedence
+     over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any reserved or
+     duplicate values are provided the request fails with HTTP status code 400.
+    :vartype priority: int
+    :ivar access: Required. The action that should be taken for a specified IP address, subnet
      range or tag. Possible values include: "Allow", "Deny".
-    :type access: str or ~azure.mgmt.batch.models.NetworkSecurityGroupRuleAccess
-    :param source_address_prefix: Required. Valid values are a single IP address (i.e.
-     10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any
-     other values are provided the request fails with HTTP status code 400.
-    :type source_address_prefix: str
-    :param source_port_ranges: Valid values are '\ *' (for all ports 0 - 65535) or arrays of ports
+    :vartype access: str or ~azure.mgmt.batch.models.NetworkSecurityGroupRuleAccess
+    :ivar source_address_prefix: Required. Valid values are a single IP address (i.e. 10.10.10.10),
+     IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any other values
+     are provided the request fails with HTTP status code 400.
+    :vartype source_address_prefix: str
+    :ivar source_port_ranges: Valid values are '\ *' (for all ports 0 - 65535) or arrays of ports
      or port ranges (i.e. 100-200). The ports should in the range of 0 to 65535 and the port ranges
      or ports can't overlap. If any other values are provided the request fails with HTTP status
      code 400. Default value will be *.
-    :type source_port_ranges: list[str]
+    :vartype source_port_ranges: list[str]
     """
 
     _validation = {
@@ -2620,6 +3327,26 @@ class NetworkSecurityGroupRule(msrest.serialization.Model):
         source_port_ranges: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword priority: Required. Priorities within a pool must be unique and are evaluated in order
+         of priority. The lower the number the higher the priority. For example, rules could be
+         specified with order numbers of 150, 250, and 350. The rule with the order number of 150 takes
+         precedence over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any
+         reserved or duplicate values are provided the request fails with HTTP status code 400.
+        :paramtype priority: int
+        :keyword access: Required. The action that should be taken for a specified IP address, subnet
+         range or tag. Possible values include: "Allow", "Deny".
+        :paramtype access: str or ~azure.mgmt.batch.models.NetworkSecurityGroupRuleAccess
+        :keyword source_address_prefix: Required. Valid values are a single IP address (i.e.
+         10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any
+         other values are provided the request fails with HTTP status code 400.
+        :paramtype source_address_prefix: str
+        :keyword source_port_ranges: Valid values are '\ *' (for all ports 0 - 65535) or arrays of
+         ports or port ranges (i.e. 100-200). The ports should in the range of 0 to 65535 and the port
+         ranges or ports can't overlap. If any other values are provided the request fails with HTTP
+         status code 400. Default value will be *.
+        :paramtype source_port_ranges: list[str]
+        """
         super(NetworkSecurityGroupRule, self).__init__(**kwargs)
         self.priority = priority
         self.access = access
@@ -2632,13 +3359,13 @@ class NFSMountConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The URI of the file system to mount.
-    :type source: str
-    :param relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
+    :ivar source: Required. The URI of the file system to mount.
+    :vartype source: str
+    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
      directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
-    :type relative_mount_path: str
-    :param mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
-    :type mount_options: str
+    :vartype relative_mount_path: str
+    :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+    :vartype mount_options: str
     """
 
     _validation = {
@@ -2660,6 +3387,15 @@ class NFSMountConfiguration(msrest.serialization.Model):
         mount_options: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source: Required. The URI of the file system to mount.
+        :paramtype source: str
+        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
+         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :paramtype relative_mount_path: str
+        :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+        :paramtype mount_options: str
+        """
         super(NFSMountConfiguration, self).__init__(**kwargs)
         self.source = source
         self.relative_mount_path = relative_mount_path
@@ -2669,9 +3405,9 @@ class NFSMountConfiguration(msrest.serialization.Model):
 class NodePlacementConfiguration(msrest.serialization.Model):
     """Allocation configuration used by Batch Service to provision the nodes.
 
-    :param policy: Allocation policy used by Batch Service to provision the nodes. If not
-     specified, Batch will use the regional policy. Possible values include: "Regional", "Zonal".
-    :type policy: str or ~azure.mgmt.batch.models.NodePlacementPolicyType
+    :ivar policy: Allocation policy used by Batch Service to provision the nodes. If not specified,
+     Batch will use the regional policy. Possible values include: "Regional", "Zonal".
+    :vartype policy: str or ~azure.mgmt.batch.models.NodePlacementPolicyType
     """
 
     _attribute_map = {
@@ -2684,6 +3420,11 @@ class NodePlacementConfiguration(msrest.serialization.Model):
         policy: Optional[Union[str, "NodePlacementPolicyType"]] = None,
         **kwargs
     ):
+        """
+        :keyword policy: Allocation policy used by Batch Service to provision the nodes. If not
+         specified, Batch will use the regional policy. Possible values include: "Regional", "Zonal".
+        :paramtype policy: str or ~azure.mgmt.batch.models.NodePlacementPolicyType
+        """
         super(NodePlacementConfiguration, self).__init__(**kwargs)
         self.policy = policy
 
@@ -2691,16 +3432,16 @@ class NodePlacementConfiguration(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """A REST API operation.
 
-    :param name: This is of the format {provider}/{resource}/{operation}.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: The object that describes the operation.
-    :type display: ~azure.mgmt.batch.models.OperationDisplay
-    :param origin: The intended executor of the operation.
-    :type origin: str
-    :param properties: Any object.
-    :type properties: any
+    :ivar name: This is of the format {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: The object that describes the operation.
+    :vartype display: ~azure.mgmt.batch.models.OperationDisplay
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
+    :ivar properties: Any object.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -2721,6 +3462,18 @@ class Operation(msrest.serialization.Model):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: This is of the format {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: The object that describes the operation.
+        :paramtype display: ~azure.mgmt.batch.models.OperationDisplay
+        :keyword origin: The intended executor of the operation.
+        :paramtype origin: str
+        :keyword properties: Any object.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
@@ -2732,14 +3485,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that describes the operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param operation: For example: read, write, delete, or listKeys/action.
-    :type operation: str
-    :param resource: The resource type on which the operation is performed.
-    :type resource: str
-    :param description: The friendly name of the operation.
-    :type description: str
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar operation: For example: read, write, delete, or listKeys/action.
+    :vartype operation: str
+    :ivar resource: The resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar description: The friendly name of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -2758,6 +3511,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Friendly name of the resource provider.
+        :paramtype provider: str
+        :keyword operation: For example: read, write, delete, or listKeys/action.
+        :paramtype operation: str
+        :keyword resource: The resource type on which the operation is performed.
+        :paramtype resource: str
+        :keyword description: The friendly name of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.operation = operation
@@ -2768,10 +3531,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list REST API operations. It contains a list of operations and a URL nextLink to get the next set of results.
 
-    :param value: The list of operations supported by the resource provider.
-    :type value: list[~azure.mgmt.batch.models.Operation]
-    :param next_link: The URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: The list of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.batch.models.Operation]
+    :ivar next_link: The URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2786,6 +3549,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of operations supported by the resource provider.
+        :paramtype value: list[~azure.mgmt.batch.models.Operation]
+        :keyword next_link: The URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2794,9 +3563,9 @@ class OperationListResult(msrest.serialization.Model):
 class OSDisk(msrest.serialization.Model):
     """Settings for the operating system disk of the virtual machine.
 
-    :param ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
+    :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
      system disk used by the virtual machine.
-    :type ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+    :vartype ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
     """
 
     _attribute_map = {
@@ -2809,6 +3578,11 @@ class OSDisk(msrest.serialization.Model):
         ephemeral_os_disk_settings: Optional["DiffDiskSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
+         system disk used by the virtual machine.
+        :paramtype ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+        """
         super(OSDisk, self).__init__(**kwargs)
         self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
 
@@ -2839,6 +3613,8 @@ class OutboundEnvironmentEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OutboundEnvironmentEndpoint, self).__init__(**kwargs)
         self.category = None
         self.endpoints = None
@@ -2852,8 +3628,8 @@ class OutboundEnvironmentEndpointCollection(msrest.serialization.Model):
     :ivar value: The collection of outbound network dependency endpoints returned by the listing
      operation.
     :vartype value: list[~azure.mgmt.batch.models.OutboundEnvironmentEndpoint]
-    :param next_link: The continuation token.
-    :type next_link: str
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -2871,6 +3647,10 @@ class OutboundEnvironmentEndpointCollection(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
         super(OutboundEnvironmentEndpointCollection, self).__init__(**kwargs)
         self.value = None
         self.next_link = next_link
@@ -2889,11 +3669,11 @@ class Pool(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
-    :param identity: The type of identity used for the Batch Pool.
-    :type identity: ~azure.mgmt.batch.models.BatchPoolIdentity
-    :param display_name: The display name need not be unique and can contain any Unicode characters
+    :ivar identity: The type of identity used for the Batch Pool.
+    :vartype identity: ~azure.mgmt.batch.models.BatchPoolIdentity
+    :ivar display_name: The display name need not be unique and can contain any Unicode characters
      up to a maximum length of 1024.
-    :type display_name: str
+    :vartype display_name: str
     :ivar last_modified: This is the last time at which the pool level data, such as the
      targetDedicatedNodes or autoScaleSettings, changed. It does not factor in node-level changes
      such as a compute node changing state.
@@ -2911,7 +3691,7 @@ class Pool(ProxyResource):
     :ivar allocation_state_transition_time: The time at which the pool entered its current
      allocation state.
     :vartype allocation_state_transition_time: ~datetime.datetime
-    :param vm_size: For information about available sizes of virtual machines for Cloud Services
+    :ivar vm_size: For information about available sizes of virtual machines for Cloud Services
      pools (pools created with cloudServiceConfiguration), see Sizes for Cloud Services
      (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/). Batch
      supports all Cloud Services VM sizes except ExtraSmall. For information about available VM
@@ -2922,66 +3702,66 @@ class Pool(ProxyResource):
      (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/). Batch
      supports all Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS,
      STANDARD_DS, and STANDARD_DSV2 series).
-    :type vm_size: str
-    :param deployment_configuration: Using CloudServiceConfiguration specifies that the nodes
-     should be creating using Azure Cloud Services (PaaS), while VirtualMachineConfiguration uses
-     Azure Virtual Machines (IaaS).
-    :type deployment_configuration: ~azure.mgmt.batch.models.DeploymentConfiguration
+    :vartype vm_size: str
+    :ivar deployment_configuration: Using CloudServiceConfiguration specifies that the nodes should
+     be creating using Azure Cloud Services (PaaS), while VirtualMachineConfiguration uses Azure
+     Virtual Machines (IaaS).
+    :vartype deployment_configuration: ~azure.mgmt.batch.models.DeploymentConfiguration
     :ivar current_dedicated_nodes: The number of compute nodes currently in the pool.
     :vartype current_dedicated_nodes: int
-    :ivar current_low_priority_nodes: The number of low-priority compute nodes currently in the
-     pool.
+    :ivar current_low_priority_nodes: The number of Spot/low-priority compute nodes currently in
+     the pool.
     :vartype current_low_priority_nodes: int
-    :param scale_settings: Defines the desired size of the pool. This can either be 'fixedScale'
+    :ivar scale_settings: Defines the desired size of the pool. This can either be 'fixedScale'
      where the requested targetDedicatedNodes is specified, or 'autoScale' which defines a formula
      which is periodically reevaluated. If this property is not specified, the pool will have a
      fixed scale with 0 targetDedicatedNodes.
-    :type scale_settings: ~azure.mgmt.batch.models.ScaleSettings
+    :vartype scale_settings: ~azure.mgmt.batch.models.ScaleSettings
     :ivar auto_scale_run: This property is set only if the pool automatically scales, i.e.
      autoScaleSettings are used.
     :vartype auto_scale_run: ~azure.mgmt.batch.models.AutoScaleRun
-    :param inter_node_communication: This imposes restrictions on which nodes can be assigned to
-     the pool. Enabling this value can reduce the chance of the requested number of nodes to be
+    :ivar inter_node_communication: This imposes restrictions on which nodes can be assigned to the
+     pool. Enabling this value can reduce the chance of the requested number of nodes to be
      allocated in the pool. If not specified, this value defaults to 'Disabled'. Possible values
      include: "Enabled", "Disabled".
-    :type inter_node_communication: str or ~azure.mgmt.batch.models.InterNodeCommunicationState
-    :param network_configuration: The network configuration for a pool.
-    :type network_configuration: ~azure.mgmt.batch.models.NetworkConfiguration
-    :param task_slots_per_node: The default value is 1. The maximum value is the smaller of 4 times
+    :vartype inter_node_communication: str or ~azure.mgmt.batch.models.InterNodeCommunicationState
+    :ivar network_configuration: The network configuration for a pool.
+    :vartype network_configuration: ~azure.mgmt.batch.models.NetworkConfiguration
+    :ivar task_slots_per_node: The default value is 1. The maximum value is the smaller of 4 times
      the number of cores of the vmSize of the pool or 256.
-    :type task_slots_per_node: int
-    :param task_scheduling_policy: If not specified, the default is spread.
-    :type task_scheduling_policy: ~azure.mgmt.batch.models.TaskSchedulingPolicy
-    :param user_accounts: The list of user accounts to be created on each node in the pool.
-    :type user_accounts: list[~azure.mgmt.batch.models.UserAccount]
-    :param metadata: The Batch service does not assign any meaning to metadata; it is solely for
-     the use of user code.
-    :type metadata: list[~azure.mgmt.batch.models.MetadataItem]
-    :param start_task: In an PATCH (update) operation, this property can be set to an empty object
+    :vartype task_slots_per_node: int
+    :ivar task_scheduling_policy: If not specified, the default is spread.
+    :vartype task_scheduling_policy: ~azure.mgmt.batch.models.TaskSchedulingPolicy
+    :ivar user_accounts: The list of user accounts to be created on each node in the pool.
+    :vartype user_accounts: list[~azure.mgmt.batch.models.UserAccount]
+    :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
+     use of user code.
+    :vartype metadata: list[~azure.mgmt.batch.models.MetadataItem]
+    :ivar start_task: In an PATCH (update) operation, this property can be set to an empty object
      to remove the start task from the pool.
-    :type start_task: ~azure.mgmt.batch.models.StartTask
-    :param certificates: For Windows compute nodes, the Batch service installs the certificates to
+    :vartype start_task: ~azure.mgmt.batch.models.StartTask
+    :ivar certificates: For Windows compute nodes, the Batch service installs the certificates to
      the specified certificate store and location. For Linux compute nodes, the certificates are
      stored in a directory inside the task working directory and an environment variable
      AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this location. For certificates
      with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
      (e.g., /home/{user-name}/certs) and certificates are placed in that directory.
-    :type certificates: list[~azure.mgmt.batch.models.CertificateReference]
-    :param application_packages: Changes to application package references affect all new compute
+    :vartype certificates: list[~azure.mgmt.batch.models.CertificateReference]
+    :ivar application_packages: Changes to application package references affect all new compute
      nodes joining the pool, but do not affect compute nodes that are already in the pool until they
      are rebooted or reimaged. There is a maximum of 10 application package references on any given
      pool.
-    :type application_packages: list[~azure.mgmt.batch.models.ApplicationPackageReference]
-    :param application_licenses: The list of application licenses must be a subset of available
+    :vartype application_packages: list[~azure.mgmt.batch.models.ApplicationPackageReference]
+    :ivar application_licenses: The list of application licenses must be a subset of available
      Batch service application licenses. If a license is requested which is not supported, pool
      creation will fail.
-    :type application_licenses: list[str]
+    :vartype application_licenses: list[str]
     :ivar resize_operation_status: Describes either the current operation (if the pool
      AllocationState is Resizing) or the previously completed operation (if the AllocationState is
      Steady).
     :vartype resize_operation_status: ~azure.mgmt.batch.models.ResizeOperationStatus
-    :param mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
-    :type mount_configuration: list[~azure.mgmt.batch.models.MountConfiguration]
+    :ivar mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :vartype mount_configuration: list[~azure.mgmt.batch.models.MountConfiguration]
     """
 
     _validation = {
@@ -3055,6 +3835,73 @@ class Pool(ProxyResource):
         mount_configuration: Optional[List["MountConfiguration"]] = None,
         **kwargs
     ):
+        """
+        :keyword identity: The type of identity used for the Batch Pool.
+        :paramtype identity: ~azure.mgmt.batch.models.BatchPoolIdentity
+        :keyword display_name: The display name need not be unique and can contain any Unicode
+         characters up to a maximum length of 1024.
+        :paramtype display_name: str
+        :keyword vm_size: For information about available sizes of virtual machines for Cloud Services
+         pools (pools created with cloudServiceConfiguration), see Sizes for Cloud Services
+         (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/). Batch
+         supports all Cloud Services VM sizes except ExtraSmall. For information about available VM
+         sizes for pools using images from the Virtual Machines Marketplace (pools created with
+         virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
+         (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/) or Sizes for
+         Virtual Machines (Windows)
+         (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/). Batch
+         supports all Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS,
+         STANDARD_DS, and STANDARD_DSV2 series).
+        :paramtype vm_size: str
+        :keyword deployment_configuration: Using CloudServiceConfiguration specifies that the nodes
+         should be creating using Azure Cloud Services (PaaS), while VirtualMachineConfiguration uses
+         Azure Virtual Machines (IaaS).
+        :paramtype deployment_configuration: ~azure.mgmt.batch.models.DeploymentConfiguration
+        :keyword scale_settings: Defines the desired size of the pool. This can either be 'fixedScale'
+         where the requested targetDedicatedNodes is specified, or 'autoScale' which defines a formula
+         which is periodically reevaluated. If this property is not specified, the pool will have a
+         fixed scale with 0 targetDedicatedNodes.
+        :paramtype scale_settings: ~azure.mgmt.batch.models.ScaleSettings
+        :keyword inter_node_communication: This imposes restrictions on which nodes can be assigned to
+         the pool. Enabling this value can reduce the chance of the requested number of nodes to be
+         allocated in the pool. If not specified, this value defaults to 'Disabled'. Possible values
+         include: "Enabled", "Disabled".
+        :paramtype inter_node_communication: str or
+         ~azure.mgmt.batch.models.InterNodeCommunicationState
+        :keyword network_configuration: The network configuration for a pool.
+        :paramtype network_configuration: ~azure.mgmt.batch.models.NetworkConfiguration
+        :keyword task_slots_per_node: The default value is 1. The maximum value is the smaller of 4
+         times the number of cores of the vmSize of the pool or 256.
+        :paramtype task_slots_per_node: int
+        :keyword task_scheduling_policy: If not specified, the default is spread.
+        :paramtype task_scheduling_policy: ~azure.mgmt.batch.models.TaskSchedulingPolicy
+        :keyword user_accounts: The list of user accounts to be created on each node in the pool.
+        :paramtype user_accounts: list[~azure.mgmt.batch.models.UserAccount]
+        :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
+         the use of user code.
+        :paramtype metadata: list[~azure.mgmt.batch.models.MetadataItem]
+        :keyword start_task: In an PATCH (update) operation, this property can be set to an empty
+         object to remove the start task from the pool.
+        :paramtype start_task: ~azure.mgmt.batch.models.StartTask
+        :keyword certificates: For Windows compute nodes, the Batch service installs the certificates
+         to the specified certificate store and location. For Linux compute nodes, the certificates are
+         stored in a directory inside the task working directory and an environment variable
+         AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this location. For certificates
+         with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
+         (e.g., /home/{user-name}/certs) and certificates are placed in that directory.
+        :paramtype certificates: list[~azure.mgmt.batch.models.CertificateReference]
+        :keyword application_packages: Changes to application package references affect all new compute
+         nodes joining the pool, but do not affect compute nodes that are already in the pool until they
+         are rebooted or reimaged. There is a maximum of 10 application package references on any given
+         pool.
+        :paramtype application_packages: list[~azure.mgmt.batch.models.ApplicationPackageReference]
+        :keyword application_licenses: The list of application licenses must be a subset of available
+         Batch service application licenses. If a license is requested which is not supported, pool
+         creation will fail.
+        :paramtype application_licenses: list[str]
+        :keyword mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+        :paramtype mount_configuration: list[~azure.mgmt.batch.models.MountConfiguration]
+        """
         super(Pool, self).__init__(**kwargs)
         self.identity = identity
         self.display_name = display_name
@@ -3089,10 +3936,10 @@ class PoolEndpointConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param inbound_nat_pools: Required. The maximum number of inbound NAT pools per Batch pool is
-     5. If the maximum number of inbound NAT pools is exceeded the request fails with HTTP status
-     code 400. This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses.
-    :type inbound_nat_pools: list[~azure.mgmt.batch.models.InboundNatPool]
+    :ivar inbound_nat_pools: Required. The maximum number of inbound NAT pools per Batch pool is 5.
+     If the maximum number of inbound NAT pools is exceeded the request fails with HTTP status code
+     400. This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses.
+    :vartype inbound_nat_pools: list[~azure.mgmt.batch.models.InboundNatPool]
     """
 
     _validation = {
@@ -3109,6 +3956,12 @@ class PoolEndpointConfiguration(msrest.serialization.Model):
         inbound_nat_pools: List["InboundNatPool"],
         **kwargs
     ):
+        """
+        :keyword inbound_nat_pools: Required. The maximum number of inbound NAT pools per Batch pool is
+         5. If the maximum number of inbound NAT pools is exceeded the request fails with HTTP status
+         code 400. This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses.
+        :paramtype inbound_nat_pools: list[~azure.mgmt.batch.models.InboundNatPool]
+        """
         super(PoolEndpointConfiguration, self).__init__(**kwargs)
         self.inbound_nat_pools = inbound_nat_pools
 
@@ -3135,6 +3988,8 @@ class PrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -3156,11 +4011,11 @@ class PrivateEndpointConnection(ProxyResource):
      values include: "Succeeded", "Updating", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.PrivateEndpointConnectionProvisioningState
-    :param private_endpoint: The private endpoint of the private endpoint connection.
-    :type private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
-    :param private_link_service_connection_state: The private link service connection state of the
+    :ivar private_endpoint: The private endpoint of the private endpoint connection.
+    :vartype private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: The private link service connection state of the
      private endpoint connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.batch.models.PrivateLinkServiceConnectionState
     """
 
@@ -3189,6 +4044,14 @@ class PrivateEndpointConnection(ProxyResource):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The private endpoint of the private endpoint connection.
+        :paramtype private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: The private link service connection state of
+         the private endpoint connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.batch.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.provisioning_state = None
         self.private_endpoint = private_endpoint
@@ -3241,6 +4104,8 @@ class PrivateLinkResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -3254,11 +4119,11 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The status of the Batch private endpoint connection. Possible values
+    :ivar status: Required. The status of the Batch private endpoint connection. Possible values
      include: "Approved", "Pending", "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.batch.models.PrivateLinkServiceConnectionStatus
-    :param description: Description of the private Connection state.
-    :type description: str
+    :vartype status: str or ~azure.mgmt.batch.models.PrivateLinkServiceConnectionStatus
+    :ivar description: Description of the private Connection state.
+    :vartype description: str
     :ivar action_required: Action required on the private connection state.
     :vartype action_required: str
     """
@@ -3281,6 +4146,13 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: Required. The status of the Batch private endpoint connection. Possible values
+         include: "Approved", "Pending", "Rejected", "Disconnected".
+        :paramtype status: str or ~azure.mgmt.batch.models.PrivateLinkServiceConnectionStatus
+        :keyword description: Description of the private Connection state.
+        :paramtype description: str
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -3290,15 +4162,15 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 class PublicIPAddressConfiguration(msrest.serialization.Model):
     """The public IP Address configuration of the networking configuration of a Pool.
 
-    :param provision: The default value is BatchManaged. Possible values include: "BatchManaged",
+    :ivar provision: The default value is BatchManaged. Possible values include: "BatchManaged",
      "UserManaged", "NoPublicIPAddresses".
-    :type provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
-    :param ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
-     100 dedicated nodes or 100 low-priority nodes can be allocated for each public IP. For example,
-     a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each element of
-     this collection is of the form:
+    :vartype provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
+    :ivar ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
+     100 dedicated nodes or 100 Spot/low-priority nodes can be allocated for each public IP. For
+     example, a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each
+     element of this collection is of the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
-    :type ip_address_ids: list[str]
+    :vartype ip_address_ids: list[str]
     """
 
     _attribute_map = {
@@ -3313,6 +4185,17 @@ class PublicIPAddressConfiguration(msrest.serialization.Model):
         ip_address_ids: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword provision: The default value is BatchManaged. Possible values include: "BatchManaged",
+         "UserManaged", "NoPublicIPAddresses".
+        :paramtype provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
+        :keyword ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
+         100 dedicated nodes or 100 Spot/low-priority nodes can be allocated for each public IP. For
+         example, a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each
+         element of this collection is of the form:
+         /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
+        :paramtype ip_address_ids: list[str]
+        """
         super(PublicIPAddressConfiguration, self).__init__(**kwargs)
         self.provision = provision
         self.ip_address_ids = ip_address_ids
@@ -3323,14 +4206,14 @@ class ResizeError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. An identifier for the error. Codes are invariant and are intended to be
+    :ivar code: Required. An identifier for the error. Codes are invariant and are intended to be
      consumed programmatically.
-    :type code: str
-    :param message: Required. A message describing the error, intended to be suitable for display
-     in a user interface.
-    :type message: str
-    :param details: Additional details about the error.
-    :type details: list[~azure.mgmt.batch.models.ResizeError]
+    :vartype code: str
+    :ivar message: Required. A message describing the error, intended to be suitable for display in
+     a user interface.
+    :vartype message: str
+    :ivar details: Additional details about the error.
+    :vartype details: list[~azure.mgmt.batch.models.ResizeError]
     """
 
     _validation = {
@@ -3352,6 +4235,16 @@ class ResizeError(msrest.serialization.Model):
         details: Optional[List["ResizeError"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. An identifier for the error. Codes are invariant and are intended to
+         be consumed programmatically.
+        :paramtype code: str
+        :keyword message: Required. A message describing the error, intended to be suitable for display
+         in a user interface.
+        :paramtype message: str
+        :keyword details: Additional details about the error.
+        :paramtype details: list[~azure.mgmt.batch.models.ResizeError]
+        """
         super(ResizeError, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -3361,22 +4254,24 @@ class ResizeError(msrest.serialization.Model):
 class ResizeOperationStatus(msrest.serialization.Model):
     """Describes either the current operation (if the pool AllocationState is Resizing) or the previously completed operation (if the AllocationState is Steady).
 
-    :param target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
-    :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority compute nodes in the pool.
-    :type target_low_priority_nodes: int
-    :param resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
+    :ivar target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
+    :vartype target_dedicated_nodes: int
+    :ivar target_low_priority_nodes: The desired number of Spot/low-priority compute nodes in the
+     pool.
+    :vartype target_low_priority_nodes: int
+    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
      specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
      REST API directly, the HTTP status code is 400 (Bad Request).
-    :type resize_timeout: ~datetime.timedelta
-    :param node_deallocation_option: The default value is requeue. Possible values include:
+    :vartype resize_timeout: ~datetime.timedelta
+    :ivar node_deallocation_option: The default value is requeue. Possible values include:
      "Requeue", "Terminate", "TaskCompletion", "RetainedData".
-    :type node_deallocation_option: str or ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
-    :param start_time: The time when this resize operation was started.
-    :type start_time: ~datetime.datetime
-    :param errors: This property is set only if an error occurred during the last pool resize, and
+    :vartype node_deallocation_option: str or
+     ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
+    :ivar start_time: The time when this resize operation was started.
+    :vartype start_time: ~datetime.datetime
+    :ivar errors: This property is set only if an error occurred during the last pool resize, and
      only when the pool allocationState is Steady.
-    :type errors: list[~azure.mgmt.batch.models.ResizeError]
+    :vartype errors: list[~azure.mgmt.batch.models.ResizeError]
     """
 
     _attribute_map = {
@@ -3399,6 +4294,26 @@ class ResizeOperationStatus(msrest.serialization.Model):
         errors: Optional[List["ResizeError"]] = None,
         **kwargs
     ):
+        """
+        :keyword target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
+        :paramtype target_dedicated_nodes: int
+        :keyword target_low_priority_nodes: The desired number of Spot/low-priority compute nodes in
+         the pool.
+        :paramtype target_low_priority_nodes: int
+        :keyword resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If
+         you specify a value less than 5 minutes, the Batch service returns an error; if you are calling
+         the REST API directly, the HTTP status code is 400 (Bad Request).
+        :paramtype resize_timeout: ~datetime.timedelta
+        :keyword node_deallocation_option: The default value is requeue. Possible values include:
+         "Requeue", "Terminate", "TaskCompletion", "RetainedData".
+        :paramtype node_deallocation_option: str or
+         ~azure.mgmt.batch.models.ComputeNodeDeallocationOption
+        :keyword start_time: The time when this resize operation was started.
+        :paramtype start_time: ~datetime.datetime
+        :keyword errors: This property is set only if an error occurred during the last pool resize,
+         and only when the pool allocationState is Steady.
+        :paramtype errors: list[~azure.mgmt.batch.models.ResizeError]
+        """
         super(ResizeOperationStatus, self).__init__(**kwargs)
         self.target_dedicated_nodes = target_dedicated_nodes
         self.target_low_priority_nodes = target_low_priority_nodes
@@ -3411,43 +4326,43 @@ class ResizeOperationStatus(msrest.serialization.Model):
 class ResourceFile(msrest.serialization.Model):
     """A single file or multiple files to be downloaded to a compute node.
 
-    :param auto_storage_container_name: The autoStorageContainerName, storageContainerUrl and
+    :ivar auto_storage_container_name: The autoStorageContainerName, storageContainerUrl and
      httpUrl properties are mutually exclusive and one of them must be specified.
-    :type auto_storage_container_name: str
-    :param storage_container_url: The autoStorageContainerName, storageContainerUrl and httpUrl
+    :vartype auto_storage_container_name: str
+    :ivar storage_container_url: The autoStorageContainerName, storageContainerUrl and httpUrl
      properties are mutually exclusive and one of them must be specified. This URL must be readable
      and listable from compute nodes. There are three ways to get such a URL for a container in
      Azure storage: include a Shared Access Signature (SAS) granting read and list permissions on
      the container, use a managed identity with read and list permissions, or set the ACL for the
      container to allow public access.
-    :type storage_container_url: str
-    :param http_url: The autoStorageContainerName, storageContainerUrl and httpUrl properties are
+    :vartype storage_container_url: str
+    :ivar http_url: The autoStorageContainerName, storageContainerUrl and httpUrl properties are
      mutually exclusive and one of them must be specified. If the URL points to Azure Blob Storage,
      it must be readable from compute nodes. There are three ways to get such a URL for a blob in
      Azure storage: include a Shared Access Signature (SAS) granting read permissions on the blob,
      use a managed identity with read permission, or set the ACL for the blob or its container to
      allow public access.
-    :type http_url: str
-    :param blob_prefix: The property is valid only when autoStorageContainerName or
+    :vartype http_url: str
+    :ivar blob_prefix: The property is valid only when autoStorageContainerName or
      storageContainerUrl is used. This prefix can be a partial filename or a subdirectory. If a
      prefix is not specified, all the files in the container will be downloaded.
-    :type blob_prefix: str
-    :param file_path: If the httpUrl property is specified, the filePath is required and describes
+    :vartype blob_prefix: str
+    :ivar file_path: If the httpUrl property is specified, the filePath is required and describes
      the path which the file will be downloaded to, including the filename. Otherwise, if the
      autoStorageContainerName or storageContainerUrl property is specified, filePath is optional and
      is the directory to download the files to. In the case where filePath is used as a directory,
      any directory structure already associated with the input data will be retained in full and
      appended to the specified filePath directory. The specified relative path cannot break out of
      the task's working directory (for example by using '..').
-    :type file_path: str
-    :param file_mode: This property applies only to files being downloaded to Linux compute nodes.
+    :vartype file_path: str
+    :ivar file_mode: This property applies only to files being downloaded to Linux compute nodes.
      It will be ignored if it is specified for a resourceFile which will be downloaded to a Windows
      node. If this property is not specified for a Linux node, then a default value of 0770 is
      applied to the file.
-    :type file_mode: str
-    :param identity_reference: The reference to a user assigned identity associated with the Batch
+    :vartype file_mode: str
+    :ivar identity_reference: The reference to a user assigned identity associated with the Batch
      pool which a compute node will use.
-    :type identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
     """
 
     _attribute_map = {
@@ -3472,6 +4387,45 @@ class ResourceFile(msrest.serialization.Model):
         identity_reference: Optional["ComputeNodeIdentityReference"] = None,
         **kwargs
     ):
+        """
+        :keyword auto_storage_container_name: The autoStorageContainerName, storageContainerUrl and
+         httpUrl properties are mutually exclusive and one of them must be specified.
+        :paramtype auto_storage_container_name: str
+        :keyword storage_container_url: The autoStorageContainerName, storageContainerUrl and httpUrl
+         properties are mutually exclusive and one of them must be specified. This URL must be readable
+         and listable from compute nodes. There are three ways to get such a URL for a container in
+         Azure storage: include a Shared Access Signature (SAS) granting read and list permissions on
+         the container, use a managed identity with read and list permissions, or set the ACL for the
+         container to allow public access.
+        :paramtype storage_container_url: str
+        :keyword http_url: The autoStorageContainerName, storageContainerUrl and httpUrl properties are
+         mutually exclusive and one of them must be specified. If the URL points to Azure Blob Storage,
+         it must be readable from compute nodes. There are three ways to get such a URL for a blob in
+         Azure storage: include a Shared Access Signature (SAS) granting read permissions on the blob,
+         use a managed identity with read permission, or set the ACL for the blob or its container to
+         allow public access.
+        :paramtype http_url: str
+        :keyword blob_prefix: The property is valid only when autoStorageContainerName or
+         storageContainerUrl is used. This prefix can be a partial filename or a subdirectory. If a
+         prefix is not specified, all the files in the container will be downloaded.
+        :paramtype blob_prefix: str
+        :keyword file_path: If the httpUrl property is specified, the filePath is required and
+         describes the path which the file will be downloaded to, including the filename. Otherwise, if
+         the autoStorageContainerName or storageContainerUrl property is specified, filePath is optional
+         and is the directory to download the files to. In the case where filePath is used as a
+         directory, any directory structure already associated with the input data will be retained in
+         full and appended to the specified filePath directory. The specified relative path cannot break
+         out of the task's working directory (for example by using '..').
+        :paramtype file_path: str
+        :keyword file_mode: This property applies only to files being downloaded to Linux compute
+         nodes. It will be ignored if it is specified for a resourceFile which will be downloaded to a
+         Windows node. If this property is not specified for a Linux node, then a default value of 0770
+         is applied to the file.
+        :paramtype file_mode: str
+        :keyword identity_reference: The reference to a user assigned identity associated with the
+         Batch pool which a compute node will use.
+        :paramtype identity_reference: ~azure.mgmt.batch.models.ComputeNodeIdentityReference
+        """
         super(ResourceFile, self).__init__(**kwargs)
         self.auto_storage_container_name = auto_storage_container_name
         self.storage_container_url = storage_container_url
@@ -3485,12 +4439,12 @@ class ResourceFile(msrest.serialization.Model):
 class ScaleSettings(msrest.serialization.Model):
     """Defines the desired size of the pool. This can either be 'fixedScale' where the requested targetDedicatedNodes is specified, or 'autoScale' which defines a formula which is periodically reevaluated. If this property is not specified, the pool will have a fixed scale with 0 targetDedicatedNodes.
 
-    :param fixed_scale: This property and autoScale are mutually exclusive and one of the
-     properties must be specified.
-    :type fixed_scale: ~azure.mgmt.batch.models.FixedScaleSettings
-    :param auto_scale: This property and fixedScale are mutually exclusive and one of the
-     properties must be specified.
-    :type auto_scale: ~azure.mgmt.batch.models.AutoScaleSettings
+    :ivar fixed_scale: This property and autoScale are mutually exclusive and one of the properties
+     must be specified.
+    :vartype fixed_scale: ~azure.mgmt.batch.models.FixedScaleSettings
+    :ivar auto_scale: This property and fixedScale are mutually exclusive and one of the properties
+     must be specified.
+    :vartype auto_scale: ~azure.mgmt.batch.models.AutoScaleSettings
     """
 
     _attribute_map = {
@@ -3505,6 +4459,14 @@ class ScaleSettings(msrest.serialization.Model):
         auto_scale: Optional["AutoScaleSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword fixed_scale: This property and autoScale are mutually exclusive and one of the
+         properties must be specified.
+        :paramtype fixed_scale: ~azure.mgmt.batch.models.FixedScaleSettings
+        :keyword auto_scale: This property and fixedScale are mutually exclusive and one of the
+         properties must be specified.
+        :paramtype auto_scale: ~azure.mgmt.batch.models.AutoScaleSettings
+        """
         super(ScaleSettings, self).__init__(**kwargs)
         self.fixed_scale = fixed_scale
         self.auto_scale = auto_scale
@@ -3535,6 +4497,8 @@ class SkuCapability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -3543,28 +4507,27 @@ class SkuCapability(msrest.serialization.Model):
 class StartTask(msrest.serialization.Model):
     """In some cases the start task may be re-run even though the node was not rebooted. Due to this, start tasks should be idempotent and exit gracefully if the setup they're performing has already been done. Special care should be taken to avoid start tasks which create breakaway process or install/launch services from the start task working directory, as this will block Batch from being able to re-run the start task.
 
-    :param command_line: The command line does not run under a shell, and therefore cannot take
+    :ivar command_line: The command line does not run under a shell, and therefore cannot take
      advantage of shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command line, for example using
      "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. Required if any other
      properties of the startTask are specified.
-    :type command_line: str
-    :param resource_files: A list of files that the Batch service will download to the compute node
+    :vartype command_line: str
+    :ivar resource_files: A list of files that the Batch service will download to the compute node
      before running the command line.
-    :type resource_files: list[~azure.mgmt.batch.models.ResourceFile]
-    :param environment_settings: A list of environment variable settings for the start task.
-    :type environment_settings: list[~azure.mgmt.batch.models.EnvironmentSetting]
-    :param user_identity: If omitted, the task runs as a non-administrative user unique to the
-     task.
-    :type user_identity: ~azure.mgmt.batch.models.UserIdentity
-    :param max_task_retry_count: The Batch service retries a task if its exit code is nonzero. Note
+    :vartype resource_files: list[~azure.mgmt.batch.models.ResourceFile]
+    :ivar environment_settings: A list of environment variable settings for the start task.
+    :vartype environment_settings: list[~azure.mgmt.batch.models.EnvironmentSetting]
+    :ivar user_identity: If omitted, the task runs as a non-administrative user unique to the task.
+    :vartype user_identity: ~azure.mgmt.batch.models.UserIdentity
+    :ivar max_task_retry_count: The Batch service retries a task if its exit code is nonzero. Note
      that this value specifically controls the number of retries. The Batch service will try the
      task once, and may then retry up to this limit. For example, if the maximum retry count is 3,
      Batch tries the task up to 4 times (one initial try and 3 retries). If the maximum retry count
      is 0, the Batch service does not retry the task. If the maximum retry count is -1, the Batch
      service retries the task without limit.
-    :type max_task_retry_count: int
-    :param wait_for_success: If true and the start task fails on a compute node, the Batch service
+    :vartype max_task_retry_count: int
+    :ivar wait_for_success: If true and the start task fails on a compute node, the Batch service
      retries the start task up to its maximum retry count (maxTaskRetryCount). If the task has still
      not completed successfully after all retries, then the Batch service marks the compute node
      unusable, and will not schedule tasks to it. This condition can be detected via the node state
@@ -3572,12 +4535,12 @@ class StartTask(msrest.serialization.Model):
      complete. In this case, other tasks can start executing on the compute node while the start
      task is still running; and even if the start task fails, new tasks will continue to be
      scheduled on the node. The default is true.
-    :type wait_for_success: bool
-    :param container_settings: When this is specified, all directories recursively below the
+    :vartype wait_for_success: bool
+    :ivar container_settings: When this is specified, all directories recursively below the
      AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
      container, all task environment variables are mapped into the container, and the task command
      line is executed in the container.
-    :type container_settings: ~azure.mgmt.batch.models.TaskContainerSettings
+    :vartype container_settings: ~azure.mgmt.batch.models.TaskContainerSettings
     """
 
     _attribute_map = {
@@ -3602,6 +4565,43 @@ class StartTask(msrest.serialization.Model):
         container_settings: Optional["TaskContainerSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword command_line: The command line does not run under a shell, and therefore cannot take
+         advantage of shell features such as environment variable expansion. If you want to take
+         advantage of such features, you should invoke the shell in the command line, for example using
+         "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. Required if any other
+         properties of the startTask are specified.
+        :paramtype command_line: str
+        :keyword resource_files: A list of files that the Batch service will download to the compute
+         node before running the command line.
+        :paramtype resource_files: list[~azure.mgmt.batch.models.ResourceFile]
+        :keyword environment_settings: A list of environment variable settings for the start task.
+        :paramtype environment_settings: list[~azure.mgmt.batch.models.EnvironmentSetting]
+        :keyword user_identity: If omitted, the task runs as a non-administrative user unique to the
+         task.
+        :paramtype user_identity: ~azure.mgmt.batch.models.UserIdentity
+        :keyword max_task_retry_count: The Batch service retries a task if its exit code is nonzero.
+         Note that this value specifically controls the number of retries. The Batch service will try
+         the task once, and may then retry up to this limit. For example, if the maximum retry count is
+         3, Batch tries the task up to 4 times (one initial try and 3 retries). If the maximum retry
+         count is 0, the Batch service does not retry the task. If the maximum retry count is -1, the
+         Batch service retries the task without limit.
+        :paramtype max_task_retry_count: int
+        :keyword wait_for_success: If true and the start task fails on a compute node, the Batch
+         service retries the start task up to its maximum retry count (maxTaskRetryCount). If the task
+         has still not completed successfully after all retries, then the Batch service marks the
+         compute node unusable, and will not schedule tasks to it. This condition can be detected via
+         the node state and scheduling error detail. If false, the Batch service will not wait for the
+         start task to complete. In this case, other tasks can start executing on the compute node while
+         the start task is still running; and even if the start task fails, new tasks will continue to
+         be scheduled on the node. The default is true.
+        :paramtype wait_for_success: bool
+        :keyword container_settings: When this is specified, all directories recursively below the
+         AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
+         container, all task environment variables are mapped into the container, and the task command
+         line is executed in the container.
+        :paramtype container_settings: ~azure.mgmt.batch.models.TaskContainerSettings
+        """
         super(StartTask, self).__init__(**kwargs)
         self.command_line = command_line
         self.resource_files = resource_files
@@ -3641,6 +4641,8 @@ class SupportedSku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SupportedSku, self).__init__(**kwargs)
         self.name = None
         self.family_name = None
@@ -3654,8 +4656,8 @@ class SupportedSkusResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of SKUs available for the Batch service in the location.
-    :type value: list[~azure.mgmt.batch.models.SupportedSku]
+    :ivar value: Required. The list of SKUs available for the Batch service in the location.
+    :vartype value: list[~azure.mgmt.batch.models.SupportedSku]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -3676,6 +4678,10 @@ class SupportedSkusResult(msrest.serialization.Model):
         value: List["SupportedSku"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of SKUs available for the Batch service in the location.
+        :paramtype value: list[~azure.mgmt.batch.models.SupportedSku]
+        """
         super(SupportedSkusResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3686,18 +4692,18 @@ class TaskContainerSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param container_run_options: These additional options are supplied as arguments to the "docker
+    :ivar container_run_options: These additional options are supplied as arguments to the "docker
      create" command, in addition to those controlled by the Batch Service.
-    :type container_run_options: str
-    :param image_name: Required. This is the full image reference, as would be specified to "docker
+    :vartype container_run_options: str
+    :ivar image_name: Required. This is the full image reference, as would be specified to "docker
      pull". If no tag is provided as part of the image name, the tag ":latest" is used as a default.
-    :type image_name: str
-    :param registry: This setting can be omitted if was already provided at pool creation.
-    :type registry: ~azure.mgmt.batch.models.ContainerRegistry
-    :param working_directory: A flag to indicate where the container task working directory is. The
+    :vartype image_name: str
+    :ivar registry: This setting can be omitted if was already provided at pool creation.
+    :vartype registry: ~azure.mgmt.batch.models.ContainerRegistry
+    :ivar working_directory: A flag to indicate where the container task working directory is. The
      default is 'taskWorkingDirectory'. Possible values include: "TaskWorkingDirectory",
      "ContainerImageDefault".
-    :type working_directory: str or ~azure.mgmt.batch.models.ContainerWorkingDirectory
+    :vartype working_directory: str or ~azure.mgmt.batch.models.ContainerWorkingDirectory
     """
 
     _validation = {
@@ -3720,6 +4726,21 @@ class TaskContainerSettings(msrest.serialization.Model):
         working_directory: Optional[Union[str, "ContainerWorkingDirectory"]] = None,
         **kwargs
     ):
+        """
+        :keyword container_run_options: These additional options are supplied as arguments to the
+         "docker create" command, in addition to those controlled by the Batch Service.
+        :paramtype container_run_options: str
+        :keyword image_name: Required. This is the full image reference, as would be specified to
+         "docker pull". If no tag is provided as part of the image name, the tag ":latest" is used as a
+         default.
+        :paramtype image_name: str
+        :keyword registry: This setting can be omitted if was already provided at pool creation.
+        :paramtype registry: ~azure.mgmt.batch.models.ContainerRegistry
+        :keyword working_directory: A flag to indicate where the container task working directory is.
+         The default is 'taskWorkingDirectory'. Possible values include: "TaskWorkingDirectory",
+         "ContainerImageDefault".
+        :paramtype working_directory: str or ~azure.mgmt.batch.models.ContainerWorkingDirectory
+        """
         super(TaskContainerSettings, self).__init__(**kwargs)
         self.container_run_options = container_run_options
         self.image_name = image_name
@@ -3732,9 +4753,9 @@ class TaskSchedulingPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_fill_type: Required. How tasks should be distributed across compute nodes. Possible
+    :ivar node_fill_type: Required. How tasks should be distributed across compute nodes. Possible
      values include: "Spread", "Pack".
-    :type node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
+    :vartype node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
     """
 
     _validation = {
@@ -3751,6 +4772,11 @@ class TaskSchedulingPolicy(msrest.serialization.Model):
         node_fill_type: Union[str, "ComputeNodeFillType"],
         **kwargs
     ):
+        """
+        :keyword node_fill_type: Required. How tasks should be distributed across compute nodes.
+         Possible values include: "Spread", "Pack".
+        :paramtype node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
+        """
         super(TaskSchedulingPolicy, self).__init__(**kwargs)
         self.node_fill_type = node_fill_type
 
@@ -3760,21 +4786,21 @@ class UserAccount(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the user account.
-    :type name: str
-    :param password: Required. The password for the user account.
-    :type password: str
-    :param elevation_level: nonAdmin - The auto user is a standard user without elevated access.
+    :ivar name: Required. The name of the user account.
+    :vartype name: str
+    :ivar password: Required. The password for the user account.
+    :vartype password: str
+    :ivar elevation_level: nonAdmin - The auto user is a standard user without elevated access.
      admin - The auto user is a user with elevated access and operates with full Administrator
      permissions. The default value is nonAdmin. Possible values include: "NonAdmin", "Admin".
-    :type elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
-    :param linux_user_configuration: This property is ignored if specified on a Windows pool. If
-     not specified, the user is created with the default options.
-    :type linux_user_configuration: ~azure.mgmt.batch.models.LinuxUserConfiguration
-    :param windows_user_configuration: This property can only be specified if the user is on a
+    :vartype elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
+    :ivar linux_user_configuration: This property is ignored if specified on a Windows pool. If not
+     specified, the user is created with the default options.
+    :vartype linux_user_configuration: ~azure.mgmt.batch.models.LinuxUserConfiguration
+    :ivar windows_user_configuration: This property can only be specified if the user is on a
      Windows pool. If not specified and on a Windows pool, the user is created with the default
      options.
-    :type windows_user_configuration: ~azure.mgmt.batch.models.WindowsUserConfiguration
+    :vartype windows_user_configuration: ~azure.mgmt.batch.models.WindowsUserConfiguration
     """
 
     _validation = {
@@ -3800,6 +4826,23 @@ class UserAccount(msrest.serialization.Model):
         windows_user_configuration: Optional["WindowsUserConfiguration"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the user account.
+        :paramtype name: str
+        :keyword password: Required. The password for the user account.
+        :paramtype password: str
+        :keyword elevation_level: nonAdmin - The auto user is a standard user without elevated access.
+         admin - The auto user is a user with elevated access and operates with full Administrator
+         permissions. The default value is nonAdmin. Possible values include: "NonAdmin", "Admin".
+        :paramtype elevation_level: str or ~azure.mgmt.batch.models.ElevationLevel
+        :keyword linux_user_configuration: This property is ignored if specified on a Windows pool. If
+         not specified, the user is created with the default options.
+        :paramtype linux_user_configuration: ~azure.mgmt.batch.models.LinuxUserConfiguration
+        :keyword windows_user_configuration: This property can only be specified if the user is on a
+         Windows pool. If not specified and on a Windows pool, the user is created with the default
+         options.
+        :paramtype windows_user_configuration: ~azure.mgmt.batch.models.WindowsUserConfiguration
+        """
         super(UserAccount, self).__init__(**kwargs)
         self.name = name
         self.password = password
@@ -3833,6 +4876,8 @@ class UserAssignedIdentities(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserAssignedIdentities, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -3841,12 +4886,12 @@ class UserAssignedIdentities(msrest.serialization.Model):
 class UserIdentity(msrest.serialization.Model):
     """Specify either the userName or autoUser property, but not both.
 
-    :param user_name: The userName and autoUser properties are mutually exclusive; you must specify
+    :ivar user_name: The userName and autoUser properties are mutually exclusive; you must specify
      one but not both.
-    :type user_name: str
-    :param auto_user: The userName and autoUser properties are mutually exclusive; you must specify
+    :vartype user_name: str
+    :ivar auto_user: The userName and autoUser properties are mutually exclusive; you must specify
      one but not both.
-    :type auto_user: ~azure.mgmt.batch.models.AutoUserSpecification
+    :vartype auto_user: ~azure.mgmt.batch.models.AutoUserSpecification
     """
 
     _attribute_map = {
@@ -3861,6 +4906,14 @@ class UserIdentity(msrest.serialization.Model):
         auto_user: Optional["AutoUserSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword user_name: The userName and autoUser properties are mutually exclusive; you must
+         specify one but not both.
+        :paramtype user_name: str
+        :keyword auto_user: The userName and autoUser properties are mutually exclusive; you must
+         specify one but not both.
+        :paramtype auto_user: ~azure.mgmt.batch.models.AutoUserSpecification
+        """
         super(UserIdentity, self).__init__(**kwargs)
         self.user_name = user_name
         self.auto_user = auto_user
@@ -3871,45 +4924,45 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param image_reference: Required. A reference to an Azure Virtual Machines Marketplace image or
+    :ivar image_reference: Required. A reference to an Azure Virtual Machines Marketplace image or
      the Azure Image resource of a custom Virtual Machine. To get the list of all imageReferences
      verified by Azure Batch, see the 'List supported node agent SKUs' operation.
-    :type image_reference: ~azure.mgmt.batch.models.ImageReference
-    :param node_agent_sku_id: Required. The Batch node agent is a program that runs on each node in
+    :vartype image_reference: ~azure.mgmt.batch.models.ImageReference
+    :ivar node_agent_sku_id: Required. The Batch node agent is a program that runs on each node in
      the pool, and provides the command-and-control interface between the node and the Batch
      service. There are different implementations of the node agent, known as SKUs, for different
      operating systems. You must specify a node agent SKU which matches the selected image
      reference. To get the list of supported node agent SKUs along with their list of verified image
      references, see the 'List supported node agent SKUs' operation.
-    :type node_agent_sku_id: str
-    :param windows_configuration: This property must not be specified if the imageReference
+    :vartype node_agent_sku_id: str
+    :ivar windows_configuration: This property must not be specified if the imageReference
      specifies a Linux OS image.
-    :type windows_configuration: ~azure.mgmt.batch.models.WindowsConfiguration
-    :param data_disks: This property must be specified if the compute nodes in the pool need to
-     have empty data disks attached to them.
-    :type data_disks: list[~azure.mgmt.batch.models.DataDisk]
-    :param license_type: This only applies to images that contain the Windows operating system, and
+    :vartype windows_configuration: ~azure.mgmt.batch.models.WindowsConfiguration
+    :ivar data_disks: This property must be specified if the compute nodes in the pool need to have
+     empty data disks attached to them.
+    :vartype data_disks: list[~azure.mgmt.batch.models.DataDisk]
+    :ivar license_type: This only applies to images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the nodes which will be
      deployed. If omitted, no on-premises licensing discount is applied. Values are:
     
       Windows_Server - The on-premises license is for Windows Server.
       Windows_Client - The on-premises license is for Windows Client.
-    :type license_type: str
-    :param container_configuration: If specified, setup is performed on each node in the pool to
+    :vartype license_type: str
+    :ivar container_configuration: If specified, setup is performed on each node in the pool to
      allow tasks to run in containers. All regular tasks and job manager tasks run on this pool must
      specify the containerSettings property, and all other tasks may specify it.
-    :type container_configuration: ~azure.mgmt.batch.models.ContainerConfiguration
-    :param disk_encryption_configuration: If specified, encryption is performed on each node in the
+    :vartype container_configuration: ~azure.mgmt.batch.models.ContainerConfiguration
+    :ivar disk_encryption_configuration: If specified, encryption is performed on each node in the
      pool during node provisioning.
-    :type disk_encryption_configuration: ~azure.mgmt.batch.models.DiskEncryptionConfiguration
-    :param node_placement_configuration: This configuration will specify rules on how nodes in the
+    :vartype disk_encryption_configuration: ~azure.mgmt.batch.models.DiskEncryptionConfiguration
+    :ivar node_placement_configuration: This configuration will specify rules on how nodes in the
      pool will be physically allocated.
-    :type node_placement_configuration: ~azure.mgmt.batch.models.NodePlacementConfiguration
-    :param extensions: If specified, the extensions mentioned in this configuration will be
+    :vartype node_placement_configuration: ~azure.mgmt.batch.models.NodePlacementConfiguration
+    :ivar extensions: If specified, the extensions mentioned in this configuration will be
      installed on each node.
-    :type extensions: list[~azure.mgmt.batch.models.VMExtension]
-    :param os_disk: Contains configuration for ephemeral OSDisk settings.
-    :type os_disk: ~azure.mgmt.batch.models.OSDisk
+    :vartype extensions: list[~azure.mgmt.batch.models.VMExtension]
+    :ivar os_disk: Contains configuration for ephemeral OSDisk settings.
+    :vartype os_disk: ~azure.mgmt.batch.models.OSDisk
     """
 
     _validation = {
@@ -3945,6 +4998,47 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         os_disk: Optional["OSDisk"] = None,
         **kwargs
     ):
+        """
+        :keyword image_reference: Required. A reference to an Azure Virtual Machines Marketplace image
+         or the Azure Image resource of a custom Virtual Machine. To get the list of all imageReferences
+         verified by Azure Batch, see the 'List supported node agent SKUs' operation.
+        :paramtype image_reference: ~azure.mgmt.batch.models.ImageReference
+        :keyword node_agent_sku_id: Required. The Batch node agent is a program that runs on each node
+         in the pool, and provides the command-and-control interface between the node and the Batch
+         service. There are different implementations of the node agent, known as SKUs, for different
+         operating systems. You must specify a node agent SKU which matches the selected image
+         reference. To get the list of supported node agent SKUs along with their list of verified image
+         references, see the 'List supported node agent SKUs' operation.
+        :paramtype node_agent_sku_id: str
+        :keyword windows_configuration: This property must not be specified if the imageReference
+         specifies a Linux OS image.
+        :paramtype windows_configuration: ~azure.mgmt.batch.models.WindowsConfiguration
+        :keyword data_disks: This property must be specified if the compute nodes in the pool need to
+         have empty data disks attached to them.
+        :paramtype data_disks: list[~azure.mgmt.batch.models.DataDisk]
+        :keyword license_type: This only applies to images that contain the Windows operating system,
+         and should only be used when you hold valid on-premises licenses for the nodes which will be
+         deployed. If omitted, no on-premises licensing discount is applied. Values are:
+        
+          Windows_Server - The on-premises license is for Windows Server.
+          Windows_Client - The on-premises license is for Windows Client.
+        :paramtype license_type: str
+        :keyword container_configuration: If specified, setup is performed on each node in the pool to
+         allow tasks to run in containers. All regular tasks and job manager tasks run on this pool must
+         specify the containerSettings property, and all other tasks may specify it.
+        :paramtype container_configuration: ~azure.mgmt.batch.models.ContainerConfiguration
+        :keyword disk_encryption_configuration: If specified, encryption is performed on each node in
+         the pool during node provisioning.
+        :paramtype disk_encryption_configuration: ~azure.mgmt.batch.models.DiskEncryptionConfiguration
+        :keyword node_placement_configuration: This configuration will specify rules on how nodes in
+         the pool will be physically allocated.
+        :paramtype node_placement_configuration: ~azure.mgmt.batch.models.NodePlacementConfiguration
+        :keyword extensions: If specified, the extensions mentioned in this configuration will be
+         installed on each node.
+        :paramtype extensions: list[~azure.mgmt.batch.models.VMExtension]
+        :keyword os_disk: Contains configuration for ephemeral OSDisk settings.
+        :paramtype os_disk: ~azure.mgmt.batch.models.OSDisk
+        """
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
         self.image_reference = image_reference
         self.node_agent_sku_id = node_agent_sku_id
@@ -3983,6 +5077,8 @@ class VirtualMachineFamilyCoreQuota(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VirtualMachineFamilyCoreQuota, self).__init__(**kwargs)
         self.name = None
         self.core_quota = None
@@ -3993,26 +5089,26 @@ class VMExtension(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the virtual machine extension.
-    :type name: str
-    :param publisher: Required. The name of the extension handler publisher.
-    :type publisher: str
-    :param type: Required. The type of the extensions.
-    :type type: str
-    :param type_handler_version: The version of script handler.
-    :type type_handler_version: str
-    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+    :ivar name: Required. The name of the virtual machine extension.
+    :vartype name: str
+    :ivar publisher: Required. The name of the extension handler publisher.
+    :vartype publisher: str
+    :ivar type: Required. The type of the extensions.
+    :vartype type: str
+    :ivar type_handler_version: The version of script handler.
+    :vartype type_handler_version: str
+    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
      version if one is available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
-    :type auto_upgrade_minor_version: bool
-    :param settings: Any object.
-    :type settings: any
-    :param protected_settings: The extension can contain either protectedSettings or
+    :vartype auto_upgrade_minor_version: bool
+    :ivar settings: Any object.
+    :vartype settings: any
+    :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: any
-    :param provision_after_extensions: Collection of extension names after which this extension
+    :vartype protected_settings: any
+    :ivar provision_after_extensions: Collection of extension names after which this extension
      needs to be provisioned.
-    :type provision_after_extensions: list[str]
+    :vartype provision_after_extensions: list[str]
     """
 
     _validation = {
@@ -4045,6 +5141,28 @@ class VMExtension(msrest.serialization.Model):
         provision_after_extensions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the virtual machine extension.
+        :paramtype name: str
+        :keyword publisher: Required. The name of the extension handler publisher.
+        :paramtype publisher: str
+        :keyword type: Required. The type of the extensions.
+        :paramtype type: str
+        :keyword type_handler_version: The version of script handler.
+        :paramtype type_handler_version: str
+        :keyword auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+         version if one is available at deployment time. Once deployed, however, the extension will not
+         upgrade minor versions unless redeployed, even with this property set to true.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword settings: Any object.
+        :paramtype settings: any
+        :keyword protected_settings: The extension can contain either protectedSettings or
+         protectedSettingsFromKeyVault or no protected settings at all.
+        :paramtype protected_settings: any
+        :keyword provision_after_extensions: Collection of extension names after which this extension
+         needs to be provisioned.
+        :paramtype provision_after_extensions: list[str]
+        """
         super(VMExtension, self).__init__(**kwargs)
         self.name = name
         self.publisher = publisher
@@ -4059,8 +5177,8 @@ class VMExtension(msrest.serialization.Model):
 class WindowsConfiguration(msrest.serialization.Model):
     """Windows operating system settings to apply to the virtual machine.
 
-    :param enable_automatic_updates: If omitted, the default value is true.
-    :type enable_automatic_updates: bool
+    :ivar enable_automatic_updates: If omitted, the default value is true.
+    :vartype enable_automatic_updates: bool
     """
 
     _attribute_map = {
@@ -4073,6 +5191,10 @@ class WindowsConfiguration(msrest.serialization.Model):
         enable_automatic_updates: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enable_automatic_updates: If omitted, the default value is true.
+        :paramtype enable_automatic_updates: bool
+        """
         super(WindowsConfiguration, self).__init__(**kwargs)
         self.enable_automatic_updates = enable_automatic_updates
 
@@ -4080,10 +5202,10 @@ class WindowsConfiguration(msrest.serialization.Model):
 class WindowsUserConfiguration(msrest.serialization.Model):
     """Properties used to create a user account on a Windows node.
 
-    :param login_mode: Specifies login mode for the user. The default value for
+    :ivar login_mode: Specifies login mode for the user. The default value for
      VirtualMachineConfiguration pools is interactive mode and for CloudServiceConfiguration pools
      is batch mode. Possible values include: "Batch", "Interactive".
-    :type login_mode: str or ~azure.mgmt.batch.models.LoginMode
+    :vartype login_mode: str or ~azure.mgmt.batch.models.LoginMode
     """
 
     _attribute_map = {
@@ -4096,5 +5218,11 @@ class WindowsUserConfiguration(msrest.serialization.Model):
         login_mode: Optional[Union[str, "LoginMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword login_mode: Specifies login mode for the user. The default value for
+         VirtualMachineConfiguration pools is interactive mode and for CloudServiceConfiguration pools
+         is batch mode. Possible values include: "Batch", "Interactive".
+        :paramtype login_mode: str or ~azure.mgmt.batch.models.LoginMode
+        """
         super(WindowsUserConfiguration, self).__init__(**kwargs)
         self.login_mode = login_mode

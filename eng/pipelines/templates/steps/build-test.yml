@@ -9,27 +9,40 @@ parameters:
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
-  BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
+  TestProxy: false
 
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
+    displayName: Dump Artifact Directory
 
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - script: |
-      python -m pip install pip==20.1
+      python -m pip install pip==20.3.3
+      python -m pip install wheel==0.37.0
       pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
     displayName: 'Prep Environment'
+
+  - ${{if eq(parameters.TestProxy, true) }}:
+    - template: /eng/common/testproxy/test-proxy-tool.yml
+      parameters:
+        runProxy: false
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
@@ -38,12 +51,14 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
+  - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
+
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
         ${{ parameters.CoverageArg }}
         --mark_arg="${{ parameters.TestMarkArgument }}"
@@ -52,6 +67,17 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+
+  - ${{if eq(parameters.TestProxy, true) }}:
+    - pwsh: |
+        $files = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter _proxy_log_*.log
+        foreach($file in $files){
+            Write-Host "##[group]$file"
+            cat $file
+            Write-Host "##[endgroup]"
+        }
+      displayName: Dump Test-Proxy Logs
+      condition: succeededOrFailed()
 
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs
@@ -94,7 +120,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}"
+        "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}

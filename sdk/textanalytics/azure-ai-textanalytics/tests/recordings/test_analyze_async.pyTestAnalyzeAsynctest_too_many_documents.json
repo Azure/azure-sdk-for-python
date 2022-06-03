@@ -1,0 +1,214 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "2131",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "4",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "5",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "6",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "7",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "8",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "9",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "10",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "11",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "12",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "13",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "14",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "15",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "16",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "17",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "18",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "20",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "21",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "22",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "23",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "24",
+              "text": "input document",
+              "language": "en"
+            },
+            {
+              "id": "25",
+              "text": "input document",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "EntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "KeyPhraseExtraction",
+            "parameters": {}
+          },
+          {
+            "taskName": "2",
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "3",
+            "kind": "EntityLinking",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "4",
+            "kind": "SentimentAnalysis",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          },
+          {
+            "taskName": "5",
+            "kind": "ExtractiveSummarization",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "9d85e03e-e407-4c53-97b4-62b19424919e",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 May 2022 00:08:48 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Invalid Document in request.",
+          "innererror": {
+            "code": "InvalidDocumentBatch",
+            "message": "Batch request contains too many records. Max 25 records are permitted."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,5 +1,29 @@
 # Release History
 
+## 13.1.0 (2022-03-25)
+
+**Features**
+
+  - Added operation AccountsOperations.list_models
+  - Model AccountProperties has a new parameter deletion_date
+  - Model AccountProperties has a new parameter dynamic_throttling_enabled
+  - Model AccountProperties has a new parameter scheduled_purge_date
+  - Model DeploymentScaleSettings has a new parameter active_capacity
+
+## 13.0.0 (2021-11-15)
+
+**Features**
+
+  - Model DomainAvailability has a new parameter kind
+  - Model CheckDomainAvailabilityParameter has a new parameter kind
+  - Added operation group CommitmentPlansOperations
+  - Added operation group CommitmentTiersOperations
+  - Added operation group DeploymentsOperations
+
+**Breaking changes**
+
+  - Operation CognitiveServicesManagementClientOperationsMixin.check_domain_availability has a new signature
+
 ## 12.0.0 (2021-06-03)
 
 **Features**

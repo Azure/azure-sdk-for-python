@@ -1,0 +1,23 @@
+type: automl
+
+name: simpleautomlnlpjob
+experiment_name: "automl"
+compute: azureml:cpu-cluster
+
+log_verbosity: debug
+task: text_ner
+primary_metric: accuracy
+
+limits:
+  timeout_minutes: 30
+  max_concurrent_trials: 2
+
+training_data:
+  path: azureml:nlp-training-data:1
+  type: mltable
+validation_data:
+  path: azureml:nlp-validation-data:1
+  type: mltable
+
+featurization:
+  dataset_language: eng

@@ -17,14 +17,21 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
+class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureDataLakeStorageRESTAPI.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the
+     desired operation.
     :type url: str
+    :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
+     is "filesystem". Note that overriding this default value may result in unsupported behavior.
+    :paramtype resource: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(
@@ -33,13 +40,16 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
+        resource = kwargs.pop('resource', "filesystem")  # type: str
+        version = kwargs.pop('version', "2021-06-08")  # type: str
+
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.resource = "filesystem"
-        self.version = "2020-06-12"
+        self.resource = resource
+        self.version = version
         kwargs.setdefault('sdk_moniker', 'azuredatalakestoragerestapi/{}'.format(VERSION))
         self._configure(**kwargs)
 

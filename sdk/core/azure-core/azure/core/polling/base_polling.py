@@ -26,12 +26,14 @@
 import abc
 import base64
 import json
+from enum import Enum
 from typing import TYPE_CHECKING, Optional, Any, Union
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
 from ..pipeline._tools import is_rest
+from .._enum_meta import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -174,20 +176,38 @@ class LongRunningOperation(ABC):
         """
         raise NotImplementedError()
 
+class _LroOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known LRO options from Swagger."""
+
+    FINAL_STATE_VIA = "final-state-via"
+
+
+class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible final-state-via options."""
+
+    AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
+    LOCATION_FINAL_STATE = "location"
+    OPERATION_LOCATION_FINAL_STATE = "operation-location"
+
 
 class OperationResourcePolling(LongRunningOperation):
     """Implements a operation resource polling, typically from Operation-Location.
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
+    :keyword dict[str, any] lro_options: Additional options for LRO. For more information, see
+     https://aka.ms/azsdk/autorest/openapi/lro-options
     """
 
-    def __init__(self, operation_location_header="operation-location"):
+    def __init__(
+        self, operation_location_header="operation-location", *, lro_options=None
+    ):
         self._operation_location_header = operation_location_header
 
         # Store the initial URLs
         self._async_url = None
         self._location_url = None
         self._request = None
+        self._lro_options = lro_options or {}
 
     def can_poll(self, pipeline_response):
         """Answer if this polling method could be used.
@@ -207,6 +227,20 @@ class OperationResourcePolling(LongRunningOperation):
 
         :rtype: str
         """
+        if (
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.LOCATION_FINAL_STATE
+            and self._location_url
+        ):
+            return self._location_url
+        if (
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
+            in [
+                _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE,
+                _FinalStateViaOption.OPERATION_LOCATION_FINAL_STATE
+            ]
+            and self._request.method == "POST"
+        ):
+            return None
         response = pipeline_response.http_response
         if not _is_empty(response):
             body = _as_json(response)
@@ -381,7 +415,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
-            OperationResourcePolling(),
+            OperationResourcePolling(lro_options=lro_options),
             LocationPolling(),
             StatusCheckPolling(),
         ]
@@ -588,8 +622,6 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             )
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
-
-        # can't use send_request in this case, because send_request is still provisional
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )

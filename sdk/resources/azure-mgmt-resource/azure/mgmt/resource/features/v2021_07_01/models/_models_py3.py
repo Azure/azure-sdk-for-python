@@ -51,6 +51,8 @@ class AuthorizationProfile(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AuthorizationProfile, self).__init__(**kwargs)
         self.requested_time = None
         self.requester = None
@@ -68,8 +70,8 @@ class ErrorDefinition(msrest.serialization.Model):
     :vartype code: str
     :ivar message: Description of the error.
     :vartype message: str
-    :param details: Internal error details.
-    :type details: list[~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition]
+    :ivar details: Internal error details.
+    :vartype details: list[~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition]
     """
 
     _validation = {
@@ -89,6 +91,10 @@ class ErrorDefinition(msrest.serialization.Model):
         details: Optional[List["ErrorDefinition"]] = None,
         **kwargs
     ):
+        """
+        :keyword details: Internal error details.
+        :paramtype details: list[~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition]
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -98,8 +104,8 @@ class ErrorDefinition(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates that the service is not able to process the incoming request.
 
-    :param error: The error details.
-    :type error: ~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -112,6 +118,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -119,10 +129,10 @@ class ErrorResponse(msrest.serialization.Model):
 class FeatureOperationsListResult(msrest.serialization.Model):
     """List of previewed features.
 
-    :param value: The array of features.
-    :type value: list[~azure.mgmt.resource.features.v2021_07_01.models.FeatureResult]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The array of features.
+    :vartype value: list[~azure.mgmt.resource.features.v2021_07_01.models.FeatureResult]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -137,6 +147,12 @@ class FeatureOperationsListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The array of features.
+        :paramtype value: list[~azure.mgmt.resource.features.v2021_07_01.models.FeatureResult]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(FeatureOperationsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -145,8 +161,8 @@ class FeatureOperationsListResult(msrest.serialization.Model):
 class FeatureProperties(msrest.serialization.Model):
     """Information about feature.
 
-    :param state: The registration state of the feature for the subscription.
-    :type state: str
+    :ivar state: The registration state of the feature for the subscription.
+    :vartype state: str
     """
 
     _attribute_map = {
@@ -159,6 +175,10 @@ class FeatureProperties(msrest.serialization.Model):
         state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword state: The registration state of the feature for the subscription.
+        :paramtype state: str
+        """
         super(FeatureProperties, self).__init__(**kwargs)
         self.state = state
 
@@ -166,14 +186,14 @@ class FeatureProperties(msrest.serialization.Model):
 class FeatureResult(msrest.serialization.Model):
     """Previewed feature information.
 
-    :param name: The name of the feature.
-    :type name: str
-    :param properties: Properties of the previewed feature.
-    :type properties: ~azure.mgmt.resource.features.v2021_07_01.models.FeatureProperties
-    :param id: The resource ID of the feature.
-    :type id: str
-    :param type: The resource type of the feature.
-    :type type: str
+    :ivar name: The name of the feature.
+    :vartype name: str
+    :ivar properties: Properties of the previewed feature.
+    :vartype properties: ~azure.mgmt.resource.features.v2021_07_01.models.FeatureProperties
+    :ivar id: The resource ID of the feature.
+    :vartype id: str
+    :ivar type: The resource type of the feature.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -192,6 +212,16 @@ class FeatureResult(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the feature.
+        :paramtype name: str
+        :keyword properties: Properties of the previewed feature.
+        :paramtype properties: ~azure.mgmt.resource.features.v2021_07_01.models.FeatureProperties
+        :keyword id: The resource ID of the feature.
+        :paramtype id: str
+        :keyword type: The resource type of the feature.
+        :paramtype type: str
+        """
         super(FeatureResult, self).__init__(**kwargs)
         self.name = name
         self.properties = properties
@@ -202,10 +232,10 @@ class FeatureResult(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Microsoft.Features operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.resource.features.v2021_07_01.models.OperationDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.resource.features.v2021_07_01.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -220,6 +250,12 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.resource.features.v2021_07_01.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -228,12 +264,12 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Features.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
+    :ivar provider: Service provider: Microsoft.Features.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
     """
 
     _attribute_map = {
@@ -250,6 +286,14 @@ class OperationDisplay(msrest.serialization.Model):
         operation: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Features.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -259,10 +303,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Microsoft.Features operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Microsoft.Features operations.
-    :type value: list[~azure.mgmt.resource.features.v2021_07_01.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Microsoft.Features operations.
+    :vartype value: list[~azure.mgmt.resource.features.v2021_07_01.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -277,6 +321,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Microsoft.Features operations.
+        :paramtype value: list[~azure.mgmt.resource.features.v2021_07_01.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -311,6 +361,8 @@ class ProxyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -328,8 +380,8 @@ class SubscriptionFeatureRegistration(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param properties:
-    :type properties:
+    :ivar properties:
+    :vartype properties:
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationProperties
     """
 
@@ -352,6 +404,11 @@ class SubscriptionFeatureRegistration(ProxyResource):
         properties: Optional["SubscriptionFeatureRegistrationProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties:
+        :paramtype properties:
+         ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationProperties
+        """
         super(SubscriptionFeatureRegistration, self).__init__(**kwargs)
         self.properties = properties
 
@@ -359,11 +416,10 @@ class SubscriptionFeatureRegistration(ProxyResource):
 class SubscriptionFeatureRegistrationList(msrest.serialization.Model):
     """The list of subscription feature registrations.
 
-    :param next_link: The link used to get the next page of subscription feature registrations
-     list.
-    :type next_link: str
-    :param value: The list of subscription feature registrations.
-    :type value:
+    :ivar next_link: The link used to get the next page of subscription feature registrations list.
+    :vartype next_link: str
+    :ivar value: The list of subscription feature registrations.
+    :vartype value:
      list[~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistration]
     """
 
@@ -379,6 +435,14 @@ class SubscriptionFeatureRegistrationList(msrest.serialization.Model):
         value: Optional[List["SubscriptionFeatureRegistration"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of subscription feature registrations
+         list.
+        :paramtype next_link: str
+        :keyword value: The list of subscription feature registrations.
+        :paramtype value:
+         list[~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistration]
+        """
         super(SubscriptionFeatureRegistrationList, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -399,15 +463,15 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     :vartype display_name: str
     :ivar provider_namespace: The providerNamespace.
     :vartype provider_namespace: str
-    :param state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
+    :ivar state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
      "Registering", "Registered", "Unregistering", "Unregistered".
-    :type state: str or
+    :vartype state: str or
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationState
-    :param authorization_profile: Authorization Profile.
-    :type authorization_profile:
+    :ivar authorization_profile: Authorization Profile.
+    :vartype authorization_profile:
      ~azure.mgmt.resource.features.v2021_07_01.models.AuthorizationProfile
-    :param metadata: Key-value pairs for meta data.
-    :type metadata: dict[str, str]
+    :ivar metadata: Key-value pairs for meta data.
+    :vartype metadata: dict[str, str]
     :ivar release_date: The feature release date.
     :vartype release_date: ~datetime.datetime
     :ivar registration_date: The feature registration date.
@@ -418,11 +482,11 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
      "ApprovalRequired", "AutoApproval".
     :vartype approval_type: str or
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationApprovalType
-    :param should_feature_display_in_portal: Indicates whether feature should be displayed in
+    :ivar should_feature_display_in_portal: Indicates whether feature should be displayed in
      Portal.
-    :type should_feature_display_in_portal: bool
-    :param description: The feature description.
-    :type description: str
+    :vartype should_feature_display_in_portal: bool
+    :ivar description: The feature description.
+    :vartype description: str
     """
 
     _validation = {
@@ -465,6 +529,22 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
+         "Registering", "Registered", "Unregistering", "Unregistered".
+        :paramtype state: str or
+         ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationState
+        :keyword authorization_profile: Authorization Profile.
+        :paramtype authorization_profile:
+         ~azure.mgmt.resource.features.v2021_07_01.models.AuthorizationProfile
+        :keyword metadata: Key-value pairs for meta data.
+        :paramtype metadata: dict[str, str]
+        :keyword should_feature_display_in_portal: Indicates whether feature should be displayed in
+         Portal.
+        :paramtype should_feature_display_in_portal: bool
+        :keyword description: The feature description.
+        :paramtype description: str
+        """
         super(SubscriptionFeatureRegistrationProperties, self).__init__(**kwargs)
         self.tenant_id = None
         self.subscription_id = None

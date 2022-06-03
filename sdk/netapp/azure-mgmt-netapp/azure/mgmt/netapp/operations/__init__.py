@@ -18,6 +18,8 @@ from ._backups_operations import BackupsOperations
 from ._account_backups_operations import AccountBackupsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._vaults_operations import VaultsOperations
+from ._volume_groups_operations import VolumeGroupsOperations
+from ._subvolumes_operations import SubvolumesOperations
 
 __all__ = [
     'Operations',
@@ -32,4 +34,6 @@ __all__ = [
     'AccountBackupsOperations',
     'BackupPoliciesOperations',
     'VaultsOperations',
+    'VolumeGroupsOperations',
+    'SubvolumesOperations',
 ]

@@ -1771,6 +1771,74 @@ class ServiceFabricClientAPIsOperationsMixin(object):
             return client_raw_response
     toggle_verbose_service_placement_health_reporting.metadata = {'url': '/$/ToggleVerboseServicePlacementHealthReporting'}
 
+    def validate_cluster_upgrade(
+            self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Validate and assess the impact of a code or configuration version
+        update of a Service Fabric cluster.
+
+        Validate the supplied upgrade parameters and assess the expected impact
+        of a code or configuration version upgrade of a Service Fabric cluster.
+        The upgrade will not be initiated.
+
+        :param start_cluster_upgrade_description: Describes the parameters for
+         starting a cluster upgrade.
+        :type start_cluster_upgrade_description:
+         ~azure.servicefabric.models.StartClusterUpgradeDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ValidateClusterUpgradeResult or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ValidateClusterUpgradeResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "8.2"
+
+        # Construct URL
+        url = self.validate_cluster_upgrade.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(start_cluster_upgrade_description, 'StartClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ValidateClusterUpgradeResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    validate_cluster_upgrade.metadata = {'url': '/$/ValidateUpgrade'}
+
     def get_node_info_list(
             self, continuation_token=None, node_status_filter="default", max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of nodes in the Service Fabric cluster.
@@ -4673,6 +4741,78 @@ class ServiceFabricClientAPIsOperationsMixin(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     update_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/UpdateUpgrade'}
+
+    def update_application(
+            self, application_id, application_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Updates a Service Fabric application.
+
+        Updates a Service Fabric application instance. The set of properties
+        that can be updated are a subset of the properties that were specified
+        at the time of creating the application.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param application_update_description: Parameters for updating an
+         existing application instance.
+        :type application_update_description:
+         ~azure.servicefabric.models.ApplicationUpdateDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "8.1"
+
+        # Construct URL
+        url = self.update_application.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(application_update_description, 'ApplicationUpdateDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update_application.metadata = {'url': '/Applications/{applicationId}/$/Update'}
 
     def resume_application_upgrade(
             self, application_id, upgrade_domain_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8028,6 +8168,94 @@ class ServiceFabricClientAPIsOperationsMixin(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     move_instance.metadata = {'url': '/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveInstance'}
+
+    def move_auxiliary_replica(
+            self, service_id, partition_id, current_node_name=None, new_node_name=None, ignore_constraints=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Moves the auxiliary replica of a partition of a stateful service.
+
+        This command moves the auxiliary replica of a partition of a stateful
+        service, respecting all constraints.
+        CurrentNodeName can be omitted, and in that case a random auxiliary
+        replica is chosen.
+        NewNodeName can be omitted, and in that case the auxiliary replica is
+        moved to a random node.
+        If IgnoreConstraints parameter is specified and set to true, then
+        auxiliary will be moved regardless of the constraints.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param current_node_name: The name of the source node for instance
+         move. If not specified, instance is moved from a random node.
+        :type current_node_name: str
+        :param new_node_name: The name of the target node for secondary
+         replica or instance move. If not specified, replica or instance is
+         moved to a random node.
+        :type new_node_name: str
+        :param ignore_constraints: Ignore constraints when moving a replica or
+         instance. If this parameter is not specified, all constraints are
+         honored.
+        :type ignore_constraints: bool
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "8.1"
+
+        # Construct URL
+        url = self.move_auxiliary_replica.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if current_node_name is not None:
+            query_parameters['CurrentNodeName'] = self._serialize.query("current_node_name", current_node_name, 'str')
+        if new_node_name is not None:
+            query_parameters['NewNodeName'] = self._serialize.query("new_node_name", new_node_name, 'str')
+        if ignore_constraints is not None:
+            query_parameters['IgnoreConstraints'] = self._serialize.query("ignore_constraints", ignore_constraints, 'bool')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    move_auxiliary_replica.metadata = {'url': '/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveAuxiliaryReplica'}
 
     def create_repair_task(
             self, repair_task, custom_headers=None, raw=False, **operation_config):

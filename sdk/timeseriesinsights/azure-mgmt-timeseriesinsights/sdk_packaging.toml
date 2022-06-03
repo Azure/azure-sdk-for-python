@@ -1,5 +1,5 @@
 [packaging]
 package_name = "azure-mgmt-timeseriesinsights"
-package_pprint_name = "TimeSeriesInsights Management"
-package_doc_id = "timeseriesinsights"
+package_pprint_name = "Time Series Insights Management"
+package_doc_id = ""
 is_stable = false

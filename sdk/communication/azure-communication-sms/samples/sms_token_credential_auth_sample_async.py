@@ -59,5 +59,4 @@ class SmsTokenCredentialAuthSampleAsync(object):
 
 if __name__ == '__main__':
     sample = SmsTokenCredentialAuthSampleAsync()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.sms_token_credential_auth_async())
+    asyncio.run(sample.sms_token_credential_auth_async())

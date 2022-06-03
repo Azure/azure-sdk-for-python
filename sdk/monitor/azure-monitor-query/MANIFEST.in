@@ -1,5 +1,7 @@
 recursive-include tests *.py *.yaml
 recursive-include samples *.py
 include *.md
+include LICENSE
 include azure/__init__.py
 include azure/monitor/__init__.py
+include azure/monitor/query/py.typed

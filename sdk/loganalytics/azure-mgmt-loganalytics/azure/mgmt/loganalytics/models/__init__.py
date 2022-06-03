@@ -6,149 +6,112 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AssociatedWorkspace
-    from ._models_py3 import AvailableServiceTier
-    from ._models_py3 import AzureEntityResource
-    from ._models_py3 import CapacityReservationProperties
-    from ._models_py3 import Cluster
-    from ._models_py3 import ClusterListResult
-    from ._models_py3 import ClusterPatch
-    from ._models_py3 import ClusterSku
-    from ._models_py3 import CoreSummary
-    from ._models_py3 import DataExport
-    from ._models_py3 import DataExportListResult
-    from ._models_py3 import DataSource
-    from ._models_py3 import DataSourceFilter
-    from ._models_py3 import DataSourceListResult
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Identity
-    from ._models_py3 import IntelligencePack
-    from ._models_py3 import KeyVaultProperties
-    from ._models_py3 import LinkedService
-    from ._models_py3 import LinkedServiceListResult
-    from ._models_py3 import LinkedStorageAccountsListResult
-    from ._models_py3 import LinkedStorageAccountsResource
-    from ._models_py3 import ManagementGroup
-    from ._models_py3 import MetricName
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationStatus
-    from ._models_py3 import PrivateLinkScopedResource
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import SavedSearch
-    from ._models_py3 import SavedSearchesListResult
-    from ._models_py3 import SearchGetSchemaResponse
-    from ._models_py3 import SearchMetadata
-    from ._models_py3 import SearchMetadataSchema
-    from ._models_py3 import SearchSchemaValue
-    from ._models_py3 import SearchSort
-    from ._models_py3 import SharedKeys
-    from ._models_py3 import StorageAccount
-    from ._models_py3 import StorageInsight
-    from ._models_py3 import StorageInsightListResult
-    from ._models_py3 import StorageInsightStatus
-    from ._models_py3 import Table
-    from ._models_py3 import TablesListResult
-    from ._models_py3 import Tag
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UsageMetric
-    from ._models_py3 import UserIdentityProperties
-    from ._models_py3 import Workspace
-    from ._models_py3 import WorkspaceCapping
-    from ._models_py3 import WorkspaceFeatures
-    from ._models_py3 import WorkspaceListManagementGroupsResult
-    from ._models_py3 import WorkspaceListResult
-    from ._models_py3 import WorkspaceListUsagesResult
-    from ._models_py3 import WorkspacePatch
-    from ._models_py3 import WorkspacePurgeBody
-    from ._models_py3 import WorkspacePurgeBodyFilters
-    from ._models_py3 import WorkspacePurgeResponse
-    from ._models_py3 import WorkspacePurgeStatusResponse
-    from ._models_py3 import WorkspaceSku
-except (SyntaxError, ImportError):
-    from ._models import AssociatedWorkspace  # type: ignore
-    from ._models import AvailableServiceTier  # type: ignore
-    from ._models import AzureEntityResource  # type: ignore
-    from ._models import CapacityReservationProperties  # type: ignore
-    from ._models import Cluster  # type: ignore
-    from ._models import ClusterListResult  # type: ignore
-    from ._models import ClusterPatch  # type: ignore
-    from ._models import ClusterSku  # type: ignore
-    from ._models import CoreSummary  # type: ignore
-    from ._models import DataExport  # type: ignore
-    from ._models import DataExportListResult  # type: ignore
-    from ._models import DataSource  # type: ignore
-    from ._models import DataSourceFilter  # type: ignore
-    from ._models import DataSourceListResult  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import IntelligencePack  # type: ignore
-    from ._models import KeyVaultProperties  # type: ignore
-    from ._models import LinkedService  # type: ignore
-    from ._models import LinkedServiceListResult  # type: ignore
-    from ._models import LinkedStorageAccountsListResult  # type: ignore
-    from ._models import LinkedStorageAccountsResource  # type: ignore
-    from ._models import ManagementGroup  # type: ignore
-    from ._models import MetricName  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationStatus  # type: ignore
-    from ._models import PrivateLinkScopedResource  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SavedSearch  # type: ignore
-    from ._models import SavedSearchesListResult  # type: ignore
-    from ._models import SearchGetSchemaResponse  # type: ignore
-    from ._models import SearchMetadata  # type: ignore
-    from ._models import SearchMetadataSchema  # type: ignore
-    from ._models import SearchSchemaValue  # type: ignore
-    from ._models import SearchSort  # type: ignore
-    from ._models import SharedKeys  # type: ignore
-    from ._models import StorageAccount  # type: ignore
-    from ._models import StorageInsight  # type: ignore
-    from ._models import StorageInsightListResult  # type: ignore
-    from ._models import StorageInsightStatus  # type: ignore
-    from ._models import Table  # type: ignore
-    from ._models import TablesListResult  # type: ignore
-    from ._models import Tag  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UsageMetric  # type: ignore
-    from ._models import UserIdentityProperties  # type: ignore
-    from ._models import Workspace  # type: ignore
-    from ._models import WorkspaceCapping  # type: ignore
-    from ._models import WorkspaceFeatures  # type: ignore
-    from ._models import WorkspaceListManagementGroupsResult  # type: ignore
-    from ._models import WorkspaceListResult  # type: ignore
-    from ._models import WorkspaceListUsagesResult  # type: ignore
-    from ._models import WorkspacePatch  # type: ignore
-    from ._models import WorkspacePurgeBody  # type: ignore
-    from ._models import WorkspacePurgeBodyFilters  # type: ignore
-    from ._models import WorkspacePurgeResponse  # type: ignore
-    from ._models import WorkspacePurgeStatusResponse  # type: ignore
-    from ._models import WorkspaceSku  # type: ignore
+from ._models_py3 import AssociatedWorkspace
+from ._models_py3 import AvailableServiceTier
+from ._models_py3 import AzureEntityResource
+from ._models_py3 import AzureResourceProperties
+from ._models_py3 import CapacityReservationProperties
+from ._models_py3 import Cluster
+from ._models_py3 import ClusterListResult
+from ._models_py3 import ClusterPatch
+from ._models_py3 import ClusterSku
+from ._models_py3 import Column
+from ._models_py3 import CoreSummary
+from ._models_py3 import DataExport
+from ._models_py3 import DataExportListResult
+from ._models_py3 import DataSource
+from ._models_py3 import DataSourceFilter
+from ._models_py3 import DataSourceListResult
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Identity
+from ._models_py3 import IntelligencePack
+from ._models_py3 import KeyVaultProperties
+from ._models_py3 import LinkedService
+from ._models_py3 import LinkedServiceListResult
+from ._models_py3 import LinkedStorageAccountsListResult
+from ._models_py3 import LinkedStorageAccountsResource
+from ._models_py3 import LogAnalyticsQueryPack
+from ._models_py3 import LogAnalyticsQueryPackListResult
+from ._models_py3 import LogAnalyticsQueryPackQuery
+from ._models_py3 import LogAnalyticsQueryPackQueryListResult
+from ._models_py3 import LogAnalyticsQueryPackQueryPropertiesRelated
+from ._models_py3 import LogAnalyticsQueryPackQuerySearchProperties
+from ._models_py3 import LogAnalyticsQueryPackQuerySearchPropertiesRelated
+from ._models_py3 import ManagementGroup
+from ._models_py3 import MetricName
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationStatus
+from ._models_py3 import PrivateLinkScopedResource
+from ._models_py3 import ProxyResource
+from ._models_py3 import QueryPacksResource
+from ._models_py3 import Resource
+from ._models_py3 import RestoredLogs
+from ._models_py3 import ResultStatistics
+from ._models_py3 import SavedSearch
+from ._models_py3 import SavedSearchesListResult
+from ._models_py3 import Schema
+from ._models_py3 import SearchGetSchemaResponse
+from ._models_py3 import SearchMetadata
+from ._models_py3 import SearchMetadataSchema
+from ._models_py3 import SearchResults
+from ._models_py3 import SearchSchemaValue
+from ._models_py3 import SearchSort
+from ._models_py3 import SharedKeys
+from ._models_py3 import StorageAccount
+from ._models_py3 import StorageInsight
+from ._models_py3 import StorageInsightListResult
+from ._models_py3 import StorageInsightStatus
+from ._models_py3 import SystemData
+from ._models_py3 import SystemDataAutoGenerated
+from ._models_py3 import Table
+from ._models_py3 import TablesListResult
+from ._models_py3 import Tag
+from ._models_py3 import TagsResource
+from ._models_py3 import TrackedResource
+from ._models_py3 import UsageMetric
+from ._models_py3 import UserIdentityProperties
+from ._models_py3 import Workspace
+from ._models_py3 import WorkspaceCapping
+from ._models_py3 import WorkspaceFeatures
+from ._models_py3 import WorkspaceListManagementGroupsResult
+from ._models_py3 import WorkspaceListResult
+from ._models_py3 import WorkspaceListUsagesResult
+from ._models_py3 import WorkspacePatch
+from ._models_py3 import WorkspacePurgeBody
+from ._models_py3 import WorkspacePurgeBodyFilters
+from ._models_py3 import WorkspacePurgeResponse
+from ._models_py3 import WorkspacePurgeStatusResponse
+from ._models_py3 import WorkspaceSku
+
 
 from ._log_analytics_management_client_enums import (
     BillingType,
+    Capacity,
+    CapacityReservationLevel,
     ClusterEntityStatus,
     ClusterSkuNameEnum,
+    ColumnDataTypeHintEnum,
+    ColumnTypeEnum,
+    CreatedByType,
     DataIngestionStatus,
     DataSourceKind,
     DataSourceType,
     IdentityType,
     LinkedServiceEntityStatus,
+    ProvisioningStateEnum,
     PublicNetworkAccessType,
     PurgeState,
     SearchSortEnum,
     SkuNameEnum,
+    SourceEnum,
     StorageInsightState,
+    TablePlanEnum,
+    TableSubTypeEnum,
+    TableTypeEnum,
     Type,
     WorkspaceEntityStatus,
     WorkspaceSkuNameEnum,
@@ -158,11 +121,13 @@ __all__ = [
     'AssociatedWorkspace',
     'AvailableServiceTier',
     'AzureEntityResource',
+    'AzureResourceProperties',
     'CapacityReservationProperties',
     'Cluster',
     'ClusterListResult',
     'ClusterPatch',
     'ClusterSku',
+    'Column',
     'CoreSummary',
     'DataExport',
     'DataExportListResult',
@@ -179,6 +144,13 @@ __all__ = [
     'LinkedServiceListResult',
     'LinkedStorageAccountsListResult',
     'LinkedStorageAccountsResource',
+    'LogAnalyticsQueryPack',
+    'LogAnalyticsQueryPackListResult',
+    'LogAnalyticsQueryPackQuery',
+    'LogAnalyticsQueryPackQueryListResult',
+    'LogAnalyticsQueryPackQueryPropertiesRelated',
+    'LogAnalyticsQueryPackQuerySearchProperties',
+    'LogAnalyticsQueryPackQuerySearchPropertiesRelated',
     'ManagementGroup',
     'MetricName',
     'Operation',
@@ -187,12 +159,17 @@ __all__ = [
     'OperationStatus',
     'PrivateLinkScopedResource',
     'ProxyResource',
+    'QueryPacksResource',
     'Resource',
+    'RestoredLogs',
+    'ResultStatistics',
     'SavedSearch',
     'SavedSearchesListResult',
+    'Schema',
     'SearchGetSchemaResponse',
     'SearchMetadata',
     'SearchMetadataSchema',
+    'SearchResults',
     'SearchSchemaValue',
     'SearchSort',
     'SharedKeys',
@@ -200,9 +177,12 @@ __all__ = [
     'StorageInsight',
     'StorageInsightListResult',
     'StorageInsightStatus',
+    'SystemData',
+    'SystemDataAutoGenerated',
     'Table',
     'TablesListResult',
     'Tag',
+    'TagsResource',
     'TrackedResource',
     'UsageMetric',
     'UserIdentityProperties',
@@ -219,18 +199,28 @@ __all__ = [
     'WorkspacePurgeStatusResponse',
     'WorkspaceSku',
     'BillingType',
+    'Capacity',
+    'CapacityReservationLevel',
     'ClusterEntityStatus',
     'ClusterSkuNameEnum',
+    'ColumnDataTypeHintEnum',
+    'ColumnTypeEnum',
+    'CreatedByType',
     'DataIngestionStatus',
     'DataSourceKind',
     'DataSourceType',
     'IdentityType',
     'LinkedServiceEntityStatus',
+    'ProvisioningStateEnum',
     'PublicNetworkAccessType',
     'PurgeState',
     'SearchSortEnum',
     'SkuNameEnum',
+    'SourceEnum',
     'StorageInsightState',
+    'TablePlanEnum',
+    'TableSubTypeEnum',
+    'TableTypeEnum',
     'Type',
     'WorkspaceEntityStatus',
     'WorkspaceSkuNameEnum',

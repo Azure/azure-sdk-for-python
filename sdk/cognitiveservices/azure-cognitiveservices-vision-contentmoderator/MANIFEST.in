@@ -1,6 +1,8 @@
+include _meta.json
 recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include azure/cognitiveservices/__init__.py
 include azure/cognitiveservices/vision/__init__.py
-
+include LICENSE
+include azure/cognitiveservices/vision/contentmoderator/py.typed

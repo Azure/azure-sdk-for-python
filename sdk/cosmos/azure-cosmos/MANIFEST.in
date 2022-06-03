@@ -1,7 +1,6 @@
-include README.md
-include CHANGELOG.md
-include LICENSE.txt
+include *.md
+include LICENSE
 include azure/__init__.py
-recursive-include samples *.py
+recursive-include samples *.py *.md
 recursive-include test *.py
-recursive-include doc *.rst
+include azure/cosmos/py.typed

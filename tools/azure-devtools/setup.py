@@ -48,6 +48,7 @@ setup(
     entry_points={
         "console_scripts": [
             "perfstress = azure_devtools.perfstress_tests:run_perfstress_cmd",
+            "perfstressdebug = azure_devtools.perfstress_tests:run_perfstress_debug_cmd",
             "systemperf = azure_devtools.perfstress_tests:run_system_perfstress_tests_cmd",
         ],
     },
@@ -57,7 +58,7 @@ setup(
             "GitPython",
             "requests>=2.0",
         ],
-        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3" "pycurl==7.43.0.5" "httpx==0.11.1"],
+        "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
     },
     package_dir={"": "src"},
     install_requires=DEPENDENCIES,

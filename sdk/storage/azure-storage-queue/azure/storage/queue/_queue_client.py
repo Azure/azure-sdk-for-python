@@ -105,7 +105,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -122,8 +122,12 @@ class QueueClient(StorageAccountHostsMixin):
             self._query_str)
 
     @classmethod
-    def from_queue_url(cls, queue_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> QueueClient
+    def from_queue_url(cls,
+                       queue_url,  # type: str
+                       credential=None,  # type: Optional[Any]
+                       **kwargs  # type: Any
+                       ):
+        # type: (...) -> QueueClient
         """A client to interact with a specific Queue.
 
         :param str queue_url: The full URI to the queue, including SAS token if used.
@@ -163,9 +167,9 @@ class QueueClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             queue_name,  # type: str
-            credential=None,  # type: Any
+            credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+     ):
         # type: (...) -> QueueClient
         """Create QueueClient from a Connection String.
 
@@ -199,7 +203,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_queue(self, **kwargs):
-        # type: (Optional[Any]) -> None
+        # type: (Any) -> None
         """Creates a new queue in the storage account.
 
         If a queue with the same name already exists, the operation fails with
@@ -240,7 +244,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_queue(self, **kwargs):
-        # type: (Optional[Any]) -> None
+        # type: (Any) -> None
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -272,7 +276,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_queue_properties(self, **kwargs):
-        # type: (Optional[Any]) -> QueueProperties
+        # type: (Any) -> QueueProperties
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -303,8 +307,11 @@ class QueueClient(StorageAccountHostsMixin):
         return response # type: ignore
 
     @distributed_trace
-    def set_queue_metadata(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, Any]], Optional[Any]) -> None
+    def set_queue_metadata(self,
+                           metadata=None,  # type: Optional[Dict[str, Any]]
+                           **kwargs  # type: Any
+                           ):
+        # type: (...) -> None
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -339,7 +346,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_queue_access_policy(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, AccessPolicy]
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -359,8 +366,11 @@ class QueueClient(StorageAccountHostsMixin):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_queue_access_policy(self, signed_identifiers, **kwargs):
-        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+    def set_queue_access_policy(self,
+                                signed_identifiers,  # type: Dict[str, AccessPolicy]
+                                **kwargs  # type: Any
+                                ):
+        # type: (...) -> None
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -413,10 +423,11 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def send_message( # type: ignore
-            self, content, # type: Any
-            **kwargs  # type: Optional[Any]
-        ):
+    def send_message(
+            self,
+            content,  # type: Any
+            **kwargs  # type: Any
+    ):
         # type: (...) -> QueueMessage
         """Adds a new message to the back of the message queue.
 
@@ -492,7 +503,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def receive_message(self, **kwargs):
-        # type: (Optional[Any]) -> QueueMessage
+        # type: (Any) -> QueueMessage
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -548,14 +559,16 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def receive_messages(self, **kwargs):
-        # type: (Optional[Any]) -> ItemPaged[QueueMessage]
+        # type: (Any) -> ItemPaged[QueueMessage]
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
         content and a pop_receipt value, which is required to delete the message.
         The message is not automatically deleted from the queue, but after it has
         been retrieved, it is not visible to other clients for the time interval
-        specified by the visibility_timeout parameter.
+        specified by the visibility_timeout parameter. The iterator will continuously
+        fetch messages until the queue is empty or max_messages is reached (if max_messages
+        is set).
 
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
@@ -577,14 +590,16 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: List pages and corresponding messages from the queue.
 
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :keyword int max_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
@@ -601,6 +616,7 @@ class QueueClient(StorageAccountHostsMixin):
         messages_per_page = kwargs.pop('messages_per_page', None)
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -613,13 +629,22 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
+            if max_messages is not None and messages_per_page is not None:
+                if max_messages < messages_per_page:
+                    raise ValueError("max_messages must be greater or equal to messages_per_page")
+            return ItemPaged(command, results_per_page=messages_per_page,
+                             page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def update_message(self, message, pop_receipt=None, content=None, **kwargs):
-        # type: (Any, Optional[str], Optional[Any], Any) -> QueueMessage
+    def update_message(self,
+                       message,  # type: Any
+                       pop_receipt=None,  # type: Optional[str]
+                       content=None,  # type: Optional[Any]
+                       **kwargs  # type: Any
+                       ):
+        # type: (...) -> QueueMessage
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
 
@@ -715,8 +740,11 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def peek_messages(self, max_messages=None, **kwargs):
-        # type: (Optional[int], Optional[Any]) -> List[QueueMessage]
+    def peek_messages(self,
+                      max_messages=None,  # type: Optional[int]
+                      **kwargs  # type: Any
+                      ):
+        # type: (...) -> List[QueueMessage]
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
 
@@ -774,7 +802,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def clear_messages(self, **kwargs):
-        # type: (Optional[Any]) -> None
+        # type: (Any) -> None
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -796,8 +824,12 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def delete_message(self, message, pop_receipt=None, **kwargs):
-        # type: (Any, Optional[str], Any) -> None
+    def delete_message(self,
+                       message,  # type: Any
+                       pop_receipt=None,  # type: Optional[str]
+                       **kwargs  # type: Any
+                       ):
+        # type: (...) -> None
         """Deletes the specified message.
 
         Normally after a client retrieves a message with the receive messages operation,

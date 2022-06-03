@@ -6,7 +6,6 @@
 
 import base64
 import json
-import time
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
@@ -16,8 +15,16 @@ import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
-def _convert_datetime_to_utc_int(expires_on):
-    return int(calendar.timegm(expires_on.utctimetuple()))
+def _convert_datetime_to_utc_int(input_datetime):
+    """
+    Converts DateTime in local time to the Epoch in UTC in second.
+
+    :param input_datetime: Input datetime
+    :type input_datetime: datetime
+    :return: Integer
+    :rtype: int
+    """
+    return int(calendar.timegm(input_datetime.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -50,13 +57,13 @@ def get_current_utc_time():
     # type: () -> str
     return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
+
 def get_current_utc_as_int():
     # type: () -> int
-    current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
+    current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 def create_access_token(token):
-    # pylint: disable=bad-option-value,useless-object-inheritance,raise-missing-from
     # type: (str) -> azure.core.credentials.AccessToken
     """Creates an instance of azure.core.credentials.AccessToken from a
     string token. The input string is jwt token in the following form:
@@ -80,13 +87,9 @@ def create_access_token(token):
         padded_base64_payload = base64.b64decode(parts[1] + "==").decode('ascii')
         payload = json.loads(padded_base64_payload)
         return AccessToken(token,
-                           _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
-    except ValueError:
-        raise ValueError(token_parse_err_msg)
-
-def _convert_expires_on_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
+                           _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp'], TZ_UTC)))
+    except ValueError as val_error:
+        raise ValueError(token_parse_err_msg) from val_error
 
 def get_authentication_policy(
         endpoint, # type: str
@@ -123,7 +126,3 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
-
-def _convert_expires_on_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())

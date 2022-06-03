@@ -12,19 +12,19 @@
 import unittest
 
 import azure.mgmt.servicebus
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtServiceBusTest(AzureMgmtTestCase):
+class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtServiceBusTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
     
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_queue(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name

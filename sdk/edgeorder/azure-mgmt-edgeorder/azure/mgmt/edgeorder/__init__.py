@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._edge_order_management_client import EdgeOrderManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['EdgeOrderManagementClient']
 
 try:

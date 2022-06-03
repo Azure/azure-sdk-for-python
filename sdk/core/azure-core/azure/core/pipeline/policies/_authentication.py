@@ -119,9 +119,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
             response = self.next.send(request)
             self.on_response(request, response)
         except Exception:  # pylint:disable=broad-except
-            handled = self.on_exception(request)
-            if not handled:
-                raise
+            self.on_exception(request)
+            raise
         else:
             if response.http_response.status_code == 401:
                 self._token = None  # any cached token is invalid
@@ -132,9 +131,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                             response = self.next.send(request)
                             self.on_response(request, response)
                         except Exception:  # pylint:disable=broad-except
-                            handled = self.on_exception(request)
-                            if not handled:
-                                raise
+                            self.on_exception(request)
+                            raise
 
         return response
 
@@ -162,18 +160,16 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         """
 
     def on_exception(self, request):
-        # type: (PipelineRequest) -> bool
+        # type: (PipelineRequest) -> None
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
 
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: False by default, override with True to stop the exception.
-        :rtype: bool
         """
         # pylint: disable=no-self-use,unused-argument
-        return False
+        return
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):

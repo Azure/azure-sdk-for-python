@@ -1,14 +1,18 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.0.2 (2022-05-06)
 
-### Features Added
-
-### Breaking Changes
+- This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug where having a None value in datetime throws
+
+## 1.0.1 (2021-11-09)
+
+### Bugs Fixed
+
+- Fixed a bug where Metadata values in timestamp don't show up sometimes.
 
 ## 1.0.0 (2021-10-06)
 
@@ -22,7 +26,7 @@
 
 ### Breaking Changes
 
-- `LogsQueryResult` now iterates over the tables directly as a convinience.
+- `LogsQueryResult` now iterates over the tables directly as a convenience.
 - `query` API in logs is renamed to `query_workspace`
 - `query` API in metrics is renamed to `query_resource`
 - `query_workspace` API now returns a union of `LogsQueryPartialResult` and `LogsQueryResult`.

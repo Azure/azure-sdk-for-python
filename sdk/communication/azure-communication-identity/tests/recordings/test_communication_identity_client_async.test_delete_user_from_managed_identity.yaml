@@ -9,50 +9,50 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1
+        2021-03-31-preview1, 2021-10-31-preview
+      content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Jun 2021 18:58:55 GMT
-      ms-cv: P20kvw1g/k62AibiEW0m0w.0
+      date: Tue, 02 Nov 2021 10:40:53 GMT
+      ms-cv: jBZxVWuiI0ytr5WrXsf4zg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 213ms
+      x-processing-time: 92ms
     status:
       code: 201
       message: Created
-    url: https://smstestapp.communication.azure.com/identities?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
     method: DELETE
-    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-10-31-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1
-      date: Tue, 22 Jun 2021 18:58:56 GMT
-      ms-cv: PUdu1M8QkkeuAL9M7ArAGg.0
+        2021-03-31-preview1, 2021-10-31-preview
+      date: Tue, 02 Nov 2021 10:40:53 GMT
+      ms-cv: 1seexUgPJUaQFsLh+CFRGA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 741ms
+      x-processing-time: 210ms
     status:
       code: 204
       message: No Content
-    url: https://smstestapp.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-10-31-preview
 version: 1

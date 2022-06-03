@@ -12,7 +12,7 @@ urlFragment: storage-file-share-samples
 
 These are code samples that show common scenario operations with the Azure Storage File Share client library.
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
-with file shares and require Python 3.5 or later.
+with file shares.
 
 * [file_samples_hello_world.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/samples/file_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/samples/file_samples_hello_world_async.py)) - Examples for getting started with file shares:
     * Client creation
@@ -45,7 +45,7 @@ with file shares and require Python 3.5 or later.
     * Copy a file from a URL
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
 

@@ -21,4 +21,5 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-eventgrid",
   "azure-appconfiguration",
   "azure-data-tables",
+  "azure-mixedreality-remoterendering",
 ]

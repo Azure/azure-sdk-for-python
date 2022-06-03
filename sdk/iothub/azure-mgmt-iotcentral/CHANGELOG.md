@@ -1,5 +1,36 @@
 # Release History
 
+## 10.0.0b1 (2022-04-13)
+
+**Features**
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinksOperations
+  - Model App has a new parameter network_rule_sets
+  - Model App has a new parameter private_endpoint_connections
+  - Model App has a new parameter provisioning_state
+  - Model App has a new parameter public_network_access
+  - Model App has a new parameter system_data
+  - Model AppPatch has a new parameter network_rule_sets
+  - Model AppPatch has a new parameter private_endpoint_connections
+  - Model AppPatch has a new parameter provisioning_state
+  - Model AppPatch has a new parameter public_network_access
+  - Model Resource has a new parameter system_data
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+
+## 9.0.0 (2021-11-11)
+
+**Features**
+
+  - Model App has a new parameter state
+  - Model App has a new parameter identity
+  - Model AppPatch has a new parameter state
+  - Model AppPatch has a new parameter identity
+
 ## 9.0.0b1 (2021-05-13)
 
 This is beta preview version.

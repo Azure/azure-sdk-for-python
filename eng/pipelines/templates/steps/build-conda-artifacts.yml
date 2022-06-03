@@ -29,6 +29,7 @@ steps:
       mkdir $(Agent.BuildDirectory)/conda/
       mkdir $(Agent.BuildDirectory)/conda/output
       mkdir $(Agent.BuildDirectory)/conda/build
+      mkdir $(Agent.BuildDirectory)/conda/manifest
 
       Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/output"
       Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/build"
@@ -82,3 +83,14 @@ steps:
     parameters:
       ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
       ArtifactName: 'conda'
+
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Upload Conda Package SBOM'
+    condition: succeededOrFailed()
+    inputs:
+      BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
+      ArtifactName: 'conda_manifest'

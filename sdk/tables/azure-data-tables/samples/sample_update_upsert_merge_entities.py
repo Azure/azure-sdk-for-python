@@ -20,7 +20,7 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
 import os
 from uuid import uuid4
@@ -48,8 +48,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             my_entity = {
-                u"PartitionKey": u"color",
-                u"RowKey": u"brand",
+                "PartitionKey": "color",
+                "RowKey": "brand",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 4.99,
@@ -84,8 +84,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             entity = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"sharpie",
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 5.99,
@@ -93,8 +93,8 @@ class TableEntitySamples(object):
                 "product_id": uuid4(),
             }
             entity1 = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"crayola",
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
                 "text": "Marker",
                 "color": "Red",
                 "price": 3.99,
@@ -129,8 +129,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             entity = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"sharpie",
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 5.99,
@@ -138,8 +138,8 @@ class TableEntitySamples(object):
                 "product_id": uuid4(),
             }
             entity1 = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"crayola",
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
                 "text": "Marker",
                 "color": "Red",
                 "price": 3.99,

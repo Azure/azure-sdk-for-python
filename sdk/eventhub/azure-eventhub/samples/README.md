@@ -11,7 +11,7 @@ urlFragment: eventhub-samples
 # Azure Event Hubs client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Event Hubs client library.
-Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples) of samples are provided, async samples require Python 3.6 or later.
+Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples) of samples are provided.
 
 - [client_creation.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_creation.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/client_creation_async.py)) - Examples to create EventHubProducerClient and EventHubConsumerClient:
     - From a connection string
@@ -74,14 +74,19 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
     - Utilize `azure.core.credentials.AzureNamedKeyCredential` to authenticate when creating an Event Hub client.
 
 - [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples:
-  to create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
+    - Create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
 
 - [send_and_receive_amqp_annotated_message.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_and_receive_amqp_annotated_message.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_and_receive_amqp_annotated_message_async.py)) - Examples to send AMQPAnnotatedMessage to and receive events from an event hub and parse the body:
     - Send AMQPAnnotatedMessage of different body types.
     - Receive messages and parse the body according to the body type.
 
+- [send_buffered_mode.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/send_buffered_mode.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_buffered_mode_async.py)) - Examples to send events in buffered mode:
+    - Send single events, which will be automatically batched.
+    - Send a batch of events by enqueuing an EventDataBatch object to the buffer.
+    - Send events in buffer immediately by calling `flush`.
+
 ## Prerequisites
-- Python 2.7, 3.6 or later.
+- Python 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -120,5 +125,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/eventhub-readme) to learn more about
 what you can do with the Azure Event Hubs client library.

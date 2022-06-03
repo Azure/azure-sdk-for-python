@@ -10,9 +10,9 @@ import six
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
-    ManifestOrder,
+    ArtifactManifestOrder,
     ArtifactTagProperties,
-    TagOrder,
+    ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
@@ -206,7 +206,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         prev_last_updated_on = None
         count = 0
         async for artifact in client.list_manifest_properties(
-            BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING
+            BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
         ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
@@ -232,7 +232,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         prev_last_updated_on = None
         count = 0
         async for artifact in client.list_manifest_properties(
-            BUSYBOX, order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING
+            BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_ASCENDING
         ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
@@ -443,7 +443,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for tag in client.list_tag_properties(repo, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+        async for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on < prev_last_updated_on
@@ -472,7 +472,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for tag in client.list_tag_properties(repo, order_by=TagOrder.LAST_UPDATE_TIME_ASCENDING):
+        async for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on > prev_last_updated_on
@@ -570,4 +570,27 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         
         client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com")
         with pytest.raises(ClientAuthenticationError):
-            properties = await client.get_repository_properties(HELLO_WORLD)
+            properties = await client.get_repository_properties(HELLO_WORLD)       
+        with pytest.raises(TypeError):
+            client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
+
+    @acr_preparer()
+    def test_set_api_version(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        assert client._client._config.api_version == "2021-07-01"
+        
+        client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15-preview")
+        assert client._client._config.api_version == "2019-08-15-preview"
+        
+        with pytest.raises(ValueError):
+            client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15")
+
+    @acr_preparer()
+    async def test_get_misspell_property(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        properties = await client.get_repository_properties(ALPINE)
+        
+        with self.assertWarns(DeprecationWarning):
+            last_udpated_on = properties.last_udpated_on
+        last_updated_on = properties.last_updated_on
+        assert last_udpated_on == last_updated_on

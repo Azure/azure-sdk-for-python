@@ -9,12 +9,13 @@
 from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
 
 from . import models
 from ._configuration import SearchClientConfiguration
-from .operations import DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
+from .operations import AliasesOperations, DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -22,8 +23,9 @@ if TYPE_CHECKING:
 
     from azure.core.rest import HttpRequest, HttpResponse
 
-class SearchClient(SearchClientOperationsMixin):
-    """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
+class SearchClient(SearchClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+    """Client that can be used to manage and query indexes and documents, as well as manage other
+    resources, on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
     :vartype data_sources: azure.search.documents.indexes.operations.DataSourcesOperations
@@ -35,8 +37,13 @@ class SearchClient(SearchClientOperationsMixin):
     :vartype synonym_maps: azure.search.documents.indexes.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.search.documents.indexes.operations.IndexesOperations
+    :ivar aliases: AliasesOperations operations
+    :vartype aliases: azure.search.documents.indexes.operations.AliasesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -46,7 +53,7 @@ class SearchClient(SearchClientOperationsMixin):
     ):
         # type: (...) -> None
         _base_url = '{endpoint}'
-        self._config = SearchClientConfiguration(endpoint, **kwargs)
+        self._config = SearchClientConfiguration(endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -58,6 +65,7 @@ class SearchClient(SearchClientOperationsMixin):
         self.skillsets = SkillsetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.synonym_maps = SynonymMapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.aliases = AliasesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

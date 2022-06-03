@@ -1,3 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 aiohttp>=3.0; python_version >= '3.5'
 -e ../../../tools/azure-devtools
+../../identity/azure-identity
+azure-mgmt-compute==26.1.0
+azure-mgmt-storage==20.0.0
+azure-mgmt-privatedns==1.0.0
