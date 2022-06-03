@@ -51,9 +51,22 @@ jobs:
         fetchDepth: 1
         path: 'cli'
 
-      - template: /eng/pipelines/templates/steps/use-python-version.yml
-        parameters:
-          versionSpec: '${{ parameters.PythonVersion }}'
+
+      - pwsh: |
+          Write-Host "Hello World"
+        displayName: "Greetings"
+
+      - pwsh: |
+          Get-ChildItem -Force -Path $(Build.BuildDirectory)
+        displayName: "Build Directory"
+
+      - pwsh: |
+          Get-ChildItem -Force -Path $(Build.SourcesDirectory)
+        displayName: "Examining Sources Directory"
+
+      # - template: /eng/pipelines/templates/steps/use-python-version.yml
+      #   parameters:
+      #     versionSpec: '${{ parameters.PythonVersion }}'
 
       - pwsh: |
           Write-Host "Hello World"
