@@ -1,0 +1,59 @@
+resources:
+  repositories:
+    - repository: azure-cli
+      type: git
+      name: azure/azure-cli
+      ref: refs/heads/dev
+
+parameters:
+  - name: TargetRepoPackages
+    type: object
+    default: 
+      - 'sdk/core/azure-core'
+# a list of any resolvable pip install. EG:
+# - https://<path-to-blobstorage>/blah.whl
+# - <packagename>==<version>
+  - name: InjectedPackages
+    type: object
+    default: []
+  - name: PythonVersion
+    type: string
+    default: "3.9"
+
+jobs:
+ - job:
+    displayName: 'Run AZDev Tests'
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+
+    variables:
+      - template: ../variables/globals.yml
+
+    strategy:
+      matrix:
+        linux:
+          imageName: 'ubuntu-20.04'
+          poolName: 'azsdk-pool-mms-ubuntu-2004-general'
+        mac:
+          imageName: 'windows-2019'
+          poolName: 'azsdk-pool-mms-win-2019-general'
+        windows:
+          imageName: 'macOS-10.15'
+          poolName: 'Azure Pipelines'
+
+    pool:
+      vmImage: $(imageName)
+      name: '$(poolName)'
+
+    steps:
+      - checkout: azure-cli
+        fetchDepth: 1
+        path: 'cli'
+
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
+        parameters:
+          versionSpec: '${{ parameters.PythonVersion }}'
+
+      - pwsh: |
+          Write-Host "Hello World"
+        displayName: "Greetings"
+  
