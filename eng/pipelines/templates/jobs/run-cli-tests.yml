@@ -33,10 +33,10 @@ jobs:
         linux:
           imageName: 'ubuntu-20.04'
           poolName: 'azsdk-pool-mms-ubuntu-2004-general'
-        mac:
+        windows:
           imageName: 'windows-2019'
           poolName: 'azsdk-pool-mms-win-2019-general'
-        windows:
+        mac:
           imageName: 'macOS-10.15'
           poolName: 'Azure Pipelines'
 
@@ -51,26 +51,6 @@ jobs:
       - checkout: AzureCLI
         fetchDepth: 1
         path: 'cli'
-
-      # - pwsh: |
-      #     Write-Host "Hello World"
-      #   displayName: "Greetings"
-
-      # - pwsh: |
-      #     Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)"
-      #   displayName: "Examining Build Directory"
-
-      # - pwsh: |
-      #     Get-ChildItem -Name -Force -Path "$(Build.SourcesDirectory)"
-      #   displayName: "Examining Sources Directory"
-
-      # - pwsh: |
-      #     Write-Host "Hello World"
-      #   displayName: "Greetings"
-
-      # - pwsh: |
-      #     Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)/cli"
-      #   displayName: "cli dump"
 
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
@@ -93,6 +73,8 @@ jobs:
       - bash: |
           set -ev
           source env/bin/activate
+
+          python -m pip freeze
 
           serial_modules="appservice botservice cloud network azure-cli-core azure-cli-telemetry"
           python $(Agent.BuildDirectory)/cli/scripts/ci/automation_full_test.py "1" "1" "latest" "$serial_modules"
