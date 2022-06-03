@@ -1,0 +1,52 @@
+type: pipeline
+
+description: The hello world pipeline job with inline parallel job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+inputs:
+  job_data_path:
+    type: mltable
+    path: ../dataset/mnist-data/
+    mode: eval_mount
+
+outputs:
+  job_out_path:
+    type: uri_folder
+    mode: mount
+
+jobs:
+  hello_world_inline_parallel_file_job_1:
+    type: parallel
+    compute: "azureml:cpu-cluster"
+    resources:
+      instance_count: 3
+    inputs:
+      job_data_path: ${{parent.inputs.job_data_path}}
+    outputs:
+      job_output_path: ${{parent.outputs.job_out_path}}
+
+    mini_batch_size: "1"
+    input_data: ${{inputs.job_data_path}}
+    mini_batch_error_threshold: 1
+    max_concurrency_per_instance: 1
+    logging_level: "WARNING"
+    error_threshold: -1
+    environment_variables:
+      FOO: "bar"
+    retry_settings:
+      max_retries: 2
+      timeout: 60
+
+    task:
+      type: function
+      code: ../script_parallel/
+      entry_script: pass_through.py
+      environment:
+        name: "prs-env"
+        version: 1
+        image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+        conda_file: ../environment/environment_parallel.yml
+      args: >-
+        --job_output_path ${{outputs.job_output_path}}

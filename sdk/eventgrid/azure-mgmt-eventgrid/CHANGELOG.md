@@ -1,5 +1,16 @@
 # Release History
 
+## 10.2.0b2 (2022-05-30)
+
+**Breaking changes**
+
+  - Operation DomainEventSubscriptionsOperations.list has a new parameter filter
+  - Operation DomainEventSubscriptionsOperations.list has a new parameter top
+  - Operation DomainTopicEventSubscriptionsOperations.list has a new parameter filter
+  - Operation DomainTopicEventSubscriptionsOperations.list has a new parameter top
+  - Operation TopicEventSubscriptionsOperations.list has a new parameter filter
+  - Operation TopicEventSubscriptionsOperations.list has a new parameter top
+
 ## 10.2.0b1 (2022-04-07)
 
 **Features**

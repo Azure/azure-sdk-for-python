@@ -16,7 +16,7 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import DataFactoryManagementClientConfiguration
-from .operations import ActivityRunsOperations, DataFlowDebugSessionOperations, DataFlowsOperations, DatasetsOperations, ExposureControlOperations, FactoriesOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimesOperations, LinkedServicesOperations, ManagedPrivateEndpointsOperations, ManagedVirtualNetworksOperations, Operations, PipelineRunsOperations, PipelinesOperations, PrivateEndPointConnectionsOperations, PrivateEndpointConnectionOperations, PrivateLinkResourcesOperations, TriggerRunsOperations, TriggersOperations
+from .operations import ActivityRunsOperations, DataFlowDebugSessionOperations, DataFlowsOperations, DatasetsOperations, ExposureControlOperations, FactoriesOperations, GlobalParametersOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimesOperations, LinkedServicesOperations, ManagedPrivateEndpointsOperations, ManagedVirtualNetworksOperations, Operations, PipelineRunsOperations, PipelinesOperations, PrivateEndPointConnectionsOperations, PrivateEndpointConnectionOperations, PrivateLinkResourcesOperations, TriggerRunsOperations, TriggersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -75,6 +75,8 @@ class DataFactoryManagementClient:    # pylint: disable=too-many-instance-attrib
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.datafactory.operations.PrivateLinkResourcesOperations
+    :ivar global_parameters: GlobalParametersOperations operations
+    :vartype global_parameters: azure.mgmt.datafactory.operations.GlobalParametersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription identifier.
@@ -122,6 +124,7 @@ class DataFactoryManagementClient:    # pylint: disable=too-many-instance-attrib
         self.private_end_point_connections = PrivateEndPointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connection = PrivateEndpointConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.global_parameters = GlobalParametersOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

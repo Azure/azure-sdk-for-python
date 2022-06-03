@@ -1,0 +1,19 @@
+type: command
+
+description: "Show the MPI training environment"
+name: mpi_hello_world
+display_name: MPI-hello-world
+version: 1
+compute: azureml:gpu-cluster
+environment: azureml:AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:15
+command: >-
+  printenv 
+resources:
+  instance_count: 2
+distribution:
+  type: mpi
+  process_count_per_instance: 2
+
+## TODO: remove
+#environment_variables:
+#  AZUREML_COMPUTE_USE_COMMON_RUNTIME: "true"

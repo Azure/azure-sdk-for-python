@@ -15,6 +15,77 @@ import msrest.serialization
 from ._azure_stack_hci_client_enums import *
 
 
+class ArcConnectivityProperties(msrest.serialization.Model):
+    """Connectivity related configuration required by arc server.
+
+    :ivar enabled: True indicates ARC connectivity is enabled.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword enabled: True indicates ARC connectivity is enabled.
+        :paramtype enabled: bool
+        """
+        super(ArcConnectivityProperties, self).__init__(**kwargs)
+        self.enabled = enabled
+
+
+class ArcIdentityResponse(msrest.serialization.Model):
+    """ArcIdentity details.
+
+    :ivar arc_application_client_id:
+    :vartype arc_application_client_id: str
+    :ivar arc_application_tenant_id:
+    :vartype arc_application_tenant_id: str
+    :ivar arc_service_principal_object_id:
+    :vartype arc_service_principal_object_id: str
+    :ivar arc_application_object_id:
+    :vartype arc_application_object_id: str
+    """
+
+    _attribute_map = {
+        'arc_application_client_id': {'key': 'properties.arcApplicationClientId', 'type': 'str'},
+        'arc_application_tenant_id': {'key': 'properties.arcApplicationTenantId', 'type': 'str'},
+        'arc_service_principal_object_id': {'key': 'properties.arcServicePrincipalObjectId', 'type': 'str'},
+        'arc_application_object_id': {'key': 'properties.arcApplicationObjectId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        arc_application_client_id: Optional[str] = None,
+        arc_application_tenant_id: Optional[str] = None,
+        arc_service_principal_object_id: Optional[str] = None,
+        arc_application_object_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword arc_application_client_id:
+        :paramtype arc_application_client_id: str
+        :keyword arc_application_tenant_id:
+        :paramtype arc_application_tenant_id: str
+        :keyword arc_service_principal_object_id:
+        :paramtype arc_service_principal_object_id: str
+        :keyword arc_application_object_id:
+        :paramtype arc_application_object_id: str
+        """
+        super(ArcIdentityResponse, self).__init__(**kwargs)
+        self.arc_application_client_id = arc_application_client_id
+        self.arc_application_tenant_id = arc_application_tenant_id
+        self.arc_service_principal_object_id = arc_service_principal_object_id
+        self.arc_application_object_id = arc_application_object_id
+
+
 class Resource(msrest.serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -105,29 +176,39 @@ class ArcSetting(ProxyResource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state of the ArcSetting proxy resource. Possible values
      include: "Succeeded", "Failed", "Canceled", "Accepted", "Provisioning".
-    :vartype provisioning_state: str or ~azure_stack_hci_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
     :ivar arc_instance_resource_group: The resource group that hosts the Arc agents, ie. Hybrid
      Compute Machine resources.
     :vartype arc_instance_resource_group: str
+    :ivar arc_application_client_id: App id of arc AAD identity.
+    :vartype arc_application_client_id: str
+    :ivar arc_application_tenant_id: Tenant id of arc AAD identity.
+    :vartype arc_application_tenant_id: str
+    :ivar arc_service_principal_object_id: Object id of arc AAD service principal.
+    :vartype arc_service_principal_object_id: str
+    :ivar arc_application_object_id: Object id of arc AAD identity.
+    :vartype arc_application_object_id: str
     :ivar aggregate_state: Aggregate state of Arc agent across the nodes in this HCI cluster.
      Possible values include: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed",
      "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
      "PartiallySucceeded", "PartiallyConnected", "InProgress".
-    :vartype aggregate_state: str or ~azure_stack_hci_client.models.ArcSettingAggregateState
+    :vartype aggregate_state: str or ~azure.mgmt.azurestackhci.models.ArcSettingAggregateState
     :ivar per_node_details: State of Arc agent in each of the nodes.
-    :vartype per_node_details: list[~azure_stack_hci_client.models.PerNodeState]
+    :vartype per_node_details: list[~azure.mgmt.azurestackhci.models.PerNodeState]
+    :ivar connectivity_properties: contains connectivity related configuration for ARC resources.
+    :vartype connectivity_properties: any
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Possible values include:
      "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -147,8 +228,13 @@ class ArcSetting(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'arc_instance_resource_group': {'key': 'properties.arcInstanceResourceGroup', 'type': 'str'},
+        'arc_application_client_id': {'key': 'properties.arcApplicationClientId', 'type': 'str'},
+        'arc_application_tenant_id': {'key': 'properties.arcApplicationTenantId', 'type': 'str'},
+        'arc_service_principal_object_id': {'key': 'properties.arcServicePrincipalObjectId', 'type': 'str'},
+        'arc_application_object_id': {'key': 'properties.arcApplicationObjectId', 'type': 'str'},
         'aggregate_state': {'key': 'properties.aggregateState', 'type': 'str'},
         'per_node_details': {'key': 'properties.perNodeDetails', 'type': '[PerNodeState]'},
+        'connectivity_properties': {'key': 'properties.connectivityProperties', 'type': 'object'},
         'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
         'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
         'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
@@ -161,6 +247,11 @@ class ArcSetting(ProxyResource):
         self,
         *,
         arc_instance_resource_group: Optional[str] = None,
+        arc_application_client_id: Optional[str] = None,
+        arc_application_tenant_id: Optional[str] = None,
+        arc_service_principal_object_id: Optional[str] = None,
+        arc_application_object_id: Optional[str] = None,
+        connectivity_properties: Optional[Any] = None,
         created_by: Optional[str] = None,
         created_by_type: Optional[Union[str, "CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
@@ -173,26 +264,42 @@ class ArcSetting(ProxyResource):
         :keyword arc_instance_resource_group: The resource group that hosts the Arc agents, ie. Hybrid
          Compute Machine resources.
         :paramtype arc_instance_resource_group: str
+        :keyword arc_application_client_id: App id of arc AAD identity.
+        :paramtype arc_application_client_id: str
+        :keyword arc_application_tenant_id: Tenant id of arc AAD identity.
+        :paramtype arc_application_tenant_id: str
+        :keyword arc_service_principal_object_id: Object id of arc AAD service principal.
+        :paramtype arc_service_principal_object_id: str
+        :keyword arc_application_object_id: Object id of arc AAD identity.
+        :paramtype arc_application_object_id: str
+        :keyword connectivity_properties: contains connectivity related configuration for ARC
+         resources.
+        :paramtype connectivity_properties: any
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Possible values
          include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
          values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+        :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
         super(ArcSetting, self).__init__(**kwargs)
         self.provisioning_state = None
         self.arc_instance_resource_group = arc_instance_resource_group
+        self.arc_application_client_id = arc_application_client_id
+        self.arc_application_tenant_id = arc_application_tenant_id
+        self.arc_service_principal_object_id = arc_service_principal_object_id
+        self.arc_application_object_id = arc_application_object_id
         self.aggregate_state = None
         self.per_node_details = None
+        self.connectivity_properties = connectivity_properties
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -207,7 +314,7 @@ class ArcSettingList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of ArcSetting proxy resources.
-    :vartype value: list[~azure_stack_hci_client.models.ArcSetting]
+    :vartype value: list[~azure.mgmt.azurestackhci.models.ArcSetting]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -231,6 +338,39 @@ class ArcSettingList(msrest.serialization.Model):
         super(ArcSettingList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ArcSettingsPatch(msrest.serialization.Model):
+    """ArcSetting details to update.
+
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar connectivity_properties: contains connectivity related configuration for ARC resources.
+    :vartype connectivity_properties: any
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'connectivity_properties': {'key': 'properties.connectivityProperties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        connectivity_properties: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword connectivity_properties: contains connectivity related configuration for ARC
+         resources.
+        :paramtype connectivity_properties: any
+        """
+        super(ArcSettingsPatch, self).__init__(**kwargs)
+        self.tags = tags
+        self.connectivity_properties = connectivity_properties
 
 
 class TrackedResource(Resource):
@@ -308,10 +448,10 @@ class Cluster(TrackedResource):
     :vartype location: str
     :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded", "Failed",
      "Canceled", "Accepted", "Provisioning".
-    :vartype provisioning_state: str or ~azure_stack_hci_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
     :ivar status: Status of the cluster agent. Possible values include: "NotYetRegistered",
      "ConnectedRecently", "NotConnectedRecently", "Disconnected", "Error".
-    :vartype status: str or ~azure_stack_hci_client.models.Status
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.Status
     :ivar cloud_id: Unique, immutable resource id.
     :vartype cloud_id: str
     :ivar cloud_management_endpoint: Endpoint configured for management from the Azure portal.
@@ -320,10 +460,14 @@ class Cluster(TrackedResource):
     :vartype aad_client_id: str
     :ivar aad_tenant_id: Tenant id of cluster AAD identity.
     :vartype aad_tenant_id: str
+    :ivar aad_application_object_id: Object id of cluster AAD identity.
+    :vartype aad_application_object_id: str
+    :ivar aad_service_principal_object_id: Id of cluster identity service principal.
+    :vartype aad_service_principal_object_id: str
     :ivar desired_properties: Desired properties of the cluster.
-    :vartype desired_properties: ~azure_stack_hci_client.models.ClusterDesiredProperties
+    :vartype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
     :ivar reported_properties: Properties reported by cluster agent.
-    :vartype reported_properties: ~azure_stack_hci_client.models.ClusterReportedProperties
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.ClusterReportedProperties
     :ivar trial_days_remaining: Number of days remaining in the trial period.
     :vartype trial_days_remaining: float
     :ivar billing_model: Type of billing applied to the resource.
@@ -334,18 +478,20 @@ class Cluster(TrackedResource):
     :vartype last_sync_timestamp: ~datetime.datetime
     :ivar last_billing_timestamp: Most recent billing meter timestamp.
     :vartype last_billing_timestamp: ~datetime.datetime
+    :ivar service_endpoint: Region specific DataPath Endpoint of the cluster.
+    :vartype service_endpoint: str
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Possible values include:
      "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -364,6 +510,7 @@ class Cluster(TrackedResource):
         'registration_timestamp': {'readonly': True},
         'last_sync_timestamp': {'readonly': True},
         'last_billing_timestamp': {'readonly': True},
+        'service_endpoint': {'readonly': True},
     }
 
     _attribute_map = {
@@ -378,6 +525,8 @@ class Cluster(TrackedResource):
         'cloud_management_endpoint': {'key': 'properties.cloudManagementEndpoint', 'type': 'str'},
         'aad_client_id': {'key': 'properties.aadClientId', 'type': 'str'},
         'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
+        'aad_application_object_id': {'key': 'properties.aadApplicationObjectId', 'type': 'str'},
+        'aad_service_principal_object_id': {'key': 'properties.aadServicePrincipalObjectId', 'type': 'str'},
         'desired_properties': {'key': 'properties.desiredProperties', 'type': 'ClusterDesiredProperties'},
         'reported_properties': {'key': 'properties.reportedProperties', 'type': 'ClusterReportedProperties'},
         'trial_days_remaining': {'key': 'properties.trialDaysRemaining', 'type': 'float'},
@@ -385,6 +534,7 @@ class Cluster(TrackedResource):
         'registration_timestamp': {'key': 'properties.registrationTimestamp', 'type': 'iso-8601'},
         'last_sync_timestamp': {'key': 'properties.lastSyncTimestamp', 'type': 'iso-8601'},
         'last_billing_timestamp': {'key': 'properties.lastBillingTimestamp', 'type': 'iso-8601'},
+        'service_endpoint': {'key': 'properties.serviceEndpoint', 'type': 'str'},
         'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
         'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
         'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
@@ -401,6 +551,8 @@ class Cluster(TrackedResource):
         cloud_management_endpoint: Optional[str] = None,
         aad_client_id: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
+        aad_application_object_id: Optional[str] = None,
+        aad_service_principal_object_id: Optional[str] = None,
         desired_properties: Optional["ClusterDesiredProperties"] = None,
         created_by: Optional[str] = None,
         created_by_type: Optional[Union[str, "CreatedByType"]] = None,
@@ -421,20 +573,24 @@ class Cluster(TrackedResource):
         :paramtype aad_client_id: str
         :keyword aad_tenant_id: Tenant id of cluster AAD identity.
         :paramtype aad_tenant_id: str
+        :keyword aad_application_object_id: Object id of cluster AAD identity.
+        :paramtype aad_application_object_id: str
+        :keyword aad_service_principal_object_id: Id of cluster identity service principal.
+        :paramtype aad_service_principal_object_id: str
         :keyword desired_properties: Desired properties of the cluster.
-        :paramtype desired_properties: ~azure_stack_hci_client.models.ClusterDesiredProperties
+        :paramtype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Possible values
          include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
          values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+        :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
@@ -445,6 +601,8 @@ class Cluster(TrackedResource):
         self.cloud_management_endpoint = cloud_management_endpoint
         self.aad_client_id = aad_client_id
         self.aad_tenant_id = aad_tenant_id
+        self.aad_application_object_id = aad_application_object_id
+        self.aad_service_principal_object_id = aad_service_principal_object_id
         self.desired_properties = desired_properties
         self.reported_properties = None
         self.trial_days_remaining = None
@@ -452,6 +610,7 @@ class Cluster(TrackedResource):
         self.registration_timestamp = None
         self.last_sync_timestamp = None
         self.last_billing_timestamp = None
+        self.service_endpoint = None
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -466,10 +625,10 @@ class ClusterDesiredProperties(msrest.serialization.Model):
     :ivar windows_server_subscription: Desired state of Windows Server Subscription. Possible
      values include: "Disabled", "Enabled".
     :vartype windows_server_subscription: str or
-     ~azure_stack_hci_client.models.WindowsServerSubscription
+     ~azure.mgmt.azurestackhci.models.WindowsServerSubscription
     :ivar diagnostic_level: Desired level of diagnostic data emitted by the cluster. Possible
      values include: "Off", "Basic", "Enhanced".
-    :vartype diagnostic_level: str or ~azure_stack_hci_client.models.DiagnosticLevel
+    :vartype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
     """
 
     _attribute_map = {
@@ -488,14 +647,60 @@ class ClusterDesiredProperties(msrest.serialization.Model):
         :keyword windows_server_subscription: Desired state of Windows Server Subscription. Possible
          values include: "Disabled", "Enabled".
         :paramtype windows_server_subscription: str or
-         ~azure_stack_hci_client.models.WindowsServerSubscription
+         ~azure.mgmt.azurestackhci.models.WindowsServerSubscription
         :keyword diagnostic_level: Desired level of diagnostic data emitted by the cluster. Possible
          values include: "Off", "Basic", "Enhanced".
-        :paramtype diagnostic_level: str or ~azure_stack_hci_client.models.DiagnosticLevel
+        :paramtype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
         """
         super(ClusterDesiredProperties, self).__init__(**kwargs)
         self.windows_server_subscription = windows_server_subscription
         self.diagnostic_level = diagnostic_level
+
+
+class ClusterIdentityResponse(msrest.serialization.Model):
+    """Cluster Identity details.
+
+    :ivar aad_client_id:
+    :vartype aad_client_id: str
+    :ivar aad_tenant_id:
+    :vartype aad_tenant_id: str
+    :ivar aad_service_principal_object_id:
+    :vartype aad_service_principal_object_id: str
+    :ivar aad_application_object_id:
+    :vartype aad_application_object_id: str
+    """
+
+    _attribute_map = {
+        'aad_client_id': {'key': 'properties.aadClientId', 'type': 'str'},
+        'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
+        'aad_service_principal_object_id': {'key': 'properties.aadServicePrincipalObjectId', 'type': 'str'},
+        'aad_application_object_id': {'key': 'properties.aadApplicationObjectId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        aad_client_id: Optional[str] = None,
+        aad_tenant_id: Optional[str] = None,
+        aad_service_principal_object_id: Optional[str] = None,
+        aad_application_object_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword aad_client_id:
+        :paramtype aad_client_id: str
+        :keyword aad_tenant_id:
+        :paramtype aad_tenant_id: str
+        :keyword aad_service_principal_object_id:
+        :paramtype aad_service_principal_object_id: str
+        :keyword aad_application_object_id:
+        :paramtype aad_application_object_id: str
+        """
+        super(ClusterIdentityResponse, self).__init__(**kwargs)
+        self.aad_client_id = aad_client_id
+        self.aad_tenant_id = aad_tenant_id
+        self.aad_service_principal_object_id = aad_service_principal_object_id
+        self.aad_application_object_id = aad_application_object_id
 
 
 class ClusterList(msrest.serialization.Model):
@@ -504,7 +709,7 @@ class ClusterList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of clusters.
-    :vartype value: list[~azure_stack_hci_client.models.Cluster]
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Cluster]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -526,7 +731,7 @@ class ClusterList(msrest.serialization.Model):
     ):
         """
         :keyword value: List of clusters.
-        :paramtype value: list[~azure_stack_hci_client.models.Cluster]
+        :paramtype value: list[~azure.mgmt.azurestackhci.models.Cluster]
         """
         super(ClusterList, self).__init__(**kwargs)
         self.value = value
@@ -545,7 +750,7 @@ class ClusterNode(msrest.serialization.Model):
     :ivar windows_server_subscription: State of Windows Server Subscription. Possible values
      include: "Disabled", "Enabled".
     :vartype windows_server_subscription: str or
-     ~azure_stack_hci_client.models.WindowsServerSubscription
+     ~azure.mgmt.azurestackhci.models.WindowsServerSubscription
     :ivar manufacturer: Manufacturer of the cluster node hardware.
     :vartype manufacturer: str
     :ivar model: Model name of the cluster node hardware.
@@ -619,7 +824,7 @@ class ClusterPatch(msrest.serialization.Model):
     :ivar aad_tenant_id: Tenant id of cluster AAD identity.
     :vartype aad_tenant_id: str
     :ivar desired_properties: Desired properties of the cluster.
-    :vartype desired_properties: ~azure_stack_hci_client.models.ClusterDesiredProperties
+    :vartype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
     """
 
     _attribute_map = {
@@ -650,7 +855,7 @@ class ClusterPatch(msrest.serialization.Model):
         :keyword aad_tenant_id: Tenant id of cluster AAD identity.
         :paramtype aad_tenant_id: str
         :keyword desired_properties: Desired properties of the cluster.
-        :paramtype desired_properties: ~azure_stack_hci_client.models.ClusterDesiredProperties
+        :paramtype desired_properties: ~azure.mgmt.azurestackhci.models.ClusterDesiredProperties
         """
         super(ClusterPatch, self).__init__(**kwargs)
         self.tags = tags
@@ -672,15 +877,15 @@ class ClusterReportedProperties(msrest.serialization.Model):
     :ivar cluster_version: Version of the cluster software.
     :vartype cluster_version: str
     :ivar nodes: List of nodes reported by the cluster.
-    :vartype nodes: list[~azure_stack_hci_client.models.ClusterNode]
+    :vartype nodes: list[~azure.mgmt.azurestackhci.models.ClusterNode]
     :ivar last_updated: Last time the cluster reported the data.
     :vartype last_updated: ~datetime.datetime
     :ivar imds_attestation: IMDS attestation status of the cluster. Possible values include:
      "Disabled", "Enabled".
-    :vartype imds_attestation: str or ~azure_stack_hci_client.models.ImdsAttestation
+    :vartype imds_attestation: str or ~azure.mgmt.azurestackhci.models.ImdsAttestation
     :ivar diagnostic_level: Level of diagnostic data emitted by the cluster. Possible values
      include: "Off", "Basic", "Enhanced".
-    :vartype diagnostic_level: str or ~azure_stack_hci_client.models.DiagnosticLevel
+    :vartype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
     """
 
     _validation = {
@@ -711,7 +916,7 @@ class ClusterReportedProperties(msrest.serialization.Model):
         """
         :keyword diagnostic_level: Level of diagnostic data emitted by the cluster. Possible values
          include: "Off", "Basic", "Enhanced".
-        :paramtype diagnostic_level: str or ~azure_stack_hci_client.models.DiagnosticLevel
+        :paramtype diagnostic_level: str or ~azure.mgmt.azurestackhci.models.DiagnosticLevel
         """
         super(ClusterReportedProperties, self).__init__(**kwargs)
         self.cluster_name = None
@@ -767,9 +972,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure_stack_hci_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.azurestackhci.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure_stack_hci_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.azurestackhci.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -806,7 +1011,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~azure_stack_hci_client.models.ErrorDetail
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -821,7 +1026,7 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         """
         :keyword error: The error object.
-        :paramtype error: ~azure_stack_hci_client.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
         """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
@@ -842,14 +1047,15 @@ class Extension(ProxyResource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state of the Extension proxy resource. Possible values
      include: "Succeeded", "Failed", "Canceled", "Accepted", "Provisioning".
-    :vartype provisioning_state: str or ~azure_stack_hci_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
     :ivar aggregate_state: Aggregate state of Arc Extensions across the nodes in this HCI cluster.
      Possible values include: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed",
      "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
      "PartiallySucceeded", "PartiallyConnected", "InProgress".
-    :vartype aggregate_state: str or ~azure_stack_hci_client.models.ExtensionAggregateState
+    :vartype aggregate_state: str or ~azure.mgmt.azurestackhci.models.ExtensionAggregateState
     :ivar per_node_extension_details: State of Arc Extension in each of the nodes.
-    :vartype per_node_extension_details: list[~azure_stack_hci_client.models.PerNodeExtensionState]
+    :vartype per_node_extension_details:
+     list[~azure.mgmt.azurestackhci.models.PerNodeExtensionState]
     :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
     :vartype force_update_tag: str
@@ -872,14 +1078,14 @@ class Extension(ProxyResource):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Possible values include:
      "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -956,14 +1162,14 @@ class Extension(ProxyResource):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Possible values
          include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
          values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+        :paramtype last_modified_by_type: str or ~azure.mgmt.azurestackhci.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
@@ -992,7 +1198,7 @@ class ExtensionList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Extensions in HCI cluster.
-    :vartype value: list[~azure_stack_hci_client.models.Extension]
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Extension]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -1030,14 +1236,14 @@ class Operation(msrest.serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :ivar display: Localized display information for this particular operation.
-    :vartype display: ~azure_stack_hci_client.models.OperationDisplay
+    :vartype display: ~azure.mgmt.azurestackhci.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
      "system", "user,system".
-    :vartype origin: str or ~azure_stack_hci_client.models.Origin
+    :vartype origin: str or ~azure.mgmt.azurestackhci.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. Possible values include: "Internal".
-    :vartype action_type: str or ~azure_stack_hci_client.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.azurestackhci.models.ActionType
     """
 
     _validation = {
@@ -1063,7 +1269,7 @@ class Operation(msrest.serialization.Model):
     ):
         """
         :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~azure_stack_hci_client.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.azurestackhci.models.OperationDisplay
         """
         super(Operation, self).__init__(**kwargs)
         self.name = None
@@ -1125,7 +1331,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~azure_stack_hci_client.models.Operation]
+    :vartype value: list[~azure.mgmt.azurestackhci.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -1151,6 +1357,52 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = None
 
 
+class PasswordCredential(msrest.serialization.Model):
+    """PasswordCredential.
+
+    :ivar secret_text:
+    :vartype secret_text: str
+    :ivar key_id:
+    :vartype key_id: str
+    :ivar start_date_time:
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time:
+    :vartype end_date_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'secret_text': {'key': 'secretText', 'type': 'str'},
+        'key_id': {'key': 'keyId', 'type': 'str'},
+        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
+        'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        secret_text: Optional[str] = None,
+        key_id: Optional[str] = None,
+        start_date_time: Optional[datetime.datetime] = None,
+        end_date_time: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword secret_text:
+        :paramtype secret_text: str
+        :keyword key_id:
+        :paramtype key_id: str
+        :keyword start_date_time:
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time:
+        :paramtype end_date_time: ~datetime.datetime
+        """
+        super(PasswordCredential, self).__init__(**kwargs)
+        self.secret_text = secret_text
+        self.key_id = key_id
+        self.start_date_time = start_date_time
+        self.end_date_time = end_date_time
+
+
 class PerNodeExtensionState(msrest.serialization.Model):
     """Status of Arc Extension for a particular node in HCI Cluster.
 
@@ -1163,7 +1415,7 @@ class PerNodeExtensionState(msrest.serialization.Model):
     :ivar state: State of Arc Extension in this node. Possible values include: "NotSpecified",
      "Error", "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
      "Updating", "Deleting", "Moving".
-    :vartype state: str or ~azure_stack_hci_client.models.NodeExtensionState
+    :vartype state: str or ~azure.mgmt.azurestackhci.models.NodeExtensionState
     """
 
     _validation = {
@@ -1202,7 +1454,7 @@ class PerNodeState(msrest.serialization.Model):
     :ivar state: State of Arc agent in this node. Possible values include: "NotSpecified", "Error",
      "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
      "Updating", "Deleting", "Moving".
-    :vartype state: str or ~azure_stack_hci_client.models.NodeArcState
+    :vartype state: str or ~azure.mgmt.azurestackhci.models.NodeArcState
     """
 
     _validation = {
@@ -1227,3 +1479,53 @@ class PerNodeState(msrest.serialization.Model):
         self.name = None
         self.arc_instance = None
         self.state = None
+
+
+class RawCertificateData(msrest.serialization.Model):
+    """RawCertificateData.
+
+    :ivar certificates:
+    :vartype certificates: list[str]
+    """
+
+    _attribute_map = {
+        'certificates': {'key': 'certificates', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        certificates: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword certificates:
+        :paramtype certificates: list[str]
+        """
+        super(RawCertificateData, self).__init__(**kwargs)
+        self.certificates = certificates
+
+
+class UploadCertificateRequest(msrest.serialization.Model):
+    """UploadCertificateRequest.
+
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.azurestackhci.models.RawCertificateData
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'RawCertificateData'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["RawCertificateData"] = None,
+        **kwargs
+    ):
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.azurestackhci.models.RawCertificateData
+        """
+        super(UploadCertificateRequest, self).__init__(**kwargs)
+        self.properties = properties
