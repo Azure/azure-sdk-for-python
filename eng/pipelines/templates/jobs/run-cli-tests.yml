@@ -83,7 +83,9 @@ jobs:
       # walk injected packages, install them
       # walk file paths, install those  
       - ${{ each artifact in parameters.TargetRepoPackages }}:
-        - pwsh: |
+        - bash: |
+            set -ev
+            source env/bin/activate
             pip install -e $(Build.SourcesDirectory)/${{ artifact }}
           displayName: Install ${{ artifact }} 
 
@@ -95,4 +97,3 @@ jobs:
           serial_modules="appservice botservice cloud network azure-cli-core azure-cli-telemetry"
           python scripts/ci/automation_full_test.py "1" "1" "latest" "$serial_modules"
         displayName: Run CLI Tests
-        workingDirectory: $(Agent.BuildDirectory)/cli
