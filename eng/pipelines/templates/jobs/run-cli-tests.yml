@@ -11,15 +11,18 @@ parameters:
     type: object
     default: 
       - 'sdk/core/azure-core'
-# a list of any resolvable pip install. EG:
-# - https://<path-to-blobstorage>/blah.whl
-# - <packagename>==<version>
+    # a list of any resolvable pip install. EG:
+    # - https://<path-to-blobstorage>/blah.whl
+    # - <packagename>==<version>
   - name: InjectedPackages
     type: object
     default: []
   - name: PythonVersion
     type: string
     default: "3.9"
+  - name: TargetModules
+    type: string
+    default: "appservice botservice cloud network azure-cli-core azure-cli-telemetry"
 
 jobs:
   - job:
@@ -80,6 +83,5 @@ jobs:
 
           python -m pip freeze
 
-          serial_modules="appservice botservice cloud network azure-cli-core azure-cli-telemetry"
-          python $(Agent.BuildDirectory)/cli/scripts/ci/automation_full_test.py "1" "1" "latest" "$serial_modules"
+          python $(Agent.BuildDirectory)/cli/scripts/ci/automation_full_test.py "1" "1" "latest" "${{ parameters.TargetModules }}"
         displayName: Run CLI Tests
