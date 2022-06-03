@@ -95,5 +95,5 @@ jobs:
           source env/bin/activate
 
           serial_modules="appservice botservice cloud network azure-cli-core azure-cli-telemetry"
-          python scripts/ci/automation_full_test.py "1" "1" "latest" "$serial_modules"
+          python $(Agent.BuildDirectory)/cli/scripts/ci/automation_full_test.py "1" "1" "latest" "$serial_modules"
         displayName: Run CLI Tests
