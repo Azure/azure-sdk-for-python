@@ -373,7 +373,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 encryption_version=self.encryption_version)
         except TypeError:
             warnings.warn(
-                "message_encode_policy.configure is likely missing the encryption_version parameter."
+                "TypeError when calling message_encode_policy.configure. \
+                It is likely missing the encryption_version parameter. \
+                Retrying without encryption_version."
             )
             self._config.message_encode_policy.configure(
                 require_encryption=self.require_encryption,
