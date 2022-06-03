@@ -141,10 +141,10 @@ class _EncryptionData:
         '''
         :param Optional[bytes] content_encryption_IV:
             The content encryption initialization vector.
-            Required for AES-CBC.
+            Required for AES-CBC (V1).
         :param Optional[_EncryptedRegionInfo] encrypted_region_info:
             The info about the autenticated block sizes.
-            Required for AES-GCM.
+            Required for AES-GCM (V2).
         :param _EncryptionAgent encryption_agent:
             The encryption agent.
         :param _WrappedContentKey wrapped_content_key:
@@ -157,7 +157,7 @@ class _EncryptionData:
         _validate_not_none('encryption_agent', encryption_agent)
         _validate_not_none('wrapped_content_key', wrapped_content_key)
 
-        # Validate we have the right info for the specified algorithm
+        # Validate we have the right matching optional parameter for the specified algorithm
         if encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256:
             _validate_not_none('content_encryption_IV', content_encryption_IV)
         elif encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_GCM_256:
