@@ -77,7 +77,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
