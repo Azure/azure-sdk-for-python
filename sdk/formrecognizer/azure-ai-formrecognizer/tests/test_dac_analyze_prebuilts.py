@@ -13,8 +13,8 @@ from io import BytesIO
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.serialization import AzureJSONEncoder
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
-from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType, AddressValue
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -84,10 +84,53 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert business_card.fields.get("Faxes").value[0].content == "+44 (0) 20 6789 2345"
 
         assert len(business_card.fields.get("Addresses").value) == 1
-        assert business_card.fields.get("Addresses").value[0].value == "2 Kingdom Street Paddington, London, W2 6BD"
+        assert business_card.fields.get("Addresses").value[0].value == "2 Kingdom Street\nPaddington, London, W2 6BD"
 
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
+
+    @pytest.mark.skip()
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_w2_png_value_address(self, client):
+        with open(self.w2_png, "rb") as fd:
+            document = fd.read()
+
+        poller = client.begin_analyze_document("prebuilt-tax.us.w2", document)
+
+        result = poller.result()
+        assert len(result.documents) == 1
+
+        w2_document = result.documents[0]
+
+        assert w2_document.doc_type == "tax.us.w2"
+        assert w2_document.fields.get("TaxYear").value == "2018"
+        # check value address correctly populated
+        assert w2_document.fields.get("Employee").value.get("Address").value.house_number == "96541"
+        assert w2_document.fields.get("Employee").value.get("Address").value.road == "molly hollow street"
+        assert w2_document.fields.get("Employee").value.get("Address").value.postal_code == "98631-5293"
+        assert w2_document.fields.get("Employee").value.get("Address").value.city == "kathrynmouth"
+        assert w2_document.fields.get("Employee").value.get("Address").value.state == "ne"
+        assert w2_document.fields.get("Employee").value.get("Address").value.street_address == "96541 molly hollow street"
+        assert w2_document.fields.get("Employee").value.get("Address").value.country_region == None
+        assert w2_document.fields.get("Employee").value.get("Address").value.po_box == None
+
+        w2_dict = result.to_dict()
+        json.dumps(w2_dict, cls=AzureJSONEncoder)
+        result = AnalyzeResult.from_dict(w2_dict)
+
+        assert w2_document.doc_type == "tax.us.w2"
+        assert w2_document.fields.get("TaxYear").value == "2018"
+        # check value address correctly populated
+        assert w2_document.fields.get("Employee").value.get("Address").value.house_number == "96541"
+        assert w2_document.fields.get("Employee").value.get("Address").value.road == "molly hollow street"
+        assert w2_document.fields.get("Employee").value.get("Address").value.postal_code == "98631-5293"
+        assert w2_document.fields.get("Employee").value.get("Address").value.city == "kathrynmouth"
+        assert w2_document.fields.get("Employee").value.get("Address").value.state == "ne"
+        assert w2_document.fields.get("Employee").value.get("Address").value.street_address == "96541 molly hollow street"
+        assert w2_document.fields.get("Employee").value.get("Address").value.country_region == None
+        assert w2_document.fields.get("Employee").value.get("Address").value.po_box == None
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -131,7 +174,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
         assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
         assert id_document.fields.get("Sex").value == "M"
-        assert id_document.fields.get("Address").value == "123 STREET ADDRESS YOUR CITY WA 99999-1234"
+        assert id_document.fields.get("Address").value == "123 STREET ADDRESS\nYOUR CITY WA 99999-1234"
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
@@ -169,7 +212,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -344,7 +386,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -384,7 +425,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -488,7 +528,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
