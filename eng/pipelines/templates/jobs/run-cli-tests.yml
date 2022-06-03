@@ -52,25 +52,25 @@ jobs:
         fetchDepth: 1
         path: 'cli'
 
-      - pwsh: |
-          Write-Host "Hello World"
-        displayName: "Greetings"
+      # - pwsh: |
+      #     Write-Host "Hello World"
+      #   displayName: "Greetings"
 
-      - pwsh: |
-          Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)"
-        displayName: "Examining Build Directory"
+      # - pwsh: |
+      #     Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)"
+      #   displayName: "Examining Build Directory"
 
-      - pwsh: |
-          Get-ChildItem -Name -Force -Path "$(Build.SourcesDirectory)"
-        displayName: "Examining Sources Directory"
+      # - pwsh: |
+      #     Get-ChildItem -Name -Force -Path "$(Build.SourcesDirectory)"
+      #   displayName: "Examining Sources Directory"
 
-      - pwsh: |
-          Write-Host "Hello World"
-        displayName: "Greetings"
+      # - pwsh: |
+      #     Write-Host "Hello World"
+      #   displayName: "Greetings"
 
-      - pwsh: |
-          Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)/cli"
-        displayName: "cli dump"
+      # - pwsh: |
+      #     Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)/cli"
+      #   displayName: "cli dump"
 
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
@@ -79,3 +79,20 @@ jobs:
       - template: .azure-pipelines/templates/azdev_setup.yml@AzureCLI
         parameters:
           CLIRepoPath: $(Agent.BuildDirectory)/cli
+
+      # walk injected packages, install them
+      # walk file paths, install those  
+      - ${{ each artifact in parameters.TargetRepoPackages }}:
+        - pwsh: |
+            pip install -e $(Build.SourcesDirectory)/${{ artifact }}
+          displayName: Install ${{ artifact }} 
+
+      # run tests
+      - bash: |
+          set -ev
+          source env/bin/activate
+
+          serial_modules="appservice botservice cloud network azure-cli-core azure-cli-telemetry"
+          python scripts/ci/automation_full_test.py "1" "1" "latest" "$serial_modules"
+        displayName: Run CLI Tests
+        workingDirectory: $(Agent.BuildDirectory)/cli
