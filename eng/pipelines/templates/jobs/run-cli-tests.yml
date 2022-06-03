@@ -45,6 +45,8 @@ jobs:
       name: '$(poolName)'
 
     steps:
+      - checkout: self
+
       - checkout: AzureCLI
         fetchDepth: 1
         path: 'cli'
@@ -55,4 +57,8 @@ jobs:
 
       - pwsh: |
           Write-Host "Hello World"
+        displayName: "Greetings"
+
+      - pwsh: |
+          Get-ChildItem -R -Force -Path $(Build.BuildDirectory)/cli
         displayName: "Greetings"
