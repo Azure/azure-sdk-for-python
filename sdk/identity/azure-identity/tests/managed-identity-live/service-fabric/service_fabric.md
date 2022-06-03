@@ -33,12 +33,19 @@ cd azure-sdk-for-python/sdk/identity/azure-identity/tests/managed-identity-live/
 
 You can skip to [Set Up and Deploy the Applications](#set-up-and-deploy-the-applications) if you have an existing Service Fabric cluster, key vault, storage account, container registry, and managed identity named "AdminUser".
 
-### Create a resource group
+### Log in and set the subscription
 
-From a command prompt window, run:
+First, we need to log in to the Azure CLI and set the subscription that we want our resources to live in, to make the following steps easier. From a command prompt window, run:
 ```
 az login
-az group create -n $RESOURCE_GROUP --location $LOCATION --subscription $SUBSCRIPTION_NAME
+az account set -n $SUBSCRIPTION_NAME
+```
+
+### Create a resource group
+
+This is only necessary if you don't have a resource group in this location and subscription. From your command prompt window, run:
+```
+az group create -n $RESOURCE_GROUP -l $LOCATION
 ```
 
 ### Create a user-assigned managed identity
@@ -57,16 +64,16 @@ az identity show -g $RESOURCE_GROUP -n AdminUser
 
 Create your key vault:
 ```
-az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
+az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME -l $LOCATION --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
 ```
 
-After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
+After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com). You'll need to insert some of this certificate's properties into the cluster template later on.
 
 ### Create an Azure Container Registry
 
 From your command prompt window, run:
 ```
-az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
+az acr create -g $RESOURCE_GROUP -n $ACR_NAME -l $LOCATION --admin-enabled --sku basic
 ```
 
 > **NOTE:** Don't use upper-case letters in the name of the container registry. A registry can be created with a name
@@ -82,7 +89,7 @@ To use the provided template:
 2. In `arm-templates/cluster.parameters.json`, change all instances of `sfmi-test` to a unique name, like `<myusername>-sfmi-test`. Also, change the values of `applicationDiagnosticsStorageAccountName` and `supportLogStorageAccountName` to be similarly unique, but without hyphens. This will help ensure the deployment resource names do not conflict with the names of other public resources.
 3. Start the deployment by running the following command in your command prompt:
 ```
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\cluster.template.json --parameters arm-templates\cluster.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\cluster.template.json -p arm-templates\cluster.parameters.json
 ```
 
 This will begin to deploy a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
@@ -157,8 +164,8 @@ To use the provided templates:
 2. Open `arm-templates/sfmitestuser.parameters.json` and complete the same fields, using the URL of `sfmitestuser.sfpkg` for `applicationPackageUrl`.
 3. Start the deployment by running the following commands in your command prompt:
 ```
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestsystem.template.json --parameters arm-templates\sfmitestsystem.parameters.json
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestsystem.template.json -p arm-templates\sfmitestsystem.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestuser.template.json -p arm-templates\sfmitestuser.parameters.json
 ```
 
 ### Give the applications access to your key vault
@@ -266,8 +273,8 @@ docker push $ACR_NAME.azurecr.io/sfmitestuser
 ```
 5. Re-deploy the applications:
 ```
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestsystem.template.json --parameters arm-templates\sfmitestsystem.parameters.json
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestsystem.template.json -p arm-templates\sfmitestsystem.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestuser.template.json -p arm-templates\sfmitestuser.parameters.json
 ```
 6. Verify the test output again, as you did above. You should now also see that `test_managed_identity_live_async` shows `PASSED`.
 
@@ -299,3 +306,13 @@ should appear.
 **The Explorer page won't connect or the browser is blocking the endpoint**
 
 Refer to [Connect to your cluster on Service Fabric Explorer](#connect-to-your-cluster-on-service-fabric-explorer).
+
+If you're unable to get any information from the Explorer, there are also cluster logs that can be downloaded from one of the storage accounts that was deployed with the ARM template. These logs are composed of large text files that are very dense, but they can contain information about cluster failures that may help to diagnose problems.
+
+- First, go to the resource group containing the Service Fabric cluster in the Azure Portal.
+- Open up the storage account that's dedicated to logs. Its name matches `supportLogStorageAccountName` from `arm-templates/cluster.parameters.json`.
+- Open the page of containers in the account. There should be a container with a name indicating that it contains cluster logs.
+- Open the logs container. There should be a number of `.dtr` files. Each of these is a log file for a particular time range.
+- Download a log file from a time when the cluster should have been attempting to run the test application.
+- Open the log file locally using a text reader like Notepad (you may need to unzip it from a compressed folder first).
+- Search for phrases that may be associated with an application event or failure. For example, you may want to search for the string "error" and iterate through instances until an event suggests that it was associated with the test application.
