@@ -1,6 +1,6 @@
 resources:
   repositories:
-    - repository: azure-cli
+    - repository: azurecli
       type: git
       name: azure/azure-cli
       ref: refs/heads/dev
@@ -45,7 +45,7 @@ jobs:
       name: '$(poolName)'
 
     steps:
-      - checkout: azure-cli
+      - checkout: azurecli
         fetchDepth: 1
         path: 'cli'
 
