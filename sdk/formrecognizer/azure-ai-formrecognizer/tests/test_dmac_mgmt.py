@@ -216,6 +216,6 @@ class TestManagement(FormRecognizerTest):
             with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
+                assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
             dtc.get_account_info()
             assert transport.session is not None
