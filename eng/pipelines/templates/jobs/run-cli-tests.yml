@@ -57,11 +57,11 @@ jobs:
         displayName: "Greetings"
 
       - pwsh: |
-          Get-ChildItem -Force -Path "$(Agent.BuildDirectory)"
+          Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)"
         displayName: "Examining Build Directory"
 
       - pwsh: |
-          Get-ChildItem -Force -Path "$(Build.SourcesDirectory)"
+          Get-ChildItem -Name -Force -Path "$(Build.SourcesDirectory)"
         displayName: "Examining Sources Directory"
 
       - pwsh: |
@@ -69,7 +69,7 @@ jobs:
         displayName: "Greetings"
 
       - pwsh: |
-          Get-ChildItem -Force -Path "$(Agent.BuildDirectory)/cli"
+          Get-ChildItem -Name -Force -Path "$(Agent.BuildDirectory)/cli"
         displayName: "cli dump"
 
       - template: /eng/pipelines/templates/steps/use-python-version.yml
