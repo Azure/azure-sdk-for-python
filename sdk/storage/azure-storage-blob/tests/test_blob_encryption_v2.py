@@ -29,6 +29,7 @@ from settings.testcase import BlobPreparer
 
 TEST_CONTAINER_PREFIX = 'encryptionv2_container'
 TEST_BLOB_PREFIX = 'encryptionv2_blob'
+MiB = 1024 * 1024
 
 
 class StorageBlobEncryptionV2Test(StorageTestCase):
@@ -259,13 +260,13 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             max_single_put_size=1024,
-            max_block_size=4 * 1024 * 1024,
+            max_block_size=4 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -283,13 +284,13 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             max_single_put_size=1024,
-            max_block_size=4 * 1024 * 1024,
+            max_block_size=4 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True, max_concurrency=3)
@@ -307,13 +308,13 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             max_single_put_size=1024,
-            max_block_size=2 * 1024 * 1024,
+            max_block_size=2 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -331,17 +332,51 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
             max_single_put_size=1024,
-            max_block_size=6 * 1024 * 1024,
+            max_block_size=6 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
         data = blob.download_blob().readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_range_single_region(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcd' * 2 * MiB  # 8 MiB
+
+        # Act
+        blob.upload_blob(content, overwrite=True)
+        data = blob.download_blob(offset=0, length=4 * MiB).readall()
+
+        # Assert
+        self.assertEqual(content[:4 * MiB], data)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_range_multiple_region(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcd' * 2 * MiB  # 8 MiB
+
+        # Act
+        blob.upload_blob(content, overwrite=True)
+        data = blob.download_blob(offset=0, length=8 * MiB).readall()
 
         # Assert
         self.assertEqual(content, data)
@@ -354,7 +389,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcd' * 1024 * 1024  # 4 MiB
+        content = b'abcd' * MiB  # 4 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -371,7 +406,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcd' * 1024 * 1024  # 4 MiB
+        content = b'abcd' * MiB  # 4 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -388,7 +423,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcd' * 1024 * 1024  # 4 MiB
+        content = b'abcd' * MiB  # 4 MiB
         length = len(content)
 
         # Act
@@ -406,7 +441,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcdef' * 1024 * 1024  # 6 MiB
+        content = b'abcdef' * MiB  # 6 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -423,14 +458,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcdef' * 1024 * 1024  # 6 MiB
+        content = b'abcdef' * MiB  # 6 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
-        data = blob.download_blob(offset=5 * 1024 * 1024, length=1024 * 1024).readall()
+        data = blob.download_blob(offset=5 * MiB, length=MiB).readall()
 
         # Assert
-        self.assertEqual(content[5 * 1024 * 1024:6 * 1024 * 1024], data)
+        self.assertEqual(content[5 * MiB:6 * MiB], data)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -440,14 +475,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcdef' * 1024 * 1024  # 6 MiB
+        content = b'abcdef' * MiB  # 6 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
-        data = blob.download_blob(offset=1 * 1024 * 1024, length=7 * 1024 * 1024).readall()
+        data = blob.download_blob(offset=1 * MiB, length=7 * MiB).readall()
 
         # Assert
-        self.assertEqual(content[1 * 1024 * 1024:], data)
+        self.assertEqual(content[1 * MiB:], data)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -457,14 +492,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcdef' * 1024 * 1024  # 6 MiB
+        content = b'abcd' * 2 * MiB  # 8 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
-        data = blob.download_blob(offset=4 * 1024 * 1024 - 1).readall()
+        data = blob.download_blob(offset=4 * MiB - 1, length=4 * MiB + 2).readall()
 
         # Assert
-        self.assertEqual(content[4 * 1024 * 1024 - 1:], data)
+        self.assertEqual(content[4 * MiB - 1:], data)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -474,14 +509,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            max_single_get_size=4 * 1024 * 1024,
-            max_chunk_get_size=4 * 1024 * 1024,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -498,14 +533,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            max_single_get_size=4 * 1024 * 1024,
-            max_chunk_get_size=4 * 1024 * 1024,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 4 * 1024 * 1024  # 20 MiB
+        content = b'abcde' * 4 * MiB  # 20 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -522,14 +557,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            max_single_get_size=4 * 1024 * 1024,
-            max_chunk_get_size=2 * 1024 * 1024,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=2 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -546,14 +581,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            max_single_get_size=4 * 1024 * 1024,
-            max_chunk_get_size=6 * 1024 * 1024,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=6 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -570,14 +605,14 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            max_single_get_size=4 * 1024 * 1024,
-            max_chunk_get_size=4 * 1024 * 1024,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
             require_encryption=True,
             encryption_version='2.0',
             key_encryption_key=kek)
 
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'abcde' * 3 * 1024 * 1024  # 15 MiB
+        content = b'abcde' * 3 * MiB  # 15 MiB
 
         # Act
         blob.upload_blob(content, overwrite=True)
@@ -600,7 +635,7 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = (b'abcde' * 100 * 1024 * 1024) + b'abc'  # 500 MiB + 3
+        content = (b'abcde' * 100 * MiB) + b'abc'  # 500 MiB + 3
 
         # Act
         blob.upload_blob(content, overwrite=True, max_concurrency=5)
