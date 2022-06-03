@@ -10,6 +10,7 @@ import asyncio
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .testcase import CommunicationTestCase
 
+
 class AsyncCommunicationTestCase(CommunicationTestCase):
 
     @staticmethod
@@ -25,3 +26,9 @@ class AsyncCommunicationTestCase(CommunicationTestCase):
             return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
         return run
+
+
+def get_completed_future(result=None):
+    future = asyncio.Future()
+    future.set_result(result)
+    return future

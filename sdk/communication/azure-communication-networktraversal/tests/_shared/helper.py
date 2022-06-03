@@ -4,8 +4,30 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
+import base64
 from azure_devtools.scenario_tests import RecordingProcessor
+from datetime import datetime, timedelta
+from functools import wraps
 from urllib.parse import urlparse
+import sys
+
+if sys.version_info[0] < 3 or sys.version_info[1] < 4:
+    # python version < 3.3
+    import time
+    def generate_token_with_custom_expiry(valid_for_seconds):
+        date = datetime.now() + timedelta(seconds=valid_for_seconds)
+        return generate_token_with_custom_expiry_epoch(time.mktime(date.timetuple()))
+else:
+    def generate_token_with_custom_expiry(valid_for_seconds):
+        return generate_token_with_custom_expiry_epoch((datetime.now() + timedelta(seconds=valid_for_seconds)).timestamp())
+
+def generate_token_with_custom_expiry_epoch(expires_on_epoch):
+    expiry_json = f'{{"exp": {str(expires_on_epoch)} }}'
+    base64expiry = base64.b64encode(
+        expiry_json.encode('utf-8')).decode('utf-8').rstrip("=")
+    token_template = (f'''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+        {base64expiry}.adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs''')
+    return token_template
 
 class URIIdentityReplacer(RecordingProcessor):
     """Replace the identity in request uri"""
