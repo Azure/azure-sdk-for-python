@@ -9,8 +9,9 @@
 from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
 
 from . import models
 from ._configuration import FormRecognizerClientConfiguration
@@ -31,8 +32,8 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
      example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2022-01-30-preview". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-06-30-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

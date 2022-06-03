@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AddressValue
     from ._models_py3 import AnalyzeDocumentRequest
     from ._models_py3 import AnalyzeResult
     from ._models_py3 import AnalyzeResultOperation
@@ -21,14 +22,17 @@ try:
     from ._models_py3 import CustomDocumentModelsInfo
     from ._models_py3 import DocTypeInfo
     from ._models_py3 import Document
-    from ._models_py3 import DocumentEntity
+    from ._models_py3 import DocumentCaption
     from ._models_py3 import DocumentField
     from ._models_py3 import DocumentFieldSchema
+    from ._models_py3 import DocumentFootnote
+    from ._models_py3 import DocumentImage
     from ._models_py3 import DocumentKeyValueElement
     from ._models_py3 import DocumentKeyValuePair
     from ._models_py3 import DocumentLanguage
     from ._models_py3 import DocumentLine
     from ._models_py3 import DocumentPage
+    from ._models_py3 import DocumentParagraph
     from ._models_py3 import DocumentSelectionMark
     from ._models_py3 import DocumentSpan
     from ._models_py3 import DocumentStyle
@@ -46,6 +50,7 @@ try:
     from ._models_py3 import ModelSummary
     from ._models_py3 import OperationInfo
 except (SyntaxError, ImportError):
+    from ._models import AddressValue  # type: ignore
     from ._models import AnalyzeDocumentRequest  # type: ignore
     from ._models import AnalyzeResult  # type: ignore
     from ._models import AnalyzeResultOperation  # type: ignore
@@ -60,14 +65,17 @@ except (SyntaxError, ImportError):
     from ._models import CustomDocumentModelsInfo  # type: ignore
     from ._models import DocTypeInfo  # type: ignore
     from ._models import Document  # type: ignore
-    from ._models import DocumentEntity  # type: ignore
+    from ._models import DocumentCaption  # type: ignore
     from ._models import DocumentField  # type: ignore
     from ._models import DocumentFieldSchema  # type: ignore
+    from ._models import DocumentFootnote  # type: ignore
+    from ._models import DocumentImage  # type: ignore
     from ._models import DocumentKeyValueElement  # type: ignore
     from ._models import DocumentKeyValuePair  # type: ignore
     from ._models import DocumentLanguage  # type: ignore
     from ._models import DocumentLine  # type: ignore
     from ._models import DocumentPage  # type: ignore
+    from ._models import DocumentParagraph  # type: ignore
     from ._models import DocumentSelectionMark  # type: ignore
     from ._models import DocumentSpan  # type: ignore
     from ._models import DocumentStyle  # type: ignore
@@ -91,16 +99,21 @@ from ._form_recognizer_client_enums import (
     ContentType,
     DocumentBuildMode,
     DocumentFieldType,
+    DocumentPageKind,
     DocumentSignatureType,
     DocumentTableCellKind,
     LengthUnit,
     OperationKind,
     OperationStatus,
+    ParagraphRole,
     SelectionMarkState,
     StringIndexType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'AddressValue',
     'AnalyzeDocumentRequest',
     'AnalyzeResult',
     'AnalyzeResultOperation',
@@ -115,14 +128,17 @@ __all__ = [
     'CustomDocumentModelsInfo',
     'DocTypeInfo',
     'Document',
-    'DocumentEntity',
+    'DocumentCaption',
     'DocumentField',
     'DocumentFieldSchema',
+    'DocumentFootnote',
+    'DocumentImage',
     'DocumentKeyValueElement',
     'DocumentKeyValuePair',
     'DocumentLanguage',
     'DocumentLine',
     'DocumentPage',
+    'DocumentParagraph',
     'DocumentSelectionMark',
     'DocumentSpan',
     'DocumentStyle',
@@ -144,11 +160,15 @@ __all__ = [
     'ContentType',
     'DocumentBuildMode',
     'DocumentFieldType',
+    'DocumentPageKind',
     'DocumentSignatureType',
     'DocumentTableCellKind',
     'LengthUnit',
     'OperationKind',
     'OperationStatus',
+    'ParagraphRole',
     'SelectionMarkState',
     'StringIndexType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

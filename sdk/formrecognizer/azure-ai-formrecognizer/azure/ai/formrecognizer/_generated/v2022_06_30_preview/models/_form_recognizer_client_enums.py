@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AnalyzeResultOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AnalyzeResultOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operation status.
     """
 
@@ -20,13 +19,13 @@ class AnalyzeResultOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, 
     FAILED = "failed"
     SUCCEEDED = "succeeded"
 
-class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """API version.
     """
 
-    TWO_THOUSAND_TWENTY_TWO01_30_PREVIEW = "2022-01-30-preview"
+    TWO_THOUSAND_TWENTY_TWO06_30_PREVIEW = "2022-06-30-preview"
 
-class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
     """
 
@@ -34,25 +33,33 @@ class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     APPLICATION_OCTET_STREAM = "application/octet-stream"
     #: Content Type 'application/pdf'.
     APPLICATION_PDF = "application/pdf"
+    #: Content Type 'application/vnd.openxmlformats-officedocument.presentationml.presentation'.
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_PRESENTATIONML_PRESENTATION = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    #: Content Type 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    #: Content Type 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'.
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     #: Content Type 'image/bmp'.
     IMAGE_BMP = "image/bmp"
+    #: Content Type 'image/heif'.
+    IMAGE_HEIF = "image/heif"
     #: Content Type 'image/jpeg'.
     IMAGE_JPEG = "image/jpeg"
     #: Content Type 'image/png'.
     IMAGE_PNG = "image/png"
     #: Content Type 'image/tiff'.
     IMAGE_TIFF = "image/tiff"
-    #: Content Type 'application/json'.
-    APPLICATION_JSON = "application/json"
+    #: Content Type 'text/html'.
+    TEXT_HTML = "text/html"
 
-class DocumentBuildMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom model build mode.
     """
 
     TEMPLATE = "template"
     NEURAL = "neural"
 
-class DocumentFieldType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
     """
 
@@ -68,15 +75,25 @@ class DocumentFieldType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ARRAY = "array"
     OBJECT = "object"
     CURRENCY = "currency"
+    ADDRESS = "address"
 
-class DocumentSignatureType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentPageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of document page.
+    """
+
+    DOCUMENT = "document"
+    SHEET = "sheet"
+    SLIDE = "slide"
+    IMAGE = "image"
+
+class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Presence of signature.
     """
 
     SIGNED = "signed"
     UNSIGNED = "unsigned"
 
-class DocumentTableCellKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Table cell kind.
     """
 
@@ -86,15 +103,15 @@ class DocumentTableCellKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STUB_HEAD = "stubHead"
     DESCRIPTION = "description"
 
-class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit used by the width, height, and boundingBox properties. For images, the unit is
-    "pixel". For PDF, the unit is "inch".
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit used by the width, height, and polygon properties. For images, the unit is "pixel".
+    For PDF, the unit is "inch".
     """
 
     PIXEL = "pixel"
     INCH = "inch"
 
-class OperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of operation.
     """
 
@@ -102,7 +119,7 @@ class OperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DOCUMENT_MODEL_COMPOSE = "documentModelCompose"
     DOCUMENT_MODEL_COPY_TO = "documentModelCopyTo"
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operation status.
     """
 
@@ -112,14 +129,25 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     CANCELED = "canceled"
 
-class SelectionMarkState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Semantic role of the paragraph.
+    """
+
+    PAGE_HEADER = "pageHeader"
+    PAGE_FOOTER = "pageFooter"
+    PAGE_NUMBER = "pageNumber"
+    TITLE = "title"
+    SECTION_HEADING = "sectionHeading"
+    FOOTNOTE = "footnote"
+
+class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the selection mark.
     """
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
-class StringIndexType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Method used to compute string offset and length.
     """
 
