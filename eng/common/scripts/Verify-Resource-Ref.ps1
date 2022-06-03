@@ -1,6 +1,6 @@
 . (Join-Path $PSScriptRoot common.ps1)
 Install-Module -Name powershell-yaml -RequiredVersion 0.4.1 -Force -Scope CurrentUser
-$ymlfiles = Get-ChildItem $RepoRoot -recurse | Where-Object {$_ -like '*.yml' -and $_ -notlike '*/invalid/*'}
+$ymlfiles = Get-ChildItem $RepoRoot -recurse | Where-Object {$_ -like '*.yml' -and $_ -notlike '*\invalid\*'}
 $affectedRepos = [System.Collections.ArrayList]::new()
 
 foreach ($file in $ymlfiles)
