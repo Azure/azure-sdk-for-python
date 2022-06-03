@@ -24,7 +24,6 @@ parameters:
 jobs:
   - job:
     displayName: 'Run AZDev Tests'
-    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
     variables:
       - template: ../variables/globals.yml
