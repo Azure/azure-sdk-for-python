@@ -33,9 +33,9 @@ jobs:
         linux:
           imageName: 'ubuntu-20.04'
           poolName: 'azsdk-pool-mms-ubuntu-2004-general'
-        windows:
-          imageName: 'windows-2019'
-          poolName: 'azsdk-pool-mms-win-2019-general'
+        # windows:
+        #   imageName: 'windows-2019'
+        #   poolName: 'azsdk-pool-mms-win-2019-general'
         mac:
           imageName: 'macOS-10.15'
           poolName: 'Azure Pipelines'
@@ -60,8 +60,6 @@ jobs:
         parameters:
           CLIRepoPath: $(Agent.BuildDirectory)/cli
 
-      # walk injected packages, install them
-      # walk file paths, install those  
       - ${{ each artifact in parameters.TargetRepoPackages }}:
         - bash: |
             set -ev
@@ -69,7 +67,13 @@ jobs:
             pip install -e $(Build.SourcesDirectory)/${{ artifact }}
           displayName: Install ${{ artifact }} 
 
-      # run tests
+      - ${{ each package_spec in parameters.InjectedPackages }}:
+        - bash: |
+            set -ev
+            source env/bin/activate
+            pip install -e ${{ package_spec }}
+          displayName: Install ${{ package_spec }} 
+
       - bash: |
           set -ev
           source env/bin/activate
