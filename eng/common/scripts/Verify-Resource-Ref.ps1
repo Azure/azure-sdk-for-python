@@ -1,6 +1,6 @@
 . (Join-Path $PSScriptRoot common.ps1)
 Install-Module -Name powershell-yaml -RequiredVersion 0.4.1 -Force -Scope CurrentUser
-$ymlfiles = Get-ChildItem $RepoRoot -recurse | Where-Object {$_ -like '*.yml'}
+$ymlfiles = Get-ChildItem $RepoRoot -recurse | Where-Object {$_ -like '*.yml' -and $_ -notlike '*/invalid/*'}
 $affectedRepos = [System.Collections.ArrayList]::new()
 
 foreach ($file in $ymlfiles)
@@ -9,7 +9,7 @@ foreach ($file in $ymlfiles)
   $ymlContent = Get-Content $file.FullName -Raw
   $ymlObject = ConvertFrom-Yaml $ymlContent -Ordered
 
-  if ($null -ne $ymlObject -and $ymlObject.Contains("resources"))
+  if ($ymlObject.Contains("resources"))
   {
     if ($ymlObject["resources"]["repositories"])
     {
