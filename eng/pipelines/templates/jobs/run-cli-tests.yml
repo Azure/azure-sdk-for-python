@@ -78,4 +78,4 @@ jobs:
 
       - template: .azure-pipelines/templates/azdev_setup.yml@AzureCLI
         parameters:
-          CLIRepoPath: $(Build.SourcesDirectory)/cli
+          CLIRepoPath: $(Agent.BuildDirectory)/cli
