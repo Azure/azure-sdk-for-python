@@ -62,3 +62,15 @@ def test_parse_deleted_certificate_id():
         parsed_certificate_id.source_id
         == "https://keyvault-name.vault.azure.net/deletedcertificates/deleted-certificate"
     )
+
+
+def test_parse_certificate_id_with_port():
+    """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/24446"""
+
+    source_id = "https://localhost:8443/certificates/certificate-name/version"
+    parsed_key_id = KeyVaultCertificateIdentifier(source_id)
+
+    assert parsed_key_id.name == "certificate-name"
+    assert parsed_key_id.vault_url == "https://localhost:8443"
+    assert parsed_key_id.version == "version"
+    assert parsed_key_id.source_id == "https://localhost:8443/certificates/certificate-name/version"

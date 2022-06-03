@@ -1,5 +1,14 @@
 # Release History
 
+## 3.1.0 (2022-06-02)
+
+**Features**
+
+  - Added model ErrorResponseComponents
+  - Added model ErrorResponseComponentsError
+  - Added model WorkbookSharedTypeKind
+  - Added model WorkbookUpdateSharedTypeKind
+
 ## 3.0.0 (2022-03-23)
 
 **Breaking changes**

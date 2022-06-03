@@ -98,6 +98,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Don't verify if a changeset includes breaking changes.
 - `Skip.MyPy`
   - Omit `mypy` checks in `analyze` job.
+- `Skip.AnalyzeDependencies`
+  - Omit 'Analyze Dependencies' step in `analyze` job.
 - `Skip.VerifyDependencies`
   - Omit checking that a package's dependencies are on PyPI before releasing.
 

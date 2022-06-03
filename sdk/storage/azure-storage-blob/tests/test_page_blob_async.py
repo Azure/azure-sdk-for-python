@@ -1,3 +1,4 @@
+
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -1835,7 +1836,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
 
         # Assert
 
-    @pytest.mark.skip(reason="Failing live test https://github.com/Azure/azure-sdk-for-python/issues/10473")
+    @pytest.mark.skip(reason="Requires further investigation. Failing for unexpected kwarg seal_blob")
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test

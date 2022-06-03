@@ -102,8 +102,8 @@ class DataLakeDirectoryClient(PathClient):
             an instance of a AzureSasCredential from azure.core.credentials, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :return a DataLakeDirectoryClient
-        :rtype ~azure.storage.filedatalake.DataLakeDirectoryClient
+        :return: a DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
@@ -162,7 +162,8 @@ class DataLakeDirectoryClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: response dict (Etag and last modified).
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -176,7 +177,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._create('directory', metadata=metadata, **kwargs)
 
     def delete_directory(self, **kwargs):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Marks the specified directory for deletion.
 
@@ -203,7 +204,8 @@ class DataLakeDirectoryClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: None
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 

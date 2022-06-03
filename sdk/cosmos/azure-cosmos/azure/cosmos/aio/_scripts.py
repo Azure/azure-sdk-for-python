@@ -94,7 +94,7 @@ class ScriptsProxy(object):
 
         :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :paramtype parameters: Optional[List[str]]
+        :paramtype parameters: List[Dict[str, Any]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of stored procedures (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -264,7 +264,7 @@ class ScriptsProxy(object):
 
         :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :paramtype parameters: Optional[List[Dict[str, Any]]]
+        :paramtype parameters: List[Dict[str, Any]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of triggers (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -391,7 +391,7 @@ class ScriptsProxy(object):
 
         :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :paramtype parameters: Optional[List[Dict[str, Any]]]
+        :paramtype parameters: List[Dict[str, Any]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of user-defined functions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]

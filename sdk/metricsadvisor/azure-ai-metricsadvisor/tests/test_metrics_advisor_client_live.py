@@ -220,3 +220,19 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             alert_id=self.alert_id,
         ))
         assert len(results) > 0
+
+    def test_models_removed(self):
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import AlertResultList
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import AnomalyAlertingConfigurationList
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import MetricDimensionList
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import MetricFeedbackList
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import MetricSeriesList
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import RootCauseList
+        with pytest.raises(ImportError):
+            from azure.ai.metricsadvisor.models import SeriesResultList
