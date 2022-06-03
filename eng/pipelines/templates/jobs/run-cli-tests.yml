@@ -3,6 +3,7 @@ resources:
     - repository: AzureCLI
       type: github
       name: azure/azure-cli
+      endpoint: Azure
       ref: refs/heads/dev
 
 parameters:
