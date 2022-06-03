@@ -75,3 +75,7 @@ jobs:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
           versionSpec: '${{ parameters.PythonVersion }}'
+
+      - template: .azure-pipelines/templates/azdev_setup.yml@AzureCLI
+        parameters:
+          CLIRepoPath: $(Build.SourcesDirectory)/cli
