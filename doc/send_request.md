@@ -29,67 +29,15 @@ Here's how to get started:
 
 ## Steps To Make a Call
 
-1. [Initialize your client](#1-initialize-your-client "Initialize Your Client")
-2. [Create a request](#2-create-a-request "Create a Request")
-3. [Send the request](#3-send-the-request "Send the Request")
-4. [Handle the response](#4-handle-the-response "Handle the Response")
+1. [Create a request](#1-create-a-request "Create a Request")
+2. [Send the request](#2-send-the-request "Send the Request")
+3. [Handle the response](#3-handle-the-response "Handle the Response")
 
-We will go into each step in the following sections
+We will go into each step in the following sections. To initialize and authenticate your client, please follow your client's README examples.
 
-## 1. Initialize Your Client
+## 1. Create a Request
 
-First you import your client from the namespace of your package. For example, let's say your namespace is `azure.example.service` and your client's name
-is `ExampleClient`. Your import would look like
-
-```python
-from azure.example.service import ExampleClient
-```
-
-Most clients require authenticating through their `credential` parameter. Depending on what authentication support your library is using, you can either [authenticate with aad](#authenticating-with-aad) or [authenticate with an `AzureKeyCredential`](#authenticating-with-azurekeycredential).
-
-Additionally, most of our clients accept an `endpoint` parameter at initialization, usually a link to your own resource.
-
-### Authenticating with AAD
-
-If your client supports authenticating with an [Azure Active Directory (AAD) token credential][aad_authentication], we provide a convenient library for AAD authentication called [`azure-identity`][azure_identity_docs] that can be installed additionally with:
-
-```bash
-pip install azure-identity
-```
-
-Once [`azure-identity`][azure_identity_pip] is installed, the simplest way to authenticate is to use the [`DefaultAzureCredential`][default_azure_credential] class.
-
-The following code snippet shows you how to authenticate with a [`DefaultAzureCredential`][default_azure_credential].
-
-```python
-from azure.identity import DefaultAzureCredential
-from azure.example.service import ExampleClient
-
-client = ExampleClient(
-    endpoint="https://www.example.org/",
-    credential=DefaultAzureCredential()
-)
-```
-
-### Authenticating with [`AzureKeyCredential`][azure_key_credential]
-
-Some libraries support authenticating with an [`AzureKeyCredential`][azure_key_credential]. The following code snippet shows you how to authenticate with an
-[`AzureKeyCredential`][azure_key_credential]
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.example.service import ExampleClient
-
-credential = "myCredential"
-client = ExampleClient(
-    endpoint="https://www.example.org/",
-    credential=AzureKeyCredential(credential)
-)
-```
-
-## 2. Create a Request
-
-Next, you need to create the [`HttpRequest`][azure_core_http_request] you want to be sent to the service.
+First, we will go over how to create the [`HttpRequest`][azure_core_http_request] you want to be sent to the service.
 
 We will be making a `POST` request with a `JSON` body. The following code snippet uses a relative url, which will be relative
 to your client's `endpoint`. You can also pass in a full-path url, and we will honor that full path.
@@ -106,7 +54,7 @@ request = HttpRequest(
 )
 ```
 
-## 3. Send the Request
+## 2. Send the Request
 
 Now, we pass this request to your client's `send_request` method. This actually makes the network call.
 
@@ -116,7 +64,7 @@ from azure.example.service import ExampleClient
 response = client.send_request(request) # makes the network call
 ```
 
-## 4. Handle the Response
+## 3. Handle the Response
 
 Our `send_request` call returns an [`HttpResponse`][azure_core_http_response].
 
