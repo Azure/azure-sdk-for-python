@@ -21,7 +21,7 @@ parameters:
     default: "3.9"
 
 jobs:
- - job:
+  - job:
     displayName: 'Run AZDev Tests'
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
@@ -56,4 +56,3 @@ jobs:
       - pwsh: |
           Write-Host "Hello World"
         displayName: "Greetings"
-  
