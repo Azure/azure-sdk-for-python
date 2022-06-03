@@ -181,6 +181,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         poller2.wait()
         assert poller2._polling_method._timeout ==  7  # goes back to client default
 
+    @pytest.mark.skip()
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
