@@ -46,11 +46,11 @@ jobs:
 
     steps:
       - checkout: self
+        path: 's'
 
       - checkout: AzureCLI
         fetchDepth: 1
         path: 'cli'
-
 
       - pwsh: |
           Write-Host "Hello World"
@@ -64,9 +64,9 @@ jobs:
           Get-ChildItem -Force -Path $(Build.SourcesDirectory)
         displayName: "Examining Sources Directory"
 
-      # - template: /eng/pipelines/templates/steps/use-python-version.yml
-      #   parameters:
-      #     versionSpec: '${{ parameters.PythonVersion }}'
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
+        parameters:
+          versionSpec: '${{ parameters.PythonVersion }}'
 
       - pwsh: |
           Write-Host "Hello World"
