@@ -56,20 +56,20 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
     async def append_entry_flow_actions(self, client):
         entry_contents = "Test entry from Python SDK"
         append_result = await client.confidential_ledger.post_ledger_entry(
-            {"contents": entry_contents}, api_version="0.1-preview"
+            {"contents": entry_contents}
         )
         self.assertTrue(append_result["transactionId"])
-        self.assertTrue(append_result["subLedgerId"])
+        self.assertTrue(append_result["collectionId"])
 
-        append_result_sub_ledger_id = append_result["subLedgerId"]
+        append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
         await client.confidential_ledger.wait_until_durable(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
 
         transaction_status = await client.confidential_ledger.get_transaction_status(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
         self.assertEqual(
             transaction_status["transactionId"], append_result_transaction_id
@@ -77,14 +77,12 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(transaction_status["state"], "Committed")
 
         receipt = await client.confidential_ledger.get_receipt(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
         self.assertEqual(receipt["transactionId"], append_result_transaction_id)
         self.assertTrue(receipt["receipt"])
 
-        latest_entry = await client.confidential_ledger.get_current_ledger_entry(
-            api_version="0.1-preview"
-        )
+        latest_entry = await client.confidential_ledger.get_current_ledger_entry()
         # The transaction ids may not be equal in the unfortunate edge case where a governance
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
         # the latest id will be higher.
@@ -92,28 +90,26 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             latest_entry["transactionId"], append_result_transaction_id
         )
         self.assertEqual(latest_entry["contents"], entry_contents)
-        self.assertEqual(latest_entry["subLedgerId"], append_result_sub_ledger_id)
+        self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
         await client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
-            "Test entry 2 from Python SDK", api_version="0.1-preview"
+            "Test entry 2 from Python SDK"
         )
 
-        latest_entry = await client.confidential_ledger.get_current_ledger_entry(
-            api_version="0.1-preview"
-        )
+        latest_entry = await client.confidential_ledger.get_current_ledger_entry()
         self.assertNotEqual(latest_entry["transactionId"], append_result_transaction_id)
         self.assertNotEqual(latest_entry["contents"], entry_contents)
-        self.assertEqual(latest_entry["subLedgerId"], append_result_sub_ledger_id)
+        self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
         original_entry = await client.confidential_ledger.get_ledger_entry(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
         self.assertEqual(
             original_entry["entry"]["transactionId"], append_result_transaction_id
         )
         self.assertEqual(original_entry["entry"]["contents"], entry_contents)
         self.assertEqual(
-            original_entry["entry"]["subLedgerId"], append_result_sub_ledger_id
+            original_entry["entry"]["collectionId"], append_result_sub_ledger_id
         )
 
     @ConfidentialLedgerPreparer()
@@ -146,32 +142,31 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         append_result = await client.confidential_ledger.post_ledger_entry(
             {"contents": entry_contents},
             sub_ledger_id=collection_id,
-            api_version="0.1-preview",
         )
         self.assertTrue(append_result["transactionId"])
-        self.assertEqual(append_result["subLedgerId"], collection_id)
+        self.assertEqual(append_result["collectionId"], collection_id)
 
-        append_result_sub_ledger_id = append_result["subLedgerId"]
+        append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
         await client.confidential_ledger.wait_until_durable(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
 
         transaction_status = await client.confidential_ledger.get_transaction_status(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
         self.assertIsNotNone(transaction_status)
         self.assertIs(transaction_status, "Committed")
 
         receipt = await client.confidential_ledger.get_receipt(
-            transaction_id=append_result_transaction_id, api_version="0.1-preview"
+            transaction_id=append_result_transaction_id
         )
         self.assertEqual(receipt["transactionId"], append_result_transaction_id)
         self.assertTrue(receipt["contents"])
 
         latest_entry = await client.confidential_ledger.get_ledger_entry(
-            sub_ledger_id=collection_id, api_version="0.1-preview"
+            sub_ledger_id=collection_id
         )
         # The transaction ids may not be equal in the unfortunate edge case where a governance
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
@@ -180,29 +175,27 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             latest_entry["transactionId"], append_result_transaction_id
         )
         self.assertEqual(latest_entry["contents"], entry_contents)
-        self.assertEqual(latest_entry["subLedgerId"], append_result_sub_ledger_id)
+        self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
         await client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
             "Test sub-ledger entry 2 from Python SDK",
             sub_ledger_id=collection_id,
-            api_version="0.1-preview",
         )
 
         latest_entry = await client.confidential_ledger.get_ledger_entry(
-            sub_ledger_id=collection_id, api_version="0.1-preview"
+            sub_ledger_id=collection_id
         )
         self.assertNotEqual(latest_entry["transactionId"], append_result_transaction_id)
         self.assertNotEqual(latest_entry["contents"], entry_contents)
-        self.assertEqual(latest_entry["subLedgerId"], collection_id)
+        self.assertEqual(latest_entry["collectionId"], collection_id)
 
         original_entry = await client.confidential_ledger.get_ledger_entry(
             transaction_id=append_result_transaction_id,
             sub_ledger_id=collection_id,
-            api_version="0.1-preview",
         )
         self.assertEqual(original_entry["transactionId"], append_result_transaction_id)
         self.assertEqual(original_entry["contents"], entry_contents)
-        self.assertEqual(original_entry["subLedgerId"], append_result_sub_ledger_id)
+        self.assertEqual(original_entry["collectionId"], append_result_sub_ledger_id)
 
     @ConfidentialLedgerPreparer()
     async def test_range_query_aad_user(self, confidentialledger_endpoint):
@@ -235,7 +228,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
                 {} if modulus == 0 else {"sub_ledger_id": "{0}".format(i % modulus)}
             )
             append_result = await client.confidential_ledger.post_ledger_entry(
-                {"contents": message}, api_version="0.1-preview", **kwargs
+                {"contents": message}, **kwargs
             )
 
             messages[i % modulus].append(
@@ -245,9 +238,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         num_matched = 0
         for i in range(modulus):
             query_result = client.confidential_ledger.list_ledger_entries(
-                from_transaction_id=messages[i][0][0],
-                api_version="0.1-preview",
-                **messages[i][0][2]
+                from_transaction_id=messages[i][0][0], **messages[i][0][2]
             )
             index = 0
             async for historical_entry in query_result:
@@ -290,36 +281,28 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         )
         for user_id in [aad_user_id, cert_user_id]:
             user = await client.confidential_ledger.create_or_update_user(
-                user_id, "Contributor", api_version="0.1-preview"
+                user_id, "Contributor"
             )
             self.assertEqual(user["userId"], user_id)
             self.assertEqual(user["assignedRole"], "Contributor")
 
-            user = await client.confidential_ledger.get_user(
-                user_id, api_version="0.1-preview"
-            )
+            user = await client.confidential_ledger.get_user(user_id)
             self.assertEqual(user["userId"], user_id)
             self.assertEqual(user["assignedRole"], "Contributor")
 
-            await client.confidential_ledger.delete_user(
-                user_id, api_version="0.1-preview"
-            )
+            await client.confidential_ledger.delete_user(user_id)
 
             user = await client.confidential_ledger.create_or_update_user(
-                user_id, "Reader", api_version="0.1-preview"
+                user_id, "Reader"
             )
             self.assertEqual(user["userId"], user_id)
             self.assertEqual(user["assignedRole"], "Reader")
 
-            user = await client.confidential_ledger.get_user(
-                user_id, api_version="0.1-preview"
-            )
+            user = await client.confidential_ledger.get_user(user_id)
             self.assertEqual(user["userId"], user_id)
             self.assertEqual(user["assignedRole"], "Reader")
 
-            await client.confidential_ledger.delete_user(
-                user_id, api_version="0.1-preview"
-            )
+            await client.confidential_ledger.delete_user(user_id)
 
     @ConfidentialLedgerPreparer()
     async def test_verification_methods_aad_user(self, confidentialledger_endpoint):
@@ -342,17 +325,13 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             await client.close()
 
     async def verification_methods_actions(self, client):
-        consortium = await client.confidential_ledger.get_consortium_members(
-            api_version="0.1-preview"
-        )
+        consortium = await client.confidential_ledger.get_consortium_members()
         self.assertEqual(len(consortium["members"]), 1)
         for member in consortium["members"]:
             self.assertTrue(member["certificate"])
             self.assertTrue(member["id"])
 
-        constitution = await client.confidential_ledger.get_constitution(
-            api_version="0.1-preview"
-        )
+        constitution = await client.confidential_ledger.get_constitution()
         self.assertTrue(constitution["script"])
         self.assertTrue(constitution["digest"])
         self.assertEqual(
@@ -360,9 +339,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             hashlib.sha256(constitution["script"].encode()).hexdigest().lower(),
         )
 
-        ledger_enclaves = await client.confidential_ledger.get_enclave_quotes(
-            api_version="0.1-preview"
-        )
+        ledger_enclaves = await client.confidential_ledger.get_enclave_quotes()
         self.assertEqual(len(ledger_enclaves["enclaveQuotes"]), 3)
         self.assertIn(
             ledger_enclaves["currentNodeId"], ledger_enclaves["enclaveQuotes"]

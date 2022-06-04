@@ -14,7 +14,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=0.1-preview&subLedgerId=132
   response:
     body:
-      string: '{"subLedgerId":"132"}'
+      string: '{"collectionId":"132"}'
     headers:
       content-length: '21'
       content-type: application/json
@@ -148,7 +148,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview&subLedgerId=132
   response:
     body:
-      string: '{"contents":"Test sub-ledger entry from Python SDK","subLedgerId":"132","transactionId":"2.45844"}'
+      string: '{"contents":"Test sub-ledger entry from Python SDK","collectionId":"132","transactionId":"2.45844"}'
     headers:
       content-length: '98'
       content-type: application/json
@@ -172,7 +172,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=0.1-preview&subLedgerId=132
   response:
     body:
-      string: '{"subLedgerId":"132"}'
+      string: '{"collectionId":"132"}'
     headers:
       content-length: '21'
       content-type: application/json
@@ -232,7 +232,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview&subLedgerId=132
   response:
     body:
-      string: '{"contents":"Test sub-ledger entry 2 from Python SDK","subLedgerId":"132","transactionId":"2.45846"}'
+      string: '{"contents":"Test sub-ledger entry 2 from Python SDK","collectionId":"132","transactionId":"2.45846"}'
     headers:
       content-length: '100'
       content-type: application/json

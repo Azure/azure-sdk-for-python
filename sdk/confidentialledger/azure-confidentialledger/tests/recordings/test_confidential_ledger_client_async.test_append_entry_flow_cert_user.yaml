@@ -14,7 +14,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=0.1-preview
   response:
     body:
-      string: '{"subLedgerId":"subledger:0"}'
+      string: '{"collectionId":"subledger:0"}'
     headers:
       content-length: '29'
       content-type: application/json
@@ -128,7 +128,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview
   response:
     body:
-      string: '{"contents":"Test entry from Python SDK","subLedgerId":"subledger:0","transactionId":"2.45836"}'
+      string: '{"contents":"Test entry from Python SDK","collectionId":"subledger:0","transactionId":"2.45836"}'
     headers:
       content-length: '95'
       content-type: application/json
@@ -152,7 +152,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions?api-version=0.1-preview
   response:
     body:
-      string: '{"subLedgerId":"subledger:0"}'
+      string: '{"collectionId":"subledger:0"}'
     headers:
       content-length: '29'
       content-type: application/json
@@ -192,7 +192,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview
   response:
     body:
-      string: '{"contents":"Test entry 2 from Python SDK","subLedgerId":"subledger:0","transactionId":"2.45838"}'
+      string: '{"contents":"Test entry 2 from Python SDK","collectionId":"subledger:0","transactionId":"2.45838"}'
     headers:
       content-length: '97'
       content-type: application/json
