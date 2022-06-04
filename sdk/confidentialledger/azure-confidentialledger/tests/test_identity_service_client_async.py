@@ -10,8 +10,9 @@ from .testcase import ConfidentialLedgerPreparer
 class ConfidentialLedgerIdentityServiceClientTest(AzureTestCase):
     @ConfidentialLedgerPreparer()
     async def test_get_ledger_identity(self, confidentialledger_endpoint):
-        client = ConfidentialLedgerIdentityServiceClient(
-            "https://identity.confidential-ledger.core.azure.com"
+        client = self.create_client_from_credential(
+            ConfidentialLedgerIdentityServiceClient,
+            credential=None,
         )
 
         try:

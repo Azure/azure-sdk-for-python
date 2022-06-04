@@ -23,7 +23,7 @@ class ConfidentialLedgerIdentityServiceClientConfiguration(
     attributes.
 
     :param identity_service_uri: The Identity Service URL, for example
-     https://identity.accledger.azure.com. Required.
+     https://identity.confidential-ledger.core.azure.com. Required.
     :type identity_service_uri: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
