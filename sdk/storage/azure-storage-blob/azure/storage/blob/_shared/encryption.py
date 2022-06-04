@@ -13,7 +13,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Dict, Optional
+from typing import Any, BinaryIO, Dict, Optional, Tuple
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -265,19 +265,20 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
     """
     if encryption_version == _ENCRYPTION_PROTOCOL_V1:
         return length + (16 - (length % 16))
-    elif encryption_version == _ENCRYPTION_PROTOCOL_V2:
+
+    if encryption_version == _ENCRYPTION_PROTOCOL_V2:
         encryption_data_length = _GCM_NONCE_LENGTH + _GCM_TAG_LENGTH
         regions = math.ceil(length / _GCM_REGION_DATA_LENGTH)
         return length + (regions * encryption_data_length)
-    else:
-        raise ValueError("Invalid encryption version specified.")
+
+    raise ValueError("Invalid encryption version specified.")
 
 
 def get_adjusted_download_range_and_offset(
         start: int,
         end: int,
         length: int,
-        encryption_data: Optional[_EncryptionData]) -> tuple[tuple[int, int], tuple[int, int]]:
+        encryption_data: Optional[_EncryptionData]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
     the given user-specified range. The new download range will include all
@@ -699,8 +700,14 @@ def generate_blob_encryption_data(key_encryption_key, version):
     return content_encryption_key, initialization_vector, encryption_data
 
 
-def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
-                 content, start_offset, end_offset, response_headers):
+def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
+        require_encryption,
+        key_encryption_key,
+        key_resolver,
+        content,
+        start_offset,
+        end_offset,
+        response_headers):
     """
     Decrypts the given blob contents and returns only the requested range.
 
@@ -737,12 +744,16 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
         return content
 
     algorithm = encryption_data.encryption_agent.encryption_algorithm
-    if (algorithm != _EncryptionAlgorithm.AES_CBC_256 and algorithm != _EncryptionAlgorithm.AES_GCM_256):
+    if algorithm not in(_EncryptionAlgorithm.AES_CBC_256, _EncryptionAlgorithm.AES_GCM_256):
         raise ValueError('Specified encryption algorithm is not supported.')
+
+    version = encryption_data.encryption_agent.protocol
+    if version not in (_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2):
+        raise ValueError('Specified encryption version is not supported.')
 
     content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, key_resolver)
 
-    if encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V1:
+    if version == _ENCRYPTION_PROTOCOL_V1:
         blob_type = response_headers['x-ms-blob-type']
 
         iv = None
@@ -785,7 +796,7 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
 
         return content[start_offset: len(content) - end_offset]
 
-    elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
+    if version == _ENCRYPTION_PROTOCOL_V2:
         # We assume the content contains only full encryption regions
         total_size = len(content)
         offset = 0
@@ -813,9 +824,6 @@ def decrypt_blob(require_encryption, key_encryption_key, key_resolver,
 
         # Read the caller requested data from the decrypted content
         return decrypted_content[start_offset:end_offset]
-
-    else:
-        raise ValueError('Specified encryption version is not supported.')
 
 
 def get_blob_encryptor_and_padder(cek, iv, should_pad):

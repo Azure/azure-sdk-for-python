@@ -239,6 +239,15 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._response = None
         self._encryption_data = None
 
+        self._initial_range = None
+        self._initial_offset = None
+
+        # The service only provides transactional MD5s for chunks under 4MB.
+        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # chunk so a transactional MD5 can be retrieved.
+        self._first_get_size = self._config.max_single_get_size if not self._validate_content \
+            else self._config.max_chunk_get_size
+
     def __len__(self):
         return self.size
 
@@ -258,11 +267,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             await self._get_encryption_data_request()
 
-        # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
-        # chunk so a transactional MD5 can be retrieved.
-        self._first_get_size = self._config.max_single_get_size if not self._validate_content \
-            else self._config.max_chunk_get_size
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
             initial_request_end = self._end_range
@@ -410,7 +414,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             iter_downloader = None
         else:
             data_end = self._file_size
-            data_start = self._initial_range[1] + 1,  # Start where the first download ended
+            data_start = self._initial_range[1] + 1  # Start where the first download ended
             # For encryption V2 only, adjust start to the end of the fetched data rather than download size
             if is_encryption_v2(self._encryption_data):
                 data_start = (self._start_range or 0) + len(self._current_content)
@@ -522,7 +526,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Use the length unless it is over the end of the file
             data_end = min(self._file_size, self._end_range + 1)
 
-        data_start = self._initial_range[1] + 1,  # Start where the first download ended
+        data_start = self._initial_range[1] + 1  # Start where the first download ended
         # For encryption V2 only, adjust start to the end of the fetched data rather than download size
         if is_encryption_v2(self._encryption_data):
             data_start = (self._start_range or 0) + len(self._current_content)

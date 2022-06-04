@@ -515,7 +515,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # Use the end range index unless it is over the end of the file
                 data_end = min(self._file_size, self._end_range + 1)
 
-            data_start = self._initial_range[1] + 1,  # Start where the first download ended
+            data_start = self._initial_range[1] + 1  # Start where the first download ended
             # For encryption V2 only, adjust start to the end of the fetched data rather than download size
             if is_encryption_v2(self._encryption_data):
                 data_start = (self._start_range or 0) + len(self._current_content)
@@ -626,7 +626,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Use the length unless it is over the end of the file
             data_end = min(self._file_size, self._end_range + 1)
 
-        data_start = self._initial_range[1] + 1,  # Start where the first download ended
+        data_start = self._initial_range[1] + 1  # Start where the first download ended
         # For encryption V2 only, adjust start to the end of the fetched data rather than download size
         if is_encryption_v2(self._encryption_data):
             data_start = (self._start_range or 0) + len(self._current_content)
