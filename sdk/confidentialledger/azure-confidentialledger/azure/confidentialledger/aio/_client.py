@@ -21,8 +21,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-
-class ConfidentialLedgerClient:
+class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-keyword
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
 
@@ -30,21 +29,21 @@ class ConfidentialLedgerClient:
     :vartype confidential_ledger:
      azure.confidentialledger.aio.operations.ConfidentialLedgerOperations
     :param ledger_uri: The Confidential Ledger URL, for example
-     https://contoso.confidentialledger.azure.com.
+     https://contoso.confidentialledger.azure.com. Required.
     :type ledger_uri: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, ledger_uri: str, **kwargs: Any) -> None:
-        _endpoint = "{ledgerUri}"
-        self._config = ConfidentialLedgerClientConfiguration(
-            ledger_uri=ledger_uri, **kwargs
-        )
-        self._client = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+    def __init__(
+        self,
+        ledger_uri: str,
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{ledgerUri}'
+        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -53,8 +52,11 @@ class ConfidentialLedgerClient:
             self._client, self._config, self._serialize, self._deserialize
         )
 
+
     def send_request(
-        self, request: HttpRequest, **kwargs: Any
+        self,
+        request: HttpRequest,
+        **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
@@ -75,17 +77,10 @@ class ConfidentialLedgerClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
-            ),
+            "ledgerUri": self._serialize.url("self._config.ledger_uri", self._config.ledger_uri, 'str', skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
