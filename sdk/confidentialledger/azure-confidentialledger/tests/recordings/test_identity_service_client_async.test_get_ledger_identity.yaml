@@ -4,34 +4,24 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-confidentialledger/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-acl-identity-service/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-azure-sdk-for-python?api-version=0.1-preview
+    uri: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-python-sdk?api-version=2022-05-13
   response:
     body:
-      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQCwOtv88CxqPRTAkd4oZqezAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMTAzMTEwMDAwMDBaFw0yMzA2MTEyMzU5\nNTlaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEqh6Boajjk2+ZtA3nZwtlxG8FtYD4fQyIvavHFUsc4r6Z9H9YX6tFfVsI\nLzd1/s/jfwgooNb2BZw8VRI/A91uYaNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUG7FjbaMqKFAeVCcZQBUoRCTIzdQwHwYDVR0jBBgwFoAUG7FjbaMqKFAeVCcZ\nQBUoRCTIzdQwCgYIKoZIzj0EAwIDRwAwRAIgCIWqMN703ftlapmQEfWx+9lPWRyZ\nefxppDt3X5k41WACICJ8/2LTkwAmeb7hWgM07cFGlIMX1rCKvLi4S95qc8UL\n-----END
-        CERTIFICATE-----\n\u0000","ledgerId":"lyshi-azure-sdk-for-python"}'
+      string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBejCCASCgAwIBAgIQXqYlhsHXrAZDmRcsUPOA/TAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MDQwMDQxMzhaFw0yMjA5MDIwMDQx\nMzdaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEm/rbajYdpYZCd1EkmT9bjx/z5rXm7Hs95SuuC8ganqG+q5lEpaeLhdNA\ns0f7TEI0Npgp4GkyHyfzUviGMDVAoqNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUu9Yu7BReXU/WyqTKOZSt3k4MDCkwHwYDVR0jBBgwFoAUu9Yu7BReXU/WyqTK\nOZSt3k4MDCkwCgYIKoZIzj0EAwIDSAAwRQIhANjG8MfLiQhl2HC24RLSGV89BpJ+\nw2N0cX0BaSVccXfCAiBr9gfljLcjr7WztOVmudR+o7PtIAboT1nG8FE4Tq+uXQ==\n-----END
+        CERTIFICATE-----\n","ledgerId":"lyshi-python-sdk"}'
     headers:
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 18 May 2022 21:27:45 GMT
-      server:
-      - Kestrel
-      transfer-encoding:
-      - chunked
-      x-ms-image-digest:
-      - sha256:8893d7cf29ba984f652231a071622b991fb03eb1b37a1a398d4129de09fb0651
-      x-ms-image-tag:
-      - 1.0.01963.446-78f5e1ad76129983a49182b95ad99af332c06c71
-      x-ms-machinename:
-      - identityservice-7477dd895d-gfh89
+      content-type: application/json; charset=utf-8
+      date: Sat, 04 Jun 2022 00:50:12 GMT
+      server: Kestrel
+      transfer-encoding: chunked
+      x-ms-image-digest: sha256:76a043c6830573c7ca9d4c3973598c3c07b5234b78c1c59c0875d423a234cb54
+      x-ms-image-tag: 1.0.01966.457-a5d1497e5e29535cd0ce574253fb08188e4d495a
+      x-ms-machinename: identityservice-796f6dfd89-rzdjc
     status:
       code: 200
       message: OK
+    url: https://identity.confidential-ledger.core.azure.com/ledgerIdentity/lyshi-python-sdk?api-version=2022-05-13
 version: 1
