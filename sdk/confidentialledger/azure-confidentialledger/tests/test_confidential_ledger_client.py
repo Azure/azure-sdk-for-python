@@ -259,7 +259,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         )
         for user_id in [aad_user_id, cert_user_id]:
             user = client.confidential_ledger.create_or_update_user(
-                user_id, "Contributor"
+                user_id, {"assignedRole": "Contributor"}
             )
             self.assertEqual(user["userId"], user_id)
             self.assertEqual(user["assignedRole"], "Contributor")
@@ -270,7 +270,9 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
             client.confidential_ledger.delete_user(user_id)
 
-            user = client.confidential_ledger.create_or_update_user(user_id, "Reader")
+            user = client.confidential_ledger.create_or_update_user(
+                user_id, {"assignedRole": "Reader"}
+            )
             self.assertEqual(user["userId"], user_id)
             self.assertEqual(user["assignedRole"], "Reader")
 
