@@ -40,7 +40,7 @@ jobs:
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
+        git clone ${REPO:0:8}$(USR_NAME):$(azuresdk-github-pat)@${REPO:8} $(pwd)/azure-sdk-for-python
 
         # prepare env if need to generate SDK code
         if [ "$(SPEC_README)" ]; then
