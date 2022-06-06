@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://github.com/Azure/azure-rest-api-specs/blob/80fee259d7e835a9604b5d1c4afd01943f03881c/specification/purview/data-plane/Azure.Analytics.Purview.Catalog/preview/2022-03-01-preview/purviewcatalog.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/ccbe894f6b012ca2000184307ed453fd68797b86/specification/purview/data-plane/Azure.Analytics.Purview.Catalog/preview/2022-03-01-preview/purviewcatalog.json
 output-folder: ../azure/purview/catalog
 namespace: azure.purview.catalog
 package-name: azure-purview-catalog

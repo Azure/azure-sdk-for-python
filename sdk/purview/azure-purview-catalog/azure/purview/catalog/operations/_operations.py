@@ -8448,11 +8448,11 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
     def get_sample_business_metadata_template(
         self,
         **kwargs: Any
-    ) -> Optional[IO]:
+    ) -> IO:
         """Get the sample Template for uploading/creating bulk BusinessMetaData.
 
         :return: IO
-        :rtype: IO or None
+        :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -8463,7 +8463,7 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[IO]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
         
         request = build_entity_get_sample_business_metadata_template_request(
@@ -8482,18 +8482,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = response
+        deserialized = response
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(IO, deserialized), {})
 
-        return deserialized
+        return cast(IO, deserialized)
 
 
 
@@ -8503,7 +8501,7 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         self,
         *args,
         **kwargs
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """You need to write a custom operation for "import_business_metadata". Please refer to
         https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.
 
@@ -18018,7 +18016,7 @@ class LineageOperations:
         include_parent: Optional[bool] = None,
         get_derived_lineage: Optional[bool] = None,
         **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Returns lineage info about entity.
 
         In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
@@ -18044,7 +18042,7 @@ class LineageOperations:
          None.
         :paramtype get_derived_lineage: bool
         :return: JSON object
-        :rtype: JSON or None
+        :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -18181,7 +18179,7 @@ class LineageOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_lineage_get_lineage_by_unique_attribute_request(
@@ -18206,21 +18204,19 @@ class LineageOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
 
 class RelationshipOperations:
@@ -18776,13 +18772,13 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         self,
         guid: str,
         **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Get the businessMetadata definition for the given guid.
 
         :param guid: businessMetadata guid.
         :type guid: str
         :return: JSON object
-        :rtype: JSON or None
+        :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -18904,7 +18900,7 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_types_get_business_metadata_def_by_guid_request(
@@ -18924,21 +18920,19 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
 
 
@@ -18947,13 +18941,13 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         self,
         name: str,
         **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Get the businessMetadata definition by it's name (unique).
 
         :param name: businessMetadata name.
         :type name: str
         :return: JSON object
-        :rtype: JSON or None
+        :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -19075,7 +19069,7 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_types_get_business_metadata_def_by_name_request(
@@ -19095,21 +19089,19 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
 
 

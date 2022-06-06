@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._purview_catalog_client import PurviewCatalogClient
+from ._client import PurviewCatalogClient
 
 try:
     from ._patch import __all__ as _patch_all
