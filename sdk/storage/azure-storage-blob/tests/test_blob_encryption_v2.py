@@ -7,6 +7,8 @@
 import pytest
 from json import loads
 
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobServiceClient,
     BlobType
@@ -208,6 +210,52 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         self.bsc.key_encryption_key = None
         blob.upload_blob(content, overwrite=True)
         data = blob.download_blob().readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @BlobPreparer()
+    def test_encryption_with_blob_lease(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        blob.upload_blob(b'', overwrite=True)
+        lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+
+        # Act
+        blob.upload_blob(content, overwrite=True, lease=lease)
+        with self.assertRaises(HttpResponseError):
+            blob.download_blob(lease='00000000-1111-2222-3333-444444444445')
+
+        data = blob.download_blob(lease=lease).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @BlobPreparer()
+    def test_encryption_with_if_match(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        resp = blob.upload_blob(b'', overwrite=True)
+        etag = resp['etag']
+
+        # Act
+        resp = blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
+        etag = resp['etag']
+
+        with self.assertRaises(HttpResponseError):
+            blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
+
+        data = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified).readall()
 
         # Assert
         self.assertEqual(content, data)

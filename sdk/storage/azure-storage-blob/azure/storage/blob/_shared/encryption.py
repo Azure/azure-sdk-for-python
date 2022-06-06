@@ -189,8 +189,8 @@ class GCMBlobEncryptionStream:
             data_stream: BinaryIO,
             ):
         """
-        :param content_encryption_key: The encryption key to use.
-        :param data_stream: The data stream to read data from.
+        :param bytes content_encryption_key: The encryption key to use.
+        :param BinaryIO data_stream: The data stream to read data from.
         """
         self.content_encryption_key = content_encryption_key
         self.data_stream = data_stream
@@ -203,7 +203,7 @@ class GCMBlobEncryptionStream:
         """
         Read data from the stream. Specify -1 to read all available data.
 
-        :param size: The amount of data to read. Defaults to -1 for all data.
+        :param int size: The amount of data to read. Defaults to -1 for all data.
         """
         result = BytesIO()
         remaining = sys.maxsize if size == -1 else size
@@ -233,6 +233,8 @@ class GCMBlobEncryptionStream:
         """
         Encrypt the given region of data using AES-GCM. The result
         includes the data in the form: nonce + ciphertext + tag.
+
+        :param bytes data: The data to encrypt.
         """
         # Each region MUST use a different nonce
         nonce = self.nonce_counter.to_bytes(_GCM_NONCE_LENGTH, 'big')
@@ -249,7 +251,7 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     """
     Determine whether the given encryption data signifies version 2.0.
 
-    :param encryption_data: The encryption data. Will return False if this is None.
+    :param Optional[_EncryptionData] encryption_data: The encryption data. Will return False if this is None.
     """
     # If encryption_data is None, assume no encryption
     return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
@@ -260,8 +262,8 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
     Get the adjusted size of the blob upload which accounts for
     extra encryption data (padding OR nonce + tag).
 
-    :param length: The plaintext data length.
-    :param encryption_version: The version of encryption being used.
+    :param int length: The plaintext data length.
+    :param str encryption_version: The version of encryption being used.
     """
     if encryption_version == _ENCRYPTION_PROTOCOL_V1:
         return length + (16 - (length % 16))
@@ -292,10 +294,10 @@ def get_adjusted_download_range_and_offset(
     V1: decrypted_data[start_offset : len(decrypted_data) - end_offset]
     V2: decrypted_data[start_offset : end_offset]
 
-    :param start: The user-requested start index.
-    :param end: The user-requested end index.
-    :param length: The user-requested length. Only used for V1.
-    :param encryption_data: The encryption data to determine version and sizes.
+    :param int start: The user-requested start index.
+    :param int end: The user-requested end index.
+    :param int length: The user-requested length. Only used for V1.
+    :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
     :return: (new start, new end), (start offset, end offset)
     """
     start_offset, end_offset = 0, 0
@@ -354,8 +356,8 @@ def parse_encryption_data(metadata: Dict[str, Any], require_encryption: bool) ->
     """
     Parses the encryption data out of the given blob metadata.
 
-    :param metadata: The blob metadata parsed from the response.
-    :param require_encryption: Whether encryption is required on the client.
+    :param Dict[str, Any] metadata: The blob metadata parsed from the response.
+    :param bool require_encryption: Whether encryption is required on the client.
     """
     try:
         encryption_data_str = metadata['encryptiondata']
@@ -373,8 +375,8 @@ def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_Encryp
     Adjusts the given blob size for encryption by subtracting the size of
     the encryption data (nonce + tag). This only has an affect for encryption V2.
 
-    :param size: The original blob size.
-    :param encryption_data: The encryption data to determine version and sizes.
+    :param int size: The original blob size.
+    :param Optional[_EncryptionData] encryption_data: The encryption data to determine version and sizes.
     """
     if is_encryption_v2(encryption_data):
         nonce_length = encryption_data.encrypted_region_info.nonce_length
@@ -476,8 +478,8 @@ def _dict_to_encryption_data(encryption_data_dict):
     if 'EncryptedRegionInfo' in encryption_data_dict:
         encrypted_region_info = encryption_data_dict['EncryptedRegionInfo']
         region_info = _EncryptedRegionInfo(encrypted_region_info['EncryptedRegionDataLength'],
-                                          encrypted_region_info['NonceLength'],
-                                          encrypted_region_info['TagLength'])
+                                           encrypted_region_info['NonceLength'],
+                                           encrypted_region_info['TagLength'])
 
     encryption_data = _EncryptionData(encryption_iv,
                                       region_info,
