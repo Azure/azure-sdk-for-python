@@ -1,0 +1,21 @@
+trigger: none
+
+stages:
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: 'azure-maps-search'
+      JobName: search
+      ServiceDirectory: maps
+      MatrixReplace:
+        - TestSamples=.*/true
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-maps-services-cloud-test-resources-common)
+            - $(sub-config-maps-services-cloud-test-resources-python)
+        Int:
+            SubscriptionConfigurations:
+              - $(sub-config-maps-int-test-resources-common)
+              - $(sub-config-maps-int-test-resources-python)
+      Clouds: Public,Int
