@@ -147,6 +147,7 @@
     "contoso",
     "contosodataset",
     "centralus",
+    "centraluseuap",
     "creds",
     "ctoring",
     "ctypes",
@@ -399,6 +400,12 @@
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
         "udpated"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {
