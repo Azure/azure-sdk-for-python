@@ -38,7 +38,9 @@ SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-version-keyword
+class EventHubProducerClient(
+    ClientBase
+):  # pylint: disable=client-accepts-api-version-keyword
     # pylint: disable=too-many-instance-attributes
     """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -168,7 +170,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         credential: "CredentialTypes",
         *,
         buffered_mode: bool = False,
-        on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]] = None,
+        on_error: Optional[
+            Callable[[SendEventTypes, Optional[str], Exception], None]
+        ] = None,
         on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]] = None,
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
@@ -181,7 +185,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             network_tracing=kwargs.get("logging_enable"),
             **kwargs
         )
-        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
+        self._producers = {
+            ALL_PARTITIONS: self._create_producer()
+        }  # type: Dict[str, Optional[EventHubProducer]]
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
         self._lock = threading.Lock()
@@ -207,13 +213,19 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             if self._max_wait_time is None:
                 self._max_wait_time = 1
             if self._max_wait_time <= 0:
-                raise ValueError("'max_wait_time' must be a float greater than 0 in buffered mode")
+                raise ValueError(
+                    "'max_wait_time' must be a float greater than 0 in buffered mode"
+                )
             if self._max_buffer_length is None:
                 self._max_buffer_length = 1500
             if self._max_buffer_length <= 0:
-                raise ValueError("'max_buffer_length' must be an integer greater than 0 in buffered mode")
+                raise ValueError(
+                    "'max_buffer_length' must be an integer greater than 0 in buffered mode"
+                )
             if isinstance(self._executor, int) and self._executor <= 0:
-                raise ValueError("'buffer_concurrency' must be an integer greater than 0 in buffered mode")
+                raise ValueError(
+                    "'buffer_concurrency' must be an integer greater than 0 in buffered mode"
+                )
 
     def __enter__(self):
         return self
@@ -236,8 +248,8 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
-                executor=self._executor
-                )
+                executor=self._executor,
+            )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
     def _batch_preparer(self, event_data_batch, **kwargs):
@@ -252,10 +264,18 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
                 )
             to_send_batch = event_data_batch
         else:
-            to_send_batch = self.create_batch(partition_id=partition_id, partition_key=partition_key)
-            to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+            to_send_batch = self.create_batch(
+                partition_id=partition_id, partition_key=partition_key
+            )
+            to_send_batch._load_events(
+                event_data_batch
+            )  # pylint:disable=protected-access
 
-        return to_send_batch, to_send_batch._partition_id, partition_key  # pylint:disable=protected-access
+        return (
+            to_send_batch,
+            to_send_batch._partition_id,
+            partition_key,
+        )  # pylint:disable=protected-access
 
     def _buffered_send_batch(self, event_data_batch, **kwargs):
         batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
@@ -266,7 +286,12 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
 
-        self._buffered_send(event_data_batch, partition_id=pid, partition_key=pkey, timeout_time=timeout_time)
+        self._buffered_send(
+            event_data_batch,
+            partition_id=pid,
+            partition_key=pkey,
+            timeout_time=timeout_time,
+        )
 
     def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
@@ -274,7 +299,10 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         self._buffered_send(
-            event, partition_id=kwargs.get("partition_id"), partition_key=partition_key, timeout_time=timeout_time
+            event,
+            partition_id=kwargs.get("partition_id"),
+            partition_key=partition_key,
+            timeout_time=timeout_time,
         )
 
     def _get_partitions(self):
@@ -289,7 +317,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         # pylint: disable=protected-access,line-too-long
         with self._lock:
             if not self._max_message_size_on_link:
-                cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
+                cast(
+                    EventHubProducer, self._producers[ALL_PARTITIONS]
+                )._open_with_retry()
                 self._max_message_size_on_link = (
                     self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size  # type: ignore
                     or constants.MAX_MESSAGE_LENGTH_BYTES
@@ -299,21 +329,33 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         # type: (str, Optional[Union[int, float]]) -> None
         with self._lock:
             self._get_partitions()
-            if partition_id not in cast(List[str], self._partition_ids) and partition_id != ALL_PARTITIONS:
+            if (
+                partition_id not in cast(List[str], self._partition_ids)
+                and partition_id != ALL_PARTITIONS
+            ):
                 raise ConnectError(
-                    "Invalid partition {} for the event hub {}".format(partition_id, self.eventhub_name)
+                    "Invalid partition {} for the event hub {}".format(
+                        partition_id, self.eventhub_name
+                    )
                 )
 
-            if not self._producers[partition_id] or cast(EventHubProducer, self._producers[partition_id]).closed:
+            if (
+                not self._producers[partition_id]
+                or cast(EventHubProducer, self._producers[partition_id]).closed
+            ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=(None if partition_id == ALL_PARTITIONS else partition_id),
+                    partition_id=(
+                        None if partition_id == ALL_PARTITIONS else partition_id
+                    ),
                     send_timeout=send_timeout,
                 )
 
     def _create_producer(self, partition_id=None, send_timeout=None):
         # type: (Optional[str], Optional[Union[int, float]]) -> EventHubProducer
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
+        send_timeout = (
+            self._config.send_timeout if send_timeout is None else send_timeout
+        )
 
         handler = EventHubProducer(
             self,
@@ -359,7 +401,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: bool = False,
-        on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]] = None,
+        on_error: Optional[
+            Callable[[SendEventTypes, Optional[str], Exception], None]
+        ] = None,
         on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]] = None,
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
@@ -720,7 +764,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return super(EventHubProducerClient, self)._get_partition_properties(partition_id)
+        return super(EventHubProducerClient, self)._get_partition_properties(
+            partition_id
+        )
 
     def flush(self, **kwargs: Any) -> None:
         """
@@ -763,7 +809,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             if self._buffered_mode and self._buffered_producer_dispatcher:
                 timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
-                self._buffered_producer_dispatcher.close(flush=flush, timeout_time=timeout_time, raise_error=True)
+                self._buffered_producer_dispatcher.close(
+                    flush=flush, timeout_time=timeout_time, raise_error=True
+                )
                 self._buffered_producer_dispatcher = None
 
             for pid in self._producers:
@@ -784,9 +832,9 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             return None
 
         try:
-            return cast(BufferedProducerDispatcher, self._buffered_producer_dispatcher).get_buffered_event_count(
-                partition_id
-            )
+            return cast(
+                BufferedProducerDispatcher, self._buffered_producer_dispatcher
+            ).get_buffered_event_count(partition_id)
         except AttributeError:
             return 0
 
@@ -802,6 +850,8 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             return None
 
         try:
-            return cast(BufferedProducerDispatcher, self._buffered_producer_dispatcher).total_buffered_event_count
+            return cast(
+                BufferedProducerDispatcher, self._buffered_producer_dispatcher
+            ).total_buffered_event_count
         except AttributeError:
             return 0
