@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Mon, 06 Jun 2022 23:29:23 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer9941921?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 06 Jun 2022 23:29:23 GMT
+      etag: '"0x8DA48146428FF7E"'
+      last-modified: Mon, 06 Jun 2022 23:29:24 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranstock.blob.core.windows.net/utcontainer9941921?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Mon, 06 Jun 2022 23:29:24 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainersource9941921?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 06 Jun 2022 23:29:23 GMT
+      etag: '"0x8DA4814643978E2"'
+      last-modified: Mon, 06 Jun 2022 23:29:24 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranstock.blob.core.windows.net/utcontainersource9941921?restype=container
+version: 1
