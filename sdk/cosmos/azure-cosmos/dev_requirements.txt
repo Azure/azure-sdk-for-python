@@ -1,3 +1,4 @@
+azure-core
+azure-identity
 -e ../../../tools/azure-sdk-tools
-../../core/azure-core
 -e ../../../tools/azure-devtools

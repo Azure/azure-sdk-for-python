@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +13,7 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
     def __init__(self, **kwargs):
         self._response_callback = kwargs.get("raw_response_hook")
         self._is_lro = None
-        super(TextAnalyticsResponseHookPolicy, self).__init__()
+        super().__init__()
 
     def on_request(self, request):
         self._response_callback = request.context.options.pop(
@@ -29,17 +28,18 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
             data = ContentDecodePolicy.deserialize_from_http_generics(
                 response.http_response
             )
-            if self._is_lro and (not data or data.get("status") not in _FINISHED):
+            if self._is_lro and (not data or data.get("status", "").lower() not in _FINISHED):
+                return
+            if response.http_response.status_code == 429:
                 return
             if data:
-                statistics = data.get("statistics", None)
-                model_version = data.get("modelVersion", None)
-
-                if statistics or model_version:
-                    batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access
-                        statistics
-                    )
-                    response.statistics = batch_statistics
-                    response.model_version = model_version
+                inner = data.get("results", data)  # language API compat
+                statistics = inner.get("statistics", None)
+                model_version = inner.get("modelVersion", None)
+                batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access
+                    statistics
+                )
+                response.statistics = batch_statistics
+                response.model_version = model_version
             response.raw_response = data
             self._response_callback(response)

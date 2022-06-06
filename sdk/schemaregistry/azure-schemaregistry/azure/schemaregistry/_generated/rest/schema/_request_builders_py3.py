@@ -7,55 +7,125 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional
 
-from azure.core.pipeline.transport._base import _format_url_section
-from azure.core.rest import HttpRequest
 from msrest import Serializer
 
+from azure.core.rest import HttpRequest
+from azure.core.utils import case_insensitive_dict
+
+from ..._vendor import _format_url_section
+
 _SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
 def build_get_by_id_request(
-    schema_id: str,
+    id: str,
     **kwargs: Any
 ) -> HttpRequest:
     """Get a registered schema by its unique ID reference.
 
     Gets a registered schema by its unique ID.  Azure Schema Registry guarantees that ID is unique
-    within a namespace.
+    within a namespace. Operation response type is based on serialization of schema requested.
 
     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder
     into your code flow.
 
-    :param schema_id: References specific schema in registry namespace.
-    :type schema_id: str
+    :param id: References specific schema in registry namespace.
+    :type id: str
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
     :rtype: ~azure.core.rest.HttpRequest
     """
 
-    api_version = "2020-09-01-preview"
-    accept = "text/plain; charset=utf-8"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10"))  # type: str
+    accept = _headers.pop('Accept', "application/json; serialization=Avro")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/$schemagroups/getSchemaById/{schema-id}')
+    _url = "/$schemaGroups/$schemas/{id}"
     path_format_arguments = {
-        'schema-id': _SERIALIZER.url("schema_id", schema_id, 'str'),
+        "id": _SERIALIZER.url("id", id, 'str'),
     }
-    url = _format_url_section(url, **path_format_arguments)
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_get_versions_request(
+    group_name: str,
+    schema_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    """Get list schema versions.
+
+    Gets the list of all versions of one schema.
+
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder
+    into your code flow.
+
+    :param group_name: Schema group under which schema is registered.  Group's serialization type
+     should match the serialization type specified in the request.
+    :type group_name: str
+    :param schema_name: Name of schema.
+    :type schema_name: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # response body for status code(s): 200
+            response.json() == {
+                "schemaVersions": [
+                    0  # Optional. Array of schema groups.
+                ]
+            }
+    """
+
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions"
+    path_format_arguments = {
+        "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
+        "schemaName": _SERIALIZER.url("schema_name", schema_name, 'str', max_length=50, min_length=0, pattern=r'^[A-Za-z0-9][^\\/$:]*$'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -65,7 +135,6 @@ def build_query_id_by_content_request(
     schema_name: str,
     *,
     content: Any,
-    serialization_type: str,
     **kwargs: Any
 ) -> HttpRequest:
     """Get ID for existing schema.
@@ -79,47 +148,46 @@ def build_query_id_by_content_request(
     :param group_name: Schema group under which schema is registered.  Group's serialization type
      should match the serialization type specified in the request.
     :type group_name: str
-    :param schema_name: Name of the registered schema.
+    :param schema_name: Name of schema.
     :type schema_name: str
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). String representation (UTF-8) of the registered schema.
     :paramtype content: any
-    :keyword serialization_type: Serialization type for the schema being registered. "avro"
-    :paramtype serialization_type: str
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
     :rtype: ~azure.core.rest.HttpRequest
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = "2020-09-01-preview"
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/$schemagroups/{group-name}/schemas/{schema-name}')
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}:get-id"
     path_format_arguments = {
-        'group-name': _SERIALIZER.url("group_name", group_name, 'str'),
-        'schema-name': _SERIALIZER.url("schema_name", schema_name, 'str'),
+        "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
+        "schemaName": _SERIALIZER.url("schema_name", schema_name, 'str', max_length=50, min_length=0, pattern=r'^[A-Za-z0-9][^\\/$:]*$'),
     }
-    url = _format_url_section(url, **path_format_arguments)
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Serialization-Type'] = _SERIALIZER.header("serialization_type", serialization_type, 'str')
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_params,
+        headers=_headers,
         content=content,
         **kwargs
     )
@@ -130,7 +198,6 @@ def build_register_request(
     schema_name: str,
     *,
     content: Any,
-    serialization_type: str,
     **kwargs: Any
 ) -> HttpRequest:
     """Register new schema.
@@ -145,48 +212,47 @@ def build_register_request(
     :param group_name: Schema group under which schema should be registered.  Group's serialization
      type should match the serialization type specified in the request.
     :type group_name: str
-    :param schema_name: Name of schema being registered.
+    :param schema_name: Name of schema.
     :type schema_name: str
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). String representation (UTF-8) of the schema being
      registered.
     :paramtype content: any
-    :keyword serialization_type: Serialization type for the schema being registered. "avro"
-    :paramtype serialization_type: str
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
     :rtype: ~azure.core.rest.HttpRequest
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = "2020-09-01-preview"
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/$schemagroups/{group-name}/schemas/{schema-name}')
+    _url = "/$schemaGroups/{groupName}/schemas/{schemaName}"
     path_format_arguments = {
-        'group-name': _SERIALIZER.url("group_name", group_name, 'str'),
-        'schema-name': _SERIALIZER.url("schema_name", schema_name, 'str'),
+        "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
+        "schemaName": _SERIALIZER.url("schema_name", schema_name, 'str', max_length=50, min_length=0, pattern=r'^[A-Za-z0-9][^\\/$:]*$'),
     }
-    url = _format_url_section(url, **path_format_arguments)
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Serialization-Type'] = _SERIALIZER.header("serialization_type", serialization_type, 'str')
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_params,
+        headers=_headers,
         content=content,
         **kwargs
     )

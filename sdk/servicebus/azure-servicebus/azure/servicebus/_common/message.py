@@ -9,7 +9,7 @@ import time
 import datetime
 import uuid
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
@@ -19,6 +19,7 @@ import uamqp.message
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
     ServiceBusReceiveMode,
+    ServiceBusMessageState,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
@@ -35,6 +36,7 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
+    MESSAGE_STATE_NAME
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -56,6 +58,14 @@ if TYPE_CHECKING:
     )
     from .._servicebus_receiver import ServiceBusReceiver
     from azure.core.tracing import AbstractSpan
+    PrimitiveTypes = Union[
+        int,
+        float,
+        bytes,
+        bool,
+        str,
+        uuid.UUID
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -68,7 +78,9 @@ class ServiceBusMessage(
     :param body: The data to send in a single message.
     :type body: Optional[Union[str, bytes]]
 
-    :keyword Optional[dict] application_properties: The user defined properties on the message.
+    :keyword application_properties: The user defined properties on the message.
+    :paramtype application_properties: Dict[str, Union[int or float or bool or
+     bytes or str or uuid.UUID or datetime or None]]
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
     :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
@@ -92,8 +104,24 @@ class ServiceBusMessage(
 
     """
 
-    def __init__(self, body, **kwargs):
-        # type: (Optional[Union[str, bytes]], Any) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes]],
+        *,
+        application_properties: Optional[Dict[str, "PrimitiveTypes"]] = None,
+        session_id: Optional[str] = None,
+        message_id: Optional[str] = None,
+        scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
+        time_to_live: Optional[datetime.timedelta] = None,
+        content_type: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        subject: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        to: Optional[str] = None,
+        reply_to: Optional[str] = None,
+        reply_to_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
@@ -108,20 +136,18 @@ class ServiceBusMessage(
             self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
         else:
             self._build_message(body)
-            self.application_properties = kwargs.pop("application_properties", None)
-            self.session_id = kwargs.pop("session_id", None)
-            self.message_id = kwargs.pop("message_id", None)
-            self.content_type = kwargs.pop("content_type", None)
-            self.correlation_id = kwargs.pop("correlation_id", None)
-            self.to = kwargs.pop("to", None)
-            self.reply_to = kwargs.pop("reply_to", None)
-            self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
-            self.subject = kwargs.pop("subject", None)
-            self.scheduled_enqueue_time_utc = kwargs.pop(
-                "scheduled_enqueue_time_utc", None
-            )
-            self.time_to_live = kwargs.pop("time_to_live", None)
-            self.partition_key = kwargs.pop("partition_key", None)
+            self.application_properties = application_properties
+            self.session_id = session_id
+            self.message_id = message_id
+            self.content_type = content_type
+            self.correlation_id = correlation_id
+            self.to = to
+            self.reply_to = reply_to
+            self.reply_to_session_id = reply_to_session_id
+            self.subject = subject
+            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
+            self.time_to_live = time_to_live
+            self.partition_key = partition_key
 
     def __str__(self):
         # type: () -> str
@@ -265,7 +291,7 @@ class ServiceBusMessage(
 
     @property
     def application_properties(self):
-        # type: () -> Optional[dict]
+        # type: () -> Optional[Dict]
         """The user defined properties on the message.
 
         :rtype: dict
@@ -274,7 +300,7 @@ class ServiceBusMessage(
 
     @application_properties.setter
     def application_properties(self, value):
-        # type: (dict) -> None
+        # type: (Dict) -> None
         self._raw_amqp_message.application_properties = value
 
     @property
@@ -353,7 +379,7 @@ class ServiceBusMessage(
             if self._raw_amqp_message.properties.absolute_expiry_time:
                 self._raw_amqp_message.properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
-            self._raw_amqp_message.header.time_to_live = value.seconds * 1000
+            self._raw_amqp_message.header.time_to_live = int(value.total_seconds()) * 1000
         else:
             self._raw_amqp_message.header.time_to_live = int(value) * 1000
 
@@ -952,6 +978,24 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             except AttributeError:
                 pass
         return None
+
+    @property
+    def state(self):
+        # type: () -> ServiceBusMessageState
+        """
+        Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
+        or Scheduled.
+
+        :rtype: ~azure.servicebus.ServiceBusMessageState
+        """
+        try:
+            message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
+            try:
+                return ServiceBusMessageState(message_state)
+            except ValueError:
+                return ServiceBusMessageState.ACTIVE if not message_state else message_state
+        except AttributeError:
+            return ServiceBusMessageState.ACTIVE
 
     @property
     def delivery_count(self):

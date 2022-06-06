@@ -17,7 +17,7 @@ USAGE:
     python sample_analyze_general_documents_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
@@ -27,12 +27,12 @@ import asyncio
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_bounding_box(region.bounding_box)) for region in bounding_regions)
+    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
 
-def format_bounding_box(bounding_box):
-    if not bounding_box:
+def format_polygon(polygon):
+    if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
 
 
 async def analyze_general_documents():
@@ -85,13 +85,6 @@ async def analyze_general_documents():
                     )
                 )
 
-    print("----Entities found in document----")
-    for entity in result.entities:
-        print("Entity of category '{}' with sub-category '{}'".format(entity.category, entity.sub_category))
-        print("...has content '{}'".format(entity.content))
-        print("...within '{}' bounding regions".format(format_bounding_region(entity.bounding_regions)))
-        print("...with confidence {}\n".format(entity.confidence))
-
     for page in result.pages:
         print("----Analyzing document from page #{}----".format(page.page_number))
         print(
@@ -101,26 +94,28 @@ async def analyze_general_documents():
         )
 
         for line_idx, line in enumerate(page.lines):
+            words = line.get_words()
             print(
-                "Line # {} has text content '{}' within bounding box '{}'".format(
+                "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
                     line_idx,
+                    len(words),
                     line.content,
-                    format_bounding_box(line.bounding_box),
+                    format_polygon(line.polygon),
                 )
             )
 
-        for word in page.words:
-            print(
-                "...Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
+            for word in words:
+                print(
+                    "......Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
                 )
-            )
 
         for selection_mark in page.selection_marks:
             print(
-                "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                "Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                     selection_mark.state,
-                    format_bounding_box(selection_mark.bounding_box),
+                    format_polygon(selection_mark.polygon),
                     selection_mark.confidence,
                 )
             )
@@ -136,7 +131,7 @@ async def analyze_general_documents():
                 "Table # {} location on page: {} is {}".format(
                     table_idx,
                     region.page_number,
-                    format_bounding_box(region.bounding_box),
+                    format_polygon(region.polygon),
                 )
             )
         for cell in table.cells:
@@ -149,9 +144,9 @@ async def analyze_general_documents():
             )
             for region in cell.bounding_regions:
                 print(
-                    "...content on page {} is within bounding box '{}'\n".format(
+                    "...content on page {} is within bounding polygon '{}'\n".format(
                         region.page_number,
-                        format_bounding_box(region.bounding_box),
+                        format_polygon(region.polygon),
                     )
                 )
     print("----------------------------------------")
@@ -161,5 +156,4 @@ async def main():
     await analyze_general_documents()
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

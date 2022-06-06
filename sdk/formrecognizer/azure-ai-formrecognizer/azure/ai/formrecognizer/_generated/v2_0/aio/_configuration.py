@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class FormRecognizerClientConfiguration(Configuration):
+class FormRecognizerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for FormRecognizerClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -25,7 +25,8 @@ class FormRecognizerClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+     https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
     """
 
@@ -35,11 +36,11 @@ class FormRecognizerClientConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(FormRecognizerClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(FormRecognizerClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint

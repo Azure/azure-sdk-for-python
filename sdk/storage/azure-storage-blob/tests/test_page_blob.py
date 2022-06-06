@@ -5,36 +5,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-
-import pytest
 import os
-import unittest
+import pytest
 import uuid
 from datetime import datetime, timedelta
 
-from azure.mgmt.storage import StorageManagementClient
-
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
+from azure.mgmt.storage import StorageManagementClient
 
 from azure.storage.blob import (
-    BlobServiceClient,
-    ContainerClient,
     BlobClient,
+    BlobImmutabilityPolicyMode,
     BlobProperties,
     BlobSasPermissions,
+    BlobServiceClient,
     BlobType,
+    ImmutabilityPolicy,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    StorageErrorCode,
-    generate_blob_sas, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, BlobAccountPreparer, \
-    CachedResourceGroupPreparer
+    generate_blob_sas)
 from azure.storage.blob._shared.policies import StorageContentValidation
-from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
+from test_helpers import ProgressTracker
+from settings.testcase import BlobPreparer
+
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -1066,6 +1061,144 @@ class StoragePageBlobTest(StorageTestCase):
                                        if_sequence_number_eq=start_sequence + 1)
 
     @BlobPreparer()
+    def test_list_page_ranges(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=2560)
+        data = self.get_random_bytes(512)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data*2, offset=1024, length=1024)
+
+        # Act
+        ranges = list(blob.list_page_ranges())
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertEqual(2, len(ranges))
+        self.assertEqual(0, ranges[0].start)
+        self.assertEqual(511, ranges[0].end)
+        self.assertFalse(ranges[0].cleared)
+        self.assertEqual(1024, ranges[1].start)
+        self.assertEqual(2047, ranges[1].end)
+        self.assertFalse(ranges[1].cleared)
+
+    @BlobPreparer()
+    def test_list_page_ranges_pagination(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=3072)
+        data = self.get_random_bytes(512)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
+        blob.upload_page(data * 2, offset=2048, length=1024)
+
+        # Act
+        page_list = blob.list_page_ranges(results_per_page=2).by_page()
+        first_page = next(page_list)
+        items_on_page1 = list(first_page)
+        second_page = next(page_list)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        self.assertEqual(2, len(items_on_page1))
+        self.assertEqual(1, len(items_on_page2))
+
+    @BlobPreparer()
+    def test_list_page_ranges_empty(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=2560)
+
+        # Act
+        ranges = list(blob.list_page_ranges())
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertIsInstance(ranges, list)
+        self.assertEqual(0, len(ranges))
+
+    @BlobPreparer()
+    def test_list_page_ranges_offset(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=2560)
+        data = self.get_random_bytes(512)
+        blob.upload_page(data * 3, offset=0, length=1536)
+        blob.upload_page(data, offset=2048, length=512)
+
+        # Act
+        # Length with no offset, should raise ValueError
+        with self.assertRaises(ValueError):
+            ranges = list(blob.list_page_ranges(length=1024))
+
+        ranges = list(blob.list_page_ranges(offset=1024, length=1024))
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertIsInstance(ranges, list)
+        self.assertEqual(1, len(ranges))
+        self.assertEqual(1024, ranges[0].start)
+        self.assertEqual(1535, ranges[0].end)
+        self.assertFalse(ranges[0].cleared)
+
+    @BlobPreparer()
+    def test_list_page_ranges_diff(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=2048)
+        data = self.get_random_bytes(1536)
+        snapshot1 = blob.create_snapshot()
+        blob.upload_page(data, offset=0, length=1536)
+        snapshot2 = blob.create_snapshot()
+        blob.clear_page(offset=512, length=512)
+
+        # Act
+        ranges1 = list(blob.list_page_ranges(previous_snapshot=snapshot1))
+        ranges2 = list(blob.list_page_ranges(previous_snapshot=snapshot2['snapshot']))
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(3, len(ranges1))
+        self.assertEqual(0, ranges1[0].start)
+        self.assertEqual(511, ranges1[0].end)
+        self.assertFalse(ranges1[0].cleared)
+        self.assertEqual(512, ranges1[1].start)
+        self.assertEqual(1023, ranges1[1].end)
+        self.assertTrue(ranges1[1].cleared)
+        self.assertEqual(1024, ranges1[2].start)
+        self.assertEqual(1535, ranges1[2].end)
+        self.assertFalse(ranges1[2].cleared)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(1, len(ranges2))
+        self.assertEqual(512, ranges2[0].start)
+        self.assertEqual(1023, ranges2[0].end)
+        self.assertTrue(ranges2[0].cleared)
+
+    @BlobPreparer()
+    def test_list_page_ranges_diff_pagination(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClinet = self._create_blob(bsc, length=2048)
+        data = self.get_random_bytes(1536)
+        snapshot = blob.create_snapshot()
+        blob.upload_page(data, offset=0, length=1536)
+        blob.clear_page(offset=512, length=512)
+
+        # Act
+        page_list = blob.list_page_ranges(previous_snapshot=snapshot, results_per_page=2).by_page()
+        first_page = next(page_list)
+        items_on_page1 = list(first_page)
+        second_page = next(page_list)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        self.assertEqual(2, len(items_on_page1))
+        self.assertEqual(1, len(items_on_page2))
+
+    @BlobPreparer()
     def test_get_page_ranges_no_pages(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -1659,7 +1792,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
-    @pytest.mark.skip(reason="Failing live test https://github.com/Azure/azure-sdk-for-python/issues/10473")
+    @pytest.mark.skip(reason="Requires further investigation. Failing for unexpected kwarg seal_blob")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_incremental_copy_blob(self, storage_account_name, storage_account_key):
@@ -1872,6 +2005,7 @@ class StoragePageBlobTest(StorageTestCase):
     #         container.delete_container()
 
     @BlobPreparer()
+    @pytest.mark.playback_test_only
     def test_blob_tier_copy_blob(self, premium_storage_account_name, premium_storage_account_key):
         bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
@@ -1995,3 +2129,59 @@ class StoragePageBlobTest(StorageTestCase):
         end = page_ranges[0]['end']
 
         content = blob_client.download_blob(max_concurrency=3).readall()
+
+    @BlobPreparer()
+    def test_upload_progress_chunked_non_parallel(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_page_size=1024)
+
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.PageBlob,
+            overwrite=True,
+            max_concurrency=1,
+            progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_upload_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_page_size=1024)
+
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.PageBlob,
+            overwrite=True,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()

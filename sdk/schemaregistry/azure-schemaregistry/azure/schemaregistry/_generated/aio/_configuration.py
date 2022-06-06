@@ -18,33 +18,39 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureSchemaRegistryConfiguration(Configuration):
+class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureSchemaRegistry.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: The Schema Registry service endpoint, for example
+     my-namespace.servicebus.windows.net.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
-    :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2021-10". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         endpoint: str,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
+        super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2021-10")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
-        self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2020-09-01-preview"
+        self.credential = credential
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://eventhubs.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'azureschemaregistry/{}'.format(VERSION))
         self._configure(**kwargs)

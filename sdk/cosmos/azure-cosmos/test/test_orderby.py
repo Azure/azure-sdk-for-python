@@ -54,23 +54,45 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     def setUpClass(cls):
         # creates the database, collection, and insert all the documents
         # we will gain some speed up in running the tests by creating the database, collection and inserting all the docs only once
-        
+
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-            
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
+
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session",
+                                                connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.create_container(
+            id='orderby_tests collection ' + str(uuid.uuid4()),
+            indexing_policy={
+                'includedPaths': [
+                    {
+                        'path': '/',
+                        'indexes': [
+                            {
+                                'kind': 'Range',
+                                'dataType': 'Number'
+                            },
+                            {
+                                'kind': 'Range',
+                                'dataType': 'String'
+                            }
+                        ]
+                    }
+                ]
+            },
+            partition_key=PartitionKey(path='/id'),
+            offer_throughput=30000)
+
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
 
         # create a document using the document definition
         cls.document_definitions = []
         for i in xrange(20):
-            d = {'id' : str(i),
+            d = {'id': str(i),
                  'name': 'sample document',
                  'spam': 'eggs' + str(i),
                  'cnt': i,
@@ -79,29 +101,10 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  'boolVar': (i % 2 == 0),
                  'number': 1.1 * i
                  }
+            cls.created_collection.create_item(d)
             cls.document_definitions.append(d)
 
-        CrossPartitionTopOrderByTest.insert_doc()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.created_db.delete_container(container=cls.created_collection)
-
-    def setUp(self):
-        
-        # sanity check:
-        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
-        self.assertGreaterEqual(len(partition_key_ranges), 5)
-        
-        # sanity check: read documents after creation
-        queried_docs = list(self.created_collection.read_all_items())
-        self.assertEqual(
-            len(queried_docs),
-            len(self.document_definitions),
-            'create should increase the number of documents')    
-
-    
-    def test_orderby_query(self):        
+    def test_orderby_query(self):
         # test a simply order by query
 
         # an order by query
@@ -470,9 +473,6 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         for i in xrange(len(expected_ordered_ids)):
             item = invokeNext()
             self.assertEqual(item['id'], expected_ordered_ids[i])
-       
-        # after the result set is exhausted, invoking next must raise a StopIteration exception
-        self.assertRaises(StopIteration, invokeNext)
 
         ######################################
         # test by_page() behavior

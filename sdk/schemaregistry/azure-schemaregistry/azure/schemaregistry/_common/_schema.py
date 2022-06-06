@@ -31,57 +31,45 @@ class SchemaProperties(object):
     Meta properties of a schema.
 
     :ivar id: References specific schema in registry namespace.
-    :type id: str
+    :vartype id: str
     :ivar format: Format for the schema being stored.
-    :type format: str
-    :ivar version: Version of the returned schema.
-    :type version: int
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema_properties]
-            :end-before: [END print_schema_properties]
-            :language: python
-            :dedent: 4
-            :caption: SchemaProperties object.
-
+    :vartype format: ~azure.schemaregistry.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored.
+    :vartype group_name: str
+    :ivar name: Name of schema.
+    :vartype name: str
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.id = kwargs.pop('id')
-        self.format = kwargs.pop('format')
-        self.version = kwargs.pop('version')
+        self.id = kwargs.pop("id")
+        self.format = kwargs.pop("format")
+        self.group_name = kwargs.pop("group_name")
+        self.name = kwargs.pop("name")
+
+    def __repr__(self):
+        return (
+            f"SchemaProperties(id={self.id}, format={self.format}, "
+            f"group_name={self.group_name}, name={self.name})"[:1024]
+        )
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar schema_definition: The content of the schema.
-    :type schema_definition: str
+    :ivar definition: The content of the schema.
+    :vartype definition: str
     :ivar properties: The properties of the schema.
-    :type properties: SchemaProperties
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema]
-            :end-before: [END print_schema]
-            :language: python
-            :dedent: 4
-            :caption: Schema object.
-
+    :vartype properties: SchemaProperties
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (Any) -> None
-        self.schema_definition = kwargs.pop("schema_definition")
+        self.definition = kwargs.pop("definition")
         self.properties = kwargs.pop("properties")
+
+    def __repr__(self):
+        return "Schema(definition={}, properties={})".format(
+            self.definition, self.properties
+        )[:1024]

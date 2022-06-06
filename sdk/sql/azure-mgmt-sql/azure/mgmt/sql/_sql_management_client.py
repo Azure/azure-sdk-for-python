@@ -6,149 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
+from . import models
+from ._configuration import SqlManagementClientConfiguration
+from .operations import BackupShortTermRetentionPoliciesOperations, CapabilitiesOperations, DataMaskingPoliciesOperations, DataMaskingRulesOperations, DataWarehouseUserActivitiesOperations, DatabaseAdvisorsOperations, DatabaseAutomaticTuningOperations, DatabaseBlobAuditingPoliciesOperations, DatabaseColumnsOperations, DatabaseExtensionsOperations, DatabaseOperationsOperations, DatabaseRecommendedActionsOperations, DatabaseSchemasOperations, DatabaseSecurityAlertPoliciesOperations, DatabaseTablesOperations, DatabaseUsagesOperations, DatabaseVulnerabilityAssessmentRuleBaselinesOperations, DatabaseVulnerabilityAssessmentScansOperations, DatabaseVulnerabilityAssessmentsOperations, DatabasesOperations, DeletedServersOperations, DistributedAvailabilityGroupsOperations, ElasticPoolActivitiesOperations, ElasticPoolDatabaseActivitiesOperations, ElasticPoolOperationsOperations, ElasticPoolsOperations, EncryptionProtectorsOperations, ExtendedDatabaseBlobAuditingPoliciesOperations, ExtendedServerBlobAuditingPoliciesOperations, FailoverGroupsOperations, FirewallRulesOperations, GeoBackupPoliciesOperations, IPv6FirewallRulesOperations, InstanceFailoverGroupsOperations, InstancePoolsOperations, JobAgentsOperations, JobCredentialsOperations, JobExecutionsOperations, JobStepExecutionsOperations, JobStepsOperations, JobTargetExecutionsOperations, JobTargetGroupsOperations, JobVersionsOperations, JobsOperations, LedgerDigestUploadsOperations, LongTermRetentionBackupsOperations, LongTermRetentionManagedInstanceBackupsOperations, LongTermRetentionPoliciesOperations, MaintenanceWindowOptionsOperations, MaintenanceWindowsOperations, ManagedBackupShortTermRetentionPoliciesOperations, ManagedDatabaseColumnsOperations, ManagedDatabaseQueriesOperations, ManagedDatabaseRecommendedSensitivityLabelsOperations, ManagedDatabaseRestoreDetailsOperations, ManagedDatabaseSchemasOperations, ManagedDatabaseSecurityAlertPoliciesOperations, ManagedDatabaseSecurityEventsOperations, ManagedDatabaseSensitivityLabelsOperations, ManagedDatabaseTablesOperations, ManagedDatabaseTransparentDataEncryptionOperations, ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations, ManagedDatabaseVulnerabilityAssessmentScansOperations, ManagedDatabaseVulnerabilityAssessmentsOperations, ManagedDatabasesOperations, ManagedInstanceAdministratorsOperations, ManagedInstanceAzureADOnlyAuthenticationsOperations, ManagedInstanceEncryptionProtectorsOperations, ManagedInstanceKeysOperations, ManagedInstanceLongTermRetentionPoliciesOperations, ManagedInstanceOperationsOperations, ManagedInstancePrivateEndpointConnectionsOperations, ManagedInstancePrivateLinkResourcesOperations, ManagedInstanceTdeCertificatesOperations, ManagedInstanceVulnerabilityAssessmentsOperations, ManagedInstancesOperations, ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations, ManagedServerSecurityAlertPoliciesOperations, Operations, OutboundFirewallRulesOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, RecommendedSensitivityLabelsOperations, RecoverableDatabasesOperations, RecoverableManagedDatabasesOperations, ReplicationLinksOperations, RestorableDroppedDatabasesOperations, RestorableDroppedManagedDatabasesOperations, RestorePointsOperations, SensitivityLabelsOperations, ServerAdvisorsOperations, ServerAutomaticTuningOperations, ServerAzureADAdministratorsOperations, ServerAzureADOnlyAuthenticationsOperations, ServerBlobAuditingPoliciesOperations, ServerCommunicationLinksOperations, ServerConnectionPoliciesOperations, ServerDevOpsAuditSettingsOperations, ServerDnsAliasesOperations, ServerKeysOperations, ServerOperationsOperations, ServerSecurityAlertPoliciesOperations, ServerTrustCertificatesOperations, ServerTrustGroupsOperations, ServerUsagesOperations, ServerVulnerabilityAssessmentsOperations, ServersOperations, ServiceObjectivesOperations, SqlAgentOperations, SubscriptionUsagesOperations, SyncAgentsOperations, SyncGroupsOperations, SyncMembersOperations, TdeCertificatesOperations, TimeZonesOperations, TransparentDataEncryptionsOperations, UsagesOperations, VirtualClustersOperations, VirtualNetworkRulesOperations, WorkloadClassifiersOperations, WorkloadGroupsOperations
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import SqlManagementClientConfiguration
-from .operations import RecoverableDatabasesOperations
-from .operations import ServerConnectionPoliciesOperations
-from .operations import DataMaskingPoliciesOperations
-from .operations import DataMaskingRulesOperations
-from .operations import GeoBackupPoliciesOperations
-from .operations import DatabasesOperations
-from .operations import ElasticPoolsOperations
-from .operations import ReplicationLinksOperations
-from .operations import ServerCommunicationLinksOperations
-from .operations import ServiceObjectivesOperations
-from .operations import ElasticPoolActivitiesOperations
-from .operations import ElasticPoolDatabaseActivitiesOperations
-from .operations import TransparentDataEncryptionsOperations
-from .operations import TransparentDataEncryptionActivitiesOperations
-from .operations import ServerUsagesOperations
-from .operations import ExtendedDatabaseBlobAuditingPoliciesOperations
-from .operations import ExtendedServerBlobAuditingPoliciesOperations
-from .operations import ServerBlobAuditingPoliciesOperations
-from .operations import DatabaseBlobAuditingPoliciesOperations
-from .operations import DatabaseAdvisorsOperations
-from .operations import DatabaseAutomaticTuningOperations
-from .operations import DatabaseColumnsOperations
-from .operations import DatabaseRecommendedActionsOperations
-from .operations import DatabaseSchemasOperations
-from .operations import DatabaseSecurityAlertPoliciesOperations
-from .operations import DatabaseTablesOperations
-from .operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
-from .operations import DatabaseVulnerabilityAssessmentsOperations
-from .operations import DatabaseVulnerabilityAssessmentScansOperations
-from .operations import DataWarehouseUserActivitiesOperations
-from .operations import DeletedServersOperations
-from .operations import ElasticPoolOperationsOperations
-from .operations import EncryptionProtectorsOperations
-from .operations import FailoverGroupsOperations
-from .operations import FirewallRulesOperations
-from .operations import InstanceFailoverGroupsOperations
-from .operations import InstancePoolsOperations
-from .operations import JobAgentsOperations
-from .operations import JobCredentialsOperations
-from .operations import JobExecutionsOperations
-from .operations import JobsOperations
-from .operations import JobStepExecutionsOperations
-from .operations import JobStepsOperations
-from .operations import JobTargetExecutionsOperations
-from .operations import JobTargetGroupsOperations
-from .operations import JobVersionsOperations
-from .operations import CapabilitiesOperations
-from .operations import LongTermRetentionBackupsOperations
-from .operations import LongTermRetentionManagedInstanceBackupsOperations
-from .operations import LongTermRetentionPoliciesOperations
-from .operations import MaintenanceWindowOptionsOperations
-from .operations import MaintenanceWindowsOperations
-from .operations import ManagedBackupShortTermRetentionPoliciesOperations
-from .operations import ManagedDatabaseColumnsOperations
-from .operations import ManagedDatabaseQueriesOperations
-from .operations import ManagedDatabaseRestoreDetailsOperations
-from .operations import ManagedDatabasesOperations
-from .operations import ManagedDatabaseSchemasOperations
-from .operations import ManagedDatabaseSecurityAlertPoliciesOperations
-from .operations import ManagedDatabaseSecurityEventsOperations
-from .operations import ManagedDatabaseSensitivityLabelsOperations
-from .operations import ManagedDatabaseRecommendedSensitivityLabelsOperations
-from .operations import ManagedDatabaseTablesOperations
-from .operations import ManagedDatabaseTransparentDataEncryptionOperations
-from .operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
-from .operations import ManagedDatabaseVulnerabilityAssessmentsOperations
-from .operations import ManagedDatabaseVulnerabilityAssessmentScansOperations
-from .operations import ManagedInstanceAdministratorsOperations
-from .operations import ManagedInstanceAzureADOnlyAuthenticationsOperations
-from .operations import ManagedInstanceEncryptionProtectorsOperations
-from .operations import ManagedInstanceKeysOperations
-from .operations import ManagedInstanceLongTermRetentionPoliciesOperations
-from .operations import ManagedInstanceOperationsOperations
-from .operations import ManagedInstancePrivateEndpointConnectionsOperations
-from .operations import ManagedInstancePrivateLinkResourcesOperations
-from .operations import ManagedInstancesOperations
-from .operations import ManagedInstanceTdeCertificatesOperations
-from .operations import ManagedInstanceVulnerabilityAssessmentsOperations
-from .operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
-from .operations import ManagedServerSecurityAlertPoliciesOperations
-from .operations import Operations
-from .operations import OperationsHealthOperations
-from .operations import PrivateEndpointConnectionsOperations
-from .operations import PrivateLinkResourcesOperations
-from .operations import RecoverableManagedDatabasesOperations
-from .operations import RestorePointsOperations
-from .operations import SensitivityLabelsOperations
-from .operations import RecommendedSensitivityLabelsOperations
-from .operations import ServerAdvisorsOperations
-from .operations import ServerAutomaticTuningOperations
-from .operations import ServerAzureADAdministratorsOperations
-from .operations import ServerAzureADOnlyAuthenticationsOperations
-from .operations import ServerDevOpsAuditSettingsOperations
-from .operations import ServerDnsAliasesOperations
-from .operations import ServerKeysOperations
-from .operations import ServerOperationsOperations
-from .operations import ServerSecurityAlertPoliciesOperations
-from .operations import ServerTrustGroupsOperations
-from .operations import ServerVulnerabilityAssessmentsOperations
-from .operations import SqlAgentOperations
-from .operations import SubscriptionUsagesOperations
-from .operations import SyncAgentsOperations
-from .operations import SyncGroupsOperations
-from .operations import SyncMembersOperations
-from .operations import TdeCertificatesOperations
-from .operations import TimeZonesOperations
-from .operations import VirtualClustersOperations
-from .operations import VirtualNetworkRulesOperations
-from .operations import WorkloadClassifiersOperations
-from .operations import WorkloadGroupsOperations
-from .operations import BackupShortTermRetentionPoliciesOperations
-from .operations import DatabaseExtensionsOperations
-from .operations import DatabaseOperationsOperations
-from .operations import DatabaseUsagesOperations
-from .operations import LedgerDigestUploadsOperations
-from .operations import OutboundFirewallRulesOperations
-from .operations import RestorableDroppedDatabasesOperations
-from .operations import RestorableDroppedManagedDatabasesOperations
-from .operations import ServersOperations
-from .operations import UsagesOperations
-from . import models
-
-
-class SqlManagementClient(object):
+class SqlManagementClient:
     """The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables you to create, retrieve, update, and delete databases.
 
     :ivar recoverable_databases: RecoverableDatabasesOperations operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
-    :ivar server_connection_policies: ServerConnectionPoliciesOperations operations
-    :vartype server_connection_policies: azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
     :ivar data_masking_policies: DataMaskingPoliciesOperations operations
     :vartype data_masking_policies: azure.mgmt.sql.operations.DataMaskingPoliciesOperations
     :ivar data_masking_rules: DataMaskingRulesOperations operations
@@ -162,27 +39,31 @@ class SqlManagementClient(object):
     :ivar replication_links: ReplicationLinksOperations operations
     :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
     :ivar server_communication_links: ServerCommunicationLinksOperations operations
-    :vartype server_communication_links: azure.mgmt.sql.operations.ServerCommunicationLinksOperations
+    :vartype server_communication_links:
+     azure.mgmt.sql.operations.ServerCommunicationLinksOperations
     :ivar service_objectives: ServiceObjectivesOperations operations
     :vartype service_objectives: azure.mgmt.sql.operations.ServiceObjectivesOperations
     :ivar elastic_pool_activities: ElasticPoolActivitiesOperations operations
     :vartype elastic_pool_activities: azure.mgmt.sql.operations.ElasticPoolActivitiesOperations
     :ivar elastic_pool_database_activities: ElasticPoolDatabaseActivitiesOperations operations
-    :vartype elastic_pool_database_activities: azure.mgmt.sql.operations.ElasticPoolDatabaseActivitiesOperations
-    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
-    :vartype transparent_data_encryptions: azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
-    :ivar transparent_data_encryption_activities: TransparentDataEncryptionActivitiesOperations operations
-    :vartype transparent_data_encryption_activities: azure.mgmt.sql.operations.TransparentDataEncryptionActivitiesOperations
+    :vartype elastic_pool_database_activities:
+     azure.mgmt.sql.operations.ElasticPoolDatabaseActivitiesOperations
     :ivar server_usages: ServerUsagesOperations operations
     :vartype server_usages: azure.mgmt.sql.operations.ServerUsagesOperations
-    :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPoliciesOperations operations
-    :vartype extended_database_blob_auditing_policies: azure.mgmt.sql.operations.ExtendedDatabaseBlobAuditingPoliciesOperations
-    :ivar extended_server_blob_auditing_policies: ExtendedServerBlobAuditingPoliciesOperations operations
-    :vartype extended_server_blob_auditing_policies: azure.mgmt.sql.operations.ExtendedServerBlobAuditingPoliciesOperations
+    :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPoliciesOperations
+     operations
+    :vartype extended_database_blob_auditing_policies:
+     azure.mgmt.sql.operations.ExtendedDatabaseBlobAuditingPoliciesOperations
+    :ivar extended_server_blob_auditing_policies: ExtendedServerBlobAuditingPoliciesOperations
+     operations
+    :vartype extended_server_blob_auditing_policies:
+     azure.mgmt.sql.operations.ExtendedServerBlobAuditingPoliciesOperations
     :ivar server_blob_auditing_policies: ServerBlobAuditingPoliciesOperations operations
-    :vartype server_blob_auditing_policies: azure.mgmt.sql.operations.ServerBlobAuditingPoliciesOperations
+    :vartype server_blob_auditing_policies:
+     azure.mgmt.sql.operations.ServerBlobAuditingPoliciesOperations
     :ivar database_blob_auditing_policies: DatabaseBlobAuditingPoliciesOperations operations
-    :vartype database_blob_auditing_policies: azure.mgmt.sql.operations.DatabaseBlobAuditingPoliciesOperations
+    :vartype database_blob_auditing_policies:
+     azure.mgmt.sql.operations.DatabaseBlobAuditingPoliciesOperations
     :ivar database_advisors: DatabaseAdvisorsOperations operations
     :vartype database_advisors: azure.mgmt.sql.operations.DatabaseAdvisorsOperations
     :ivar database_automatic_tuning: DatabaseAutomaticTuningOperations operations
@@ -190,21 +71,29 @@ class SqlManagementClient(object):
     :ivar database_columns: DatabaseColumnsOperations operations
     :vartype database_columns: azure.mgmt.sql.operations.DatabaseColumnsOperations
     :ivar database_recommended_actions: DatabaseRecommendedActionsOperations operations
-    :vartype database_recommended_actions: azure.mgmt.sql.operations.DatabaseRecommendedActionsOperations
+    :vartype database_recommended_actions:
+     azure.mgmt.sql.operations.DatabaseRecommendedActionsOperations
     :ivar database_schemas: DatabaseSchemasOperations operations
     :vartype database_schemas: azure.mgmt.sql.operations.DatabaseSchemasOperations
     :ivar database_security_alert_policies: DatabaseSecurityAlertPoliciesOperations operations
-    :vartype database_security_alert_policies: azure.mgmt.sql.operations.DatabaseSecurityAlertPoliciesOperations
+    :vartype database_security_alert_policies:
+     azure.mgmt.sql.operations.DatabaseSecurityAlertPoliciesOperations
     :ivar database_tables: DatabaseTablesOperations operations
     :vartype database_tables: azure.mgmt.sql.operations.DatabaseTablesOperations
-    :ivar database_vulnerability_assessment_rule_baselines: DatabaseVulnerabilityAssessmentRuleBaselinesOperations operations
-    :vartype database_vulnerability_assessment_rule_baselines: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar database_vulnerability_assessment_rule_baselines:
+     DatabaseVulnerabilityAssessmentRuleBaselinesOperations operations
+    :vartype database_vulnerability_assessment_rule_baselines:
+     azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentRuleBaselinesOperations
     :ivar database_vulnerability_assessments: DatabaseVulnerabilityAssessmentsOperations operations
-    :vartype database_vulnerability_assessments: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentsOperations
-    :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScansOperations operations
-    :vartype database_vulnerability_assessment_scans: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentScansOperations
+    :vartype database_vulnerability_assessments:
+     azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentsOperations
+    :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScansOperations
+     operations
+    :vartype database_vulnerability_assessment_scans:
+     azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentScansOperations
     :ivar data_warehouse_user_activities: DataWarehouseUserActivitiesOperations operations
-    :vartype data_warehouse_user_activities: azure.mgmt.sql.operations.DataWarehouseUserActivitiesOperations
+    :vartype data_warehouse_user_activities:
+     azure.mgmt.sql.operations.DataWarehouseUserActivitiesOperations
     :ivar deleted_servers: DeletedServersOperations operations
     :vartype deleted_servers: azure.mgmt.sql.operations.DeletedServersOperations
     :ivar elastic_pool_operations: ElasticPoolOperationsOperations operations
@@ -239,98 +128,136 @@ class SqlManagementClient(object):
     :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
     :ivar capabilities: CapabilitiesOperations operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
-    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
-    :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
-    :ivar long_term_retention_managed_instance_backups: LongTermRetentionManagedInstanceBackupsOperations operations
-    :vartype long_term_retention_managed_instance_backups: azure.mgmt.sql.operations.LongTermRetentionManagedInstanceBackupsOperations
     :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
-    :vartype long_term_retention_policies: azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
+    :vartype long_term_retention_policies:
+     azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
     :ivar maintenance_window_options: MaintenanceWindowOptionsOperations operations
-    :vartype maintenance_window_options: azure.mgmt.sql.operations.MaintenanceWindowOptionsOperations
+    :vartype maintenance_window_options:
+     azure.mgmt.sql.operations.MaintenanceWindowOptionsOperations
     :ivar maintenance_windows: MaintenanceWindowsOperations operations
     :vartype maintenance_windows: azure.mgmt.sql.operations.MaintenanceWindowsOperations
-    :ivar managed_backup_short_term_retention_policies: ManagedBackupShortTermRetentionPoliciesOperations operations
-    :vartype managed_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
+    :ivar managed_backup_short_term_retention_policies:
+     ManagedBackupShortTermRetentionPoliciesOperations operations
+    :vartype managed_backup_short_term_retention_policies:
+     azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
     :ivar managed_database_columns: ManagedDatabaseColumnsOperations operations
     :vartype managed_database_columns: azure.mgmt.sql.operations.ManagedDatabaseColumnsOperations
     :ivar managed_database_queries: ManagedDatabaseQueriesOperations operations
     :vartype managed_database_queries: azure.mgmt.sql.operations.ManagedDatabaseQueriesOperations
     :ivar managed_database_restore_details: ManagedDatabaseRestoreDetailsOperations operations
-    :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
+    :vartype managed_database_restore_details:
+     azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
     :ivar managed_databases: ManagedDatabasesOperations operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar managed_database_schemas: ManagedDatabaseSchemasOperations operations
     :vartype managed_database_schemas: azure.mgmt.sql.operations.ManagedDatabaseSchemasOperations
-    :ivar managed_database_security_alert_policies: ManagedDatabaseSecurityAlertPoliciesOperations operations
-    :vartype managed_database_security_alert_policies: azure.mgmt.sql.operations.ManagedDatabaseSecurityAlertPoliciesOperations
+    :ivar managed_database_security_alert_policies: ManagedDatabaseSecurityAlertPoliciesOperations
+     operations
+    :vartype managed_database_security_alert_policies:
+     azure.mgmt.sql.operations.ManagedDatabaseSecurityAlertPoliciesOperations
     :ivar managed_database_security_events: ManagedDatabaseSecurityEventsOperations operations
-    :vartype managed_database_security_events: azure.mgmt.sql.operations.ManagedDatabaseSecurityEventsOperations
-    :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabelsOperations operations
-    :vartype managed_database_sensitivity_labels: azure.mgmt.sql.operations.ManagedDatabaseSensitivityLabelsOperations
-    :ivar managed_database_recommended_sensitivity_labels: ManagedDatabaseRecommendedSensitivityLabelsOperations operations
-    :vartype managed_database_recommended_sensitivity_labels: azure.mgmt.sql.operations.ManagedDatabaseRecommendedSensitivityLabelsOperations
+    :vartype managed_database_security_events:
+     azure.mgmt.sql.operations.ManagedDatabaseSecurityEventsOperations
+    :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabelsOperations
+     operations
+    :vartype managed_database_sensitivity_labels:
+     azure.mgmt.sql.operations.ManagedDatabaseSensitivityLabelsOperations
+    :ivar managed_database_recommended_sensitivity_labels:
+     ManagedDatabaseRecommendedSensitivityLabelsOperations operations
+    :vartype managed_database_recommended_sensitivity_labels:
+     azure.mgmt.sql.operations.ManagedDatabaseRecommendedSensitivityLabelsOperations
     :ivar managed_database_tables: ManagedDatabaseTablesOperations operations
     :vartype managed_database_tables: azure.mgmt.sql.operations.ManagedDatabaseTablesOperations
-    :ivar managed_database_transparent_data_encryption: ManagedDatabaseTransparentDataEncryptionOperations operations
-    :vartype managed_database_transparent_data_encryption: azure.mgmt.sql.operations.ManagedDatabaseTransparentDataEncryptionOperations
-    :ivar managed_database_vulnerability_assessment_rule_baselines: ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations operations
-    :vartype managed_database_vulnerability_assessment_rule_baselines: azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
-    :ivar managed_database_vulnerability_assessments: ManagedDatabaseVulnerabilityAssessmentsOperations operations
-    :vartype managed_database_vulnerability_assessments: azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentsOperations
-    :ivar managed_database_vulnerability_assessment_scans: ManagedDatabaseVulnerabilityAssessmentScansOperations operations
-    :vartype managed_database_vulnerability_assessment_scans: azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentScansOperations
+    :ivar managed_database_transparent_data_encryption:
+     ManagedDatabaseTransparentDataEncryptionOperations operations
+    :vartype managed_database_transparent_data_encryption:
+     azure.mgmt.sql.operations.ManagedDatabaseTransparentDataEncryptionOperations
+    :ivar managed_database_vulnerability_assessment_rule_baselines:
+     ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations operations
+    :vartype managed_database_vulnerability_assessment_rule_baselines:
+     azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar managed_database_vulnerability_assessments:
+     ManagedDatabaseVulnerabilityAssessmentsOperations operations
+    :vartype managed_database_vulnerability_assessments:
+     azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentsOperations
+    :ivar managed_database_vulnerability_assessment_scans:
+     ManagedDatabaseVulnerabilityAssessmentScansOperations operations
+    :vartype managed_database_vulnerability_assessment_scans:
+     azure.mgmt.sql.operations.ManagedDatabaseVulnerabilityAssessmentScansOperations
     :ivar managed_instance_administrators: ManagedInstanceAdministratorsOperations operations
-    :vartype managed_instance_administrators: azure.mgmt.sql.operations.ManagedInstanceAdministratorsOperations
-    :ivar managed_instance_azure_ad_only_authentications: ManagedInstanceAzureADOnlyAuthenticationsOperations operations
-    :vartype managed_instance_azure_ad_only_authentications: azure.mgmt.sql.operations.ManagedInstanceAzureADOnlyAuthenticationsOperations
-    :ivar managed_instance_encryption_protectors: ManagedInstanceEncryptionProtectorsOperations operations
-    :vartype managed_instance_encryption_protectors: azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
+    :vartype managed_instance_administrators:
+     azure.mgmt.sql.operations.ManagedInstanceAdministratorsOperations
+    :ivar managed_instance_azure_ad_only_authentications:
+     ManagedInstanceAzureADOnlyAuthenticationsOperations operations
+    :vartype managed_instance_azure_ad_only_authentications:
+     azure.mgmt.sql.operations.ManagedInstanceAzureADOnlyAuthenticationsOperations
+    :ivar managed_instance_encryption_protectors: ManagedInstanceEncryptionProtectorsOperations
+     operations
+    :vartype managed_instance_encryption_protectors:
+     azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
     :ivar managed_instance_keys: ManagedInstanceKeysOperations operations
     :vartype managed_instance_keys: azure.mgmt.sql.operations.ManagedInstanceKeysOperations
-    :ivar managed_instance_long_term_retention_policies: ManagedInstanceLongTermRetentionPoliciesOperations operations
-    :vartype managed_instance_long_term_retention_policies: azure.mgmt.sql.operations.ManagedInstanceLongTermRetentionPoliciesOperations
+    :ivar managed_instance_long_term_retention_policies:
+     ManagedInstanceLongTermRetentionPoliciesOperations operations
+    :vartype managed_instance_long_term_retention_policies:
+     azure.mgmt.sql.operations.ManagedInstanceLongTermRetentionPoliciesOperations
     :ivar managed_instance_operations: ManagedInstanceOperationsOperations operations
-    :vartype managed_instance_operations: azure.mgmt.sql.operations.ManagedInstanceOperationsOperations
-    :ivar managed_instance_private_endpoint_connections: ManagedInstancePrivateEndpointConnectionsOperations operations
-    :vartype managed_instance_private_endpoint_connections: azure.mgmt.sql.operations.ManagedInstancePrivateEndpointConnectionsOperations
-    :ivar managed_instance_private_link_resources: ManagedInstancePrivateLinkResourcesOperations operations
-    :vartype managed_instance_private_link_resources: azure.mgmt.sql.operations.ManagedInstancePrivateLinkResourcesOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
+    :vartype managed_instance_operations:
+     azure.mgmt.sql.operations.ManagedInstanceOperationsOperations
+    :ivar managed_instance_private_endpoint_connections:
+     ManagedInstancePrivateEndpointConnectionsOperations operations
+    :vartype managed_instance_private_endpoint_connections:
+     azure.mgmt.sql.operations.ManagedInstancePrivateEndpointConnectionsOperations
+    :ivar managed_instance_private_link_resources: ManagedInstancePrivateLinkResourcesOperations
+     operations
+    :vartype managed_instance_private_link_resources:
+     azure.mgmt.sql.operations.ManagedInstancePrivateLinkResourcesOperations
     :ivar managed_instance_tde_certificates: ManagedInstanceTdeCertificatesOperations operations
-    :vartype managed_instance_tde_certificates: azure.mgmt.sql.operations.ManagedInstanceTdeCertificatesOperations
-    :ivar managed_instance_vulnerability_assessments: ManagedInstanceVulnerabilityAssessmentsOperations operations
-    :vartype managed_instance_vulnerability_assessments: azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
-    :ivar managed_restorable_dropped_database_backup_short_term_retention_policies: ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations operations
-    :vartype managed_restorable_dropped_database_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
-    :ivar managed_server_security_alert_policies: ManagedServerSecurityAlertPoliciesOperations operations
-    :vartype managed_server_security_alert_policies: azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
+    :vartype managed_instance_tde_certificates:
+     azure.mgmt.sql.operations.ManagedInstanceTdeCertificatesOperations
+    :ivar managed_instance_vulnerability_assessments:
+     ManagedInstanceVulnerabilityAssessmentsOperations operations
+    :vartype managed_instance_vulnerability_assessments:
+     azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
+    :ivar managed_restorable_dropped_database_backup_short_term_retention_policies:
+     ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations operations
+    :vartype managed_restorable_dropped_database_backup_short_term_retention_policies:
+     azure.mgmt.sql.operations.ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
+    :ivar managed_server_security_alert_policies: ManagedServerSecurityAlertPoliciesOperations
+     operations
+    :vartype managed_server_security_alert_policies:
+     azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sql.operations.Operations
-    :ivar operations_health: OperationsHealthOperations operations
-    :vartype operations_health: azure.mgmt.sql.operations.OperationsHealthOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections:
+     azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
     :ivar recoverable_managed_databases: RecoverableManagedDatabasesOperations operations
-    :vartype recoverable_managed_databases: azure.mgmt.sql.operations.RecoverableManagedDatabasesOperations
+    :vartype recoverable_managed_databases:
+     azure.mgmt.sql.operations.RecoverableManagedDatabasesOperations
     :ivar restore_points: RestorePointsOperations operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
     :ivar sensitivity_labels: SensitivityLabelsOperations operations
     :vartype sensitivity_labels: azure.mgmt.sql.operations.SensitivityLabelsOperations
     :ivar recommended_sensitivity_labels: RecommendedSensitivityLabelsOperations operations
-    :vartype recommended_sensitivity_labels: azure.mgmt.sql.operations.RecommendedSensitivityLabelsOperations
+    :vartype recommended_sensitivity_labels:
+     azure.mgmt.sql.operations.RecommendedSensitivityLabelsOperations
     :ivar server_advisors: ServerAdvisorsOperations operations
     :vartype server_advisors: azure.mgmt.sql.operations.ServerAdvisorsOperations
     :ivar server_automatic_tuning: ServerAutomaticTuningOperations operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministratorsOperations operations
-    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
-    :ivar server_azure_ad_only_authentications: ServerAzureADOnlyAuthenticationsOperations operations
-    :vartype server_azure_ad_only_authentications: azure.mgmt.sql.operations.ServerAzureADOnlyAuthenticationsOperations
+    :vartype server_azure_ad_administrators:
+     azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
+    :ivar server_azure_ad_only_authentications: ServerAzureADOnlyAuthenticationsOperations
+     operations
+    :vartype server_azure_ad_only_authentications:
+     azure.mgmt.sql.operations.ServerAzureADOnlyAuthenticationsOperations
     :ivar server_dev_ops_audit_settings: ServerDevOpsAuditSettingsOperations operations
-    :vartype server_dev_ops_audit_settings: azure.mgmt.sql.operations.ServerDevOpsAuditSettingsOperations
+    :vartype server_dev_ops_audit_settings:
+     azure.mgmt.sql.operations.ServerDevOpsAuditSettingsOperations
     :ivar server_dns_aliases: ServerDnsAliasesOperations operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
     :ivar server_keys: ServerKeysOperations operations
@@ -338,11 +265,13 @@ class SqlManagementClient(object):
     :ivar server_operations: ServerOperationsOperations operations
     :vartype server_operations: azure.mgmt.sql.operations.ServerOperationsOperations
     :ivar server_security_alert_policies: ServerSecurityAlertPoliciesOperations operations
-    :vartype server_security_alert_policies: azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
+    :vartype server_security_alert_policies:
+     azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
     :ivar server_trust_groups: ServerTrustGroupsOperations operations
     :vartype server_trust_groups: azure.mgmt.sql.operations.ServerTrustGroupsOperations
     :ivar server_vulnerability_assessments: ServerVulnerabilityAssessmentsOperations operations
-    :vartype server_vulnerability_assessments: azure.mgmt.sql.operations.ServerVulnerabilityAssessmentsOperations
+    :vartype server_vulnerability_assessments:
+     azure.mgmt.sql.operations.ServerVulnerabilityAssessmentsOperations
     :ivar sql_agent: SqlAgentOperations operations
     :vartype sql_agent: azure.mgmt.sql.operations.SqlAgentOperations
     :ivar subscription_usages: SubscriptionUsagesOperations operations
@@ -365,8 +294,13 @@ class SqlManagementClient(object):
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
     :ivar workload_groups: WorkloadGroupsOperations operations
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
-    :ivar backup_short_term_retention_policies: BackupShortTermRetentionPoliciesOperations operations
-    :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
+    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
+    :vartype transparent_data_encryptions:
+     azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
+    :ivar backup_short_term_retention_policies: BackupShortTermRetentionPoliciesOperations
+     operations
+    :vartype backup_short_term_retention_policies:
+     azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensionsOperations operations
     :vartype database_extensions: azure.mgmt.sql.operations.DatabaseExtensionsOperations
     :ivar database_operations: DatabaseOperationsOperations operations
@@ -377,298 +311,208 @@ class SqlManagementClient(object):
     :vartype ledger_digest_uploads: azure.mgmt.sql.operations.LedgerDigestUploadsOperations
     :ivar outbound_firewall_rules: OutboundFirewallRulesOperations operations
     :vartype outbound_firewall_rules: azure.mgmt.sql.operations.OutboundFirewallRulesOperations
-    :ivar restorable_dropped_databases: RestorableDroppedDatabasesOperations operations
-    :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
-    :ivar restorable_dropped_managed_databases: RestorableDroppedManagedDatabasesOperations operations
-    :vartype restorable_dropped_managed_databases: azure.mgmt.sql.operations.RestorableDroppedManagedDatabasesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
+    :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
+    :vartype long_term_retention_backups:
+     azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
+    :ivar long_term_retention_managed_instance_backups:
+     LongTermRetentionManagedInstanceBackupsOperations operations
+    :vartype long_term_retention_managed_instance_backups:
+     azure.mgmt.sql.operations.LongTermRetentionManagedInstanceBackupsOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
+    :ivar restorable_dropped_databases: RestorableDroppedDatabasesOperations operations
+    :vartype restorable_dropped_databases:
+     azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
+    :ivar restorable_dropped_managed_databases: RestorableDroppedManagedDatabasesOperations
+     operations
+    :vartype restorable_dropped_managed_databases:
+     azure.mgmt.sql.operations.RestorableDroppedManagedDatabasesOperations
+    :ivar server_connection_policies: ServerConnectionPoliciesOperations operations
+    :vartype server_connection_policies:
+     azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
+    :ivar distributed_availability_groups: DistributedAvailabilityGroupsOperations operations
+    :vartype distributed_availability_groups:
+     azure.mgmt.sql.operations.DistributedAvailabilityGroupsOperations
+    :ivar server_trust_certificates: ServerTrustCertificatesOperations operations
+    :vartype server_trust_certificates: azure.mgmt.sql.operations.ServerTrustCertificatesOperations
+    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
+    :vartype ipv6_firewall_rules: azure.mgmt.sql.operations.IPv6FirewallRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :type base_url: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = SqlManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = SqlManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.recoverable_databases = RecoverableDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_masking_policies = DataMaskingPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_masking_rules = DataMaskingRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.geo_backup_policies = GeoBackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.elastic_pools = ElasticPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replication_links = ReplicationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_communication_links = ServerCommunicationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service_objectives = ServiceObjectivesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.elastic_pool_activities = ElasticPoolActivitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.elastic_pool_database_activities = ElasticPoolDatabaseActivitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_usages = ServerUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extended_database_blob_auditing_policies = ExtendedDatabaseBlobAuditingPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extended_server_blob_auditing_policies = ExtendedServerBlobAuditingPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_blob_auditing_policies = ServerBlobAuditingPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_advisors = DatabaseAdvisorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_automatic_tuning = DatabaseAutomaticTuningOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_columns = DatabaseColumnsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_recommended_actions = DatabaseRecommendedActionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_schemas = DatabaseSchemasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_security_alert_policies = DatabaseSecurityAlertPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_tables = DatabaseTablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_vulnerability_assessment_rule_baselines = DatabaseVulnerabilityAssessmentRuleBaselinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_vulnerability_assessments = DatabaseVulnerabilityAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_warehouse_user_activities = DataWarehouseUserActivitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deleted_servers = DeletedServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.elastic_pool_operations = ElasticPoolOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.encryption_protectors = EncryptionProtectorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.instance_failover_groups = InstanceFailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_agents = JobAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_credentials = JobCredentialsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_executions = JobExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_step_executions = JobStepExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_steps = JobStepsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_target_executions = JobTargetExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_target_groups = JobTargetGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_versions = JobVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_policies = LongTermRetentionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.maintenance_window_options = MaintenanceWindowOptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.maintenance_windows = MaintenanceWindowsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_backup_short_term_retention_policies = ManagedBackupShortTermRetentionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_columns = ManagedDatabaseColumnsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_queries = ManagedDatabaseQueriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_databases = ManagedDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_schemas = ManagedDatabaseSchemasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_security_alert_policies = ManagedDatabaseSecurityAlertPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_security_events = ManagedDatabaseSecurityEventsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_recommended_sensitivity_labels = ManagedDatabaseRecommendedSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_tables = ManagedDatabaseTablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_transparent_data_encryption = ManagedDatabaseTransparentDataEncryptionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_vulnerability_assessment_rule_baselines = ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_vulnerability_assessments = ManagedDatabaseVulnerabilityAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_vulnerability_assessment_scans = ManagedDatabaseVulnerabilityAssessmentScansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_administrators = ManagedInstanceAdministratorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_azure_ad_only_authentications = ManagedInstanceAzureADOnlyAuthenticationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_encryption_protectors = ManagedInstanceEncryptionProtectorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_keys = ManagedInstanceKeysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_long_term_retention_policies = ManagedInstanceLongTermRetentionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_operations = ManagedInstanceOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_private_endpoint_connections = ManagedInstancePrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_private_link_resources = ManagedInstancePrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_tde_certificates = ManagedInstanceTdeCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_restorable_dropped_database_backup_short_term_retention_policies = ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_server_security_alert_policies = ManagedServerSecurityAlertPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.recoverable_managed_databases = RecoverableManagedDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.restore_points = RestorePointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sensitivity_labels = SensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.recommended_sensitivity_labels = RecommendedSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_advisors = ServerAdvisorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_automatic_tuning = ServerAutomaticTuningOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_azure_ad_only_authentications = ServerAzureADOnlyAuthenticationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_dev_ops_audit_settings = ServerDevOpsAuditSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_dns_aliases = ServerDnsAliasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_keys = ServerKeysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_operations = ServerOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_trust_groups = ServerTrustGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sql_agent = SqlAgentOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subscription_usages = SubscriptionUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sync_agents = SyncAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sync_groups = SyncGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sync_members = SyncMembersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.tde_certificates = TdeCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.time_zones = TimeZonesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_clusters = VirtualClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_network_rules = VirtualNetworkRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workload_classifiers = WorkloadClassifiersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workload_groups = WorkloadGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_extensions = DatabaseExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_operations = DatabaseOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_usages = DatabaseUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ledger_digest_uploads = LedgerDigestUploadsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.outbound_firewall_rules = OutboundFirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_backups = LongTermRetentionBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_instances = ManagedInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_dropped_managed_databases = RestorableDroppedManagedDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_connection_policies = ServerConnectionPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_trust_certificates = ServerTrustCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.recoverable_databases = RecoverableDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_connection_policies = ServerConnectionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_masking_policies = DataMaskingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_masking_rules = DataMaskingRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.geo_backup_policies = GeoBackupPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.databases = DatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.elastic_pools = ElasticPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.replication_links = ReplicationLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_communication_links = ServerCommunicationLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.service_objectives = ServiceObjectivesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.elastic_pool_activities = ElasticPoolActivitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.elastic_pool_database_activities = ElasticPoolDatabaseActivitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.transparent_data_encryption_activities = TransparentDataEncryptionActivitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_usages = ServerUsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.extended_database_blob_auditing_policies = ExtendedDatabaseBlobAuditingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.extended_server_blob_auditing_policies = ExtendedServerBlobAuditingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_blob_auditing_policies = ServerBlobAuditingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_advisors = DatabaseAdvisorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_automatic_tuning = DatabaseAutomaticTuningOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_columns = DatabaseColumnsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_recommended_actions = DatabaseRecommendedActionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_schemas = DatabaseSchemasOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_security_alert_policies = DatabaseSecurityAlertPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_tables = DatabaseTablesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_vulnerability_assessment_rule_baselines = DatabaseVulnerabilityAssessmentRuleBaselinesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_vulnerability_assessments = DatabaseVulnerabilityAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_warehouse_user_activities = DataWarehouseUserActivitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_servers = DeletedServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.elastic_pool_operations = ElasticPoolOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.encryption_protectors = EncryptionProtectorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.failover_groups = FailoverGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.firewall_rules = FirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.instance_failover_groups = InstanceFailoverGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.instance_pools = InstancePoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_agents = JobAgentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_credentials = JobCredentialsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_executions = JobExecutionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_step_executions = JobStepExecutionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_steps = JobStepsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_target_executions = JobTargetExecutionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_target_groups = JobTargetGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_versions = JobVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.capabilities = CapabilitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_managed_instance_backups = LongTermRetentionManagedInstanceBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.maintenance_window_options = MaintenanceWindowOptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.maintenance_windows = MaintenanceWindowsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_backup_short_term_retention_policies = ManagedBackupShortTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_columns = ManagedDatabaseColumnsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_queries = ManagedDatabaseQueriesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_databases = ManagedDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_schemas = ManagedDatabaseSchemasOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_security_alert_policies = ManagedDatabaseSecurityAlertPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_security_events = ManagedDatabaseSecurityEventsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_recommended_sensitivity_labels = ManagedDatabaseRecommendedSensitivityLabelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_tables = ManagedDatabaseTablesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_transparent_data_encryption = ManagedDatabaseTransparentDataEncryptionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_vulnerability_assessment_rule_baselines = ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_vulnerability_assessments = ManagedDatabaseVulnerabilityAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_vulnerability_assessment_scans = ManagedDatabaseVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_administrators = ManagedInstanceAdministratorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_azure_ad_only_authentications = ManagedInstanceAzureADOnlyAuthenticationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_encryption_protectors = ManagedInstanceEncryptionProtectorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_keys = ManagedInstanceKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_long_term_retention_policies = ManagedInstanceLongTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_operations = ManagedInstanceOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_private_endpoint_connections = ManagedInstancePrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_private_link_resources = ManagedInstancePrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_tde_certificates = ManagedInstanceTdeCertificatesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_restorable_dropped_database_backup_short_term_retention_policies = ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_server_security_alert_policies = ManagedServerSecurityAlertPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations_health = OperationsHealthOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.recoverable_managed_databases = RecoverableManagedDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.restore_points = RestorePointsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sensitivity_labels = SensitivityLabelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.recommended_sensitivity_labels = RecommendedSensitivityLabelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_advisors = ServerAdvisorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_automatic_tuning = ServerAutomaticTuningOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_azure_ad_only_authentications = ServerAzureADOnlyAuthenticationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_dev_ops_audit_settings = ServerDevOpsAuditSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_dns_aliases = ServerDnsAliasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_keys = ServerKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_operations = ServerOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_trust_groups = ServerTrustGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sql_agent = SqlAgentOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.subscription_usages = SubscriptionUsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sync_agents = SyncAgentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sync_groups = SyncGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.sync_members = SyncMembersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tde_certificates = TdeCertificatesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.time_zones = TimeZonesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_clusters = VirtualClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_network_rules = VirtualNetworkRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.workload_classifiers = WorkloadClassifiersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.workload_groups = WorkloadGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_extensions = DatabaseExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_operations = DatabaseOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.database_usages = DatabaseUsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.ledger_digest_uploads = LedgerDigestUploadsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.outbound_firewall_rules = OutboundFirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_dropped_managed_databases = RestorableDroppedManagedDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

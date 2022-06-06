@@ -4,16 +4,17 @@
 # ------------------------------------
 
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DocumentAnalysisApiVersion(str, Enum):
+class DocumentAnalysisApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by DocumentAnalysisClient and DocumentModelAdministrationClient."""
 
     #: This is the default version
-    V2021_09_30_PREVIEW = "2021-09-30-preview"
+    V2022_06_30_PREVIEW = "2022-06-30-preview"
 
 
-class FormRecognizerApiVersion(str, Enum):
+class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by FormRecognizerClient and FormTrainingClient."""
 
     #: This is the default version

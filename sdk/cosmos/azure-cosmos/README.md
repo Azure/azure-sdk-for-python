@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure Cosmos DB SQL API client library for Python
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
@@ -23,7 +26,7 @@ New releases of this SDK won't support Python 2.x starting January 1st, 2022. Pl
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 2.7 or 3.6+][python]
+* [Python 3.6+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -68,10 +71,39 @@ Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables,
 from azure.cosmos import CosmosClient
 
 import os
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
 ```
+
+### AAD Authentication
+
+You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
+You can directly pass in the credentials information to ClientSecretCrednetial, or use the DefaultAzureCredential:
+```Python
+from azure.cosmos import CosmosClient
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
+
+import os
+url = os.environ['ACCOUNT_URI']
+tenant_id = os.environ['TENANT_ID']
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ['CLIENT_SECRET']
+
+# Using ClientSecretCredential
+aad_credentials = ClientSecretCredential(
+    tenant_id=tenant_id,
+    client_id=client_id,
+    client_secret=client_secret)
+
+# Using DefaultAzureCredential (recommended)
+aad_credentials = DefaultAzureCredential()
+
+client = CosmosClient(url, aad_credentials)
+```
+Always ensure that the managed identity you use for AAD authentication has `readMetadata` permissions. <br>
+More information on how to set up AAD authentication: [Set up RBAC for AAD authentication](https://docs.microsoft.com/azure/cosmos-db/how-to-setup-rbac) <br>
+More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
 
 ## Key concepts
 
@@ -90,6 +122,24 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (default) or `True`.
 
+## Note on using queries by id
+
+When using queries that try to find items based on an **id** value, always make sure you are passing in a string type variable. Azure Cosmos DB only allows string id values and if you use any other datatype, this SDK will return no results and no error messages.
+
+## Note on client consistency levels
+
+As of release version 4.3.0b3, if a user does not pass in an explicit consistency level to their client initialization,
+their client will use their database account's default level. Previously, the default was being set to `Session` consistency.
+If for some reason you'd like to keep doing this, you can change your client initialization to include the explicit parameter for this like shown:
+```Python
+from azure.cosmos import CosmosClient
+
+import os
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY, consistency_level='Session')
+```
+
 ## Limitations
 
 Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
@@ -97,7 +147,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 ### Data Plane Limitations:
 
 * Group By queries
-* Language Native async i/o
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
 * Bulk/Transactional batch processing
 * Direct TCP Mode access
@@ -105,10 +154,9 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
 * Change Feed: Read specific time
-* Change Feed: Read from the beggining
+* Change Feed: Read from the beginning
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
-* Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
 
 ### Control Plane Limitations:
 
@@ -120,10 +168,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Get the connection string
 * Get the minimum RU/s of a container
 
-### Security Limitations:
-
-* AAD support
-
 ## Workarounds
 
 ### Bulk processing Limitation Workaround
@@ -132,15 +176,7 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
-
-### AAD Support Workaround
-
-A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
-
-## Consistency Level
-
-Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
+Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ## Boolean Data Type
 
@@ -177,6 +213,7 @@ The following sections provide several code snippets covering some of the most c
 * [Get database properties](#get-database-properties "Get database properties")
 * [Get database and container throughputs](#get-database-and-container-throughputs "Get database and container throughputs")
 * [Modify container properties](#modify-container-properties "Modify container properties")
+* [Using the asynchronous client](#using-the-asynchronous-client "Using the asynchronous client")
 
 ### Create a database
 
@@ -186,14 +223,14 @@ After authenticating your [CosmosClient][ref_cosmosclient], you can work with an
 from azure.cosmos import CosmosClient, exceptions
 import os
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
 try:
-    database = client.create_database(database_name)
+    database = client.create_database(DATABASE_NAME)
 except exceptions.CosmosResourceExistsError:
-    database = client.get_database_client(database_name)
+    database = client.get_database_client(DATABASE_NAME)
 ```
 
 ### Create a container
@@ -204,17 +241,17 @@ This example creates a container with default settings. If a container with the 
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
 import os
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
-container_name = 'products'
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
 
 try:
-    container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
+    container = database.create_container(id=CONTAINER_NAME, partition_key=PartitionKey(path="/productName"))
 except exceptions.CosmosResourceExistsError:
-    container = database.get_container_client(container_name)
+    container = database.get_container_client(CONTAINER_NAME)
 except exceptions.CosmosHttpResponseError:
     raise
 ```
@@ -231,11 +268,11 @@ The options for analytical_storage_ttl are:
 
 
 ```Python
-container_name = 'products'
+CONTAINER_NAME = 'products'
 try:
-    container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"),analytical_storage_ttl=-1)
+    container = database.create_container(id=CONTAINER_NAME, partition_key=PartitionKey(path="/productName"),analytical_storage_ttl=-1)
 except exceptions.CosmosResourceExistsError:
-    container = database.get_container_client(container_name)
+    container = database.get_container_client(CONTAINER_NAME)
 except exceptions.CosmosHttpResponseError:
     raise
 ```
@@ -250,13 +287,13 @@ Retrieve an existing container from the database:
 from azure.cosmos import CosmosClient
 import os
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
-container_name = 'products'
-container = database.get_container_client(container_name)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
+container = database.get_container_client(CONTAINER_NAME)
 ```
 
 ### Insert data
@@ -269,13 +306,13 @@ This example inserts several items into the container, each with a unique `id`:
 from azure.cosmos import CosmosClient
 import os
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
-container_name = 'products'
-container = database.get_container_client(container_name)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
+container = database.get_container_client(CONTAINER_NAME)
 
 for i in range(1, 10):
     container.upsert_item({
@@ -294,13 +331,13 @@ To delete items from a container, use [ContainerProxy.delete_item][ref_container
 from azure.cosmos import CosmosClient
 import os
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
-container_name = 'products'
-container = database.get_container_client(container_name)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
+container = database.get_container_client(CONTAINER_NAME)
 
 for item in container.query_items(
         query='SELECT * FROM products p WHERE p.productModel = "Model 2"',
@@ -320,13 +357,13 @@ This example queries a container for items with a specific `id`:
 from azure.cosmos import CosmosClient
 import os
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
-container_name = 'products'
-container = database.get_container_client(container_name)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
+container = database.get_container_client(CONTAINER_NAME)
 
 # Enumerate the returned items
 import json
@@ -363,11 +400,11 @@ from azure.cosmos import CosmosClient
 import os
 import json
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
 properties = database.read()
 print(json.dumps(properties))
 ```
@@ -381,19 +418,19 @@ from azure.cosmos import CosmosClient
 import os
 import json
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
 
 # Database
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
 db_offer = database.read_offer()
 print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
 
 # Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
-container_name = 'testContainer'
-container = database.get_container_client(container_name)
+CONTAINER_NAME = 'testContainer'
+container = database.get_container_client(CONTAINER_NAME)
 container_offer = container.read_offer()
 print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
 ```
@@ -408,13 +445,13 @@ from azure.cosmos import CosmosClient, PartitionKey
 import os
 import json
 
-url = os.environ['ACCOUNT_URI']
-key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, credential=key)
-database_name = 'testDatabase'
-database = client.get_database_client(database_name)
-container_name = 'products'
-container = database.get_container_client(container_name)
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
+container = database.get_container_client(CONTAINER_NAME)
 
 database.replace_container(
     container,
@@ -428,7 +465,92 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
+### Using the asynchronous client
 
+The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
+The Async client needs to be initialized and closed after usage, which can be done manually or with the use of a context manager. The example below shows how to do so manually.
+
+```Python
+from azure.cosmos.aio import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'    
+
+async def create_products():
+    client = CosmosClient(URL, credential=KEY)
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
+    for i in range(10):
+        await container.upsert_item({
+                'id': 'item{0}'.format(i),
+                'productName': 'Widget',
+                'productModel': 'Model {0}'.format(i)
+            }
+        )
+    await client.close() # the async client must be closed manually if it's not initialized in a with statement
+```
+
+Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement. The example below shows how to do so.
+
+```Python
+from azure.cosmos.aio import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'
+
+async def create_products():
+    async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically initialize and close the async client
+        database = client.get_database_client(DATABASE_NAME)
+        container = database.get_container_client(CONTAINER_NAME)
+        for i in range(10):
+            await container.upsert_item({
+                    'id': 'item{0}'.format(i),
+                    'productName': 'Widget',
+                    'productModel': 'Model {0}'.format(i)
+                }
+            )
+```
+
+### Queries with the asynchronous client
+
+Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
+
+Query results can be iterated, but the query's raw output returns an asynchronous iterator. This means that each object from the iterator is an awaitable object, and does not yet contain the true query result. In order to obtain the query results you can use an async for loop, which awaits each result as you iterate on the object, or manually await each query result as you iterate over the asynchronous iterator.
+
+Since the query results are an asynchronous iterator, they can't be cast into lists directly; instead, if you need to create lists from your results, use an async for loop or Python's list comprehension to populate a list:
+
+```Python
+from azure.cosmos.aio import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY)
+DATABASE_NAME = 'testDatabase'
+database = client.get_database_client(DATABASE_NAME)
+CONTAINER_NAME = 'products'
+container = database.get_container_client(CONTAINER_NAME)
+
+async def create_lists():
+    results = container.query_items(
+            query='SELECT * FROM products p WHERE p.productModel = "Model 2"')
+
+    # iterates on "results" iterator to asynchronously create a complete list of the actual query results
+
+    item_list = []
+    async for item in results:
+        item_list.append(item)
+
+    # Asynchronously creates a complete list of the actual query results. This code performs the same action as the for-loop example above.
+    item_list = [item async for item in results]
+    await client.close()
+```
 ## Troubleshooting
 
 ### General
@@ -441,7 +563,7 @@ For example, if you try to create a container using an ID (name) that's already 
 
 ```Python
 try:
-    database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
+    database.create_container(id=CONTAINER_NAME, partition_key=PartitionKey(path="/productName"))
 except exceptions.CosmosResourceExistsError:
     print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
@@ -471,13 +593,13 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-client = CosmosClient(url, credential=key, logging_enable=True)
+client = CosmosClient(URL, credential=KEY, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
-database = client.create_database(database_name, logging_enable=True)
+database = client.create_database(DATABASE_NAME, logging_enable=True)
 ```
 
 ## Next steps

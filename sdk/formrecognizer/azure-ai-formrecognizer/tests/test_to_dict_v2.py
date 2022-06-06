@@ -5,16 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
-import functools
 from datetime import datetime
 from azure.ai.formrecognizer import _models
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
-
-GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestToDict(FormRecognizerTest):

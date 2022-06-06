@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -18,8 +18,9 @@ from ._generated.models import CommunicationRelayConfiguration
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.communication.identity import CommunicationUserIdentifier
+    from azure.communication.networktraversal import RouteType
 
-class CommunicationRelayClient(object):
+class CommunicationRelayClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Relay client.
 
     :param str endpoint:
@@ -85,18 +86,26 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
+            *,
             user=None, # type: CommunicationUserIdentifier
+            route_type=None, # type: Optional[Union[str, "RouteType"]]
+            ttl=172800,  # type: Optional[int]
             **kwargs # type: Any
     ):
-        # type: (Any) -> CommunicationRelayConfiguration
+    # type: (...) -> CommunicationRelayConfiguration
         """get a Communication Relay configuration
-        :param: CommunicationUserIdentifier user: A user from which we will get an id
+        :param user: Azure Communication User
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
+        :param route_type: Azure Communication Route Type
+        :type route_type: ~azure.communication.networktraversal.RouteType
         :return: CommunicationRelayConfiguration
-        :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
+        :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """
         if user is None:
             return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-                None, **kwargs)
+                route_type=route_type, ttl=ttl, **kwargs)
         return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-            user.properties['id'],
+            id=user.properties['id'],
+            route_type=route_type,
+            ttl=ttl,
             **kwargs)

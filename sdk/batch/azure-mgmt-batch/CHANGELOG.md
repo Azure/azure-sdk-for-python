@@ -1,5 +1,25 @@
 # Release History
 
+## 16.2.0 (2022-06-06)
+
+**Features**
+
+  - Added operation PrivateEndpointConnectionOperations.begin_delete
+  - Model BatchAccount has a new parameter network_profile
+  - Model BatchAccount has a new parameter node_management_endpoint
+  - Model BatchAccountCreateParameters has a new parameter network_profile
+  - Model BatchAccountUpdateParameters has a new parameter network_profile
+  - Model BatchAccountUpdateParameters has a new parameter public_network_access
+  - Model PrivateEndpointConnection has a new parameter group_ids
+
+## 16.1.0 (2022-02-24)
+
+**Features**
+
+  - Added operation BatchAccountOperations.get_detector
+  - Added operation BatchAccountOperations.list_detectors
+  - Model NetworkConfiguration has a new parameter dynamic_v_net_assignment_scope
+
 ## 16.0.0 (2021-07-30)
 
 **Features**

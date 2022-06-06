@@ -10,7 +10,7 @@ from typing import (  # pylint: disable=unused-import
 
 from ._shared import sign_string, url_quote
 from ._shared.constants import X_MS_VERSION
-from ._shared.models import Services
+from ._shared.models import Services, UserDelegationKey
 from ._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     from ..blob import (
         ResourceTypes,
         AccountSasPermissions,
-        UserDelegationKey,
         ContainerSasPermissions,
         BlobSasPermissions
     )
@@ -67,13 +66,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str snapshot:
             The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to grant permission.
-        :param BlobSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
+            Permissions must be ordered racwdxytmei.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or BlobSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -133,6 +133,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
+        sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(self.account_name, self.account_key, resource_path,
                                    user_delegation_key=self.user_delegation_key)
@@ -150,13 +151,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         :param str container_name:
             Name of container.
-        :param ContainerSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, write, delete, list.
+            Permissions must be ordered racwdxyltfmei.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: str or ContainerSasPermissions
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -208,6 +210,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
+        sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(self.account_name, self.account_key, container_name,
                                    user_delegation_key=self.user_delegation_key)
@@ -271,6 +274,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
              self.get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_RESOURCE) +
              self.get_value_to_append(BlobQueryStringConstants.SIGNED_TIMESTAMP) +
+             self.get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
@@ -345,6 +349,8 @@ def generate_account_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -402,7 +408,7 @@ def generate_container_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdxyltfmei.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -449,6 +455,8 @@ def generate_container_sas(
     :keyword str content_type:
         Response header value for Content-Type when resource is accessed
         using this shared access signature.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -463,7 +471,8 @@ def generate_container_sas(
     """
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
-
+    if isinstance(account_key, UserDelegationKey):
+        user_delegation_key = account_key
     if user_delegation_key:
         sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
     else:
@@ -518,7 +527,7 @@ def generate_blob_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdxytmei.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -570,11 +579,15 @@ def generate_blob_sas(
     :keyword str content_type:
         Response header value for Content-Type when resource is accessed
         using this shared access signature.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
+    if isinstance(account_key, UserDelegationKey):
+        user_delegation_key = account_key
     version_id = kwargs.pop('version_id', None)
     if version_id and snapshot:
         raise ValueError("snapshot and version_id cannot be set at the same time.")

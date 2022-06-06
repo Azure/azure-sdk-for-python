@@ -1,0 +1,45 @@
+name: blue
+type: kubernetes
+endpoint_name: my-endpoint
+model:
+  path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../model-1/onlinescoring/
+  scoring_script: score.py
+environment:
+  conda_file: ../model-1/environment/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+request_settings:
+  request_timeout_ms: 3000
+  max_concurrent_requests_per_instance: 1
+  max_queue_wait_ms: 3000
+resources:
+  requests:
+    cpu: "0.1"
+    memory: "0.1Gi"
+  limits:
+    cpu: "0.2"
+    memory: "200Mi"
+liveness_probe:
+  initial_delay: 5
+  period: 5
+  timeout: 10
+  success_threshold: 1
+  failure_threshold: 1
+readiness_probe:
+  initial_delay: 5
+  period: 5
+  timeout: 10
+  success_threshold: 1
+  failure_threshold: 1
+tags:
+  tag1: deployment-tag1-value
+properties:
+  prop1: deployment-prop1-value
+scale_settings:
+  type: target_utilization
+  min_instances: 1
+  max_instances: 3
+  polling_interval: 10
+  target_utilization_percentage: 70
+

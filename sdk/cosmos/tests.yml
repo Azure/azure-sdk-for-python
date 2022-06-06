@@ -3,30 +3,12 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
+      Clouds: 'Cosmos_Public'
+      CloudConfig:
+        Cosmos_Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-cosmos-azure-cloud-test-resources)
       MaxParallel: 1
+      BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
-      TestMarkArgument: not globaldb
-      EnvVars:
-        ACCOUNT_KEY: $(python-cosmos-live-account-key)
-        ACCOUNT_HOST: $(python-cosmos-live-account-host)
-
-      # Workaround to ensure deletion of databases from a statically defined
-      # CosmosDB account.
-      PreSteps:
-        - pwsh: |
-            $testDatabaseId = "Python Test Database " + (New-Guid).ToString()
-            Write-Host Test Database ID: $testDatabaseId
-            Write-Host "##vso[task.setvariable variable=COSMOS_TEST_DATABASE_ID]$testDatabaseId"
-          displayName: Set COSMOS_TEST_DATABASE_ID
-      PostSteps:
-        - pwsh: >
-            az cosmosdb sql database delete
-            --db-name $env:COSMOS_TEST_DATABASE_ID
-            --url-connection $(python-cosmos-live-account-host)
-            --key $(python-cosmos-live-account-key)
-          ignoreLASTEXITCODE: true
-          # Always clean up the database (works when a build is canceled)
-          condition: always()
-          displayName: Cleanup test database
-

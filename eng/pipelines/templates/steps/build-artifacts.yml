@@ -5,9 +5,6 @@ parameters:
   - name: TestPipeline
     type: boolean
     default: false
-  - name: BuildTargetingString
-    type: string
-    default: 'azure-*'
   - name: ServiceDirectory
     type: string
     default: ''
@@ -18,32 +15,25 @@ parameters:
     type: object
     default: []
 
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
+
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
-
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 2.7'
-    inputs:
-      versionSpec: '2.7'
-
-  - script: |
-      pip install -r eng/ci_tools.txt
-    displayName: 'Prep Py2 Environment'
-
-  - task: PythonScript@0
-    displayName: 'Generate Python2 Applicable Namespace Packages'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -57,7 +47,7 @@ steps:
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
@@ -73,7 +63,7 @@ steps:
     displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
@@ -86,9 +76,13 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
+
+  - template: /eng/pipelines/templates/steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 
@@ -102,3 +96,15 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
+
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Generate BOM'
+    condition: succeededOrFailed()
+    inputs:
+      BuildDropPath: $(Build.ArtifactStagingDirectory)
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+      ArtifactName: 'manifest'
+

@@ -1,19 +1,48 @@
 # Release History
 
-## 12.1.1 (Unreleased)
-
-### Bugs Fixed
-
-- Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
-- Resolved bug where single quote characters in Partition and Row keys were not escaped correctly (#20301).
+## 12.4.1 (Unreleased)
 
 ### Features Added
 
-- Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
 
-- Bumped dependency on `msrest` to `>=0.6.21`
+## 12.4.0 (2022-05-10)
+
+### Features Added
+* Support for multitenant authentication ([#24278](https://github.com/Azure/azure-sdk-for-python/pull/24278))
+
+### Bugs Fixed
+* Fixed bug where odmtype tag was not being included for boolean and int32 types even when a full EdmProperty tuple was passed in. This is needed for CLI compatibility.
+
+## 12.3.0 (2022-03-10)
+
+### Bugs Fixed
+* Validation of the table name has been removed from the constructor of the TableClient. Instead individual APIs will validate the table name and raise a ValueError only if the service rejects the request due to the table name not being valid (#23106)
+* Fixed hard-coded URL scheme in batch requests (#21953)
+* Improved documentation for query formatting in `query_entities` APIs (#23235)
+* Removed unsecure debug logging
+
+### Other Changes
+* Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+* Bumped dependency on `azure-core` to `>=1.15.0`
+
+## 12.2.0 (2021-11-10)
+**Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
+
+
+### Bugs Fixed
+* Resolved bug where strings couldn't be used instead of enum value for entity Update Mode (#20247).
+* Resolved bug where single quote characters in Partition and Row keys were not escaped correctly (#20301).
+
+### Features Added
+* Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+
+### Other Changes
+* Bumped dependency on `msrest` to `>=0.6.21`
 
 ## 12.1.0 (2021-07-06)
 
@@ -36,7 +65,7 @@
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
 * Fixed table name from URL parsing in `TableClient.from_table_url` classmethod.
 * The `account_name` attribute on clients will now be pulled from an `AzureNamedKeyCredential` if used.
-* Any additional odata metadata is returned in entitys metadata.
+* Any additional odata metadata is returned in entity's metadata.
 * The timestamp in entity metadata is now deserialized to a timestamp.
 * If the `prefer` header is added in the `create_entity` operation, the echo will be returned.
 * Errors raised on a 412 if-not-match error will now be a specific `azure.core.exceptions.ResourceModifiedError`.

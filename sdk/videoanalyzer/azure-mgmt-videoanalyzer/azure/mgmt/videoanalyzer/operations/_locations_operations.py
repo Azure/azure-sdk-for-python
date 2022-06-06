@@ -55,7 +55,7 @@ class LocationsOperations(object):
 
         Checks whether the Video Analyzer resource name is available.
 
-        :param location_name: The name of the location.
+        :param location_name: Location Name.
         :type location_name: str
         :param parameters: The request parameters.
         :type parameters: ~video_analyzer.models.CheckNameAvailabilityRequest
@@ -69,7 +69,7 @@ class LocationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-05-01-preview"
+        api_version = "2021-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

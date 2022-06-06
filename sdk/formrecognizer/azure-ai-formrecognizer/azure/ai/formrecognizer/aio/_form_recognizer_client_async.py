@@ -166,7 +166,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream=receipt,
+            file_stream=receipt, # type: ignore
             content_type=content_type,
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -239,7 +239,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream={"source": receipt_url},
+            file_stream={"source": receipt_url},  # type: ignore
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._prebuilt_callback),
             polling=True,
@@ -302,7 +302,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_business_card_async(  # type: ignore
-                file_stream=business_card,
+                file_stream=business_card,  # type: ignore
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -350,7 +350,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_business_card_async(  # type: ignore
-                file_stream={"source": business_card_url},
+                file_stream={"source": business_card_url},  # type: ignore
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -418,7 +418,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_id_document_async(  # type: ignore
-                file_stream=identity_document,
+                file_stream=identity_document,  # type: ignore
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -464,7 +464,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_id_document_async(  # type: ignore
-                file_stream={"source": identity_document_url},
+                file_stream={"source": identity_document_url},  # type: ignore
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -533,7 +533,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_invoice_async(  # type: ignore
-                file_stream=invoice,
+                file_stream=invoice,  # type: ignore
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -580,7 +580,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_invoice_async(  # type: ignore
-                file_stream={"source": invoice_url},
+                file_stream={"source": invoice_url},  # type: ignore
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -686,7 +686,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_layout_async(  # type: ignore
-            file_stream=form,
+            file_stream=form,  # type: ignore
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
             polling=True,
@@ -755,7 +755,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_layout_async(  # type: ignore
-            file_stream={"source": form_url},
+            file_stream={"source": form_url},  # type: ignore
             cls=kwargs.pop("cls", self._content_callback),
             polling=True,
             **kwargs
@@ -786,7 +786,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -841,7 +841,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream=form,
+            file_stream=form,  # type: ignore
             model_id=model_id,
             include_text_details=include_field_elements,
             content_type=content_type,
@@ -871,7 +871,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -909,7 +909,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 )
 
         return await self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream={"source": form_url},
+            file_stream={"source": form_url},  # type: ignore
             model_id=model_id,
             include_text_details=include_field_elements,
             cls=callback,

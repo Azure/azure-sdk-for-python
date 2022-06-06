@@ -3,3 +3,5 @@ package_name = "azure-mgmt-powerbiembedded"
 package_pprint_name = "Power BI Embedded Management"
 package_doc_id = "power-bi"
 is_stable = true
+need_msrestazure = true
+need_azuremgmtcore = false

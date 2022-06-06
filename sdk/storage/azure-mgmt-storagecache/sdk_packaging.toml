@@ -1,8 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-storagecache"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Storagecache Management"
+package_pprint_name = "Storage Cache Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true

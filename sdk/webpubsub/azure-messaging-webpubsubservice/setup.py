@@ -39,12 +39,11 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/signalr/azure-messaging-webpubsubservice",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -52,6 +51,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(
         exclude=[
@@ -60,15 +60,15 @@ setup(
             "azure.messaging",
         ]
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
-        "azure-core<2.0.0,>=1.19.0",
+        "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.21",
         "cryptography>=2.8.0",
         "pyjwt>=1.7.1",
         "six>=1.12.0",
     ],
-    extras_require={
-        ":python_version<'3.0'": ["futures", "azure-messaging-nspkg"],
-        ":python_version<'3.5'": ["typing"],
-    },
 )

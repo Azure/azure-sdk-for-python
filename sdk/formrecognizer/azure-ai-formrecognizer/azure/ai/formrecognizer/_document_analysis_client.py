@@ -63,7 +63,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
         )
         super(DocumentAnalysisClient, self).__init__(
             endpoint=endpoint,
@@ -125,9 +125,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return self._client.begin_analyze_document(
+        return self._client.begin_analyze_document(  # type: ignore
             model_id=model,
-            analyze_request=document,
+            analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
@@ -144,8 +144,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         :param str model: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
-        :param str document_url: The URL of the document to analyze. The input must be a valid, encoded, and
-            publicly accessible URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :param str document_url: The URL of the document to analyze. The input must be a valid, properly
+            encoded  (i.e. encode special characters, such as empty spaces), and publicly accessible URL
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
@@ -173,9 +174,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return self._client.begin_analyze_document(
+        return self._client.begin_analyze_document(  # type: ignore
             model_id=model,
-            analyze_request={"url_source": document_url},
+            analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
             continuation_token=continuation_token,
             cls=cls,

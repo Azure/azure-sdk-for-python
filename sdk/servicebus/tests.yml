@@ -5,7 +5,6 @@ stages:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 300
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       BuildTargetingString: azure-servicebus*

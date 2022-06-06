@@ -9,17 +9,21 @@
 
 import sys
 import logging
-import argparse
 import ast
 import os
-import platform
 import textwrap
 import io
 import glob
 import zipfile
 import fnmatch
+import subprocess
+import re
+
+from packaging.specifiers import SpecifierSet
+from pkg_resources import Requirement, parse_version
 
 logging.getLogger().setLevel(logging.INFO)
+
 
 def get_package_details(setup_filename):
     mock_setup = textwrap.dedent(
@@ -55,19 +59,64 @@ def get_package_details(setup_filename):
 
     package_name = kwargs["name"]
     # default namespace for the package
-    name_space = package_name.replace('-', '.')
+    name_space = package_name.replace("-", ".")
+
+    package_data = None
+    if "package_data" in kwargs:
+        package_data = kwargs["package_data"]
+
+    include_package_data = None
+    if "include_package_data" in kwargs:
+        include_package_data = kwargs["include_package_data"]
+
     if "packages" in kwargs.keys():
         packages = kwargs["packages"]
         if packages:
             name_space = packages[0]
             logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
-    return package_name, name_space, kwargs["version"]
+    return package_name, name_space, kwargs["version"], package_data, include_package_data
+
+
+def parse_req(req):
+    """
+    Parses a valid python requirement, EG: EG: azure-core<2.0.0,>=1.11.0. Returns the package name and spec.
+    """
+    req_object = Requirement.parse(req.split(";")[0])
+    pkg_name = req_object.key
+    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
+    return pkg_name, spec
+
+
+def get_pip_list_output():
+    """Uses the invoking python executable to get the output from pip list."""
+    out = subprocess.Popen(
+        [sys.executable, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    stdout, stderr = out.communicate()
+
+    collected_output = {}
+
+    if stdout and (stderr is None):
+        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
+        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
+            if line:
+                package, version = re.split("==", line)
+                collected_output[package] = version
+    else:
+        raise Exception(stderr)
+
+    return collected_output
+
 
 def unzip_sdist_to_directory(containing_folder):
     # grab the first one
     path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.zip"))[0]
     return unzip_file_to_directory(path_to_zip_file, containing_folder)
+
 
 def unzip_file_to_directory(path_to_zip_file, extract_location):
     # unzip file in given path
@@ -77,10 +126,12 @@ def unzip_file_to_directory(path_to_zip_file, extract_location):
         extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
         return os.path.join(extract_location, extracted_dir)
 
+
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
     os.rename(source_location, new_location)
     return new_location
+
 
 def find_sdist(dist_dir, pkg_name, pkg_version):
     # This function will find a sdist for given package name
@@ -116,7 +167,6 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         logging.error("Package name cannot be empty to find whl")
         return
 
-
     pkg_name_format = "{0}-{1}*.whl".format(pkg_name.replace("-", "_"), pkg_version)
     whls = []
     for root, dirnames, filenames in os.walk(whl_dir):
@@ -124,7 +174,7 @@ def find_whl(whl_dir, pkg_name, pkg_version):
             whls.append(os.path.join(root, filename))
 
     whls = [os.path.relpath(w, whl_dir) for w in whls]
-    
+
     if not whls:
         logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
         logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
@@ -140,9 +190,13 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         if len(whls) > 1:
             # if we have reached here, that means we have whl specific to platform as well.
             # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
-            logging.error("More than one whl is found in wheel directory for package {}. Platform specific whl discovery is not supported now".format(pkg_name))
+            logging.error(
+                "More than one whl is found in wheel directory for package {}. Platform specific whl discovery is not supported now".format(
+                    pkg_name
+                )
+            )
             sys.exit(1)
-    
+
     # Additional filtering based on arch type willbe required in future if that need arises.
     # for now assumption is that no arch specific whl is generated
     if len(whls) == 1:

@@ -56,5 +56,4 @@ class SmsMultipleRecipientsSampleAsync(object):
 
 if __name__ == '__main__':
     sample = SmsMultipleRecipientsSampleAsync()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.send_sms_to_multiple_recipients_async())
+    asyncio.run(sample.send_sms_to_multiple_recipients_async())

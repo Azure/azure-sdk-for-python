@@ -51,9 +51,9 @@ These options are available for all perf tests:
 The options are available for all Blob perf tests:
 - `--size=10240` Size in bytes of data to be transferred in upload or download tests. Default is 10240.
 - `--max-concurrency=1` Number of threads to concurrently upload/download a single operation using the SDK API parameter. Default is 1.
-- `--max-put-size` Maximum size of data uploading in single HTTP PUT. Default is 64*1024*1024.
-- `--max-block-size` Maximum size of data in a block within a blob. Defaults to 4*1024*1024.
-- `--buffer-threshold` Minimum block size to prevent full block buffering. Defaults to 4*1024*1024+1.
+- `--max-put-size` Maximum size of data uploading in single HTTP PUT. Default is 64\*1024\*1024.
+- `--max-block-size` Maximum size of data in a block within a blob. Defaults to 4\*1024\*1024.
+- `--buffer-threshold` Minimum block size to prevent full block buffering. Defaults to 4\*1024\*1024+1.
 
 #### List Blobs command line options
 This option is only available to the List Blobs test (T1 and T2).
@@ -65,7 +65,7 @@ The tests currently written for the T2 SDK:
 - `UploadFromFileTest` Uploads a local file of `size` bytes to a new Blob.
 - `UploadBlockTest` Upload a single block of `size` bytes within a Blob.
 - `DownloadTest` Download a stream of `size` bytes. 
-- `ListBlobsTest` List a speficied number of blobs.
+- `ListBlobsTest` List a specified number of blobs.
 
 ### T1 Tests
 The tests currently written for the T1 SDK:
@@ -73,7 +73,7 @@ The tests currently written for the T1 SDK:
 - `LegacyUploadFromFileTest` Uploads a local file of `size` bytes to a new Blob.
 - `LegacyUploadBlockTest` Upload a single block of `size` bytes within a Blob.
 - `LegacyDownloadTest` Download a stream of `size` bytes. 
-- `LegacyListBlobsTest` List a speficied number of blobs.
+- `LegacyListBlobsTest` List a specified number of blobs.
 
 ## Example command
 ```cmd

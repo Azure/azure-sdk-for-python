@@ -35,7 +35,7 @@ from typing import (
     MutableMapping,
 )
 
-from ..utils._utils import _case_insensitive_dict
+from ..utils._utils import case_insensitive_dict
 
 from ._helpers import (
     ParamsType,
@@ -45,17 +45,15 @@ from ._helpers import (
     set_urlencoded_body,
     _format_parameters_helper,
     HttpRequestBackcompatMixin,
+    set_content_body,
 )
-from ._helpers_py3 import set_content_body
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ################################## CLASSES ######################################
 
 class HttpRequest(HttpRequestBackcompatMixin):
-    """**Provisional** object that represents an HTTP request.
-
-    **This object is provisional**, meaning it may be changed in a future release.
+    """An HTTP request.
 
     It should be passed to your client's `send_request` method.
 
@@ -115,7 +113,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             files=files,
             json=json,
         )
-        self.headers = _case_insensitive_dict(default_headers)
+        self.headers = case_insensitive_dict(default_headers)
         self.headers.update(headers or {})
 
         if kwargs:
@@ -315,9 +313,8 @@ class _HttpResponseBase(abc.ABC):
         ...
 
 class HttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for HTTP responses.
+    """Abstract base class for HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your client's `send_request` method
@@ -352,7 +349,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def iter_raw(self) -> Iterator[bytes]:
+    def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -361,7 +358,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def iter_bytes(self) -> Iterator[bytes]:
+    def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -378,9 +375,8 @@ class HttpResponse(_HttpResponseBase):
         )
 
 class AsyncHttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for Async HTTP responses.
+    """Abstract base class for Async HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your async client's `send_request`
@@ -403,7 +399,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    async def iter_raw(self) -> AsyncIterator[bytes]:
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process.
 
         :return: An async iterator of bytes from the response
@@ -414,7 +410,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         yield  # pylint: disable=unreachable
 
     @abc.abstractmethod
-    async def iter_bytes(self) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process.
 
         :return: An async iterator of bytes from the response

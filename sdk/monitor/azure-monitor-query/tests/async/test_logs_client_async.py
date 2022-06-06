@@ -159,7 +159,7 @@ async def test_logs_query_batch_additional_workspaces():
 async def test_logs_single_query_with_render():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = """AppRequests"""
+    query = """AppRequests | take 10"""
 
     # returns LogsQueryResult 
     response = await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
@@ -171,7 +171,7 @@ async def test_logs_single_query_with_render():
 async def test_logs_single_query_with_render_and_stats():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = """AppRequests"""
+    query = """AppRequests | take 10"""
 
     # returns LogsQueryResult 
     response = await client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
@@ -184,7 +184,7 @@ async def test_logs_single_query_with_render_and_stats():
 async def test_logs_query_result_iterate_over_tables():
     client = LogsQueryClient(_credential())
 
-    query = "AppRequests; AppRequests | take 5"
+    query = "AppRequests | take 10; AppRequests | take 5"
 
     response = await client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],

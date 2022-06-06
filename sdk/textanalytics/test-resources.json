@@ -42,16 +42,16 @@
                 "description": "The application client secret used to run tests."
             }
         },
-        "textAnalyticsEndpointSuffix": {
-            "defaultValue": ".cognitiveservices.azure.com/",
+        "cognitiveServicesEndpointSuffix": {
+            "defaultValue": ".cognitiveservices.azure.com",
             "type": "String"
-        },
+        }
     },
     "variables": {
         "authorizationApiVersion": "2018-09-01-preview",
         "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
         "cognitiveApiVersion": "2017-04-18",
-        "azureTextAnalyticsUrl": "[concat('https://', variables('textAnalyticsBaseName'), parameters('textAnalyticsEndpointSuffix'))]",
+        "azureTextAnalyticsUrl": "[concat('https://', variables('textAnalyticsBaseName'), parameters('cognitiveServicesEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
     },
     "resources": [
@@ -102,13 +102,9 @@
             "type": "string",
             "value": "[variables('azureTextAnalyticsUrl')]"
         },
-        "AZURE_TEXT_ANALYTICS_KEY": {
+        "TEXTANALYTICS_ENDPOINT_SUFFIX": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsBaseName')), variables('cognitiveApiVersion')).key1]"
-        },
-        "AZURE_TEXT_ANALYTICS_ENDPOINT": {
-            "type": "string",
-            "value": "[variables('azureTextAnalyticsUrl')]"
+            "value": "[parameters('cognitiveServicesEndpointSuffix')]"
         }
     }
 }

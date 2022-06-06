@@ -20,20 +20,6 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 # a-b-c => a.b.c
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
-# azure v0.x is not compatible with this package
-# azure v0.x used to have a __version__ attribute (newer versions don't)
-try:
-    import azure
-    try:
-        ver = azure.__version__
-        raise Exception(
-            'This package is incompatible with azure=={}. '.format(ver) +
-            'Uninstall it with "pip uninstall azure".'
-        )
-    except AttributeError:
-        pass
-except ImportError:
-    pass
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
@@ -61,34 +47,34 @@ setup(
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         "Development Status :: 4 - Beta",
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'License :: OSI Approved :: MIT License',
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "License :: OSI Approved :: MIT License",
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
+        # This means any folder structure that only consists of a __init__.py.
+        # For example, for storage, this would mean adding 'azure.storage'
+        # in addition to the default 'azure' that is seen here.
+        'azure',
         'azure.ai',
         'azure.ai.language',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.19.0",
+        "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.21",
         'azure-common~=1.1',
         'six>=1.11.0',
     ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-ai-language-nspkg'],
-        ":python_version<'3.5'": ['typing'],
-    },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
         'Source': 'https://github.com/Azure/azure-sdk-python',

@@ -8,7 +8,7 @@ interactions:
       your Surface Pro 4 power supply to charge other devices, like a phone, while
       your Surface charges. The USB port on the power supply is only for charging,
       not for data transfer. If you want to use a USB device, plug it into the USB
-      port on your Surface."}], "language": "en", "stringIndexType": "UnicodeCodePoint"}'
+      port on your Surface."}], "stringIndexType": "UnicodeCodePoint"}'
     headers:
       Accept:
       - application/json
@@ -17,38 +17,38 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '707'
+      - '689'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-text?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"answer\": \"Power and charging.
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"0\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"0\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
         to four hours to charge the Surface Pro 4 battery fully from an empty state.
         It can take longer if you\u2019re using your Surface for power-intensive activities
         like gaming or video streaming while you\u2019re charging it.\",\n      \"confidenceScore\":
-        0.9254360198974609,\n      \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\":
-        \"two to four hours\",\n        \"confidenceScore\": 0.98562825,\n        \"offset\":
+        0.9254359006881714,\n      \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\":
+        \"two to four hours\",\n        \"confidenceScore\": 0.9856282,\n        \"offset\":
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503516271710396,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.055035144090652466,\n
         \     \"id\": \"0\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
         \       \"confidenceScore\": 0.62411773,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - f0c97e63-de33-41db-bebd-3a34cc810fad
+      - c88b68ad-b495-4121-a048-7b41d82ddae8
       content-length:
       - '1481'
       content-type:
@@ -56,13 +56,13 @@ interactions:
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2
       date:
-      - Thu, 30 Sep 2021 15:52:34 GMT
+      - Thu, 28 Oct 2021 17:25:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '255'
+      - '241'
     status:
       code: 200
       message: OK

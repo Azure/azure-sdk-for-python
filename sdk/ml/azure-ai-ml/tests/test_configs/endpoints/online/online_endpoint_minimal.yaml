@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/onlineEndpoint.schema.json
+name: my-new-endpoint
+auth_mode: aml_token

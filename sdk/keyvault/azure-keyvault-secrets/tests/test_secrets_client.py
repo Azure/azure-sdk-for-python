@@ -3,22 +3,27 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-from dateutil import parser as date_parse
-import time
-import logging
 import json
+import logging
+import time
 
+
+import pytest
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
+from dateutil import parser as date_parse
+from devtools_testutils import recorded_by_proxy
+
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, SecretsTestCase
-
+from _test_case import SecretsClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
+list_test_size = 7
 
 
 # used for logging tests
@@ -31,32 +36,30 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
+class TestSecretClient(KeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
-        self.assertEqual(s1.name, s2.name)
-        self.assertEqual(s1.vault_url, s2.vault_url)
-        self.assertEqual(s1.content_type, s2.content_type)
-        self.assertEqual(s1.enabled, s2.enabled)
-        self.assertEqual(s1.not_before, s2.not_before)
-        self.assertEqual(s1.expires_on, s2.expires_on)
-        self.assertEqual(s1.created_on, s2.created_on)
-        self.assertEqual(s1.updated_on, s2.updated_on)
-        self.assertEqual(s1.recovery_level, s2.recovery_level)
-        self.assertEqual(s1.key_id, s2.key_id)
+        assert s1.name == s2.name
+        assert s1.vault_url == s2.vault_url
+        assert s1.content_type == s2.content_type
+        assert s1.enabled == s2.enabled
+        assert s1.not_before == s2.not_before
+        assert s1.expires_on == s2.expires_on
+        assert s1.created_on == s2.created_on
+        assert s1.updated_on == s2.updated_on
+        assert s1.recovery_level == s2.recovery_level
+        assert s1.key_id == s2.key_id
 
     def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
         id = secret_attributes.id
-        self.assertTrue(id.index(prefix) == 0, "Id should start with '{}', but value is '{}'".format(prefix, id))
-        self.assertEqual(
-            secret_attributes.value,
-            secret_value,
-            "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
-        )
-        self.assertTrue(
-            secret_attributes.properties.created_on and secret_attributes.properties.updated_on,
-            "Missing required date attributes.",
-        )
+        assert id.index(prefix) == 0, f"Id should start with '{prefix}', but value is '{id}'"
+        assert (
+            secret_attributes.value == secret_value
+        ), f"value should be '{secret_value}', but is '{secret_attributes.value}'"
+
+        assert (
+            secret_attributes.properties.created_on and secret_attributes.properties.updated_on
+        ), "Missing required date attributes."
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
@@ -64,10 +67,11 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
                 expected_secret = expected[secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
                 del expected[secret.name]
-        self.assertEqual(len(expected), 0)
+        assert len(expected) == 0
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
@@ -92,11 +96,11 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
             tags=tags,
         )
         self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
-        self.assertEqual(content_type, created.properties.content_type)
-        self.assertEqual(enabled, created.properties.enabled)
-        self.assertEqual(not_before, created.properties.not_before)
-        self.assertEqual(expires, created.properties.expires_on)
-        self.assertEqual(tags, created.properties.tags)
+        assert content_type == created.properties.content_type
+        assert enabled == created.properties.enabled
+        assert not_before == created.properties.not_before
+        assert expires == created.properties.expires_on
+        assert tags == created.properties.tags
 
         self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name).properties)
         self._assert_secret_attributes_equal(
@@ -116,12 +120,12 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
                 tags=tags,
                 enabled=enabled,
             )
-            self.assertEqual(tags, updated_secret.tags)
-            self.assertEqual(secret.id, updated_secret.id)
-            self.assertEqual(content_type, updated_secret.content_type)
-            self.assertEqual(expires, updated_secret.expires_on)
-            self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
-            self.assertNotEqual(secret.properties.updated_on, updated_secret.updated_on)
+            assert tags == updated_secret.tags
+            assert secret.id == updated_secret.id
+            assert content_type == updated_secret.content_type
+            assert expires == updated_secret.expires_on
+            assert secret.properties.enabled != updated_secret.enabled
+            assert secret.properties.updated_on != updated_secret.updated_on
             return updated_secret
 
         if self.is_live:
@@ -132,12 +136,13 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         # delete secret
         deleted = client.begin_delete_secret(updated.name).result()
-        self.assertIsNotNone(deleted)
+        assert deleted is not None
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
-        max_secrets = self.list_test_size
+        max_secrets = list_test_size
         expected = {}
 
         # create many secrets
@@ -153,13 +158,15 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
         result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
+
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
-        max_secrets = self.list_test_size
+        max_secrets = list_test_size
         expected = {}
 
         # create many secret versions
@@ -177,15 +184,16 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
                 expected_secret = expected[secret.id]
                 del expected[secret.id]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
-        self.assertEqual(len(expected), 0)
+        assert len(expected) == 0
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
 
         # create secrets
-        for i in range(self.list_test_size):
+        for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
             secret_value = "value{}".format(i)
             expected[secret_name] = client.set_secret(secret_name, secret_value)
@@ -196,16 +204,18 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         # validate list deleted secrets with attributes
         for deleted_secret in client.list_deleted_secrets():
-            self.assertIsNotNone(deleted_secret.deleted_date)
-            self.assertIsNotNone(deleted_secret.scheduled_purge_date)
-            self.assertIsNotNone(deleted_secret.recovery_id)
+            assert deleted_secret.deleted_date is not None
+            assert deleted_secret.scheduled_purge_date is not None
+            assert deleted_secret.recovery_id is not None
             if deleted_secret.name in expected:
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
+
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -214,7 +224,7 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         # backup secret
         secret_backup = client.backup_secret(created_bundle.name)
-        self.assertIsNotNone(secret_backup, "secret_backup")
+        assert secret_backup is not None, "secret_backup"
 
         # delete secret
         client.begin_delete_secret(created_bundle.name).wait()
@@ -227,13 +237,15 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
         restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_recover(self, client, **kwargs):
+
         secrets = {}
 
         # create secrets to recover
-        for i in range(self.list_test_size):
+        for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
@@ -244,7 +256,7 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
-        self.assertTrue(all(s in deleted for s in secrets.keys()))
+        assert all(s in deleted for s in secrets.keys())
 
         # recover select secrets
         for secret_name in secrets.keys():
@@ -255,13 +267,15 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
             secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
     def test_purge(self, client, **kwargs):
+
         secrets = {}
 
         # create secrets to purge
-        for i in range(self.list_test_size):
+        for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
@@ -272,7 +286,7 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
-        self.assertTrue(all(s in deleted for s in secrets.keys()))
+        assert all(s in deleted for s in secrets.keys())
 
         # purge secrets
         for secret_name in secrets.keys():
@@ -281,10 +295,11 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
             self._poll_until_exception(functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError)
 
         deleted = [s.name for s in client.list_deleted_secrets()]
-        self.assertTrue(not any(s in deleted for s in secrets.keys()))
+        assert not any(s in deleted for s in secrets.keys())
 
-    @logging_enabled()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer(logging_enable=True)
+    @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -297,20 +312,28 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
+                # parts of the request are logged on new lines in a single message
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
+                for section in request_sections:
                     try:
-                        body = json.loads(m)
+                        # the body of the request should be JSON
+                        body = json.loads(section)
                         if body["value"] == "secret-value":
+                            mock_handler.close()
                             return
                     except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
+                        # this means the request section is not JSON
                         pass
 
+        mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
-    @logging_disabled()
-    @client_setup
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPreparer(logging_enable=False)
+    @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -323,14 +346,23 @@ class SecretClientTests(SecretsTestCase, KeyVaultTestCase):
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
-                messages_request = message.message.split("/n")
-                for m in messages_request:
+                # parts of the request are logged on new lines in a single message
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
+                for section in request_sections:
                     try:
-                        body = json.loads(m)
-                        assert body["value"] != "secret-value", "Client request body was logged"
+                        # the body of the request should be JSON
+                        body = json.loads(section)
+                        if body["value"] == "secret-value":
+                            mock_handler.close()
+                            assert False, "Client request body was logged"
                     except (ValueError, KeyError):
                         # this means the message is not JSON or has no kty property
                         pass
+
+        mock_handler.close()
 
 
 def test_service_headers_allowed_in_logs():

@@ -1,6 +1,7 @@
 import time
+import pytest
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 from azure.mgmt.netapp.models import Volume, Snapshot
 from test_volume import create_volume, wait_for_volume, delete_volume
 from test_pool import delete_pool
@@ -43,37 +44,47 @@ def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_n
             break
 
 
-class NetAppAccountTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(NetAppAccountTestCase, self).setUp()
+class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
+    @recorded_by_proxy
     def test_create_delete_snapshot(self):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
 
         snapshot_list = self.client.snapshots.list(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        self.assertEqual(len(list(snapshot_list)), 1)
+        assert len(list(snapshot_list)) == 1
 
         delete_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, self.is_live)
         snapshot_list = self.client.snapshots.list(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        self.assertEqual(len(list(snapshot_list)), 0)
+        assert len(list(snapshot_list)) == 0
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, self.is_live)
 
+    @recorded_by_proxy
     def test_list_snapshots(self):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_2, LOCATION, snapshot_only=True)
         snapshots = [TEST_SNAPSHOT_1, TEST_SNAPSHOT_2]
 
         snapshot_list = self.client.snapshots.list(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        self.assertEqual(len(list(snapshot_list)), 2)
+        assert len(list(snapshot_list)) == 2
         idx = 0
         for snapshot in snapshot_list:
-            self.assertEqual(snapshot.name, snapshots[idx])
+            assert snapshot.name == snapshots[idx]
             idx += 1
 
         delete_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, self.is_live)
@@ -82,11 +93,16 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, self.is_live)
 
+    @recorded_by_proxy
     def test_get_snapshot_by_name(self):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
 
         snapshot = self.client.snapshots.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1)
-        self.assertEqual(snapshot.name, TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1+ '/' + TEST_SNAPSHOT_1)
+        assert snapshot.name == TEST_ACC_1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1+ '/' + TEST_SNAPSHOT_1
 
         delete_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, self.is_live)
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, self.is_live)

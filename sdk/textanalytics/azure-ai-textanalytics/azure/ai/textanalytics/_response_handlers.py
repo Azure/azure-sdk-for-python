@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,10 +6,11 @@
 import json
 import functools
 from collections import defaultdict
-from six.moves.urllib.parse import urlparse, parse_qsl
+from urllib.parse import urlparse, parse_qsl
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
+    ResourceNotFoundError,
     ODataV4Format,
 )
 from azure.core.paging import ItemPaged
@@ -34,6 +34,10 @@ from ._models import (
     AnalyzeHealthcareEntitiesResult,
     ExtractSummaryResult,
     _AnalyzeActionsType,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyResult,
+    ActionPointerKind,
 )
 
 
@@ -41,11 +45,11 @@ class CSODataV4Format(ODataV4Format):
     def __init__(self, odata_error):
         try:
             if odata_error["error"]["innererror"]:
-                super(CSODataV4Format, self).__init__(
+                super().__init__(
                     odata_error["error"]["innererror"]
                 )
         except KeyError:
-            super(CSODataV4Format, self).__init__(odata_error)
+            super().__init__(odata_error)
 
 
 def process_http_response_error(error):
@@ -53,7 +57,9 @@ def process_http_response_error(error):
     raise_error = HttpResponseError
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
-    raise raise_error(response=error.response, error_format=CSODataV4Format)
+    if error.status_code == 404:
+        raise_error = ResourceNotFoundError
+    raise raise_error(response=error.response, error_format=CSODataV4Format) from error
 
 
 def order_results(response, combined):
@@ -63,7 +69,10 @@ def order_results(response, combined):
     :param combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
     """
-    request = json.loads(response.http_response.request.body)["documents"]
+    try:
+        request = json.loads(response.http_response.request.body)["documents"]
+    except KeyError:  # language API compat
+        request = json.loads(response.http_response.request.body)["analysisInput"]["documents"]
     mapping = {item.id: item for item in combined}
     ordered_response = [mapping[item["id"]] for item in request]
     return ordered_response
@@ -91,6 +100,9 @@ def prepare_result(func):
         def wrapper(
             response, obj, response_headers, ordering_function
         ):  # pylint: disable=unused-argument
+            if hasattr(obj, "results"):
+                obj = obj.results  # language API compat
+
             if obj.errors:
                 combined = obj.documents + obj.errors
                 results = ordering_function(response, combined)
@@ -260,18 +272,49 @@ def summary_result(
     )
 
 
+@prepare_result
+def custom_entities_result(
+    custom_entities, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return RecognizeCustomEntitiesResult._from_generated(  # pylint: disable=protected-access
+        custom_entities
+    )
+
+
+@prepare_result
+def single_category_classify_result(
+    custom_category, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+        custom_category
+    )
+
+@prepare_result
+def multi_category_classify_result(
+    custom_categories, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+        custom_categories
+    )
+
+
 def healthcare_extract_page_data(
     doc_id_order, obj, response_headers, health_job_state
 ):  # pylint: disable=unused-argument
     return (
         health_job_state.next_link,
         healthcare_result(
-            doc_id_order, health_job_state.results, response_headers, lro=True
+            doc_id_order,
+            health_job_state.results
+            if hasattr(health_job_state, "results")
+            else health_job_state.tasks.items[0].results,
+            response_headers,
+            lro=True
         ),
     )
 
 
-def _get_deserialization_callback_from_task_type(task_type):
+def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=too-many-return-statements
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return entities_result
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -282,10 +325,19 @@ def _get_deserialization_callback_from_task_type(task_type):
         return sentiment_result
     if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
         return summary_result
+    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
+        return custom_entities_result
+    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
+        return single_category_classify_result
+    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
+        return multi_category_classify_result
+    if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
+        return healthcare_result
     return key_phrases_result
 
 
-def _get_property_name_from_task_type(task_type):
+def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-return-statements
+    """v3.1 only"""
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -294,25 +346,81 @@ def _get_property_name_from_task_type(task_type):
         return "entity_linking_tasks"
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
-    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
-        return "extractive_summarization_tasks"
     return "key_phrase_extraction_tasks"
 
 
-def _get_good_result(
-    current_task_type,
-    index_of_task_result,
-    doc_id_order,
-    response_headers,
-    returned_tasks_object,
-):
+def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
+    """v3.1 only"""
+    if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
+        return "entity_recognition_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
+        return "entity_recognition_pii_tasks"
+    if task_type == ActionPointerKind.RECOGNIZE_LINKED_ENTITIES:
+        return "entity_linking_tasks"
+    if task_type == ActionPointerKind.ANALYZE_SENTIMENT:
+        return "sentiment_analysis_tasks"
+    return "key_phrase_extraction_tasks"
+
+
+def resolve_action_pointer(pointer):
+    import re
+    pointer_union = "|".join(value for value in ActionPointerKind)
+    found = re.search(fr"#/tasks/({pointer_union})/\d+", pointer)
+    if found:
+        index = int(pointer[-1])
+        task = pointer.split("#/tasks/")[1].split("/")[0]
+        property_name = get_task_from_pointer(task)
+        return property_name, index
+    raise ValueError(
+        f"Unexpected response from service - action pointer '{pointer}' is not a valid action pointer."
+    )
+
+
+def get_ordered_errors(tasks_obj, task_name, doc_id_order):
+    # throw exception if error missing a target
+    missing_target = any([error for error in tasks_obj.errors if error.target is None])
+    if missing_target:
+        message = "".join([f"({err.code}) {err.message}" for err in tasks_obj.errors])
+        raise HttpResponseError(message=message)
+
+    # create a DocumentError per input doc with the action error details
+    for err in tasks_obj.errors:
+        # language API compat
+        if err.target.find("items") != -1:
+            action = tasks_obj.tasks.items[int(err.target.split("/")[-1])]
+        else:
+            property_name, index = resolve_action_pointer(err.target)
+            actions = getattr(tasks_obj.tasks, property_name)
+            action = actions[index]
+        if action.task_name == task_name:
+            errors = [
+                DocumentError(
+                    id=doc_id,
+                    error=TextAnalyticsError(code=err.code, message=err.message)
+                ) for doc_id in doc_id_order
+            ]
+            return errors
+    raise ValueError("Unexpected response from service - no errors for missing action results.")
+
+
+def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object):
+    returned_tasks = returned_tasks_object.tasks
+    current_task_type, task_name = task
     deserialization_callback = _get_deserialization_callback_from_task_type(
         current_task_type
     )
-    property_name = _get_property_name_from_task_type(current_task_type)
-    response_task_to_deserialize = getattr(returned_tasks_object, property_name)[
-        index_of_task_result
-    ]
+    # language api compat
+    property_name = \
+        "items" if hasattr(returned_tasks, "items") else _get_property_name_from_task_type(current_task_type)
+    try:
+        response_task_to_deserialize = \
+            next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
+    except StopIteration:
+        raise ValueError("Unexpected response from service - unable to deserialize result.")
+
+    # if no results present, check for action errors
+    if response_task_to_deserialize.results is None:
+        return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
     )
@@ -320,15 +428,10 @@ def _get_good_result(
 
 def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
     iter_items = defaultdict(list)  # map doc id to action results
-    task_type_to_index = defaultdict(
-        int
-    )  # need to keep track of how many of each type of tasks we've seen
-    returned_tasks_object = analyze_job_state.tasks
-    for current_task_type in task_order:
-        index_of_task_result = task_type_to_index[current_task_type]
-        results = _get_good_result(
-            current_task_type,
-            index_of_task_result,
+    returned_tasks_object = analyze_job_state
+    for task in task_order:
+        results = _get_doc_results(
+            task,
             doc_id_order,
             response_headers,
             returned_tasks_object,
@@ -336,7 +439,6 @@ def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state
         for result in results:
             iter_items[result.id].append(result)
 
-        task_type_to_index[current_task_type] += 1
     return [iter_items[doc_id] for doc_id in doc_id_order if doc_id in iter_items]
 
 
@@ -367,6 +469,8 @@ def lro_get_next_page(
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
     if "showStats" in query_params:
         query_params.pop("showStats")
+    if "api-version" in query_params:  # language api compat
+        query_params.pop("api-version")
     query_params["show_stats"] = show_stats
 
     return lro_status_callback(job_id, **query_params)

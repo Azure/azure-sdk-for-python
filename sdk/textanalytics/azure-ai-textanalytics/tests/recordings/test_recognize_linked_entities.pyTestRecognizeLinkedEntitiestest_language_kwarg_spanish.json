@@ -1,0 +1,117 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "218",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityLinking",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Bill Gates is the CEO of Microsoft.",
+              "language": "es"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "latest",
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "94fe9499-38b9-43fc-a2b8-61cf9b813a1b",
+        "Content-Length": "1087",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Tue, 03 May 2022 00:16:48 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "kind": "EntityLinkingResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 1,
+            "validDocumentsCount": 1,
+            "erroneousDocumentsCount": 0,
+            "transactionsCount": 1
+          },
+          "documents": [
+            {
+              "id": "0",
+              "statistics": {
+                "charactersCount": 35,
+                "transactionsCount": 1
+              },
+              "entities": [
+                {
+                  "bingId": "0d47c987-0042-5576-15e8-97af601614fa",
+                  "name": "Bill Gates",
+                  "matches": [
+                    {
+                      "text": "Bill Gates",
+                      "offset": 0,
+                      "length": 10,
+                      "confidenceScore": 0.38
+                    }
+                  ],
+                  "language": "es",
+                  "id": "Bill Gates",
+                  "url": "https://es.wikipedia.org/wiki/Bill_Gates",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "cf5db860-9fd2-390d-0b6d-5ba856efed49",
+                  "name": "Director ejecutivo",
+                  "matches": [
+                    {
+                      "text": "CEO",
+                      "offset": 18,
+                      "length": 3,
+                      "confidenceScore": 0.22
+                    }
+                  ],
+                  "language": "es",
+                  "id": "Director ejecutivo",
+                  "url": "https://es.wikipedia.org/wiki/Director_ejecutivo",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "a093e9b9-90f5-a3d5-c4b8-5855e1b01f85",
+                  "name": "Microsoft",
+                  "matches": [
+                    {
+                      "text": "Microsoft",
+                      "offset": 25,
+                      "length": 9,
+                      "confidenceScore": 0.3
+                    }
+                  ],
+                  "language": "es",
+                  "id": "Microsoft",
+                  "url": "https://es.wikipedia.org/wiki/Microsoft",
+                  "dataSource": "Wikipedia"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

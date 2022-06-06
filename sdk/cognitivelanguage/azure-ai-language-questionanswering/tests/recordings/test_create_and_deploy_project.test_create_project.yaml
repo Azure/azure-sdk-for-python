@@ -1,0 +1,445 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-01-26T21:05:50Z\",\n  \"lastModifiedDateTime\":
+        \"2022-02-10T19:36:30Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        answer\"\n  }\n}"
+    headers:
+      apim-request-id:
+      - 105a5013-2314-4d84-8d01-14e5efeb83be
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 10 Feb 2022 19:36:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '222'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"projectName\": \"IssacNewton\",\n
+        \     \"description\": \"biography of Sir Issac Newton\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-26T21:05:50Z\",\n      \"lastModifiedDateTime\": \"2022-02-10T19:36:30Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"no answer\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"LeithyCustomQuestionAnsweringEuWest\",\n
+        \     \"description\": \"\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-10-29T14:12:48Z\",\n      \"lastModifiedDateTime\":
+        \"2021-11-18T15:10:54Z\",\n      \"lastDeployedDateTime\": \"2021-10-29T14:34:58Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"Microsoft\",\n      \"description\":
+        \"test project for some Microsoft QnAs\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-25T18:53:19Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-26T12:25:59Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"no answer\"\n      }\n    },\n    {\n      \"projectName\": \"NewFAQ\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T12:24:54Z\",\n      \"lastModifiedDateTime\": \"2022-01-09T10:57:59Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-04T15:43:05Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1022484728\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-13T19:39:17Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-13T19:40:02Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1037016838\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T16:31:45Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T16:32:28Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1120136997\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T11:34:43Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T11:35:19Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-16T11:35:26Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject1204781366\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-20T10:07:05Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-20T10:07:05Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject1256490165\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-19T20:44:02Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-19T20:44:58Z\",\n      \"lastDeployedDateTime\": \"2021-12-19T20:45:56Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject1258556362\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T10:27:28Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T10:30:00Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-16T10:30:13Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1270174457\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T10:25:27Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T10:26:30Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-16T10:27:15Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject1300121175\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-16T10:20:28Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T10:21:09Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject1310419072\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-16T15:26:21Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T15:26:54Z\",\n      \"lastDeployedDateTime\": \"2021-12-16T15:29:39Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject1402107094\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-16T09:27:33Z\",\n      \"lastModifiedDateTime\": \"2022-01-16T09:28:13Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-16T09:28:21Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1440532405\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T15:32:35Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T15:33:09Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-16T15:33:50Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject1458131380\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-09T10:54:08Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-09T10:54:44Z\",\n      \"lastDeployedDateTime\": \"2022-01-09T10:54:51Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject1462147386\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-11T19:50:42Z\",\n      \"lastModifiedDateTime\": \"2022-01-11T19:51:22Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-11T19:51:30Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1474942789\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T14:10:07Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T14:12:42Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1499046711\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-19T20:17:08Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-19T20:17:45Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-19T20:18:44Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject15561404\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-16T16:37:28Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T16:38:07Z\",\n      \"lastDeployedDateTime\": \"2021-12-16T16:38:25Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject1596719381\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-09T10:49:05Z\",\n      \"lastModifiedDateTime\": \"2022-01-09T10:49:05Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject1641322419\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-20T10:10:38Z\",\n      \"lastModifiedDateTime\": \"2021-12-20T10:11:12Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-20T10:11:19Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1672004108\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T16:32:26Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T16:33:02Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1674376583\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-09T10:48:23Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-09T10:48:23Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1770110392\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T15:20:50Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T15:21:31Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject181022298\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T12:25:56Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T12:26:35Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1839884463\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T11:36:26Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T11:36:58Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-16T11:37:04Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject1860710606\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-19T18:32:50Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-19T18:33:21Z\",\n      \"lastDeployedDateTime\": \"2021-12-19T18:33:32Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject1900807350\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-19T20:14:20Z\",\n      \"lastModifiedDateTime\": \"2021-12-19T20:14:51Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-19T20:15:29Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject1943369013\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-09T10:58:00Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-09T10:58:00Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject2021014067\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-19T20:39:43Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-19T20:40:25Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-19T20:40:32Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject2059281489\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-13T19:27:45Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-13T19:29:00Z\",\n      \"lastDeployedDateTime\": \"2022-01-13T19:29:16Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject2062932075\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T14:16:09Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T14:16:47Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject2072342360\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-09T10:55:46Z\",\n      \"lastModifiedDateTime\": \"2022-01-09T10:56:16Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-09T10:56:22Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject212185292\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-12T17:10:46Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-12T17:11:20Z\",\n      \"lastDeployedDateTime\":
+        \"2022-01-12T17:11:27Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject2136073720\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-19T20:25:29Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-19T20:26:06Z\",\n      \"lastDeployedDateTime\": \"2021-12-19T20:30:45Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject218972971\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-09T10:57:13Z\",\n      \"lastModifiedDateTime\": \"2022-01-09T10:57:13Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject23356668\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-19T18:31:00Z\",\n      \"lastModifiedDateTime\": \"2021-12-19T18:31:42Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-19T18:31:51Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject242934191\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-16T10:07:24Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-16T10:07:59Z\",\n      \"lastDeployedDateTime\":
+        \"2022-01-16T10:08:05Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject256970955\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-09T10:46:50Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-09T10:47:27Z\",\n      \"lastDeployedDateTime\": \"2022-01-09T10:47:34Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject2607490\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T10:49:02Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T10:49:02Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject36468974\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T14:14:03Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T14:14:42Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject365678464\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-19T20:15:40Z\",\n      \"lastModifiedDateTime\": \"2021-12-19T20:16:13Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-19T20:16:22Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject366905064\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-12T17:09:19Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-12T17:09:58Z\",\n      \"lastDeployedDateTime\":
+        \"2022-01-12T17:10:07Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject436485626\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-13T19:26:39Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-13T19:27:33Z\",\n      \"lastDeployedDateTime\": \"2022-01-13T19:27:42Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject451335847\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T16:33:31Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T16:34:06Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-16T16:35:47Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject493994996\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T12:25:06Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T12:25:06Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject495196868\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T10:22:02Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T10:22:02Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject536242296\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T15:31:13Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T15:31:49Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-16T15:31:57Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject562488557\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-16T15:23:44Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T15:24:40Z\",\n      \"lastDeployedDateTime\": \"2021-12-16T15:25:13Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject578877401\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T12:25:10Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T12:25:48Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject583646470\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-16T09:28:29Z\",\n      \"lastModifiedDateTime\": \"2022-01-16T09:29:05Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-16T09:29:12Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject612807851\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-16T12:25:51Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-16T12:25:51Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject644233786\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-16T10:08:57Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-16T10:09:35Z\",\n      \"lastDeployedDateTime\":
+        \"2022-01-16T10:10:04Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject684014155\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-16T15:37:49Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T15:38:27Z\",\n      \"lastDeployedDateTime\": \"2021-12-16T15:39:06Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject76531228\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-16T10:19:27Z\",\n      \"lastModifiedDateTime\": \"2021-12-16T10:19:27Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject769635982\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-19T20:40:57Z\",\n      \"lastModifiedDateTime\": \"2021-12-19T20:41:33Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-19T20:43:35Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject815455663\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-11T19:51:31Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-11T19:52:06Z\",\n      \"lastDeployedDateTime\":
+        \"2022-01-11T19:52:14Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject830652947\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-16T10:24:05Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T10:24:41Z\",\n      \"lastDeployedDateTime\": \"2021-12-16T10:24:49Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject846794181\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-20T10:12:12Z\",\n      \"lastModifiedDateTime\": \"2021-12-20T10:12:43Z\",\n
+        \     \"lastDeployedDateTime\": \"2021-12-20T10:12:49Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject885640496\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-19T20:19:37Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-19T20:20:13Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-19T20:21:50Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject894436613\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-13T19:30:52Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-13T19:31:37Z\",\n      \"lastDeployedDateTime\": \"2022-01-13T19:31:50Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject905989614\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2021-12-20T10:08:02Z\",\n      \"lastModifiedDateTime\": \"2021-12-20T10:08:02Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"TestProject929527654\",\n
+        \     \"description\": \"This is the description for a test project\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-09T10:45:03Z\",\n      \"lastModifiedDateTime\": \"2022-01-09T10:45:44Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-09T10:45:52Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject950918528\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-12-19T20:12:47Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-12-19T20:13:24Z\",\n      \"lastDeployedDateTime\":
+        \"2021-12-19T20:13:58Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject967327503\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2022-01-11T18:28:25Z\",\n      \"lastModifiedDateTime\":
+        \"2022-01-11T18:28:25Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer found for your question.\"\n      }\n    },\n    {\n      \"projectName\":
+        \"TestProject992187747\",\n      \"description\": \"This is the description
+        for a test project\",\n      \"language\": \"en\",\n      \"multilingualResource\":
+        false,\n      \"createdDateTime\": \"2021-12-19T20:11:07Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-19T20:11:48Z\",\n      \"lastDeployedDateTime\": \"2021-12-19T20:11:56Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No answer found for your
+        question.\"\n      }\n    },\n    {\n      \"projectName\": \"ghg\",\n      \"description\":
+        \"hg\",\n      \"language\": \"en\",\n      \"multilingualResource\": false,\n
+        \     \"createdDateTime\": \"2021-12-16T11:55:05Z\",\n      \"lastModifiedDateTime\":
+        \"2021-12-16T11:57:23Z\",\n      \"settings\": {\n        \"defaultAnswer\":
+        \"No answer foundhg\"\n      }\n    }\n  ]\n}"
+    headers:
+      apim-request-id:
+      - 66640d30-a9ae-4e3a-bee5-8c189a79ca4d
+      content-length:
+      - '27913'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 10 Feb 2022 19:36:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '289'
+    status:
+      code: 200
+      message: OK
+version: 1

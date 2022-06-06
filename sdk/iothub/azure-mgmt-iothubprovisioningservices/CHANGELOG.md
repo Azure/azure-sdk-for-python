@@ -1,5 +1,14 @@
 # Release History
 
+## 1.1.0 (2022-02-07)
+
+**Features**
+
+  - Model CertificateResponse has a new parameter system_data
+  - Model IotDpsPropertiesDescription has a new parameter enable_data_residency
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProvisioningServiceDescription has a new parameter system_data
+
 ## 1.0.0 (2021-08-18)
 
 **Features**

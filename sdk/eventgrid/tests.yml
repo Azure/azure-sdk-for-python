@@ -4,8 +4,8 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventgrid
-      DeployArmTemplate: true
       BuildTargetingString: azure-eventgrid*
+      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

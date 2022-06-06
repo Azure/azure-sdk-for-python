@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -17,8 +15,8 @@ USAGE:
     python sample_get_detailed_diagnostics_information_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -33,8 +31,8 @@ async def sample_get_detailed_diagnostics_information_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     # This client will log detailed information about its HTTP sessions, at DEBUG level
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
@@ -55,7 +53,7 @@ async def sample_get_detailed_diagnostics_information_async():
         _LOGGER.debug("valid_document_count: {}".format(resp.statistics["valid_document_count"]))
         _LOGGER.debug("erroneous_document_count: {}".format(resp.statistics["erroneous_document_count"]))
         _LOGGER.debug("transaction_count: {}".format(resp.statistics["transaction_count"]))
-        _LOGGER.debug("model_version: {}".format(resp.model_version))
+        _LOGGER.debug(f"model_version: {resp.model_version}")
         json_response = json.dumps(resp.raw_response)
         json_responses.append(json_response)
 
@@ -67,9 +65,9 @@ async def sample_get_detailed_diagnostics_information_async():
             raw_response_hook=callback
         )
         for doc in result:
-            _LOGGER.warning("Doc with id {} has these warnings: {}".format(doc.id, doc.warnings))
+            _LOGGER.warning(f"Doc with id {doc.id} has these warnings: {doc.warnings}")
 
-    _LOGGER.debug("json response: {}".format(json_responses[0]))
+    _LOGGER.debug(f"json response: {json_responses[0]}")
 
 
 async def main():
@@ -77,5 +75,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

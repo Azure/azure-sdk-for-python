@@ -1,6 +1,21 @@
 # Release History
 
-## 1.1.28 (Unreleased)
+## 1.1.29 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.1.28 (2022-02-03)
+
+- Raise a NotImplementedError if trying to use CLI credentials were CLI version is higher than 2.21.0  #20657 #21313
+- Deprecate all methods that needs access to CLI code using azure-cli-core, since this package is no longer importable as public API
 
 ## 1.1.27 (2021-03-23)
 

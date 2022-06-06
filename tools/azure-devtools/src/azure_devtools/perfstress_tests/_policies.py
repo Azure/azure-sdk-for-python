@@ -17,7 +17,6 @@ class PerfTestProxyPolicy(SansIOHTTPPolicy):
 
     def redirect_to_test_proxy(self, request):
         if self.recording_id and self.mode:
-            request.context.options['connection_verify'] = False
             live_endpoint = urlparse(request.http_request.url)
             redirected = live_endpoint._replace(
                 scheme=self._proxy_url.scheme,

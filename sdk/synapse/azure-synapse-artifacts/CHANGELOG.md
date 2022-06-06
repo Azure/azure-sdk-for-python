@@ -1,6 +1,6 @@
 # Release History
 
-## 0.10.0 (Unreleased)
+## 0.13.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,34 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.13.0 (2022-04-21)
+
+### Features
+
+  - Added operation group LinkConnectionOperations
+
+## 0.12.0 (2022-03-07)
+
+### Features Added
+
+- re-generated based on tag package-artifacts-composite-v3
+
+## 0.11.0 (2022-01-11)
+
+### Features Added
+
+- Added `MetastoreOperations`
+
+### Other Changes
+
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
+## 0.10.0 (2021-11-09)
+
+### Other Changes
+
+- Internal bugfixes (re-generated with latest generator)
 
 ## 0.9.0 (2021-10-05)
 

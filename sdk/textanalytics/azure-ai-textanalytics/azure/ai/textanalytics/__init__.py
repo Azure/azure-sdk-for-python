@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -53,6 +52,14 @@ from ._models import (
     ExtractSummaryAction,
     ExtractSummaryResult,
     SummarySentence,
+    RecognizeCustomEntitiesAction,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
+    ClassificationCategory,
+    AnalyzeHealthcareEntitiesAction,
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
@@ -107,6 +114,14 @@ __all__ = [
     "ExtractSummaryAction",
     "ExtractSummaryResult",
     "SummarySentence",
+    "RecognizeCustomEntitiesAction",
+    "RecognizeCustomEntitiesResult",
+    "SingleCategoryClassifyAction",
+    "SingleCategoryClassifyResult",
+    "MultiCategoryClassifyAction",
+    "MultiCategoryClassifyResult",
+    "ClassificationCategory",
+    "AnalyzeHealthcareEntitiesAction",
 ]
 
 __version__ = VERSION

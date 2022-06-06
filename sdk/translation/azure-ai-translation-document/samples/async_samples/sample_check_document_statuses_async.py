@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -53,19 +52,16 @@ async def sample_document_status_checks_async():
             async for document in doc_statuses:
                 if document.id not in completed_docs:
                     if document.status == "Succeeded":
-                        print("Document at {} was translated to {} language. You can find translated document at {}".format(
-                            document.source_document_url, document.translated_to, document.translated_document_url
-                        ))
+                        print(f"Document at {document.source_document_url} was translated to {document.translated_to} "
+                              f"language. You can find translated document at {document.translated_document_url}")
                         completed_docs.append(document.id)
                     if document.status == "Failed":
-                        print("Document at {} failed translation. Error Code: {}, Message: {}".format(
-                            document.source_document_url, document.error.code, document.error.message
-                        ))
+                        print(f"Document at {document.source_document_url} failed translation. "
+                              f"Error Code: {document.error.code}, Message: {document.error.message}")
                         completed_docs.append(document.id)
                     if document.status == "Running":
-                        print("Document ID: {}, translation progress is {} percent".format(
-                            document.id, document.translation_progress * 100
-                        ))
+                        print(f"Document ID: {document.id}, translation progress is "
+                              f"{document.translation_progress * 100} percent")
 
         print("\nTranslation completed.")
     # [END list_document_statuses_async]
@@ -75,5 +71,4 @@ async def main():
     await sample_document_status_checks_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

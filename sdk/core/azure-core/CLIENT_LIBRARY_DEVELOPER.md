@@ -14,7 +14,8 @@ When constructing an SDK, a developer may consume the pipeline like so:
 
 ```python
 from azure.core.pipeline import Pipeline
-from azure.core.transport import RequestsTransport, HttpRequest
+from azure.core.rest import HttpRequest
+from azure.core.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
@@ -193,106 +194,126 @@ proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 
 ### HttpRequest and HttpResponse
 
-The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
+The `HttpRequest` and `HttpResponse` objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
 
-The HttpRequest has the following API. It does not vary between transports:
+The `HttpRequest` has the following API. It does not vary between transports:
 
 ```python
-class HttpRequest(object):
+class HttpRequest:
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        self.method = method
+    def __init__(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Optional[ParamsType] = None,
+        headers: Optional[MutableMapping[str, str]] = None,
+        json: Any = None,
+        content: Optional[ContentType] = None,
+        data: Optional[dict] = None,
+        files: Optional[FilesType] = None,
+        **kwargs
+    ):
         self.url = url
-        self.headers = CaseInsensitiveDict(headers)
-        self.files = files
-        self.data = data
+        self.method = method
+        self.headers = CaseInsensitiveDict(default_headers)
 
     @property
-    def body(self):
-        return self.data
-
-    @body.setter
-    def body(self, value):
-        self.data = value
-
-    def format_parameters(self, params):
-        """Format parameters into a valid query string.
-        It's assumed all parameters have already been quoted as
-        valid URL strings."""
-
-    def set_xml_body(self, data):
-        """Set an XML element tree as the body of the request."""
-
-    def set_json_body(self, data):
-        """Set a JSON-friendly object as the body of the request."""
-
-    def set_multipart_body(self, data=None):
-        """Set form-encoded data as the body of the request.
-        Supported content-types are:
-            - application/x-www-form-urlencoded
-            - multipart/form-data
-        """
-
-    def set_bytes_body(self, data):
-        """Set generic bytes as the body of the request."""
-
-    def set_multipart_mixed(self, *requests, **kwargs):
-        """Set requests for a multipart/mixed body.
-        Optionally apply "policies" in kwargs to each request.
-        """
+    def content(self) -> Any:
+        """Get's the request's content"""
 ```
 
-The HttpResponse object on the other hand will generally have a transport-specific derivative.
-This is to accomodate how the data is extracted for the object returned by the HTTP library.
-There is also an async flavor: AsyncHttpResponse. This is to allow for the asynchronous streaming of
-data from the response.
-For example:
+`HttpResponse` on the other hand is an abstract base class that will have to be implemented
+for a transport-specific derivative to accommodate how data is extracted from the object
+returned by the HTTP library.
 
-```python
-from azure.core.pipeline.transport import (
-    RequestsTransportResponse,  # HttpResponse
-    AioHttpTransportResponse, # AsyncHttpResponse
-    TrioRequestsTransportResponse,  # AsyncHttpResponse
-    AsyncioRequestsTransportResponse,  # AsyncHttpResponse
-)
-```
-
-The API for each of these response types is identical, so the consumer of the Response need not know about these
+The API for each of these response types is identical, so the consumer of the `HttpResponse` need not know about these
 particular types.
 
-The HttpResponse has the following API. It does not vary between transports:
+The `HttpResponse` has the following API. It does not vary between transports, and has the following surface area:
 
 ```python
-class HttpResponse(object):
+class HttpResponse:
 
-    def __init__(self, request, internal_response):
-        self.request = request
-        self.internal_response = internal_response  # The object returned by the HTTP library
-        self.status_code = None
-        self.headers = CaseInsensitiveDict()
-        self.reason = None
-        self.content_type = None
+    @property
+    def request(self) -> HttpRequest:
+        """The request that resulted in this response."""
 
-    def body(self):
-        """Return the whole body as bytes in memory."""
+    @property
+    def status_code(self) -> int:
+        """The status code of this response."""
 
-    def text(self, encoding=None):
-        """Return the whole body as a string."""
+    @property
+    def headers(self) -> MutableMapping[str, str]:
+        """The response headers. Must be case-insensitive."""
 
-    def stream_download(self, pipeline, **kwargs):
-        """Generator for streaming request body data.
-        Should be implemented by sub-classes if streaming download
-        is supported.
-        For the AsyncHttpResponse object this function will return
-        and asynchronous generator.
-        """
+    @property
+    def reason(self) -> str:
+        """The reason phrase for this response."""
 
-    def parts(self):
-        """An iterator of parts if content-type is multipart/mixed.
-        For the AsyncHttpResponse object this function will return
-        and asynchronous iterator.
-        """
+    @property
+    def content_type(self) -> Optional[str]:
+        """The content type of the response."""
 
+    @property
+    def is_closed(self) -> bool:
+        """Whether the network connection has been closed yet."""
+
+    @property
+    def is_stream_consumed(self) -> bool:
+        """Whether the stream has been consumed."""
+
+    @property
+    def encoding(self) -> Optional[str]:
+        """Returns the response encoding."""
+
+    @encoding.setter
+    def encoding(self, value: Optional[str]) -> None:
+        """Sets the response encoding."""
+
+    @property
+    def url(self) -> str:
+        """The URL that resulted in this response."""
+
+    @property
+    def content(self) -> bytes:
+        """Return the response's content in bytes."""
+
+    def text(self, encoding: Optional[str] = None) -> str:
+        """Returns the response body as a string."""
+
+    def json(self) -> Any:
+        """Returns the whole body as a json object."""
+
+    def raise_for_status(self) -> None:
+        """Raises an HttpResponseError if the response has an error status code."""
+
+    def read(self) -> bytes:
+        """Read the response's bytes."""
+
+    def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will not decompress in the process."""
+
+    def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
+        """Iterates over the response's bytes. Will decompress in the process."""
+
+```
+
+Async calls to networks will return an `AsyncHttpResponse` instead. It shares most of its properties with an `HttpResponse` with the following exceptions:
+
+```python
+class AsyncHttpResponse:
+
+    ...
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory."""
+
+    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process."""
+
+    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process."""
 ```
 
 ### PipelineRequest and PipelineResponse
@@ -347,11 +368,7 @@ def on_response(self, request, response):
     """Is executed after the request comes back from the policy."""
 
 def on_exception(self, request):
-    """Is executed if an exception is raised while executing this policy.
-
-    Return True if the exception has been handled and should not
-    be forwarded to the caller.
-    """
+    """Is executed if an exception is raised while executing this policy."""
 ```
 
 SansIOHTTPPolicy methods can be declared as coroutines, but then they can only be used with a AsyncPipeline.
@@ -452,7 +469,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
 |  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is `exponential`. |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is `exponential`. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 | AsyncRetryPolicy | AsyncHTTPPolicy |  |  |  |  |
 |  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
@@ -461,7 +478,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
 |  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
-|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
 
 ### The Pipeline
@@ -471,7 +488,7 @@ A pipeline can either be synchronous or asynchronous.
 The pipeline does not expose the policy chain, so individual policies cannot/should not be further
 configured once the pipeline has been instantiated.
 
-The pipeline has a single exposed operation: `run(request)` which will send a new HttpRequest object down
+The pipeline has a single exposed operation: `run(request)` which will send a new `HttpRequest` object down
 the pipeline. This operation returns a `PipelineResponse` object.
 
 ```python
@@ -505,3 +522,71 @@ class Pipeline:
         return first_node.send(pipeline_request)  # type: ignore
 
 ```
+
+## Credentials
+
+### TokenCredential protocol
+
+Clients from the Azure SDK often require a `TokenCredential` instance in their constructors. A `TokenCredential` is
+meant to provide OAuth tokens to authenticate service requests and can be implemented in a number of ways.
+
+The `TokenCredential` protocol specifies a class that has a single method -- `get_token` -- which returns an
+`AccessToken`: a `NamedTuple` containing a `token` string and an `expires_on` integer (in Unix time).
+
+```python
+AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
+
+class TokenCredential(Protocol):
+    """Protocol for classes able to provide OAuth tokens."""
+
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type(s) of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+
+        :rtype: AccessToken
+        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        """
+```
+
+A `TokenCredential` implementation needs to implement the `get_token` method to these specifications and can optionally
+implement additional methods. The [`azure-identity`][identity_github] package has a number of `TokenCredential`
+implementations that can be used for reference. For example, the [`InteractiveCredential`][interactive_cred] is used as
+a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
+
+If a `TokenCredential` implementation doesn't have a use for a keyword argument in a given scenario, the unused
+keyword argument should be removed from `kwargs` before getting passed elsewhere. The documentation for the
+implementation should mention that this keyword argument will not be used when making token requests, as well as any
+potential consequences of this. For example, if a `TokenCredential` implementation doesn't use `tenant_id`, it should
+document that fetched tokens may not authorize requests made to the specified tenant.
+
+There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an aysnc
+`get_token` method with the same arguments. An `AsyncTokenCredential` implementation additionally needs to be a context
+manager, with `__aenter__`, `__aexit__`, and `close` methods.
+
+#### Known uses of `get_token` keyword-only parameters
+
+**`claims`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| [Continuous Access Evaluation][cae_doc] | Respond to claim challenges when unexpired tokens have access revoked
+
+**`tenant_id`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
+
+
+[cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
+[custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
+[identity_github]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+[interactive_cred]: https://github.com/Azure/azure-sdk-for-python/blob/58c974883123b10b1ca9249ac49109220facb02f/sdk/identity/azure-identity/azure/identity/_internal/interactive.py
+[kv_tenant_id]: https://github.com/Azure/azure-sdk-for-python/blob/0a0cc97f178a7476ec79f29c090b8c93ad5d4955/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys/_shared/challenge_auth_policy.py#L102

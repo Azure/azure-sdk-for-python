@@ -11,7 +11,6 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
@@ -21,6 +20,7 @@ from ._configuration import AzureDigitalTwinsManagementClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -68,12 +68,10 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = AzureDigitalTwinsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(AzureDigitalTwinsManagementClient, self).__init__(
@@ -92,6 +90,7 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-03-01-preview: :mod:`v2020_03_01_preview.models<azure.mgmt.digitaltwins.v2020_03_01_preview.models>`
            * 2020-10-31: :mod:`v2020_10_31.models<azure.mgmt.digitaltwins.v2020_10_31.models>`
            * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.digitaltwins.v2020_12_01.models>`
+           * 2021-06-30-preview: :mod:`v2021_06_30_preview.models<azure.mgmt.digitaltwins.v2021_06_30_preview.models>`
         """
         if api_version == '2020-03-01-preview':
             from ..v2020_03_01_preview import models
@@ -102,6 +101,9 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-12-01':
             from ..v2020_12_01 import models
             return models
+        elif api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -111,6 +113,7 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-03-01-preview: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2020_03_01_preview.aio.operations.DigitalTwinsOperations>`
            * 2020-10-31: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2020_10_31.aio.operations.DigitalTwinsOperations>`
            * 2020-12-01: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2020_12_01.aio.operations.DigitalTwinsOperations>`
+           * 2021-06-30-preview: :class:`DigitalTwinsOperations<azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations.DigitalTwinsOperations>`
         """
         api_version = self._get_api_version('digital_twins')
         if api_version == '2020-03-01-preview':
@@ -119,6 +122,8 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_10_31.aio.operations import DigitalTwinsOperations as OperationClass
         elif api_version == '2020-12-01':
             from ..v2020_12_01.aio.operations import DigitalTwinsOperations as OperationClass
+        elif api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview.aio.operations import DigitalTwinsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'digital_twins'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -130,6 +135,7 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-03-01-preview: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2020_03_01_preview.aio.operations.DigitalTwinsEndpointOperations>`
            * 2020-10-31: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2020_10_31.aio.operations.DigitalTwinsEndpointOperations>`
            * 2020-12-01: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2020_12_01.aio.operations.DigitalTwinsEndpointOperations>`
+           * 2021-06-30-preview: :class:`DigitalTwinsEndpointOperations<azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations.DigitalTwinsEndpointOperations>`
         """
         api_version = self._get_api_version('digital_twins_endpoint')
         if api_version == '2020-03-01-preview':
@@ -138,6 +144,8 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_10_31.aio.operations import DigitalTwinsEndpointOperations as OperationClass
         elif api_version == '2020-12-01':
             from ..v2020_12_01.aio.operations import DigitalTwinsEndpointOperations as OperationClass
+        elif api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview.aio.operations import DigitalTwinsEndpointOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'digital_twins_endpoint'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -149,6 +157,7 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-03-01-preview: :class:`Operations<azure.mgmt.digitaltwins.v2020_03_01_preview.aio.operations.Operations>`
            * 2020-10-31: :class:`Operations<azure.mgmt.digitaltwins.v2020_10_31.aio.operations.Operations>`
            * 2020-12-01: :class:`Operations<azure.mgmt.digitaltwins.v2020_12_01.aio.operations.Operations>`
+           * 2021-06-30-preview: :class:`Operations<azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2020-03-01-preview':
@@ -157,6 +166,8 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_10_31.aio.operations import Operations as OperationClass
         elif api_version == '2020-12-01':
             from ..v2020_12_01.aio.operations import Operations as OperationClass
+        elif api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -166,10 +177,13 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-12-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.digitaltwins.v2020_12_01.aio.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-06-30-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2020-12-01':
             from ..v2020_12_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -179,12 +193,28 @@ class AzureDigitalTwinsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-12-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.digitaltwins.v2020_12_01.aio.operations.PrivateLinkResourcesOperations>`
+           * 2021-06-30-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2020-12-01':
             from ..v2020_12_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def time_series_database_connections(self):
+        """Instance depends on the API version:
+
+           * 2021-06-30-preview: :class:`TimeSeriesDatabaseConnectionsOperations<azure.mgmt.digitaltwins.v2021_06_30_preview.aio.operations.TimeSeriesDatabaseConnectionsOperations>`
+        """
+        api_version = self._get_api_version('time_series_database_connections')
+        if api_version == '2021-06-30-preview':
+            from ..v2021_06_30_preview.aio.operations import TimeSeriesDatabaseConnectionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'time_series_database_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

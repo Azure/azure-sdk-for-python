@@ -6,17 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import functools
 from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-
+from ..._vendor import _convert_request
+from ...operations._diagnostics_operations import build_execute_site_analysis_request, build_execute_site_analysis_slot_request, build_execute_site_detector_request, build_execute_site_detector_slot_request, build_get_hosting_environment_detector_response_request, build_get_site_analysis_request, build_get_site_analysis_slot_request, build_get_site_detector_request, build_get_site_detector_response_request, build_get_site_detector_response_slot_request, build_get_site_detector_slot_request, build_get_site_diagnostic_category_request, build_get_site_diagnostic_category_slot_request, build_list_hosting_environment_detector_responses_request, build_list_site_analyses_request, build_list_site_analyses_slot_request, build_list_site_detector_responses_request, build_list_site_detector_responses_slot_request, build_list_site_detectors_request, build_list_site_detectors_slot_request, build_list_site_diagnostic_categories_request, build_list_site_diagnostic_categories_slot_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -42,6 +47,7 @@ class DiagnosticsOperations:
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def list_hosting_environment_detector_responses(
         self,
         resource_group_name: str,
@@ -57,8 +63,10 @@ class DiagnosticsOperations:
         :param name: Site Name.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DetectorResponseCollection]
+        :return: An iterator like instance of either DetectorResponseCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
@@ -66,36 +74,33 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_hosting_environment_detector_responses.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_hosting_environment_detector_responses_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_hosting_environment_detector_responses.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_hosting_environment_detector_responses_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
+            deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -108,17 +113,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_hosting_environment_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors'}  # type: ignore
 
+    @distributed_trace_async
     async def get_hosting_environment_detector_response(
         self,
         resource_group_name: str,
@@ -155,40 +162,27 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_hosting_environment_detector_response.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_hosting_environment_detector_response_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            detector_name=detector_name,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.get_hosting_environment_detector_response.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -197,8 +191,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_hosting_environment_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_detector_responses(
         self,
         resource_group_name: str,
@@ -214,8 +211,10 @@ class DiagnosticsOperations:
         :param site_name: Site Name.
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DetectorResponseCollection]
+        :return: An iterator like instance of either DetectorResponseCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
@@ -223,36 +222,33 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_detector_responses.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_detector_responses_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_detector_responses.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_detector_responses_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
+            deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -265,17 +261,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_detector_response(
         self,
         resource_group_name: str,
@@ -312,40 +310,27 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_detector_response.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_detector_response_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            detector_name=detector_name,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.get_site_detector_response.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -354,8 +339,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_diagnostic_categories(
         self,
         resource_group_name: str,
@@ -371,8 +359,10 @@ class DiagnosticsOperations:
         :param site_name: Site Name.
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticCategoryCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticCategoryCollection]
+        :return: An iterator like instance of either DiagnosticCategoryCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticCategoryCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategoryCollection"]
@@ -380,36 +370,33 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_diagnostic_categories.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_diagnostic_categories_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_diagnostic_categories.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_diagnostic_categories_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiagnosticCategoryCollection', pipeline_response)
+            deserialized = self._deserialize("DiagnosticCategoryCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -422,17 +409,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_diagnostic_categories.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_diagnostic_category(
         self,
         resource_group_name: str,
@@ -460,34 +449,24 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_diagnostic_category.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_diagnostic_category_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get_site_diagnostic_category.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
@@ -496,8 +475,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_diagnostic_category.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_analyses(
         self,
         resource_group_name: str,
@@ -516,8 +498,10 @@ class DiagnosticsOperations:
         :param diagnostic_category: Diagnostic Category.
         :type diagnostic_category: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticAnalysisCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticAnalysisCollection]
+        :return: An iterator like instance of either DiagnosticAnalysisCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticAnalysisCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysisCollection"]
@@ -525,37 +509,35 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_analyses.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_analyses_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_analyses.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_analyses_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiagnosticAnalysisCollection', pipeline_response)
+            deserialized = self._deserialize("DiagnosticAnalysisCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -568,17 +550,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_analyses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_analysis(
         self,
         resource_group_name: str,
@@ -609,35 +593,25 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_analysis.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'analysisName': self._serialize.url("analysis_name", analysis_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_analysis_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            analysis_name=analysis_name,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get_site_analysis.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
@@ -646,8 +620,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}  # type: ignore
 
+
+    @distributed_trace_async
     async def execute_site_analysis(
         self,
         resource_group_name: str,
@@ -687,41 +664,28 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.execute_site_analysis.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'analysisName': self._serialize.url("analysis_name", analysis_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_execute_site_analysis_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            analysis_name=analysis_name,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.execute_site_analysis.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
@@ -730,8 +694,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     execute_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_detectors(
         self,
         resource_group_name: str,
@@ -750,8 +717,10 @@ class DiagnosticsOperations:
         :param diagnostic_category: Diagnostic Category.
         :type diagnostic_category: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticDetectorCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticDetectorCollection]
+        :return: An iterator like instance of either DiagnosticDetectorCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticDetectorCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorCollection"]
@@ -759,37 +728,35 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_detectors.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_detectors_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_detectors.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_detectors_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiagnosticDetectorCollection', pipeline_response)
+            deserialized = self._deserialize("DiagnosticDetectorCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -802,17 +769,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detectors.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_detector(
         self,
         resource_group_name: str,
@@ -843,35 +812,25 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_detector.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_detector_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            detector_name=detector_name,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get_site_detector.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorDefinition', pipeline_response)
@@ -880,8 +839,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}  # type: ignore
 
+
+    @distributed_trace_async
     async def execute_site_detector(
         self,
         resource_group_name: str,
@@ -921,41 +883,28 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.execute_site_detector.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_execute_site_detector_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            detector_name=detector_name,
+            diagnostic_category=diagnostic_category,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.execute_site_detector.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
@@ -964,8 +913,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     execute_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_detector_responses_slot(
         self,
         resource_group_name: str,
@@ -984,8 +936,10 @@ class DiagnosticsOperations:
         :param slot: Slot Name.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DetectorResponseCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DetectorResponseCollection]
+        :return: An iterator like instance of either DetectorResponseCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DetectorResponseCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectorResponseCollection"]
@@ -993,37 +947,35 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_detector_responses_slot.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_detector_responses_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_detector_responses_slot.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_detector_responses_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DetectorResponseCollection', pipeline_response)
+            deserialized = self._deserialize("DetectorResponseCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1036,17 +988,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detector_responses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_detector_response_slot(
         self,
         resource_group_name: str,
@@ -1086,41 +1040,28 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_detector_response_slot.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_detector_response_slot_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            detector_name=detector_name,
+            slot=slot,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.get_site_detector_response_slot.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorResponse', pipeline_response)
@@ -1129,8 +1070,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_detector_response_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_diagnostic_categories_slot(
         self,
         resource_group_name: str,
@@ -1149,8 +1093,10 @@ class DiagnosticsOperations:
         :param slot: Slot Name.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticCategoryCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticCategoryCollection]
+        :return: An iterator like instance of either DiagnosticCategoryCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticCategoryCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticCategoryCollection"]
@@ -1158,37 +1104,35 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_diagnostic_categories_slot.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_diagnostic_categories_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_diagnostic_categories_slot.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_diagnostic_categories_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiagnosticCategoryCollection', pipeline_response)
+            deserialized = self._deserialize("DiagnosticCategoryCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1201,17 +1145,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_diagnostic_categories_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_diagnostic_category_slot(
         self,
         resource_group_name: str,
@@ -1242,35 +1188,25 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_diagnostic_category_slot.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_diagnostic_category_slot_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            slot=slot,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get_site_diagnostic_category_slot.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticCategory', pipeline_response)
@@ -1279,8 +1215,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_diagnostic_category_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_analyses_slot(
         self,
         resource_group_name: str,
@@ -1302,8 +1241,10 @@ class DiagnosticsOperations:
         :param slot: Slot Name.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticAnalysisCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticAnalysisCollection]
+        :return: An iterator like instance of either DiagnosticAnalysisCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticAnalysisCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticAnalysisCollection"]
@@ -1311,38 +1252,37 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_analyses_slot.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_analyses_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_analyses_slot.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_analyses_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiagnosticAnalysisCollection', pipeline_response)
+            deserialized = self._deserialize("DiagnosticAnalysisCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1355,17 +1295,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_analyses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_analysis_slot(
         self,
         resource_group_name: str,
@@ -1399,36 +1341,26 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_analysis_slot.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'analysisName': self._serialize.url("analysis_name", analysis_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_analysis_slot_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            analysis_name=analysis_name,
+            slot=slot,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get_site_analysis_slot.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AnalysisDefinition', pipeline_response)
@@ -1437,8 +1369,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}  # type: ignore
 
+
+    @distributed_trace_async
     async def execute_site_analysis_slot(
         self,
         resource_group_name: str,
@@ -1481,42 +1416,29 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.execute_site_analysis_slot.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'analysisName': self._serialize.url("analysis_name", analysis_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_execute_site_analysis_slot_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            analysis_name=analysis_name,
+            slot=slot,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.execute_site_analysis_slot.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticAnalysis', pipeline_response)
@@ -1525,8 +1447,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     execute_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'}  # type: ignore
 
+
+    @distributed_trace
     def list_site_detectors_slot(
         self,
         resource_group_name: str,
@@ -1548,8 +1473,10 @@ class DiagnosticsOperations:
         :param slot: Slot Name.
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DiagnosticDetectorCollection or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticDetectorCollection]
+        :return: An iterator like instance of either DiagnosticDetectorCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2020_06_01.models.DiagnosticDetectorCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnosticDetectorCollection"]
@@ -1557,38 +1484,37 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_site_detectors_slot.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-                    'siteName': self._serialize.url("site_name", site_name, 'str'),
-                    'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-                    'slot': self._serialize.url("slot", slot, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_site_detectors_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=self.list_site_detectors_slot.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_site_detectors_slot_request(
+                    resource_group_name=resource_group_name,
+                    site_name=site_name,
+                    diagnostic_category=diagnostic_category,
+                    slot=slot,
+                    subscription_id=self._config.subscription_id,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DiagnosticDetectorCollection', pipeline_response)
+            deserialized = self._deserialize("DiagnosticDetectorCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1601,17 +1527,19 @@ class DiagnosticsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
+
 
         return AsyncItemPaged(
             get_next, extract_data
         )
     list_site_detectors_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors'}  # type: ignore
 
+    @distributed_trace_async
     async def get_site_detector_slot(
         self,
         resource_group_name: str,
@@ -1645,36 +1573,26 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_site_detector_slot.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_site_detector_slot_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            diagnostic_category=diagnostic_category,
+            detector_name=detector_name,
+            slot=slot,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get_site_detector_slot.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DetectorDefinition', pipeline_response)
@@ -1683,8 +1601,11 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}  # type: ignore
 
+
+    @distributed_trace_async
     async def execute_site_detector_slot(
         self,
         resource_group_name: str,
@@ -1727,42 +1648,29 @@ class DiagnosticsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.execute_site_detector_slot.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
-            'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
-            'diagnosticCategory': self._serialize.url("diagnostic_category", diagnostic_category, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_execute_site_detector_slot_request(
+            resource_group_name=resource_group_name,
+            site_name=site_name,
+            detector_name=detector_name,
+            diagnostic_category=diagnostic_category,
+            slot=slot,
+            subscription_id=self._config.subscription_id,
+            start_time=start_time,
+            end_time=end_time,
+            time_grain=time_grain,
+            template_url=self.execute_site_detector_slot.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
-        if time_grain is not None:
-            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DiagnosticDetectorResponse', pipeline_response)
@@ -1771,4 +1679,6 @@ class DiagnosticsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     execute_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}  # type: ignore
+

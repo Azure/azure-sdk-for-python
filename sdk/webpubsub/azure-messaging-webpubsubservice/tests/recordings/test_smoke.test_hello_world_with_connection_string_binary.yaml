@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: Hello, World!
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:send?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - '2021-10-01'
+      connection:
+      - keep-alive
+      content-length:
+      - '0'
+      date:
+      - Wed, 10 Nov 2021 01:08:53 GMT
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 202
+      message: Accepted
+version: 1

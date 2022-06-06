@@ -16,49 +16,49 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Make
         your battery last\"\n      ],\n      \"answer\": \"**Make your battery last**\\n\\nFor
         info on how to care for your battery and power supply, conserve power, and
         make your Surface battery last longer, see [Surface battery and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
-        on Surface.com.\",\n      \"confidenceScore\": 0.9201999999999999,\n      \"id\":
-        27,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        on Surface.com.\",\n      \"confidenceScore\": 0.9079,\n      \"id\": 136,\n
+        \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
         level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
         can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
-        0.4412,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.48469999999999996,\n      \"id\": 133,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
         level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 227983f1-c75e-4ee2-910d-589011a7a251
+      - 9dda58f9-b755-4ddd-8a59-13a99672d664
       content-length:
-      - '1140'
+      - '1143'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Thu, 30 Sep 2021 15:52:35 GMT
+      - Thu, 28 Oct 2021 03:30:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2660'
+      - '557'
     status:
       code: 200
       message: OK
 - request:
     body: '{"question": "How long it takes to charge Surface?", "top": 3, "userId":
-      "sd53lsY=", "confidenceScoreThreshold": 0.2, "context": {"previousQnaId": 27,
+      "sd53lsY=", "confidenceScoreThreshold": 0.2, "context": {"previousQnaId": 136,
       "previousUserQuery": "How long should my Surface battery last?"}, "answerSpanRequest":
       {"enable": true, "confidenceScoreThreshold": 0.2, "topAnswersWithSpan": 1},
       "includeUnstructuredSources": true}'
@@ -70,13 +70,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '349'
+      - '350'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/1.0.0b2 Python/3.9.5 (macOS-11.5.2-x86_64-i386-64bit)
+      - azsdk-python-ai-language-questionanswering/1.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-07-15-preview
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
   response:
     body:
       string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Power
@@ -88,44 +88,36 @@ interactions:
         like a phone, while your Surface charges. The USB port on the power supply
         is only for charging, not for data transfer. If you want to use a USB device,
         plug it into the USB port on your Surface.\",\n      \"confidenceScore\":
-        0.5296,\n      \"id\": 23,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        0.6015,\n      \"id\": 132,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"power and charging\"\n
         \     },\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 24,\n
+        [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\": 133,\n
         \           \"displayText\": \"Check the battery level\"\n          },\n          {\n
-        \           \"displayOrder\": 1,\n            \"qnaId\": 25,\n            \"displayText\":
+        \           \"displayOrder\": 1,\n            \"qnaId\": 134,\n            \"displayText\":
         \"Lock screen.\"\n          },\n          {\n            \"displayOrder\":
-        2,\n            \"qnaId\": 26,\n            \"displayText\": \"Desktop taskbar.\"\n
+        2,\n            \"qnaId\": 135,\n            \"displayText\": \"Desktop taskbar.\"\n
         \         },\n          {\n            \"displayOrder\": 3,\n            \"qnaId\":
-        27,\n            \"displayText\": \"Make your battery last\"\n          }\n
+        136,\n            \"displayText\": \"Make your battery last\"\n          }\n
         \       ]\n      },\n      \"answerSpan\": {\n        \"text\": \" two to
         four hours\",\n        \"confidenceScore\": 0.3795,\n        \"offset\": 32,\n
-        \       \"length\": 19\n      }\n    },\n    {\n      \"questions\": [\n        \"Charge
-        your Surface Pro 4\"\n      ],\n      \"answer\": \"**Charge your Surface
-        Pro 4**\\n\\n1.  Connect the two parts of the power cord.\\n\\n2.  Connect
-        the power cord securely to the charging port.\\n\\n3.  Plug the power supply
-        into an electrical outlet.\",\n      \"confidenceScore\": 0.2707,\n      \"id\":
-        19,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
-        {\n        \"explicitlytaggedheading\": \"charge your surface pro 4\"\n      },\n
-        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
-        []\n      }\n    }\n  ]\n}"
+        \       \"length\": 19\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - f95352a5-4e6d-4ec1-8809-d164a774dfe6
+      - 9f3f573f-142d-4250-ad13-ac11e6061447
       content-length:
-      - '2154'
+      - '1594'
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
       date:
-      - Thu, 30 Sep 2021 15:52:35 GMT
+      - Thu, 28 Oct 2021 03:30:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '509'
+      - '562'
     status:
       code: 200
       message: OK

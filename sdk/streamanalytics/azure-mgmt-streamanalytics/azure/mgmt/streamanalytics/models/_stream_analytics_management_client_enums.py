@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthenticationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AuthenticationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Authentication Mode. Valid modes are ``ConnectionString``\ , ``Msi`` and 'UserToken'.
     """
 
@@ -34,29 +19,44 @@ class AuthenticationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER_TOKEN = "UserToken"
     CONNECTION_STRING = "ConnectionString"
 
-class ClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the cluster provisioning. The three terminal states are: Succeeded, Failed and
     Canceled
     """
 
-    SUCCEEDED = "Succeeded"  #: The cluster provisioning succeeded.
-    FAILED = "Failed"  #: The cluster provisioning failed.
-    CANCELED = "Canceled"  #: The cluster provisioning was canceled.
-    IN_PROGRESS = "InProgress"  #: The cluster provisioning was inprogress.
+    #: The cluster provisioning succeeded.
+    SUCCEEDED = "Succeeded"
+    #: The cluster provisioning failed.
+    FAILED = "Failed"
+    #: The cluster provisioning was canceled.
+    CANCELED = "Canceled"
+    #: The cluster provisioning was inprogress.
+    IN_PROGRESS = "InProgress"
 
-class ClusterSkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterSkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests.
     """
 
-    DEFAULT = "Default"  #: The default SKU.
+    #: The default SKU.
+    DEFAULT = "Default"
 
-class CompatibilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CompatibilityLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Controls certain runtime behaviors of the streaming job.
     """
 
     ONE0 = "1.0"
+    ONE2 = "1.2"
 
-class ContentStoragePolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CompressionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates the type of compression that the input uses. Required on PUT (CreateOrReplace)
+    requests.
+    """
+
+    NONE = "None"
+    G_ZIP = "GZip"
+    DEFLATE = "Deflate"
+
+class ContentStoragePolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Valid values are JobStorageAccount and SystemAccount. If set to JobStorageAccount, this
     requires the user to also specify jobStorageAccount property. .
     """
@@ -64,14 +64,14 @@ class ContentStoragePolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ACCOUNT = "SystemAccount"
     JOB_STORAGE_ACCOUNT = "JobStorageAccount"
 
-class Encoding(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Encoding(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the encoding of the incoming data in the case of input and the encoding of outgoing
     data in the case of output.
     """
 
     UTF8 = "UTF8"
 
-class EventSerializationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EventSerializationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of serialization that the input or output uses. Required on PUT
     (CreateOrReplace) requests.
     """
@@ -79,39 +79,48 @@ class EventSerializationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     CSV = "Csv"
     AVRO = "Avro"
     JSON = "Json"
-    CUSTOM_CLR = "CustomClr"
     PARQUET = "Parquet"
 
-class EventsOutOfOrderPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EventsOutOfOrderPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the policy to apply to events that arrive out of order in the input event stream.
     """
 
     ADJUST = "Adjust"
     DROP = "Drop"
 
-class JobState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current execution state of the streaming job.
     """
 
-    CREATED = "Created"  #: The job is currently in the Created state.
-    STARTING = "Starting"  #: The job is currently in the Starting state.
-    RUNNING = "Running"  #: The job is currently in the Running state.
-    STOPPING = "Stopping"  #: The job is currently in the Stopping state.
-    STOPPED = "Stopped"  #: The job is currently in the Stopped state.
-    DELETING = "Deleting"  #: The job is currently in the Deleting state.
-    FAILED = "Failed"  #: The job is currently in the Failed state.
-    DEGRADED = "Degraded"  #: The job is currently in the Degraded state.
-    RESTARTING = "Restarting"  #: The job is currently in the Restarting state.
-    SCALING = "Scaling"  #: The job is currently in the Scaling state.
+    #: The job is currently in the Created state.
+    CREATED = "Created"
+    #: The job is currently in the Starting state.
+    STARTING = "Starting"
+    #: The job is currently in the Running state.
+    RUNNING = "Running"
+    #: The job is currently in the Stopping state.
+    STOPPING = "Stopping"
+    #: The job is currently in the Stopped state.
+    STOPPED = "Stopped"
+    #: The job is currently in the Deleting state.
+    DELETING = "Deleting"
+    #: The job is currently in the Failed state.
+    FAILED = "Failed"
+    #: The job is currently in the Degraded state.
+    DEGRADED = "Degraded"
+    #: The job is currently in the Restarting state.
+    RESTARTING = "Restarting"
+    #: The job is currently in the Scaling state.
+    SCALING = "Scaling"
 
-class JobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'.
     """
 
     CLOUD = "Cloud"
     EDGE = "Edge"
 
-class JsonOutputSerializationFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonOutputSerializationFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the format of the JSON the output will be written in. The currently supported values
     are 'lineSeparated' indicating the output will be formatted by having each JSON object
     separated by a new line and 'array' indicating the output will be formatted as an array of JSON
@@ -121,7 +130,7 @@ class JsonOutputSerializationFormat(with_metaclass(_CaseInsensitiveEnumMeta, str
     LINE_SEPARATED = "LineSeparated"
     ARRAY = "Array"
 
-class OutputErrorPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OutputErrorPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the policy to apply to events that arrive at the output and cannot be written to the
     external storage due to being malformed (missing column values, column values of wrong type or
     size).
@@ -130,7 +139,7 @@ class OutputErrorPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STOP = "Stop"
     DROP = "Drop"
 
-class OutputStartMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OutputStartMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Value may be JobStartTime, CustomTime, or LastOutputEventTime to indicate whether the starting
     point of the output event stream should start whenever the job is started, start at a custom
     user time stamp specified via the outputStartTime property, or start from the last event output
@@ -141,7 +150,15 @@ class OutputStartMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM_TIME = "CustomTime"
     LAST_OUTPUT_EVENT_TIME = "LastOutputEventTime"
 
-class StreamingJobSkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RefreshType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates the type of data refresh option.
+    """
+
+    STATIC = "Static"
+    REFRESH_PERIODICALLY_WITH_FULL = "RefreshPeriodicallyWithFull"
+    REFRESH_PERIODICALLY_WITH_DELTA = "RefreshPeriodicallyWithDelta"
+
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the SKU. Required on PUT (CreateOrReplace) requests.
     """
 

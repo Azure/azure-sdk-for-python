@@ -6,51 +6,41 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CopyStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CopyStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     PENDING = "pending"
     SUCCESS = "success"
     ABORTED = "aborted"
     FAILED = "failed"
 
-class DeleteSnapshotsOptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeleteSnapshotsOptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     INCLUDE = "include"
     INCLUDE_LEASED = "include-leased"
 
-class FileRangeWriteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FileLastWrittenMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    NOW = "Now"
+    PRESERVE = "Preserve"
+
+class FileRangeWriteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     UPDATE = "update"
     CLEAR = "clear"
 
-class LeaseDurationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseDurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """When a share is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
     INFINITE = "infinite"
     FIXED = "fixed"
 
-class LeaseStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Lease state of the share.
     """
 
@@ -60,44 +50,44 @@ class LeaseStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BREAKING = "breaking"
     BROKEN = "broken"
 
-class LeaseStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LeaseStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current lease status of the share.
     """
 
     LOCKED = "locked"
     UNLOCKED = "unlocked"
 
-class ListFilesIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ListFilesIncludeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     TIMESTAMPS = "Timestamps"
     ETAG = "Etag"
     ATTRIBUTES = "Attributes"
     PERMISSION_KEY = "PermissionKey"
 
-class ListSharesIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ListSharesIncludeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SNAPSHOTS = "snapshots"
     METADATA = "metadata"
     DELETED = "deleted"
 
-class PermissionCopyModeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PermissionCopyModeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SOURCE = "source"
     OVERRIDE = "override"
 
-class ShareAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ShareAccessTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     TRANSACTION_OPTIMIZED = "TransactionOptimized"
     HOT = "Hot"
     COOL = "Cool"
 
-class ShareRootSquash(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ShareRootSquash(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NO_ROOT_SQUASH = "NoRootSquash"
     ROOT_SQUASH = "RootSquash"
     ALL_SQUASH = "AllSquash"
 
-class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StorageErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Error codes returned by the service
     """
 

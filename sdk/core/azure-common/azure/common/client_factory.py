@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import warnings
 try:
     from inspect import getfullargspec as get_arg_spec
 except ImportError:
@@ -50,7 +51,18 @@ def _client_resource(client_class, cloud):
 def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
-    This method will fill automatically the following client parameters:
+    *Disclaimer*: This is NOT the recommended approach to authenticate with CLI login, this method is deprecated.
+    use https://pypi.org/project/azure-identity/ and AzureCliCredential instead. See example code below:
+
+    .. code:: python
+
+        from azure.identity import AzureCliCredential
+        from azure.mgmt.compute import ComputeManagementClient
+        client = ComputeManagementClient(AzureCliCredential(), subscription_id)
+
+    This method is not working for azure-cli-core>=2.21.0 (released in March 2021).
+
+    For compatible azure-cli-core (< 2.20.0), This method will automatically fill the following client parameters:
     - credentials/credential
     - subscription_id
     - base_url
@@ -67,10 +79,20 @@ def get_client_from_cli_profile(client_class, **kwargs):
 
     .. versionadded:: 1.1.6
 
+    .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
+
     :param client_class: A SDK client class
     :return: An instantiated client
     :raises: ImportError if azure-cli-core package is not available
     """
+    warnings.warn(
+        "get_client_from_cli_profile is deprecated, please use azure-identity and AzureCliCredential instead. "+
+        "See also https://aka.ms/azsdk/python/identity/migration.",
+        DeprecationWarning
+    )
+
     cloud = get_cli_active_cloud()
     parameters = {}
     no_credential_sentinel = object()
@@ -120,11 +142,7 @@ def _is_autorest_v3(client_class):
 def get_client_from_json_dict(client_class, config_dict, **kwargs):
     """Return a SDK client initialized with a JSON auth dict.
 
-    The easiest way to obtain this content is to call the following CLI commands:
-
-    .. code:: bash
-
-        az ad sp create-for-rbac --sdk-auth
+    *Disclaimer*: This is NOT the recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
 
     This method will fill automatically the following client parameters:
     - credentials
@@ -156,6 +174,10 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
 
     .. versionadded:: 1.1.7
 
+    .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
+
     :param client_class: A SDK client class
     :param dict config_dict: A config dict.
     :return: An instantiated client
@@ -163,7 +185,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     if _is_autorest_v3(client_class):
         raise ValueError(
             "Auth file or JSON dict are deprecated auth approach and are not supported anymore. "
-            "Please read https://aka.ms/azsdk/python/azidmigration for details"
+            "See also https://aka.ms/azsdk/python/identity/migration."
         )
 
     import adal
@@ -215,11 +237,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
 def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
     """Return a SDK client initialized with auth file.
 
-    The easiest way to obtain this file is to call the following CLI commands:
-
-    .. code:: bash
-
-        az ad sp create-for-rbac --sdk-auth
+    *Disclaimer*: This is NOT the recommended approach, see https://aka.ms/azsdk/python/identity/migration for guidance.
 
     You can specific the file path directly, or fill the environment variable AZURE_AUTH_LOCATION.
     File must be UTF-8.
@@ -257,6 +275,10 @@ def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
         }
 
     .. versionadded:: 1.1.7
+
+    .. deprecated:: 1.1.28
+
+    .. seealso:: https://aka.ms/azsdk/python/identity/migration
 
     :param client_class: A SDK client class
     :param str auth_path: Path to the file.

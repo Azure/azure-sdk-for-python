@@ -15,7 +15,7 @@ from ._domain_registration_provider_operations import DomainRegistrationProvider
 from ._certificates_operations import CertificatesOperations
 from ._deleted_web_apps_operations import DeletedWebAppsOperations
 from ._diagnostics_operations import DiagnosticsOperations
-from ._global_model_operations import GlobalOperations
+from ._global_operations_operations import GlobalOperations
 from ._provider_operations import ProviderOperations
 from ._recommendations_operations import RecommendationsOperations
 from ._web_site_management_client_operations import WebSiteManagementClientOperationsMixin

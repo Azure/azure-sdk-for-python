@@ -19,14 +19,13 @@ from .. import (
     KeyProperties,
     KeyRotationPolicy,
     KeyVaultKey,
-    RandomBytes,
     ReleaseKeyResult,
 )
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from azure.core.async_paging import AsyncItemPaged
-    from typing import Any, Iterable, Optional, Union
+    from typing import Any, List, Optional, Union
     from .. import KeyType
 
 
@@ -68,13 +67,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str key_name: The name of the key used to perform cryptographic operations.
 
-        :keyword str version: Optional version of the key used to perform cryptographic operations.
+        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
 
         :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
             HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
         """
-        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("version"))
+        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
 
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
@@ -130,7 +129,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(data=policy.data, content_type=policy.content_type)
+            policy = self._models.KeyReleasePolicy(
+                encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
+            )
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
@@ -541,7 +542,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
+            )
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
@@ -617,7 +620,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
             error_map=_error_map,
-            **kwargs
+            **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -655,7 +658,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.data)
+            policy = self._models.KeyReleasePolicy(
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
+            )
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
@@ -665,55 +670,51 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.import_key(
-            self.vault_url,
-            name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def release_key(
-        self, name: str, target: str, version: "Optional[str]" = None, **kwargs: "Any"
-    ) -> ReleaseKeyResult:
+    async def release_key(self, name: str, target_attestation_token: str, **kwargs: "Any") -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
         exportable. This operation requires the keys/release permission.
 
         :param str name: The name of the key to get.
-        :param str target: The attestation assertion for the target of the key release.
-        :param str version: (optional) A specific version of the key to release. If unspecified, the latest version is
-            released.
+        :param str target_attestation_token: The attestation assertion for the target of the key release.
 
+        :keyword str version: A specific version of the key to release. If unspecified, the latest version is released.
         :keyword algorithm: The encryption algorithm to use to protect the released key material.
-        :paramtype algorithm: ~azure.keyvault.keys.KeyExportEncryptionAlgorithm
+        :paramtype algorithm: Union[str, ~azure.keyvault.keys.KeyExportEncryptionAlgorithm]
         :keyword str nonce: A client-provided nonce for freshness.
 
         :return: The result of the key release.
         :rtype: ~azure.keyvault.keys.ReleaseKeyResult
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        version = kwargs.pop("version", "")
         result = await self._client.release(
             vault_base_url=self._vault_url,
             key_name=name,
-            key_version=version or "",
+            key_version=version,
             parameters=self._models.KeyReleaseParameters(
-                target=target, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+                target_attestation_token=target_attestation_token,
+                nonce=kwargs.pop("nonce", None),
+                enc=kwargs.pop("algorithm", None),
             ),
-            **kwargs
+            **kwargs,
         )
         return ReleaseKeyResult(result.value)
 
     @distributed_trace_async
-    async def get_random_bytes(self, count: int, **kwargs: "Any") -> RandomBytes:
+    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
 
         :return: The random bytes.
-        :rtype: ~azure.keyvault.keys.RandomBytes
+        :rtype: bytes
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -730,19 +731,19 @@ class KeyClient(AsyncKeyVaultClientBase):
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
         result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
-        return RandomBytes(value=result.value)
+        return result.value
 
     @distributed_trace_async
-    async def get_key_rotation_policy(self, name: str, **kwargs: "Any") -> "KeyRotationPolicy":
+    async def get_key_rotation_policy(self, key_name: str, **kwargs: "Any") -> "KeyRotationPolicy":
         """Get the rotation policy of a Key Vault key.
 
-        :param str name: The name of the key.
+        :param str key_name: The name of the key.
 
         :return: The key rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace_async
@@ -761,23 +762,30 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def update_key_rotation_policy(self, name: str, **kwargs: "Any") -> KeyRotationPolicy:
+    async def update_key_rotation_policy(
+        self, key_name: str, policy: KeyRotationPolicy, **kwargs: "Any"
+    ) -> KeyRotationPolicy:
         """Updates the rotation policy of a Key Vault key.
 
         This operation requires the keys/update permission.
 
-        :param str name: The name of the key in the given vault.
+        :param str key_name: The name of the key in the given vault.
+        :param policy: The new rotation policy for the key.
+        :type policy: ~azure.keyvault.keys.KeyRotationPolicy
 
-        :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
-        :paramtype lifetime_actions: Iterable[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
+            override the lifetime actions of the provided ``policy``.
+        :paramtype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
-            ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H".
+            ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
+            `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
+            This will override the expiry time of the provided ``policy``.
 
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        lifetime_actions = kwargs.pop("lifetime_actions", None)
+        lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
         if lifetime_actions:
             lifetime_actions = [
                 self._models.LifetimeActions(
@@ -789,9 +797,9 @@ class KeyClient(AsyncKeyVaultClientBase):
                 for action in lifetime_actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", None))
-        policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
+        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions or [], attributes=attributes)
         result = await self._client.update_key_rotation_policy(
-            vault_base_url=self._vault_url, key_name=name, key_rotation_policy=policy
+            vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )
         return KeyRotationPolicy._from_generated(result)

@@ -34,7 +34,7 @@ _kv_crv_to_crypto_cls = {
     KeyCurveName.p_521: SECP521R1,
     "SECP256K1": SECP256K1,  # "SECP256K1" is from Key Vault 2016-10-01
 }
-_curve_to_default_algo = {
+_curve_to_default_algorithm = {
     KeyCurveName.p_256: Es256.name(),
     KeyCurveName.p_256_k: Ecdsa256.name(),
     KeyCurveName.p_384: Es384.name(),
@@ -44,13 +44,13 @@ _curve_to_default_algo = {
 
 
 class EllipticCurveKey(Key):
-    _supported_signature_algorithms = frozenset(_curve_to_default_algo.values())
+    _supported_signature_algorithms = frozenset(_curve_to_default_algorithm.values())
 
     def __init__(self, x, y, d=None, kid=None, curve=None):
         super(EllipticCurveKey, self).__init__()
 
         self._kid = kid or str(uuid.uuid4())
-        self._default_algo = _curve_to_default_algo[curve]
+        self._default_algorithm = _curve_to_default_algorithm[curve]
         curve_cls = _kv_crv_to_crypto_cls[curve]
 
         public_numbers = EllipticCurvePublicNumbers(x, y, curve_cls())

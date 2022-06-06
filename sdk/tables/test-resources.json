@@ -10,6 +10,13 @@
             "metadata": {
                 "description": "The principal to assign the role to. This is application object id."
             }
+        },
+        "tablesStorageEndpointSuffix": {
+          "type": "string",
+          "defaultValue": "core.windows.net",
+          "metadata": {
+              "description": "The url suffix to use when accessing the storage data plane."
+          }
         }
     },
     "variables": {
@@ -107,6 +114,10 @@
         }
     ],
     "outputs": {
+        "TABLES_STORAGE_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('tablesStorageEndpointSuffix')]"
+        },
         "TABLES_STORAGE_ACCOUNT_NAME": {
             "type": "string",
             "value": "[variables('primaryAccountName')]"

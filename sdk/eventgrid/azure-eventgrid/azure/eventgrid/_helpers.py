@@ -15,6 +15,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 from msrest import Serializer
+from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -98,7 +99,6 @@ def _is_cloud_event(event):
     except TypeError:
         return False
 
-
 def _is_eventgrid_event(event):
     # type: (Any) -> bool
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
@@ -141,6 +141,22 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         additional_properties=cloud_event.extensions,
         **kwargs
     )
+
+def _from_cncf_events(event):
+    """This takes in a CNCF cloudevent and returns a dictionary.
+    If cloud events library is not installed, the event is returned back.
+    """
+    try:
+        from cloudevents.http import to_json
+        return json.loads(to_json(event))
+    except (AttributeError, ImportError):
+        # means this is not a CNCF event
+        return event
+    except Exception as err: # pylint: disable=broad-except
+        msg = """Failed to serialize the event. Please ensure your
+        CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
+        raise_with_traceback(ValueError, msg, err)
+
 
 def _build_request(endpoint, content_type, events):
     serialize = Serializer()

@@ -1,6 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-serialconsole"
-package_pprint_name = "SerialConsole"
+package_pprint_name = "Serial Console"
 package_doc_id = ""
 is_stable = false
 is_arm = true

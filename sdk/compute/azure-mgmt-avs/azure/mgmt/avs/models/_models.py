@@ -202,14 +202,13 @@ class AddonSrmProperties(AddonProperties):
     :ivar provisioning_state: The state of the addon provisioning. Possible values include:
      "Succeeded", "Failed", "Cancelled", "Building", "Deleting", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
-    :param license_key: Required. The Site Recovery Manager (SRM) license.
+    :param license_key: The Site Recovery Manager (SRM) license.
     :type license_key: str
     """
 
     _validation = {
         'addon_type': {'required': True},
         'provisioning_state': {'readonly': True},
-        'license_key': {'required': True},
     }
 
     _attribute_map = {
@@ -224,7 +223,7 @@ class AddonSrmProperties(AddonProperties):
     ):
         super(AddonSrmProperties, self).__init__(**kwargs)
         self.addon_type = 'SRM'  # type: str
-        self.license_key = kwargs['license_key']
+        self.license_key = kwargs.get('license_key', None)
 
 
 class AddonVrProperties(AddonProperties):
@@ -303,6 +302,34 @@ class AdminCredentials(msrest.serialization.Model):
         self.nsxt_password = None
         self.vcenter_username = None
         self.vcenter_password = None
+
+
+class AvailabilityProperties(msrest.serialization.Model):
+    """The properties describing private cloud availability zone distribution.
+
+    :param strategy: The availability strategy for the private cloud. Possible values include:
+     "SingleZone", "DualZone".
+    :type strategy: str or ~azure.mgmt.avs.models.AvailabilityStrategy
+    :param zone: The primary availability zone for the private cloud.
+    :type zone: int
+    :param secondary_zone: The secondary availability zone for the private cloud.
+    :type secondary_zone: int
+    """
+
+    _attribute_map = {
+        'strategy': {'key': 'strategy', 'type': 'str'},
+        'zone': {'key': 'zone', 'type': 'int'},
+        'secondary_zone': {'key': 'secondaryZone', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvailabilityProperties, self).__init__(**kwargs)
+        self.strategy = kwargs.get('strategy', None)
+        self.zone = kwargs.get('zone', None)
+        self.secondary_zone = kwargs.get('secondary_zone', None)
 
 
 class Circuit(msrest.serialization.Model):
@@ -439,8 +466,8 @@ class Cluster(Resource):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :ivar hosts: The hosts.
-    :vartype hosts: list[str]
+    :param hosts: The hosts.
+    :type hosts: list[str]
     """
 
     _validation = {
@@ -450,7 +477,6 @@ class Cluster(Resource):
         'sku': {'required': True},
         'provisioning_state': {'readonly': True},
         'cluster_id': {'readonly': True},
-        'hosts': {'readonly': True},
     }
 
     _attribute_map = {
@@ -473,7 +499,7 @@ class Cluster(Resource):
         self.cluster_size = kwargs.get('cluster_size', None)
         self.provisioning_state = None
         self.cluster_id = None
-        self.hosts = None
+        self.hosts = kwargs.get('hosts', None)
 
 
 class ClusterList(msrest.serialization.Model):
@@ -518,14 +544,13 @@ class CommonClusterProperties(msrest.serialization.Model):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :ivar hosts: The hosts.
-    :vartype hosts: list[str]
+    :param hosts: The hosts.
+    :type hosts: list[str]
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'cluster_id': {'readonly': True},
-        'hosts': {'readonly': True},
     }
 
     _attribute_map = {
@@ -543,7 +568,7 @@ class CommonClusterProperties(msrest.serialization.Model):
         self.cluster_size = kwargs.get('cluster_size', None)
         self.provisioning_state = None
         self.cluster_id = None
-        self.hosts = None
+        self.hosts = kwargs.get('hosts', None)
 
 
 class ClusterProperties(CommonClusterProperties):
@@ -558,14 +583,13 @@ class ClusterProperties(CommonClusterProperties):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :ivar hosts: The hosts.
-    :vartype hosts: list[str]
+    :param hosts: The hosts.
+    :type hosts: list[str]
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'cluster_id': {'readonly': True},
-        'hosts': {'readonly': True},
     }
 
     _attribute_map = {
@@ -587,10 +611,13 @@ class ClusterUpdate(msrest.serialization.Model):
 
     :param cluster_size: The cluster size.
     :type cluster_size: int
+    :param hosts: The hosts.
+    :type hosts: list[str]
     """
 
     _attribute_map = {
         'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
+        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
     }
 
     def __init__(
@@ -599,6 +626,7 @@ class ClusterUpdate(msrest.serialization.Model):
     ):
         super(ClusterUpdate, self).__init__(**kwargs)
         self.cluster_size = kwargs.get('cluster_size', None)
+        self.hosts = kwargs.get('hosts', None)
 
 
 class Datastore(Resource):
@@ -619,6 +647,9 @@ class Datastore(Resource):
     :type net_app_volume: ~azure.mgmt.avs.models.NetAppVolume
     :param disk_pool_volume: An iSCSI volume.
     :type disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
+    :ivar status: The operational status of the datastore. Possible values include: "Unknown",
+     "Accessible", "Inaccessible", "Attached", "Detached", "LostCommunication", "DeadOrError".
+    :vartype status: str or ~azure.mgmt.avs.models.DatastoreStatus
     """
 
     _validation = {
@@ -626,6 +657,7 @@ class Datastore(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -635,6 +667,7 @@ class Datastore(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'net_app_volume': {'key': 'properties.netAppVolume', 'type': 'NetAppVolume'},
         'disk_pool_volume': {'key': 'properties.diskPoolVolume', 'type': 'DiskPoolVolume'},
+        'status': {'key': 'properties.status', 'type': 'str'},
     }
 
     def __init__(
@@ -645,6 +678,7 @@ class Datastore(Resource):
         self.provisioning_state = None
         self.net_app_volume = kwargs.get('net_app_volume', None)
         self.disk_pool_volume = kwargs.get('disk_pool_volume', None)
+        self.status = None
 
 
 class DatastoreList(msrest.serialization.Model):
@@ -717,6 +751,74 @@ class DiskPoolVolume(msrest.serialization.Model):
         self.lun_name = kwargs['lun_name']
         self.mount_option = kwargs.get('mount_option', "MOUNT")
         self.path = None
+
+
+class Encryption(msrest.serialization.Model):
+    """The properties of customer managed encryption key.
+
+    :param status: Status of customer managed encryption key. Possible values include: "Enabled",
+     "Disabled".
+    :type status: str or ~azure.mgmt.avs.models.EncryptionState
+    :param key_vault_properties: The key vault where the encryption key is stored.
+    :type key_vault_properties: ~azure.mgmt.avs.models.EncryptionKeyVaultProperties
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'EncryptionKeyVaultProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Encryption, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
+class EncryptionKeyVaultProperties(msrest.serialization.Model):
+    """An Encryption Key.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param key_name: The name of the key.
+    :type key_name: str
+    :param key_version: The version of the key.
+    :type key_version: str
+    :param key_vault_url: The URL of the vault.
+    :type key_vault_url: str
+    :ivar key_state: The state of key provided. Possible values include: "Connected",
+     "AccessDenied".
+    :vartype key_state: str or ~azure.mgmt.avs.models.EncryptionKeyStatus
+    :ivar version_type: Property of the key if user provided or auto detected. Possible values
+     include: "Fixed", "AutoDetected".
+    :vartype version_type: str or ~azure.mgmt.avs.models.EncryptionVersionType
+    """
+
+    _validation = {
+        'key_state': {'readonly': True},
+        'version_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        'key_vault_url': {'key': 'keyVaultUrl', 'type': 'str'},
+        'key_state': {'key': 'keyState', 'type': 'str'},
+        'version_type': {'key': 'versionType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EncryptionKeyVaultProperties, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)
+        self.key_vault_url = kwargs.get('key_vault_url', None)
+        self.key_state = None
+        self.version_type = None
 
 
 class Endpoints(msrest.serialization.Model):
@@ -848,6 +950,8 @@ class ExpressRouteAuthorization(Resource):
     :vartype express_route_authorization_id: str
     :ivar express_route_authorization_key: The key of the ExpressRoute Circuit Authorization.
     :vartype express_route_authorization_key: str
+    :param express_route_id: The ID of the ExpressRoute Circuit.
+    :type express_route_id: str
     """
 
     _validation = {
@@ -866,6 +970,7 @@ class ExpressRouteAuthorization(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'express_route_authorization_id': {'key': 'properties.expressRouteAuthorizationId', 'type': 'str'},
         'express_route_authorization_key': {'key': 'properties.expressRouteAuthorizationKey', 'type': 'str'},
+        'express_route_id': {'key': 'properties.expressRouteId', 'type': 'str'},
     }
 
     def __init__(
@@ -876,6 +981,7 @@ class ExpressRouteAuthorization(Resource):
         self.provisioning_state = None
         self.express_route_authorization_id = None
         self.express_route_authorization_key = None
+        self.express_route_id = kwargs.get('express_route_id', None)
 
 
 class ExpressRouteAuthorizationList(msrest.serialization.Model):
@@ -935,6 +1041,9 @@ class GlobalReachConnection(Resource):
     :param peer_express_route_circuit: Identifier of the ExpressRoute Circuit to peer with in the
      global reach connection.
     :type peer_express_route_circuit: str
+    :param express_route_id: The ID of the Private Cloud's ExpressRoute Circuit that is
+     participating in the global reach connection.
+    :type express_route_id: str
     """
 
     _validation = {
@@ -955,6 +1064,7 @@ class GlobalReachConnection(Resource):
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
         'circuit_connection_status': {'key': 'properties.circuitConnectionStatus', 'type': 'str'},
         'peer_express_route_circuit': {'key': 'properties.peerExpressRouteCircuit', 'type': 'str'},
+        'express_route_id': {'key': 'properties.expressRouteId', 'type': 'str'},
     }
 
     def __init__(
@@ -967,6 +1077,7 @@ class GlobalReachConnection(Resource):
         self.authorization_key = kwargs.get('authorization_key', None)
         self.circuit_connection_status = None
         self.peer_express_route_circuit = kwargs.get('peer_express_route_circuit', None)
+        self.express_route_id = kwargs.get('express_route_id', None)
 
 
 class GlobalReachConnectionList(msrest.serialization.Model):
@@ -1169,14 +1280,13 @@ class ManagementCluster(CommonClusterProperties):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :ivar hosts: The hosts.
-    :vartype hosts: list[str]
+    :param hosts: The hosts.
+    :type hosts: list[str]
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'cluster_id': {'readonly': True},
-        'hosts': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1452,6 +1562,150 @@ class OperationProperties(msrest.serialization.Model):
         self.service_specification = kwargs.get('service_specification', None)
 
 
+class PlacementPoliciesList(msrest.serialization.Model):
+    """Represents list of placement policies.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The items on the page.
+    :vartype value: list[~azure.mgmt.avs.models.PlacementPolicy]
+    :ivar next_link: URL to get the next page if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PlacementPolicy]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlacementPoliciesList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class PlacementPolicy(Resource):
+    """A vSphere Distributed Resource Scheduler (DRS) placement policy.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param properties: placement policy properties.
+    :type properties: ~azure.mgmt.avs.models.PlacementPolicyProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PlacementPolicyProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlacementPolicy, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class PlacementPolicyProperties(msrest.serialization.Model):
+    """Abstract placement policy properties.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: VmHostPlacementPolicyProperties, VmPlacementPolicyProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. placement policy type.Constant filled by server.  Possible values
+     include: "VmVm", "VmHost".
+    :type type: str or ~azure.mgmt.avs.models.PlacementPolicyType
+    :param state: Whether the placement policy is enabled or disabled. Possible values include:
+     "Enabled", "Disabled".
+    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :param display_name: Display name of the placement policy.
+    :type display_name: str
+    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
+     "Failed", "Building", "Deleting", "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.PlacementPolicyProvisioningState
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'VmHost': 'VmHostPlacementPolicyProperties', 'VmVm': 'VmPlacementPolicyProperties'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlacementPolicyProperties, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+        self.state = kwargs.get('state', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.provisioning_state = None
+
+
+class PlacementPolicyUpdate(msrest.serialization.Model):
+    """An update of a DRS placement policy resource.
+
+    :param state: Whether the placement policy is enabled or disabled. Possible values include:
+     "Enabled", "Disabled".
+    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :param vm_members: Virtual machine members list.
+    :type vm_members: list[str]
+    :param host_members: Host members list.
+    :type host_members: list[str]
+    """
+
+    _attribute_map = {
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'vm_members': {'key': 'properties.vmMembers', 'type': '[str]'},
+        'host_members': {'key': 'properties.hostMembers', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PlacementPolicyUpdate, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.vm_members = kwargs.get('vm_members', None)
+        self.host_members = kwargs.get('host_members', None)
+
+
 class TrackedResource(Resource):
     """The resource model definition for a ARM tracked top level resource.
 
@@ -1511,6 +1765,8 @@ class PrivateCloud(TrackedResource):
     :type tags: dict[str, str]
     :param sku: Required. The private cloud SKU.
     :type sku: ~azure.mgmt.avs.models.Sku
+    :param identity: The identity of the private cloud, if configured.
+    :type identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
     :param management_cluster: The default cluster used for management.
     :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
     :param internet: Connectivity to internet is enabled or disabled. Possible values include:
@@ -1518,6 +1774,11 @@ class PrivateCloud(TrackedResource):
     :type internet: str or ~azure.mgmt.avs.models.InternetEnum
     :param identity_sources: vCenter Single Sign On Identity Sources.
     :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :param availability: Properties describing how the cloud is distributed across availability
+     zones.
+    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :param encryption: Customer managed key encryption, can be enabled or disabled.
+    :type encryption: ~azure.mgmt.avs.models.Encryption
     :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
      "Failed", "Cancelled", "Pending", "Building", "Deleting", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PrivateCloudProvisioningState
@@ -1548,6 +1809,9 @@ class PrivateCloud(TrackedResource):
     :vartype nsxt_certificate_thumbprint: str
     :ivar external_cloud_links: Array of cloud link IDs from other clouds that connect to this one.
     :vartype external_cloud_links: list[str]
+    :param secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present in
+     a stretched private cloud.
+    :type secondary_circuit: ~azure.mgmt.avs.models.Circuit
     """
 
     _validation = {
@@ -1572,9 +1836,12 @@ class PrivateCloud(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'PrivateCloudIdentity'},
         'management_cluster': {'key': 'properties.managementCluster', 'type': 'ManagementCluster'},
         'internet': {'key': 'properties.internet', 'type': 'str'},
         'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
+        'availability': {'key': 'properties.availability', 'type': 'AvailabilityProperties'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'circuit': {'key': 'properties.circuit', 'type': 'Circuit'},
         'endpoints': {'key': 'properties.endpoints', 'type': 'Endpoints'},
@@ -1587,6 +1854,7 @@ class PrivateCloud(TrackedResource):
         'vcenter_certificate_thumbprint': {'key': 'properties.vcenterCertificateThumbprint', 'type': 'str'},
         'nsxt_certificate_thumbprint': {'key': 'properties.nsxtCertificateThumbprint', 'type': 'str'},
         'external_cloud_links': {'key': 'properties.externalCloudLinks', 'type': '[str]'},
+        'secondary_circuit': {'key': 'properties.secondaryCircuit', 'type': 'Circuit'},
     }
 
     def __init__(
@@ -1595,9 +1863,12 @@ class PrivateCloud(TrackedResource):
     ):
         super(PrivateCloud, self).__init__(**kwargs)
         self.sku = kwargs['sku']
+        self.identity = kwargs.get('identity', None)
         self.management_cluster = kwargs.get('management_cluster', None)
         self.internet = kwargs.get('internet', "Disabled")
         self.identity_sources = kwargs.get('identity_sources', None)
+        self.availability = kwargs.get('availability', None)
+        self.encryption = kwargs.get('encryption', None)
         self.provisioning_state = None
         self.circuit = kwargs.get('circuit', None)
         self.endpoints = None
@@ -1610,6 +1881,45 @@ class PrivateCloud(TrackedResource):
         self.vcenter_certificate_thumbprint = None
         self.nsxt_certificate_thumbprint = None
         self.external_cloud_links = None
+        self.secondary_circuit = kwargs.get('secondary_circuit', None)
+
+
+class PrivateCloudIdentity(msrest.serialization.Model):
+    """Identity for the virtual machine.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of private cloud identity. This property will only be
+     provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID associated with the private cloud. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: The type of identity used for the private cloud. The type 'SystemAssigned' refers
+     to an implicitly created identity. The type 'None' will remove any identities from the Private
+     Cloud. Possible values include: "SystemAssigned", "None".
+    :type type: str or ~azure.mgmt.avs.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateCloudIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class PrivateCloudList(msrest.serialization.Model):
@@ -1652,12 +1962,19 @@ class PrivateCloudUpdateProperties(msrest.serialization.Model):
     :type internet: str or ~azure.mgmt.avs.models.InternetEnum
     :param identity_sources: vCenter Single Sign On Identity Sources.
     :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :param availability: Properties describing how the cloud is distributed across availability
+     zones.
+    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :param encryption: Customer managed key encryption, can be enabled or disabled.
+    :type encryption: ~azure.mgmt.avs.models.Encryption
     """
 
     _attribute_map = {
         'management_cluster': {'key': 'managementCluster', 'type': 'ManagementCluster'},
         'internet': {'key': 'internet', 'type': 'str'},
         'identity_sources': {'key': 'identitySources', 'type': '[IdentitySource]'},
+        'availability': {'key': 'availability', 'type': 'AvailabilityProperties'},
+        'encryption': {'key': 'encryption', 'type': 'Encryption'},
     }
 
     def __init__(
@@ -1668,6 +1985,8 @@ class PrivateCloudUpdateProperties(msrest.serialization.Model):
         self.management_cluster = kwargs.get('management_cluster', None)
         self.internet = kwargs.get('internet', "Disabled")
         self.identity_sources = kwargs.get('identity_sources', None)
+        self.availability = kwargs.get('availability', None)
+        self.encryption = kwargs.get('encryption', None)
 
 
 class PrivateCloudProperties(PrivateCloudUpdateProperties):
@@ -1684,6 +2003,11 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
     :type internet: str or ~azure.mgmt.avs.models.InternetEnum
     :param identity_sources: vCenter Single Sign On Identity Sources.
     :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :param availability: Properties describing how the cloud is distributed across availability
+     zones.
+    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :param encryption: Customer managed key encryption, can be enabled or disabled.
+    :type encryption: ~azure.mgmt.avs.models.Encryption
     :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
      "Failed", "Cancelled", "Pending", "Building", "Deleting", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PrivateCloudProvisioningState
@@ -1714,6 +2038,9 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
     :vartype nsxt_certificate_thumbprint: str
     :ivar external_cloud_links: Array of cloud link IDs from other clouds that connect to this one.
     :vartype external_cloud_links: list[str]
+    :param secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present in
+     a stretched private cloud.
+    :type secondary_circuit: ~azure.mgmt.avs.models.Circuit
     """
 
     _validation = {
@@ -1732,6 +2059,8 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
         'management_cluster': {'key': 'managementCluster', 'type': 'ManagementCluster'},
         'internet': {'key': 'internet', 'type': 'str'},
         'identity_sources': {'key': 'identitySources', 'type': '[IdentitySource]'},
+        'availability': {'key': 'availability', 'type': 'AvailabilityProperties'},
+        'encryption': {'key': 'encryption', 'type': 'Encryption'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'circuit': {'key': 'circuit', 'type': 'Circuit'},
         'endpoints': {'key': 'endpoints', 'type': 'Endpoints'},
@@ -1744,6 +2073,7 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
         'vcenter_certificate_thumbprint': {'key': 'vcenterCertificateThumbprint', 'type': 'str'},
         'nsxt_certificate_thumbprint': {'key': 'nsxtCertificateThumbprint', 'type': 'str'},
         'external_cloud_links': {'key': 'externalCloudLinks', 'type': '[str]'},
+        'secondary_circuit': {'key': 'secondaryCircuit', 'type': 'Circuit'},
     }
 
     def __init__(
@@ -1763,6 +2093,7 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
         self.vcenter_certificate_thumbprint = None
         self.nsxt_certificate_thumbprint = None
         self.external_cloud_links = None
+        self.secondary_circuit = kwargs.get('secondary_circuit', None)
 
 
 class PrivateCloudUpdate(msrest.serialization.Model):
@@ -1770,6 +2101,8 @@ class PrivateCloudUpdate(msrest.serialization.Model):
 
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :param identity: The identity of the private cloud, if configured.
+    :type identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
     :param management_cluster: The default cluster used for management.
     :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
     :param internet: Connectivity to internet is enabled or disabled. Possible values include:
@@ -1777,13 +2110,21 @@ class PrivateCloudUpdate(msrest.serialization.Model):
     :type internet: str or ~azure.mgmt.avs.models.InternetEnum
     :param identity_sources: vCenter Single Sign On Identity Sources.
     :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :param availability: Properties describing how the cloud is distributed across availability
+     zones.
+    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :param encryption: Customer managed key encryption, can be enabled or disabled.
+    :type encryption: ~azure.mgmt.avs.models.Encryption
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'PrivateCloudIdentity'},
         'management_cluster': {'key': 'properties.managementCluster', 'type': 'ManagementCluster'},
         'internet': {'key': 'properties.internet', 'type': 'str'},
         'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
+        'availability': {'key': 'properties.availability', 'type': 'AvailabilityProperties'},
+        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
     }
 
     def __init__(
@@ -1792,9 +2133,12 @@ class PrivateCloudUpdate(msrest.serialization.Model):
     ):
         super(PrivateCloudUpdate, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
         self.management_cluster = kwargs.get('management_cluster', None)
         self.internet = kwargs.get('internet', "Disabled")
         self.identity_sources = kwargs.get('identity_sources', None)
+        self.availability = kwargs.get('availability', None)
+        self.encryption = kwargs.get('encryption', None)
 
 
 class ProxyResource(Resource):
@@ -2414,6 +2758,217 @@ class Trial(msrest.serialization.Model):
         self.available_hosts = None
 
 
+class VirtualMachine(ProxyResource):
+    """Virtual Machine.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar display_name: Display name of the VM.
+    :vartype display_name: str
+    :ivar mo_ref_id: Virtual machine managed object reference id.
+    :vartype mo_ref_id: str
+    :ivar folder_path: Path to virtual machine's folder starting from datacenter virtual machine
+     folder.
+    :vartype folder_path: str
+    :ivar restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
+     (disabled). Possible values include: "Enabled", "Disabled".
+    :vartype restrict_movement: str or ~azure.mgmt.avs.models.VirtualMachineRestrictMovementState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'display_name': {'readonly': True},
+        'mo_ref_id': {'readonly': True},
+        'folder_path': {'readonly': True},
+        'restrict_movement': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
+        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
+        'restrict_movement': {'key': 'properties.restrictMovement', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachine, self).__init__(**kwargs)
+        self.display_name = None
+        self.mo_ref_id = None
+        self.folder_path = None
+        self.restrict_movement = None
+
+
+class VirtualMachineRestrictMovement(msrest.serialization.Model):
+    """Set VM DRS-driven movement to restricted (enabled) or not (disabled).
+
+    :param restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
+     (disabled). Possible values include: "Enabled", "Disabled".
+    :type restrict_movement: str or ~azure.mgmt.avs.models.VirtualMachineRestrictMovementState
+    """
+
+    _attribute_map = {
+        'restrict_movement': {'key': 'restrictMovement', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineRestrictMovement, self).__init__(**kwargs)
+        self.restrict_movement = kwargs.get('restrict_movement', None)
+
+
+class VirtualMachinesList(msrest.serialization.Model):
+    """A list of Virtual Machines.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The items to be displayed on the page.
+    :vartype value: list[~azure.mgmt.avs.models.VirtualMachine]
+    :ivar next_link: URL to get the next page if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VirtualMachine]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachinesList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class VmHostPlacementPolicyProperties(PlacementPolicyProperties):
+    """VM-Host placement policy properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. placement policy type.Constant filled by server.  Possible values
+     include: "VmVm", "VmHost".
+    :type type: str or ~azure.mgmt.avs.models.PlacementPolicyType
+    :param state: Whether the placement policy is enabled or disabled. Possible values include:
+     "Enabled", "Disabled".
+    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :param display_name: Display name of the placement policy.
+    :type display_name: str
+    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
+     "Failed", "Building", "Deleting", "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.PlacementPolicyProvisioningState
+    :param vm_members: Required. Virtual machine members list.
+    :type vm_members: list[str]
+    :param host_members: Required. Host members list.
+    :type host_members: list[str]
+    :param affinity_type: Required. placement policy affinity type. Possible values include:
+     "Affinity", "AntiAffinity".
+    :type affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'vm_members': {'required': True},
+        'host_members': {'required': True},
+        'affinity_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'vm_members': {'key': 'vmMembers', 'type': '[str]'},
+        'host_members': {'key': 'hostMembers', 'type': '[str]'},
+        'affinity_type': {'key': 'affinityType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VmHostPlacementPolicyProperties, self).__init__(**kwargs)
+        self.type = 'VmHost'  # type: str
+        self.vm_members = kwargs['vm_members']
+        self.host_members = kwargs['host_members']
+        self.affinity_type = kwargs['affinity_type']
+
+
+class VmPlacementPolicyProperties(PlacementPolicyProperties):
+    """VM-VM placement policy properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. placement policy type.Constant filled by server.  Possible values
+     include: "VmVm", "VmHost".
+    :type type: str or ~azure.mgmt.avs.models.PlacementPolicyType
+    :param state: Whether the placement policy is enabled or disabled. Possible values include:
+     "Enabled", "Disabled".
+    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :param display_name: Display name of the placement policy.
+    :type display_name: str
+    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
+     "Failed", "Building", "Deleting", "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.PlacementPolicyProvisioningState
+    :param vm_members: Required. Virtual machine members list.
+    :type vm_members: list[str]
+    :param affinity_type: Required. placement policy affinity type. Possible values include:
+     "Affinity", "AntiAffinity".
+    :type affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'vm_members': {'required': True},
+        'affinity_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'vm_members': {'key': 'vmMembers', 'type': '[str]'},
+        'affinity_type': {'key': 'affinityType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VmPlacementPolicyProperties, self).__init__(**kwargs)
+        self.type = 'VmVm'  # type: str
+        self.vm_members = kwargs['vm_members']
+        self.affinity_type = kwargs['affinity_type']
+
+
 class WorkloadNetworkDhcp(ProxyResource):
     """NSX DHCP.
 
@@ -2909,14 +3464,14 @@ class WorkloadNetworkPortMirroring(ProxyResource):
     :vartype type: str
     :param display_name: Display name of the port mirroring profile.
     :type display_name: str
-    :param direction: Direction of port mirroring profile. Possible values include: "INGRESS,
-     EGRESS, BIDIRECTIONAL".
+    :param direction: Direction of port mirroring profile. Possible values include: "INGRESS",
+     "EGRESS", "BIDIRECTIONAL".
     :type direction: str or ~azure.mgmt.avs.models.PortMirroringDirectionEnum
     :param source: Source VM Group.
     :type source: str
     :param destination: Destination VM Group.
     :type destination: str
-    :ivar status: Port Mirroring Status. Possible values include: "SUCCESS, FAILURE".
+    :ivar status: Port Mirroring Status. Possible values include: "SUCCESS", "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.PortMirroringStatusEnum
     :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
      "Failed", "Building", "Deleting", "Updating".
@@ -3092,7 +3647,7 @@ class WorkloadNetworkSegment(ProxyResource):
     :type subnet: ~azure.mgmt.avs.models.WorkloadNetworkSegmentSubnet
     :ivar port_vif: Port Vif which segment is associated with.
     :vartype port_vif: list[~azure.mgmt.avs.models.WorkloadNetworkSegmentPortVif]
-    :ivar status: Segment status. Possible values include: "SUCCESS, FAILURE".
+    :ivar status: Segment status. Possible values include: "SUCCESS", "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.SegmentStatusEnum
     :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
      "Failed", "Building", "Deleting", "Updating".
@@ -3223,7 +3778,7 @@ class WorkloadNetworkVirtualMachine(ProxyResource):
     :vartype type: str
     :param display_name: Display name of the VM.
     :type display_name: str
-    :ivar vm_type: Virtual machine type. Possible values include: "REGULAR, EDGE, SERVICE".
+    :ivar vm_type: Virtual machine type. Possible values include: "REGULAR", "EDGE", "SERVICE".
     :vartype vm_type: str or ~azure.mgmt.avs.models.VMTypeEnum
     """
 
@@ -3296,7 +3851,7 @@ class WorkloadNetworkVMGroup(ProxyResource):
     :type display_name: str
     :param members: Virtual machine members of this group.
     :type members: list[str]
-    :ivar status: VM Group status. Possible values include: "SUCCESS, FAILURE".
+    :ivar status: VM Group status. Possible values include: "SUCCESS", "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.VMGroupStatusEnum
     :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
      "Failed", "Building", "Deleting", "Updating".

@@ -4,17 +4,29 @@
   },
   "matrix": {
     "Agent": {
-      "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" }
+      "ubuntu-20.04": { "OSVmImage": "MMSUbuntu20.04", "Pool": "azsdk-pool-mms-ubuntu-2004-general" },
+      "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
     },
-    "PythonVersion": [ "pypy3", "3.6", "3.7", "3.8", "3.9" ],
+    "PythonVersion": [ "pypy3.7", "3.8", "3.9" ],
     "CoverageArg": "--disablecov"
   },
   "include": [
     {
+      "Config": {
+        "Ubuntu2004_310": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "PythonVersion": "3.10.4",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
       "Agent": {
         "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
       },
-      "PythonVersion": "2.7",
+      "PythonVersion": "3.7",
       "CoverageArg": "--disablecov"
     },
     {
@@ -23,17 +35,6 @@
       },
       "PythonVersion": "3.6",
       "CoverageArg": "--disablecov"
-    },
-    {
-      "Config": {
-        "Ubuntu2004_310": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "PythonVersion": "3.10.0",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false"
-        }
-      }
     }
   ]
 }

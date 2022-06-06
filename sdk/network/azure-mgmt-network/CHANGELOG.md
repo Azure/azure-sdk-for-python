@@ -1,5 +1,55 @@
 # Release History
 
+## 20.0.0 (2022-05-10)
+
+**Features**
+
+  - Added operation FirewallPoliciesOperations.update_tags
+  - Added operation PerimeterAssociableResourceTypesOperations.list
+  - Added operation group ConfigurationPolicyGroupsOperations
+  - Added operation group ExpressRoutePortAuthorizationsOperations
+  - Added operation group NspAccessRulesOperations
+  - Added operation group NspAssociationsOperations
+  - Added operation group NspProfilesOperations
+  - Model ApplicationGateway has a new parameter backend_settings_collection
+  - Model ApplicationGateway has a new parameter listeners
+  - Model ApplicationGateway has a new parameter routing_rules
+  - Model ApplicationGatewayProbe has a new parameter pick_host_name_from_backend_settings
+  - Model BackendAddressPool has a new parameter drain_period_in_seconds
+  - Model ExpressRouteCircuit has a new parameter authorization_key
+  - Model FirewallPolicyIntrusionDetectionConfiguration has a new parameter private_ranges
+  - Model LoadBalancerBackendAddress has a new parameter admin_state
+  - Model NetworkInterface has a new parameter auxiliary_mode
+  - Model P2SConnectionConfiguration has a new parameter configuration_policy_group_associations
+  - Model P2SConnectionConfiguration has a new parameter previous_configuration_policy_group_associations
+  - Model VirtualHub has a new parameter hub_routing_preference
+  - Model VirtualNetworkGatewayConnection has a new parameter gateway_custom_bgp_ip_addresses
+  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter gateway_custom_bgp_ip_addresses
+  - Model VpnServerConfiguration has a new parameter configuration_policy_groups
+  - Model VpnSiteLinkConnection has a new parameter vpn_gateway_custom_bgp_addresses
+
+**Breaking changes**
+
+  - Removed operation PerimeterAssociableResourceTypesOperations.get
+
+## 19.3.0 (2021-11-05)
+
+**Features**
+
+  - Model LoadBalancerBackendAddress has a new parameter inbound_nat_rules_port_mapping
+  - Model VpnNatRuleMapping has a new parameter port_range
+  - Model OwaspCrsExclusionEntry has a new parameter exclusion_managed_rule_sets
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_encryption
+  - Model NetworkInterface has a new parameter vnet_encryption_supported
+  - Model VirtualNetworkGateway has a new parameter disable_ip_sec_replay_protection
+  - Model VirtualNetwork has a new parameter encryption
+  - Model BackendAddressPool has a new parameter inbound_nat_rules
+  - Added operation LoadBalancersOperations.begin_list_inbound_nat_rule_port_mappings
+  - Added operation group FirewallPolicyIdpsSignaturesOverridesOperations
+  - Added operation group RoutingIntentOperations
+  - Added operation group FirewallPolicyIdpsSignaturesOperations
+  - Added operation group FirewallPolicyIdpsSignaturesFilterValuesOperations
+
 ## 19.2.0 (2021-10-21)
 
 **Features**

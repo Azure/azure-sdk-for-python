@@ -1,5 +1,37 @@
 # Release History
 
+## 2.1.0b5 (2022-04-15)
+
+**Features**
+
+  - Added operation group WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
+
+## 2.1.0b4 (2022-01-11)
+
+**Features**
+
+  - Model DynamicExecutorAllocation has a new parameter max_executors
+  - Model DynamicExecutorAllocation has a new parameter min_executors
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model ManagedIntegrationRuntime has a new parameter id
+  - Model ManagedIntegrationRuntime has a new parameter reference_name
+  - Model ManagedIntegrationRuntime has a new parameter type_managed_virtual_network_type
+  - Model SelfHostedIntegrationRuntimeStatus has a new parameter newer_versions
+  - Model SelfHostedIntegrationRuntimeStatus has a new parameter service_region
+  - Model ServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model Workspace has a new parameter trusted_service_bypass_enabled
+
+## 2.1.0b3 (2021-11-08)
+
+**Features**
+
+  - Model EventHubDataConnection has a new parameter managed_identity_resource_id
+  - Added operation KustoPoolsOperations.list_skus
+
+**Breaking changes**
+
+  - Removed operation group KustoPoolOperations
+
 ## 2.1.0b2 (2021-10-09)
 
 **Features**

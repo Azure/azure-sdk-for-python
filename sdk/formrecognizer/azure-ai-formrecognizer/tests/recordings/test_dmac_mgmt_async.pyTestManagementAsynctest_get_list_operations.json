@@ -1,0 +1,1961 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations?api-version=2022-06-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "1002b3a6-cc2e-46d3-8fdb-65d81b2e708c",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 26 May 2022 00:49:36 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "984"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "operationId": "31512842368_62321e15-90f9-4395-90be-f93b662516ce",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:40:31Z",
+            "lastUpdatedDateTime": "2022-05-26T00:40:37Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b40328b7-0ec8-4984-90e0-02a65fd6e210?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842390_38e890da-33ee-4242-848f-0f6e4851c61d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:40:09Z",
+            "lastUpdatedDateTime": "2022-05-26T00:40:16Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/c06236d1-868d-4108-a8f7-d224757d3d01?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842418_f7604c2c-9e05-4253-8548-fad90dcd7b44",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:39:42Z",
+            "lastUpdatedDateTime": "2022-05-26T00:39:47Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1820e3da-71c4-44a9-bb37-3f9e4f0cf45d?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842441_3cb46ab9-1f80-456a-8b89-b852b74ba1ea",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:39:19Z",
+            "lastUpdatedDateTime": "2022-05-26T00:39:25Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/c6e179c7-39ef-44d3-84a3-6c1484076167?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842545_0d0e4bbb-4335-49a6-9397-25f432ff3557",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:37:35Z",
+            "lastUpdatedDateTime": "2022-05-26T00:37:39Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a1bfddd9-ced4-4af5-9648-58e9ae4f57d7?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842565_e394cbfb-2365-4e07-9b2e-b8dd3220cd43",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:37:14Z",
+            "lastUpdatedDateTime": "2022-05-26T00:37:19Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/ff898898-fcee-4ba7-8a23-3ec222ee8fd6?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842588_430113a9-0373-4381-85a6-a33f5a804d86",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:36:51Z",
+            "lastUpdatedDateTime": "2022-05-26T00:36:58Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/f7531680-664d-4a27-a7d2-9eaab7a9e2e1?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842640_ab70e65c-de7e-4b4d-82bc-0c7f8d2fd14f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:35:59Z",
+            "lastUpdatedDateTime": "2022-05-26T00:36:04Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7b1f6d99-0baa-4104-865b-df5b23fe2ea8?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842662_07aa2dce-6e39-4773-a098-6894f1bc5a64",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:35:38Z",
+            "lastUpdatedDateTime": "2022-05-26T00:35:43Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/4c88ba08-bd94-4446-bc5a-d816e8ea18c4?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512842686_a86d84d2-1a63-4da3-98b1-d3ae0a091d51",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:35:13Z",
+            "lastUpdatedDateTime": "2022-05-26T00:35:20Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/0a020978-ba68-46e4-93b0-1187e6410563?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512843877_3753eb90-bc70-4b0f-b5a4-d75ca5531fb1",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:15:23Z",
+            "lastUpdatedDateTime": "2022-05-26T00:15:27Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/037d3f39-cc65-487f-b76e-69126e553566?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512843962_5025c367-7cdc-4af9-a49e-b6c132714aff",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:13:57Z",
+            "lastUpdatedDateTime": "2022-05-26T00:14:03Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/f51c8750-a3d5-4403-b355-9cdc099b0ced?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844222_4cc3feae-497b-467e-9dc6-ae7db97287a5",
+            "kind": "documentModelBuild",
+            "status": "running",
+            "createdDateTime": "2022-05-26T00:09:37Z",
+            "lastUpdatedDateTime": "2022-05-26T00:49:11Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1184302945?api-version=2022-06-30-preview"
+          },
+          {
+            "operationId": "31512844237_794c5669-9642-4987-9a46-061bd96c448c",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:09:22Z",
+            "lastUpdatedDateTime": "2022-05-26T00:09:28Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/615691433?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844252_fef23688-f434-4f93-a551-08db6f4f99e0",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:09:07Z",
+            "lastUpdatedDateTime": "2022-05-26T00:09:13Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1711717130?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844268_9d1ffcc1-e9b0-47f8-a0f7-428a9e877bde",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:08:51Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:57Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/4a734ca7-82a5-410b-b947-17deca92da15?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844279_c08c090c-3beb-4e3d-88a1-3a6e4b4edc6f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:08:41Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:47Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/0fc0d187-9f77-4f7c-b9c7-5de86ea77fef?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844292_c669d52f-94eb-4ab1-8159-397ecb495eb4",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:08:28Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:34Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/88622b2e-4e11-4384-a5a7-951530111297?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844303_101f1631-22c4-4adb-9739-cf81906d9b67",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:08:16Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:17Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/914b9eac-bfea-493e-81f5-fcf220a0765c?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844310_52116c68-441b-4d5c-96a3-62f557b02b3a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:08:10Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:15Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/6f94177f-b852-49cf-8051-6472a3d8845c?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844317_c98ca288-5f6e-4b35-a9c9-293076369106",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:08:03Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:08Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/20612b1d-733c-4faf-a297-12098f46d63d?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844324_e8ea5d04-c804-49ee-98a4-53b8c2f121f6",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:07:56Z",
+            "lastUpdatedDateTime": "2022-05-26T00:08:02Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/28338199-9912-47e1-b64c-e24726ff49c6?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844330_9dc48b64-f7b9-42cd-b496-a928d525b7df",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:07:49Z",
+            "lastUpdatedDateTime": "2022-05-26T00:07:55Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/54ba0e83-83cd-4ad1-9bab-24c3ef1a0cb4?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844332_2e992719-3460-4859-b9d1-c1f736291624",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:07:48Z",
+            "lastUpdatedDateTime": "2022-05-26T00:07:49Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b6409fd3-2cde-4717-8f6e-66fd1a308d7c?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844341_083ffffe-13f3-4a7e-b293-ff04fe23a1cc",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:07:39Z",
+            "lastUpdatedDateTime": "2022-05-26T00:07:46Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/bd0a3484-da9a-4e68-85ae-25ab1cef6039?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844348_b418a8d8-fb78-4bad-9bec-d5b7b97576e8",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:07:31Z",
+            "lastUpdatedDateTime": "2022-05-26T00:07:37Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/43a91bb2-f619-428a-b0e6-bfb7123683dc?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844376_2aa308ee-6382-4b5f-9c65-95550409822d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:07:03Z",
+            "lastUpdatedDateTime": "2022-05-26T00:07:11Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/c6dbbfeb-42a9-4b44-bc96-ac6149e0941b?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512844390_c88bbf62-de2c-48f0-8933-c70611f33f15",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-26T00:06:49Z",
+            "lastUpdatedDateTime": "2022-05-26T00:06:57Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/afac2218-850f-4cc0-9246-3fe2ee81ef94?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512847369_6e15dee7-656b-4b74-8247-eb8f19916b1a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T23:17:10Z",
+            "lastUpdatedDateTime": "2022-05-25T23:17:16Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/5cfe4433-6e77-4347-b386-ed729821608f?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512847391_1ecd4a37-921f-4415-8bd4-c80d4e0fa74f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T23:16:48Z",
+            "lastUpdatedDateTime": "2022-05-25T23:16:55Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/d3f161ae-4b5a-4e23-9eda-a6d3699a4c31?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512847418_69d685ea-c455-4be5-b729-cea37a587c5c",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T23:16:21Z",
+            "lastUpdatedDateTime": "2022-05-25T23:16:27Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/6f2a7a5f-9122-425b-b908-345df44a2899?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512847442_e99988e7-bf2b-48e4-b8f9-e7cb64f318eb",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T23:15:57Z",
+            "lastUpdatedDateTime": "2022-05-25T23:16:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/ae2a0788-eba4-4adf-bf95-eb502cc6f6ea?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512849780_36587382-870d-4803-b015-a19ed0358db6",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T22:37:00Z",
+            "lastUpdatedDateTime": "2022-05-25T22:37:07Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/821676831?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512849862_30bc917b-73db-4078-ac7b-7de19b5e95b9",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T22:35:38Z",
+            "lastUpdatedDateTime": "2022-05-25T22:35:45Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1103114664?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512849924_516c6863-983d-4fad-94d5-25cbd985adf2",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T22:34:36Z",
+            "lastUpdatedDateTime": "2022-05-25T22:34:43Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1894054129?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512850095_763f29ee-efef-4a0a-8f5e-7824038d3288",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T22:31:44Z",
+            "lastUpdatedDateTime": "2022-05-25T22:31:52Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1584874394?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512850111_91b99af6-94f6-4ee9-bbaa-284c9cec3905",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T22:31:29Z",
+            "lastUpdatedDateTime": "2022-05-25T22:31:36Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2119979277?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853361_7bf372f2-bb0c-4084-8d85-0dd816a4112e",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:37:18Z",
+            "lastUpdatedDateTime": "2022-05-25T21:37:19Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/8d5994ce-f67a-4521-a963-ab695a8853d2?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853370_53514d96-c8f6-487f-8745-ed1dd7b2f928",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:37:09Z",
+            "lastUpdatedDateTime": "2022-05-25T21:37:15Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/daa045cb-a57b-465b-8f2b-a33226df6f63?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853381_c31c1085-acef-43ba-ac78-ec93aa478fac",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:36:58Z",
+            "lastUpdatedDateTime": "2022-05-25T21:37:06Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/d0a3a3bc-9d3e-405b-b738-76a79e3aea68?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853397_c25cea85-f0c5-4ce1-bbee-abc5c1cf0ee9",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:36:43Z",
+            "lastUpdatedDateTime": "2022-05-25T21:36:43Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/70e8ac1e-5107-465f-b14b-5ea754adb9e7?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853406_cbf04582-0321-4b55-9a34-aeea7dde7012",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:36:33Z",
+            "lastUpdatedDateTime": "2022-05-25T21:36:40Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/5d7e4d45-fb06-428b-b3f6-6fddd7aca16a?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853416_62d8093a-5125-418f-9d32-778cb3cf9f9d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:36:24Z",
+            "lastUpdatedDateTime": "2022-05-25T21:36:30Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/d77e46f1-b6ee-41ca-a42d-5a1191999c3e?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853427_6e5f4511-35e0-44a6-9085-428cc47f6ca4",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:36:13Z",
+            "lastUpdatedDateTime": "2022-05-25T21:36:14Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/e51311a9-cb55-4f03-b34d-6797af05c5cb?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853436_968ed863-e6ae-495e-ace0-ca8b9c518a98",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:36:03Z",
+            "lastUpdatedDateTime": "2022-05-25T21:36:09Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/284d7c59-fa68-43af-afa3-16ad54138329?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853445_53a0e684-6efe-45f7-98a7-e7904ce60835",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:35:54Z",
+            "lastUpdatedDateTime": "2022-05-25T21:36:00Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7b0ebefd-b741-4284-90a3-86a1a8ae1032?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853456_3550e022-8b47-4dcf-ae9f-d68193666d75",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:35:44Z",
+            "lastUpdatedDateTime": "2022-05-25T21:35:44Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/ca86c314-91f5-495d-97ab-12ae7147bf5a?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "testkey": "testvalue"
+            }
+          },
+          {
+            "operationId": "31512853465_a531568b-180e-4e34-8884-8b6e67e966c4",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:35:34Z",
+            "lastUpdatedDateTime": "2022-05-25T21:35:41Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b85b220b-612c-427d-947a-d15d52cd4b4e?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853475_a3836d60-9081-4a97-89b0-41e710d53659",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:35:25Z",
+            "lastUpdatedDateTime": "2022-05-25T21:35:31Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/49ceac99-70eb-4db6-8767-a93eba989a32?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853544_0faf721c-1c58-45c3-817c-bb35aae23673",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:34:15Z",
+            "lastUpdatedDateTime": "2022-05-25T21:34:16Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1b3ee143-ce90-4fdc-b156-aaa64f445fd7?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853554_9df1e3e2-0148-42b8-9efb-c55e77787939",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:34:06Z",
+            "lastUpdatedDateTime": "2022-05-25T21:34:12Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/09834c09-9b9f-4292-9b61-828aa859c857?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853565_7c5372e4-6a4b-4e56-83a1-1a17b0be26df",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:33:55Z",
+            "lastUpdatedDateTime": "2022-05-25T21:34:03Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/fa655082-c2bc-4c1d-b4a0-25e9bf072e4f?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853580_4ae79063-8720-41b9-86be-c80836b90e94",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:33:39Z",
+            "lastUpdatedDateTime": "2022-05-25T21:33:40Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/67568da7-15b5-4730-baad-914350cd082a?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853589_8710fa6a-f540-45aa-96a9-1edcbc236bf5",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:33:30Z",
+            "lastUpdatedDateTime": "2022-05-25T21:33:36Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/6e8d4895-e262-485b-ae12-21108bf64198?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853600_26cf4f15-4ebb-42a7-8582-3291c897fdb2",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:33:19Z",
+            "lastUpdatedDateTime": "2022-05-25T21:33:27Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2838dd11-4e2a-4297-a50b-7307d38e9049?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853666_fad73dce-8625-4834-abfc-708d318dee3a",
+            "kind": "documentModelBuild",
+            "status": "notStarted",
+            "createdDateTime": "2022-05-25T21:32:13Z",
+            "lastUpdatedDateTime": "2022-05-25T21:32:13Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/9a934118-8aac-4d26-bf26-c607142b62f6?api-version=2022-06-30-preview"
+          },
+          {
+            "operationId": "31512853677_f38bfeea-3356-4588-9cd3-d532d79e8eb7",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:32:03Z",
+            "lastUpdatedDateTime": "2022-05-25T21:32:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/95eb8c08-59a6-45c5-9005-e0944ba2286a?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "testkey": "testvalue"
+            }
+          },
+          {
+            "operationId": "31512853686_7e6e4ac9-277a-4cd6-be0f-afb0e280fa5a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:31:54Z",
+            "lastUpdatedDateTime": "2022-05-25T21:32:00Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/526f3e78-3578-49d6-b79e-acee09a02d4d?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853695_ab07f0a4-98e8-4c5e-930e-aa7279ad9d6a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:31:44Z",
+            "lastUpdatedDateTime": "2022-05-25T21:31:50Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/3824ddf8-022d-426b-8cb3-fd23ba73af7b?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853733_d553ba99-4602-4242-88c0-7b4bee551d98",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:31:07Z",
+            "lastUpdatedDateTime": "2022-05-25T21:31:07Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/239094f0-94b5-482a-ad49-cead4f51096f?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853742_2c5cf6c5-f050-4eed-a1dc-8a291032391d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:30:57Z",
+            "lastUpdatedDateTime": "2022-05-25T21:31:03Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/c6eb83b3-a28f-45cd-beb4-6b606cdda649?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853752_46c5dfd9-84c5-431a-bcbe-1dd0344896e4",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:30:48Z",
+            "lastUpdatedDateTime": "2022-05-25T21:30:54Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b8c64ee5-b0ad-4b49-a47a-58d56335d1bb?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853763_f23fa9d6-3338-481c-93fc-0c9fbece475f",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:30:37Z",
+            "lastUpdatedDateTime": "2022-05-25T21:30:37Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/c0d5c6b7-b015-4d1b-b72a-4417b5a87a86?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853772_9a499fb4-9070-4cef-b769-52d46dd6658e",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:30:28Z",
+            "lastUpdatedDateTime": "2022-05-25T21:30:33Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/eed04b10-a9f3-4baa-b0ff-36cb1659dafe?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853784_623e514f-d428-4b47-89b4-b6ff5c026e9c",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:30:16Z",
+            "lastUpdatedDateTime": "2022-05-25T21:30:23Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1142130b-54cf-439b-b9bf-023427855b2a?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853795_128e3f90-270d-4a48-983a-109ca434d585",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:30:04Z",
+            "lastUpdatedDateTime": "2022-05-25T21:30:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/24d2d3cb-c4ed-4e3d-b622-1c2443dd34c4?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853804_8a7b93a6-8070-4076-9cc8-a53de9d592a9",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:29:55Z",
+            "lastUpdatedDateTime": "2022-05-25T21:30:01Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2e209f79-6eb2-48e0-8699-3cc549fbe7b7?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853814_79465c44-ad97-47c9-b6ec-54bbaf96f077",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:29:46Z",
+            "lastUpdatedDateTime": "2022-05-25T21:29:52Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/d70d4e3d-2edd-4d23-93bd-d8a3cd05d121?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853824_265c50eb-b117-40a3-b2ac-a97179fa5102",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:29:35Z",
+            "lastUpdatedDateTime": "2022-05-25T21:29:36Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b8486d28-353c-4280-8687-7829228e97a5?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "testkey": "testvalue"
+            }
+          },
+          {
+            "operationId": "31512853835_5d409e09-6000-42ac-a92c-91e6ba2e74a1",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:29:24Z",
+            "lastUpdatedDateTime": "2022-05-25T21:29:32Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/aac6b88c-99af-4ad7-a5ab-b60549ee9cfd?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853846_27c009fb-6cca-43e9-a6ac-0b2b34503b22",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:29:13Z",
+            "lastUpdatedDateTime": "2022-05-25T21:29:21Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/701bbb19-6d17-4d0d-972f-2a77235d29b1?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853980_b31361ff-ea51-4bf6-9a78-dc20cbb9729c",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:27:00Z",
+            "lastUpdatedDateTime": "2022-05-25T21:27:00Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/dde082a7-3c48-4f6e-917c-af71911c88b2?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853989_9b8d6ac5-6494-4a17-b4da-93815c3e1367",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:26:50Z",
+            "lastUpdatedDateTime": "2022-05-25T21:26:56Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/695d7ab2-e5d0-44c5-abd4-44b8c3dc61ac?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512853999_ffa46d1f-07a3-4594-97cf-a44c5257c363",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:26:41Z",
+            "lastUpdatedDateTime": "2022-05-25T21:26:47Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/0410d1da-0e7e-4892-ad99-71189fda353a?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854009_525cf1e3-eaba-4ecc-a26d-b71eefcf74a4",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:26:30Z",
+            "lastUpdatedDateTime": "2022-05-25T21:26:32Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/55aa6a1e-a1c4-41f1-bcb0-c712e286b4e2?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854019_68ac1c44-90c5-4a46-b3df-19845f0672f1",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:26:21Z",
+            "lastUpdatedDateTime": "2022-05-25T21:26:27Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/3d39bc26-1590-4483-a089-88e15e3d55e3?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854028_6f7f4958-ea17-46ec-9e22-045e98950b07",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:26:12Z",
+            "lastUpdatedDateTime": "2022-05-25T21:26:18Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/4ab858fd-485c-4409-ba66-bdc9195f9d7e?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854039_d56fe8bd-b02d-4b2d-b34e-188686d521d9",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:26:01Z",
+            "lastUpdatedDateTime": "2022-05-25T21:26:01Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2e271a73-338f-4f2a-9556-68460bd8d848?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854048_9459d53c-1a1c-4b42-ba64-0c11d0e94fcd",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:25:52Z",
+            "lastUpdatedDateTime": "2022-05-25T21:25:57Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/e9bbce70-7f1c-4639-936f-a39ef1855575?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854057_f4fa4cf2-39f6-4acf-97aa-d2b5472913ce",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:25:42Z",
+            "lastUpdatedDateTime": "2022-05-25T21:25:48Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b0e2b4d4-4391-4798-ae28-9d2d374fc219?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854068_b99fe80e-0275-4db4-b177-f87ba3a7a708",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:25:32Z",
+            "lastUpdatedDateTime": "2022-05-25T21:25:33Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/9ca31ec1-7521-4f99-8783-833764851e23?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "testkey": "testvalue"
+            }
+          },
+          {
+            "operationId": "31512854077_47c6e2d9-e215-421c-b6cf-4a106bb9b454",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:25:23Z",
+            "lastUpdatedDateTime": "2022-05-25T21:25:29Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1c361ac2-8b2f-4a7b-9582-ff0f4f494be7?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854086_d21b14fe-153a-414f-aae9-b3152e90847f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:25:13Z",
+            "lastUpdatedDateTime": "2022-05-25T21:25:19Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/3b4a08a8-5198-4bfb-b905-22a8c5aa9946?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854116_efb08294-34fd-41fa-9f7e-0d6d18c4ddf8",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:24:43Z",
+            "lastUpdatedDateTime": "2022-05-25T21:24:45Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2fa2ff27-32b4-4e71-9252-775b5516f791?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854125_90585ac7-5092-44e4-bc57-04ff5539c18c",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:24:34Z",
+            "lastUpdatedDateTime": "2022-05-25T21:24:40Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/f5d7c7b6-ceb1-46ff-9766-b7e5265a9002?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854137_cad617b5-9b6c-41b9-a1f9-e22758703d85",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:24:23Z",
+            "lastUpdatedDateTime": "2022-05-25T21:24:31Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/144d84a9-3df9-489c-abdc-f0e51f1f2227?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854152_43568699-bffe-4f22-94b3-376ee2cdec76",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:24:07Z",
+            "lastUpdatedDateTime": "2022-05-25T21:24:08Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/6bb304e0-3df6-4683-8106-df7b9aea3a61?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854162_fc10bf5d-732e-4e54-b3bd-16286ace896a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:23:58Z",
+            "lastUpdatedDateTime": "2022-05-25T21:24:04Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/4d2863b5-62de-4d6e-a257-80f35a8dfc76?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854171_7eb4b044-d3d3-43a6-a132-e75676511649",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:23:49Z",
+            "lastUpdatedDateTime": "2022-05-25T21:23:55Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1a85a63e-a342-4377-934a-33f928c0ad13?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854182_7f02d158-7f11-4680-b87d-79375e8fae4b",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:23:38Z",
+            "lastUpdatedDateTime": "2022-05-25T21:23:38Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a0155127-6d78-46b7-8b39-5429b7db87b5?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854191_f8402262-2a4b-49ae-ad15-e60c40c8da35",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:23:28Z",
+            "lastUpdatedDateTime": "2022-05-25T21:23:34Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/613882d5-6701-48ff-b32f-3a974dccc5a5?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854200_c18d58fe-6093-4c5c-b384-dc6918ca7e25",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:23:19Z",
+            "lastUpdatedDateTime": "2022-05-25T21:23:25Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a69c43ad-c873-49f9-818e-03e89057bc0e?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854211_45919d13-1414-45c4-9ea1-c00fef303de3",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:23:08Z",
+            "lastUpdatedDateTime": "2022-05-25T21:23:09Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b53c4b42-1103-460c-bd69-3bb73e4bcbbe?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "testkey": "testvalue"
+            }
+          },
+          {
+            "operationId": "31512854222_17d4fd2c-0141-4acb-b818-7327d2052b63",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:22:57Z",
+            "lastUpdatedDateTime": "2022-05-25T21:23:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/14fe6947-e908-4d81-bf1c-690736d46962?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512854233_516148ff-c62d-4848-982d-42c16a5045ea",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T21:22:46Z",
+            "lastUpdatedDateTime": "2022-05-25T21:22:54Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/47facd9f-0a7c-4948-a7b5-5499df0a3dc3?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512929781_7ac4b42a-5abe-44cc-9c0c-2e71fd2e8cf8",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T00:23:38Z",
+            "lastUpdatedDateTime": "2022-05-25T00:23:44Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/24d3d402-b8eb-47a5-95c5-4899c14ab863?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512929803_9efd0f25-4ac2-4f90-94e5-e99e4d90a6fe",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T00:23:17Z",
+            "lastUpdatedDateTime": "2022-05-25T00:23:24Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7925eb28-a9f2-44a1-8493-14050f2a7387?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512929834_3f6a8a1f-b6fb-478e-b849-7bd7553782be",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T00:22:45Z",
+            "lastUpdatedDateTime": "2022-05-25T00:22:51Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/655594eb-706d-44c9-affc-d122b12ebb95?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512929858_7baa2a16-8ff5-4d32-b34b-c048169ad107",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-25T00:22:22Z",
+            "lastUpdatedDateTime": "2022-05-25T00:22:30Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/58969436-2ede-4988-8d35-3ff14e38c2f8?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512933407_bb840db2-f061-4f2b-9788-e4c4af576116",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-24T23:23:13Z",
+            "lastUpdatedDateTime": "2022-05-24T23:23:21Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/b6d8e64a-2daf-40e5-92fd-ee729992eca7?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          }
+        ],
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations?api-version=2022-06-30-preview\u0026nextLink=2!228!MDAwMTI1IXN1YnNjcmlwdGlvbnMvYjE3OWU2MjM1Y2MyNDUyYmI3YWZhMzM0MzBjNTYzZWYvb3BlcmF0aW9ucy8zMTUxMjkzMzQyOV8zZTA2NDdhNS1hZDI0LTRiYzEtOGVlYi1mNzYxNjA2YWI5MzMvb3BlcmF0aW9uSW5mby5qc29uITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaIQ--"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations?api-version=2022-06-30-preview\u0026nextLink=2!228!MDAwMTI1IXN1YnNjcmlwdGlvbnMvYjE3OWU2MjM1Y2MyNDUyYmI3YWZhMzM0MzBjNTYzZWYvb3BlcmF0aW9ucy8zMTUxMjkzMzQyOV8zZTA2NDdhNS1hZDI0LTRiYzEtOGVlYi1mNzYxNjA2YWI5MzMvb3BlcmF0aW9uSW5mby5qc29uITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaIQ--",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b556e625-64d0-4883-8f09-7a2b6a0a0735",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 26 May 2022 00:49:38 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1099"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "operationId": "31512933429_3e0647a5-ad24-4bc1-8eeb-f761606ab933",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-24T23:22:50Z",
+            "lastUpdatedDateTime": "2022-05-24T23:23:00Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/cda9f0b4-f7ce-42eb-804a-283d7d2925d3?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512933455_0a700a00-a5a7-4618-aad7-c275e513ee31",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-24T23:22:24Z",
+            "lastUpdatedDateTime": "2022-05-24T23:22:30Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/e7bac8d4-34f0-46d8-8707-fd8399bad8f2?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31512933484_e0748240-a88a-4239-bcfd-5c6fd32eb4bc",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-24T23:21:55Z",
+            "lastUpdatedDateTime": "2022-05-24T23:22:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/9970e227-9940-4b21-9bb2-b3c98dc58bbc?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281305_16b6d051-6de0-43dc-8972-32026c36444e",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:55Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:55Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/68072195?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513281312_3147405f-adfa-4adb-b25a-50e774214965",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:48Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:53Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1150070782?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281318_02e58451-ea52-4a26-a4d9-630c565d2a03",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:41Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:47Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/57523987?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281325_11c98e14-0a18-4b08-9d46-b0570304cd39",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:34Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:40Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1515160822?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281332_c07ad8dc-2eb7-48cb-a8e4-0ef3fdc62905",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:28Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:33Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1263157962?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513281337_64b7cd66-cff7-406c-85a6-cd95009422f4",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:22Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:27Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/75004787?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281341_04d24d26-ade9-4d41-a68b-a4159a326e39",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:18Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:23Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/863141481?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281349_4d219aee-f039-4efb-b5d4-248bea37db9b",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:11Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:16Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1218511119?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513281352_f38cf6ed-e854-4c5a-a518-03b85f1418f5",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:07Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:08Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/48612371?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281359_8164f74e-933f-4ca7-beb0-2d9c93c6deae",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:44:00Z",
+            "lastUpdatedDateTime": "2022-05-20T22:44:06Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1535473279?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281367_07dfb507-b901-4832-a324-610595744dc0",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:52Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:58Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1419173043?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281374_e2860f51-dfc3-406e-b356-0bf42a182674",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:46Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:51Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/842386608?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281376_4bb5faff-d158-49f9-a90e-e8012508a821",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:43Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:44Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1213346569?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281383_12267c15-440c-4d5f-99ad-841ffeddf287",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:36Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:42Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/836773127?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281390_4c653229-f853-48ea-a2fd-c8cceb1c5199",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:30Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:35Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/519960472?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281396_506464f2-0aac-4b7c-863d-9f77156b7693",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:23Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:28Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/193585410?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281403_156c0284-0db0-4ae6-9808-cc9238469d7a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:16Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:22Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1831929663?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281412_efce2611-5f31-4b55-a658-040434929983",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:08Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:14Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1930661185?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281419_b61d94c0-ff16-41af-9362-48e8fd2dc38e",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:43:01Z",
+            "lastUpdatedDateTime": "2022-05-20T22:43:06Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/397025833?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281421_39baa3c2-544b-4360-a3a7-f079297cdad6",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:42:58Z",
+            "lastUpdatedDateTime": "2022-05-20T22:42:59Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1198547788?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281430_d08fe4f2-c2dc-4cd2-8770-9841698a411e",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:42:50Z",
+            "lastUpdatedDateTime": "2022-05-20T22:42:57Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/397752956?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281439_a464c530-db15-43a7-b308-f33716e55cf3",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:42:40Z",
+            "lastUpdatedDateTime": "2022-05-20T22:42:48Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1396158519?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281450_087f3caa-9920-43d4-96e2-bd916aa1e060",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:42:29Z",
+            "lastUpdatedDateTime": "2022-05-20T22:42:37Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1209692163?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513281912_5fcfb48a-e24e-42bd-bc4b-3479816da1bc",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:34:47Z",
+            "lastUpdatedDateTime": "2022-05-20T22:34:51Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/568363965?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281922_b1a2562e-a39b-462f-a0c4-0a56a226d6b2",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:34:38Z",
+            "lastUpdatedDateTime": "2022-05-20T22:34:42Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1653998951?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281979_274ab24f-9bab-4593-8429-b2a968685414",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:33:40Z",
+            "lastUpdatedDateTime": "2022-05-20T22:34:32Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2093077299?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281986_296a9810-3862-45dc-b193-b86597c4572d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:33:33Z",
+            "lastUpdatedDateTime": "2022-05-20T22:33:39Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/528983867?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513281999_a582e401-8ca3-4aac-8d00-156e9fc80e4e",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:33:20Z",
+            "lastUpdatedDateTime": "2022-05-20T22:33:26Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1397612740?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282064_8dfee470-5dbc-45dd-a5ab-6fcc83e24321",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:32:16Z",
+            "lastUpdatedDateTime": "2022-05-20T22:32:21Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1308034362?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282078_f0c1c224-4cb9-4049-a85e-643ee2d5326f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:32:01Z",
+            "lastUpdatedDateTime": "2022-05-20T22:32:08Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1310049402?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282092_071e905d-edd6-4d8f-89cf-45ffc29d650a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:31:47Z",
+            "lastUpdatedDateTime": "2022-05-20T22:31:55Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2089070094?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282107_058d6d4e-f608-4b87-a2f4-389a28248457",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:31:33Z",
+            "lastUpdatedDateTime": "2022-05-20T22:31:40Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/628741096?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282275_27ae0a8c-5925-4d3f-8f2b-715a92e115b8",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:28:45Z",
+            "lastUpdatedDateTime": "2022-05-20T22:28:45Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1783061604?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282282_94f008cd-845e-4c8c-a109-cbd7d108738a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:28:38Z",
+            "lastUpdatedDateTime": "2022-05-20T22:28:44Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/367294566?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282284_1976e436-1893-4d76-9b6b-6490aa742bca",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:28:35Z",
+            "lastUpdatedDateTime": "2022-05-20T22:28:36Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1865946473?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282293_dd8df21e-b476-40eb-a943-15f6984ba290",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:28:26Z",
+            "lastUpdatedDateTime": "2022-05-20T22:28:34Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/370720633?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282302_a3b3f3c5-4cc8-4bb5-a535-f26966b6fddd",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:28:17Z",
+            "lastUpdatedDateTime": "2022-05-20T22:28:25Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2007776436?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282311_c368f45d-f513-4250-8225-87243b112f02",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:28:09Z",
+            "lastUpdatedDateTime": "2022-05-20T22:28:16Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/873402363?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282547_1ee813ea-647c-43d6-9941-20572d1eb75f",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:24:13Z",
+            "lastUpdatedDateTime": "2022-05-20T22:24:13Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1320960452?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282554_566ec097-f182-4ea9-aaeb-9dc0e9aef114",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:24:06Z",
+            "lastUpdatedDateTime": "2022-05-20T22:24:12Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1311109095?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282556_e8fad89d-d83b-4ff5-9942-e9cc52be67de",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:24:03Z",
+            "lastUpdatedDateTime": "2022-05-20T22:24:04Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1166100637?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282565_47127e89-d900-4a03-8740-10efb29ffbab",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:23:54Z",
+            "lastUpdatedDateTime": "2022-05-20T22:24:02Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1016668029?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282573_6e3418a2-2005-4199-9ef8-b3519a37df78",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:23:46Z",
+            "lastUpdatedDateTime": "2022-05-20T22:23:53Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/746948428?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282582_0addac74-0b3e-480a-a70a-2633509183e6",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:23:37Z",
+            "lastUpdatedDateTime": "2022-05-20T22:23:45Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2124291841?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282904_599d1f03-edeb-4c8f-8c4b-a396cba973ca",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:18:16Z",
+            "lastUpdatedDateTime": "2022-05-20T22:18:17Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1987548841?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513282912_fbdec48d-4961-4572-9e09-4a1d9a01235c",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:18:07Z",
+            "lastUpdatedDateTime": "2022-05-20T22:18:15Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/321925802?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282919_254798e9-3959-4aa3-bb07-aaee84080e55",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:18:00Z",
+            "lastUpdatedDateTime": "2022-05-20T22:18:06Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/192257287?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282928_176002ed-0aed-4fe5-abb1-446367cfc581",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:17:51Z",
+            "lastUpdatedDateTime": "2022-05-20T22:17:59Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2086976819?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513282937_e79640d7-cf9f-47ff-94d6-49475912e923",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T22:17:43Z",
+            "lastUpdatedDateTime": "2022-05-20T22:17:50Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/741252736?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513284765_886e7ae5-caaa-4a4d-9653-4d08a7f09a5a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:47:14Z",
+            "lastUpdatedDateTime": "2022-05-20T22:32:46Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/599703190?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284771_f8a2a5ad-9bc8-443f-9f40-4432a0e783e8",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:47:09Z",
+            "lastUpdatedDateTime": "2022-05-20T21:47:13Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/814669322?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284775_33d6b11e-25a4-40f0-ad4c-d0809b23bff1",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:47:05Z",
+            "lastUpdatedDateTime": "2022-05-20T21:47:10Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1311906493?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284782_a9f0fc1a-1a0b-4a92-aaf3-055601e1bb56",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:58Z",
+            "lastUpdatedDateTime": "2022-05-20T21:47:03Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2128575452?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513284785_176b05e1-8b19-4a0e-a03c-ba0af8e97916",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:54Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:55Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1113629690?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284792_73badfae-6150-4c34-98a6-b35cd6891451",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:47Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:53Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/768500518?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284801_e49823e2-c969-4a89-b7bb-5716d2e03c01",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:38Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:44Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/54927031?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284808_052a8b41-19e3-432f-a9d0-943723b181cd",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:31Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:37Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1384803752?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284811_d4bcac8f-99d6-428c-84b2-6b80b7a5ff19",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:28Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:29Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/422555072?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284818_6c7b07f6-8233-47cb-a21f-aa7ca24b7723",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:21Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:27Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1585665137?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284825_0067c9ac-3888-4e56-8820-a1d8b689434f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:15Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:20Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1609292019?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284831_546ff0aa-c79e-4977-99f8-3a1f9666a41a",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:09Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:14Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1611797200?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284838_13b98633-2c9d-4f69-a71d-e7a0ad1373d9",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:46:02Z",
+            "lastUpdatedDateTime": "2022-05-20T21:46:07Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/349422738?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284848_3257ae7e-5018-4d32-9d82-4f65dbf120bc",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:45:51Z",
+            "lastUpdatedDateTime": "2022-05-20T21:45:59Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/115110075?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284856_5e56cce7-b548-4dc0-b2c8-1588fc78c3bf",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:45:43Z",
+            "lastUpdatedDateTime": "2022-05-20T21:45:49Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1772507299?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284859_0120b27e-d2c4-4e5a-ac9a-70013ba14900",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:45:40Z",
+            "lastUpdatedDateTime": "2022-05-20T21:45:42Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/699358290?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284866_e16e6ce6-e62f-4bec-b017-ca8a4d05f8a3",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:45:33Z",
+            "lastUpdatedDateTime": "2022-05-20T21:45:39Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/465678389?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284876_5dc1a533-8a67-402d-a9ac-82ec1902f02d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:45:24Z",
+            "lastUpdatedDateTime": "2022-05-20T21:45:31Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/76768553?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513284885_0c7b820a-c73d-43eb-bf85-4d43b9875ed6",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:45:14Z",
+            "lastUpdatedDateTime": "2022-05-20T21:45:22Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/400394557?api-version=2022-06-30-preview",
+            "percentCompleted": 100,
+            "tags": {
+              "ordinary tag": "an ordinary tag",
+              "crazy tag": "a CRAZY tag 123!@#$%^\u0026*()[]{}\\/?.,\u003C\u003E"
+            }
+          },
+          {
+            "operationId": "31513285118_77b5211d-6b46-428e-80cc-f62b9f20b2a4",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:41:21Z",
+            "lastUpdatedDateTime": "2022-05-20T21:41:25Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/587285028?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285129_eb5b07ac-5d6e-4f63-9b5a-e94b30a5aafb",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:41:11Z",
+            "lastUpdatedDateTime": "2022-05-20T21:41:15Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/120397375?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285140_97be775c-3b9d-40ed-bb0a-ba327f281eb9",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:41:00Z",
+            "lastUpdatedDateTime": "2022-05-20T21:41:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/283577917?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285147_3560d595-b831-4fe8-a430-e32f5fe46304",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:40:53Z",
+            "lastUpdatedDateTime": "2022-05-20T21:40:58Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1466706662?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285160_2bbb0f75-9a1e-43db-ab8d-d8ad965e9cc4",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:40:40Z",
+            "lastUpdatedDateTime": "2022-05-20T21:40:45Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1970501535?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285230_e6d52ea3-b2cd-4081-a721-0a0e795cdd36",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:39:30Z",
+            "lastUpdatedDateTime": "2022-05-20T21:39:34Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/832357121?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285248_9fb424c4-9197-4b9d-9af3-ddac7256ecfc",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:39:12Z",
+            "lastUpdatedDateTime": "2022-05-20T21:39:19Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/1034735020?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285262_7680c399-2aa3-4903-abd4-0452b6eb140d",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:38:57Z",
+            "lastUpdatedDateTime": "2022-05-20T21:39:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/2018477372?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513285278_62dd45cf-0376-40a1-9ee9-5ec0fbcee98f",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T21:38:42Z",
+            "lastUpdatedDateTime": "2022-05-20T21:38:51Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/660901766?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293180_f8672a11-ba37-43aa-a09a-f9f73fb2ddf0",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:27:00Z",
+            "lastUpdatedDateTime": "2022-05-20T19:27:06Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/21894b38-59b7-497e-ac69-3a4e53b01b82?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293187_ac601035-739a-426e-a144-0c368e5c83f3",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:52Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:58Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/5c612728-f6d5-4adc-ba1b-329971dfc7a8?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293195_0b154914-8d03-4b52-a001-271367b0c2d7",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:44Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:50Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/28572756-402f-44ea-991b-0b02cae02f17?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293206_e131d2c6-4521-4cf8-9ee8-1cedfe99171a",
+            "kind": "documentModelCompose",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:34Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:34Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/6bb6bb57-9232-4cd6-ba43-272f2cb9b322?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293212_0c25c607-54de-4364-a82d-bffff793fe20",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:27Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:33Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/e72311c9-4e42-48fc-b080-e466737545e6?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293218_4788574d-2a19-4963-9840-dae2a4a4c8df",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:21Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:26Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/9bde9fb6-34d2-46f5-8ca9-af06cc7590cd?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293225_b562613c-972d-4713-9e05-71c2c674efea",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:14Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:20Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/4443bd1a-0b0a-402f-8aaf-8fe2e07b33aa?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293232_553ef880-653d-4309-8688-52dbabc0b3ee",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:08Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:14Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/ad655a42-e97e-4d39-860a-5ee31989a4fa?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293233_db227116-1f19-4d59-952a-f9200a21c6e8",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:26:06Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:06Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/bbc3ffe6-22d1-48e3-8ba5-e60b07fe9400?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293241_41b3fea2-0de5-4f8d-88ff-ac4822efb4b9",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:25:58Z",
+            "lastUpdatedDateTime": "2022-05-20T19:26:05Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/dfc7c68a-71a3-4f2f-beb9-b717a4a49257?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293248_1c4219bf-b2c9-4ebc-a850-59270ad5ca74",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:25:51Z",
+            "lastUpdatedDateTime": "2022-05-20T19:25:57Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/6ec7ba98-abdd-49f4-bc20-02fc1edbb803?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293276_c8ed6566-6e69-4cfc-97bc-b423ebde34c8",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:25:23Z",
+            "lastUpdatedDateTime": "2022-05-20T19:25:30Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/64ed13d3-d5f9-4c5e-b23a-6b1c31acd741?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293289_16007630-5c08-4f0d-90b3-669668634e53",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:25:10Z",
+            "lastUpdatedDateTime": "2022-05-20T19:25:18Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/bbd239f6-d2d7-4124-8fab-f92413acf34f?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293337_f46bd82e-0a84-45fe-8c9b-4709113424db",
+            "kind": "documentModelCopyTo",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:24:23Z",
+            "lastUpdatedDateTime": "2022-05-20T19:24:24Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/ce5ac5cb-c5fe-48d2-9d92-cbc9714b0fa2?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          },
+          {
+            "operationId": "31513293348_1c39ffa6-39a8-4cb4-9baf-d66dde3383e3",
+            "kind": "documentModelBuild",
+            "status": "succeeded",
+            "createdDateTime": "2022-05-20T19:24:12Z",
+            "lastUpdatedDateTime": "2022-05-20T19:24:21Z",
+            "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/583b77ef-b6ea-47aa-b2e7-a4d6b423e127?api-version=2022-06-30-preview",
+            "percentCompleted": 100
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31513293348_1c39ffa6-39a8-4cb4-9baf-d66dde3383e3?api-version=2022-06-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "1a2f6a6c-fc2a-4716-80e0-664fd4f0cfad",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 26 May 2022 00:49:39 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "13"
+      },
+      "ResponseBody": {
+        "operationId": "31513293348_1c39ffa6-39a8-4cb4-9baf-d66dde3383e3",
+        "kind": "documentModelBuild",
+        "status": "succeeded",
+        "createdDateTime": "2022-05-20T19:24:12Z",
+        "lastUpdatedDateTime": "2022-05-20T19:24:21Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/583b77ef-b6ea-47aa-b2e7-a4d6b423e127?api-version=2022-06-30-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "583b77ef-b6ea-47aa-b2e7-a4d6b423e127": {
+              "fieldSchema": {
+                "Merchant": {
+                  "type": "string"
+                },
+                "PhoneNumber": {
+                  "type": "string"
+                },
+                "Website": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                },
+                "PurchaseOrderNumber": {
+                  "type": "string"
+                },
+                "DatedAs": {
+                  "type": "string"
+                },
+                "VendorName": {
+                  "type": "string"
+                },
+                "CompanyName": {
+                  "type": "string"
+                },
+                "CompanyAddress": {
+                  "type": "string"
+                },
+                "CompanyPhoneNumber": {
+                  "type": "string"
+                },
+                "Subtotal": {
+                  "type": "string"
+                },
+                "Tax": {
+                  "type": "string"
+                },
+                "Total": {
+                  "type": "string"
+                },
+                "Signature": {
+                  "type": "string"
+                },
+                "Quantity": {
+                  "type": "number"
+                },
+                "FullSignature": {
+                  "type": "signature"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "CompanyAddress": 0.8,
+                "CompanyName": 0.995,
+                "CompanyPhoneNumber": 0.995,
+                "DatedAs": 0.995,
+                "Email": 0.8,
+                "FullSignature": 0.6,
+                "Merchant": 0.995,
+                "PhoneNumber": 0.995,
+                "PurchaseOrderNumber": 0.995,
+                "Quantity": 0.995,
+                "Signature": 0.995,
+                "Subtotal": 0.995,
+                "Tax": 0.995,
+                "Total": 0.995,
+                "VendorName": 0.995,
+                "Website": 0.995
+              }
+            }
+          },
+          "modelId": "583b77ef-b6ea-47aa-b2e7-a4d6b423e127",
+          "createdDateTime": "2022-05-20T19:24:21Z",
+          "apiVersion": "2022-06-30-preview"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

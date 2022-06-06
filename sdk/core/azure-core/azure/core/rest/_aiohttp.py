@@ -31,6 +31,7 @@ from multidict import CIMultiDict
 from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
+from ..exceptions import ResponseNotReadError
 
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
@@ -162,7 +163,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
             **kwargs
         )
         self._decompress = decompress
-        self._decompressed_content = None
+        self._decompressed_content = False
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -170,6 +171,14 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
         state['_internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+    @property
+    def content(self):
+        # type: (...) -> bytes
+        """Return the response's content in bytes."""
+        if self._content is None:
+            raise ResponseNotReadError(self)
+        return _aiohttp_body_helper(self)
 
     async def read(self) -> bytes:
         """Read the response's bytes into memory.

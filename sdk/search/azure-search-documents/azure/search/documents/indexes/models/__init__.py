@@ -31,16 +31,18 @@ from ._index import (
     SimpleField,
     SearchIndex,
 )
-from . import _edm as SearchFieldDataType
+from . import _edm
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
+    SearchAlias,
+    AzureMachineLearningSkill,
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
-    BM25Similarity as BM25SimilarityAlgorithm,
+    BM25Similarity,
     CharFilter,
     CjkBigramTokenFilter,
-    ClassicSimilarity as ClassicSimilarityAlgorithm,
+    ClassicSimilarity,
     ClassicTokenizer,
     CommonGramTokenFilter,
     ConditionalSkill,
@@ -52,6 +54,7 @@ from .._generated.models import (
     DistanceScoringFunction,
     DistanceScoringParameters,
     DocumentExtractionSkill,
+    DocumentKeysOrIds,
     EdgeNGramTokenFilter,
     EdgeNGramTokenizer,
     EdgeNGramTokenFilterSide,
@@ -76,7 +79,7 @@ from .._generated.models import (
     KeyPhraseExtractionSkill,
     KeyPhraseExtractionSkillLanguage,
     KeywordMarkerTokenFilter,
-    KeywordTokenizerV2 as KeywordTokenizer,
+    KeywordTokenizerV2,
     LanguageDetectionSkill,
     LengthTokenFilter,
     LexicalAnalyzer,
@@ -99,7 +102,7 @@ from .._generated.models import (
     OcrSkill,
     OcrSkillLanguage,
     OutputFieldMappingEntry,
-    PathHierarchyTokenizerV2 as PathHierarchyTokenizer,
+    PathHierarchyTokenizerV2,
     PatternCaptureTokenFilter,
     PatternReplaceCharFilter,
     PatternReplaceTokenFilter,
@@ -107,6 +110,7 @@ from .._generated.models import (
     PIIDetectionSkillMaskingMode,
     PhoneticEncoder,
     PhoneticTokenFilter,
+    PrioritizedFields,
     RegexFlags,
     SearchIndexer,
     SearchIndexerCache,
@@ -123,6 +127,9 @@ from .._generated.models import (
     SearchIndexerKnowledgeStoreTableProjectionSelector,
     SearchIndexerLimits,
     SearchIndexerStatus,
+    SemanticConfiguration,
+    SemanticField,
+    SemanticSettings,
     ScoringFunction,
     ScoringFunctionAggregation,
     ScoringFunctionInterpolation,
@@ -130,7 +137,7 @@ from .._generated.models import (
     SentimentSkillLanguage,
     ShaperSkill,
     ShingleTokenFilter,
-    Similarity as SimilarityAlgorithm,
+    Similarity,
     SnowballTokenFilter,
     SnowballTokenFilterLanguage,
     SoftDeleteColumnDeletionDetectionPolicy,
@@ -143,7 +150,7 @@ from .._generated.models import (
     StopAnalyzer,
     StopwordsList,
     StopwordsTokenFilter,
-    Suggester as SearchSuggester,
+    Suggester,
     SynonymTokenFilter,
     TagScoringFunction,
     TagScoringParameters,
@@ -176,8 +183,32 @@ from ._models import (
     SynonymMap,
 )
 
+SearchFieldDataType = _edm
+
+class BM25SimilarityAlgorithm(BM25Similarity):
+    pass
+
+class ClassicSimilarityAlgorithm(ClassicSimilarity):
+    pass
+
+class KeywordTokenizer(KeywordTokenizerV2):
+    pass
+
+class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
+    pass
+
+class SimilarityAlgorithm(Similarity):
+    pass
+
+class SearchSuggester(Suggester):
+    pass
+
+
+
 
 __all__ = (
+    "SearchAlias",
+    "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
@@ -199,6 +230,7 @@ __all__ = (
     "DistanceScoringFunction",
     "DistanceScoringParameters",
     "DocumentExtractionSkill",
+    "DocumentKeysOrIds",
     "EdgeNGramTokenFilter",
     "EdgeNGramTokenizer",
     "ElisionTokenFilter",
@@ -258,6 +290,7 @@ __all__ = (
     "PIIDetectionSkillMaskingMode",
     "PhoneticEncoder",
     "PhoneticTokenFilter",
+    "PrioritizedFields",
     "RegexFlags",
     "ScoringFunction",
     "ScoringFunctionAggregation",
@@ -284,6 +317,9 @@ __all__ = (
     "SearchIndexerStatus",
     "SearchResourceEncryptionKey",
     "SearchableField",
+    "SemanticConfiguration",
+    "SemanticField",
+    "SemanticSettings",
     "SentimentSkill",
     "SentimentSkillLanguage",
     "SentimentSkillVersion",

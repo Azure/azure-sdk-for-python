@@ -1,6 +1,6 @@
 # Release History
 
-## 1.19.1 (Unreleased)
+## 1.24.2 (Unreleased)
 
 ### Features Added
 
@@ -8,8 +8,121 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.24.1 (2022-06-01)
+
+### Bugs Fixed
+
+- Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
+
+## 1.24.0 (2022-05-06)
+
+### Features Added
+
+- Add `SerializationError` and `DeserializationError` in `azure.core.exceptions` for errors raised during serialization / deserialization  #24312
+
+## 1.23.1 (2022-03-31)
+
+### Bugs Fixed
+
+- Allow stream inputs to the `content` kwarg of `azure.core.rest.HttpRequest` from objects with a `read` method  #23578
+
+## 1.23.0 (2022-03-03)
+
+### Features Added
+
+- Improve intellisense type hinting for service client methods. #22891
+
+- Add a case insensitive dict `case_insensitive_dict` in `azure.core.utils`.  #23206
+
+### Bugs Fixed
+
+- Use "\n" rather than "/n" for new line in log.     #23261
+
+### Other Changes
+
+- Log "WWW-Authenticate" header in `HttpLoggingPolicy`  #22990
+- Added dependency on `typing-extensions` >= 4.0.1
+
+## 1.22.1 (2022-02-09)
+
+### Bugs Fixed
+
+- Limiting `final-state-via` scope to POST until consuming SDKs has been fixed to use this option properly on PUT.  #22989
+
+## 1.22.0 (2022-02-03)
+_[**This version is deprecated.**]_
+
+### Features Added
+
+- Add support for `final-state-via` LRO option in core.  #22713
+
+### Bugs Fixed
+
+- Add response body to string representation of `HttpResponseError` if we're not able to parse out information #22302
+- Raise `AttributeError` when calling azure.core.pipeline.transport.\_\_bases__    #22469
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.21.1 (2021-12-06)
+
+### Other Changes
+
+- Revert change in str method  #22023
+
+## 1.21.0 (2021-12-02)
+
+### Breaking Changes
+
+- Sync stream downloading now raises `azure.core.exceptions.DecodeError` rather than `requests.exceptions.ContentDecodingError`
+
+### Bugs Fixed
+
+- Add response body to string representation of `HttpResponseError` if we're not able to parse out information #21800
+
+## 1.20.1 (2021-11-08)
+
+### Bugs Fixed
+
+- Correctly set response's content to decompressed body when users are using aiohttp transport with decompression headers #21620
+
+## 1.20.0 (2021-11-04)
+
+### Features Added
+
+- GA `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
+- GA `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- GA errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
+are thrown if you mishandle streamed responses from the `azure.core.rest` module
+- add kwargs to the methods for `iter_raw` and `iter_bytes`  #21529
+- no longer raise JSON errors if users pass in file descriptors of JSON to the `json` kwarg in `HttpRequest`  #21504
+- Added new error type `IncompleteReadError` which is raised if peer closes the connection before we have received the complete message body.
+
+### Breaking Changes
+
+- SansIOHTTPPolicy.on_exception returns None instead of bool.
+
+### Bugs Fixed
+
+- The `Content-Length` header in a http response is strictly checked against the actual number of bytes in the body,
+  rather than silently truncating data in case the underlying tcp connection is closed prematurely.
+  (thanks to @jochen-ott-by for the contribution)   #20412
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
+- Add default content type header of `text/plain` and content length header for users who pass unicode strings to the `content` kwarg of `HttpRequest` in 2.7  #21550
+
+## 1.19.1 (2021-11-01)
+
+### Bugs Fixed
+
 - respect text encoding specified in argument (thanks to @ryohji for the contribution)  #20796
+- Fix "coroutine x.read() was never awaited" warning from `ContentDecodePolicy`  #21318
 - fix type check for `data` input to `azure.core.rest` for python 2.7 users  #21341
+- use `charset_normalizer` if `chardet` is not installed to migrate aiohttp 3.8.0 changes.
 
 ### Other Changes
 

@@ -24,117 +24,56 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
 from typing import Any, TYPE_CHECKING, Union
 
-
-from azure.core import AsyncPipelineClient
-from msrest import Deserializer, Serializer
-
-from .._version import VERSION
-from .._patch import JwtCredentialPolicy, ApiManagementProxy, _parse_connection_string
-from ._web_pub_sub_service_client import WebPubSubServiceClient as GeneratedWebPubSubServiceClient
-
-
-from azure.core.configuration import Configuration
-from azure.core.pipeline import policies
 from azure.core.credentials import AzureKeyCredential
+
+from .._patch import _parse_connection_string, WebPubSubServiceClientBase
+from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict, TypeVar, Type
-    ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WebPubSubServiceClientConfiguration(Configuration):
-    """Configuration for WebPubSubServiceClient.
-
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
-    :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: Union[~azure.core.credentials_async.AsyncTokenCredential, ~azure.core.credentials.AzureKeyCredential]
-    """
-
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
-        **kwargs: Any
-    ) -> None:
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
-
-        self.endpoint = endpoint
-        self.credential = credential
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
-        self._configure(**kwargs)
-
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or ApiManagementProxy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
-        if self.credential and not self.authentication_policy:
-            if isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = JwtCredentialPolicy(self.credential, kwargs.get('user'))
-            else:
-                self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-
-
-class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
+class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientGenerated):
     """WebPubSubServiceClient.
 
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
     :type endpoint: str
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
+     alpha-numeric characters or underscore.
+    :type hub: str
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
-        **kwargs: Any
+        self, endpoint: str, hub: str, credential: Union["AsyncTokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        kwargs['origin_endpoint'] = endpoint
-        _endpoint = '{Endpoint}'
-        self._config = WebPubSubServiceClientConfiguration(endpoint, credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
+        super().__init__(endpoint=endpoint, hub=hub, credential=credential, **kwargs)
 
     @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
-        # type: (Type[ClientType], str, Any) -> ClientType
+    def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubServiceClient":
         """Create a new WebPubSubServiceClient from a connection string.
+
         :param connection_string: Connection string
         :type connection_string: ~str
+        :param hub: Target hub name, which should start with alphabetic characters and only contain
+         alpha-numeric characters or underscore.
+        :type hub: str
         :rtype: WebPubSubServiceClient
         """
         kwargs = _parse_connection_string(connection_string, **kwargs)
 
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
-        return cls(credential=credential, **kwargs)
+        return cls(hub=hub, credential=credential, **kwargs)
+
+
+__all__ = ["WebPubSubServiceClient"]
 
 
 def patch_sdk():

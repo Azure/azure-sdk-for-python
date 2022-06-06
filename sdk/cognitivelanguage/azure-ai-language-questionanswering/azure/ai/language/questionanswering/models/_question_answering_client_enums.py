@@ -19,7 +19,13 @@ class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNAUTHORIZED = "Unauthorized"
     FORBIDDEN = "Forbidden"
     NOT_FOUND = "NotFound"
+    PROJECT_NOT_FOUND = "ProjectNotFound"
+    OPERATION_NOT_FOUND = "OperationNotFound"
+    AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
+    AZURE_COGNITIVE_SEARCH_INDEX_NOT_FOUND = "AzureCognitiveSearchIndexNotFound"
     TOO_MANY_REQUESTS = "TooManyRequests"
+    AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
+    AZURE_COGNITIVE_SEARCH_INDEX_LIMIT_REACHED = "AzureCognitiveSearchIndexLimitReached"
     INTERNAL_SERVER_ERROR = "InternalServerError"
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
 
@@ -33,17 +39,3 @@ class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
     AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
     EXTRACTION_FAILURE = "ExtractionFailure"
-
-
-class LogicalOperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Set to 'OR' or 'AND' for using corresponding logical operation."""
-
-    AND_ENUM = "AND"
-    OR_ENUM = "OR"
-
-
-class RankerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """(Optional) Set to 'QuestionOnly' for using a question only Ranker."""
-
-    DEFAULT = "Default"
-    QUESTION_ONLY = "QuestionOnly"

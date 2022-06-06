@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:56 GMT
+      - Wed, 17 Nov 2021 23:53:57 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=yalinlitestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&grant_type=password
+    body: service=yallacrtestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&grant_type=password
     headers:
       Accept:
       - application/json
@@ -59,9 +59,9 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:56 GMT
+      - Wed, 17 Nov 2021 23:53:57 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.366667'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -93,16 +93,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world?api-version=2021-07-01
   response:
     body:
-      string: '{"registry": "yalinlitestsanon.azurecr.io", "imageName": "library/hello-world",
-        "createdTime": "2021-08-30T10:55:18.7315572Z", "lastUpdateTime": "2021-08-30T10:55:16.1911692Z",
+      string: '{"registry": "yallacrtestsanon.azurecr.io", "imageName": "library/hello-world",
+        "createdTime": "2021-11-17T21:45:12.0019042Z", "lastUpdateTime": "2021-11-17T21:45:09.8470312Z",
         "manifestCount": 12, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
-        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
-        false}}'
+        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -112,11 +111,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '330'
+      - '306'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:56 GMT
+      - Wed, 17 Nov 2021 23:53:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -144,9 +143,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -165,7 +164,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:56 GMT
+      - Wed, 17 Nov 2021 23:53:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -181,7 +180,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=yalinlitestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_write&grant_type=password
+    body: service=yallacrtestsanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_write&grant_type=password
     headers:
       Accept:
       - application/json
@@ -194,9 +193,9 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -206,7 +205,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:56 GMT
+      - Wed, 17 Nov 2021 23:53:58 GMT
       server:
       - openresty
       strict-transport-security:
@@ -214,7 +213,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.35'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -233,9 +232,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -254,7 +253,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:56 GMT
+      - Wed, 17 Nov 2021 23:53:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

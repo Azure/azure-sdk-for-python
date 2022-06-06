@@ -22,10 +22,12 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
+    generate_share_sas,
     ShareFileClient,
     ShareServiceClient,
     ContentSettings,
     FileSasPermissions,
+    ShareSasPermissions,
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
@@ -42,6 +44,9 @@ TEST_FILE_PREFIX = 'file'
 INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
 OUTPUT_FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_FILE_SIZE = 64 * 1024 + 5
+TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
+                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
+                        'S-1-5-21-397955417-626881126-188441444-3053964)'
 
 
 # ------------------------------------------------------------------------------
@@ -334,6 +339,31 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(file_properties.last_write_time)
 
     @FileSharePreparer()
+    def test_create_file_set_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._get_file_client()
+
+        file_attributes = NTFSAttributes(read_only=True, archive=True)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+
+        # Act
+        file_client.create_file(
+            size=1024,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
+        file_properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(file_properties)
+        self.assertEqual(file_creation_time, file_properties.creation_time)
+        self.assertEqual(file_last_write_time, file_properties.last_write_time)
+        self.assertEqual(file_change_time, file_properties.change_time)
+        self.assertIn('ReadOnly', file_properties.file_attributes)
+        self.assertIn('Archive', file_properties.file_attributes)
+
+    @FileSharePreparer()
     def test_file_exists(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
@@ -482,6 +512,7 @@ class StorageFileTest(StorageTestCase):
         ntfs_attributes = NTFSAttributes(archive=True, temporary=True)
         last_write_time = properties_on_creation.last_write_time + timedelta(hours=3)
         creation_time = properties_on_creation.creation_time + timedelta(hours=3)
+        change_time = properties_on_creation.change_time + timedelta(hours=3)
 
         # Act
         file_client.set_http_headers(
@@ -489,6 +520,7 @@ class StorageFileTest(StorageTestCase):
             file_attributes=ntfs_attributes,
             file_last_write_time=last_write_time,
             file_creation_time=creation_time,
+            file_change_time=change_time
         )
 
         # Assert
@@ -497,6 +529,7 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
         self.assertEqual(properties.creation_time, creation_time)
         self.assertEqual(properties.last_write_time, last_write_time)
+        self.assertEqual(properties.change_time, change_time)
         self.assertIn("Archive", properties.file_attributes)
         self.assertIn("Temporary", properties.file_attributes)
 
@@ -747,6 +780,34 @@ class StorageFileTest(StorageTestCase):
         # Assert
 
     @FileSharePreparer()
+    def test_update_range_last_written_mode_now(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+        current_last_write_time = file_client.get_file_properties().last_write_time
+
+        # Act
+        data = b'abcdefghijklmnop' * 32
+        file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Now")
+
+        # Assert
+        new_last_write_time = file_client.get_file_properties().last_write_time
+        self.assertNotEqual(current_last_write_time, new_last_write_time)
+
+    @FileSharePreparer()
+    def test_update_range_last_written_mode_preserve(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+        current_last_write_time = file_client.get_file_properties().last_write_time
+
+        # Act
+        data = b'abcdefghijklmnop' * 32
+        file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Preserve")
+
+        # Assert
+        new_last_write_time = file_client.get_file_properties().last_write_time
+        self.assertEqual(current_last_write_time, new_last_write_time)
+
+    @FileSharePreparer()
     def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_file_name = 'testfile1'
@@ -897,6 +958,64 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(0, file_ranges[0].get('start'))
         self.assertEqual(end, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
+
+    @FileSharePreparer()
+    def test_update_range_from_file_url_last_written_mode_now(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file_client = self._create_file(file_name='testfile')
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_client = self._create_empty_file(file_name='filetoupdate')
+        current_last_write_time = destination_file_client.get_file_properties().last_write_time
+
+        # generate SAS for the source file
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                      file_last_write_mode="Now")
+
+        # Assert
+        new_last_write_time = destination_file_client.get_file_properties().last_write_time
+        self.assertNotEqual(current_last_write_time, new_last_write_time)
+
+    @FileSharePreparer()
+    def test_update_range_from_file_url_last_written_mode_preserve(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file_client = self._create_file(file_name='testfile')
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_client = self._create_empty_file(file_name='filetoupdate')
+        current_last_write_time = destination_file_client.get_file_properties().last_write_time
+
+        # generate SAS for the source file
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                      file_last_write_mode="Preserve")
+
+        # Assert
+        new_last_write_time = destination_file_client.get_file_properties().last_write_time
+        self.assertEqual(current_last_write_time, new_last_write_time)
 
     @FileSharePreparer()
     def test_clear_range(self, storage_account_name, storage_account_key):
@@ -1154,35 +1273,62 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(copy_file, self.short_byte_data)
 
     @FileSharePreparer()
-    def test_copy_file_with_specifying_acl_copy_behavior_attributes(self, storage_account_name, storage_account_key):
+    def test_copy_file_ignore_readonly(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
-        source_client = self._create_file()
-        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
-                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
-                                "S-1-5-21-397955417-626881126-188441444-3053964)"
-        file_client = ShareFileClient(
+        source_file = self._create_file()
+        dest_file = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path='file1copy',
             credential=storage_account_key)
 
-        file_creation_time = "2017-05-10T17:52:33.9551860Z"
+        file_attributes = NTFSAttributes(read_only=True)
+        dest_file.create_file(1024, file_attributes=file_attributes)
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            dest_file.start_copy_from_url(source_file.url)
+
+        copy = dest_file.start_copy_from_url(source_file.url, ignore_read_only=True)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = dest_file.download_file().readall()
+        self.assertEqual(copy_file, self.short_byte_data)
+
+    @FileSharePreparer()
+    def test_copy_file_with_specifying_acl_copy_behavior_attributes(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_client = self._create_file()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=storage_account_key)
+        source_props = source_client.get_file_properties()
+
+        file_creation_time = source_props.creation_time - timedelta(hours=1)
+        file_last_write_time = source_props.last_write_time - timedelta(hours=1)
         file_attributes = "Temporary|NoScrubData"
 
         # Act
         copy = file_client.start_copy_from_url(
             source_client.url,
             ignore_read_only=True,
-            file_permission=user_given_permission,
+            file_permission=TEST_FILE_PERMISSIONS,
             file_attributes=file_attributes,
-            file_creation_time=file_creation_time
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
         )
 
         # Assert
         dest_prop = file_client.get_file_properties()
         # to make sure the attributes are the same as the set ones
-        self.assertEqual(_datetime_to_str(dest_prop['creation_time']),
-                         file_creation_time)
+        self.assertEqual(file_creation_time, dest_prop['creation_time'])
+        self.assertEqual(file_last_write_time, dest_prop['last_write_time'])
         self.assertIn('Temporary', dest_prop['file_attributes'])
         self.assertIn('NoScrubData', dest_prop['file_attributes'])
 
@@ -2095,5 +2241,180 @@ class StorageFileTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             file_client_admin.download_file()
 
+    @FileSharePreparer()
+    def test_rename_file(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file = self._create_file('file1')
+
+        # Act
+        new_file = source_file.rename_file('file2')
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    def test_rename_file_different_directory(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = share_client.create_directory('dir1')
+        dest_directory = share_client.create_directory('dir2')
+        source_file = source_directory.upload_file('file1', self.short_byte_data)
+
+        # Act
+        new_file = source_file.rename_file(dest_directory.directory_path + '/' + source_file.file_name)
+
+        # Assert
+        self.assertTrue('dir2' in new_file.file_path)
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    def test_rename_file_ignore_readonly(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_file = share_client.get_file_client('file1')
+        source_file.create_file(1024)
+        dest_file = share_client.get_file_client('file2')
+
+        file_attributes = NTFSAttributes(read_only=True)
+        dest_file.create_file(1024, file_attributes=file_attributes)
+
+        # Act
+        new_file = source_file.rename_file(dest_file.file_name, overwrite=True, ignore_read_only=True)
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    def test_rename_file_file_permission(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+
+        source_file = share_client.get_file_client('file1')
+        source_file.create_file(1024)
+
+        # Act
+        new_file = source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS)
+
+        # Assert
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(file_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    def test_rename_file_preserve_permission(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_file = share_client.get_file_client('file1')
+        source_file.create_file(1024, file_permission=TEST_FILE_PERMISSIONS)
+
+        source_props = source_file.get_file_properties()
+        source_permission_key = source_props.permission_key
+
+        # Act
+        new_file = source_file.rename_file('file2', file_permission='preserve')
+
+        # Assert
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(source_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    def test_rename_file_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file = self._create_file('file1')
+
+        file_attributes = NTFSAttributes(read_only=True, archive=True)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
+
+        # Act
+        new_file = source_file.rename_file(
+            'file2',
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
+
+        # Assert
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
+        self.assertEqual(file_creation_time, props.creation_time)
+        self.assertEqual(file_last_write_time, props.last_write_time)
+        self.assertEqual(file_change_time, props.change_time)
+
+    @FileSharePreparer()
+    def test_rename_file_content_type(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file = self._create_file('file1')
+        content_type = 'text/plain'
+
+        # Act
+        new_file = source_file.rename_file(
+            'file2',
+            content_type=content_type)
+
+        # Assert
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(content_type, props.content_settings.content_type)
+
+    @FileSharePreparer()
+    def test_rename_file_with_lease(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+
+        source_file = self._create_file('file1')
+        dest_file = self._create_file('file2')
+        source_lease = source_file.acquire_lease()
+        dest_lease = dest_file.acquire_lease()
+
+        # Act
+        new_file = source_file.rename_file(
+            dest_file.file_name,
+            overwrite=True,
+            source_lease=source_lease,
+            destination_lease=dest_lease)
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_rename_file_share_sas(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        token = generate_share_sas(
+            share_client.account_name,
+            share_client.share_name,
+            share_client.credential.account_key,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            permission=ShareSasPermissions(read=True, write=True))
+
+        source_file = ShareFileClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'file1',
+            credential=token)
+        source_file.create_file(1024)
+
+        # Act
+        new_file = source_file.rename_file('file2' + '?' + token)
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = new_file.get_file_properties()
+        self.assertIsNotNone(props)
 
 # ------------------------------------------------------------------------------

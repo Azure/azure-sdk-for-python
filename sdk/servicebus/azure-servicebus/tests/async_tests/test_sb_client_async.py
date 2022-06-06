@@ -6,6 +6,7 @@
 
 
 import logging
+import time
 import pytest
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -401,3 +402,44 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
+
+    async def test_backoff_fixed_retry(self):
+        client = ServiceBusClient(
+            'fake.host.com',
+            'fake_eh',
+            retry_mode='fixed'
+        )
+        # queue sender
+        sender = await client.get_queue_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        # exp = 0.8 * (2 ** 1) = 1.6
+        # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
+        # check that fixed is less than 'exp'
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # topic sender
+        sender = await client.get_topic_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # queue receiver 
+        receiver = await client.get_queue_receiver('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # subscription receiver 
+        receiver = await client.get_subscription_receiver('fake_topic', 'fake_sub')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)

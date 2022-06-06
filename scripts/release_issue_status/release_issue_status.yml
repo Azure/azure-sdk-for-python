@@ -7,13 +7,30 @@ trigger:
     exclude:
     - '*'
 
+# avoid being triggered as part of CI check
+pr:
+  branches:
+    exclude:
+    - '*'
+
+schedules:
+  - cron: "0,30 1-9 * * *"
+    displayName: Daily release
+    branches:
+      include:
+      - main
+    always: true
+
+variables:
+  - group: Azure SDK Auto Release Pipeline Secrets
+  - group: SDK Release Helper
 
 jobs:
 - job: ReleaseIssueStatus
   displayName: ReleaseIssueStatus Python 3.8
   timeoutInMinutes: 30
   strategy:
-    maxParallel: 3
+    maxParallel: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
@@ -28,18 +45,14 @@ jobs:
         git config --global user.email "ReleaseIssueStatus"
         git config --global user.name "ReleaseIssueStatus"
 
-        # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
+        # clone(FILE_REPO: https://github.com/msyyc/file-storage.git, USR_NAME: msyyc, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir file-storage
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
+        git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
 
         # import env variable
-        export CONN_STR=$(ENV_CONN_STR)
-        export FILE=$(ENV_FILE)
-        export TOKEN=$(USR_TOKEN)
-        export HEADERS=$(PIPELINE_HEADERS)
-        export URL=$(PIPELINE_URL)
+        export TOKEN=$(Yuchao-GitToken)
         export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
-        export COOKIE=$(USR_TOKEN)
+        export JF_TOKEN=$(Jiefeng-GitToken)
 
         # create virtual env
         python -m venv venv-sdk

@@ -45,14 +45,11 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -65,13 +62,13 @@ setup(
             'azure.digitaltwins',
         ]
     ),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
+    python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",
-        "msrest>=0.5.0"
+        "msrest>=0.6.21"
     ],
-    extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-digitaltwins-nspkg>=1.0.0'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ["typing"]
-    },
 )

@@ -1,0 +1,135 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:27:19 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare691c1682?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 04 Nov 2021 06:27:18 GMT
+      etag: '"0x8D99F5C271DCD66"'
+      last-modified: Thu, 04 Nov 2021 06:27:19 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://tamerdevtest.file.core.windows.net/utshare691c1682?restype=share
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:27:19 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare691c1682/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 04 Nov 2021 06:27:18 GMT
+      etag: '"0x8D99F5C272E7322"'
+      last-modified: Thu, 04 Nov 2021 06:27:19 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2021-11-04T06:27:19.2799010Z'
+      x-ms-file-creation-time: '2021-11-04T06:27:19.2799010Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2021-11-04T06:27:19.2799010Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 8772442282881623900*1253935651986682069
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://tamerdevtest.file.core.windows.net/utshare691c1682/dir1?restype=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:27:19 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare691c1682/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 04 Nov 2021 06:27:18 GMT
+      etag: '"0x8D99F5C272E7322"'
+      last-modified: Thu, 04 Nov 2021 06:27:19 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2021-11-04T06:27:19.2799010Z'
+      x-ms-file-creation-time: '2021-11-04T06:27:19.2799010Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2021-11-04T06:27:19.2799010Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 8772442282881623900*1253935651986682069
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 200
+      message: OK
+    url: https://tamerdevtest.file.core.windows.net/utshare691c1682/dir1?restype=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.6.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 04 Nov 2021 06:27:19 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare691c1682/dir2?restype=directory
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:4aacfe6f-501a-009d-0145-d1bf1a000000\nTime:2021-11-04T06:27:19.4686297Z</Message></Error>"
+    headers:
+      content-length: '223'
+      content-type: application/xml
+      date: Thu, 04 Nov 2021 06:27:18 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ResourceNotFound
+      x-ms-version: '2020-10-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+    url: https://tamerdevtest.file.core.windows.net/utshare691c1682/dir2?restype=directory
+version: 1

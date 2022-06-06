@@ -27,3 +27,6 @@ __all__ = [
     "KeyVaultRoleDefinition",
     "KeyVaultRoleScope",
 ]
+
+from ._version import VERSION
+__version__ = VERSION

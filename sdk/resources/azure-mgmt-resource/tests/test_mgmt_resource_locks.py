@@ -13,12 +13,11 @@
 import unittest
 
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-class MgmtResourceLocksTest(AzureMgmtTestCase):
+class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtResourceLocksTest, self).setUp()
+    def setup_method(self, method):
         self.locks_client = self.create_mgmt_client(
             azure.mgmt.resource.ManagementLockClient
         )
@@ -27,6 +26,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
             azure.mgmt.resource.ResourceManagementClient
         )
 
+    @recorded_by_proxy
     def test_locks_at_subscription_level(self):
         lock_name = 'pylockrg'
 
@@ -36,7 +36,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
                 'level': 'CanNotDelete'
             }
         )
-        self.assertIsNotNone(lock)
+        assert lock is not None
 
         self.locks_client.management_locks.get_at_subscription_level(
             lock_name
@@ -49,9 +49,10 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         )
 
     @RandomNameResourceGroupPreparer()
-    def test_locks_by_scope(self, resource_group):
+    @recorded_by_proxy
+    def test_locks_by_scope(self, resource_group, location):
         lock_name = "pylockrg"
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         resource_name = self.get_resource_name("pytestavset")
 
         resource_id = "/subscriptions/{guid}/resourceGroups/{resourcegroupname}/providers/{resourceprovidernamespace}/{resourcetype}/{resourcename}".format(
@@ -64,7 +65,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
 
         create_result = self.resource_client.resources.begin_create_or_update_by_id(
             resource_id,
-            parameters={'location': self.region},
+            parameters={'location': location},
             api_version="2019-07-01"
         )
 
@@ -97,6 +98,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         result = result.result()
 
     @RandomNameResourceGroupPreparer()
+    @recorded_by_proxy
     def test_locks_at_resource_level(self, resource_group, location):
         lock_name = 'pylockrg'
         resource_name = self.get_resource_name("pytestavset")
@@ -108,7 +110,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            parameters={'location': self.region},
+            parameters={'location': location},
             api_version="2019-07-01"
         )
 
@@ -123,7 +125,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
                 'level': 'CanNotDelete'
             }
         )
-        self.assertIsNotNone(lock)
+        assert lock is not None
 
         self.locks_client.management_locks.get_at_resource_level(
             resource_group_name=resource_group.name,
@@ -141,7 +143,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
             resource_type="availabilitySets",
             resource_name=resource_name,
         ))
-        self.assertEqual(len(locks), 1)
+        assert len(locks) == 1
 
         lock = self.locks_client.management_locks.delete_at_resource_level(
             resource_group_name=resource_group.name,
@@ -164,6 +166,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         delete_result.wait()
 
     @RandomNameResourceGroupPreparer()
+    @recorded_by_proxy
     def test_locks_at_resource_group_level(self, resource_group, location):
         lock_name = 'pylockrg'
 
@@ -174,7 +177,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
                 'level': 'CanNotDelete'
             }
         )
-        self.assertIsNotNone(lock)
+        assert lock is not None
 
         self.locks_client.management_locks.get_at_resource_group_level(
             resource_group.name,
@@ -184,13 +187,14 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         locks = list(self.locks_client.management_locks.list_at_resource_group_level(
             resource_group.name
         ))
-        self.assertEqual(len(locks), 1)
+        assert len(locks) == 1
 
         lock = self.locks_client.management_locks.delete_at_resource_group_level(
             resource_group.name,
             lock_name
         )
 
+    @recorded_by_proxy
     def test_operations(self):
         self.locks_client.authorization_operations.list()
 

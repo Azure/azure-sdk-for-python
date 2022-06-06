@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
+from typing_extensions import Literal
 
 import uamqp
 
@@ -15,21 +16,33 @@ from ._base_handler import (
 )
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
+from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._configuration import Configuration
 from ._common.utils import (
     create_authentication,
     generate_dead_letter_entity_name,
     strip_protocol_from_uri,
 )
-from ._common.constants import ServiceBusSubQueue
+from ._common.constants import (
+    ServiceBusSubQueue,
+    ServiceBusReceiveMode,
+    ServiceBusSessionFilter,
+)
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
+
+NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
+
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object):
+class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -51,7 +64,7 @@ class ServiceBusClient(object):
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -60,6 +73,17 @@ class ServiceBusClient(object):
     :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
      Default value is 0.8.
     :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are "fixed" or "exponential",
+     where default is "exponential".
+    :paramtype retry_mode: str
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Service Bus service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -72,15 +96,32 @@ class ServiceBusClient(object):
 
     """
 
-    def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: Union[
+            "TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
+        ],
+        *,
+        retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: float = 120,
+        retry_mode: str = "exponential",
+        **kwargs: Any
+    ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
         )
 
         self._credential = credential
-        self._config = Configuration(**kwargs)
+        self._config = Configuration(
+            retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            **kwargs
+        )
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
@@ -90,6 +131,9 @@ class ServiceBusClient(object):
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
+
+        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
+        self._connection_verify = kwargs.get("connection_verify")
 
     def __enter__(self):
         if self._connection_sharing:
@@ -131,8 +175,16 @@ class ServiceBusClient(object):
             self._connection.destroy()
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> ServiceBusClient
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        retry_total: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: float = 120,
+        retry_mode: str = "exponential",
+        **kwargs: Any
+    ) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
 
@@ -143,7 +195,7 @@ class ServiceBusClient(object):
          If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
          be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -152,6 +204,17 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Service Bus service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.servicebus.ServiceBusClient
 
         .. admonition:: Example:
@@ -175,6 +238,10 @@ class ServiceBusClient(object):
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
             credential=credential,  # type: ignore
+            retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
             **kwargs
         )
 
@@ -212,29 +279,44 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
         return handler
 
-    def get_queue_receiver(self, queue_name, **kwargs):
-        # type: (str, Any) -> ServiceBusReceiver
+    def get_queue_receiver(
+        self,
+        queue_name: str,
+        *,
+        session_id: Optional[Union[str, NextAvailableSessionType]] = None,
+        sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        max_wait_time: Optional[float] = None,
+        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        prefetch_count: int = 0,
+        **kwargs: Any
+    ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful queue, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
-        :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
-         connect to.
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE_SESSION
+        :keyword sub_queue: If specified, the subqueue this receiver will connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
+        :paramtype sub_queue: str or ~azure.servicebus.ServiceBusSubQueue or None
         :keyword receive_mode: The receive_mode with which messages will be retrieved from the entity. The two options
          are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
          lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -273,8 +355,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        sub_queue = kwargs.get("sub_queue", None)
-        if sub_queue and kwargs.get("session_id"):
+        if sub_queue and session_id:
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful queue, "
@@ -303,9 +384,18 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            session_id=session_id,
+            sub_queue=sub_queue,
+            receive_mode=receive_mode,
+            max_wait_time=max_wait_time,
+            auto_lock_renewer=auto_lock_renewer,
+            prefetch_count=prefetch_count,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
@@ -344,16 +434,32 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
             **kwargs
         )
         self._handlers.add(handler)
         return handler
 
-    def get_subscription_receiver(self, topic_name, subscription_name, **kwargs):
-        # type: (str, str, Any) -> ServiceBusReceiver
+    def get_subscription_receiver(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        session_id: Optional[Union[str, NextAvailableSessionType]] = None,
+        sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        max_wait_time: Optional[float] = None,
+        auto_lock_renewer: Optional[AutoLockRenewer] = None,
+        prefetch_count: int = 0,
+        **kwargs: Any
+    ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
@@ -362,13 +468,13 @@ class ServiceBusClient(object):
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful subscription, otherwise it must be None. In order to receive messages from the next available
          session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
-        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
-        :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
-         connect to.
+        :paramtype session_id: str or ~azure.servicebus.NEXT_AVAILABLE_SESSION
+        :keyword sub_queue: If specified, the subqueue this receiver will connect to.
          This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
+        :paramtype sub_queue: str or ~azure.servicebus.ServiceBusSubQueue or None
         :keyword receive_mode: The receive_mode with which messages will be retrieved from the entity. The two options
          are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
          lock period before they will be removed from the subscription. Messages received with RECEIVE_AND_DELETE
@@ -408,8 +514,7 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        sub_queue = kwargs.get("sub_queue", None)
-        if sub_queue and kwargs.get("session_id"):
+        if sub_queue and session_id:
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful subscription, "
@@ -433,9 +538,18 @@ class ServiceBusClient(object):
                 http_proxy=self._config.http_proxy,
                 connection=self._connection,
                 user_agent=self._config.user_agent,
+                retry_mode=self._config.retry_mode,
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                session_id=session_id,
+                sub_queue=sub_queue,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         except ValueError:
@@ -453,9 +567,18 @@ class ServiceBusClient(object):
                 http_proxy=self._config.http_proxy,
                 connection=self._connection,
                 user_agent=self._config.user_agent,
+                retry_mode=self._config.retry_mode,
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                session_id=session_id,
+                sub_queue=sub_queue,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
+                custom_endpoint_address=self._custom_endpoint_address,
+                connection_verify=self._connection_verify,
                 **kwargs
             )
         self._handlers.add(handler)

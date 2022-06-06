@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class BaseImageDependencyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BaseImageDependencyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the base image dependency.
     """
 
     BUILD_TIME = "BuildTime"
     RUN_TIME = "RunTime"
 
-class BaseImageTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BaseImageTriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the auto trigger for base image dependency updates.
     """
 
@@ -41,13 +26,13 @@ class BaseImageTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RUNTIME = "Runtime"
     NONE = "None"
 
-class BuildArgumentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BuildArgumentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the argument.
     """
 
     DOCKER_BUILD_ARGUMENT = "DockerBuildArgument"
 
-class BuildStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BuildStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current status of the build.
     """
 
@@ -60,34 +45,34 @@ class BuildStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "Error"
     TIMEOUT = "Timeout"
 
-class BuildStepType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BuildStepType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the step.
     """
 
     DOCKER = "Docker"
 
-class BuildTaskStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BuildTaskStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current status of build task.
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class BuildType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BuildType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of build.
     """
 
     AUTO_BUILD = "AutoBuild"
     QUICK_BUILD = "QuickBuild"
 
-class OsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operating system type required for the build.
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of a build.
     """
 
@@ -98,14 +83,14 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class SourceControlType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SourceControlType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of source control service.
     """
 
     GITHUB = "Github"
     VISUAL_STUDIO_TEAM_SERVICE = "VisualStudioTeamService"
 
-class TokenType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TokenType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of Auth token.
     """
 

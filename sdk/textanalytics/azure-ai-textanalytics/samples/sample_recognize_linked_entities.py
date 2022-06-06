@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -22,8 +20,8 @@ USAGE:
     python sample_recognize_linked_entities.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
@@ -40,8 +38,8 @@ def sample_recognize_linked_entities():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     documents = [
@@ -49,7 +47,7 @@ def sample_recognize_linked_entities():
         Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends,
         Steve Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped
         down as CEO of Microsoft, and was succeeded by Satya Nadella.
-        Microsoft originally moved its headquarters to Bellevue, Wahsington in Januaray 1979, but is now
+        Microsoft originally moved its headquarters to Bellevue, Washington in January 1979, but is now
         headquartered in Redmond.
         """
     ]

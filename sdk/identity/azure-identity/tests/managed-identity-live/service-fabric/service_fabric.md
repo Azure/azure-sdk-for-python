@@ -27,17 +27,25 @@ cd azure-sdk-for-python/sdk/identity/azure-identity/tests/managed-identity-live/
 - [Resource setup](#set-up-resources)
 - [Application deployment](#set-up-and-deploy-the-applications)
 - [Test validation](#run-the-tests)
+- [Troubleshooting](#troubleshooting)
 
-## Set Up Resources
+## Set up resources
 
 You can skip to [Set Up and Deploy the Applications](#set-up-and-deploy-the-applications) if you have an existing Service Fabric cluster, key vault, storage account, container registry, and managed identity named "AdminUser".
 
-### Create a resource group
+### Log in and set the subscription
 
-From a command prompt window, run:
+First, we need to log in to the Azure CLI and set the subscription that we want our resources to live in, to make the following steps easier. From a command prompt window, run:
 ```
 az login
-az group create -n $RESOURCE_GROUP --location $LOCATION --subscription $SUBSCRIPTION_NAME
+az account set -n $SUBSCRIPTION_NAME
+```
+
+### Create a resource group
+
+This is only necessary if you don't have a resource group in this location and subscription. From your command prompt window, run:
+```
+az group create -n $RESOURCE_GROUP -l $LOCATION
 ```
 
 ### Create a user-assigned managed identity
@@ -56,17 +64,20 @@ az identity show -g $RESOURCE_GROUP -n AdminUser
 
 Create your key vault:
 ```
-az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
+az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME -l $LOCATION --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
 ```
 
-After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
+After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com). You'll need to insert some of this certificate's properties into the cluster template later on.
 
 ### Create an Azure Container Registry
 
 From your command prompt window, run:
 ```
-az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
+az acr create -g $RESOURCE_GROUP -n $ACR_NAME -l $LOCATION --admin-enabled --sku basic
 ```
+
+> **NOTE:** Don't use upper-case letters in the name of the container registry. A registry can be created with a name
+> that includes upper-case letters, but you may be unable to authenticate to it.
 
 ### Deploy a managed identity-enabled cluster
 
@@ -78,12 +89,12 @@ To use the provided template:
 2. In `arm-templates/cluster.parameters.json`, change all instances of `sfmi-test` to a unique name, like `<myusername>-sfmi-test`. Also, change the values of `applicationDiagnosticsStorageAccountName` and `supportLogStorageAccountName` to be similarly unique, but without hyphens. This will help ensure the deployment resource names do not conflict with the names of other public resources.
 3. Start the deployment by running the following command in your command prompt:
 ```
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\cluster.template.json --parameters arm-templates\cluster.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\cluster.template.json -p arm-templates\cluster.parameters.json
 ```
 
 This will begin to deploy a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
 
-## Set Up and Deploy the Applications
+## Set up and deploy the applications
 
 ### Build and publish a Docker image for each application
 
@@ -153,13 +164,13 @@ To use the provided templates:
 2. Open `arm-templates/sfmitestuser.parameters.json` and complete the same fields, using the URL of `sfmitestuser.sfpkg` for `applicationPackageUrl`.
 3. Start the deployment by running the following commands in your command prompt:
 ```
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestsystem.template.json --parameters arm-templates\sfmitestsystem.parameters.json
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestsystem.template.json -p arm-templates\sfmitestsystem.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestuser.template.json -p arm-templates\sfmitestuser.parameters.json
 ```
 
 ### Give the applications access to your key vault
 
-If the applications were accessed now, they would report an error. This is because their managed identities don't have permission to access secrets in the key vault you created. 
+If the applications were accessed now, they would report an error. This is because their managed identities don't have permission to access secrets in the key vault you created.
 
 To grant them access:
 
@@ -180,26 +191,80 @@ az identity show -g $RESOURCE_GROUP -n AdminUser
 az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $PRINCIPAL_ID
 ```
 
-## Run the Tests
+## Run the tests
+
+### Connect to your cluster on Service Fabric Explorer
+
+Instructions on connecting to the Explorer can be found
+[here](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+Adding a certificate to your local machine's browser is the recommended method of easily connecting to the Explorer;
+instructions are below.
+
+#### Add your self-signed certificate to your certificate store
+
+First, go to the Key Vault you created earlier in the Azure Portal. Go to the "Certificates" page in the sidebar and
+click on the certificate that you created earlier. Click on the current version of the certificate, and then click
+"Download in PFX/PEM format" at the top of the following page.
+
+After the certificate finishes downloading, open your browser's settings and find the option to manage HTTPS/SSL
+certificates. On Windows, you should see a window open with a list of certificates in your Personal store -- click
+"Import..." to open the Certificate Import Wizard. Browse your files to find the PFX certificate you downloaded from
+Key Vault -- you may need to change the file extension filter to "Personal Information Exchange (\*.pfx;\*.p12)".
+Import the certificate into your Personal store.
+
+#### Troubleshooting: gain access to the Explorer endpoint
+
+If you're using a corporate VPN and your browser can't connect to the Explorer endpoint because your request times out,
+you may have to add a security rule to the network security group resource in your resource group (its name should
+begin with "NRMS"). Be sure to first comply with
+[security rules for ARM subnets](https://strikecommunity.azurewebsites.net/articles/3427/faq-simply-secure-network-security-rules-for-new-a.html).
+[Here](https://strikecommunity.azurewebsites.net/articles/4889/can-not-access-my-non-production-resources-from-so-1.html)
+is a page that discusses the known issue with VPN access to some resources.
+
+To add a security rule, open the resource in the Azure Portal, and then go to the "Inbound security rules" page in the
+sidebar. Click "Add" to add a new rule, and fill in the following settings:
+
+- **Source:** IP Addresses
+- **Source IP addresses/CIDR ranges:** [Your IP address]
+- **Source port ranges:** *
+- **Destination:** Any
+- **Service:** Custom
+- **Destination port ranges:** *
+- **Protocol:** Any
+- **Action:** Allow
+- **Priority:** [Lower number than the priority of other rules -- most likely 100]
+- **Name:** Allow-My-Machine
+
+#### Connect to Service Fabric Explorer
+
+After adding the certificate to your Personal store (and possibly adding a security rule), going to the Explorer
+endpoint in your browser should present you with a page saying that the website is unsafe. This is because the Service
+Fabric cluster is providing the self-signed certificate you created with your Key Vault, so this isn't an issue.
+Proceed to the website (you may have to expand "Advanced" settings to do this).
+
+You should be prompted for a certificate. Provide the certificate from your Key Vault that you imported to your
+machine's certificate store.
+
+### Verify test output
 
 Once running on your cluster, the applications should each perform the same task: using a `ManagedIdentityCredential` to list your key vault's secret properties. One uses a system-assigned managed identity to do so, while the other uses a user-assigned managed identity. To verify that they have each done their job correctly, you can access the application logs in your cluster's Service Fabric Explorer page.
 
 Verify in a browser:
 
-1. [Connect to your cluster on Service Fabric Explorer](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+1. Connect to your cluster on Service Fabric Explorer.
 2. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
 3. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
 4. When you find an application entry, click the "+" sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
-5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` shows `PASSED`.
+5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` and `test_managed_identity_live_async` show `PASSED`.
 
-This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.5, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
+This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.9, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
 
 1. Remove each application from the cluster. In the Service Fabric Explorer, expand the Applications tab and sfmitestsystemType tab. Click on "fabric:/sfmitestsystem", and in the application page, use the "Actions" tab at the top right to delete the application.
 2. Now, remove the other application. Click on "fabric:/sfmitestuser" and use the "Actions" tab to delete the application.
-3. Re-build the docker images, targeting Python 3.5 with `--build-arg`. In your command prompt, run:
+3. Re-build the docker images, targeting Python 3.9 with `--build-arg`. In your command prompt, run:
 ```
-docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestsystem ..
-docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestuser ..
+docker build --no-cache --build-arg PYTHON_VERSION=3.9 -t $ACR_NAME.azurecr.io/sfmitestsystem ..
+docker build --no-cache --build-arg PYTHON_VERSION=3.9 -t $ACR_NAME.azurecr.io/sfmitestuser ..
 ```
 4. Publish the new images to your ACR:
 ```
@@ -208,7 +273,46 @@ docker push $ACR_NAME.azurecr.io/sfmitestuser
 ```
 5. Re-deploy the applications:
 ```
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestsystem.template.json --parameters arm-templates\sfmitestsystem.parameters.json
-az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestsystem.template.json -p arm-templates\sfmitestsystem.parameters.json
+az deployment group create -g $RESOURCE_GROUP -f arm-templates\sfmitestuser.template.json -p arm-templates\sfmitestuser.parameters.json
 ```
 6. Verify the test output again, as you did above. You should now also see that `test_managed_identity_live_async` shows `PASSED`.
+
+## Troubleshooting
+
+**Applications and/or nodes are in an error state**
+
+This usually means that the applications are crashing or the Docker image is broken.
+- Validate that you can run the tests locally and only see expected failures/errors for your environment.
+- Validate that your Dockerfile has installed all necessary packages for the commands it attempts to run and that it
+builds properly. Ensure any endpoints that are referenced by the Dockerfile are available (i.e. make sure URLs
+are correct and that install commands will succeed locally). Double-check that commands are formatted correctly.
+
+To push updates to the applications, deployed applications will first need to be deleted.
+- In the Explorer, navigate down the "Applications" tab on the sidebar and expand "sfmitestsystemType". Click on
+"fabric:/sfmitestsystem". In the top right of the following page, click on "Actions" and then "Delete
+Application".
+- After the application is deleted, click on "sfmitestsystemType" and in the top right of the following page, click
+on "Actions" and then "Unprovision Type".
+- Repeat the above steps for `sfmitestuser`.
+- Re-deploy the applications after making any changes to your test and/or Docker images, using the deployment
+commands in [Deploy the applications](#deploy-the-applications).
+
+**The container logs page is showing an Error 404 upon refresh**
+
+This is normal behavior, and just means that logs aren't available at that time. After refreshing for a while, logs
+should appear.
+
+**The Explorer page won't connect or the browser is blocking the endpoint**
+
+Refer to [Connect to your cluster on Service Fabric Explorer](#connect-to-your-cluster-on-service-fabric-explorer).
+
+If you're unable to get any information from the Explorer, there are also cluster logs that can be downloaded from one of the storage accounts that was deployed with the ARM template. These logs are composed of large text files that are very dense, but they can contain information about cluster failures that may help to diagnose problems.
+
+- First, go to the resource group containing the Service Fabric cluster in the Azure Portal.
+- Open up the storage account that's dedicated to logs. Its name matches `supportLogStorageAccountName` from `arm-templates/cluster.parameters.json`.
+- Open the page of containers in the account. There should be a container with a name indicating that it contains cluster logs.
+- Open the logs container. There should be a number of `.dtr` files. Each of these is a log file for a particular time range.
+- Download a log file from a time when the cluster should have been attempting to run the test application.
+- Open the log file locally using a text reader like Notepad (you may need to unzip it from a compressed folder first).
+- Search for phrases that may be associated with an application event or failure. For example, you may want to search for the string "error" and iterate through instances until an event suggests that it was associated with the test application.

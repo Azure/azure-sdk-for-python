@@ -18,12 +18,12 @@ from ._azure_blob_storage_enums import *
 class AccessPolicy(msrest.serialization.Model):
     """An Access policy.
 
-    :param start: the date-time the policy is active.
-    :type start: str
-    :param expiry: the date-time the policy expires.
-    :type expiry: str
-    :param permission: the permissions for the acl policy.
-    :type permission: str
+    :ivar start: the date-time the policy is active.
+    :vartype start: str
+    :ivar expiry: the date-time the policy expires.
+    :vartype expiry: str
+    :ivar permission: the permissions for the acl policy.
+    :vartype permission: str
     """
 
     _attribute_map = {
@@ -40,6 +40,14 @@ class AccessPolicy(msrest.serialization.Model):
         permission: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword start: the date-time the policy is active.
+        :paramtype start: str
+        :keyword expiry: the date-time the policy expires.
+        :paramtype expiry: str
+        :keyword permission: the permissions for the acl policy.
+        :paramtype permission: str
+        """
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
@@ -49,16 +57,16 @@ class AccessPolicy(msrest.serialization.Model):
 class AppendPositionAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param max_size: Optional conditional header. The max length in bytes permitted for the append
+    :ivar max_size: Optional conditional header. The max length in bytes permitted for the append
      blob. If the Append Block operation would cause the blob to exceed that limit or if the blob
      size is already greater than the value specified in this header, the request will fail with
      MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-    :type max_size: long
-    :param append_position: Optional conditional header, used only for the Append Block operation.
-     A number indicating the byte offset to compare. Append Block will succeed only if the append
+    :vartype max_size: long
+    :ivar append_position: Optional conditional header, used only for the Append Block operation. A
+     number indicating the byte offset to compare. Append Block will succeed only if the append
      position is equal to this number. If it is not, the request will fail with the
      AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed).
-    :type append_position: long
+    :vartype append_position: long
     """
 
     _attribute_map = {
@@ -73,6 +81,18 @@ class AppendPositionAccessConditions(msrest.serialization.Model):
         append_position: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword max_size: Optional conditional header. The max length in bytes permitted for the
+         append blob. If the Append Block operation would cause the blob to exceed that limit or if the
+         blob size is already greater than the value specified in this header, the request will fail
+         with MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
+        :paramtype max_size: long
+        :keyword append_position: Optional conditional header, used only for the Append Block
+         operation. A number indicating the byte offset to compare. Append Block will succeed only if
+         the append position is equal to this number. If it is not, the request will fail with the
+         AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed).
+        :paramtype append_position: long
+        """
         super(AppendPositionAccessConditions, self).__init__(**kwargs)
         self.max_size = max_size
         self.append_position = append_position
@@ -83,8 +103,8 @@ class ArrowConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param schema: Required.
-    :type schema: list[~azure.storage.blob.models.ArrowField]
+    :ivar schema: Required.
+    :vartype schema: list[~azure.storage.blob.models.ArrowField]
     """
 
     _validation = {
@@ -104,6 +124,10 @@ class ArrowConfiguration(msrest.serialization.Model):
         schema: List["ArrowField"],
         **kwargs
     ):
+        """
+        :keyword schema: Required.
+        :paramtype schema: list[~azure.storage.blob.models.ArrowField]
+        """
         super(ArrowConfiguration, self).__init__(**kwargs)
         self.schema = schema
 
@@ -113,14 +137,14 @@ class ArrowField(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required.
-    :type type: str
-    :param name:
-    :type name: str
-    :param precision:
-    :type precision: int
-    :param scale:
-    :type scale: int
+    :ivar type: Required.
+    :vartype type: str
+    :ivar name:
+    :vartype name: str
+    :ivar precision:
+    :vartype precision: int
+    :ivar scale:
+    :vartype scale: int
     """
 
     _validation = {
@@ -146,6 +170,16 @@ class ArrowField(msrest.serialization.Model):
         scale: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required.
+        :paramtype type: str
+        :keyword name:
+        :paramtype name: str
+        :keyword precision:
+        :paramtype precision: int
+        :keyword scale:
+        :paramtype scale: int
+        """
         super(ArrowField, self).__init__(**kwargs)
         self.type = type
         self.name = name
@@ -158,8 +192,8 @@ class BlobFlatListSegment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param blob_items: Required.
-    :type blob_items: list[~azure.storage.blob.models.BlobItemInternal]
+    :ivar blob_items: Required.
+    :vartype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
     """
 
     _validation = {
@@ -179,6 +213,10 @@ class BlobFlatListSegment(msrest.serialization.Model):
         blob_items: List["BlobItemInternal"],
         **kwargs
     ):
+        """
+        :keyword blob_items: Required.
+        :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
+        """
         super(BlobFlatListSegment, self).__init__(**kwargs)
         self.blob_items = blob_items
 
@@ -188,10 +226,10 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param blob_prefixes:
-    :type blob_prefixes: list[~azure.storage.blob.models.BlobPrefix]
-    :param blob_items: Required.
-    :type blob_items: list[~azure.storage.blob.models.BlobItemInternal]
+    :ivar blob_prefixes:
+    :vartype blob_prefixes: list[~azure.storage.blob.models.BlobPrefix]
+    :ivar blob_items: Required.
+    :vartype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
     """
 
     _validation = {
@@ -213,6 +251,12 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
         blob_prefixes: Optional[List["BlobPrefix"]] = None,
         **kwargs
     ):
+        """
+        :keyword blob_prefixes:
+        :paramtype blob_prefixes: list[~azure.storage.blob.models.BlobPrefix]
+        :keyword blob_items: Required.
+        :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
+        """
         super(BlobHierarchyListSegment, self).__init__(**kwargs)
         self.blob_prefixes = blob_prefixes
         self.blob_items = blob_items
@@ -221,23 +265,23 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
 class BlobHTTPHeaders(msrest.serialization.Model):
     """Parameter group.
 
-    :param blob_cache_control: Optional. Sets the blob's cache control. If specified, this property
+    :ivar blob_cache_control: Optional. Sets the blob's cache control. If specified, this property
      is stored with the blob and returned with a read request.
-    :type blob_cache_control: str
-    :param blob_content_type: Optional. Sets the blob's content type. If specified, this property
-     is stored with the blob and returned with a read request.
-    :type blob_content_type: str
-    :param blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is not
+    :vartype blob_cache_control: str
+    :ivar blob_content_type: Optional. Sets the blob's content type. If specified, this property is
+     stored with the blob and returned with a read request.
+    :vartype blob_content_type: str
+    :ivar blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is not
      validated, as the hashes for the individual blocks were validated when each was uploaded.
-    :type blob_content_md5: bytearray
-    :param blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+    :vartype blob_content_md5: bytearray
+    :ivar blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
      property is stored with the blob and returned with a read request.
-    :type blob_content_encoding: str
-    :param blob_content_language: Optional. Set the blob's content language. If specified, this
+    :vartype blob_content_encoding: str
+    :ivar blob_content_language: Optional. Set the blob's content language. If specified, this
      property is stored with the blob and returned with a read request.
-    :type blob_content_language: str
-    :param blob_content_disposition: Optional. Sets the blob's Content-Disposition header.
-    :type blob_content_disposition: str
+    :vartype blob_content_language: str
+    :ivar blob_content_disposition: Optional. Sets the blob's Content-Disposition header.
+    :vartype blob_content_disposition: str
     """
 
     _attribute_map = {
@@ -260,6 +304,25 @@ class BlobHTTPHeaders(msrest.serialization.Model):
         blob_content_disposition: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
+         property is stored with the blob and returned with a read request.
+        :paramtype blob_cache_control: str
+        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
+         is stored with the blob and returned with a read request.
+        :paramtype blob_content_type: str
+        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
+         not validated, as the hashes for the individual blocks were validated when each was uploaded.
+        :paramtype blob_content_md5: bytearray
+        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+         property is stored with the blob and returned with a read request.
+        :paramtype blob_content_encoding: str
+        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+         property is stored with the blob and returned with a read request.
+        :paramtype blob_content_language: str
+        :keyword blob_content_disposition: Optional. Sets the blob's Content-Disposition header.
+        :paramtype blob_content_disposition: str
+        """
         super(BlobHTTPHeaders, self).__init__(**kwargs)
         self.blob_cache_control = blob_cache_control
         self.blob_content_type = blob_content_type
@@ -274,26 +337,26 @@ class BlobItemInternal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param deleted: Required.
-    :type deleted: bool
-    :param snapshot: Required.
-    :type snapshot: str
-    :param version_id:
-    :type version_id: str
-    :param is_current_version:
-    :type is_current_version: bool
-    :param properties: Required. Properties of a blob.
-    :type properties: ~azure.storage.blob.models.BlobPropertiesInternal
-    :param metadata:
-    :type metadata: ~azure.storage.blob.models.BlobMetadata
-    :param blob_tags: Blob tags.
-    :type blob_tags: ~azure.storage.blob.models.BlobTags
-    :param has_versions_only:
-    :type has_versions_only: bool
-    :param object_replication_metadata: Dictionary of :code:`<string>`.
-    :type object_replication_metadata: dict[str, str]
+    :ivar name: Required.
+    :vartype name: ~azure.storage.blob.models.BlobName
+    :ivar deleted: Required.
+    :vartype deleted: bool
+    :ivar snapshot: Required.
+    :vartype snapshot: str
+    :ivar version_id:
+    :vartype version_id: str
+    :ivar is_current_version:
+    :vartype is_current_version: bool
+    :ivar properties: Required. Properties of a blob.
+    :vartype properties: ~azure.storage.blob.models.BlobPropertiesInternal
+    :ivar metadata:
+    :vartype metadata: ~azure.storage.blob.models.BlobMetadata
+    :ivar blob_tags: Blob tags.
+    :vartype blob_tags: ~azure.storage.blob.models.BlobTags
+    :ivar has_versions_only:
+    :vartype has_versions_only: bool
+    :ivar object_replication_metadata: Dictionary of :code:`<string>`.
+    :vartype object_replication_metadata: dict[str, str]
     """
 
     _validation = {
@@ -304,7 +367,7 @@ class BlobItemInternal(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'BlobName'},
         'deleted': {'key': 'Deleted', 'type': 'bool'},
         'snapshot': {'key': 'Snapshot', 'type': 'str'},
         'version_id': {'key': 'VersionId', 'type': 'str'},
@@ -322,7 +385,7 @@ class BlobItemInternal(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: "BlobName",
         deleted: bool,
         snapshot: str,
         properties: "BlobPropertiesInternal",
@@ -334,6 +397,28 @@ class BlobItemInternal(msrest.serialization.Model):
         object_replication_metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: ~azure.storage.blob.models.BlobName
+        :keyword deleted: Required.
+        :paramtype deleted: bool
+        :keyword snapshot: Required.
+        :paramtype snapshot: str
+        :keyword version_id:
+        :paramtype version_id: str
+        :keyword is_current_version:
+        :paramtype is_current_version: bool
+        :keyword properties: Required. Properties of a blob.
+        :paramtype properties: ~azure.storage.blob.models.BlobPropertiesInternal
+        :keyword metadata:
+        :paramtype metadata: ~azure.storage.blob.models.BlobMetadata
+        :keyword blob_tags: Blob tags.
+        :paramtype blob_tags: ~azure.storage.blob.models.BlobTags
+        :keyword has_versions_only:
+        :paramtype has_versions_only: bool
+        :keyword object_replication_metadata: Dictionary of :code:`<string>`.
+        :paramtype object_replication_metadata: dict[str, str]
+        """
         super(BlobItemInternal, self).__init__(**kwargs)
         self.name = name
         self.deleted = deleted
@@ -350,11 +435,11 @@ class BlobItemInternal(msrest.serialization.Model):
 class BlobMetadata(msrest.serialization.Model):
     """BlobMetadata.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, str]
-    :param encrypted:
-    :type encrypted: str
+    :vartype additional_properties: dict[str, str]
+    :ivar encrypted:
+    :vartype encrypted: str
     """
 
     _attribute_map = {
@@ -372,9 +457,48 @@ class BlobMetadata(msrest.serialization.Model):
         encrypted: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, str]
+        :keyword encrypted:
+        :paramtype encrypted: str
+        """
         super(BlobMetadata, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.encrypted = encrypted
+
+
+class BlobName(msrest.serialization.Model):
+    """BlobName.
+
+    :ivar encoded: Indicates if the blob name is encoded.
+    :vartype encoded: bool
+    :ivar content: The name of the blob.
+    :vartype content: str
+    """
+
+    _attribute_map = {
+        'encoded': {'key': 'Encoded', 'type': 'bool', 'xml': {'name': 'Encoded', 'attr': True}},
+        'content': {'key': 'content', 'type': 'str', 'xml': {'text': True}},
+    }
+
+    def __init__(
+        self,
+        *,
+        encoded: Optional[bool] = None,
+        content: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword encoded: Indicates if the blob name is encoded.
+        :paramtype encoded: bool
+        :keyword content: The name of the blob.
+        :paramtype content: str
+        """
+        super(BlobName, self).__init__(**kwargs)
+        self.encoded = encoded
+        self.content = content
 
 
 class BlobPrefix(msrest.serialization.Model):
@@ -382,8 +506,8 @@ class BlobPrefix(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
+    :ivar name: Required.
+    :vartype name: ~azure.storage.blob.models.BlobName
     """
 
     _validation = {
@@ -391,15 +515,19 @@ class BlobPrefix(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'BlobName'},
     }
 
     def __init__(
         self,
         *,
-        name: str,
+        name: "BlobName",
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: ~azure.storage.blob.models.BlobName
+        """
         super(BlobPrefix, self).__init__(**kwargs)
         self.name = name
 
@@ -409,91 +537,91 @@ class BlobPropertiesInternal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param creation_time:
-    :type creation_time: ~datetime.datetime
-    :param last_modified: Required.
-    :type last_modified: ~datetime.datetime
-    :param etag: Required.
-    :type etag: str
-    :param content_length: Size in bytes.
-    :type content_length: long
-    :param content_type:
-    :type content_type: str
-    :param content_encoding:
-    :type content_encoding: str
-    :param content_language:
-    :type content_language: str
-    :param content_md5:
-    :type content_md5: bytearray
-    :param content_disposition:
-    :type content_disposition: str
-    :param cache_control:
-    :type cache_control: str
-    :param blob_sequence_number:
-    :type blob_sequence_number: long
-    :param blob_type:  Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
-    :type blob_type: str or ~azure.storage.blob.models.BlobType
-    :param lease_status:  Possible values include: "locked", "unlocked".
-    :type lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :param lease_state:  Possible values include: "available", "leased", "expired", "breaking",
+    :ivar creation_time:
+    :vartype creation_time: ~datetime.datetime
+    :ivar last_modified: Required.
+    :vartype last_modified: ~datetime.datetime
+    :ivar etag: Required.
+    :vartype etag: str
+    :ivar content_length: Size in bytes.
+    :vartype content_length: long
+    :ivar content_type:
+    :vartype content_type: str
+    :ivar content_encoding:
+    :vartype content_encoding: str
+    :ivar content_language:
+    :vartype content_language: str
+    :ivar content_md5:
+    :vartype content_md5: bytearray
+    :ivar content_disposition:
+    :vartype content_disposition: str
+    :ivar cache_control:
+    :vartype cache_control: str
+    :ivar blob_sequence_number:
+    :vartype blob_sequence_number: long
+    :ivar blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+    :vartype blob_type: str or ~azure.storage.blob.models.BlobType
+    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
+    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
      "broken".
-    :type lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :param lease_duration:  Possible values include: "infinite", "fixed".
-    :type lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-    :param copy_id:
-    :type copy_id: str
-    :param copy_status:  Possible values include: "pending", "success", "aborted", "failed".
-    :type copy_status: str or ~azure.storage.blob.models.CopyStatusType
-    :param copy_source:
-    :type copy_source: str
-    :param copy_progress:
-    :type copy_progress: str
-    :param copy_completion_time:
-    :type copy_completion_time: ~datetime.datetime
-    :param copy_status_description:
-    :type copy_status_description: str
-    :param server_encrypted:
-    :type server_encrypted: bool
-    :param incremental_copy:
-    :type incremental_copy: bool
-    :param destination_snapshot:
-    :type destination_snapshot: str
-    :param deleted_time:
-    :type deleted_time: ~datetime.datetime
-    :param remaining_retention_days:
-    :type remaining_retention_days: int
-    :param access_tier:  Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
+    :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
+    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
+    :ivar copy_id:
+    :vartype copy_id: str
+    :ivar copy_status: Possible values include: "pending", "success", "aborted", "failed".
+    :vartype copy_status: str or ~azure.storage.blob.models.CopyStatusType
+    :ivar copy_source:
+    :vartype copy_source: str
+    :ivar copy_progress:
+    :vartype copy_progress: str
+    :ivar copy_completion_time:
+    :vartype copy_completion_time: ~datetime.datetime
+    :ivar copy_status_description:
+    :vartype copy_status_description: str
+    :ivar server_encrypted:
+    :vartype server_encrypted: bool
+    :ivar incremental_copy:
+    :vartype incremental_copy: bool
+    :ivar destination_snapshot:
+    :vartype destination_snapshot: str
+    :ivar deleted_time:
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days:
+    :vartype remaining_retention_days: int
+    :ivar access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
      "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
-    :type access_tier: str or ~azure.storage.blob.models.AccessTier
-    :param access_tier_inferred:
-    :type access_tier_inferred: bool
-    :param archive_status:  Possible values include: "rehydrate-pending-to-hot",
+    :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
+    :ivar access_tier_inferred:
+    :vartype access_tier_inferred: bool
+    :ivar archive_status: Possible values include: "rehydrate-pending-to-hot",
      "rehydrate-pending-to-cool".
-    :type archive_status: str or ~azure.storage.blob.models.ArchiveStatus
-    :param customer_provided_key_sha256:
-    :type customer_provided_key_sha256: str
-    :param encryption_scope: The name of the encryption scope under which the blob is encrypted.
-    :type encryption_scope: str
-    :param access_tier_change_time:
-    :type access_tier_change_time: ~datetime.datetime
-    :param tag_count:
-    :type tag_count: int
-    :param expires_on:
-    :type expires_on: ~datetime.datetime
-    :param is_sealed:
-    :type is_sealed: bool
-    :param rehydrate_priority: If an object is in rehydrate pending state then this header is
+    :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
+    :ivar customer_provided_key_sha256:
+    :vartype customer_provided_key_sha256: str
+    :ivar encryption_scope: The name of the encryption scope under which the blob is encrypted.
+    :vartype encryption_scope: str
+    :ivar access_tier_change_time:
+    :vartype access_tier_change_time: ~datetime.datetime
+    :ivar tag_count:
+    :vartype tag_count: int
+    :ivar expires_on:
+    :vartype expires_on: ~datetime.datetime
+    :ivar is_sealed:
+    :vartype is_sealed: bool
+    :ivar rehydrate_priority: If an object is in rehydrate pending state then this header is
      returned with priority of rehydrate. Valid values are High and Standard. Possible values
      include: "High", "Standard".
-    :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
-    :param last_accessed_on:
-    :type last_accessed_on: ~datetime.datetime
-    :param immutability_policy_expires_on:
-    :type immutability_policy_expires_on: ~datetime.datetime
-    :param immutability_policy_mode:  Possible values include: "Mutable", "Unlocked", "Locked".
-    :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
-    :param legal_hold:
-    :type legal_hold: bool
+    :vartype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
+    :ivar last_accessed_on:
+    :vartype last_accessed_on: ~datetime.datetime
+    :ivar immutability_policy_expires_on:
+    :vartype immutability_policy_expires_on: ~datetime.datetime
+    :ivar immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+    :vartype immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+    :ivar legal_hold:
+    :vartype legal_hold: bool
     """
 
     _validation = {
@@ -592,6 +720,94 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         legal_hold: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword creation_time:
+        :paramtype creation_time: ~datetime.datetime
+        :keyword last_modified: Required.
+        :paramtype last_modified: ~datetime.datetime
+        :keyword etag: Required.
+        :paramtype etag: str
+        :keyword content_length: Size in bytes.
+        :paramtype content_length: long
+        :keyword content_type:
+        :paramtype content_type: str
+        :keyword content_encoding:
+        :paramtype content_encoding: str
+        :keyword content_language:
+        :paramtype content_language: str
+        :keyword content_md5:
+        :paramtype content_md5: bytearray
+        :keyword content_disposition:
+        :paramtype content_disposition: str
+        :keyword cache_control:
+        :paramtype cache_control: str
+        :keyword blob_sequence_number:
+        :paramtype blob_sequence_number: long
+        :keyword blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+        :paramtype blob_type: str or ~azure.storage.blob.models.BlobType
+        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
+        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
+         "broken".
+        :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
+        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
+        :keyword copy_id:
+        :paramtype copy_id: str
+        :keyword copy_status: Possible values include: "pending", "success", "aborted", "failed".
+        :paramtype copy_status: str or ~azure.storage.blob.models.CopyStatusType
+        :keyword copy_source:
+        :paramtype copy_source: str
+        :keyword copy_progress:
+        :paramtype copy_progress: str
+        :keyword copy_completion_time:
+        :paramtype copy_completion_time: ~datetime.datetime
+        :keyword copy_status_description:
+        :paramtype copy_status_description: str
+        :keyword server_encrypted:
+        :paramtype server_encrypted: bool
+        :keyword incremental_copy:
+        :paramtype incremental_copy: bool
+        :keyword destination_snapshot:
+        :paramtype destination_snapshot: str
+        :keyword deleted_time:
+        :paramtype deleted_time: ~datetime.datetime
+        :keyword remaining_retention_days:
+        :paramtype remaining_retention_days: int
+        :keyword access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
+         "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+        :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
+        :keyword access_tier_inferred:
+        :paramtype access_tier_inferred: bool
+        :keyword archive_status: Possible values include: "rehydrate-pending-to-hot",
+         "rehydrate-pending-to-cool".
+        :paramtype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
+        :keyword customer_provided_key_sha256:
+        :paramtype customer_provided_key_sha256: str
+        :keyword encryption_scope: The name of the encryption scope under which the blob is encrypted.
+        :paramtype encryption_scope: str
+        :keyword access_tier_change_time:
+        :paramtype access_tier_change_time: ~datetime.datetime
+        :keyword tag_count:
+        :paramtype tag_count: int
+        :keyword expires_on:
+        :paramtype expires_on: ~datetime.datetime
+        :keyword is_sealed:
+        :paramtype is_sealed: bool
+        :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
+         returned with priority of rehydrate. Valid values are High and Standard. Possible values
+         include: "High", "Standard".
+        :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
+        :keyword last_accessed_on:
+        :paramtype last_accessed_on: ~datetime.datetime
+        :keyword immutability_policy_expires_on:
+        :paramtype immutability_policy_expires_on: ~datetime.datetime
+        :keyword immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+        :paramtype immutability_policy_mode: str or
+         ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :keyword legal_hold:
+        :paramtype legal_hold: bool
+        """
         super(BlobPropertiesInternal, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
@@ -640,10 +856,10 @@ class BlobTag(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: Required.
-    :type key: str
-    :param value: Required.
-    :type value: str
+    :ivar key: Required.
+    :vartype key: str
+    :ivar value: Required.
+    :vartype value: str
     """
 
     _validation = {
@@ -666,6 +882,12 @@ class BlobTag(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword key: Required.
+        :paramtype key: str
+        :keyword value: Required.
+        :paramtype value: str
+        """
         super(BlobTag, self).__init__(**kwargs)
         self.key = key
         self.value = value
@@ -676,8 +898,8 @@ class BlobTags(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param blob_tag_set: Required.
-    :type blob_tag_set: list[~azure.storage.blob.models.BlobTag]
+    :ivar blob_tag_set: Required.
+    :vartype blob_tag_set: list[~azure.storage.blob.models.BlobTag]
     """
 
     _validation = {
@@ -697,6 +919,10 @@ class BlobTags(msrest.serialization.Model):
         blob_tag_set: List["BlobTag"],
         **kwargs
     ):
+        """
+        :keyword blob_tag_set: Required.
+        :paramtype blob_tag_set: list[~azure.storage.blob.models.BlobTag]
+        """
         super(BlobTags, self).__init__(**kwargs)
         self.blob_tag_set = blob_tag_set
 
@@ -706,10 +932,10 @@ class Block(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The base64 encoded block ID.
-    :type name: str
-    :param size: Required. The block size in bytes.
-    :type size: long
+    :ivar name: Required. The base64 encoded block ID.
+    :vartype name: str
+    :ivar size: Required. The block size in bytes.
+    :vartype size: long
     """
 
     _validation = {
@@ -729,6 +955,12 @@ class Block(msrest.serialization.Model):
         size: int,
         **kwargs
     ):
+        """
+        :keyword name: Required. The base64 encoded block ID.
+        :paramtype name: str
+        :keyword size: Required. The block size in bytes.
+        :paramtype size: long
+        """
         super(Block, self).__init__(**kwargs)
         self.name = name
         self.size = size
@@ -737,10 +969,10 @@ class Block(msrest.serialization.Model):
 class BlockList(msrest.serialization.Model):
     """BlockList.
 
-    :param committed_blocks:
-    :type committed_blocks: list[~azure.storage.blob.models.Block]
-    :param uncommitted_blocks:
-    :type uncommitted_blocks: list[~azure.storage.blob.models.Block]
+    :ivar committed_blocks:
+    :vartype committed_blocks: list[~azure.storage.blob.models.Block]
+    :ivar uncommitted_blocks:
+    :vartype uncommitted_blocks: list[~azure.storage.blob.models.Block]
     """
 
     _attribute_map = {
@@ -755,6 +987,12 @@ class BlockList(msrest.serialization.Model):
         uncommitted_blocks: Optional[List["Block"]] = None,
         **kwargs
     ):
+        """
+        :keyword committed_blocks:
+        :paramtype committed_blocks: list[~azure.storage.blob.models.Block]
+        :keyword uncommitted_blocks:
+        :paramtype uncommitted_blocks: list[~azure.storage.blob.models.Block]
+        """
         super(BlockList, self).__init__(**kwargs)
         self.committed_blocks = committed_blocks
         self.uncommitted_blocks = uncommitted_blocks
@@ -763,12 +1001,12 @@ class BlockList(msrest.serialization.Model):
 class BlockLookupList(msrest.serialization.Model):
     """BlockLookupList.
 
-    :param committed:
-    :type committed: list[str]
-    :param uncommitted:
-    :type uncommitted: list[str]
-    :param latest:
-    :type latest: list[str]
+    :ivar committed:
+    :vartype committed: list[str]
+    :ivar uncommitted:
+    :vartype uncommitted: list[str]
+    :ivar latest:
+    :vartype latest: list[str]
     """
 
     _attribute_map = {
@@ -788,6 +1026,14 @@ class BlockLookupList(msrest.serialization.Model):
         latest: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword committed:
+        :paramtype committed: list[str]
+        :keyword uncommitted:
+        :paramtype uncommitted: list[str]
+        :keyword latest:
+        :paramtype latest: list[str]
+        """
         super(BlockLookupList, self).__init__(**kwargs)
         self.committed = committed
         self.uncommitted = uncommitted
@@ -799,10 +1045,10 @@ class ClearRange(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start: Required.
-    :type start: long
-    :param end: Required.
-    :type end: long
+    :ivar start: Required.
+    :vartype start: long
+    :ivar end: Required.
+    :vartype end: long
     """
 
     _validation = {
@@ -825,6 +1071,12 @@ class ClearRange(msrest.serialization.Model):
         end: int,
         **kwargs
     ):
+        """
+        :keyword start: Required.
+        :paramtype start: long
+        :keyword end: Required.
+        :paramtype end: long
+        """
         super(ClearRange, self).__init__(**kwargs)
         self.start = start
         self.end = end
@@ -833,13 +1085,13 @@ class ClearRange(msrest.serialization.Model):
 class ContainerCpkScopeInfo(msrest.serialization.Model):
     """Parameter group.
 
-    :param default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the
-     default encryption scope to set on the container and use for all future writes.
-    :type default_encryption_scope: str
-    :param prevent_encryption_scope_override: Optional.  Version 2019-07-07 and newer.  If true,
+    :ivar default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the default
+     encryption scope to set on the container and use for all future writes.
+    :vartype default_encryption_scope: str
+    :ivar prevent_encryption_scope_override: Optional.  Version 2019-07-07 and newer.  If true,
      prevents any request from specifying a different encryption scope than the scope set on the
      container.
-    :type prevent_encryption_scope_override: bool
+    :vartype prevent_encryption_scope_override: bool
     """
 
     _attribute_map = {
@@ -854,6 +1106,15 @@ class ContainerCpkScopeInfo(msrest.serialization.Model):
         prevent_encryption_scope_override: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the
+         default encryption scope to set on the container and use for all future writes.
+        :paramtype default_encryption_scope: str
+        :keyword prevent_encryption_scope_override: Optional.  Version 2019-07-07 and newer.  If true,
+         prevents any request from specifying a different encryption scope than the scope set on the
+         container.
+        :paramtype prevent_encryption_scope_override: bool
+        """
         super(ContainerCpkScopeInfo, self).__init__(**kwargs)
         self.default_encryption_scope = default_encryption_scope
         self.prevent_encryption_scope_override = prevent_encryption_scope_override
@@ -864,16 +1125,16 @@ class ContainerItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param deleted:
-    :type deleted: bool
-    :param version:
-    :type version: str
-    :param properties: Required. Properties of a container.
-    :type properties: ~azure.storage.blob.models.ContainerProperties
-    :param metadata: Dictionary of :code:`<string>`.
-    :type metadata: dict[str, str]
+    :ivar name: Required.
+    :vartype name: str
+    :ivar deleted:
+    :vartype deleted: bool
+    :ivar version:
+    :vartype version: str
+    :ivar properties: Required. Properties of a container.
+    :vartype properties: ~azure.storage.blob.models.ContainerProperties
+    :ivar metadata: Dictionary of :code:`<string>`.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
@@ -902,6 +1163,18 @@ class ContainerItem(msrest.serialization.Model):
         metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword deleted:
+        :paramtype deleted: bool
+        :keyword version:
+        :paramtype version: str
+        :keyword properties: Required. Properties of a container.
+        :paramtype properties: ~azure.storage.blob.models.ContainerProperties
+        :keyword metadata: Dictionary of :code:`<string>`.
+        :paramtype metadata: dict[str, str]
+        """
         super(ContainerItem, self).__init__(**kwargs)
         self.name = name
         self.deleted = deleted
@@ -915,34 +1188,34 @@ class ContainerProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param last_modified: Required.
-    :type last_modified: ~datetime.datetime
-    :param etag: Required.
-    :type etag: str
-    :param lease_status:  Possible values include: "locked", "unlocked".
-    :type lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :param lease_state:  Possible values include: "available", "leased", "expired", "breaking",
+    :ivar last_modified: Required.
+    :vartype last_modified: ~datetime.datetime
+    :ivar etag: Required.
+    :vartype etag: str
+    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
+    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
      "broken".
-    :type lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :param lease_duration:  Possible values include: "infinite", "fixed".
-    :type lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-    :param public_access:  Possible values include: "container", "blob".
-    :type public_access: str or ~azure.storage.blob.models.PublicAccessType
-    :param has_immutability_policy:
-    :type has_immutability_policy: bool
-    :param has_legal_hold:
-    :type has_legal_hold: bool
-    :param default_encryption_scope:
-    :type default_encryption_scope: str
-    :param prevent_encryption_scope_override:
-    :type prevent_encryption_scope_override: bool
-    :param deleted_time:
-    :type deleted_time: ~datetime.datetime
-    :param remaining_retention_days:
-    :type remaining_retention_days: int
-    :param is_immutable_storage_with_versioning_enabled: Indicates if version level worm is enabled
+    :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
+    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
+    :ivar public_access: Possible values include: "container", "blob".
+    :vartype public_access: str or ~azure.storage.blob.models.PublicAccessType
+    :ivar has_immutability_policy:
+    :vartype has_immutability_policy: bool
+    :ivar has_legal_hold:
+    :vartype has_legal_hold: bool
+    :ivar default_encryption_scope:
+    :vartype default_encryption_scope: str
+    :ivar prevent_encryption_scope_override:
+    :vartype prevent_encryption_scope_override: bool
+    :ivar deleted_time:
+    :vartype deleted_time: ~datetime.datetime
+    :ivar remaining_retention_days:
+    :vartype remaining_retention_days: int
+    :ivar is_immutable_storage_with_versioning_enabled: Indicates if version level worm is enabled
      on this container.
-    :type is_immutable_storage_with_versioning_enabled: bool
+    :vartype is_immutable_storage_with_versioning_enabled: bool
     """
 
     _validation = {
@@ -984,6 +1257,36 @@ class ContainerProperties(msrest.serialization.Model):
         is_immutable_storage_with_versioning_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword last_modified: Required.
+        :paramtype last_modified: ~datetime.datetime
+        :keyword etag: Required.
+        :paramtype etag: str
+        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
+        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
+         "broken".
+        :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
+        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
+        :keyword public_access: Possible values include: "container", "blob".
+        :paramtype public_access: str or ~azure.storage.blob.models.PublicAccessType
+        :keyword has_immutability_policy:
+        :paramtype has_immutability_policy: bool
+        :keyword has_legal_hold:
+        :paramtype has_legal_hold: bool
+        :keyword default_encryption_scope:
+        :paramtype default_encryption_scope: str
+        :keyword prevent_encryption_scope_override:
+        :paramtype prevent_encryption_scope_override: bool
+        :keyword deleted_time:
+        :paramtype deleted_time: ~datetime.datetime
+        :keyword remaining_retention_days:
+        :paramtype remaining_retention_days: int
+        :keyword is_immutable_storage_with_versioning_enabled: Indicates if version level worm is
+         enabled on this container.
+        :paramtype is_immutable_storage_with_versioning_enabled: bool
+        """
         super(ContainerProperties, self).__init__(**kwargs)
         self.last_modified = last_modified
         self.etag = etag
@@ -1005,24 +1308,24 @@ class CorsRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins: Required. The origin domains that are permitted to make a request
+    :ivar allowed_origins: Required. The origin domains that are permitted to make a request
      against the storage service via CORS. The origin domain is the domain from which the request
      originates. Note that the origin must be an exact case-sensitive match with the origin that the
      user age sends to the service. You can also use the wildcard character '*' to allow all origin
      domains to make requests via CORS.
-    :type allowed_origins: str
-    :param allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
+    :vartype allowed_origins: str
+    :ivar allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
      use for a CORS request. (comma separated).
-    :type allowed_methods: str
-    :param allowed_headers: Required. the request headers that the origin domain may specify on the
+    :vartype allowed_methods: str
+    :ivar allowed_headers: Required. the request headers that the origin domain may specify on the
      CORS request.
-    :type allowed_headers: str
-    :param exposed_headers: Required. The response headers that may be sent in the response to the
+    :vartype allowed_headers: str
+    :ivar exposed_headers: Required. The response headers that may be sent in the response to the
      CORS request and exposed by the browser to the request issuer.
-    :type exposed_headers: str
-    :param max_age_in_seconds: Required. The maximum amount time that a browser should cache the
+    :vartype exposed_headers: str
+    :ivar max_age_in_seconds: Required. The maximum amount time that a browser should cache the
      preflight OPTIONS request.
-    :type max_age_in_seconds: int
+    :vartype max_age_in_seconds: int
     """
 
     _validation = {
@@ -1051,6 +1354,26 @@ class CorsRule(msrest.serialization.Model):
         max_age_in_seconds: int,
         **kwargs
     ):
+        """
+        :keyword allowed_origins: Required. The origin domains that are permitted to make a request
+         against the storage service via CORS. The origin domain is the domain from which the request
+         originates. Note that the origin must be an exact case-sensitive match with the origin that the
+         user age sends to the service. You can also use the wildcard character '*' to allow all origin
+         domains to make requests via CORS.
+        :paramtype allowed_origins: str
+        :keyword allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
+         use for a CORS request. (comma separated).
+        :paramtype allowed_methods: str
+        :keyword allowed_headers: Required. the request headers that the origin domain may specify on
+         the CORS request.
+        :paramtype allowed_headers: str
+        :keyword exposed_headers: Required. The response headers that may be sent in the response to
+         the CORS request and exposed by the browser to the request issuer.
+        :paramtype exposed_headers: str
+        :keyword max_age_in_seconds: Required. The maximum amount time that a browser should cache the
+         preflight OPTIONS request.
+        :paramtype max_age_in_seconds: int
+        """
         super(CorsRule, self).__init__(**kwargs)
         self.allowed_origins = allowed_origins
         self.allowed_methods = allowed_methods
@@ -1062,17 +1385,17 @@ class CorsRule(msrest.serialization.Model):
 class CpkInfo(msrest.serialization.Model):
     """Parameter group.
 
-    :param encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+    :ivar encryption_key: Optional. Specifies the encryption key to use to encrypt the data
      provided in the request. If not specified, encryption is performed with the root account
      encryption key.  For more information, see Encryption at Rest for Azure Storage Services.
-    :type encryption_key: str
-    :param encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
+    :vartype encryption_key: str
+    :ivar encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
      if the x-ms-encryption-key header is provided.
-    :type encryption_key_sha256: str
-    :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+    :vartype encryption_key_sha256: str
+    :ivar encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
      the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
      provided. Possible values include: "None", "AES256".
-    :type encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+    :vartype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
@@ -1089,6 +1412,19 @@ class CpkInfo(msrest.serialization.Model):
         encryption_algorithm: Optional[Union[str, "EncryptionAlgorithmType"]] = None,
         **kwargs
     ):
+        """
+        :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+         provided in the request. If not specified, encryption is performed with the root account
+         encryption key.  For more information, see Encryption at Rest for Azure Storage Services.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the x-ms-encryption-key header is provided.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
+         Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
+         header is provided. Possible values include: "None", "AES256".
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        """
         super(CpkInfo, self).__init__(**kwargs)
         self.encryption_key = encryption_key
         self.encryption_key_sha256 = encryption_key_sha256
@@ -1098,11 +1434,11 @@ class CpkInfo(msrest.serialization.Model):
 class CpkScopeInfo(msrest.serialization.Model):
     """Parameter group.
 
-    :param encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
+    :ivar encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
      encryption scope to use to encrypt the data provided in the request. If not specified,
      encryption is performed with the default account encryption scope.  For more information, see
      Encryption at Rest for Azure Storage Services.
-    :type encryption_scope: str
+    :vartype encryption_scope: str
     """
 
     _attribute_map = {
@@ -1115,6 +1451,13 @@ class CpkScopeInfo(msrest.serialization.Model):
         encryption_scope: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
+         encryption scope to use to encrypt the data provided in the request. If not specified,
+         encryption is performed with the default account encryption scope.  For more information, see
+         Encryption at Rest for Azure Storage Services.
+        :paramtype encryption_scope: str
+        """
         super(CpkScopeInfo, self).__init__(**kwargs)
         self.encryption_scope = encryption_scope
 
@@ -1122,16 +1465,16 @@ class CpkScopeInfo(msrest.serialization.Model):
 class DelimitedTextConfiguration(msrest.serialization.Model):
     """Groups the settings used for interpreting the blob data if the blob is delimited text formatted.
 
-    :param column_separator: The string used to separate columns.
-    :type column_separator: str
-    :param field_quote: The string used to quote a specific field.
-    :type field_quote: str
-    :param record_separator: The string used to separate records.
-    :type record_separator: str
-    :param escape_char: The string used as an escape character.
-    :type escape_char: str
-    :param headers_present: Represents whether the data has headers.
-    :type headers_present: bool
+    :ivar column_separator: The string used to separate columns.
+    :vartype column_separator: str
+    :ivar field_quote: The string used to quote a specific field.
+    :vartype field_quote: str
+    :ivar record_separator: The string used to separate records.
+    :vartype record_separator: str
+    :ivar escape_char: The string used as an escape character.
+    :vartype escape_char: str
+    :ivar headers_present: Represents whether the data has headers.
+    :vartype headers_present: bool
     """
 
     _attribute_map = {
@@ -1155,6 +1498,18 @@ class DelimitedTextConfiguration(msrest.serialization.Model):
         headers_present: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword column_separator: The string used to separate columns.
+        :paramtype column_separator: str
+        :keyword field_quote: The string used to quote a specific field.
+        :paramtype field_quote: str
+        :keyword record_separator: The string used to separate records.
+        :paramtype record_separator: str
+        :keyword escape_char: The string used as an escape character.
+        :paramtype escape_char: str
+        :keyword headers_present: Represents whether the data has headers.
+        :paramtype headers_present: bool
+        """
         super(DelimitedTextConfiguration, self).__init__(**kwargs)
         self.column_separator = column_separator
         self.field_quote = field_quote
@@ -1168,12 +1523,12 @@ class FilterBlobItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param container_name: Required.
-    :type container_name: str
-    :param tags: A set of tags. Blob tags.
-    :type tags: ~azure.storage.blob.models.BlobTags
+    :ivar name: Required.
+    :vartype name: str
+    :ivar container_name: Required.
+    :vartype container_name: str
+    :ivar tags: A set of tags. Blob tags.
+    :vartype tags: ~azure.storage.blob.models.BlobTags
     """
 
     _validation = {
@@ -1198,6 +1553,14 @@ class FilterBlobItem(msrest.serialization.Model):
         tags: Optional["BlobTags"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword container_name: Required.
+        :paramtype container_name: str
+        :keyword tags: A set of tags. Blob tags.
+        :paramtype tags: ~azure.storage.blob.models.BlobTags
+        """
         super(FilterBlobItem, self).__init__(**kwargs)
         self.name = name
         self.container_name = container_name
@@ -1209,14 +1572,14 @@ class FilterBlobSegment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param where: Required.
-    :type where: str
-    :param blobs: Required.
-    :type blobs: list[~azure.storage.blob.models.FilterBlobItem]
-    :param next_marker:
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar where: Required.
+    :vartype where: str
+    :ivar blobs: Required.
+    :vartype blobs: list[~azure.storage.blob.models.FilterBlobItem]
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -1244,6 +1607,16 @@ class FilterBlobSegment(msrest.serialization.Model):
         next_marker: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword where: Required.
+        :paramtype where: str
+        :keyword blobs: Required.
+        :paramtype blobs: list[~azure.storage.blob.models.FilterBlobItem]
+        :keyword next_marker:
+        :paramtype next_marker: str
+        """
         super(FilterBlobSegment, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.where = where
@@ -1256,13 +1629,13 @@ class GeoReplication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The status of the secondary location. Possible values include: "live",
+    :ivar status: Required. The status of the secondary location. Possible values include: "live",
      "bootstrap", "unavailable".
-    :type status: str or ~azure.storage.blob.models.GeoReplicationStatusType
-    :param last_sync_time: Required. A GMT date/time value, to the second. All primary writes
+    :vartype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
+    :ivar last_sync_time: Required. A GMT date/time value, to the second. All primary writes
      preceding this value are guaranteed to be available for read operations at the secondary.
      Primary writes after this point in time may or may not be available for reads.
-    :type last_sync_time: ~datetime.datetime
+    :vartype last_sync_time: ~datetime.datetime
     """
 
     _validation = {
@@ -1282,6 +1655,15 @@ class GeoReplication(msrest.serialization.Model):
         last_sync_time: datetime.datetime,
         **kwargs
     ):
+        """
+        :keyword status: Required. The status of the secondary location. Possible values include:
+         "live", "bootstrap", "unavailable".
+        :paramtype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
+        :keyword last_sync_time: Required. A GMT date/time value, to the second. All primary writes
+         preceding this value are guaranteed to be available for read operations at the secondary.
+         Primary writes after this point in time may or may not be available for reads.
+        :paramtype last_sync_time: ~datetime.datetime
+        """
         super(GeoReplication, self).__init__(**kwargs)
         self.status = status
         self.last_sync_time = last_sync_time
@@ -1290,8 +1672,8 @@ class GeoReplication(msrest.serialization.Model):
 class JsonTextConfiguration(msrest.serialization.Model):
     """json text configuration.
 
-    :param record_separator: The string used to separate records.
-    :type record_separator: str
+    :ivar record_separator: The string used to separate records.
+    :vartype record_separator: str
     """
 
     _attribute_map = {
@@ -1307,6 +1689,10 @@ class JsonTextConfiguration(msrest.serialization.Model):
         record_separator: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword record_separator: The string used to separate records.
+        :paramtype record_separator: str
+        """
         super(JsonTextConfiguration, self).__init__(**kwargs)
         self.record_separator = record_separator
 
@@ -1316,10 +1702,10 @@ class KeyInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start: Required. The date-time the key is active in ISO 8601 UTC time.
-    :type start: str
-    :param expiry: Required. The date-time the key expires in ISO 8601 UTC time.
-    :type expiry: str
+    :ivar start: Required. The date-time the key is active in ISO 8601 UTC time.
+    :vartype start: str
+    :ivar expiry: Required. The date-time the key expires in ISO 8601 UTC time.
+    :vartype expiry: str
     """
 
     _validation = {
@@ -1339,6 +1725,12 @@ class KeyInfo(msrest.serialization.Model):
         expiry: str,
         **kwargs
     ):
+        """
+        :keyword start: Required. The date-time the key is active in ISO 8601 UTC time.
+        :paramtype start: str
+        :keyword expiry: Required. The date-time the key expires in ISO 8601 UTC time.
+        :paramtype expiry: str
+        """
         super(KeyInfo, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
@@ -1347,9 +1739,9 @@ class KeyInfo(msrest.serialization.Model):
 class LeaseAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param lease_id: If specified, the operation only succeeds if the resource's lease is active
-     and matches this ID.
-    :type lease_id: str
+    :ivar lease_id: If specified, the operation only succeeds if the resource's lease is active and
+     matches this ID.
+    :vartype lease_id: str
     """
 
     _attribute_map = {
@@ -1362,6 +1754,11 @@ class LeaseAccessConditions(msrest.serialization.Model):
         lease_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID.
+        :paramtype lease_id: str
+        """
         super(LeaseAccessConditions, self).__init__(**kwargs)
         self.lease_id = lease_id
 
@@ -1371,20 +1768,20 @@ class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param container_name: Required.
-    :type container_name: str
-    :param prefix:
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param segment: Required.
-    :type segment: ~azure.storage.blob.models.BlobFlatListSegment
-    :param next_marker:
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar container_name: Required.
+    :vartype container_name: str
+    :ivar prefix:
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results:
+    :vartype max_results: int
+    :ivar segment: Required.
+    :vartype segment: ~azure.storage.blob.models.BlobFlatListSegment
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -1418,6 +1815,22 @@ class ListBlobsFlatSegmentResponse(msrest.serialization.Model):
         next_marker: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword container_name: Required.
+        :paramtype container_name: str
+        :keyword prefix:
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results:
+        :paramtype max_results: int
+        :keyword segment: Required.
+        :paramtype segment: ~azure.storage.blob.models.BlobFlatListSegment
+        :keyword next_marker:
+        :paramtype next_marker: str
+        """
         super(ListBlobsFlatSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.container_name = container_name
@@ -1433,22 +1846,22 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param container_name: Required.
-    :type container_name: str
-    :param prefix:
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param delimiter:
-    :type delimiter: str
-    :param segment: Required.
-    :type segment: ~azure.storage.blob.models.BlobHierarchyListSegment
-    :param next_marker:
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar container_name: Required.
+    :vartype container_name: str
+    :ivar prefix:
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results:
+    :vartype max_results: int
+    :ivar delimiter:
+    :vartype delimiter: str
+    :ivar segment: Required.
+    :vartype segment: ~azure.storage.blob.models.BlobHierarchyListSegment
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -1484,6 +1897,24 @@ class ListBlobsHierarchySegmentResponse(msrest.serialization.Model):
         next_marker: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword container_name: Required.
+        :paramtype container_name: str
+        :keyword prefix:
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results:
+        :paramtype max_results: int
+        :keyword delimiter:
+        :paramtype delimiter: str
+        :keyword segment: Required.
+        :paramtype segment: ~azure.storage.blob.models.BlobHierarchyListSegment
+        :keyword next_marker:
+        :paramtype next_marker: str
+        """
         super(ListBlobsHierarchySegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.container_name = container_name
@@ -1500,18 +1931,18 @@ class ListContainersSegmentResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param prefix:
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param container_items: Required.
-    :type container_items: list[~azure.storage.blob.models.ContainerItem]
-    :param next_marker:
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar prefix:
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results:
+    :vartype max_results: int
+    :ivar container_items: Required.
+    :vartype container_items: list[~azure.storage.blob.models.ContainerItem]
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -1542,6 +1973,20 @@ class ListContainersSegmentResponse(msrest.serialization.Model):
         next_marker: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword prefix:
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results:
+        :paramtype max_results: int
+        :keyword container_items: Required.
+        :paramtype container_items: list[~azure.storage.blob.models.ContainerItem]
+        :keyword next_marker:
+        :paramtype next_marker: str
+        """
         super(ListContainersSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.prefix = prefix
@@ -1556,17 +2001,17 @@ class Logging(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of Storage Analytics to configure.
-    :type version: str
-    :param delete: Required. Indicates whether all delete requests should be logged.
-    :type delete: bool
-    :param read: Required. Indicates whether all read requests should be logged.
-    :type read: bool
-    :param write: Required. Indicates whether all write requests should be logged.
-    :type write: bool
-    :param retention_policy: Required. the retention policy which determines how long the
-     associated data should persist.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :ivar version: Required. The version of Storage Analytics to configure.
+    :vartype version: str
+    :ivar delete: Required. Indicates whether all delete requests should be logged.
+    :vartype delete: bool
+    :ivar read: Required. Indicates whether all read requests should be logged.
+    :vartype read: bool
+    :ivar write: Required. Indicates whether all write requests should be logged.
+    :vartype write: bool
+    :ivar retention_policy: Required. the retention policy which determines how long the associated
+     data should persist.
+    :vartype retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
     _validation = {
@@ -1595,6 +2040,19 @@ class Logging(msrest.serialization.Model):
         retention_policy: "RetentionPolicy",
         **kwargs
     ):
+        """
+        :keyword version: Required. The version of Storage Analytics to configure.
+        :paramtype version: str
+        :keyword delete: Required. Indicates whether all delete requests should be logged.
+        :paramtype delete: bool
+        :keyword read: Required. Indicates whether all read requests should be logged.
+        :paramtype read: bool
+        :keyword write: Required. Indicates whether all write requests should be logged.
+        :paramtype write: bool
+        :keyword retention_policy: Required. the retention policy which determines how long the
+         associated data should persist.
+        :paramtype retention_policy: ~azure.storage.blob.models.RetentionPolicy
+        """
         super(Logging, self).__init__(**kwargs)
         self.version = version
         self.delete = delete
@@ -1608,16 +2066,16 @@ class Metrics(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: The version of Storage Analytics to configure.
-    :type version: str
-    :param enabled: Required. Indicates whether metrics are enabled for the Blob service.
-    :type enabled: bool
-    :param include_apis: Indicates whether metrics should generate summary statistics for called
-     API operations.
-    :type include_apis: bool
-    :param retention_policy: the retention policy which determines how long the associated data
+    :ivar version: The version of Storage Analytics to configure.
+    :vartype version: str
+    :ivar enabled: Required. Indicates whether metrics are enabled for the Blob service.
+    :vartype enabled: bool
+    :ivar include_apis: Indicates whether metrics should generate summary statistics for called API
+     operations.
+    :vartype include_apis: bool
+    :ivar retention_policy: the retention policy which determines how long the associated data
      should persist.
-    :type retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.blob.models.RetentionPolicy
     """
 
     _validation = {
@@ -1640,6 +2098,18 @@ class Metrics(msrest.serialization.Model):
         retention_policy: Optional["RetentionPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword version: The version of Storage Analytics to configure.
+        :paramtype version: str
+        :keyword enabled: Required. Indicates whether metrics are enabled for the Blob service.
+        :paramtype enabled: bool
+        :keyword include_apis: Indicates whether metrics should generate summary statistics for called
+         API operations.
+        :paramtype include_apis: bool
+        :keyword retention_policy: the retention policy which determines how long the associated data
+         should persist.
+        :paramtype retention_policy: ~azure.storage.blob.models.RetentionPolicy
+        """
         super(Metrics, self).__init__(**kwargs)
         self.version = version
         self.enabled = enabled
@@ -1650,19 +2120,19 @@ class Metrics(msrest.serialization.Model):
 class ModifiedAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param if_modified_since: Specify this header value to operate only on a blob if it has been
+    :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
      modified since the specified date/time.
-    :type if_modified_since: ~datetime.datetime
-    :param if_unmodified_since: Specify this header value to operate only on a blob if it has not
+    :vartype if_modified_since: ~datetime.datetime
+    :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
      been modified since the specified date/time.
-    :type if_unmodified_since: ~datetime.datetime
-    :param if_match: Specify an ETag value to operate only on blobs with a matching value.
-    :type if_match: str
-    :param if_none_match: Specify an ETag value to operate only on blobs without a matching value.
-    :type if_none_match: str
-    :param if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-     matching value.
-    :type if_tags: str
+    :vartype if_unmodified_since: ~datetime.datetime
+    :ivar if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype if_match: str
+    :ivar if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+    :vartype if_none_match: str
+    :ivar if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a matching
+     value.
+    :vartype if_tags: str
     """
 
     _attribute_map = {
@@ -1683,6 +2153,22 @@ class ModifiedAccessConditions(msrest.serialization.Model):
         if_tags: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_match: Specify an ETag value to operate only on blobs with a matching value.
+        :paramtype if_match: str
+        :keyword if_none_match: Specify an ETag value to operate only on blobs without a matching
+         value.
+        :paramtype if_none_match: str
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value.
+        :paramtype if_tags: str
+        """
         super(ModifiedAccessConditions, self).__init__(**kwargs)
         self.if_modified_since = if_modified_since
         self.if_unmodified_since = if_unmodified_since
@@ -1694,15 +2180,18 @@ class ModifiedAccessConditions(msrest.serialization.Model):
 class PageList(msrest.serialization.Model):
     """the list of pages.
 
-    :param page_range:
-    :type page_range: list[~azure.storage.blob.models.PageRange]
-    :param clear_range:
-    :type clear_range: list[~azure.storage.blob.models.ClearRange]
+    :ivar page_range:
+    :vartype page_range: list[~azure.storage.blob.models.PageRange]
+    :ivar clear_range:
+    :vartype clear_range: list[~azure.storage.blob.models.ClearRange]
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _attribute_map = {
         'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
         'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(
@@ -1710,11 +2199,21 @@ class PageList(msrest.serialization.Model):
         *,
         page_range: Optional[List["PageRange"]] = None,
         clear_range: Optional[List["ClearRange"]] = None,
+        next_marker: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword page_range:
+        :paramtype page_range: list[~azure.storage.blob.models.PageRange]
+        :keyword clear_range:
+        :paramtype clear_range: list[~azure.storage.blob.models.ClearRange]
+        :keyword next_marker:
+        :paramtype next_marker: str
+        """
         super(PageList, self).__init__(**kwargs)
         self.page_range = page_range
         self.clear_range = clear_range
+        self.next_marker = next_marker
 
 
 class PageRange(msrest.serialization.Model):
@@ -1722,10 +2221,10 @@ class PageRange(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start: Required.
-    :type start: long
-    :param end: Required.
-    :type end: long
+    :ivar start: Required.
+    :vartype start: long
+    :ivar end: Required.
+    :vartype end: long
     """
 
     _validation = {
@@ -1748,6 +2247,12 @@ class PageRange(msrest.serialization.Model):
         end: int,
         **kwargs
     ):
+        """
+        :keyword start: Required.
+        :paramtype start: long
+        :keyword end: Required.
+        :paramtype end: long
+        """
         super(PageRange, self).__init__(**kwargs)
         self.start = start
         self.end = end
@@ -1758,19 +2263,19 @@ class QueryFormat(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The quick query format type. Possible values include: "delimited",
+    :ivar type: Required. The quick query format type. Possible values include: "delimited",
      "json", "arrow", "parquet".
-    :type type: str or ~azure.storage.blob.models.QueryFormatType
-    :param delimited_text_configuration: Groups the settings used for interpreting the blob data if
+    :vartype type: str or ~azure.storage.blob.models.QueryFormatType
+    :ivar delimited_text_configuration: Groups the settings used for interpreting the blob data if
      the blob is delimited text formatted.
-    :type delimited_text_configuration: ~azure.storage.blob.models.DelimitedTextConfiguration
-    :param json_text_configuration: json text configuration.
-    :type json_text_configuration: ~azure.storage.blob.models.JsonTextConfiguration
-    :param arrow_configuration: Groups the settings used for formatting the response if the
-     response should be Arrow formatted.
-    :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
-    :param parquet_text_configuration: Any object.
-    :type parquet_text_configuration: any
+    :vartype delimited_text_configuration: ~azure.storage.blob.models.DelimitedTextConfiguration
+    :ivar json_text_configuration: json text configuration.
+    :vartype json_text_configuration: ~azure.storage.blob.models.JsonTextConfiguration
+    :ivar arrow_configuration: Groups the settings used for formatting the response if the response
+     should be Arrow formatted.
+    :vartype arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
+    :ivar parquet_text_configuration: Any object.
+    :vartype parquet_text_configuration: any
     """
 
     _validation = {
@@ -1795,6 +2300,21 @@ class QueryFormat(msrest.serialization.Model):
         parquet_text_configuration: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. The quick query format type. Possible values include: "delimited",
+         "json", "arrow", "parquet".
+        :paramtype type: str or ~azure.storage.blob.models.QueryFormatType
+        :keyword delimited_text_configuration: Groups the settings used for interpreting the blob data
+         if the blob is delimited text formatted.
+        :paramtype delimited_text_configuration: ~azure.storage.blob.models.DelimitedTextConfiguration
+        :keyword json_text_configuration: json text configuration.
+        :paramtype json_text_configuration: ~azure.storage.blob.models.JsonTextConfiguration
+        :keyword arrow_configuration: Groups the settings used for formatting the response if the
+         response should be Arrow formatted.
+        :paramtype arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
+        :keyword parquet_text_configuration: Any object.
+        :paramtype parquet_text_configuration: any
+        """
         super(QueryFormat, self).__init__(**kwargs)
         self.type = type
         self.delimited_text_configuration = delimited_text_configuration
@@ -1813,13 +2333,13 @@ class QueryRequest(msrest.serialization.Model):
     :ivar query_type: Required. The type of the provided query expression. Has constant value:
      "SQL".
     :vartype query_type: str
-    :param expression: Required. The query expression in SQL. The maximum size of the query
+    :ivar expression: Required. The query expression in SQL. The maximum size of the query
      expression is 256KiB.
-    :type expression: str
-    :param input_serialization:
-    :type input_serialization: ~azure.storage.blob.models.QuerySerialization
-    :param output_serialization:
-    :type output_serialization: ~azure.storage.blob.models.QuerySerialization
+    :vartype expression: str
+    :ivar input_serialization:
+    :vartype input_serialization: ~azure.storage.blob.models.QuerySerialization
+    :ivar output_serialization:
+    :vartype output_serialization: ~azure.storage.blob.models.QuerySerialization
     """
 
     _validation = {
@@ -1847,6 +2367,15 @@ class QueryRequest(msrest.serialization.Model):
         output_serialization: Optional["QuerySerialization"] = None,
         **kwargs
     ):
+        """
+        :keyword expression: Required. The query expression in SQL. The maximum size of the query
+         expression is 256KiB.
+        :paramtype expression: str
+        :keyword input_serialization:
+        :paramtype input_serialization: ~azure.storage.blob.models.QuerySerialization
+        :keyword output_serialization:
+        :paramtype output_serialization: ~azure.storage.blob.models.QuerySerialization
+        """
         super(QueryRequest, self).__init__(**kwargs)
         self.expression = expression
         self.input_serialization = input_serialization
@@ -1858,8 +2387,8 @@ class QuerySerialization(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param format: Required.
-    :type format: ~azure.storage.blob.models.QueryFormat
+    :ivar format: Required.
+    :vartype format: ~azure.storage.blob.models.QueryFormat
     """
 
     _validation = {
@@ -1876,6 +2405,10 @@ class QuerySerialization(msrest.serialization.Model):
         format: "QueryFormat",
         **kwargs
     ):
+        """
+        :keyword format: Required.
+        :paramtype format: ~azure.storage.blob.models.QueryFormat
+        """
         super(QuerySerialization, self).__init__(**kwargs)
         self.format = format
 
@@ -1885,15 +2418,15 @@ class RetentionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Indicates whether a retention policy is enabled for the storage
+    :ivar enabled: Required. Indicates whether a retention policy is enabled for the storage
      service.
-    :type enabled: bool
-    :param days: Indicates the number of days that metrics or logging or soft-deleted data should
-     be retained. All data older than this value will be deleted.
-    :type days: int
-    :param allow_permanent_delete: Indicates whether permanent delete is allowed on this storage
+    :vartype enabled: bool
+    :ivar days: Indicates the number of days that metrics or logging or soft-deleted data should be
+     retained. All data older than this value will be deleted.
+    :vartype days: int
+    :ivar allow_permanent_delete: Indicates whether permanent delete is allowed on this storage
      account.
-    :type allow_permanent_delete: bool
+    :vartype allow_permanent_delete: bool
     """
 
     _validation = {
@@ -1915,6 +2448,17 @@ class RetentionPolicy(msrest.serialization.Model):
         allow_permanent_delete: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Required. Indicates whether a retention policy is enabled for the storage
+         service.
+        :paramtype enabled: bool
+        :keyword days: Indicates the number of days that metrics or logging or soft-deleted data should
+         be retained. All data older than this value will be deleted.
+        :paramtype days: int
+        :keyword allow_permanent_delete: Indicates whether permanent delete is allowed on this storage
+         account.
+        :paramtype allow_permanent_delete: bool
+        """
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = enabled
         self.days = days
@@ -1924,15 +2468,15 @@ class RetentionPolicy(msrest.serialization.Model):
 class SequenceNumberAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on a
+    :ivar if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on a
      blob if it has a sequence number less than or equal to the specified.
-    :type if_sequence_number_less_than_or_equal_to: long
-    :param if_sequence_number_less_than: Specify this header value to operate only on a blob if it
+    :vartype if_sequence_number_less_than_or_equal_to: long
+    :ivar if_sequence_number_less_than: Specify this header value to operate only on a blob if it
      has a sequence number less than the specified.
-    :type if_sequence_number_less_than: long
-    :param if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
+    :vartype if_sequence_number_less_than: long
+    :ivar if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
      has the specified sequence number.
-    :type if_sequence_number_equal_to: long
+    :vartype if_sequence_number_equal_to: long
     """
 
     _attribute_map = {
@@ -1949,6 +2493,17 @@ class SequenceNumberAccessConditions(msrest.serialization.Model):
         if_sequence_number_equal_to: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
+         a blob if it has a sequence number less than or equal to the specified.
+        :paramtype if_sequence_number_less_than_or_equal_to: long
+        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
+         it has a sequence number less than the specified.
+        :paramtype if_sequence_number_less_than: long
+        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
+         has the specified sequence number.
+        :paramtype if_sequence_number_equal_to: long
+        """
         super(SequenceNumberAccessConditions, self).__init__(**kwargs)
         self.if_sequence_number_less_than_or_equal_to = if_sequence_number_less_than_or_equal_to
         self.if_sequence_number_less_than = if_sequence_number_less_than
@@ -1960,10 +2515,10 @@ class SignedIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. a unique id.
-    :type id: str
-    :param access_policy: An Access policy.
-    :type access_policy: ~azure.storage.blob.models.AccessPolicy
+    :ivar id: Required. a unique id.
+    :vartype id: str
+    :ivar access_policy: An Access policy.
+    :vartype access_policy: ~azure.storage.blob.models.AccessPolicy
     """
 
     _validation = {
@@ -1985,6 +2540,12 @@ class SignedIdentifier(msrest.serialization.Model):
         access_policy: Optional["AccessPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. a unique id.
+        :paramtype id: str
+        :keyword access_policy: An Access policy.
+        :paramtype access_policy: ~azure.storage.blob.models.AccessPolicy
+        """
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = id
         self.access_policy = access_policy
@@ -1993,20 +2554,20 @@ class SignedIdentifier(msrest.serialization.Model):
 class SourceModifiedAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
-    :param source_if_modified_since: Specify this header value to operate only on a blob if it has
+    :ivar source_if_modified_since: Specify this header value to operate only on a blob if it has
      been modified since the specified date/time.
-    :type source_if_modified_since: ~datetime.datetime
-    :param source_if_unmodified_since: Specify this header value to operate only on a blob if it
-     has not been modified since the specified date/time.
-    :type source_if_unmodified_since: ~datetime.datetime
-    :param source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-    :type source_if_match: str
-    :param source_if_none_match: Specify an ETag value to operate only on blobs without a matching
+    :vartype source_if_modified_since: ~datetime.datetime
+    :ivar source_if_unmodified_since: Specify this header value to operate only on a blob if it has
+     not been modified since the specified date/time.
+    :vartype source_if_unmodified_since: ~datetime.datetime
+    :ivar source_if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype source_if_match: str
+    :ivar source_if_none_match: Specify an ETag value to operate only on blobs without a matching
      value.
-    :type source_if_none_match: str
-    :param source_if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+    :vartype source_if_none_match: str
+    :ivar source_if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
      matching value.
-    :type source_if_tags: str
+    :vartype source_if_tags: str
     """
 
     _attribute_map = {
@@ -2027,6 +2588,22 @@ class SourceModifiedAccessConditions(msrest.serialization.Model):
         source_if_tags: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
+         has been modified since the specified date/time.
+        :paramtype source_if_modified_since: ~datetime.datetime
+        :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
+         has not been modified since the specified date/time.
+        :paramtype source_if_unmodified_since: ~datetime.datetime
+        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
+        :paramtype source_if_match: str
+        :keyword source_if_none_match: Specify an ETag value to operate only on blobs without a
+         matching value.
+        :paramtype source_if_none_match: str
+        :keyword source_if_tags: Specify a SQL where clause on blob tags to operate only on blobs with
+         a matching value.
+        :paramtype source_if_tags: str
+        """
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
         self.source_if_modified_since = source_if_modified_since
         self.source_if_unmodified_since = source_if_unmodified_since
@@ -2040,14 +2617,14 @@ class StaticWebsite(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Indicates whether this account is hosting a static website.
-    :type enabled: bool
-    :param index_document: The default name of the index page under each directory.
-    :type index_document: str
-    :param error_document404_path: The absolute path of the custom 404 page.
-    :type error_document404_path: str
-    :param default_index_document_path: Absolute path of the default index page.
-    :type default_index_document_path: str
+    :ivar enabled: Required. Indicates whether this account is hosting a static website.
+    :vartype enabled: bool
+    :ivar index_document: The default name of the index page under each directory.
+    :vartype index_document: str
+    :ivar error_document404_path: The absolute path of the custom 404 page.
+    :vartype error_document404_path: str
+    :ivar default_index_document_path: Absolute path of the default index page.
+    :vartype default_index_document_path: str
     """
 
     _validation = {
@@ -2070,6 +2647,16 @@ class StaticWebsite(msrest.serialization.Model):
         default_index_document_path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Required. Indicates whether this account is hosting a static website.
+        :paramtype enabled: bool
+        :keyword index_document: The default name of the index page under each directory.
+        :paramtype index_document: str
+        :keyword error_document404_path: The absolute path of the custom 404 page.
+        :paramtype error_document404_path: str
+        :keyword default_index_document_path: Absolute path of the default index page.
+        :paramtype default_index_document_path: str
+        """
         super(StaticWebsite, self).__init__(**kwargs)
         self.enabled = enabled
         self.index_document = index_document
@@ -2080,8 +2667,8 @@ class StaticWebsite(msrest.serialization.Model):
 class StorageError(msrest.serialization.Model):
     """StorageError.
 
-    :param message:
-    :type message: str
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -2094,6 +2681,10 @@ class StorageError(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message:
+        :paramtype message: str
+        """
         super(StorageError, self).__init__(**kwargs)
         self.message = message
 
@@ -2101,25 +2692,25 @@ class StorageError(msrest.serialization.Model):
 class StorageServiceProperties(msrest.serialization.Model):
     """Storage Service Properties.
 
-    :param logging: Azure Analytics Logging settings.
-    :type logging: ~azure.storage.blob.models.Logging
-    :param hour_metrics: a summary of request statistics grouped by API in hour or minute
+    :ivar logging: Azure Analytics Logging settings.
+    :vartype logging: ~azure.storage.blob.models.Logging
+    :ivar hour_metrics: a summary of request statistics grouped by API in hour or minute aggregates
+     for blobs.
+    :vartype hour_metrics: ~azure.storage.blob.models.Metrics
+    :ivar minute_metrics: a summary of request statistics grouped by API in hour or minute
      aggregates for blobs.
-    :type hour_metrics: ~azure.storage.blob.models.Metrics
-    :param minute_metrics: a summary of request statistics grouped by API in hour or minute
-     aggregates for blobs.
-    :type minute_metrics: ~azure.storage.blob.models.Metrics
-    :param cors: The set of CORS rules.
-    :type cors: list[~azure.storage.blob.models.CorsRule]
-    :param default_service_version: The default version to use for requests to the Blob service if
+    :vartype minute_metrics: ~azure.storage.blob.models.Metrics
+    :ivar cors: The set of CORS rules.
+    :vartype cors: list[~azure.storage.blob.models.CorsRule]
+    :ivar default_service_version: The default version to use for requests to the Blob service if
      an incoming request's version is not specified. Possible values include version 2008-10-27 and
      all more recent versions.
-    :type default_service_version: str
-    :param delete_retention_policy: the retention policy which determines how long the associated
+    :vartype default_service_version: str
+    :ivar delete_retention_policy: the retention policy which determines how long the associated
      data should persist.
-    :type delete_retention_policy: ~azure.storage.blob.models.RetentionPolicy
-    :param static_website: The properties that enable an account to host a static website.
-    :type static_website: ~azure.storage.blob.models.StaticWebsite
+    :vartype delete_retention_policy: ~azure.storage.blob.models.RetentionPolicy
+    :ivar static_website: The properties that enable an account to host a static website.
+    :vartype static_website: ~azure.storage.blob.models.StaticWebsite
     """
 
     _attribute_map = {
@@ -2144,6 +2735,27 @@ class StorageServiceProperties(msrest.serialization.Model):
         static_website: Optional["StaticWebsite"] = None,
         **kwargs
     ):
+        """
+        :keyword logging: Azure Analytics Logging settings.
+        :paramtype logging: ~azure.storage.blob.models.Logging
+        :keyword hour_metrics: a summary of request statistics grouped by API in hour or minute
+         aggregates for blobs.
+        :paramtype hour_metrics: ~azure.storage.blob.models.Metrics
+        :keyword minute_metrics: a summary of request statistics grouped by API in hour or minute
+         aggregates for blobs.
+        :paramtype minute_metrics: ~azure.storage.blob.models.Metrics
+        :keyword cors: The set of CORS rules.
+        :paramtype cors: list[~azure.storage.blob.models.CorsRule]
+        :keyword default_service_version: The default version to use for requests to the Blob service
+         if an incoming request's version is not specified. Possible values include version 2008-10-27
+         and all more recent versions.
+        :paramtype default_service_version: str
+        :keyword delete_retention_policy: the retention policy which determines how long the associated
+         data should persist.
+        :paramtype delete_retention_policy: ~azure.storage.blob.models.RetentionPolicy
+        :keyword static_website: The properties that enable an account to host a static website.
+        :paramtype static_website: ~azure.storage.blob.models.StaticWebsite
+        """
         super(StorageServiceProperties, self).__init__(**kwargs)
         self.logging = logging
         self.hour_metrics = hour_metrics
@@ -2157,8 +2769,8 @@ class StorageServiceProperties(msrest.serialization.Model):
 class StorageServiceStats(msrest.serialization.Model):
     """Stats for the storage service.
 
-    :param geo_replication: Geo-Replication information for the Secondary Storage Service.
-    :type geo_replication: ~azure.storage.blob.models.GeoReplication
+    :ivar geo_replication: Geo-Replication information for the Secondary Storage Service.
+    :vartype geo_replication: ~azure.storage.blob.models.GeoReplication
     """
 
     _attribute_map = {
@@ -2171,6 +2783,10 @@ class StorageServiceStats(msrest.serialization.Model):
         geo_replication: Optional["GeoReplication"] = None,
         **kwargs
     ):
+        """
+        :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
+        :paramtype geo_replication: ~azure.storage.blob.models.GeoReplication
+        """
         super(StorageServiceStats, self).__init__(**kwargs)
         self.geo_replication = geo_replication
 
@@ -2180,21 +2796,20 @@ class UserDelegationKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param signed_oid: Required. The Azure Active Directory object ID in GUID format.
-    :type signed_oid: str
-    :param signed_tid: Required. The Azure Active Directory tenant ID in GUID format.
-    :type signed_tid: str
-    :param signed_start: Required. The date-time the key is active.
-    :type signed_start: ~datetime.datetime
-    :param signed_expiry: Required. The date-time the key expires.
-    :type signed_expiry: ~datetime.datetime
-    :param signed_service: Required. Abbreviation of the Azure Storage service that accepts the
-     key.
-    :type signed_service: str
-    :param signed_version: Required. The service version that created the key.
-    :type signed_version: str
-    :param value: Required. The key as a base64 string.
-    :type value: str
+    :ivar signed_oid: Required. The Azure Active Directory object ID in GUID format.
+    :vartype signed_oid: str
+    :ivar signed_tid: Required. The Azure Active Directory tenant ID in GUID format.
+    :vartype signed_tid: str
+    :ivar signed_start: Required. The date-time the key is active.
+    :vartype signed_start: ~datetime.datetime
+    :ivar signed_expiry: Required. The date-time the key expires.
+    :vartype signed_expiry: ~datetime.datetime
+    :ivar signed_service: Required. Abbreviation of the Azure Storage service that accepts the key.
+    :vartype signed_service: str
+    :ivar signed_version: Required. The service version that created the key.
+    :vartype signed_version: str
+    :ivar value: Required. The key as a base64 string.
+    :vartype value: str
     """
 
     _validation = {
@@ -2229,6 +2844,23 @@ class UserDelegationKey(msrest.serialization.Model):
         value: str,
         **kwargs
     ):
+        """
+        :keyword signed_oid: Required. The Azure Active Directory object ID in GUID format.
+        :paramtype signed_oid: str
+        :keyword signed_tid: Required. The Azure Active Directory tenant ID in GUID format.
+        :paramtype signed_tid: str
+        :keyword signed_start: Required. The date-time the key is active.
+        :paramtype signed_start: ~datetime.datetime
+        :keyword signed_expiry: Required. The date-time the key expires.
+        :paramtype signed_expiry: ~datetime.datetime
+        :keyword signed_service: Required. Abbreviation of the Azure Storage service that accepts the
+         key.
+        :paramtype signed_service: str
+        :keyword signed_version: Required. The service version that created the key.
+        :paramtype signed_version: str
+        :keyword value: Required. The key as a base64 string.
+        :paramtype value: str
+        """
         super(UserDelegationKey, self).__init__(**kwargs)
         self.signed_oid = signed_oid
         self.signed_tid = signed_tid

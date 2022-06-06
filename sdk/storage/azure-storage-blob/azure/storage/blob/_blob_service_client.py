@@ -135,7 +135,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -405,6 +405,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Specifies that deleted containers to be returned in the response. This is for container restore enabled
             account. The default value is `False`.
             .. versionadded:: 12.4.0
+        :keyword bool include_system:
+            Flag specifying that system containers should be included.
+            .. versionadded:: 12.10.0
         :keyword int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -426,6 +429,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         include_deleted = kwargs.pop('include_deleted', None)
         if include_deleted:
             include.append("deleted")
+        include_system = kwargs.pop('include_system', None)
+        if include_system:
+            include.append("system")
 
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)

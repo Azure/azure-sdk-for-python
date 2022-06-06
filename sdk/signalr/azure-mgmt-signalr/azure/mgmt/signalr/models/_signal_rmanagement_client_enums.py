@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ACLAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Default action when no other rule matches
+class ACLAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Azure Networking ACL Action.
     """
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -42,7 +27,7 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class FeatureFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FeatureFlags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """FeatureFlags is the supported features of Azure SignalR service.
     
     
@@ -66,22 +51,23 @@ class FeatureFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLE_MESSAGING_LOGS = "EnableMessagingLogs"
     ENABLE_LIVE_TRACE = "EnableLiveTrace"
 
-class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The keyType to regenerate. Must be either 'primary' or 'secondary'(case-insensitive).
+class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of access key.
     """
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
+    SALT = "Salt"
 
-class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the identity type: systemAssigned, userAssigned, None
+class ManagedIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Represents the identity type: systemAssigned, userAssigned, None
     """
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateLinkServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
     service.
     """
@@ -91,7 +77,7 @@ class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the resource.
     """
 
@@ -105,14 +91,22 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of the service - e.g. "SignalR" for "Microsoft.SignalRService/SignalR"
+class ScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The scale type applicable to the sku.
+    """
+
+    NONE = "None"
+    MANUAL = "Manual"
+    AUTOMATIC = "Automatic"
+
+class ServiceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of the service, it can be SignalR or RawWebSockets
     """
 
     SIGNAL_R = "SignalR"
     RAW_WEB_SOCKETS = "RawWebSockets"
 
-class SharedPrivateLinkResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SharedPrivateLinkResourceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the shared private link resource
     """
 
@@ -122,9 +116,8 @@ class SharedPrivateLinkResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, s
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
 
-class SignalRRequestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Allowed request types. The value can be one or more of: ClientConnection, ServerConnection,
-    RESTAPI.
+class SignalRRequestType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The incoming request type to the service
     """
 
     CLIENT_CONNECTION = "ClientConnection"
@@ -132,7 +125,7 @@ class SignalRRequestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESTAPI = "RESTAPI"
     TRACE = "Trace"
 
-class SignalRSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SignalRSkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Optional tier of this particular SKU. 'Standard' or 'Free'.
     
     ``Basic`` is deprecated, use ``Standard`` instead.
@@ -143,8 +136,8 @@ class SignalRSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class UpstreamAuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of auth. None or ManagedIdentity is supported now.
+class UpstreamAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Upstream auth type enum.
     """
 
     NONE = "None"

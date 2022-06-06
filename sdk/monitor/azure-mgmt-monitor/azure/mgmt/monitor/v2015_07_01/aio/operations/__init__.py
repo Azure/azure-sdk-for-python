@@ -7,7 +7,13 @@
 # --------------------------------------------------------------------------
 
 from ._service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
+from ._metric_definitions_operations import MetricDefinitionsOperations
+from ._alert_rules_operations import AlertRulesOperations
+from ._operations import Operations
 
 __all__ = [
     'ServiceDiagnosticSettingsOperations',
+    'MetricDefinitionsOperations',
+    'AlertRulesOperations',
+    'Operations',
 ]

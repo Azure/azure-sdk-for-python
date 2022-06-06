@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """the primary aggregation type value defining how to use the values for display.
     """
 
@@ -37,7 +22,7 @@ class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class ConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConditionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operators allowed in the rule condition.
     """
 
@@ -46,7 +31,7 @@ class ConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class TimeAggregationOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeAggregationOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Aggregation operators allowed in a rule.
     """
 
@@ -56,8 +41,8 @@ class TimeAggregationOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     TOTAL = "Total"
     LAST = "Last"
 
-class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """the unit of the metric.
+class Unit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The unit of the metric.
     """
 
     COUNT = "Count"
@@ -67,3 +52,9 @@ class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BYTES_PER_SECOND = "BytesPerSecond"
     PERCENT = "Percent"
     MILLI_SECONDS = "MilliSeconds"
+    BYTE_SECONDS = "ByteSeconds"
+    UNSPECIFIED = "Unspecified"
+    CORES = "Cores"
+    MILLI_CORES = "MilliCores"
+    NANO_CORES = "NanoCores"
+    BITS_PER_SECOND = "BitsPerSecond"

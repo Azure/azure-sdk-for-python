@@ -3,16 +3,25 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: $(BuildTargetingString)
+      BuildTargetingString: azure-ai-textanalytics
       ServiceDirectory: textanalytics
-      DeployArmTemplate: true
-      MatrixReplace:
-        - TestSamples=.*/true
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-text-analytics-azure-cloud-test-resources)
+          MatrixReplace:
+            - TestSamples=.*/true
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+      SupportedClouds: 'Public,UsGov,China'
       EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_SUBSCRIPTION_ID: $(TEXTANALYTICS_SUBSCRIPTION_ID)
+        AZURE_TENANT_ID: $(TEXTANALYTICS_TENANT_ID)
+        AZURE_CLIENT_SECRET: $(TEXTANALYTICS_CLIENT_SECRET)
+        AZURE_CLIENT_ID: $(TEXTANALYTICS_CLIENT_ID)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

@@ -1,5 +1,79 @@
 # Release History
 
+## 3.1.0 (2022-06-02)
+
+**Features**
+
+  - Added model ErrorResponseComponents
+  - Added model ErrorResponseComponentsError
+  - Added model WorkbookSharedTypeKind
+  - Added model WorkbookUpdateSharedTypeKind
+
+## 3.0.0 (2022-03-23)
+
+**Breaking changes**
+
+  - Operation WorkbooksOperations.get has a new signature
+
+## 2.1.0 (2022-01-25)
+
+**Features**
+
+  - Model OperationLive has a new parameter is_data_action
+
+## 2.0.0 (2021-12-12)
+
+**Features**
+
+  - Model MyWorkbook has a new parameter etag
+  - Model MyWorkbook has a new parameter storage_uri
+  - Model MyWorkbook has a new parameter identity
+  - Model MyWorkbook has a new parameter system_data
+  - Model ErrorResponse has a new parameter error
+  - Model WorkbookResource has a new parameter etag
+  - Model WorkbookResource has a new parameter identity
+  - Model WorkbookResource has a new parameter kind
+  - Model ApplicationInsightsComponent has a new parameter disable_local_auth
+  - Model ApplicationInsightsComponent has a new parameter force_customer_storage_for_profiler
+  - Model MyWorkbookResource has a new parameter etag
+  - Model MyWorkbookResource has a new parameter identity
+  - Model WorkbookUpdateParameters has a new parameter description
+  - Model WorkbookUpdateParameters has a new parameter revision
+  - Model Workbook has a new parameter storage_uri
+  - Model Workbook has a new parameter identity
+  - Model Workbook has a new parameter revision
+  - Model Workbook has a new parameter system_data
+  - Model Workbook has a new parameter etag
+  - Model Workbook has a new parameter description
+  - Model WebTest has a new parameter validation_rules
+  - Model WebTest has a new parameter request
+  - Model WorkbookError has a new parameter error
+  - Model WorkbooksListResult has a new parameter next_link
+  - Model MyWorkbookError has a new parameter error
+  - Model MyWorkbooksListResult has a new parameter next_link
+  - Added operation WorkbooksOperations.revision_get
+  - Added operation WorkbooksOperations.list_by_subscription
+  - Added operation WorkbooksOperations.revisions_list
+
+**Breaking changes**
+
+  - Parameter location of model WorkbookResource is now required
+  - Operation WorkbooksOperations.list_by_resource_group has a new signature
+  - Operation WorkbooksOperations.create_or_update has a new signature
+  - Operation MyWorkbooksOperations.create_or_update has a new signature
+  - Operation MyWorkbooksOperations.list_by_resource_group has a new signature
+  - Operation MyWorkbooksOperations.update has a new signature
+  - Operation WorkbooksOperations.create_or_update has a new signature
+  - Operation WorkbooksOperations.list_by_resource_group has a new signature
+  - Model ErrorResponse no longer has parameter message
+  - Model ErrorResponse no longer has parameter code
+  - Model WorkbookError no longer has parameter message
+  - Model WorkbookError no longer has parameter details
+  - Model WorkbookError no longer has parameter code
+  - Model MyWorkbookError no longer has parameter message
+  - Model MyWorkbookError no longer has parameter details
+  - Model MyWorkbookError no longer has parameter code
+
 ## 1.0.0 (2021-02-04)
 
 **Features**

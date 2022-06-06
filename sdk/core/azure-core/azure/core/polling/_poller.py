@@ -257,12 +257,12 @@ class LROPoller(Generic[PollingReturnType]):
 
     @distributed_trace
     def wait(self, timeout=None):
-        # type: (Optional[int]) -> None
+        # type: (Optional[float]) -> None
         """Wait on the long running operation for a specified length
         of time. You can check if this call as ended with timeout with the
         "done()" method.
 
-        :param int timeout: Period of time to wait for the long running
+        :param float timeout: Period of time to wait for the long running
          operation to complete (in seconds).
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """

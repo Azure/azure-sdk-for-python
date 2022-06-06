@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 import os
 import six
 import logging
@@ -16,90 +17,18 @@ from azure.ai.formrecognizer._helpers import (
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import AzureTestCase
-from azure_devtools.scenario_tests import (
-    RecordingProcessor,
-    ReplayableTest
-)
-from azure_devtools.scenario_tests.utilities import is_text_payload
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 
-
-class RequestBodyReplacer(RecordingProcessor):
-    """Replace request body when a file is read."""
-
-    def __init__(self, max_request_body=128):
-        self._max_request_body = max_request_body
-
-    def process_request(self, request):
-        try:
-            if request.body and six.binary_type(request.body) and len(request.body) > self._max_request_body * 1024:
-                request.body = '!!! The request body has been omitted from the recording because its ' \
-                               'size {} is larger than {}KB. !!!'.format(len(request.body),
-                                                                         self._max_request_body)
-        except TypeError:
-            pass
-        return request
-
-
-class OperationLocationReplacer(RecordingProcessor):
-    """Replace the location/operation location uri in a request/response body."""
-
-    def __init__(self):
-        self._replacement = "https://region.api.cognitive.microsoft.com/formrecognizer/"
-
-    def process_response(self, response):
-        try:
-            headers = response['headers']
-            location_header = None
-            if 'operation-location' in headers:
-                location_header = "operation-location"
-            if 'location' in headers:
-                location_header = "location"
-            if location_header:
-                if isinstance(headers[location_header], list):
-                    suffix = headers[location_header][0].split("/formrecognizer/")[1]
-                    response['headers'][location_header] = [self._replacement + suffix]
-                else:
-                    suffix = headers[location_header].split("/formrecognizer/")[1]
-                    response['headers'][location_header] = self._replacement + suffix
-            url = response["url"]
-            if url is not None:
-                suffix = url.split("/formrecognizer/")[1]
-                response['url'] = self._replacement + suffix
-            return response
-        except (KeyError, ValueError):
-            return response
-
-
-class AccessTokenReplacer(RecordingProcessor):
-    """Replace the access token in a request/response body."""
-
-    def __init__(self, replacement='redacted'):
-
-        self._replacement = replacement
-
-    def process_request(self, request):
-        import re
-        if is_text_payload(request) and request.body:
-            body = str(request.body)
-            body = re.sub(r'"accessToken": "([0-9a-f-]{36})"', r'"accessToken": 00000000-0000-0000-0000-000000000000', body)
-            request.body = body
-        return request
-
-    def process_response(self, response):
-        import json
-        try:
-            body = json.loads(response['body']['string'])
-            if 'accessToken' in body:
-                body['accessToken'] = self._replacement
-            response['body']['string'] = json.dumps(body)
-            return response
-        except (KeyError, ValueError):
-            return response
-
+def _get_blob_url(container_sas_url, container, file_name):
+    if container_sas_url == "https://blob_sas_url":
+        return container_sas_url
+    url = container_sas_url.split(container)
+    url[0] += container + "/" + file_name
+    blob_sas_url = url[0] + url[1]
+    return blob_sas_url
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -111,85 +40,52 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
+class FormRecognizerTest(AzureRecordedTestCase):
 
-class FormRecognizerTest(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
+    testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
+    receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
+    receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
+    business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
+    business_card_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
+    business_card_multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
+    identity_document_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
+    identity_document_url_jpg_passport = _get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
+    invoice_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
+    invoice_url_tiff = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
+    invoice_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
+    multipage_vendor_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
+    form_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
+    multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
+    multipage_table_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
+    selection_mark_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
+    label_table_variable_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
+    label_table_fixed_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
+    multipage_receipt_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
+    invoice_no_sub_line_item = _get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
 
-    def __init__(self, method_name):
-        super(FormRecognizerTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        self.recording_processors.append(AccessTokenReplacer())
-        self.recording_processors.append(RequestBodyReplacer())
-        self.recording_processors.append(OperationLocationReplacer())
-        self.configure_logging()
-
-        # URL samples
-        # self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
-        # self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-        # self.business_card_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.jpg"
-        # self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
-        # self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
-        # self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
-        # self.invoice_url_tiff = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"
-        # self.multipage_vendor_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multi1.pdf"
-        # self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
-        # self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
-        # self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
-        # self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
-
-        testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
-        self.receipt_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
-        self.receipt_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
-        self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
-        self.business_card_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
-        self.business_card_multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
-        self.identity_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
-        self.identity_document_url_jpg_passport = self.get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
-        self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
-        self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
-        self.invoice_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
-        self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
-        self.form_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
-        self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
-        self.multipage_table_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
-        self.selection_mark_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
-        self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
-        self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
-        self.multipage_receipt_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
-        self.invoice_no_sub_line_item = self.get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
-
-        # file stream samples
-        self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
-        self.receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
-        self.business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
-        self.business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
-        self.business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
-        self.identity_document_license_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg"))
-        self.identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
-        self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
-        self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
-        self.invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
-        self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
-        self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
-        self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
-        self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
-        self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
-        self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
-        self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
-        self.multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
-
-    def get_blob_url(self, container_sas_url, container, file_name):
-        if self.is_live:
-            url = container_sas_url.split(container)
-            url[0] += container + "/" + file_name
-            blob_sas_url = url[0] + url[1]
-            self.scrubber.register_name_pair(
-                blob_sas_url,
-                "blob_sas_url"
-            )
-        else:
-            blob_sas_url = "blob_sas_url"
-        return blob_sas_url
+    # file stream samples
+    receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
+    receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
+    business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
+    business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
+    business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
+    identity_document_license_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg"))
+    identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
+    invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
+    invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
+    invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
+    form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
+    blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
+    multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
+    unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
+    multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
+    multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
+    selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
+    multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
+    invoice_docx = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/invoice.docx"))
+    w2_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/tax/sample_w2.png"))
+    html_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/simple_html.html"))
+    spreadsheet = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx"))
 
     def get_oauth_endpoint(self):
         return os.getenv("FORMRECOGNIZER_TEST_ENDPOINT")
@@ -240,17 +136,17 @@ class FormRecognizerTest(AzureTestCase):
         for page, expected_page in zip(form_pages, read_result):
             if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                 page = page.pages[0]
-            self.assertEqual(page.page_number, expected_page.page)
-            self.assertEqual(page.text_angle, adjust_text_angle(expected_page.angle))
-            self.assertEqual(page.width, expected_page.width)
-            self.assertEqual(page.height, expected_page.height)
-            self.assertEqual(page.unit, expected_page.unit)
+            assert page.page_number == expected_page.page
+            assert page.text_angle == adjust_text_angle(expected_page.angle)
+            assert page.width == expected_page.width
+            assert page.height == expected_page.height
+            assert page.unit == expected_page.unit
 
             for line, expected_line in zip(page.lines or [], expected_page.lines or []):
                 self.assertFormLineTransformCorrect(line, expected_line)
 
             for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
-                self.assertDocumentSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
+                self.assertFormSelectionMarkHasValues(selection_mark, expected_page.page)
 
         if page_result:
             for page, expected_page in zip(form_pages, page_result):
@@ -262,28 +158,38 @@ class FormRecognizerTest(AzureTestCase):
     def assertBoundingBoxTransformCorrect(self, box, expected):
         if box is None and expected is None:
             return
-        self.assertEqual(box[0].x, expected[0])
-        self.assertEqual(box[0].y, expected[1])
-        self.assertEqual(box[1].x, expected[2])
-        self.assertEqual(box[1].y, expected[3])
-        self.assertEqual(box[2].x, expected[4])
-        self.assertEqual(box[2].y, expected[5])
-        self.assertEqual(box[3].x, expected[6])
-        self.assertEqual(box[3].y, expected[7])
+        assert box[0].x == expected[0]
+        assert box[0].y == expected[1]
+        assert box[1].x == expected[2]
+        assert box[1].y == expected[3]
+        assert box[2].x == expected[4]
+        assert box[2].y == expected[5]
+        assert box[3].x == expected[6]
+        assert box[3].y == expected[7]
+
+    def assertBoundingPolygonTransformCorrect(self, polygon, expected):
+        if polygon is None and expected is None:
+            return
+
+        count = 0
+        for point in polygon:
+            assert point.x == expected[count]
+            assert point.y == expected[count+1]
+            count = count + 2
 
     def assertFormWordTransformCorrect(self, word, expected):
-        self.assertEqual(word.text, expected.text)
-        self.assertEqual(word.confidence, adjust_confidence(expected.confidence))
-        self.assertEqual(word.kind, "word")
+        assert word.text == expected.text
+        assert word.confidence == adjust_confidence(expected.confidence)
+        assert word.kind  == "word"
         self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
 
     def assertFormLineTransformCorrect(self, line, expected):
-        self.assertEqual(line.kind, "line")
-        self.assertEqual(line.text, expected.text)
+        assert line.kind == "line"
+        assert line.text == expected.text
         self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
         if expected.appearance:
-            self.assertEqual(line.appearance.style_name, expected.appearance.style.name)
-            self.assertEqual(line.appearance.style_confidence, expected.appearance.style.confidence)
+            assert line.appearance.style_name == expected.appearance.style.name
+            assert line.appearance.style_confidence == expected.appearance.style.confidence
         for word, expected_word in zip(line.words, expected.words):
             self.assertFormWordTransformCorrect(word, expected_word)
 
@@ -297,28 +203,28 @@ class FormRecognizerTest(AzureTestCase):
             elif element_type == "line":
                 self.assertFormLineTransformCorrect(element, expected)
             elif element_type == "selectionMark":
-                self.assertDocumentSelectionMarkTransformCorrect(element, expected)
+                self.assertFormSelectionMarkHasValues(element, page_number)
 
     def assertFormFieldValueTransformCorrect(self, form_field, expected, read_results=None):
         if expected is None:
             return
         field_type = expected.type
         if field_type == "string":
-            self.assertEqual(form_field.value, expected.value_string)
+            assert form_field.value == expected.value_string
         if field_type == "number":
-            self.assertEqual(form_field.value, expected.value_number)
+            assert form_field.value == expected.value_number
         if field_type == "integer":
-            self.assertEqual(form_field.value, expected.value_integer)
+            assert form_field.value == expected.value_integer
         if field_type == "date":
-            self.assertEqual(form_field.value, expected.value_date)
+            assert form_field.value == expected.value_date
         if field_type == "phoneNumber":
-            self.assertEqual(form_field.value, expected.value_phone_number)
+            assert form_field.value == expected.value_phone_number
         if field_type == "time":
-            self.assertEqual(form_field.value, expected.value_time)
+            assert form_field.value == expected.value_time
         if field_type == "selectionMark":
-            self.assertEqual(form_field.value, expected.value_selection_mark)
+            assert form_field.value == expected.value_selection_mark
         if field_type == "countryRegion":
-            self.assertEqual(form_field.value, expected.value_country_region)
+            assert form_field.value == expected.value_country_region
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertFormFieldValueTransformCorrect(form_field.value[i], expected.value_array[i], read_results)
@@ -327,8 +233,8 @@ class FormRecognizerTest(AzureTestCase):
 
         if field_type not in ["array", "object"] and form_field.value_data:
             self.assertBoundingBoxTransformCorrect(form_field.value_data.bounding_box, expected.bounding_box)
-            self.assertEqual(expected.text, form_field.value_data.text)
-            self.assertEqual(expected.page, form_field.value_data.page_number)
+            assert expected.text == form_field.value_data.text
+            assert expected.page == form_field.value_data.page_number
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
                     form_field.value_data.field_elements,
@@ -344,17 +250,17 @@ class FormRecognizerTest(AzureTestCase):
             if expected is None:  # None value occurs with labeled tables and empty cells
                 continue
             field_type = expected.type
-            self.assertEqual(adjust_value_type(field_type), form_fields[label].value_type)
-            self.assertEqual(label, form_fields[label].name)
-            self.assertEqual(adjust_confidence(expected.confidence), form_fields[label].confidence)
+            assert adjust_value_type(field_type) == form_fields[label].value_type
+            assert label == form_fields[label].name
+            assert adjust_confidence(expected.confidence) == form_fields[label].confidence
             self.assertFormFieldValueTransformCorrect(form_fields[label], expected, read_results)
 
     def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, generated_fields, read_results=None):
         if generated_fields is None:
             return
         for idx, expected in enumerate(generated_fields):
-            self.assertEqual(adjust_confidence(expected.confidence), form_fields["field-"+str(idx)].confidence)
-            self.assertEqual(expected.key.text, form_fields["field-"+str(idx)].label_data.text)
+            assert adjust_confidence(expected.confidence) == form_fields["field-"+str(idx)].confidence
+            assert expected.key.text == form_fields["field-"+str(idx)].label_data.text
             self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, expected.key.bounding_box)
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
@@ -362,7 +268,7 @@ class FormRecognizerTest(AzureTestCase):
                     expected.key.elements,
                     read_results
                 )
-            self.assertEqual(expected.value.text, form_fields["field-" + str(idx)].value_data.text)
+            assert expected.value.text == form_fields["field-" + str(idx)].value_data.text
             self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, expected.value.bounding_box)
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
@@ -373,45 +279,45 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertTablesTransformCorrect(self, layout, expected_layout, read_results=None, **kwargs):
         for table, expected_table in zip(layout, expected_layout):
-            self.assertEqual(table.row_count, expected_table.rows)
-            self.assertEqual(table.column_count, expected_table.columns)
+            assert table.row_count == expected_table.rows
+            assert table.column_count == expected_table.columns
             self.assertBoundingBoxTransformCorrect(table.bounding_box, expected_table.bounding_box)
             for cell, expected_cell in zip(table.cells, expected_table.cells):
-                self.assertEqual(table.page_number, cell.page_number)
-                self.assertEqual(cell.text, expected_cell.text)
-                self.assertEqual(cell.row_index, expected_cell.row_index)
-                self.assertEqual(cell.column_index, expected_cell.column_index)
-                self.assertEqual(cell.row_span, expected_cell.row_span if expected_cell.row_span is not None else 1)
-                self.assertEqual(cell.column_span, expected_cell.column_span if expected_cell.column_span is not None else 1)
-                self.assertEqual(cell.confidence, adjust_confidence(expected_cell.confidence))
-                self.assertEqual(cell.is_header, expected_cell.is_header if expected_cell.is_header is not None else False)
-                self.assertEqual(cell.is_footer, expected_cell.is_footer if expected_cell.is_footer is not None else False)
+                assert table.page_number == cell.page_number
+                assert cell.text == expected_cell.text
+                assert cell.row_index == expected_cell.row_index
+                assert cell.column_index == expected_cell.column_index
+                assert cell.row_span == expected_cell.row_span if expected_cell.row_span is not None else 1
+                assert cell.column_span == expected_cell.column_span if expected_cell.column_span is not None else 1
+                assert cell.confidence == adjust_confidence(expected_cell.confidence)
+                assert cell.is_header == (expected_cell.is_header if expected_cell.is_header is not None else False)
+                assert cell.is_footer == (expected_cell.is_footer if expected_cell.is_footer is not None else False)
                 self.assertBoundingBoxTransformCorrect(cell.bounding_box, expected_cell.bounding_box)
                 self.assertFieldElementsTransFormCorrect(cell.field_elements, expected_cell.elements, read_results)
 
     def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
-            self.assertEqual(item.value_type, "dictionary")
+            assert item.value_type == "dictionary"
             self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
             if item.value.get("Name", None):
-                self.assertIsNotNone(item.value.get("Name").confidence)
-                self.assertIsNotNone(item.value.get("Name").value_data.text)
-                self.assertIsNotNone(item.value.get("Name").value_type)
+                assert item.value.get("Name").confidence is not None
+                assert item.value.get("Name").value_data.text is not None
+                assert item.value.get("Name").value_type is not None
             if item.value.get("Quantity", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Quantity").confidence)
-                self.assertIsNotNone(item.value.get("Quantity").value_data.text)
-                self.assertIsNotNone(item.value.get("Quantity").value_type)
+                assert item.value.get("Quantity").confidence is not None
+                assert item.value.get("Quantity").value_data.text is not None
+                assert item.value.get("Quantity").value_type is not None
             if item.value.get("TotalPrice", None):
                 self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("TotalPrice").confidence)
-                self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
-                self.assertIsNotNone(item.value.get("TotalPrice").value_type)
+                assert item.value.get("TotalPrice").confidence is not None
+                assert item.value.get("TotalPrice").value_data.text is not None
+                assert item.value.get("TotalPrice").value_type is not None
             if item.value.get("Price", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Price").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Price").confidence)
-                self.assertIsNotNone(item.value.get("Price").value_data.text)
-                self.assertIsNotNone(item.value.get("Price").value_type)
+                assert item.value.get("Price").confidence is not None
+                assert item.value.get("Price").value_data.text is not None
+                assert item.value.get("Price").value_type is not None
 
             if include_field_elements:
                 if item.value.get("Name", None):
@@ -425,47 +331,47 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertInvoiceItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
-            self.assertEqual(item.value_type, "dictionary")
+            assert item.value_type == "dictionary"
             if item.value.get("Amount", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Amount").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Amount").confidence)
-                self.assertIsNotNone(item.value.get("Amount").value_data.text)
-                self.assertIsNotNone(item.value.get("Amount").value_type)
+                assert item.value.get("Amount").confidence is not None
+                assert item.value.get("Amount").value_data.text is not None
+                assert item.value.get("Amount").value_type is not None
             if item.value.get("Quantity", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Quantity").confidence)
-                self.assertIsNotNone(item.value.get("Quantity").value_data.text)
-                self.assertIsNotNone(item.value.get("Quantity").value_type)
+                assert item.value.get("Quantity").confidence is not None
+                assert item.value.get("Quantity").value_data.text is not None
+                assert item.value.get("Quantity").value_type is not None
             if item.value.get("Description", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Description").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Description").confidence)
-                self.assertIsNotNone(item.value.get("Description").value_data.text)
-                self.assertIsNotNone(item.value.get("Description").value_type)
+                assert item.value.get("Description").confidence is not None
+                assert item.value.get("Description").value_data.text is not None
+                assert item.value.get("Description").value_type is not None
             if item.value.get("UnitPrice", None):
                 self.assertBoundingBoxHasPoints(item.value.get("UnitPrice").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("UnitPrice").confidence)
-                self.assertIsNotNone(item.value.get("UnitPrice").value_data.text)
-                self.assertIsNotNone(item.value.get("UnitPrice").value_type)
+                assert item.value.get("UnitPrice").confidence is not None
+                assert item.value.get("UnitPrice").value_data.text is not None
+                assert item.value.get("UnitPrice").value_type is not None
             if item.value.get("ProductCode", None):
                 self.assertBoundingBoxHasPoints(item.value.get("ProductCode").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("ProductCode").confidence)
-                self.assertIsNotNone(item.value.get("ProductCode").value_data.text)
-                self.assertIsNotNone(item.value.get("ProductCode").value_type)
+                assert item.value.get("ProductCode").confidence is not None
+                assert item.value.get("ProductCode").value_data.text is not None
+                assert item.value.get("ProductCode").value_type is not None
             if item.value.get("Unit", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Unit").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Unit").confidence)
-                self.assertIsNotNone(item.value.get("Unit").value_data.text)
-                self.assertIsNotNone(item.value.get("Unit").value_type)
+                assert item.value.get("Unit").confidence is not None
+                assert item.value.get("Unit").value_data.text is not None
+                assert item.value.get("Unit").value_type is not None
             if item.value.get("Date", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Date").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Date").confidence)
-                self.assertIsNotNone(item.value.get("Date").value_data.text)
-                self.assertIsNotNone(item.value.get("Date").value_type)
+                assert item.value.get("Date").confidence is not None
+                assert item.value.get("Date").value_data.text is not None
+                assert item.value.get("Date").value_type is not None
             if item.value.get("Tax", None):
                 self.assertBoundingBoxHasPoints(item.value.get("Tax").value_data.bounding_box)
-                self.assertIsNotNone(item.value.get("Tax").confidence)
-                self.assertIsNotNone(item.value.get("Tax").value_data.text)
-                self.assertIsNotNone(item.value.get("Tax").value_type)
+                assert item.value.get("Tax").confidence is not None
+                assert item.value.get("Tax").value_data.text is not None
+                assert item.value.get("Tax").value_type is not None
 
             if include_field_elements:
                 if item.value.get("Amount", None):
@@ -488,71 +394,71 @@ class FormRecognizerTest(AzureTestCase):
     def assertBoundingBoxHasPoints(self, box):
         if box is None:
             return
-        self.assertIsNotNone(box[0].x)
-        self.assertIsNotNone(box[0].y)
-        self.assertIsNotNone(box[1].x)
-        self.assertIsNotNone(box[1].y)
-        self.assertIsNotNone(box[2].x)
-        self.assertIsNotNone(box[2].y)
-        self.assertIsNotNone(box[3].x)
-        self.assertIsNotNone(box[3].y)
+        assert box[0].x is not None
+        assert box[0].y is not None
+        assert box[1].x is not None
+        assert box[1].y is not None
+        assert box[2].x is not None
+        assert box[2].y is not None
+        assert box[3].x is not None
+        assert box[3].y is not None
 
     def assertFormPagesHasValues(self, pages):
         for page in pages:
-            self.assertIsNotNone(page.text_angle)
-            self.assertIsNotNone(page.height)
-            self.assertIsNotNone(page.unit)
-            self.assertIsNotNone(page.width)
-            self.assertIsNotNone(page.page_number)
+            assert page.text_angle is not None
+            assert page.height is not None
+            assert page.unit is not None
+            assert page.width is not None
+            assert page.page_number is not None
             if page.lines:
                 for line in page.lines:
                     self.assertFormLineHasValues(line, page.page_number)
 
             if page.tables:
                 for table in page.tables:
-                    self.assertEqual(table.page_number, page.page_number)
-                    self.assertIsNotNone(table.row_count)
+                    assert table.page_number == page.page_number
+                    assert table.row_count is not None
                     if table.bounding_box:
                         self.assertBoundingBoxHasPoints(table.bounding_box)
-                    self.assertIsNotNone(table.column_count)
+                    assert table.column_count is not None
                     for cell in table.cells:
-                        self.assertIsNotNone(cell.text)
-                        self.assertIsNotNone(cell.row_index)
-                        self.assertIsNotNone(cell.column_index)
-                        self.assertIsNotNone(cell.row_span)
-                        self.assertIsNotNone(cell.column_span)
+                        assert cell.text is not None
+                        assert cell.row_index is not None
+                        assert cell.column_index is not None
+                        assert cell.row_span is not None
+                        assert cell.column_span is not None
                         self.assertBoundingBoxHasPoints(cell.bounding_box)
                         self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
 
             if page.selection_marks:
                 for selection_mark in page.selection_marks:
-                    self.assertIsNone(selection_mark.text)
-                    self.assertEqual(selection_mark.page_number, page.page_number)
+                    assert selection_mark.text is None
+                    assert selection_mark.page_number == page.page_number
                     self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
-                    self.assertIsNotNone(selection_mark.confidence)
-                    self.assertTrue(selection_mark.state in ["selected", "unselected"])
+                    assert selection_mark.confidence is not None
+                    assert (selection_mark.state in ["selected", "unselected"]) == True
 
     def assertFormWordHasValues(self, word, page_number):
-        self.assertIsNotNone(word.confidence)
-        self.assertIsNotNone(word.text)
+        assert word.confidence is not None
+        assert word.text is not None
         self.assertBoundingBoxHasPoints(word.bounding_box)
-        self.assertEqual(word.page_number, page_number)
+        assert word.page_number == page_number
 
     def assertFormLineHasValues(self, line, page_number):
-        self.assertIsNotNone(line.text)
+        assert line.text is not None
         self.assertBoundingBoxHasPoints(line.bounding_box)
         if line.appearance:
-            self.assertIsNotNone(line.appearance.style_name)
-            self.assertIsNotNone(line.appearance.style_confidence)
-        self.assertEqual(line.page_number, page_number)
+            assert line.appearance.style_name is not None
+            assert line.appearance.style_confidence is not None
+        assert line.page_number == page_number
         for word in line.words:
             self.assertFormWordHasValues(word, page_number)
 
     def assertFormSelectionMarkHasValues(self, selection_mark, page_number):
-        self.assertIsNotNone(selection_mark.confidence)
-        self.assertIsNotNone(selection_mark.state)
+        assert selection_mark.confidence is not None
+        assert selection_mark.state is not None
         self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
-        self.assertEqual(selection_mark.page_number, page_number)
+        assert selection_mark.page_number == page_number
 
     def assertFieldElementsHasValues(self, elements, page_number):
         if elements is None:
@@ -605,25 +511,25 @@ class FormRecognizerTest(AzureTestCase):
                 assert value.accuracy == composed_model.fields[field].accuracy
 
     def assertUnlabeledRecognizedFormHasValues(self, form, model):
-        self.assertIsNone(form.form_type_confidence)
-        self.assertEqual(form.model_id, model.model_id)
+        assert form.form_type_confidence is None
+        assert form.model_id == model.model_id
         self.assertFormPagesHasValues(form.pages)
         for label, field in form.fields.items():
-            self.assertIsNotNone(field.confidence)
-            self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.value)
-            self.assertIsNotNone(field.value_data.text)
-            self.assertIsNotNone(field.label_data.text)
+            assert field.confidence is not None
+            assert field.name is not None
+            assert field.value is not None
+            assert field.value_data.text is not None
+            assert field.label_data.text is not None
 
     def assertLabeledRecognizedFormHasValues(self, form, model):
-        self.assertIsNotNone(form.form_type_confidence)
-        self.assertEqual(form.model_id, model.model_id)
+        assert form.form_type_confidence is not None
+        assert form.model_id == model.model_id
         self.assertFormPagesHasValues(form.pages)
         for label, field in form.fields.items():
-            self.assertIsNotNone(field.confidence)
-            self.assertIsNotNone(field.name)
-            self.assertIsNotNone(field.value_data.text)
-            self.assertIsNotNone(field.value_data.bounding_box)
+            assert field.confidence is not None
+            assert field.name is not None
+            assert field.value_data.text is not None
+            assert field.value_data.bounding_box is not None
 
     def assertDocumentTransformCorrect(self, transformed_documents, raw_documents, **kwargs):
         if transformed_documents == [] and not raw_documents:
@@ -646,20 +552,14 @@ class FormRecognizerTest(AzureTestCase):
             self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
 
-    def assertDocumentEntitiesTransformCorrect(self, transformed_entity, raw_entity, **kwargs):
-        if transformed_entity == [] and not raw_entity:
+    def assertDocumentLanguagesTransformCorrect(self, transformed_languages, raw_languages, **kwargs):
+        if transformed_languages == [] and not raw_languages:
             return
-        
-        for entity, expected in zip(transformed_entity, raw_entity):
-            assert entity.category == expected.category
-            assert entity.sub_category == expected.sub_category
-            assert entity.content == expected.content
-            assert entity.confidence == expected.confidence
-            
-            for span, expected_span in zip(entity.spans or [], expected.spans or []):
-                    self.assertSpanTransformCorrect(span, expected_span)
-                
-            self.assertBoundingRegionsTransformCorrect(entity.bounding_regions, expected.bounding_regions)
+        for lang, expected in zip(transformed_languages, raw_languages):
+            assert lang.locale == expected.locale
+            for span, expected_span in zip(lang.spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+            assert lang.confidence == expected.confidence
 
     def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
         if transformed_styles == [] and not raw_styles:
@@ -697,6 +597,18 @@ class FormRecognizerTest(AzureTestCase):
             
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
+    def assertDocumentParagraphsTransformCorrect(self, transformed_paragraphs, raw_paragraphs, **kwargs):
+        if transformed_paragraphs == [] and not raw_paragraphs:
+            return
+        for par, expected in zip(transformed_paragraphs, raw_paragraphs):
+            assert par.role == expected.role
+            assert par.content == expected.content
+
+            for span, expected_span in zip(par.spans or [], expected.spans or []):
+                self.assertSpanTransformCorrect(span, expected_span)
+            
+            self.assertBoundingRegionsTransformCorrect(par.bounding_regions, expected.bounding_regions)
+
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
         if raw_cell.kind:
             assert transformed_cell.kind == raw_cell.kind
@@ -721,8 +633,10 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
         for page, expected_page in zip(transformed_pages, raw_pages):
+            assert page.kind == expected_page.kind
             assert page.page_number == expected_page.page_number
-            assert page.angle == adjust_text_angle(expected_page.angle)
+            if page.angle:
+                assert page.angle == adjust_text_angle(expected_page.angle)
             assert page.width == expected_page.width
             assert page.height == expected_page.height
             assert page.unit == expected_page.unit
@@ -741,14 +655,14 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertDocumentLineTransformCorrect(self, line, expected):
         assert line.content == expected.content
-        self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
+        self.assertBoundingBoxTransformCorrect(line.polygon, expected.polygon)
         for transformed_span, span in zip(line.spans or [], expected.spans or []):
             self.assertSpanTransformCorrect(transformed_span, span)
 
     def assertDocumentWordTransformCorrect(self, word, expected):
         assert word.kind == "word"
         assert word.content == expected.content
-        self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
+        self.assertBoundingPolygonTransformCorrect(word.polygon, expected.polygon)
         self.assertSpanTransformCorrect(word.span, expected.span)
 
     def assertSpanTransformCorrect(self, span, expected):
@@ -761,7 +675,7 @@ class FormRecognizerTest(AzureTestCase):
         assert selection_mark.kind == "selectionMark"
         assert selection_mark.confidence == adjust_confidence(expected.confidence)
         assert selection_mark.state == expected.state
-        self.assertBoundingBoxTransformCorrect(selection_mark.bounding_box, expected.bounding_box)
+        self.assertBoundingPolygonTransformCorrect(selection_mark.polygon, expected.polygon)
 
     def assertDocumentFieldsTransformCorrect(self, document_fields, generated_fields):
         if generated_fields is None:
@@ -773,7 +687,9 @@ class FormRecognizerTest(AzureTestCase):
             field_type = expected.type
             assert adjust_value_type(field_type) == document_fields[label].value_type
             assert expected.confidence == document_fields[label].confidence
-            assert expected.content == document_fields[label].content
+            # In the case of content for a signature type field we get '' in expected.content
+            # vs. None for document_fields[label].content
+            assert (expected.content == document_fields[label].content) or (expected.content == '' and not document_fields[label].content)
             self.assertDocumentFieldValueTransformCorrect(document_fields[label], expected)
 
             for span, expected_span in zip(document_fields[label].spans or [], expected.spans or []):
@@ -786,7 +702,7 @@ class FormRecognizerTest(AzureTestCase):
             return
         for region, expected_region in zip(bounding_regions, expected):
             assert region.page_number == expected_region.page_number
-            self.assertBoundingBoxTransformCorrect(region.bounding_box, expected_region.bounding_box)
+            self.assertBoundingPolygonTransformCorrect(region.polygon, expected_region.polygon)
             
 
     def assertDocumentFieldValueTransformCorrect(self, document_field, expected):
@@ -809,6 +725,8 @@ class FormRecognizerTest(AzureTestCase):
             assert document_field.value == expected.value_selection_mark
         if field_type == "countryRegion":
             assert document_field.value == expected.value_country_region
+        if field_type == "signature":
+            assert document_field.value == expected.value_signature
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertDocumentFieldValueTransformCorrect(document_field.value[i], expected.value_array[i])

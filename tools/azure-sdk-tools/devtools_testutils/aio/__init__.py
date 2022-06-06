@@ -1,3 +1,3 @@
-from .proxy_testcase_async import RecordedByProxyAsync
+from .proxy_testcase_async import recorded_by_proxy_async
 
-__all__ = ["RecordedByProxyAsync"]
+__all__ = ["recorded_by_proxy_async"]

@@ -1,9 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-sqlvirtualmachine"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Sqlvirtualmachine Management"
+package_pprint_name = "Sql Virtual Machine Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = false
-need_azuremgmtcore = true

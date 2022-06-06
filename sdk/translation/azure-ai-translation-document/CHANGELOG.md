@@ -1,14 +1,21 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
-
-### Features Added
+## 1.0.0 (Unreleased)
 
 ### Breaking Changes
 
-### Bugs Fixed
+- Changed: `begin_translation` parameter `target_language_code` has been renamed to `target_language`.
+- Changed: `begin_translation` keyword-only argument `source_language_code` has been renamed to `source_language`.
+- Changed: `DocumentTranslationInput` keyword-only argument and property `source_language_code` has been renamed to `source_language`.
+- Changed: `TranslationTarget` keyword-only argument and property `language_code` has been renamed to `language`.
+- Changed: `TranslationStatus` property `documents_not_yet_started_count` has been renamed to `documents_not_started_count`.
+- Removed: `results_per_page` keyword-only argument from `list_translation_statuses` and `list_document_statuses`.
+
+
+## 1.0.0b6 (2022-02-08)
 
 ### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 1.0.0b5 (2021-09-08)
 

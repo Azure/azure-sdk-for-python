@@ -1,0 +1,533 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-authentication/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      X-MRC-CV:
+      - Aznc4CcBrwlR+l/Jru2QHu
+    method: GET
+    uri: https://sts.eastus.mixedreality.azure.com/Accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/token?api-version=2019-02-28-preview
+  response:
+    body:
+      string: '{"AccessToken":"faketoken.eyJleHAiOjIxNDc0ODM2NDd9.faketoken"}'
+    headers:
+      cache-control: no-store,no-cache
+      content-length: '1240'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:22:56 GMT
+      ms-cv: dHWGozT0Z0yorJvvjHBw7A.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://sts.eastus2.mixedreality.azure.com/Accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/token?api-version=2019-02-28-preview
+- request:
+    body: '{"settings": {"inputLocation": {"storageContainerUri": "https://arrstorageaccount.blob.core.windows.net/test",
+      "storageContainerReadListSas": "?sv=2015-04-05&sr=c&se=2122-03-10T16%3A13%3A40.0000000Z&sp=rwl&sig=fakeSig",
+      "blobPrefix": "Input", "relativeInputAssetPath": "testBox.fbx"}, "outputLocation":
+      {"storageContainerUri": "https://arrstorageaccount.blob.core.windows.net/test",
+      "storageContainerWriteSas": "?sv=2015-04-05&sr=c&se=2122-03-10T16%3A13%3A40.0000000Z&sp=rwl&sig=fakeSig",
+      "blobPrefix": "1724f808-17c6-4058-93c8-f39c2a84b0b7"}}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '666'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"NotStarted"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      content-length: '481'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:22:57 GMT
+      ms-cv: mPb6a2lBlUiB7/DsmIl/Xg.0
+      x-content-type-options: nosniff
+    status:
+      code: 201
+      message: Created
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"NotStarted"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '481'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:22:57 GMT
+      ms-cv: 9XO9frtshk+p0DRl/PJxGA.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"NotStarted"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '481'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:22:58 GMT
+      ms-cv: o2JY6vAF2UyoE+UQ2PPzXQ.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"NotStarted"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '481'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:03 GMT
+      ms-cv: IjKBKz9NBEWd2grbhbmyWA.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"NotStarted"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '481'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:08 GMT
+      ms-cv: VAMr2wMolEe9TRvFXgP5BQ.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:13 GMT
+      ms-cv: cH0j3XHWX0mgbEQetnHryQ.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:19 GMT
+      ms-cv: y8MqfjPbU0qQVl3QmfJmjQ.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:24 GMT
+      ms-cv: RFE3w3igwkKkkfZTnqfmTw.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:29 GMT
+      ms-cv: uFk0fwn2UUuOJMZ7ha6mjQ.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:34 GMT
+      ms-cv: DJIIh8G5fkytd8KuEdNBaw.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:39 GMT
+      ms-cv: JZCmcBiRbUy9ohlp7oGDxA.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:45 GMT
+      ms-cv: TXKoCpSrcEurXhJWSBnk7g.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:50 GMT
+      ms-cv: nA707bNhOEqiQ2JYdkru1g.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:23:55 GMT
+      ms-cv: WKHQlFPfjEmoxV9pA0/Qhg.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:24:00 GMT
+      ms-cv: G1uA0Fop/UaIKfkm1hcIVg.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"error":null,"status":"Running"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '478'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:24:05 GMT
+      ms-cv: BhW1QfBQXEOL+0qS1ekEvg.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/1724f808-17c6-4058-93c8-f39c2a84b0b7/testBox.arrAsset"},"error":null,"status":"Succeeded"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      cache-control: no-store,no-cache
+      content-length: '615'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:24:11 GMT
+      ms-cv: 1fuhnZ4nZkKNGWhQE1D1qw.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions/1724f808-17c6-4058-93c8-f39c2a84b0b7?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions?api-version=2021-01-01
+  response:
+    body:
+      string: '{"conversions":[{"id":"9b0f30a1-f43f-492c-893d-6b3c05464bf4","creationTime":"2021-03-09T18:18:03.1675785Z","settings":{"inputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"9b0f30a1-f43f-492c-893d-6b3c05464bf4/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InternalServerError","message":"Unexpected
+        internal server error encountered."},"status":"Failed"},{"id":"f19299d2-eef7-4d82-84b0-047defcf236e","creationTime":"2021-03-09T18:18:30.881044Z","settings":{"inputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"f19299d2-eef7-4d82-84b0-047defcf236e/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InternalServerError","message":"Unexpected
+        internal server error encountered."},"status":"Failed"},{"id":"6f494a77-3e94-45ca-ace8-d90335637122","creationTime":"2021-03-09T18:19:24.0118432Z","settings":{"inputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"6f494a77-3e94-45ca-ace8-d90335637122/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InternalServerError","message":"Unexpected
+        internal server error encountered."},"status":"Failed"},{"id":"5277192c-0bf7-4c61-bda5-e44153a6d2a2","creationTime":"2021-03-09T18:30:42.2644192Z","settings":{"inputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"5277192c-0bf7-4c61-bda5-e44153a6d2a2/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InternalServerError","message":"Unexpected
+        internal server error encountered."},"status":"Failed"},{"id":"6abcdd46-5b8c-4d31-bbac-122bdbdf4c3f","creationTime":"2021-03-09T18:34:54.4977297Z","settings":{"inputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"6abcdd46-5b8c-4d31-bbac-122bdbdf4c3f/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InternalServerError","message":"Unexpected
+        internal server error encountered."},"status":"Failed"},{"id":"2e6ddbf4-2170-4171-a72b-56c3be518c3a","creationTime":"2021-03-09T18:35:44.2592196Z","settings":{"inputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"(''https://arrstorageaccount.blob.core.windows.net/test'',)","blobPrefix":"2e6ddbf4-2170-4171-a72b-56c3be518c3a/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InternalServerError","message":"Unexpected
+        internal server error encountered."},"status":"Failed"},{"id":"ae975581-34ba-4a7b-8444-f978215e66b6","creationTime":"2021-03-09T18:37:24.4419477Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"ae975581-34ba-4a7b-8444-f978215e66b6/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/ae975581-34ba-4a7b-8444-f978215e66b6/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"9bce520b-c6da-4f0f-a825-e8950b46e2ab","creationTime":"2021-03-10T16:31:25.1246608Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"9bce520b-c6da-4f0f-a825-e8950b46e2ab/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InputContainerAccessDenied","message":"Access
+        to the input blob container was denied. Invalid access rights or invalid shared
+        access signature."},"status":"Failed"},{"id":"a5cc69da-9cb3-4511-9812-b0456f96d422","creationTime":"2021-03-10T16:35:19.7770288Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"a5cc69da-9cb3-4511-9812-b0456f96d422/","outputAssetFilename":"testBox.arrAsset"}},"error":{"code":"InputContainerAccessDenied","message":"Access
+        to the input blob container was denied. Invalid access rights or invalid shared
+        access signature."},"status":"Failed"},{"id":"80039b19-c1a9-48c4-9d3c-05bbc3f2c0a8","creationTime":"2021-03-10T16:43:16.7373357Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"80039b19-c1a9-48c4-9d3c-05bbc3f2c0a8/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/80039b19-c1a9-48c4-9d3c-05bbc3f2c0a8/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"042dbe77-cd35-4fb7-a522-8b9096592acc","creationTime":"2021-03-10T19:28:42.8057122Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"042dbe77-cd35-4fb7-a522-8b9096592acc/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/042dbe77-cd35-4fb7-a522-8b9096592acc/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"10e5a4a2-312c-4bbe-93db-976438a4635d","creationTime":"2021-03-11T18:07:50.2393836Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"10e5a4a2-312c-4bbe-93db-976438a4635d/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/10e5a4a2-312c-4bbe-93db-976438a4635d/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"d141d3ec-8f25-4417-9a48-a143daa7f2d0","creationTime":"2021-03-11T19:05:54.277069Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"d141d3ec-8f25-4417-9a48-a143daa7f2d0/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/d141d3ec-8f25-4417-9a48-a143daa7f2d0/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"391b3052-0a7b-4831-b772-124719c7bb04","creationTime":"2021-03-11T19:15:27.484726Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"391b3052-0a7b-4831-b772-124719c7bb04/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/391b3052-0a7b-4831-b772-124719c7bb04/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"c8f38fa8-099c-48fc-bf5c-0a6e72baacc7","creationTime":"2021-03-12T17:38:44.7556604Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"c8f38fa8-099c-48fc-bf5c-0a6e72baacc7/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/c8f38fa8-099c-48fc-bf5c-0a6e72baacc7/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"c2ea2df4-7b1b-4ee2-97b5-226c52e5f5e5","creationTime":"2021-03-12T17:55:55.4377703Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"c2ea2df4-7b1b-4ee2-97b5-226c52e5f5e5/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/c2ea2df4-7b1b-4ee2-97b5-226c52e5f5e5/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"e1bbad8b-29bf-4dfd-983d-e6ba8c6003d3","creationTime":"2021-03-15T17:54:15.7509006Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"e1bbad8b-29bf-4dfd-983d-e6ba8c6003d3/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/e1bbad8b-29bf-4dfd-983d-e6ba8c6003d3/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"d87d2d17-225c-4f60-8d8a-51dadc36e3e2","creationTime":"2021-03-15T17:55:32.0413519Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"d87d2d17-225c-4f60-8d8a-51dadc36e3e2/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/d87d2d17-225c-4f60-8d8a-51dadc36e3e2/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"cb6b9ce3-3b83-4ca2-acb5-1d3acab0b191","creationTime":"2021-03-15T17:56:57.9605113Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"cb6b9ce3-3b83-4ca2-acb5-1d3acab0b191/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/cb6b9ce3-3b83-4ca2-acb5-1d3acab0b191/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"6970613e-bed3-4e84-a32e-8515db024599","creationTime":"2021-03-15T18:09:23.7342303Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"6970613e-bed3-4e84-a32e-8515db024599/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/6970613e-bed3-4e84-a32e-8515db024599/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"a67d29e5-61d1-4c3d-ad9c-552837a7dd61","creationTime":"2021-03-16T11:11:25.6714785Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"a67d29e5-61d1-4c3d-ad9c-552837a7dd61/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/a67d29e5-61d1-4c3d-ad9c-552837a7dd61/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"77fb083c-e55b-4d2b-941e-06649ac0f7f7","creationTime":"2021-03-16T11:12:09.0107221Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"77fb083c-e55b-4d2b-941e-06649ac0f7f7/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/77fb083c-e55b-4d2b-941e-06649ac0f7f7/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"53d31310-15de-4cac-bbff-bf30658e2e86","creationTime":"2021-03-19T17:00:00.1763042Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"53d31310-15de-4cac-bbff-bf30658e2e86/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"9c98f810-681e-466d-894b-171e311008ad","creationTime":"2021-03-19T17:04:03.5760141Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"9c98f810-681e-466d-894b-171e311008ad/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"79a37901-c798-4112-8bf4-be8038e3fbce","creationTime":"2021-03-19T17:10:49.0512631Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"79a37901-c798-4112-8bf4-be8038e3fbce/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"df0bf778-e005-4162-be4a-56d9d8e9a83c","creationTime":"2021-03-19T17:12:15.8909541Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"df0bf778-e005-4162-be4a-56d9d8e9a83c/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/df0bf778-e005-4162-be4a-56d9d8e9a83c/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"029783c8-179e-4455-b606-252b044c4f0b","creationTime":"2021-03-19T17:22:39.4520987Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"029783c8-179e-4455-b606-252b044c4f0b/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"e4963baf-4d21-4029-951c-225188ebe339","creationTime":"2021-03-19T17:23:45.9155238Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"e4963baf-4d21-4029-951c-225188ebe339/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/e4963baf-4d21-4029-951c-225188ebe339/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"fcf1d2a7-1d0e-4e16-a4b6-6af1a046dce2","creationTime":"2021-03-19T17:37:07.6491193Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"fcf1d2a7-1d0e-4e16-a4b6-6af1a046dce2/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"f628ef31-aab0-4b53-af70-bea568cae3bb","creationTime":"2021-03-19T17:38:08.9989001Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"f628ef31-aab0-4b53-af70-bea568cae3bb/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/f628ef31-aab0-4b53-af70-bea568cae3bb/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"1b976dcd-816a-43b0-93c6-3c7ee6749cc3","creationTime":"2021-03-19T17:39:59.6177173Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1b976dcd-816a-43b0-93c6-3c7ee6749cc3/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"cf598ca1-4924-4120-b02b-4e237889f392","creationTime":"2021-03-19T17:41:01.4026308Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"cf598ca1-4924-4120-b02b-4e237889f392/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/cf598ca1-4924-4120-b02b-4e237889f392/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"8bfef2cf-36eb-45f8-8d10-97fb307e4a7c","creationTime":"2021-03-19T17:48:01.2574813Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"8bfef2cf-36eb-45f8-8d10-97fb307e4a7c/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"5c14703a-917d-4020-b6d9-37a0c2431529","creationTime":"2021-03-19T17:49:06.4439118Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"5c14703a-917d-4020-b6d9-37a0c2431529/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/5c14703a-917d-4020-b6d9-37a0c2431529/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"1f54c360-9fea-48a4-a950-1a46ab3adc3d","creationTime":"2021-03-19T18:05:09.8734976Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1f54c360-9fea-48a4-a950-1a46ab3adc3d/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"babdf5d4-5e7d-47f2-b384-822a04551348","creationTime":"2021-03-19T18:06:17.8273073Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"babdf5d4-5e7d-47f2-b384-822a04551348/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/babdf5d4-5e7d-47f2-b384-822a04551348/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"ded52e40-8643-41d2-8571-c30dcf1df2ec","creationTime":"2021-03-19T18:17:11.8584239Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"ded52e40-8643-41d2-8571-c30dcf1df2ec/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"f8a14b8e-d5cf-4860-9c3f-070fb016b326","creationTime":"2021-03-22T17:07:12.8212152Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"f8a14b8e-d5cf-4860-9c3f-070fb016b326/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"0632c21e-5782-49b5-ba6e-a21352b9b2ac","creationTime":"2021-03-22T17:10:16.8367277Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"0632c21e-5782-49b5-ba6e-a21352b9b2ac/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/0632c21e-5782-49b5-ba6e-a21352b9b2ac/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"bf3b7e9f-39d1-4a98-8a19-65596209d440","creationTime":"2021-03-22T17:14:27.7063026Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"bf3b7e9f-39d1-4a98-8a19-65596209d440/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"cfc534b3-3d46-4185-a080-98afc6097dba","creationTime":"2021-03-22T17:15:30.0686997Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"cfc534b3-3d46-4185-a080-98afc6097dba/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/cfc534b3-3d46-4185-a080-98afc6097dba/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"c228b814-e29a-4389-be1c-96e7c0ea668d","creationTime":"2021-03-22T18:46:15.4801039Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"c228b814-e29a-4389-be1c-96e7c0ea668d/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/c228b814-e29a-4389-be1c-96e7c0ea668d/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"9872dd7b-6d11-408a-bbf9-cfe3abaf58a7","creationTime":"2021-03-22T19:24:27.492717Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"9872dd7b-6d11-408a-bbf9-cfe3abaf58a7/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/9872dd7b-6d11-408a-bbf9-cfe3abaf58a7/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"cddfc170-ec9a-428a-a9d7-2cd069387b30","creationTime":"2021-03-22T19:31:14.5486469Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"cddfc170-ec9a-428a-a9d7-2cd069387b30/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/cddfc170-ec9a-428a-a9d7-2cd069387b30/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"e8f23a70-3146-4119-a9d0-9ed813e6c6f1","creationTime":"2021-03-22T19:40:31.3253184Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"e8f23a70-3146-4119-a9d0-9ed813e6c6f1/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/e8f23a70-3146-4119-a9d0-9ed813e6c6f1/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"023f5b84-f142-4d5f-bf86-cc3a68fdde6f","creationTime":"2021-03-22T19:40:51.3227567Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"023f5b84-f142-4d5f-bf86-cc3a68fdde6f/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/023f5b84-f142-4d5f-bf86-cc3a68fdde6f/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"1eabd0a4-eb68-42e0-8678-9d73d555ee28","creationTime":"2021-03-22T19:41:11.156701Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1eabd0a4-eb68-42e0-8678-9d73d555ee28/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/1eabd0a4-eb68-42e0-8678-9d73d555ee28/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"11b5d55d-b228-4291-8883-df3865a32088","creationTime":"2021-03-22T19:46:49.6665492Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"11b5d55d-b228-4291-8883-df3865a32088/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/11b5d55d-b228-4291-8883-df3865a32088/testBox.arrAsset"},"error":null,"status":"Succeeded"},{"id":"70be9154-ee8c-43ed-a7da-918ecef5eb3b","creationTime":"2021-03-23T11:49:11.4455919Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"70be9154-ee8c-43ed-a7da-918ecef5eb3b/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"44001c37-5e9c-48b5-ac18-8eae3be5f5d3","creationTime":"2021-03-23T11:52:19.5361733Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"44001c37-5e9c-48b5-ac18-8eae3be5f5d3/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"}],"@nextLink":"https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions?api-version=2021-01-01&skiptoken=1%3AW3sidG9rZW4iOiIrUklEOn5pMWhOQUlhMDJMOXZId0FBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjSVNWOjIjSUVPOjY1NTY3I1FDRjozI0ZQQzpBZ0VBQUFBR0FHK2ZBY0FEQnc9PSIsInJhbmdlIjp7Im1pbiI6IiIsIm1heCI6IkZGIn19XQ"}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      content-length: '30993'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:24:11 GMT
+      ms-cv: Rt97XE50F06K5vehwZbAxg.0
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions?api-version=2021-01-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions?api-version=2021-01-01&skiptoken=1:W3sidG9rZW4iOiIrUklEOn5pMWhOQUlhMDJMOXZId0FBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjSVNWOjIjSUVPOjY1NTY3I1FDRjozI0ZQQzpBZ0VBQUFBR0FHK2ZBY0FEQnc9PSIsInJhbmdlIjp7Im1pbiI6IiIsIm1heCI6IkZGIn19XQ
+  response:
+    body:
+      string: '{"conversions":[{"id":"5450566d-8263-4c9d-8a98-bec2f60ca2d1","creationTime":"2021-03-23T11:52:43.9191719Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"5450566d-8263-4c9d-8a98-bec2f60ca2d1/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"5147aa0f-485a-429f-8d04-bd0b2458cf79","creationTime":"2021-03-23T11:58:50.7610327Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"5147aa0f-485a-429f-8d04-bd0b2458cf79/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"bf2bc58f-08d6-42aa-8d9d-6aa0fdb65bef","creationTime":"2021-03-23T13:18:55.3796887Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"bf2bc58f-08d6-42aa-8d9d-6aa0fdb65bef/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"3ff6ab5c-600a-4892-bae9-348f215b1fa4","creationTime":"2021-03-23T13:20:52.4717661Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBoxWhichDoesNotExist.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"3ff6ab5c-600a-4892-bae9-348f215b1fa4/","outputAssetFilename":"testBoxWhichDoesNotExist.arrAsset"}},"error":{"code":"ConversionProcessFailed","message":"Invalid
+        input provided. Check logs in output container for details."},"status":"Failed"},{"id":"1724f808-17c6-4058-93c8-f39c2a84b0b7","creationTime":"2021-03-23T13:22:58.1978779Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"1724f808-17c6-4058-93c8-f39c2a84b0b7/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/1724f808-17c6-4058-93c8-f39c2a84b0b7/testBox.arrAsset"},"error":null,"status":"Succeeded"}],"@nextLink":null}'
+    headers:
+      api-supported-versions: 2021-01-01-preview, 2021-01-01
+      content-length: '3138'
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Mar 2021 13:24:11 GMT
+      ms-cv: fjxqBH8abEuy6MXUDSZ4zA.0
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://remoterendering.eastus2.mixedreality.azure.com/accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/conversions?api-version=2021-01-01&skiptoken=1:W3sidG9rZW4iOiIrUklEOn5pMWhOQUlhMDJMOXZId0FBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjSVNWOjIjSUVPOjY1NTY3I1FDRjozI0ZQQzpBZ0VBQUFBR0FHK2ZBY0FEQnc9PSIsInJhbmdlIjp7Im1pbiI6IiIsIm1heCI6IkZGIn19XQ
+version: 1

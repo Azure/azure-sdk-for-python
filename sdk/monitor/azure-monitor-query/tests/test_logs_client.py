@@ -4,6 +4,7 @@ import os
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryPartialResult
+from azure.monitor.query._helpers import native_col_type
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -117,7 +118,7 @@ def test_logs_query_batch_default():
 def test_logs_single_query_with_statistics():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = """AppRequests"""
+    query = """AppRequests | take 10"""
 
     # returns LogsQueryResult 
     response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_statistics=True)
@@ -128,7 +129,7 @@ def test_logs_single_query_with_statistics():
 def test_logs_single_query_with_render():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = """AppRequests"""
+    query = """AppRequests | take 10"""
 
     # returns LogsQueryResult 
     response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True)
@@ -139,7 +140,7 @@ def test_logs_single_query_with_render():
 def test_logs_single_query_with_render_and_stats():
     credential = _credential()
     client = LogsQueryClient(credential)
-    query = """AppRequests"""
+    query = """AppRequests | take 10"""
 
     # returns LogsQueryResult 
     response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=None, include_visualization=True, include_statistics=True)
@@ -228,7 +229,7 @@ def test_logs_query_batch_additional_workspaces():
 def test_logs_query_result_iterate_over_tables():
     client = LogsQueryClient(_credential())
 
-    query = "AppRequests; AppRequests | take 5"
+    query = "AppRequests | take 10; AppRequests | take 5"
 
     response = client.query_workspace(
         os.environ['LOG_WORKSPACE_ID'],
@@ -265,3 +266,10 @@ def test_logs_query_result_row_type():
 
         for row in table.rows:
             assert row.__class__ == LogsTableRow
+
+def test_native_col_type():
+    val = native_col_type('datetime', None)
+    assert val is None
+
+    val = native_col_type('datetime', '2020-10-10')
+    assert val is not None

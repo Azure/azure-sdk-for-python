@@ -1,17 +1,74 @@
 # Release History
 
-## 7.3.5 (Unreleased)
+## 7.7.0 (2022-06-07)
+
+### Bugs Fixed
+
+- Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
 
 ### Features Added
 
-### Breaking Changes
+- The `ServiceBusClient` constructor now accepts optional `custom_endpoint_address` argument
+which allows for specifying a custom endpoint to use when communicating with the Service Bus service,
+and is useful when your network does not allow communicating to the standard Service Bus endpoint.
+- The `ServiceBusClient`constructor now accepts optional `connection_verify` argument
+which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
+
+## 7.6.1 (2022-04-11)
+
+### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
+
+## 7.6.0 (2022-02-10)
+
+### Features Added
+
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `state` property in `ServiceBusReceivedMessage`.
+
+## 7.5.0 (2022-01-12)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+- Added new enum class `ServiceBusSessionFilter`, which is the type of existing `NEXT_AVAILABLE_SESSION` value.
+
+### Bugs Fixed
+
+- Fixed bug that when setting `ServiceBusMessage.time_to_live` with value being `datetime.timedelta`, `total_seconds` should be respected (PR #21869, thanks @jyggen).
+
+### Other Changes
+
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.1.
+
+## 7.4.0 (2021-11-09)
+
+### Features Added
+
+- GA the support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
+- The constructor of`ServiceBusAdministrationClient` as well as `ServiceBusAdministrationClient.from_connection_string` now take keyword argument `api_version` to configure the Service Bus API version. Supported service versions are "2021-05" and "2017-04".
+- Added new enum class `azure.servicebus.management.ApiVersion` to represent the supported Service Bus API versions.
 
 ### Bugs Fixed
 
 - Fixed bug that `ServiceBusReceiver` can not connect to sessionful entity with session id being empty string.
 - Fixed bug that `ServiceBusMessage.partition_key` can not parse empty string properly.
 
-### Other Changes
+## 7.4.0b1 (2021-10-06)
+
+### Features Added
+
+- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+  - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
+  - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
 
 ## 7.3.4 (2021-10-06)
 

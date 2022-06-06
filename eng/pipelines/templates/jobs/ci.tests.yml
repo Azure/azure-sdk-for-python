@@ -40,6 +40,9 @@ parameters:
   - name: CloudConfig
     type: object
     default: {}
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -72,9 +75,17 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
         AgentImage: $(OSVmImage)
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
 
     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
       parameters:
@@ -99,10 +110,10 @@ jobs:
         OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
+        TestProxy: ${{ parameters.TestProxy }}
         BeforeTestSteps:
           - task: DownloadPipelineArtifact@2
             inputs:
@@ -112,7 +123,6 @@ jobs:
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
           
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}

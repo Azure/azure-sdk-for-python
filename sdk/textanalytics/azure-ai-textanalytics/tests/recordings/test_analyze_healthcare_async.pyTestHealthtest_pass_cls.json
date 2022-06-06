@@ -1,0 +1,171 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "212",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Test passing cls to endpoint",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "da44de3a-638f-405b-808f-7ea9f1d6167a",
+        "Content-Length": "0",
+        "Date": "Tue, 03 May 2022 00:13:44 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/65b2f7a4-4def-4332-a083-a34fb68dd644?api-version=2022-04-01-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "131"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/65b2f7a4-4def-4332-a083-a34fb68dd644?api-version=2022-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "5fb41571-6fdd-4c4a-affa-755374d8f0b8",
+        "Content-Length": "1228",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 May 2022 00:13:50 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "44"
+      },
+      "ResponseBody": {
+        "jobId": "65b2f7a4-4def-4332-a083-a34fb68dd644",
+        "lastUpdateDateTime": "2022-05-03T00:13:45Z",
+        "createdDateTime": "2022-05-03T00:13:45Z",
+        "expirationDateTime": "2022-05-04T00:13:45Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-05-03T00:13:45.7151666Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "offset": 5,
+                        "length": 7,
+                        "text": "passing",
+                        "category": "MeasurementValue",
+                        "confidenceScore": 0.98
+                      },
+                      {
+                        "offset": 13,
+                        "length": 3,
+                        "text": "cls",
+                        "category": "Diagnosis",
+                        "confidenceScore": 1.0,
+                        "name": "Coffin-Lowry syndrome",
+                        "links": [
+                          {
+                            "dataSource": "UMLS",
+                            "id": "C0265252"
+                          },
+                          {
+                            "dataSource": "CHV",
+                            "id": "0000025867"
+                          },
+                          {
+                            "dataSource": "JABL",
+                            "id": "238"
+                          },
+                          {
+                            "dataSource": "MDR",
+                            "id": "10081806"
+                          },
+                          {
+                            "dataSource": "MEDCIN",
+                            "id": "311935"
+                          },
+                          {
+                            "dataSource": "MSH",
+                            "id": "D038921"
+                          },
+                          {
+                            "dataSource": "NCI",
+                            "id": "C84643"
+                          },
+                          {
+                            "dataSource": "NCI_CELLOSAURUS",
+                            "id": "C84643"
+                          },
+                          {
+                            "dataSource": "OMIM",
+                            "id": "303600"
+                          },
+                          {
+                            "dataSource": "RCD",
+                            "id": "Xa0Zc"
+                          },
+                          {
+                            "dataSource": "SNM",
+                            "id": "D-5122"
+                          },
+                          {
+                            "dataSource": "SNMI",
+                            "id": "D4-00811"
+                          },
+                          {
+                            "dataSource": "SNOMEDCT_US",
+                            "id": "15182000"
+                          }
+                        ]
+                      }
+                    ],
+                    "relations": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

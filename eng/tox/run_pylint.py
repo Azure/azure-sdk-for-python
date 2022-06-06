@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
 
     pkg_dir = os.path.abspath(args.target_package)
-    package_name, namespace, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    package_name, namespace, ver, _, _ = get_package_details(os.path.join(pkg_dir, "setup.py"))
 
     top_level_module = namespace.split('.')[0]
 

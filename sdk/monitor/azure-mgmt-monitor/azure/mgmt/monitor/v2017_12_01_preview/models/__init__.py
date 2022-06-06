@@ -6,20 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import MetricNamespace
-    from ._models_py3 import MetricNamespaceCollection
-    from ._models_py3 import MetricNamespaceName
-except (SyntaxError, ImportError):
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import MetricNamespace  # type: ignore
-    from ._models import MetricNamespaceCollection  # type: ignore
-    from ._models import MetricNamespaceName  # type: ignore
+from ._models_py3 import ErrorResponse
+from ._models_py3 import MetricNamespace
+from ._models_py3 import MetricNamespaceCollection
+from ._models_py3 import MetricNamespaceName
+
+
+from ._monitor_management_client_enums import (
+    NamespaceClassification,
+)
 
 __all__ = [
     'ErrorResponse',
     'MetricNamespace',
     'MetricNamespaceCollection',
     'MetricNamespaceName',
+    'NamespaceClassification',
 ]

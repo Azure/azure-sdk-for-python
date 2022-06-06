@@ -3,13 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
+
+import os
 import time
 
+import pytest
 from azure.keyvault.keys import KeyType
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
-
+from _test_case import KeysClientPreparer, get_decorator
+from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
 only_hsm = get_decorator(only_hsm=True)
@@ -32,10 +36,14 @@ def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
-    @all_api_versions()
-    @client_setup
+class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_example_key_crud_operations(self, key_client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
+
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]
@@ -124,8 +132,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
-    @only_hsm()
-    @client_setup
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_example_create_oct_key(self, key_client, **kwargs):
         key_name = self.get_resource_name("key")
 
@@ -137,8 +146,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(key.key_type)
         # [END create_oct_key]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
@@ -177,8 +187,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_example_keys_backup_restore(self, key_client, **kwargs):
         key_name = self.get_resource_name("keyrec")
         key_client.create_key(key_name, "RSA")
@@ -209,8 +220,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_example_keys_recover(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         created_key = key_client.create_key(key_name, "RSA")

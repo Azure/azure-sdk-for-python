@@ -14,8 +14,6 @@ Example to show managing topic entities under a ServiceBus Namespace, including
     - List topics under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import uuid
@@ -81,5 +79,5 @@ async def main():
         await get_topic_runtime_properties(servicebus_mgmt_client)
         await delete_topic(servicebus_mgmt_client)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+
+asyncio.run(main())

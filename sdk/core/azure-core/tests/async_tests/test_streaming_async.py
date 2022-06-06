@@ -111,6 +111,8 @@ async def test_compress_compressed_no_header(http_request):
         except UnicodeDecodeError:
             pass
 
+
+@pytest.mark.live_test_only
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_plain_header(http_request):

@@ -1,5 +1,105 @@
 # Release History
 
+## 9.0.0 (2022-01-06)
+
+**Features**
+
+  - Added operation EventsOperations.list_by_billing_account
+  - Added operation EventsOperations.list_by_billing_profile
+  - Added operation LotsOperations.list_by_billing_account
+  - Added operation LotsOperations.list_by_billing_profile
+  - Model Balance has a new parameter etag
+  - Model Budget has a new parameter forecast_spend
+  - Model ChargeSummary has a new parameter e_tag
+  - Model CreditBalanceSummary has a new parameter estimated_balance_in_billing_currency
+  - Model CreditSummary has a new parameter billing_currency
+  - Model CreditSummary has a new parameter credit_currency
+  - Model CreditSummary has a new parameter e_tag
+  - Model CreditSummary has a new parameter etag
+  - Model CreditSummary has a new parameter reseller
+  - Model EventSummary has a new parameter adjustments_in_billing_currency
+  - Model EventSummary has a new parameter billing_currency
+  - Model EventSummary has a new parameter billing_profile_display_name
+  - Model EventSummary has a new parameter billing_profile_id
+  - Model EventSummary has a new parameter canceled_credit
+  - Model EventSummary has a new parameter charges_in_billing_currency
+  - Model EventSummary has a new parameter closed_balance_in_billing_currency
+  - Model EventSummary has a new parameter credit_currency
+  - Model EventSummary has a new parameter credit_expired_in_billing_currency
+  - Model EventSummary has a new parameter e_tag
+  - Model EventSummary has a new parameter e_tag_properties_e_tag
+  - Model EventSummary has a new parameter lot_id
+  - Model EventSummary has a new parameter lot_source
+  - Model EventSummary has a new parameter new_credit_in_billing_currency
+  - Model EventSummary has a new parameter reseller
+  - Model LegacyChargeSummary has a new parameter e_tag
+  - Model LegacyReservationRecommendation has a new parameter etag
+  - Model LegacyReservationRecommendation has a new parameter resource_type
+  - Model LegacyReservationTransaction has a new parameter billing_month
+  - Model LegacyReservationTransaction has a new parameter monetary_commitment
+  - Model LegacyReservationTransaction has a new parameter overage
+  - Model LegacyUsageDetail has a new parameter benefit_id
+  - Model LegacyUsageDetail has a new parameter benefit_name
+  - Model LegacyUsageDetail has a new parameter etag
+  - Model LegacyUsageDetail has a new parameter pay_g_price
+  - Model LegacyUsageDetail has a new parameter pricing_model
+  - Model LotSummary has a new parameter billing_currency
+  - Model LotSummary has a new parameter closed_balance_in_billing_currency
+  - Model LotSummary has a new parameter credit_currency
+  - Model LotSummary has a new parameter e_tag
+  - Model LotSummary has a new parameter e_tag_properties_e_tag
+  - Model LotSummary has a new parameter original_amount_in_billing_currency
+  - Model LotSummary has a new parameter purchased_date
+  - Model LotSummary has a new parameter reseller
+  - Model LotSummary has a new parameter status
+  - Model ManagementGroupAggregatedCostResult has a new parameter etag
+  - Model Marketplace has a new parameter additional_info
+  - Model Marketplace has a new parameter etag
+  - Model ModernChargeSummary has a new parameter e_tag
+  - Model ModernReservationRecommendation has a new parameter etag
+  - Model ModernReservationRecommendation has a new parameter location_properties_location
+  - Model ModernReservationRecommendation has a new parameter sku_name
+  - Model ModernUsageDetail has a new parameter benefit_id
+  - Model ModernUsageDetail has a new parameter benefit_name
+  - Model ModernUsageDetail has a new parameter cost_allocation_rule_name
+  - Model ModernUsageDetail has a new parameter effective_price
+  - Model ModernUsageDetail has a new parameter etag
+  - Model ModernUsageDetail has a new parameter pay_g_price
+  - Model ModernUsageDetail has a new parameter pricing_model
+  - Model ModernUsageDetail has a new parameter provider
+  - Model Notification has a new parameter locale
+  - Model Operation has a new parameter id
+  - Model OperationDisplay has a new parameter description
+  - Model PriceSheetResult has a new parameter download
+  - Model PriceSheetResult has a new parameter etag
+  - Model ReservationDetail has a new parameter etag
+  - Model ReservationRecommendation has a new parameter etag
+  - Model ReservationRecommendationDetailsModel has a new parameter etag
+  - Model ReservationRecommendationsListResult has a new parameter previous_link
+  - Model ReservationSummary has a new parameter etag
+  - Model ReservationTransaction has a new parameter billing_month
+  - Model ReservationTransaction has a new parameter monetary_commitment
+  - Model ReservationTransaction has a new parameter overage
+  - Model Resource has a new parameter etag
+  - Model Tag has a new parameter value
+  - Model TagsResult has a new parameter next_link
+  - Model TagsResult has a new parameter previous_link
+  - Model UsageDetail has a new parameter etag
+
+**Breaking changes**
+
+  - Model ChargeSummary no longer has parameter tags
+  - Model EventSummary no longer has parameter tags
+  - Model LegacyChargeSummary no longer has parameter tags
+  - Model LotSummary no longer has parameter tags
+  - Model ModernChargeSummary no longer has parameter tags
+  - Operation ReservationRecommendationDetailsOperations.get has a new signature
+  - Parameter scope of model LegacyReservationRecommendation is now required
+  - Parameter scope of model LegacyReservationRecommendation is now required
+  - Removed operation EventsOperations.list
+  - Removed operation LotsOperations.list
+  - Removed operation group ForecastsOperations
+
 ## 8.0.0 (2020-12-22)
 
 **Features**

@@ -1,8 +1,8 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 -e ../../identity/azure-identity
--e ../azure-mgmt-eventhub
--e ../../resources/azure-mgmt-resource
-aiohttp>=3.0; python_version >= '3.5'
+azure-mgmt-eventhub==10.0.0
+azure-mgmt-resource==20.0.0
+aiohttp>=3.0
 -e ../../../tools/azure-devtools
 -e ../../servicebus/azure-servicebus

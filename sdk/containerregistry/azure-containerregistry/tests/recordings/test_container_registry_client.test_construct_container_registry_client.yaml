@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:28:00 GMT
+      - Fri, 12 Nov 2021 00:19:25 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -59,9 +59,9 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "retrieving permissions
@@ -74,13 +74,13 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 30 Aug 2021 20:28:00 GMT
+      - Fri, 12 Nov 2021 00:19:25 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.583333'
+      - '166.65'
     status:
       code: 401
       message: Unauthorized

@@ -15,19 +15,19 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerRegistryApiVersion(str, Enum):
+class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object):
-    """Base class for ContainerRegistryClient, ContainerRepository, and RegistryArtifact
+class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
+    """Base class for ContainerRegistryClient
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure
-    :type credential: :class:`~azure.identity.DefaultTokenCredential`
+    :type credential: ~azure.identity.DefaultTokenCredential
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     """
@@ -59,7 +59,7 @@ class ContainerRegistryBaseClient(object):
 
     def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
         tag = tag_or_digest.split(":")
-        return not (len(tag) == 2 and tag[0].startswith(u"sha"))
+        return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

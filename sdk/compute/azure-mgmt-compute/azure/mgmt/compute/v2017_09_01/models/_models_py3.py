@@ -84,6 +84,8 @@ class ResourceSku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSku, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
@@ -125,6 +127,8 @@ class ResourceSkuCapabilities(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuCapabilities, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -164,6 +168,8 @@ class ResourceSkuCapacity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
@@ -200,6 +206,8 @@ class ResourceSkuCosts(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuCosts, self).__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
@@ -231,6 +239,8 @@ class ResourceSkuLocationInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuLocationInfo, self).__init__(**kwargs)
         self.location = None
         self.zones = None
@@ -261,6 +271,8 @@ class ResourceSkuRestrictionInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
         self.locations = None
         self.zones = None
@@ -302,6 +314,8 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceSkuRestrictions, self).__init__(**kwargs)
         self.type = None
         self.values = None
@@ -314,11 +328,11 @@ class ResourceSkusResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of skus available for the subscription.
-    :type value: list[~azure.mgmt.compute.v2017_09_01.models.ResourceSku]
-    :param next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this
-     URI to fetch the next page of Resource Skus.
-    :type next_link: str
+    :ivar value: Required. The list of skus available for the subscription.
+    :vartype value: list[~azure.mgmt.compute.v2017_09_01.models.ResourceSku]
+    :ivar next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this URI
+     to fetch the next page of Resource Skus.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -337,6 +351,13 @@ class ResourceSkusResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of skus available for the subscription.
+        :paramtype value: list[~azure.mgmt.compute.v2017_09_01.models.ResourceSku]
+        :keyword next_link: The URI to fetch the next page of Resource Skus. Call ListNext() with this
+         URI to fetch the next page of Resource Skus.
+        :paramtype next_link: str
+        """
         super(ResourceSkusResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

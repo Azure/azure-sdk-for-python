@@ -45,7 +45,7 @@ class NamespaceOperations(object):
 
     def get(
         self,
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.NamespacePropertiesEntry"

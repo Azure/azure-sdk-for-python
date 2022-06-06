@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{}'
+    body: '{"ttl": 172800}'
     headers:
       Accept:
       - application/json
@@ -9,41 +9,43 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '15'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22454-SP0)
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Fri, 01 Oct 2021 23:03:08 GMT
+      - Wed, 23 Mar 2022 18:20:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-06-21-preview
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
   response:
     body:
-      string: '{"expiresOn": "2021-10-01T23:03:09.2274327+00:00", "iceServers": [{"urls":
-        ["turn.skype.com", "turn:world.relay.skype.com:3478"], "username": "sanitized",
-        "credential": "sanitized"}]}'
+      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
+        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
+        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
+        "BQAANhFm7iQB2EB1kwt1JIiIwKXLTNYH+0riR38hzzkAAAAMARCsgNlqhd5IsZldo6P6NifIAVJrSNaKalTsUbhfL5hPqsF1raU=",
+        "credential": "hNHSEpuvBYmEskwuS9IYu3Vta4M="}], "expiresOn": "2022-03-25T18:20:55.4778735+00:00"}'
     headers:
       api-supported-versions:
-      - 2021-02-22-preview1, 2021-06-21-preview
+      - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview
+      content-length:
+      - '546'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Oct 2021 23:03:08 GMT
+      - Wed, 23 Mar 2022 18:20:54 GMT
       ms-cv:
-      - c1XdV0vrhEOnOWF2LrDjGQ.0
+      - c/OLU9LuvUiK7ieUNkc71w.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
-      transfer-encoding:
-      - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 311ms
+      - 43ms
     status:
       code: 200
       message: OK

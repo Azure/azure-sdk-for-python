@@ -21,7 +21,7 @@ USAGE:
     python sample_analyze_layout_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
@@ -29,10 +29,10 @@ import os
 import asyncio
 
 
-def format_bounding_box(bounding_box):
-    if not bounding_box:
+def format_polygon(polygon):
+    if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
 
 
 async def analyze_layout_async():
@@ -78,26 +78,28 @@ async def analyze_layout_async():
         )
 
         for line_idx, line in enumerate(page.lines):
+            words = line.get_words()
             print(
-                "Line # {} has text content '{}' within bounding box '{}'".format(
+                "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
                     line_idx,
+                    len(words),
                     line.content,
-                    format_bounding_box(line.bounding_box),
+                    format_polygon(line.polygon),
                 )
             )
 
-        for word in page.words:
-            print(
-                "...Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
+            for word in words:
+                print(
+                    "......Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
                 )
-            )
 
         for selection_mark in page.selection_marks:
             print(
-                "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                "Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                     selection_mark.state,
-                    format_bounding_box(selection_mark.bounding_box),
+                    format_polygon(selection_mark.polygon),
                     selection_mark.confidence,
                 )
             )
@@ -113,7 +115,7 @@ async def analyze_layout_async():
                 "Table # {} location on page: {} is {}".format(
                     table_idx,
                     region.page_number,
-                    format_bounding_box(region.bounding_box),
+                    format_polygon(region.polygon),
                 )
             )
         for cell in table.cells:
@@ -126,9 +128,9 @@ async def analyze_layout_async():
             )
             for region in cell.bounding_regions:
                 print(
-                    "...content on page {} is within bounding box '{}'".format(
+                    "...content on page {} is within bounding polygon '{}'".format(
                         region.page_number,
-                        format_bounding_box(region.bounding_box),
+                        format_polygon(region.polygon),
                     )
                 )
 
@@ -140,5 +142,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

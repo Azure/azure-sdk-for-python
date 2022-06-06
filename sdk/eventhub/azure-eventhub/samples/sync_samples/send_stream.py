@@ -9,8 +9,6 @@
 Example to show streaming sending events with different options to an Event Hub.
 """
 
-# pylint: disable=C0111
-
 import time
 import os
 

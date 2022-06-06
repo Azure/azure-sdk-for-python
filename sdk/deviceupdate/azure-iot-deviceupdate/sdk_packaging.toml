@@ -1,9 +1,6 @@
 [packaging]
 auto_update = false
 package_name = "azure-iot-deviceupdate"
-package_pprint_name = "Azure DeviceUpdate"
+package_pprint_name = "Azure Device Update"
 is_stable = false
 is_arm = false
-
-# Package owners should uncomment and set this doc id.
-# package_doc_id = "device-update"

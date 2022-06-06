@@ -1,14 +1,123 @@
 # Release History
 
-## 4.5.0b5 (Unreleased)
+## 4.5.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- If a key's ID contains a port number, this port will now be preserved in the vault URL of a
+  `CryptographyClient` instance created from this key
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
+  - Port numbers are now preserved in the `vault_url` property of a `KeyVaultKeyIdentifier`
 
 ### Other Changes
+
+## 4.5.1 (2022-04-18)
+
+### Bugs Fixed
+- Fixed error that could occur when fetching a key rotation policy that has no defined
+  `lifetime_actions`.
+
+## 4.5.0 (2022-03-28)
+
+### Features Added
+- Key Vault API version 7.3 is now the default
+- Added support for multi-tenant authentication when using `azure-identity`
+  1.8.0 or newer ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+- (From 4.5.0b1) `KeyClient` has a `get_random_bytes` method for getting a requested number of
+  random bytes from a managed HSM
+- (From 4.5.0b2) Added support for secure key release from a Managed HSM
+  ([#19588](https://github.com/Azure/azure-sdk-for-python/issues/19588))
+  - Added `release_key` method to `KeyClient` for releasing the private component of a key
+  - Added `exportable` and `release_policy` keyword-only arguments to key creation and import
+    methods
+  - Added `KeyExportEncryptionAlgorithm` enum for specifying an encryption algorithm to be used
+    in key release
+- (From 4.5.0b4) Added `KeyClient.get_cryptography_client`, which provides a simple way to
+  create a `CryptographyClient` for a key, given its name and optionally a version
+  ([#20621](https://github.com/Azure/azure-sdk-for-python/issues/20621))
+- (From 4.5.0b4) Added support for automated and on-demand key rotation in Azure Key Vault
+  ([#19840](https://github.com/Azure/azure-sdk-for-python/issues/19840))
+  - Added `KeyClient.rotate_key` to rotate a key on-demand
+  - Added `KeyClient.update_key_rotation_policy` to update a key's automated rotation policy
+- (From 4.5.0b6) Added `immutable` keyword-only argument and property to `KeyReleasePolicy` to
+  support immutable release policies. Once a release policy is marked as immutable, it can no
+  longer be modified.
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.update_key_rotation_policy` accepts a required `policy` argument
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+- The optional `version` parameter in `KeyClient.release_key` is now a keyword-only argument
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+- Renamed the `name` parameter in `KeyClient.get_key_rotation_policy` and
+  `KeyClient.update_key_rotation_policy` to `key_name`
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+- Enum values in `azure-keyvault-keys` are now uniformly lower-cased
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+
+### Bugs Fixed
+- `KeyType` now ignores casing during declaration, which resolves a scenario where Key Vault
+  keys created with non-standard casing could not be fetched with the SDK
+  ([#22797](https://github.com/Azure/azure-sdk-for-python/issues/22797))
+
+### Other Changes
+- (From 4.5.0b6) Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- (From 4.5.0b6) Updated minimum `azure-core` version to 1.20.0
+- (From 4.5.0b3) Updated type hints to fix mypy errors
+  ([#19158](https://github.com/Azure/azure-sdk-for-python/issues/19158))
+- (From 4.5.0b4) `CryptographyClient` no longer requires a key version when providing a key ID to its constructor
+  (though providing a version is still recommended)
+- (From 4.5.0b5) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698)). See
+  https://aka.ms/azsdk/python/identity/tokencredential for more details on how to integrate
+  this parameter if `get_token` is implemented by a custom credential.
+- (From 4.5.0b6) Updated type hints for `KeyProperties` model's `managed`, `exportable`, and
+  `release_policy` properties ([#22368](https://github.com/Azure/azure-sdk-for-python/pull/22368))
+
+## 4.5.0b6 (2022-02-08)
+
+### Features Added
+- Added `immutable` keyword-only argument and property to `KeyReleasePolicy` to support immutable
+  release policies. Once a release policy is marked as immutable, it can no longer be modified.
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- Renamed the required argument `data` in `KeyReleasePolicy`'s constructor to
+  `encoded_policy`
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Updated minimum `azure-core` version to 1.20.0
+- Updated type hints for `KeyProperties` model's `managed`, `exportable`, and `release_policy`
+  properties ([#22368](https://github.com/Azure/azure-sdk-for-python/pull/22368))
+- (From 4.5.0b5) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+## 4.5.0b5 (2021-11-11)
+
+### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.get_random_bytes` now returns bytes instead of RandomBytes. The RandomBytes class
+  has been removed
+- Renamed the `version` keyword-only argument in `KeyClient.get_cryptography_client` to
+  `key_version`
+- Renamed `KeyReleasePolicy.data` to `KeyReleasePolicy.encoded_policy`
+- Renamed the `target` parameter in `KeyClient.release_key` to `target_attestation_token`
+
+### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
 
 ## 4.5.0b4 (2021-10-07)
 

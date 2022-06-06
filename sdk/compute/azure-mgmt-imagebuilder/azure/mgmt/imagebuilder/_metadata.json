@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2020-02-14",
-    "total_api_version_list": ["2020-02-14"],
+    "chosen_version": "2021-10-01",
+    "total_api_version_list": ["2021-10-01"],
     "client": {
         "name": "ImageBuilderClient",
         "filename": "_image_builder_client",

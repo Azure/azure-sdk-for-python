@@ -1,5 +1,38 @@
 # Release History
 
+## 5.0.0 (2022-05-16)
+
+**Breaking changes**
+
+  - Model AzureIaaSVMProtectionPolicy no longer has parameter tiering_policy
+  - Model SubProtectionPolicy no longer has parameter tiering_policy
+  - Operation ResourceGuardProxyOperations.put has a new parameter parameters
+
+## 4.2.0 (2022-05-07)
+
+**Features**
+
+  - Model AzureIaaSVMProtectionPolicy has a new parameter tiering_policy
+  - Model SubProtectionPolicy has a new parameter tiering_policy
+
+## 4.1.1 (2022-02-18)
+
+**Bug Fixes**
+
+  - Fix multi-page paging  #23089
+
+## 4.1.0 (2022-02-15)
+
+**Features**
+
+  - Model AzureIaaSVMProtectionPolicy has a new parameter policy_type
+
+## 4.0.0 (2021-12-21)
+
+**Breaking changes**
+
+  - namespace splitted from `azure.mgmt.recoveryservicesbackup` to `azure.mgmt.recoveryservicesbackup.activestamp` and `azure.mgmt.recoveryservicesbackup.passivestamp`
+
 ## 3.0.0 (2021-10-19)
 
 **Features**

@@ -1,5 +1,67 @@
 # Release History
 
+## 13.0.0b4 (2022-04-08)
+
+**Fixes**
+
+  - Reverted change about client name
+
+## 13.0.0b3 (2022-04-07)
+
+**Features**
+
+  - Added operation group QueriesOperations
+  - Added operation group QueryPacksOperations
+
+## 13.0.0b2 (2022-02-14)
+
+**Features**
+
+  - Added operation TablesOperations.migrate
+
+## 13.0.0b1 (2022-01-18)
+
+**Features**
+
+  - Added operation TablesOperations.begin_create_or_update
+  - Added operation TablesOperations.begin_delete
+  - Added operation TablesOperations.begin_update
+  - Model Table has a new parameter archive_retention_in_days
+  - Model Table has a new parameter last_plan_modified_date
+  - Model Table has a new parameter plan
+  - Model Table has a new parameter provisioning_state
+  - Model Table has a new parameter restored_logs
+  - Model Table has a new parameter result_statistics
+  - Model Table has a new parameter schema
+  - Model Table has a new parameter search_results
+  - Model Table has a new parameter system_data
+  - Model Table has a new parameter total_retention_in_days
+  - Model Workspace has a new parameter default_data_collection_rule_resource_id
+  - Model Workspace has a new parameter system_data
+  - Model WorkspacePatch has a new parameter default_data_collection_rule_resource_id
+
+**Breaking changes**
+
+  - Model Table no longer has parameter is_troubleshoot_enabled
+  - Model Table no longer has parameter is_troubleshooting_allowed
+  - Model Table no longer has parameter last_troubleshoot_date
+  - Removed operation TablesOperations.create
+  - Removed operation TablesOperations.update
+
+## 12.0.0 (2021-11-16)
+
+**Features**
+
+  - Model Table has a new parameter is_troubleshooting_allowed
+  - Model Table has a new parameter last_troubleshoot_date
+  - Model Table has a new parameter is_troubleshoot_enabled
+  - Added operation TablesOperations.create
+  - Added operation ClustersOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation ClustersOperations.update
+
 ## 11.0.0 (2021-07-12)
 
 **Features**

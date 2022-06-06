@@ -44,29 +44,29 @@ except KeyError:
 # Build a client from the connection string. And for this example, we have enabled debug
 # tracing. For production code, this should be turned off.
 # If you want to know more about the effect of `reverse_proxy_endpoint`, please reference: https://github.com/Azure/azure-webpubsub/issues/194
-client = WebPubSubServiceClient.from_connection_string(connection_string, logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint)
+client = WebPubSubServiceClient.from_connection_string(connection_string, hub='hub', logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint)
 
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message={'Hello': 'connection_string_reverse_proxy!'})
+    client.send_to_all(message={'Hello': 'connection_string_reverse_proxy!'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
 
-# Send a text message to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message='hello, connection_string_reverse_proxy!', content_type='text/plain')
-    print('Successfully sent a JSON message')
-except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
-
-
-# Send a json message from a stream to everybody on the given hub...
-try:
-    # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "connection_string_reverse_proxy" }'), content_type='application/json')
-    print('Successfully sent a JSON message')
-except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+# # Send a text message to everybody on the given hub...
+# try:
+#     # Raise an exception if the service rejected the call
+#     client.send_to_all(message='hello, connection_string_reverse_proxy!', content_type='text/plain')
+#     print('Successfully sent a JSON message')
+# except HttpResponseError as e:
+#     print('Failed to send JSON message: {}'.format(e.response.json()))
+#
+#
+# # Send a json message from a stream to everybody on the given hub...
+# try:
+#     # Raise an exception if the service rejected the call
+#     client.send_to_all(message=io.BytesIO(b'{ "hello": "connection_string_reverse_proxy" }'), content_type='application/octet-stream')
+#     print('Successfully sent a JSON message')
+# except HttpResponseError as e:
+#     print('Failed to send JSON message: {}'.format(e.response.json()))
 

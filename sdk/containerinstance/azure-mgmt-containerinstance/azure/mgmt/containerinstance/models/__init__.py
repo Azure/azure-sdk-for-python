@@ -6,112 +6,61 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AzureFileVolume
-    from ._models_py3 import CachedImages
-    from ._models_py3 import CachedImagesListResult
-    from ._models_py3 import Capabilities
-    from ._models_py3 import CapabilitiesCapabilities
-    from ._models_py3 import CapabilitiesListResult
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import Container
-    from ._models_py3 import ContainerAttachResponse
-    from ._models_py3 import ContainerExec
-    from ._models_py3 import ContainerExecRequest
-    from ._models_py3 import ContainerExecRequestTerminalSize
-    from ._models_py3 import ContainerExecResponse
-    from ._models_py3 import ContainerGroup
-    from ._models_py3 import ContainerGroupDiagnostics
-    from ._models_py3 import ContainerGroupIdentity
-    from ._models_py3 import ContainerGroupListResult
-    from ._models_py3 import ContainerGroupPropertiesInstanceView
-    from ._models_py3 import ContainerGroupSubnetId
-    from ._models_py3 import ContainerHttpGet
-    from ._models_py3 import ContainerPort
-    from ._models_py3 import ContainerProbe
-    from ._models_py3 import ContainerPropertiesInstanceView
-    from ._models_py3 import ContainerState
-    from ._models_py3 import DnsConfiguration
-    from ._models_py3 import EncryptionProperties
-    from ._models_py3 import EnvironmentVariable
-    from ._models_py3 import Event
-    from ._models_py3 import GitRepoVolume
-    from ._models_py3 import GpuResource
-    from ._models_py3 import HttpHeader
-    from ._models_py3 import ImageRegistryCredential
-    from ._models_py3 import InitContainerDefinition
-    from ._models_py3 import InitContainerPropertiesDefinitionInstanceView
-    from ._models_py3 import IpAddress
-    from ._models_py3 import LogAnalytics
-    from ._models_py3 import Logs
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import Port
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceLimits
-    from ._models_py3 import ResourceRequests
-    from ._models_py3 import ResourceRequirements
-    from ._models_py3 import Usage
-    from ._models_py3 import UsageListResult
-    from ._models_py3 import UsageName
-    from ._models_py3 import Volume
-    from ._models_py3 import VolumeMount
-except (SyntaxError, ImportError):
-    from ._models import AzureFileVolume  # type: ignore
-    from ._models import CachedImages  # type: ignore
-    from ._models import CachedImagesListResult  # type: ignore
-    from ._models import Capabilities  # type: ignore
-    from ._models import CapabilitiesCapabilities  # type: ignore
-    from ._models import CapabilitiesListResult  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import Container  # type: ignore
-    from ._models import ContainerAttachResponse  # type: ignore
-    from ._models import ContainerExec  # type: ignore
-    from ._models import ContainerExecRequest  # type: ignore
-    from ._models import ContainerExecRequestTerminalSize  # type: ignore
-    from ._models import ContainerExecResponse  # type: ignore
-    from ._models import ContainerGroup  # type: ignore
-    from ._models import ContainerGroupDiagnostics  # type: ignore
-    from ._models import ContainerGroupIdentity  # type: ignore
-    from ._models import ContainerGroupListResult  # type: ignore
-    from ._models import ContainerGroupPropertiesInstanceView  # type: ignore
-    from ._models import ContainerGroupSubnetId  # type: ignore
-    from ._models import ContainerHttpGet  # type: ignore
-    from ._models import ContainerPort  # type: ignore
-    from ._models import ContainerProbe  # type: ignore
-    from ._models import ContainerPropertiesInstanceView  # type: ignore
-    from ._models import ContainerState  # type: ignore
-    from ._models import DnsConfiguration  # type: ignore
-    from ._models import EncryptionProperties  # type: ignore
-    from ._models import EnvironmentVariable  # type: ignore
-    from ._models import Event  # type: ignore
-    from ._models import GitRepoVolume  # type: ignore
-    from ._models import GpuResource  # type: ignore
-    from ._models import HttpHeader  # type: ignore
-    from ._models import ImageRegistryCredential  # type: ignore
-    from ._models import InitContainerDefinition  # type: ignore
-    from ._models import InitContainerPropertiesDefinitionInstanceView  # type: ignore
-    from ._models import IpAddress  # type: ignore
-    from ._models import LogAnalytics  # type: ignore
-    from ._models import Logs  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import Port  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceLimits  # type: ignore
-    from ._models import ResourceRequests  # type: ignore
-    from ._models import ResourceRequirements  # type: ignore
-    from ._models import Usage  # type: ignore
-    from ._models import UsageListResult  # type: ignore
-    from ._models import UsageName  # type: ignore
-    from ._models import Volume  # type: ignore
-    from ._models import VolumeMount  # type: ignore
+from ._models_py3 import AzureFileVolume
+from ._models_py3 import CachedImages
+from ._models_py3 import CachedImagesListResult
+from ._models_py3 import Capabilities
+from ._models_py3 import CapabilitiesCapabilities
+from ._models_py3 import CapabilitiesListResult
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import Container
+from ._models_py3 import ContainerAttachResponse
+from ._models_py3 import ContainerExec
+from ._models_py3 import ContainerExecRequest
+from ._models_py3 import ContainerExecRequestTerminalSize
+from ._models_py3 import ContainerExecResponse
+from ._models_py3 import ContainerGroup
+from ._models_py3 import ContainerGroupDiagnostics
+from ._models_py3 import ContainerGroupIdentity
+from ._models_py3 import ContainerGroupListResult
+from ._models_py3 import ContainerGroupPropertiesInstanceView
+from ._models_py3 import ContainerGroupSubnetId
+from ._models_py3 import ContainerHttpGet
+from ._models_py3 import ContainerPort
+from ._models_py3 import ContainerProbe
+from ._models_py3 import ContainerPropertiesInstanceView
+from ._models_py3 import ContainerState
+from ._models_py3 import DnsConfiguration
+from ._models_py3 import EncryptionProperties
+from ._models_py3 import EnvironmentVariable
+from ._models_py3 import Event
+from ._models_py3 import GitRepoVolume
+from ._models_py3 import GpuResource
+from ._models_py3 import HttpHeader
+from ._models_py3 import ImageRegistryCredential
+from ._models_py3 import InitContainerDefinition
+from ._models_py3 import InitContainerPropertiesDefinitionInstanceView
+from ._models_py3 import IpAddress
+from ._models_py3 import LogAnalytics
+from ._models_py3 import Logs
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import Port
+from ._models_py3 import Resource
+from ._models_py3 import ResourceLimits
+from ._models_py3 import ResourceRequests
+from ._models_py3 import ResourceRequirements
+from ._models_py3 import Usage
+from ._models_py3 import UsageListResult
+from ._models_py3 import UsageName
+from ._models_py3 import Volume
+from ._models_py3 import VolumeMount
+
 
 from ._container_instance_management_client_enums import (
+    AutoGeneratedDomainNameLabelScope,
     ContainerGroupIpAddressType,
     ContainerGroupNetworkProtocol,
     ContainerGroupRestartPolicy,
@@ -177,6 +126,7 @@ __all__ = [
     'UsageName',
     'Volume',
     'VolumeMount',
+    'AutoGeneratedDomainNameLabelScope',
     'ContainerGroupIpAddressType',
     'ContainerGroupNetworkProtocol',
     'ContainerGroupRestartPolicy',

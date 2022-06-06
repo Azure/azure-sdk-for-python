@@ -11,8 +11,6 @@ Example to show usage of AutoLockRenewer:
     2. Automatically renew locks on the session of sessionful entity
 """
 
-# pylint: disable=C0111
-
 import os
 import time
 
@@ -32,7 +30,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
             msgs_to_send = [ServiceBusMessage("message: {}".format(i)) for i in range(10)]
             sender.send_messages(msgs_to_send)
             print('Send messages to non-sessionful queue.')
-        
+
         # Can also be called via "with AutoLockRenewer() as renewer" to automate shutdown.
         renewer = AutoLockRenewer()
 
@@ -92,7 +90,7 @@ def renew_lock_with_lock_renewal_failure_callback():
     with servicebus_client:
         with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
             sender.send_messages(ServiceBusMessage("message"))
-        
+
         with AutoLockRenewer() as renewer:
             # For this sample we're going to set the renewal recurrence of the autolockrenewer to greater than the
             # service side message lock duration, to demonstrate failure.  Normally, this should not be adjusted.
@@ -126,7 +124,7 @@ def renew_lock_with_lock_renewal_failure_callback():
                         receiver.complete_message(msg)
                 except ServiceBusError as e:
                     print('Messages cannot be settled if they have timed out. (This is expected)')
-                
+
                 print('Lock renew failure demonstration complete.')
 
 

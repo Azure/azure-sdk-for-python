@@ -53,8 +53,8 @@ class ScriptCmdletsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ScriptCmdletsList"]
-        """Return script cmdlet resources available for a private cloud to create a script execution
-        resource on their Private Cloud.
+        """List script cmdlet resources available for a private cloud to create a script execution
+        resource on a private cloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -72,7 +72,7 @@ class ScriptCmdletsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -155,7 +155,7 @@ class ScriptCmdletsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-06-01"
+        api_version = "2021-12-01"
         accept = "application/json"
 
         # Construct URL

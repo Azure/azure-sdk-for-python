@@ -5,13 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from uuid import UUID
 import pytest
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
@@ -32,12 +34,16 @@ from azure.data.tables import (
     EdmType
 )
 from azure.data.tables.aio import TableServiceClient
+from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
 
-class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
+TEST_GUID = UUID("1ca72025-f78c-437d-87df-9bcf0dd0d297")
+
+class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_url_encoding_at_symbol(self, tables_storage_account_name, tables_primary_storage_account_key):
 
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -73,6 +79,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_dictionary(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -88,6 +95,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -107,6 +115,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_with_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -132,6 +141,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_with_full_metadata(self, tables_storage_account_name,
                                                     tables_primary_storage_account_key):
         # Arrange
@@ -159,6 +169,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_conflict(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -175,6 +186,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_with_large_int32_value_throws(self, tables_storage_account_name,
                                                                tables_primary_storage_account_key):
         # Arrange
@@ -195,6 +207,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_with_large_int64_value_throws(self, tables_storage_account_name,
                                                                tables_primary_storage_account_key):
         # Arrange
@@ -215,6 +228,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_with_large_int_success(self, tables_storage_account_name,
                                                          tables_primary_storage_account_key):
         # Arrange
@@ -241,6 +255,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_missing_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -255,6 +270,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_empty_string_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -268,6 +284,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_missing_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -282,6 +299,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_empty_string_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -296,6 +314,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_too_many_properties(self, tables_storage_account_name,
                                                      tables_primary_storage_account_key):
         # Arrange
@@ -313,6 +332,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_entity_property_name_too_long(self, tables_storage_account_name,
                                                         tables_primary_storage_account_key):
         # Arrange
@@ -330,6 +350,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -348,6 +369,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -369,6 +391,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -391,6 +414,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -417,6 +441,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_if_match_entity_bad_etag(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -440,6 +465,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity_if_match_table_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -464,6 +490,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -484,6 +511,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -504,6 +532,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -520,6 +549,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_with_special_doubles(self, tables_storage_account_name,
                                                    tables_primary_storage_account_key):
         # Arrange
@@ -545,6 +575,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_update_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -567,6 +598,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_update_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -583,6 +615,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_update_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -605,6 +638,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_update_entity_with_if_doesnt_match(self, tables_storage_account_name,
                                                       tables_primary_storage_account_key):
         # Arrange
@@ -626,6 +660,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_or_merge_entity_with_existing_entity(self, tables_storage_account_name,
                                                                tables_primary_storage_account_key):
         # Arrange
@@ -646,6 +681,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_or_merge_entity_with_non_existing_entity(self, tables_storage_account_name,
                                                                    tables_primary_storage_account_key):
         # Arrange
@@ -666,6 +702,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_or_replace_entity_with_existing_entity(self, tables_storage_account_name,
                                                                  tables_primary_storage_account_key):
         # Arrange
@@ -686,6 +723,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_insert_or_replace_entity_with_non_existing_entity(self, tables_storage_account_name,
                                                                      tables_primary_storage_account_key):
         # Arrange
@@ -706,6 +744,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_merge_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -725,6 +764,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_merge_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -741,6 +781,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_merge_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -762,6 +803,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_merge_entity_with_if_doesnt_match(self, tables_storage_account_name,
                                                      tables_primary_storage_account_key):
         # Arrange
@@ -782,6 +824,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -799,6 +842,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -809,6 +853,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -831,6 +876,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity_with_if_doesnt_match(self, tables_storage_account_name,
                                                       tables_primary_storage_account_key):
         # Arrange
@@ -852,6 +898,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity_overloads(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -880,6 +927,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_entity_overloads_kwargs(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -908,6 +956,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         ''' regression test for github issue #57'''
         # Arrange
@@ -935,6 +984,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_unicode_property_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -961,6 +1011,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_storage_account_name, tables_primary_storage_account_key):
         partition_key_with_single_quote = u"a''''b"
         row_key_with_single_quote = u"a''''b"
@@ -987,6 +1038,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_empty_and_spaces_property_value(self, tables_storage_account_name,
                                                    tables_primary_storage_account_key):
         # Arrange
@@ -1026,6 +1078,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_none_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1044,6 +1097,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_binary_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1063,6 +1117,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_timezone(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1085,6 +1140,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1104,6 +1160,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_each_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1144,6 +1201,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_injection_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1180,6 +1238,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_special_chars(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1239,6 +1298,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1259,6 +1319,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_multiple_params(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1283,6 +1344,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_integers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1306,6 +1368,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_floats(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1329,6 +1392,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1352,6 +1416,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_guids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1375,6 +1440,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_binary(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1398,6 +1464,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1428,6 +1495,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_zero_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1445,6 +1513,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1464,6 +1533,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1483,6 +1553,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1505,6 +1576,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_invalid_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1527,6 +1599,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1549,6 +1622,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_with_top(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1566,6 +1640,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_query_entities_with_top_and_next(self, tables_storage_account_name,
                                                     tables_primary_storage_account_key):
         # Arrange
@@ -1602,6 +1677,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
 
@@ -1636,6 +1712,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1668,6 +1745,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1699,6 +1777,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1729,6 +1808,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1762,6 +1842,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1791,6 +1872,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1826,6 +1908,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         url = self.account_url(tables_storage_account_name, "table")
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1866,6 +1949,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1886,6 +1970,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_datetime_str_passthrough(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         partition, row = self._create_pk_rk(None, None)
@@ -1914,6 +1999,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_datetime_duplicate_field(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         partition, row = self._create_pk_rk(None, None)
@@ -1921,7 +2007,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         entity = {
             'PartitionKey': partition,
             'RowKey': row,
-            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
         }
         try:
             await self.table.create_entity(entity)
@@ -1932,7 +2018,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
 
-            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
             await self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = await self.table.get_entity(partition, row)
 
@@ -1945,6 +2031,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_etag_duplicate_field(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         partition, row = self._create_pk_rk(None, None)
@@ -1986,6 +2073,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_entity_create_response_echo(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         partition, row = self._create_pk_rk(None, None)
@@ -2020,6 +2108,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_keys_with_specialchar(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -2069,5 +2158,75 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                     row_key=entity['RowKey'])
                 assert get_entity == entity1
 
+        finally:
+            await self._tear_down()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_entity_with_edmtypes(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            "bool": ("false", "Edm.Boolean"),
+            "text": (42, EdmType.STRING),
+            "number": ("23", EdmType.INT32),
+            "bigNumber": (64, EdmType.INT64),
+            "bytes": ("test", "Edm.Binary"),
+            "amount": ("0", EdmType.DOUBLE),
+            "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
+            "guid": (TEST_GUID, EdmType.GUID)
+        }
+        try:
+            await self.table.upsert_entity(entity)
+            result = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            assert result['bool'] == False
+            assert result['text'] == "42"
+            assert result['number'] == 23
+            assert result['bigNumber'][0] == 64
+            assert result['bytes'] == b"test"
+            assert result['amount'] == 0.0
+            assert str(result['since']) == "2008-07-10 00:00:00+00:00"
+            assert result['guid'] == entity["guid"][0]
+
+            with pytest.raises(HttpResponseError) as e:
+                entity = {
+                    'PartitionKey': partition,
+                    'RowKey': row,
+                    "bool": ("not a bool", EdmType.BOOLEAN)
+                }
+                await self.table.upsert_entity(entity)
+        finally:
+            await self._tear_down()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_upsert_entity_with_invalid_key_type(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            table_name = self._get_table_reference('table')
+            table = self.ts.get_table_client(table_name)
+            await table.create_table()
+
+            # Act
+            entity1 = {
+                u'PartitionKey': 1,
+                u'RowKey': '0',
+                u'data': 123
+            }
+            entity2 = {
+                u'PartitionKey': '1',
+                u'RowKey': 0,
+                u'data': 123
+            }
+
+            with pytest.raises(TypeError):
+                await self.table.upsert_entity(entity1)
+            with pytest.raises(TypeError):
+                await self.table.upsert_entity(entity2)
         finally:
             await self._tear_down()

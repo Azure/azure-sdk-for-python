@@ -43,7 +43,7 @@ class EntityOperations:
         self,
         entity_name: str,
         enrich: Optional[bool] = False,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Get the details about the Queue or Topic with the given entityName.
@@ -106,7 +106,7 @@ class EntityOperations:
         self,
         entity_name: str,
         request_body: object,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         if_match: Optional[str] = None,
         **kwargs
     ) -> object:
@@ -183,7 +183,7 @@ class EntityOperations:
     async def delete(
         self,
         entity_name: str,
-        api_version: Optional[str] = "2017_04",
+        api_version: Optional[str] = "2021_05",
         **kwargs
     ) -> object:
         """Delete the Queue or Topic with the given entityName.

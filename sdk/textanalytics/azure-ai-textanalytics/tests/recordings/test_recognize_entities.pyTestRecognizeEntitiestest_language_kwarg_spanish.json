@@ -1,0 +1,90 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "222",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "Bill Gates is the CEO of Microsoft.",
+              "language": "es"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "latest",
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "76c8ad46-f7a7-4171-b38b-309f276da4de",
+        "Content-Length": "570",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Tue, 03 May 2022 00:16:20 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "22"
+      },
+      "ResponseBody": {
+        "kind": "EntityRecognitionResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 1,
+            "validDocumentsCount": 1,
+            "erroneousDocumentsCount": 0,
+            "transactionsCount": 1
+          },
+          "documents": [
+            {
+              "id": "0",
+              "statistics": {
+                "charactersCount": 35,
+                "transactionsCount": 1
+              },
+              "entities": [
+                {
+                  "text": "Bill Gates",
+                  "category": "Person",
+                  "offset": 0,
+                  "length": 10,
+                  "confidenceScore": 1.0
+                },
+                {
+                  "text": "CEO",
+                  "category": "PersonType",
+                  "offset": 18,
+                  "length": 3,
+                  "confidenceScore": 0.96
+                },
+                {
+                  "text": "Microsoft",
+                  "category": "Organization",
+                  "offset": 25,
+                  "length": 9,
+                  "confidenceScore": 0.99
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

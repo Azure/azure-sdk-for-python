@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -190,6 +190,120 @@ class ErrorDetails(msrest.serialization.Model):
         self.message = message
 
 
+class InputLinuxParameters(msrest.serialization.Model):
+    """Input properties for patching a Linux machine.
+
+    :param package_name_masks_to_exclude: Package names to be excluded for patching.
+    :type package_name_masks_to_exclude: list[str]
+    :param package_name_masks_to_include: Package names to be included for patching.
+    :type package_name_masks_to_include: list[str]
+    :param classifications_to_include: Classification category of patches to be patched.
+    :type classifications_to_include: list[str]
+    """
+
+    _attribute_map = {
+        'package_name_masks_to_exclude': {'key': 'packageNameMasksToExclude', 'type': '[str]'},
+        'package_name_masks_to_include': {'key': 'packageNameMasksToInclude', 'type': '[str]'},
+        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        package_name_masks_to_exclude: Optional[List[str]] = None,
+        package_name_masks_to_include: Optional[List[str]] = None,
+        classifications_to_include: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(InputLinuxParameters, self).__init__(**kwargs)
+        self.package_name_masks_to_exclude = package_name_masks_to_exclude
+        self.package_name_masks_to_include = package_name_masks_to_include
+        self.classifications_to_include = classifications_to_include
+
+
+class InputPatchConfiguration(msrest.serialization.Model):
+    """Input configuration for a patch run.
+
+    :param reboot_setting: Possible reboot preference as defined by the user based on which it
+     would be decided to reboot the machine or not after the patch operation is completed. Possible
+     values include: "IfRequired", "Never", "Always". Default value: "IfRequired".
+    :type reboot_setting: str or ~azure.mgmt.maintenance.models.RebootOptions
+    :param windows_parameters: Input parameters specific to patching a Windows machine. For Linux
+     machines, do not pass this property.
+    :type windows_parameters: ~azure.mgmt.maintenance.models.InputWindowsParameters
+    :param linux_parameters: Input parameters specific to patching Linux machine. For Windows
+     machines, do not pass this property.
+    :type linux_parameters: ~azure.mgmt.maintenance.models.InputLinuxParameters
+    :param pre_tasks: List of pre tasks. e.g. [{'source' :'runbook', 'taskScope': 'Global',
+     'parameters': { 'arg1': 'value1'}}].
+    :type pre_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
+    :param post_tasks: List of post tasks. e.g. [{'source' :'runbook', 'taskScope': 'Resource',
+     'parameters': { 'arg1': 'value1'}}].
+    :type post_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
+    """
+
+    _attribute_map = {
+        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
+        'windows_parameters': {'key': 'windowsParameters', 'type': 'InputWindowsParameters'},
+        'linux_parameters': {'key': 'linuxParameters', 'type': 'InputLinuxParameters'},
+        'pre_tasks': {'key': 'tasks.preTasks', 'type': '[TaskProperties]'},
+        'post_tasks': {'key': 'tasks.postTasks', 'type': '[TaskProperties]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        reboot_setting: Optional[Union[str, "RebootOptions"]] = "IfRequired",
+        windows_parameters: Optional["InputWindowsParameters"] = None,
+        linux_parameters: Optional["InputLinuxParameters"] = None,
+        pre_tasks: Optional[List["TaskProperties"]] = None,
+        post_tasks: Optional[List["TaskProperties"]] = None,
+        **kwargs
+    ):
+        super(InputPatchConfiguration, self).__init__(**kwargs)
+        self.reboot_setting = reboot_setting
+        self.windows_parameters = windows_parameters
+        self.linux_parameters = linux_parameters
+        self.pre_tasks = pre_tasks
+        self.post_tasks = post_tasks
+
+
+class InputWindowsParameters(msrest.serialization.Model):
+    """Input properties for patching a Windows machine.
+
+    :param kb_numbers_to_exclude: Windows KBID to be excluded for patching.
+    :type kb_numbers_to_exclude: list[str]
+    :param kb_numbers_to_include: Windows KBID to be included for patching.
+    :type kb_numbers_to_include: list[str]
+    :param classifications_to_include: Classification category of patches to be patched.
+    :type classifications_to_include: list[str]
+    :param exclude_kbs_requiring_reboot: Exclude patches which need reboot.
+    :type exclude_kbs_requiring_reboot: bool
+    """
+
+    _attribute_map = {
+        'kb_numbers_to_exclude': {'key': 'kbNumbersToExclude', 'type': '[str]'},
+        'kb_numbers_to_include': {'key': 'kbNumbersToInclude', 'type': '[str]'},
+        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
+        'exclude_kbs_requiring_reboot': {'key': 'excludeKbsRequiringReboot', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        kb_numbers_to_exclude: Optional[List[str]] = None,
+        kb_numbers_to_include: Optional[List[str]] = None,
+        classifications_to_include: Optional[List[str]] = None,
+        exclude_kbs_requiring_reboot: Optional[bool] = None,
+        **kwargs
+    ):
+        super(InputWindowsParameters, self).__init__(**kwargs)
+        self.kb_numbers_to_exclude = kb_numbers_to_exclude
+        self.kb_numbers_to_include = kb_numbers_to_include
+        self.classifications_to_include = classifications_to_include
+        self.exclude_kbs_requiring_reboot = exclude_kbs_requiring_reboot
+
+
 class ListApplyUpdate(msrest.serialization.Model):
     """Response for ApplyUpdate list.
 
@@ -302,6 +416,8 @@ class MaintenanceConfiguration(Resource):
     :param visibility: Gets or sets the visibility of the configuration. The default value is
      'Custom'. Possible values include: "Custom", "Public".
     :type visibility: str or ~azure.mgmt.maintenance.models.Visibility
+    :param install_patches: The input parameters to be passed to the patch run operation.
+    :type install_patches: ~azure.mgmt.maintenance.models.InputPatchConfiguration
     :param start_date_time: Effective start date of the maintenance window in YYYY-MM-DD hh:mm
      format. The start date can be set to either the current date or future date. The window will be
      created in the time zone provided and adjusted to daylight savings according to that time zone.
@@ -326,9 +442,11 @@ class MaintenanceConfiguration(Resource):
      Monday-Sunday]. Weekly schedule examples are recurEvery: 3Weeks, recurEvery: Week
      Saturday,Sunday. Monthly schedules are formatted as [Frequency as integer]['Month(s)'] [Comma
      separated list of month days] or [Frequency as integer]['Month(s)'] [Week of Month (First,
-     Second, Third, Fourth, Last)] [Weekday Monday-Sunday]. Monthly schedule examples are
-     recurEvery: Month, recurEvery: 2Months, recurEvery: Month day23,day24, recurEvery: Month Last
-     Sunday, recurEvery: Month Fourth Monday.
+     Second, Third, Fourth, Last)] [Weekday Monday-Sunday] [Optional Offset(No. of days)]. Offset
+     value must be between -6 to 6 inclusive. Monthly schedule examples are recurEvery: Month,
+     recurEvery: 2Months, recurEvery: Month day23,day24, recurEvery: Month Last Sunday, recurEvery:
+     Month Fourth Monday, recurEvery: Month Last Sunday Offset-3, recurEvery: Month Third Sunday
+     Offset6.
     :type recur_every: str
     """
 
@@ -350,6 +468,7 @@ class MaintenanceConfiguration(Resource):
         'extension_properties': {'key': 'properties.extensionProperties', 'type': '{str}'},
         'maintenance_scope': {'key': 'properties.maintenanceScope', 'type': 'str'},
         'visibility': {'key': 'properties.visibility', 'type': 'str'},
+        'install_patches': {'key': 'properties.installPatches', 'type': 'InputPatchConfiguration'},
         'start_date_time': {'key': 'properties.maintenanceWindow.startDateTime', 'type': 'str'},
         'expiration_date_time': {'key': 'properties.maintenanceWindow.expirationDateTime', 'type': 'str'},
         'duration': {'key': 'properties.maintenanceWindow.duration', 'type': 'str'},
@@ -366,6 +485,7 @@ class MaintenanceConfiguration(Resource):
         extension_properties: Optional[Dict[str, str]] = None,
         maintenance_scope: Optional[Union[str, "MaintenanceScope"]] = None,
         visibility: Optional[Union[str, "Visibility"]] = None,
+        install_patches: Optional["InputPatchConfiguration"] = None,
         start_date_time: Optional[str] = None,
         expiration_date_time: Optional[str] = None,
         duration: Optional[str] = None,
@@ -380,6 +500,7 @@ class MaintenanceConfiguration(Resource):
         self.extension_properties = extension_properties
         self.maintenance_scope = maintenance_scope
         self.visibility = visibility
+        self.install_patches = install_patches
         self.start_date_time = start_date_time
         self.expiration_date_time = expiration_date_time
         self.duration = duration
@@ -418,7 +539,7 @@ class Operation(msrest.serialization.Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: str
+    :type properties: any
     :param is_data_action: Indicates whether the operation is a data action.
     :type is_data_action: bool
     """
@@ -427,7 +548,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
@@ -437,7 +558,7 @@ class Operation(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationInfo"] = None,
         origin: Optional[str] = None,
-        properties: Optional[str] = None,
+        properties: Optional[Any] = None,
         is_data_action: Optional[bool] = None,
         **kwargs
     ):
@@ -552,6 +673,38 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class TaskProperties(msrest.serialization.Model):
+    """Task properties of the software update configuration.
+
+    :param parameters: Gets or sets the parameters of the task.
+    :type parameters: dict[str, str]
+    :param source: Gets or sets the name of the runbook.
+    :type source: str
+    :param task_scope: Global Task execute once when schedule trigger. Resource task execute for
+     each VM. Possible values include: "Global", "Resource". Default value: "Global".
+    :type task_scope: str or ~azure.mgmt.maintenance.models.TaskScope
+    """
+
+    _attribute_map = {
+        'parameters': {'key': 'parameters', 'type': '{str}'},
+        'source': {'key': 'source', 'type': 'str'},
+        'task_scope': {'key': 'taskScope', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        parameters: Optional[Dict[str, str]] = None,
+        source: Optional[str] = None,
+        task_scope: Optional[Union[str, "TaskScope"]] = "Global",
+        **kwargs
+    ):
+        super(TaskProperties, self).__init__(**kwargs)
+        self.parameters = parameters
+        self.source = source
+        self.task_scope = task_scope
 
 
 class Update(msrest.serialization.Model):

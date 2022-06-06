@@ -41,12 +41,12 @@ except KeyError:
     exit()
 
 # Build a client from the connection string. And for this example, we have enabled debug
-# tracing. For production code, this should be turned off. 
-client = WebPubSubServiceClient.from_connection_string(connection_string, logging_enable=True)
+# tracing. For production code, this should be turned off.
+client = WebPubSubServiceClient.from_connection_string(connection_string, hub='hub', logging_enable=True)
 
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message={'Hello': 'all!'})
+    client.send_to_all(message={'Hello': 'all!'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -54,7 +54,7 @@ except HttpResponseError as e:
 # Send a text message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message='hello, text!', content_type='text/plain')
+    client.send_to_all(message='hello, text!', content_type='text/plain')
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -63,7 +63,7 @@ except HttpResponseError as e:
 # Send a json message from a stream to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "world" }'), content_type='application/json')
+    client.send_to_all(message=io.BytesIO(b'{ "hello": "world" }'), content_type='application/octet-stream')
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))

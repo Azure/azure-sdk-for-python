@@ -89,6 +89,6 @@
         "usages": "UsagesOperations",
         "quota": "QuotaOperations",
         "quota_request_status": "QuotaRequestStatusOperations",
-        "operation": "OperationOperations"
+        "quota_operation": "QuotaOperationOperations"
     }
 }

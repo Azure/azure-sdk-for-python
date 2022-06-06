@@ -1,0 +1,30 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "268",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "68375feb-5e0d-11ec-8d34-6245b51668de"
+      },
+      "RequestBody": "{\u0022feedbackType\u0022: \u0022Anomaly\u0022, \u0022metricId\u0022: \u0022metrics_advisor_metric_id\u0022, \u0022dimensionFilter\u0022: {\u0022dimension\u0022: {\u0022category\u0022: \u0022Shoes Handbags \u0026 Sunglasses\u0022}}, \u0022startTime\u0022: \u00222021-08-05T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022value\u0022: {\u0022anomalyValue\u0022: \u0022NotAnomaly\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "2ab96887-bba9-4b9a-b32c-f7e94df53425",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:13:42 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/d9e8cdb2-7444-4bf1-b061-8b7189c9475b",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "475",
+        "X-Request-ID": "2ab96887-bba9-4b9a-b32c-f7e94df53425"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

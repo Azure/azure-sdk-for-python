@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -30,7 +29,7 @@ USAGE:
     6) AZURE_STORAGE_SOURCE_CONTAINER_NAME - the name of your source container
     7) AZURE_STORAGE_TARGET_CONTAINER_NAME - the name of your target container
     8) AZURE_DOCUMENT_NAME - the name and file extension of your document in this directory
-        e.g. "mydocument.txt"
+        e.g. "document.txt"
 """
 
 import os
@@ -43,7 +42,7 @@ from azure.storage.blob.aio import BlobServiceClient, BlobClient
 from azure.storage.blob import generate_container_sas
 
 
-class SampleTranslationWithAzureBlobAsync(object):
+class SampleTranslationWithAzureBlobAsync:
 
     def __init__(self):
         self.endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -84,26 +83,26 @@ class SampleTranslationWithAzureBlobAsync(object):
                 name=self.document_name,
                 data=b"This is an example translation with the document translation client library"
             )
-        print("Uploaded document {} to storage container {}".format(self.document_name, source_container.container_name))
+        print(f"Uploaded document {self.document_name} to storage container {source_container.container_name}")
 
         source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
         target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
         poller = await translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
-        print("Created translation operation with ID: {}".format(poller.id))
+        print(f"Created translation operation with ID: {poller.id}")
         print("Waiting until translation completes...")
 
         result = await poller.result()
-        print("Status: {}".format(poller.status()))
+        print(f"Status: {poller.status()}")
 
         print("\nDocument results:")
         async for document in result:
-            print("Document ID: {}".format(document.id))
-            print("Document status: {}".format(document.status))
+            print(f"Document ID: {document.id}")
+            print(f"Document status: {document.status}")
             if document.status == "Succeeded":
-                print("Source document location: {}".format(document.source_document_url))
-                print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translated_to))
+                print(f"Source document location: {document.source_document_url}")
+                print(f"Translated document location: {document.translated_document_url}")
+                print(f"Translated to language: {document.translated_to}\n")
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
                 async with blob_client:
@@ -114,7 +113,7 @@ class SampleTranslationWithAzureBlobAsync(object):
                 print("Downloaded {} locally".format("translated_"+self.document_name))
             else:
                 print("\nThere was a problem translating your document.")
-                print("Document Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+                print(f"Document Error Code: {document.error.code}, Message: {document.error.message}\n")
 
         await translation_client.close()
         await blob_service_client.close()
@@ -122,9 +121,9 @@ class SampleTranslationWithAzureBlobAsync(object):
     async def create_container(self, blob_service_client, container_name):
         try:
             container_client = await blob_service_client.create_container(container_name)
-            print("Creating container: {}".format(container_name))
+            print(f"Creating container: {container_name}")
         except ResourceExistsError:
-            print("The container with name {} already exists".format(container_name))
+            print(f"The container with name {container_name} already exists")
             container_client = blob_service_client.get_container_client(container=container_name)
         return container_client
 
@@ -138,7 +137,7 @@ class SampleTranslationWithAzureBlobAsync(object):
         )
 
         container_sas_url = self.storage_endpoint + container.container_name + "?" + sas_token
-        print("Generating {} SAS URL".format(container.container_name))
+        print(f"Generating {container.container_name} SAS URL")
         return container_sas_url
 
 
@@ -147,5 +146,4 @@ async def main():
     await sample.sample_translation_with_azure_blob()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

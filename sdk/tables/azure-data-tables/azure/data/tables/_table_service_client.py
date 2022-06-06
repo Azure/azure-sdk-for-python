@@ -213,7 +213,7 @@ class TableServiceClient(TablesBaseClient):
                 :end-before: [END create_table_if_not_exists]
                 :language: python
                 :dedent: 8
-                :caption: Deleting a table from the TableServiceClient object
+                :caption: Creating a table if it doesn't exist, from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         try:

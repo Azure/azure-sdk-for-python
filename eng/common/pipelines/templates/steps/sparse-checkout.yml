@@ -38,8 +38,8 @@ steps:
             } else {
               Write-Host "Repository $($repository.Name) is being initialized."
 
-              Write-Host "git clone --no-checkout --filter=tree:0 git://github.com/$($repository.Name) ."
-              git clone --no-checkout --filter=tree:0 git://github.com/$($repository.Name) .
+              Write-Host "git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) ."
+              git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) .
 
               Write-Host "git sparse-checkout init"
               git sparse-checkout init
@@ -59,8 +59,9 @@ steps:
 
             # sparse-checkout commands after initial checkout will auto-checkout again
             if (!$hasInitialized) {
-              Write-Host "git checkout $($repository.Commitish)"
-              git checkout $($repository.Commitish)  # this will use the default branch if repo.Commitish is empty
+              Write-Host "git -c advice.detachedHead=false checkout $($repository.Commitish)"
+              # This will use the default branch if repo.Commitish is empty
+              git -c advice.detachedHead=false checkout $($repository.Commitish)
             } else {
               Write-Host "Skipping checkout as repo has already been initialized"
             }

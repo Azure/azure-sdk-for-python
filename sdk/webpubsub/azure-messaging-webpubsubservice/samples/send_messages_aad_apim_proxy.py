@@ -36,22 +36,22 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT, WEBPUBSUB_REVERSE_PROXY_ENDPOINT
 try:
     endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
     reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_PROXY_ENDPOINT"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_RPOXY_ENDPOINT' - please set if before running the example")
+    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example")
     exit()
 
 # Build a client through AAD
 # If you want to know more about the effect of `reverse_proxy_endpoint`, please reference: https://github.com/Azure/azure-webpubsub/issues/194
-client = WebPubSubServiceClient(credential=DefaultAzureCredential(), endpoint=endpoint, reverse_proxy_endpoint=reverse_proxy_endpoint)
+client = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=DefaultAzureCredential(), reverse_proxy_endpoint=reverse_proxy_endpoint)
 
 # Send a json message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message={'Hello': 'reverse_proxy_endpoint!'})
+    client.send_to_all(message={'Hello': 'reverse_proxy_endpoint!'})
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -59,7 +59,7 @@ except HttpResponseError as e:
 # Send a text message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message='hello, reverse_proxy_endpoint!', content_type='text/plain')
+    client.send_to_all(message='hello, reverse_proxy_endpoint!', content_type='text/plain')
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))
@@ -68,7 +68,7 @@ except HttpResponseError as e:
 # Send a json message from a stream to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all('Hub', message=io.BytesIO(b'{ "hello": "reverse_proxy_endpoint" }'), content_type='application/json')
+    client.send_to_all(message=io.BytesIO(b'{ "hello": "reverse_proxy_endpoint" }'), content_type='application/octet-stream')
     print('Successfully sent a JSON message')
 except HttpResponseError as e:
     print('Failed to send JSON message: {}'.format(e.response.json()))

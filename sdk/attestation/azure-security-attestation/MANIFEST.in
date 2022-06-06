@@ -1,5 +1,7 @@
 include *.md
+include LICENSE
 include azure/__init__.py
 include azure/security/__init__.py
 recursive-include samples *.py *.md
 recursive-include tests *.py *.yaml
+include azure/security/attestation/py.typed

@@ -16,17 +16,17 @@ from ._container_service_client_enums import *
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the Container service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.containerservice.v2018_09_30_preview.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.containerservice.v2018_09_30_preview.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -45,6 +45,20 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details:
+         list[~azure.mgmt.containerservice.v2018_09_30_preview.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -55,10 +69,10 @@ class CloudErrorBody(msrest.serialization.Model):
 class NetworkProfile(msrest.serialization.Model):
     """Represents the OpenShift networking configuration.
 
-    :param vnet_cidr: CIDR for the OpenShift Vnet.
-    :type vnet_cidr: str
-    :param peer_vnet_id: CIDR of the Vnet to peer.
-    :type peer_vnet_id: str
+    :ivar vnet_cidr: CIDR for the OpenShift Vnet.
+    :vartype vnet_cidr: str
+    :ivar peer_vnet_id: CIDR of the Vnet to peer.
+    :vartype peer_vnet_id: str
     """
 
     _attribute_map = {
@@ -73,6 +87,12 @@ class NetworkProfile(msrest.serialization.Model):
         peer_vnet_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword vnet_cidr: CIDR for the OpenShift Vnet.
+        :paramtype vnet_cidr: str
+        :keyword peer_vnet_id: CIDR of the Vnet to peer.
+        :paramtype peer_vnet_id: str
+        """
         super(NetworkProfile, self).__init__(**kwargs)
         self.vnet_cidr = vnet_cidr
         self.peer_vnet_id = peer_vnet_id
@@ -91,10 +111,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -119,6 +139,12 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -140,34 +166,35 @@ class OpenShiftManagedCluster(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param plan: Define the resource plan as required by ARM for billing purposes.
-    :type plan: ~azure.mgmt.containerservice.v2018_09_30_preview.models.PurchasePlan
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar plan: Define the resource plan as required by ARM for billing purposes.
+    :vartype plan: ~azure.mgmt.containerservice.v2018_09_30_preview.models.PurchasePlan
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param open_shift_version: Version of OpenShift specified when creating the cluster.
-    :type open_shift_version: str
-    :param public_hostname: Optional user-specified FQDN for OpenShift API server.
-    :type public_hostname: str
-    :param fqdn: User-specified FQDN for OpenShift API server loadbalancer internal hostname.
-    :type fqdn: str
-    :param network_profile: Configuration for OpenShift networking.
-    :type network_profile: ~azure.mgmt.containerservice.v2018_09_30_preview.models.NetworkProfile
-    :param router_profiles: Configuration for OpenShift router(s).
-    :type router_profiles:
+    :ivar open_shift_version: Version of OpenShift specified when creating the cluster.
+    :vartype open_shift_version: str
+    :ivar public_hostname: Optional user-specified FQDN for OpenShift API server.
+    :vartype public_hostname: str
+    :ivar fqdn: User-specified FQDN for OpenShift API server loadbalancer internal hostname.
+    :vartype fqdn: str
+    :ivar network_profile: Configuration for OpenShift networking.
+    :vartype network_profile:
+     ~azure.mgmt.containerservice.v2018_09_30_preview.models.NetworkProfile
+    :ivar router_profiles: Configuration for OpenShift router(s).
+    :vartype router_profiles:
      list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftRouterProfile]
-    :param master_pool_profile: Configuration for OpenShift master VMs.
-    :type master_pool_profile:
+    :ivar master_pool_profile: Configuration for OpenShift master VMs.
+    :vartype master_pool_profile:
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterMasterPoolProfile
-    :param agent_pool_profiles: Configuration of OpenShift cluster VMs.
-    :type agent_pool_profiles:
+    :ivar agent_pool_profiles: Configuration of OpenShift cluster VMs.
+    :vartype agent_pool_profiles:
      list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterAgentPoolProfile]
-    :param auth_profile: Configures OpenShift authentication.
-    :type auth_profile:
+    :ivar auth_profile: Configures OpenShift authentication.
+    :vartype auth_profile:
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterAuthProfile
     """
 
@@ -213,6 +240,35 @@ class OpenShiftManagedCluster(Resource):
         auth_profile: Optional["OpenShiftManagedClusterAuthProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword plan: Define the resource plan as required by ARM for billing purposes.
+        :paramtype plan: ~azure.mgmt.containerservice.v2018_09_30_preview.models.PurchasePlan
+        :keyword open_shift_version: Version of OpenShift specified when creating the cluster.
+        :paramtype open_shift_version: str
+        :keyword public_hostname: Optional user-specified FQDN for OpenShift API server.
+        :paramtype public_hostname: str
+        :keyword fqdn: User-specified FQDN for OpenShift API server loadbalancer internal hostname.
+        :paramtype fqdn: str
+        :keyword network_profile: Configuration for OpenShift networking.
+        :paramtype network_profile:
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.NetworkProfile
+        :keyword router_profiles: Configuration for OpenShift router(s).
+        :paramtype router_profiles:
+         list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftRouterProfile]
+        :keyword master_pool_profile: Configuration for OpenShift master VMs.
+        :paramtype master_pool_profile:
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterMasterPoolProfile
+        :keyword agent_pool_profiles: Configuration of OpenShift cluster VMs.
+        :paramtype agent_pool_profiles:
+         list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterAgentPoolProfile]
+        :keyword auth_profile: Configures OpenShift authentication.
+        :paramtype auth_profile:
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterAuthProfile
+        """
         super(OpenShiftManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.provisioning_state = None
@@ -234,8 +290,8 @@ class OpenShiftManagedClusterBaseIdentityProvider(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required. The kind of the provider.Constant filled by server.
-    :type kind: str
+    :ivar kind: Required. The kind of the provider.Constant filled by server.
+    :vartype kind: str
     """
 
     _validation = {
@@ -254,6 +310,8 @@ class OpenShiftManagedClusterBaseIdentityProvider(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OpenShiftManagedClusterBaseIdentityProvider, self).__init__(**kwargs)
         self.kind = None  # type: Optional[str]
 
@@ -263,16 +321,16 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kind: Required. The kind of the provider.Constant filled by server.
-    :type kind: str
-    :param client_id: The clientId password associated with the provider.
-    :type client_id: str
-    :param secret: The secret password associated with the provider.
-    :type secret: str
-    :param tenant_id: The tenantId associated with the provider.
-    :type tenant_id: str
-    :param customer_admin_group_id: The groupId to be granted cluster admin role.
-    :type customer_admin_group_id: str
+    :ivar kind: Required. The kind of the provider.Constant filled by server.
+    :vartype kind: str
+    :ivar client_id: The clientId password associated with the provider.
+    :vartype client_id: str
+    :ivar secret: The secret password associated with the provider.
+    :vartype secret: str
+    :ivar tenant_id: The tenantId associated with the provider.
+    :vartype tenant_id: str
+    :ivar customer_admin_group_id: The groupId to be granted cluster admin role.
+    :vartype customer_admin_group_id: str
     """
 
     _validation = {
@@ -296,6 +354,16 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
         customer_admin_group_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword client_id: The clientId password associated with the provider.
+        :paramtype client_id: str
+        :keyword secret: The secret password associated with the provider.
+        :paramtype secret: str
+        :keyword tenant_id: The tenantId associated with the provider.
+        :paramtype tenant_id: str
+        :keyword customer_admin_group_id: The groupId to be granted cluster admin role.
+        :paramtype customer_admin_group_id: str
+        """
         super(OpenShiftManagedClusterAADIdentityProvider, self).__init__(**kwargs)
         self.kind = 'AADIdentityProvider'  # type: str
         self.client_id = client_id
@@ -309,12 +377,12 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Unique name of the pool profile in the context of the subscription and
+    :ivar name: Required. Unique name of the pool profile in the context of the subscription and
      resource group.
-    :type name: str
-    :param count: Required. Number of agents (VMs) to host docker containers.
-    :type count: int
-    :param vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+    :vartype name: str
+    :ivar count: Required. Number of agents (VMs) to host docker containers.
+    :vartype count: int
+    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
      "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
      "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
      "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
@@ -322,16 +390,16 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
      "Standard_E32s_v3", "Standard_E64s_v3", "Standard_GS2", "Standard_GS3", "Standard_GS4",
      "Standard_GS5", "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2",
      "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L32s".
-    :type vm_size: str or
+    :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftContainerServiceVMSize
-    :param subnet_cidr: Subnet CIDR for the peering.
-    :type subnet_cidr: str
-    :param os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
+    :ivar subnet_cidr: Subnet CIDR for the peering.
+    :vartype subnet_cidr: str
+    :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
      Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
-    :type os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
-    :param role: Define the role of the AgentPoolProfile. Possible values include: "compute",
+    :vartype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
+    :ivar role: Define the role of the AgentPoolProfile. Possible values include: "compute",
      "infra".
-    :type role: str or
+    :vartype role: str or
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftAgentPoolProfileRole
     """
 
@@ -361,6 +429,32 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
         role: Optional[Union[str, "OpenShiftAgentPoolProfileRole"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Unique name of the pool profile in the context of the subscription and
+         resource group.
+        :paramtype name: str
+        :keyword count: Required. Number of agents (VMs) to host docker containers.
+        :paramtype count: int
+        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+         "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
+         "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
+         "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
+         "Standard_F16s", "Standard_E4s_v3", "Standard_E8s_v3", "Standard_E16s_v3", "Standard_E20s_v3",
+         "Standard_E32s_v3", "Standard_E64s_v3", "Standard_GS2", "Standard_GS3", "Standard_GS4",
+         "Standard_GS5", "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2",
+         "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L32s".
+        :paramtype vm_size: str or
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftContainerServiceVMSize
+        :keyword subnet_cidr: Subnet CIDR for the peering.
+        :paramtype subnet_cidr: str
+        :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
+         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
+        :keyword role: Define the role of the AgentPoolProfile. Possible values include: "compute",
+         "infra".
+        :paramtype role: str or
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftAgentPoolProfileRole
+        """
         super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -373,8 +467,8 @@ class OpenShiftManagedClusterAgentPoolProfile(msrest.serialization.Model):
 class OpenShiftManagedClusterAuthProfile(msrest.serialization.Model):
     """Defines all possible authentication profiles for the OpenShift cluster.
 
-    :param identity_providers: Type of authentication profile to use.
-    :type identity_providers:
+    :ivar identity_providers: Type of authentication profile to use.
+    :vartype identity_providers:
      list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterIdentityProvider]
     """
 
@@ -388,6 +482,11 @@ class OpenShiftManagedClusterAuthProfile(msrest.serialization.Model):
         identity_providers: Optional[List["OpenShiftManagedClusterIdentityProvider"]] = None,
         **kwargs
     ):
+        """
+        :keyword identity_providers: Type of authentication profile to use.
+        :paramtype identity_providers:
+         list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterIdentityProvider]
+        """
         super(OpenShiftManagedClusterAuthProfile, self).__init__(**kwargs)
         self.identity_providers = identity_providers
 
@@ -395,10 +494,10 @@ class OpenShiftManagedClusterAuthProfile(msrest.serialization.Model):
 class OpenShiftManagedClusterIdentityProvider(msrest.serialization.Model):
     """Defines the configuration of the identity providers to be used in the OpenShift cluster.
 
-    :param name: Name of the provider.
-    :type name: str
-    :param provider: Configuration of the provider.
-    :type provider:
+    :ivar name: Name of the provider.
+    :vartype name: str
+    :ivar provider: Configuration of the provider.
+    :vartype provider:
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterBaseIdentityProvider
     """
 
@@ -414,6 +513,13 @@ class OpenShiftManagedClusterIdentityProvider(msrest.serialization.Model):
         provider: Optional["OpenShiftManagedClusterBaseIdentityProvider"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the provider.
+        :paramtype name: str
+        :keyword provider: Configuration of the provider.
+        :paramtype provider:
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedClusterBaseIdentityProvider
+        """
         super(OpenShiftManagedClusterIdentityProvider, self).__init__(**kwargs)
         self.name = name
         self.provider = provider
@@ -424,8 +530,8 @@ class OpenShiftManagedClusterListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of OpenShift managed clusters.
-    :type value:
+    :ivar value: The list of OpenShift managed clusters.
+    :vartype value:
      list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedCluster]
     :ivar next_link: The URL to get the next set of OpenShift managed cluster results.
     :vartype next_link: str
@@ -446,6 +552,11 @@ class OpenShiftManagedClusterListResult(msrest.serialization.Model):
         value: Optional[List["OpenShiftManagedCluster"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of OpenShift managed clusters.
+        :paramtype value:
+         list[~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedCluster]
+        """
         super(OpenShiftManagedClusterListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -456,13 +567,13 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Unique name of the master pool profile in the context of the subscription and
+    :ivar name: Unique name of the master pool profile in the context of the subscription and
      resource group.
-    :type name: str
-    :param count: Required. Number of masters (VMs) to host docker containers. The default value is
+    :vartype name: str
+    :ivar count: Required. Number of masters (VMs) to host docker containers. The default value is
      3.
-    :type count: int
-    :param vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+    :vartype count: int
+    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
      "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
      "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
      "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
@@ -470,13 +581,13 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
      "Standard_E32s_v3", "Standard_E64s_v3", "Standard_GS2", "Standard_GS3", "Standard_GS4",
      "Standard_GS5", "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2",
      "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L32s".
-    :type vm_size: str or
+    :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftContainerServiceVMSize
-    :param subnet_cidr: Subnet CIDR for the peering.
-    :type subnet_cidr: str
-    :param os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
+    :ivar subnet_cidr: Subnet CIDR for the peering.
+    :vartype subnet_cidr: str
+    :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
      Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
-    :type os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
+    :vartype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
     """
 
     _validation = {
@@ -502,6 +613,29 @@ class OpenShiftManagedClusterMasterPoolProfile(msrest.serialization.Model):
         os_type: Optional[Union[str, "OSType"]] = "Linux",
         **kwargs
     ):
+        """
+        :keyword name: Unique name of the master pool profile in the context of the subscription and
+         resource group.
+        :paramtype name: str
+        :keyword count: Required. Number of masters (VMs) to host docker containers. The default value
+         is 3.
+        :paramtype count: int
+        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_D2s_v3",
+         "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
+         "Standard_D64s_v3", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_F8s_v2",
+         "Standard_F16s_v2", "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_F8s",
+         "Standard_F16s", "Standard_E4s_v3", "Standard_E8s_v3", "Standard_E16s_v3", "Standard_E20s_v3",
+         "Standard_E32s_v3", "Standard_E64s_v3", "Standard_GS2", "Standard_GS3", "Standard_GS4",
+         "Standard_GS5", "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2",
+         "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L32s".
+        :paramtype vm_size: str or
+         ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftContainerServiceVMSize
+        :keyword subnet_cidr: Subnet CIDR for the peering.
+        :paramtype subnet_cidr: str
+        :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
+         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerservice.v2018_09_30_preview.models.OSType
+        """
         super(OpenShiftManagedClusterMasterPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -515,10 +649,10 @@ class OpenShiftRouterProfile(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name: Name of the router profile.
-    :type name: str
-    :param public_subdomain: DNS subdomain for OpenShift router.
-    :type public_subdomain: str
+    :ivar name: Name of the router profile.
+    :vartype name: str
+    :ivar public_subdomain: DNS subdomain for OpenShift router.
+    :vartype public_subdomain: str
     :ivar fqdn: Auto-allocated FQDN for the OpenShift router.
     :vartype fqdn: str
     """
@@ -540,6 +674,12 @@ class OpenShiftRouterProfile(msrest.serialization.Model):
         public_subdomain: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the router profile.
+        :paramtype name: str
+        :keyword public_subdomain: DNS subdomain for OpenShift router.
+        :paramtype public_subdomain: str
+        """
         super(OpenShiftRouterProfile, self).__init__(**kwargs)
         self.name = name
         self.public_subdomain = public_subdomain
@@ -549,15 +689,15 @@ class OpenShiftRouterProfile(msrest.serialization.Model):
 class PurchasePlan(msrest.serialization.Model):
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
-    :param name: The plan ID.
-    :type name: str
-    :param product: Specifies the product of the image from the marketplace. This is the same value
+    :ivar name: The plan ID.
+    :vartype name: str
+    :ivar product: Specifies the product of the image from the marketplace. This is the same value
      as Offer under the imageReference element.
-    :type product: str
-    :param promotion_code: The promotion code.
-    :type promotion_code: str
-    :param publisher: The plan ID.
-    :type publisher: str
+    :vartype product: str
+    :ivar promotion_code: The promotion code.
+    :vartype promotion_code: str
+    :ivar publisher: The plan ID.
+    :vartype publisher: str
     """
 
     _attribute_map = {
@@ -576,6 +716,17 @@ class PurchasePlan(msrest.serialization.Model):
         publisher: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The plan ID.
+        :paramtype name: str
+        :keyword product: Specifies the product of the image from the marketplace. This is the same
+         value as Offer under the imageReference element.
+        :paramtype product: str
+        :keyword promotion_code: The promotion code.
+        :paramtype promotion_code: str
+        :keyword publisher: The plan ID.
+        :paramtype publisher: str
+        """
         super(PurchasePlan, self).__init__(**kwargs)
         self.name = name
         self.product = product
@@ -586,8 +737,8 @@ class PurchasePlan(msrest.serialization.Model):
 class TagsObject(msrest.serialization.Model):
     """Tags object for patch operations.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -600,5 +751,9 @@ class TagsObject(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TagsObject, self).__init__(**kwargs)
         self.tags = tags

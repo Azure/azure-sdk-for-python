@@ -1,9 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-guestconfig"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Guestconfig Management"
+package_pprint_name = "Guest Config Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = false
-need_azuremgmtcore = true

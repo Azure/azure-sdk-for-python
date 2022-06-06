@@ -6,34 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import AppPlatformManagementClientConfiguration
+from .operations import AppsOperations, BindingsOperations, CertificatesOperations, ConfigServersOperations, CustomDomainsOperations, DeploymentsOperations, MonitoringSettingsOperations, Operations, RuntimeVersionsOperations, ServicesOperations, SkusOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import AppPlatformManagementClientConfiguration
-from .operations import ServicesOperations
-from .operations import ConfigServersOperations
-from .operations import MonitoringSettingsOperations
-from .operations import AppsOperations
-from .operations import BindingsOperations
-from .operations import CertificatesOperations
-from .operations import CustomDomainsOperations
-from .operations import DeploymentsOperations
-from .operations import Operations
-from .operations import RuntimeVersionsOperations
-from .operations import SkusOperations
-from . import models
-
-
-class AppPlatformManagementClient(object):
+class AppPlatformManagementClient:    # pylint: disable=too-many-instance-attributes
     """REST API for Azure Spring Cloud.
 
     :ivar services: ServicesOperations operations
@@ -41,7 +30,8 @@ class AppPlatformManagementClient(object):
     :ivar config_servers: ConfigServersOperations operations
     :vartype config_servers: azure.mgmt.appplatform.v2020_07_01.operations.ConfigServersOperations
     :ivar monitoring_settings: MonitoringSettingsOperations operations
-    :vartype monitoring_settings: azure.mgmt.appplatform.v2020_07_01.operations.MonitoringSettingsOperations
+    :vartype monitoring_settings:
+     azure.mgmt.appplatform.v2020_07_01.operations.MonitoringSettingsOperations
     :ivar apps: AppsOperations operations
     :vartype apps: azure.mgmt.appplatform.v2020_07_01.operations.AppsOperations
     :ivar bindings: BindingsOperations operations
@@ -55,75 +45,76 @@ class AppPlatformManagementClient(object):
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.appplatform.v2020_07_01.operations.Operations
     :ivar runtime_versions: RuntimeVersionsOperations operations
-    :vartype runtime_versions: azure.mgmt.appplatform.v2020_07_01.operations.RuntimeVersionsOperations
+    :vartype runtime_versions:
+     azure.mgmt.appplatform.v2020_07_01.operations.RuntimeVersionsOperations
     :ivar skus: SkusOperations operations
     :vartype skus: azure.mgmt.appplatform.v2020_07_01.operations.SkusOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Gets subscription ID which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Gets subscription ID which uniquely identify the Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2020-07-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = AppPlatformManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = AppPlatformManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.config_servers = ConfigServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.monitoring_settings = MonitoringSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.apps = AppsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.bindings = BindingsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.custom_domains = CustomDomainsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.runtime_versions = RuntimeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.services = ServicesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.config_servers = ConfigServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.monitoring_settings = MonitoringSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.apps = AppsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.bindings = BindingsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.certificates = CertificatesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.custom_domains = CustomDomainsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.deployments = DeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.runtime_versions = RuntimeVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

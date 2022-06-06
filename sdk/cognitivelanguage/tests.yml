@@ -3,19 +3,21 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: false
       BuildTargetingString: azure*
       ServiceDirectory: cognitivelanguage
       MatrixReplace:
         - TestSamples=.*/true
+      MaxParallel: 1
       EnvVars:
         AZURE_QUESTIONANSWERING_KEY: $(qna-key)
         AZURE_QUESTIONANSWERING_PROJECT: 190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c
         AZURE_QUESTIONANSWERING_ENDPOINT: $(qna-uri)
-        AZURE_CONVERSATIONS_ENDPOINT: $(conversations-endpoint)
-        AZURE_CONVERSATIONS_KEY: $(conversations-key)
-        AZURE_CONVERSATIONS_PROJECT: $(conversations-project)
-        AZURE_CONVERSATIONS_WORKFLOW_PROJECT: $(conversations-workflow-project)
+        AZURE_CONVERSATIONS_ENDPOINT: $(clu-uri)
+        AZURE_CONVERSATIONS_KEY: $(clu-key)
+        AZURE_CONVERSATIONS_PROJECT_NAME: $(clu-project)
+        AZURE_CONVERSATIONS_DEPLOYMENT_NAME: $(clu-project-deployment)
+        AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME: $(clu-workflow-project)
+        AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME: $(clu-workflow-project-deployment)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)

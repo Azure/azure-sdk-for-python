@@ -5,11 +5,15 @@ Read more about Azure Communication Services [here](https://docs.microsoft.com/a
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-chat) | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-communication-chat/1.0.0b5/index.html) | [Product documentation](https://docs.microsoft.com/azure/communication-services/)
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Getting started
 
 ## Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 
 ## Install the package
@@ -25,7 +29,7 @@ pip install --pre azure-communication-chat
 User access tokens enable you to build client applications that directly authenticate to Azure Communication Services. You can generate these tokens with azure.communication.identity module, and then use them to initialize the Communication Services SDKs. Example of using azure.communication.identity:
 
 ```bash
-pip install --pre azure-communication-identity
+pip install azure-communication-identity
 ```
 
 ```python
@@ -536,8 +540,7 @@ for read_receipt_page in read_receipts.by_page():
 ## Sample Code
 
 These are code samples that show common scenario operations with the Azure Communication Chat client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
-and require Python 3.6 or later.
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 Before run the sample code, refer to Prerequisites
 <!-- [Prerequisites](#Prerequisites) -->
 to create a resource, then set some Environment Variables
