@@ -17,6 +17,7 @@ no-namespace-folders: true
 title: ConfidentialLedgerClient
 version-tolerant: true
 package-version: 1.0.0
+python: true
 ```
 
 #### Tag: identity-service
@@ -32,4 +33,5 @@ no-namespace-folders: true
 title: ConfidentialLedgerIdentityServiceClient
 version-tolerant: true
 package-version: 1.0.0
+python: true
 ```

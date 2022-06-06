@@ -21,7 +21,6 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-
 class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-keyword
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential
     Ledger service.
@@ -36,11 +35,13 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
     :paramtype api_version: str
     """
 
-    def __init__(self, ledger_uri: str, **kwargs: Any) -> None:
-        _endpoint = "{ledgerUri}"
-        self._config = ConfidentialLedgerClientConfiguration(
-            ledger_uri=ledger_uri, **kwargs
-        )
+    def __init__(
+        self,
+        ledger_uri: str,
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{ledgerUri}'
+        self._config = ConfidentialLedgerClientConfiguration(ledger_uri=ledger_uri, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -50,7 +51,12 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+
+    def send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -70,17 +76,10 @@ class ConfidentialLedgerClient:  # pylint: disable=client-accepts-api-version-ke
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "ledgerUri": self._serialize.url(
-                "self._config.ledger_uri",
-                self._config.ledger_uri,
-                "str",
-                skip_quote=True,
-            ),
+            "ledgerUri": self._serialize.url("self._config.ledger_uri", self._config.ledger_uri, 'str', skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):

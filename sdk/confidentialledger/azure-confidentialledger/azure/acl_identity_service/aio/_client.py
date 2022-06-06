@@ -21,7 +21,6 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-
 class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts-api-version-keyword
     """The ConfidentialLedgerIdentityServiceClient is used to retrieve the TLS certificate required
     for connecting to a Confidential Ledger.
@@ -31,33 +30,34 @@ class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts
     :vartype confidential_ledger_identity_service:
      azure.acl_identity_service.aio.operations.ConfidentialLedgerIdentityServiceOperations
     :param identity_service_uri: The Identity Service URL, for example
-     https://identity.confidential-ledger.core.azure.com. Required.
+     https://identity.accledger.azure.com. Required.
     :type identity_service_uri: str
     :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, identity_service_uri: str, **kwargs: Any) -> None:
-        _endpoint = "{identityServiceUri}"
-        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(
-            identity_service_uri=identity_service_uri, **kwargs
-        )
-        self._client = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+    def __init__(
+        self,
+        identity_service_uri: str,
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{identityServiceUri}'
+        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(identity_service_uri=identity_service_uri, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.confidential_ledger_identity_service = (
-            ConfidentialLedgerIdentityServiceOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
+        self.confidential_ledger_identity_service = ConfidentialLedgerIdentityServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
         )
 
+
     def send_request(
-        self, request: HttpRequest, **kwargs: Any
+        self,
+        request: HttpRequest,
+        **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
@@ -78,17 +78,10 @@ class ConfidentialLedgerIdentityServiceClient:  # pylint: disable=client-accepts
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "identityServiceUri": self._serialize.url(
-                "self._config.identity_service_uri",
-                self._config.identity_service_uri,
-                "str",
-                skip_quote=True,
-            ),
+            "identityServiceUri": self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
