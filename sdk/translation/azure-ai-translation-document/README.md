@@ -136,7 +136,7 @@ The client provides operations for:
 
  - Creating a translation operation to translate documents in your source container(s) and write results to you target container(s).
  - Checking the status of individual documents in the translation operation and monitoring each document's progress.
- - Enumerating all past and current translations operations.
+ - Enumerating all past and current translation operations.
  - Identifying supported glossary and document formats.
 
 ### Translation Input
