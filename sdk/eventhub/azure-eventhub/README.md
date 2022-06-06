@@ -13,16 +13,14 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation][api_reference] | [Product documentation](https://docs.microsoft.com/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventhub/pyproto/sdk/eventhub/azure-eventhub/) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation][api_reference] | [Product documentation](https://docs.microsoft.com/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples)
 
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 _This version is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
-Features like AmqpOverWebsocket or `custom_endpoint_address` are unavailable for this version which will be added back in future previews as we work towards a stable release.
 Please refer to the changelog for more details._
-
 
 ## Getting started
 
@@ -42,7 +40,7 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 Install the Azure Event Hubs client library for Python with pip:
 
 ```
-$ pip install azure-eventhub==5.8.0a3
+$ pip install azure-eventhub==5.8.0a4
 ```
 
 ### Authenticate the client
