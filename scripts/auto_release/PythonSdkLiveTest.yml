@@ -78,7 +78,6 @@ jobs:
         export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
         export ISSUE_LINK=$(ISSUE_LINK)
-        export USR_TOKEN=$(USR_TOKEN)
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
