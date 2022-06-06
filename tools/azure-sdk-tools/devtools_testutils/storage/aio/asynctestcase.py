@@ -69,7 +69,7 @@ class AsyncStorageTestCase(StorageTestCase):
         return AsyncFakeCredential()
 
 
-class AsyncStorageTestCase(StorageRecordedTestCase):
+class AsyncStorageRecordedTestCase(StorageRecordedTestCase):
     
     @staticmethod
     def await_prepared_test(test_fn):

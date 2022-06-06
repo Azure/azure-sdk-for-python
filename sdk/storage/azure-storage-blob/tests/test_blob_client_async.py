@@ -16,7 +16,7 @@ from azure.storage.blob.aio import (
 )
 from settings.testcase import BlobPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -30,7 +30,7 @@ _CONNECTION_ENDPOINTS = {'blob': 'BlobEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'blob': 'BlobSecondaryEndpoint'}
 
 
-class TestStorageClientAsync(AsyncStorageTestCase):
+class TestStorageClientAsync(AsyncStorageRecordedTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, url_type, account_name, account_key):
@@ -522,7 +522,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
         assert blob_client.url == blob_emulator_url
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
     async def test_request_callback_signed_header_async(self, **kwargs):
         # Arrange
@@ -545,7 +545,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
             await service.delete_container(name)
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
     async def test_response_callback_async(self, **kwargs):
         # Arrange
@@ -565,7 +565,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
         assert exists
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
     async def test_user_agent_default_async(self, **kwargs):
         # Arrange
@@ -581,7 +581,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback)
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
     async def test_user_agent_custom_async(self, **kwargs):
         # Arrange
@@ -611,7 +611,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
     async def test_user_agent_append_async(self, **kwargs):
         # Arrange
@@ -630,7 +630,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback, user_agent='customer_user_agent')
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     async def test_closing_pipeline_client(self, **kwargs):
         # Arrange
         storage_account_name = kwargs.pop("storage_account_name")
@@ -647,7 +647,7 @@ class TestStorageClientAsync(AsyncStorageTestCase):
                 await service.close()
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    @AsyncStorageRecordedTestCase.await_prepared_test
     async def test_closing_pipeline_client_simple(self, **kwargs):
         # Arrange
         storage_account_name = kwargs.pop("storage_account_name")
