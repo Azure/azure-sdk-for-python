@@ -1,5 +1,11 @@
 # AutoRest: Python Client Runtime (conda)
 
+## 2022.06.01
+
+### Packages included
+
+- msrest-0.6.21
+
 ## 2022.03.01
 
 ### Packages included

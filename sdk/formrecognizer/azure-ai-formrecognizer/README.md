@@ -3,7 +3,7 @@
 Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
-- Document - Analyze key-value pairs and entities in addition to general layout from documents.
+- Document - Analyze key-value pairs in addition to general layout from documents.
 - Read - Read page information and detected languages from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
@@ -28,13 +28,13 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2022-01-30-preview` version of the service.
+> Note: This version of the client library defaults to the `2022-06-30-preview` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b4 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
+|3.2.0b5 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -45,7 +45,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |API version|Supported clients
 |-|-
-|2022-01-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-06-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
@@ -163,7 +163,7 @@ Use the `model` parameter to select the type of model for analysis.
 |Model| Features
 |-|-
 |`prebuilt-layout`| Text extraction, selection marks, tables
-|`prebuilt-document`| Text extraction, selection marks, tables, key-value pairs and entities
+|`prebuilt-document`| Text extraction, selection marks, tables, and key-value pairs
 |`prebuilt-read`|Text extraction and detected languages
 |`prebuilt-invoices`| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
 |`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
@@ -239,10 +239,10 @@ for page in result.pages:
 
     for line_idx, line in enumerate(page.lines):
         print(
-            "...Line # {} has content '{}' within bounding box '{}'".format(
+            "...Line # {} has content '{}' within bounding polygon '{}'".format(
                 line_idx,
                 line.content,
-                line.bounding_box,
+                line.polygon,
             )
         )
 
@@ -255,9 +255,9 @@ for page in result.pages:
 
     for selection_mark in page.selection_marks:
         print(
-            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.bounding_box,
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -273,7 +273,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                region.bounding_box
+                region.polygon
             )
         )
     for cell in table.cells:
@@ -287,7 +287,7 @@ for table_idx, table in enumerate(result.tables):
 ```
 
 ### Using the General Document Model
-Analyze entities, key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
 Select the General Document Model by passing `model="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
@@ -304,13 +304,6 @@ with open("<path to your document>", "rb") as fd:
 
 poller = document_analysis_client.begin_analyze_document("prebuilt-document", document)
 result = poller.result()
-
-print("----Entities found in document----")
-for entity in result.entities:
-    print("Entity '{}' has category '{}' with sub-category '{}'".format(
-        entity.content, entity.category, entity.sub_category
-    ))
-    print("...with confidence {}\n".format(entity.confidence))
 
 print("----Key-value pairs found in document----")
 for kv_pair in result.key_value_pairs:
@@ -341,7 +334,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                region.bounding_box,
+                region.polygon,
             )
         )
 
@@ -362,11 +355,11 @@ for page in result.pages:
     for line_idx, line in enumerate(page.lines):
         words = line.get_words()
         print(
-            "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+            "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
                 line_idx,
                 len(words),
                 line.content,
-                line.bounding_box,
+                line.polygon,
             )
         )
 
@@ -379,9 +372,9 @@ for page in result.pages:
 
     for selection_mark in page.selection_marks:
         print(
-            "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.bounding_box,
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )

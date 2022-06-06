@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-06-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,11 +9,10 @@
         "Connection": "keep-alive",
         "Content-Length": "119",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "824a8ea9-7f2b-11ec-8044-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "modelId": "9343f954-1559-407b-9639-5c0f8e81c9bc",
+        "modelId": "f13691fb-4ee3-4ac5-9757-684a911e42c0",
         "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "xx"
@@ -21,10 +20,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "1f8d9b86-48de-41d8-a1d1-25fc8a81d4fc",
+        "apim-request-id": "fd57d239-5a71-48b3-8b62-3670fc9fdef2",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Thu, 27 Jan 2022 04:42:18 GMT"
+        "Date": "Thu, 26 May 2022 00:56:14 GMT"
       },
       "ResponseBody": {
         "error": {

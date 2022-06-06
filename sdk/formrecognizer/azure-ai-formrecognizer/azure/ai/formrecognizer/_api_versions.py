@@ -11,7 +11,7 @@ class DocumentAnalysisApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by DocumentAnalysisClient and DocumentModelAdministrationClient."""
 
     #: This is the default version
-    V2022_01_30_PREVIEW = "2022-01-30-preview"
+    V2022_06_30_PREVIEW = "2022-06-30-preview"
 
 
 class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):

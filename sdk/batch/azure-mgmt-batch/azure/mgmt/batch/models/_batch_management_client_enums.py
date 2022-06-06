@@ -187,8 +187,8 @@ class DynamicVNetAssignmentScope(with_metaclass(CaseInsensitiveEnumMeta, str, En
 
     #: No dynamic VNet assignment is enabled.
     NONE = "none"
-    #: Dynamic VNet assignment is done per-job. Don't use this option unless your batch account has
-    #: been approved to use this feature.
+    #: Dynamic VNet assignment is done per-job. If this value is set, the network configuration subnet
+    #: ID must also be set. This feature requires approval before use, please contact support.
     JOB = "job"
 
 class ElevationLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -199,6 +199,15 @@ class ElevationLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NON_ADMIN = "NonAdmin"
     #: The user is a user with elevated access and operates with full Administrator permissions.
     ADMIN = "Admin"
+
+class EndpointAccessDefaultAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Default action for endpoint access. It is only applicable when publicNetworkAccess is enabled.
+    """
+
+    #: Allow client access.
+    ALLOW = "Allow"
+    #: Deny client access.
+    DENY = "Deny"
 
 class InboundEndpointProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The protocol of the endpoint.
@@ -326,14 +335,20 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     """The provisioning state of the private endpoint connection.
     """
 
-    #: The connection status is final and is ready for use if Status is Approved.
-    SUCCEEDED = "Succeeded"
+    #: The connection is creating.
+    CREATING = "Creating"
     #: The user has requested that the connection status be updated, but the update operation has not
     #: yet completed. You may not reference the connection when connecting the Batch account.
     UPDATING = "Updating"
+    #: The connection is deleting.
+    DELETING = "Deleting"
+    #: The connection status is final and is ready for use if Status is Approved.
+    SUCCEEDED = "Succeeded"
     #: The user requested that the connection be updated and it failed. You may retry the update
     #: operation.
     FAILED = "Failed"
+    #: The user has cancelled the connection creation.
+    CANCELLED = "Cancelled"
 
 class PrivateLinkServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the Batch private endpoint connection
