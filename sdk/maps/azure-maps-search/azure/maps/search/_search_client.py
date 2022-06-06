@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, overload, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._search_client import SearchClient as SearchClientGen
@@ -68,7 +68,7 @@ class SearchClient(object):
         self,
         query,  # type: str
         *,
-        coordinates, # type: Optional["LatLon"]
+        coordinates, # type: Optional[Union[str, LatLon]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
