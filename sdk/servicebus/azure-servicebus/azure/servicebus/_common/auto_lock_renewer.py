@@ -99,13 +99,21 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
         # None indicates it's unknown whether the provided executor has max workers > 1
-        self._is_max_workers_greater_than_one = None if executor else (max_workers is None or max_workers > 1)
+        self._is_max_workers_greater_than_one = (
+            None if executor else (max_workers is None or max_workers > 1)
+        )
         self._shutdown = threading.Event()
         self._sleep_time = 0.5
         self._renew_period = 10
-        self._running_dispatcher = threading.Event()  # indicate whether the dispatcher is running
-        self._last_activity_timestamp = None  # the last timestamp when the dispatcher is active dealing with tasks
-        self._dispatcher_timeout = 5  # the idle time that dispatcher should exit if there's no activity
+        self._running_dispatcher = (
+            threading.Event()
+        )  # indicate whether the dispatcher is running
+        self._last_activity_timestamp = (
+            None  # the last timestamp when the dispatcher is active dealing with tasks
+        )
+        self._dispatcher_timeout = (
+            5  # the idle time that dispatcher should exit if there's no activity
+        )
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
@@ -133,7 +141,9 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     def _infer_max_workers_greater_than_one_if_needed(self):
         # infer max_workers value if executor is passed in
         if self._is_max_workers_greater_than_one is None:
-            max_wokers_checker = self._executor.submit(self._infer_max_workers_value_worker)
+            max_wokers_checker = self._executor.submit(
+                self._infer_max_workers_value_worker
+            )
             max_wokers_checker.result()
 
     def _infer_max_workers_value_worker(self):
@@ -176,7 +186,9 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                 self._running_dispatcher.clear()
                 self._last_activity_timestamp = None
                 return
-            time.sleep(self._sleep_time)  # save cpu cycles if there's currently no task in self._renew_tasks
+            time.sleep(
+                self._sleep_time
+            )  # save cpu cycles if there's currently no task in self._renew_tasks
 
     def _auto_lock_renew_task(
         self,
@@ -227,7 +239,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                             starttime,
                             max_lock_renewal_duration,
                             on_lock_renew_failure,
-                            renew_period_override
+                            renew_period_override,
                         )
                     )
             clean_shutdown = not renewable._lock_expired
@@ -299,7 +311,9 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             )
 
         _log.debug(
-            "Running lock auto-renew for %r for %r seconds", renewable, max_lock_renewal_duration
+            "Running lock auto-renew for %r for %r seconds",
+            renewable,
+            max_lock_renewal_duration,
         )
 
         self._init_workers()
@@ -311,7 +325,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                 starttime,
                 max_lock_renewal_duration or self._max_lock_renewal_duration,
                 on_lock_renew_failure or self._on_lock_renew_failure,
-                renew_period_override
+                renew_period_override,
             )
         )
 

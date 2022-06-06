@@ -168,14 +168,17 @@ MAX_DURATION_VALUE = 922337203685477
 MAX_ABSOLUTE_EXPIRY_TIME = 253402243199000
 MESSAGE_STATE_NAME = b"x-opt-message-state"
 
+
 class ServiceBusReceiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PEEK_LOCK = "peeklock"
     RECEIVE_AND_DELETE = "receiveanddelete"
+
 
 class ServiceBusMessageState(int, Enum):
     ACTIVE = 0
     DEFERRED = 1
     SCHEDULED = 2
+
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
 ServiceBusToAMQPReceiveModeMap = {

@@ -39,19 +39,30 @@ class ServiceBusManagementClientConfiguration(Configuration):
         super(ServiceBusManagementClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        kwargs.setdefault('sdk_moniker', 'servicebusmanagementclient/{}'.format(VERSION))
+        kwargs.setdefault(
+            "sdk_moniker", "servicebusmanagementclient/{}".format(VERSION)
+        )
         self._configure(**kwargs)
 
     def _configure(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+        self.user_agent_policy = kwargs.get(
+            "user_agent_policy"
+        ) or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(
+            **kwargs
+        )
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get(
+            "logging_policy"
+        ) or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get(
+            "custom_hook_policy"
+        ) or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(
+            **kwargs
+        )
+        self.authentication_policy = kwargs.get("authentication_policy")

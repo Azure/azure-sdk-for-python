@@ -21,7 +21,7 @@ from typing import (
     TYPE_CHECKING,
     Union,
     Tuple,
-    cast
+    cast,
 )
 from contextlib import contextmanager
 from msrest.serialization import TZ_UTC
@@ -175,7 +175,7 @@ def create_authentication(client):
             transport_type=client._config.transport_type,
             custom_endpoint_hostname=client._config.custom_endpoint_hostname,
             port=client._config.connection_port,
-            verify=client._config.connection_verify
+            verify=client._config.connection_verify,
         )
         auth.update_token()
         return auth
@@ -190,7 +190,7 @@ def create_authentication(client):
         refresh_window=300,
         custom_endpoint_hostname=client._config.custom_endpoint_hostname,
         port=client._config.connection_port,
-        verify=client._config.connection_verify
+        verify=client._config.connection_verify,
     )
 
 
@@ -283,11 +283,14 @@ def receive_trace_context_manager(receiver, span_name=SPAN_NAME_RECEIVE, links=N
     if span_impl_type is None:
         yield
     else:
-        receive_span = span_impl_type(name=span_name, kind=SpanKind.CONSUMER, links=links)
+        receive_span = span_impl_type(
+            name=span_name, kind=SpanKind.CONSUMER, links=links
+        )
         receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
 
         with receive_span:
             yield
+
 
 def trace_message(message, parent_span=None):
     # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
@@ -301,10 +304,10 @@ def trace_message(message, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            link = Link({
-                'traceparent': current_span.get_trace_parent()
-            })
-            with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
+            link = Link({"traceparent": current_span.get_trace_parent()})
+            with current_span.span(
+                name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]
+            ) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
                 # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
                 if not message.message.application_properties:
@@ -319,7 +322,10 @@ def trace_message(message, parent_span=None):
 
 def get_receive_links(messages):
     trace_messages = (
-        messages if isinstance(messages, Iterable)  # pylint:disable=isinstance-second-argument-not-valid-type
+        messages
+        if isinstance(
+            messages, Iterable
+        )  # pylint:disable=isinstance-second-argument-not-valid-type
         else (messages,)
     )
 
@@ -331,12 +337,16 @@ def get_receive_links(messages):
                     TRACE_PARENT_PROPERTY, ""
                 ).decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
-                    links.append(Link({'traceparent': traceparent},
-                        {
-                            SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
-                                TRACE_ENQUEUED_TIME_PROPERTY
-                            )
-                        }))
+                    links.append(
+                        Link(
+                            {"traceparent": traceparent},
+                            {
+                                SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
+                                    TRACE_ENQUEUED_TIME_PROPERTY
+                                )
+                            },
+                        )
+                    )
     except AttributeError:
         pass
     return links
@@ -345,9 +355,9 @@ def get_receive_links(messages):
 def parse_sas_credential(credential):
     # type: (AzureSasCredential) -> Tuple
     sas = credential.signature
-    parsed_sas = sas.split('&')
+    parsed_sas = sas.split("&")
     expiry = None
     for item in parsed_sas:
-        if item.startswith('se='):
+        if item.startswith("se="):
             expiry = int(item[3:])
     return (sas, expiry)

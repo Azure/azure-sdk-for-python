@@ -19,7 +19,11 @@ import uamqp
 from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
-from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+)
 from azure.core.pipeline.policies import RetryMode
 
 from ._common._configuration import Configuration
@@ -30,7 +34,11 @@ from .exceptions import (
     SessionLockLostError,
     _create_servicebus_exception,
 )
-from ._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
+from ._common.utils import (
+    create_properties,
+    strip_protocol_from_uri,
+    parse_sas_credential,
+)
 from ._common.constants import (
     CONTAINER_PREFIX,
     MANAGEMENT_PATH_SUFFIX,
@@ -63,7 +71,7 @@ def _parse_conn_str(conn_str, check_case=False):
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
     if any(len(tup) != 2 for tup in conn_properties):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_properties)   # type: ignore
+    conn_settings = dict(conn_properties)  # type: ignore
 
     # case sensitive check when parsing for connection string properties
     if check_case:
@@ -80,7 +88,7 @@ def _parse_conn_str(conn_str, check_case=False):
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
                 shared_access_signature_expiry = int(
-                    shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+                    shared_access_signature.split("se=")[1].split("&")[0]  # type: ignore
                 )
             except (
                 IndexError,
@@ -153,12 +161,14 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
+
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2 ** retried_times)
+        backoff_value = backoff_factor * (2**retried_times)
     return min(backoff_max, backoff_value)
+
 
 class ServiceBusSASTokenCredential(object):
     """The shared access token credential used for authentication.
@@ -229,6 +239,7 @@ class ServiceBusAzureSasTokenCredential(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
+
     def __init__(self, azure_sas_credential):
         # type: (AzureSasCredential) -> None
         self._credential = azure_sas_credential
@@ -260,9 +271,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = ServiceBusAzureNamedKeyTokenCredential(credential) # type: ignore
+            self._credential = ServiceBusAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
-            self._credential = credential # type: ignore
+            self._credential = credential  # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
@@ -426,11 +437,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
-                    self._config.retry_mode,
-                    self._config.retry_backoff_factor,
-                    self._config.retry_backoff_max,
-                    retried_times,
-                )
+            self._config.retry_mode,
+            self._config.retry_backoff_factor,
+            self._config.retry_backoff_max,
+            retried_times,
+        )
         if backoff <= self._config.retry_backoff_max and (
             abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):  # pylint:disable=no-else-return

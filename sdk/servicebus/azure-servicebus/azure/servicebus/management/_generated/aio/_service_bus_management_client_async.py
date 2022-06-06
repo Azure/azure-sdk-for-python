@@ -36,27 +36,31 @@ class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        base_url = 'https://{endpoint}'
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        base_url = "https://{endpoint}"
         self._config = ServiceBusManagementClientConfiguration(endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.entity = EntityOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.subscription = SubscriptionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.rule = RuleOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.namespace = NamespaceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     async def close(self) -> None:
         await self._client.close()

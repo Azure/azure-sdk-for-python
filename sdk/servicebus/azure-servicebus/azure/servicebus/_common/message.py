@@ -9,7 +9,17 @@ import time
 import datetime
 import uuid
 import logging
-from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+from typing import (
+    Optional,
+    Dict,
+    List,
+    Union,
+    Iterable,
+    TYPE_CHECKING,
+    Any,
+    Mapping,
+    cast,
+)
 
 import six
 
@@ -36,13 +46,13 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
-    MESSAGE_STATE_NAME
+    MESSAGE_STATE_NAME,
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageBodyType,
     AmqpMessageHeader,
-    AmqpMessageProperties
+    AmqpMessageProperties,
 )
 from ..exceptions import MessageSizeExceededError
 from .utils import (
@@ -58,14 +68,8 @@ if TYPE_CHECKING:
     )
     from .._servicebus_receiver import ServiceBusReceiver
     from azure.core.tracing import AbstractSpan
-    PrimitiveTypes = Union[
-        int,
-        float,
-        bytes,
-        bool,
-        str,
-        uuid.UUID
-    ]
+
+    PrimitiveTypes = Union[int, float, bytes, bool, str, uuid.UUID]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -156,11 +160,11 @@ class ServiceBusMessage(
     def __repr__(self):
         # type: () -> str
         # pylint: disable=bare-except
-        message_repr = "body={}".format(
-            str(self)
-        )
+        message_repr = "body={}".format(str(self))
         try:
-            message_repr += ", application_properties={}".format(self.application_properties)
+            message_repr += ", application_properties={}".format(
+                self.application_properties
+            )
         except:
             message_repr += ", application_properties=<read-error>"
         try:
@@ -204,7 +208,9 @@ class ServiceBusMessage(
         except:
             message_repr += ", partition_key=<read-error>"
         try:
-            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+            message_repr += ", scheduled_enqueue_time_utc={}".format(
+                self.scheduled_enqueue_time_utc
+            )
         except:
             message_repr += ", scheduled_enqueue_time_utc=<read-error>"
         return "ServiceBusMessage({})".format(message_repr)[:1024]
@@ -219,8 +225,11 @@ class ServiceBusMessage(
                 )
             )
 
-        self._raw_amqp_message = AmqpAnnotatedMessage(value_body=None, encoding=self._encoding) \
-            if body is None else AmqpAnnotatedMessage(data_body=body, encoding=self._encoding)
+        self._raw_amqp_message = (
+            AmqpAnnotatedMessage(value_body=None, encoding=self._encoding)
+            if body is None
+            else AmqpAnnotatedMessage(data_body=body, encoding=self._encoding)
+        )
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
 
@@ -366,7 +375,9 @@ class ServiceBusMessage(
         :rtype: ~datetime.timedelta
         """
         if self._raw_amqp_message.header and self._raw_amqp_message.header.time_to_live:
-            return datetime.timedelta(milliseconds=self._raw_amqp_message.header.time_to_live)
+            return datetime.timedelta(
+                milliseconds=self._raw_amqp_message.header.time_to_live
+            )
         return None
 
     @time_to_live.setter
@@ -379,18 +390,25 @@ class ServiceBusMessage(
             if self._raw_amqp_message.properties.absolute_expiry_time:
                 self._raw_amqp_message.properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
-            self._raw_amqp_message.header.time_to_live = int(value.total_seconds()) * 1000
+            self._raw_amqp_message.header.time_to_live = (
+                int(value.total_seconds()) * 1000
+            )
         else:
             self._raw_amqp_message.header.time_to_live = int(value) * 1000
 
-        if self._raw_amqp_message.header.time_to_live and \
-                self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE:
+        if (
+            self._raw_amqp_message.header.time_to_live
+            and self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE
+        ):
             if not self._raw_amqp_message.properties:
                 self._raw_amqp_message.properties = AmqpMessageProperties()
-            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple())) * 1000
+            self._raw_amqp_message.properties.creation_time = (
+                int(time.mktime(utc_now().timetuple())) * 1000
+            )
             self._raw_amqp_message.properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
-                self._raw_amqp_message.properties.creation_time + self._raw_amqp_message.header.time_to_live
+                self._raw_amqp_message.properties.creation_time
+                + self._raw_amqp_message.header.time_to_live,
             )
 
     @property
@@ -408,7 +426,9 @@ class ServiceBusMessage(
         if self._raw_amqp_message.annotations:
             timestamp = self._raw_amqp_message.annotations.get(
                 _X_OPT_SCHEDULED_ENQUEUE_TIME
-            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
+            ) or self._raw_amqp_message.annotations.get(
+                ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME
+            )
             if timestamp:
                 try:
                     in_seconds = timestamp / 1000.0
@@ -704,9 +724,7 @@ class ServiceBusMessageBatch(object):
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.
-        message_size = (
-            message.message.get_message_encoded_size()
-        )
+        message_size = message.message.get_message_encoded_size()
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
@@ -824,16 +842,18 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     def _to_outgoing_message(self):
         # type: () -> ServiceBusMessage
         # pylint: disable=protected-access
-        return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
+        return ServiceBusMessage(
+            body=None, message=self.raw_amqp_message._to_outgoing_amqp_message()
+        )
 
     def __repr__(self):  # pylint: disable=too-many-branches,too-many-statements
         # type: () -> str
         # pylint: disable=bare-except
-        message_repr = "body={}".format(
-            str(self)
-        )
+        message_repr = "body={}".format(str(self))
         try:
-            message_repr += ", application_properties={}".format(self.application_properties)
+            message_repr += ", application_properties={}".format(
+                self.application_properties
+            )
         except:
             message_repr += ", application_properties=<read-error>"
         try:
@@ -877,7 +897,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         except:
             message_repr += ", partition_key=<read-error>"
         try:
-            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+            message_repr += ", scheduled_enqueue_time_utc={}".format(
+                self.scheduled_enqueue_time_utc
+            )
         except:
             message_repr += ", scheduled_enqueue_time_utc=<read-error>"
         try:
@@ -885,7 +907,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         except:
             message_repr += ", auto_renew_error=<read-error>"
         try:
-            message_repr += ", dead_letter_error_description={}".format(self.dead_letter_error_description)
+            message_repr += ", dead_letter_error_description={}".format(
+                self.dead_letter_error_description
+            )
         except:
             message_repr += ", dead_letter_error_description=<read-error>"
         try:
@@ -901,7 +925,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         except:
             message_repr += ", delivery_count=<read-error>"
         try:
-            message_repr += ", enqueued_sequence_number={}".format(self.enqueued_sequence_number)
+            message_repr += ", enqueued_sequence_number={}".format(
+                self.enqueued_sequence_number
+            )
         except:
             message_repr += ", enqueued_sequence_number=<read-error>"
         try:
@@ -938,7 +964,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             try:
                 return self._raw_amqp_message.application_properties.get(  # type: ignore
                     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
-                ).decode("UTF-8")
+                ).decode(
+                    "UTF-8"
+                )
             except AttributeError:
                 pass
         return None
@@ -955,7 +983,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             try:
                 return self._raw_amqp_message.application_properties.get(  # type: ignore
                     PROPERTIES_DEAD_LETTER_REASON
-                ).decode("UTF-8")
+                ).decode(
+                    "UTF-8"
+                )
             except AttributeError:
                 pass
         return None
@@ -993,7 +1023,11 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             try:
                 return ServiceBusMessageState(message_state)
             except ValueError:
-                return ServiceBusMessageState.ACTIVE if not message_state else message_state
+                return (
+                    ServiceBusMessageState.ACTIVE
+                    if not message_state
+                    else message_state
+                )
         except AttributeError:
             return ServiceBusMessageState.ACTIVE
 
@@ -1020,7 +1054,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         :rtype: int
         """
         if self._raw_amqp_message.annotations:
-            return self._raw_amqp_message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
+            return self._raw_amqp_message.annotations.get(
+                _X_OPT_ENQUEUE_SEQUENCE_NUMBER
+            )
         return None
 
     @property
@@ -1105,7 +1141,12 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             pass
         if self._expiry:
             return self._expiry
-        if self._raw_amqp_message.annotations and _X_OPT_LOCKED_UNTIL in self._raw_amqp_message.annotations:
-            expiry_in_seconds = self._raw_amqp_message.annotations[_X_OPT_LOCKED_UNTIL] / 1000
+        if (
+            self._raw_amqp_message.annotations
+            and _X_OPT_LOCKED_UNTIL in self._raw_amqp_message.annotations
+        ):
+            expiry_in_seconds = (
+                self._raw_amqp_message.annotations[_X_OPT_LOCKED_UNTIL] / 1000
+            )
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry

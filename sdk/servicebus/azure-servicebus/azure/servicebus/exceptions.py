@@ -101,7 +101,9 @@ def _handle_amqp_exception_with_condition(
     elif condition == AMQPErrorCodes.ClientError and "timed out" in str(exception):
         # handle send timeout
         error_cls = OperationTimeoutError
-    elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPErrors.AMQPConnectionError):
+    elif condition == AMQPErrorCodes.UnknownError and isinstance(
+        exception, AMQPErrors.AMQPConnectionError
+    ):
         error_cls = ServiceBusConnectionError
     else:
         # handle other error codes
@@ -116,7 +118,7 @@ def _handle_amqp_exception_with_condition(
     if condition in _NO_RETRY_CONDITION_ERROR_CODES:
         error._retryable = False  # pylint: disable=protected-access
     else:
-        error._retryable = True # pylint: disable=protected-access
+        error._retryable = True  # pylint: disable=protected-access
 
     return error
 

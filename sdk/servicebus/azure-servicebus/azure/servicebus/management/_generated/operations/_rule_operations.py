@@ -8,7 +8,12 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -18,8 +23,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    T = TypeVar("T")
+    ClsType = Optional[
+        Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+    ]
+
 
 class RuleOperations(object):
     """RuleOperations operations.
@@ -72,30 +80,40 @@ class RuleOperations(object):
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop("cls", None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
         # Construct URL
-        url = self.get.metadata['url']  # type: ignore
+        url = self.get.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str', min_length=1),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "topicName": self._serialize.url(
+                "topic_name", topic_name, "str", min_length=1
+            ),
+            "subscriptionName": self._serialize.url(
+                "subscription_name", subscription_name, "str", min_length=1
+            ),
+            "ruleName": self._serialize.url(
+                "rule_name", rule_name, "str", min_length=1
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if enrich is not None:
-            query_parameters['enrich'] = self._serialize.query("enrich", enrich, 'bool')
+            query_parameters["enrich"] = self._serialize.query("enrich", enrich, "bool")
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -103,17 +121,20 @@ class RuleOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
+
+    get.metadata = {"url": "/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}"}  # type: ignore
 
     def put(
         self,
@@ -148,59 +169,78 @@ class RuleOperations(object):
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop("cls", None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         content_type = kwargs.pop("content_type", "application/atom+xml")
 
         # Construct URL
-        url = self.put.metadata['url']  # type: ignore
+        url = self.put.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str', min_length=1),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "topicName": self._serialize.url(
+                "topic_name", topic_name, "str", min_length=1
+            ),
+            "subscriptionName": self._serialize.url(
+                "subscription_name", subscription_name, "str", min_length=1
+            ),
+            "ruleName": self._serialize.url(
+                "rule_name", rule_name, "str", min_length=1
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/xml'
+            header_parameters["If-Match"] = self._serialize.header(
+                "if_match", if_match, "str"
+            )
+        header_parameters["Content-Type"] = self._serialize.header(
+            "content_type", content_type, "str"
+        )
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(request_body, 'object', is_xml=True)
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        body_content = self._serialize.body(request_body, "object", is_xml=True)
+        body_content_kwargs["content"] = body_content
+        request = self._client.put(
+            url, query_parameters, header_parameters, **body_content_kwargs
+        )
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('object', pipeline_response)
+            deserialized = self._deserialize("object", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('object', pipeline_response)
+            deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    put.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
+
+    put.metadata = {"url": "/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}"}  # type: ignore
 
     def delete(
         self,
@@ -228,28 +268,38 @@ class RuleOperations(object):
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop("cls", None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
         # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
+        url = self.delete.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
-            'ruleName': self._serialize.url("rule_name", rule_name, 'str', min_length=1),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "topicName": self._serialize.url(
+                "topic_name", topic_name, "str", min_length=1
+            ),
+            "subscriptionName": self._serialize.url(
+                "subscription_name", subscription_name, "str", min_length=1
+            ),
+            "ruleName": self._serialize.url(
+                "rule_name", rule_name, "str", min_length=1
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -257,14 +307,17 @@ class RuleOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
+
+    delete.metadata = {"url": "/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}"}  # type: ignore

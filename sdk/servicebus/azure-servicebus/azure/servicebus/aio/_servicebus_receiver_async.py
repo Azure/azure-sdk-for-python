@@ -8,7 +8,16 @@ import datetime
 import functools
 import logging
 import warnings
-from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING, cast
+from typing import (
+    Any,
+    List,
+    Optional,
+    AsyncIterator,
+    Union,
+    Callable,
+    TYPE_CHECKING,
+    cast,
+)
 
 import six
 
@@ -49,7 +58,7 @@ from .._common import mgmt_handlers
 from .._common.utils import (
     receive_trace_context_manager,
     utc_from_timestamp,
-    get_receive_links
+    get_receive_links,
 )
 from ._async_utils import create_authentication, get_running_loop
 
@@ -122,7 +131,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
+        credential: Union[
+            "AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
+        ],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -133,7 +144,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._message_iter = (
             None
@@ -149,7 +160,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                **kwargs
+                **kwargs,
             )
         else:
             if queue_name and topic_name:
@@ -178,7 +189,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                **kwargs
+                **kwargs,
             )
 
         self._populate_attributes(
@@ -189,10 +200,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
-            **kwargs
+            **kwargs,
         )
         self._session = (
-            None if self._session_id is None else ServiceBusSession(self._session_id, self)
+            None
+            if self._session_id is None
+            else ServiceBusSession(self._session_id, self)
         )
         self._receive_context = asyncio.Event()
 
@@ -341,11 +354,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
-            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
+            keep_alive_interval=self._config.keep_alive
+            if self._prefetch_count != 1
+            else 5,
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
+            self._handler._message_received = (
+                self._enhanced_message_received
+            )  # pylint: disable=protected-access
 
     async def _open(self):
         # pylint: disable=protected-access
@@ -389,14 +406,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
 
             batch = []  # type: List[Message]
-            while not received_messages_queue.empty() and len(batch) < max_message_count:
+            while (
+                not received_messages_queue.empty() and len(batch) < max_message_count
+            ):
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
             if len(batch) >= max_message_count:
                 return [self._build_message(message) for message in batch]
 
             # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
-            if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
+            if (
+                max_message_count
+                and self._prefetch_count == 1
+                and max_message_count > 1
+            ):
                 link_credit_needed = max_message_count - len(batch)
                 await amqp_receive_client.message_handler.reset_link_credit_async(
                     link_credit_needed
@@ -408,7 +431,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 while receiving and received_messages_queue.qsize() < max_message_count:
                     if (
                         abs_timeout_ms
-                        and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
+                        and amqp_receive_client._counter.get_current_ms()
+                        > abs_timeout_ms
                     ):
                         expired = True
                         break
@@ -427,7 +451,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                             + self._further_pull_receive_timeout_ms
                         )
                 while (
-                    not received_messages_queue.empty() and len(batch) < max_message_count
+                    not received_messages_queue.empty()
+                    and len(batch) < max_message_count
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
@@ -662,7 +687,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return messages
 
     async def receive_deferred_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        sequence_numbers: Union[int, List[int]],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
@@ -736,7 +765,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return messages
 
     async def peek_messages(
-        self, max_message_count: int = 1, *, sequence_number: int = 0, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        max_message_count: int = 1,
+        *,
+        sequence_number: int = 0,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
@@ -782,9 +816,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(message)
-        with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_PEEK, links=links
-        ):
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links):
             return messages
 
     async def complete_message(self, message: ServiceBusReceivedMessage) -> None:
@@ -864,7 +896,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self,
         message: ServiceBusReceivedMessage,
         reason: Optional[str] = None,
-        error_description: Optional[str] = None
+        error_description: Optional[str] = None,
     ) -> None:
         """Move the message to the Dead Letter queue.
 
@@ -899,7 +931,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
 
     async def renew_message_lock(
-        self, message: ServiceBusReceivedMessage, *, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        message: ServiceBusReceivedMessage,
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> datetime.datetime:
         # pylint: disable=protected-access,no-member
         """Renew the message lock.

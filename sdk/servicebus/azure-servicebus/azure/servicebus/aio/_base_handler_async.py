@@ -12,11 +12,23 @@ import uamqp
 from uamqp import compat
 from uamqp.message import MessageProperties
 
-from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+)
 
-from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
+from .._base_handler import (
+    _generate_sas_token,
+    BaseHandler as BaseHandlerSync,
+    _get_backoff_time,
+)
 from .._common._configuration import Configuration
-from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
+from .._common.utils import (
+    create_properties,
+    strip_protocol_from_uri,
+    parse_sas_credential,
+)
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -105,11 +117,14 @@ class ServiceBusAzureSasTokenCredentialAsync(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
+
     def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         self._credential = azure_sas_credential
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(
+        self, *scopes: str, **kwargs: Any
+    ) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -122,7 +137,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         fully_qualified_namespace: str,
         entity_name: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -139,9 +156,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredentialAsync(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
+            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential)  # type: ignore
         else:
-            self._credential = credential # type: ignore
+            self._credential = credential  # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False

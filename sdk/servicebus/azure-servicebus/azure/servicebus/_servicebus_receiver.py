@@ -130,7 +130,9 @@ class ServiceBusReceiver(
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
+        credential: Union[
+            "TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
+        ],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
@@ -141,7 +143,7 @@ class ServiceBusReceiver(
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._message_iter = None  # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
@@ -155,7 +157,7 @@ class ServiceBusReceiver(
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                **kwargs
+                **kwargs,
             )
         else:
             if queue_name and topic_name:
@@ -183,7 +185,7 @@ class ServiceBusReceiver(
                 max_wait_time=max_wait_time,
                 auto_lock_renewer=auto_lock_renewer,
                 prefetch_count=prefetch_count,
-                **kwargs
+                **kwargs,
             )
 
         self._populate_attributes(
@@ -194,10 +196,12 @@ class ServiceBusReceiver(
             max_wait_time=max_wait_time,
             auto_lock_renewer=auto_lock_renewer,
             prefetch_count=prefetch_count,
-            **kwargs
+            **kwargs,
         )
         self._session = (
-            None if self._session_id is None else ServiceBusSession(self._session_id, self)
+            None
+            if self._session_id is None
+            else ServiceBusSession(self._session_id, self)
         )
         self._receive_context = threading.Event()
 
@@ -350,11 +354,15 @@ class ServiceBusReceiver(
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
-            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
+            keep_alive_interval=self._config.keep_alive
+            if self._prefetch_count != 1
+            else 5,
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
+            self._handler._message_received = (
+                self._enhanced_message_received
+            )  # pylint: disable=protected-access
 
     def _open(self):
         # pylint: disable=protected-access
@@ -398,16 +406,24 @@ class ServiceBusReceiver(
                 else 0
             )
             batch = []  # type: List[Message]
-            while not received_messages_queue.empty() and len(batch) < max_message_count:
+            while (
+                not received_messages_queue.empty() and len(batch) < max_message_count
+            ):
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
             if len(batch) >= max_message_count:
                 return [self._build_message(message) for message in batch]
 
             # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
-            if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
+            if (
+                max_message_count
+                and self._prefetch_count == 1
+                and max_message_count > 1
+            ):
                 link_credit_needed = max_message_count - len(batch)
-                amqp_receive_client.message_handler.reset_link_credit(link_credit_needed)
+                amqp_receive_client.message_handler.reset_link_credit(
+                    link_credit_needed
+                )
 
             first_message_received = expired = False
             receiving = True
@@ -415,7 +431,8 @@ class ServiceBusReceiver(
                 while receiving and received_messages_queue.qsize() < max_message_count:
                     if (
                         abs_timeout_ms
-                        and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
+                        and amqp_receive_client._counter.get_current_ms()
+                        > abs_timeout_ms
                     ):
                         expired = True
                         break
@@ -434,7 +451,8 @@ class ServiceBusReceiver(
                             + self._further_pull_receive_timeout_ms
                         )
                 while (
-                    not received_messages_queue.empty() and len(batch) < max_message_count
+                    not received_messages_queue.empty()
+                    and len(batch) < max_message_count
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
@@ -679,7 +697,7 @@ class ServiceBusReceiver(
         sequence_numbers: Union[int, List[int]],
         *,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
@@ -757,7 +775,7 @@ class ServiceBusReceiver(
         *,
         sequence_number: int = 0,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
@@ -804,9 +822,7 @@ class ServiceBusReceiver(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(messages)
-        with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_PEEK, links=links
-        ):
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links):
             return messages
 
     def complete_message(self, message: ServiceBusReceivedMessage) -> None:
@@ -886,7 +902,7 @@ class ServiceBusReceiver(
         self,
         message: ServiceBusReceivedMessage,
         reason: Optional[str] = None,
-        error_description: Optional[str] = None
+        error_description: Optional[str] = None,
     ) -> None:
         """Move the message to the Dead Letter queue.
 
@@ -925,7 +941,7 @@ class ServiceBusReceiver(
         message: ServiceBusReceivedMessage,
         *,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> datetime.datetime:
         # pylint: disable=protected-access,no-member
         """Renew the message lock.

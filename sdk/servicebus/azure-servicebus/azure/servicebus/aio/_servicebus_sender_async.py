@@ -91,17 +91,19 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                **kwargs
+                **kwargs,
             )
         else:
             if queue_name and topic_name:
@@ -119,7 +121,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 entity_name=str(entity_name),
                 queue_name=queue_name,
                 topic_name=topic_name,
-                **kwargs
+                **kwargs,
             )
 
         self._max_message_size_on_link = 0
@@ -209,7 +211,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         schedule_time_utc: datetime.datetime,
         *,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -261,7 +263,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
     async def cancel_scheduled_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        sequence_numbers: Union[int, List[int]],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -303,7 +309,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def send_messages(
-        self, message: Union[MessageTypes, ServiceBusMessageBatch], *, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        message: Union[MessageTypes, ServiceBusMessageBatch],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 

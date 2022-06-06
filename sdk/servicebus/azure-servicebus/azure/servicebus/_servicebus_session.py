@@ -122,7 +122,13 @@ class ServiceBusSession(BaseSession):
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         return session_state
 
-    def set_state(self, state: Union[str, bytes, bytearray], *, timeout: Optional[float] = None, **kwargs: Any) -> None:
+    def set_state(
+        self,
+        state: Union[str, bytes, bytearray],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> None:
         # pylint: disable=protected-access
         """Set the session state.
 
@@ -158,7 +164,9 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
 
-    def renew_lock(self, *, timeout: Optional[float] = None, **kwargs: Any) -> datetime.datetime:
+    def renew_lock(
+        self, *, timeout: Optional[float] = None, **kwargs: Any
+    ) -> datetime.datetime:
         # pylint: disable=protected-access
         """Renew the session lock.
 

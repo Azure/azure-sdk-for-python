@@ -8,17 +8,17 @@
 
 from enum import Enum
 
+
 class AccessRights(str, Enum):
-    """Access rights of an authorization
-    """
+    """Access rights of an authorization"""
 
     manage = "Manage"
     send = "Send"
     listen = "Listen"
 
+
 class EntityAvailabilityStatus(str, Enum):
-    """Availability status of the entity
-    """
+    """Availability status of the entity"""
 
     available = "Available"
     limited = "Limited"
@@ -26,9 +26,9 @@ class EntityAvailabilityStatus(str, Enum):
     restoring = "Restoring"
     unknown = "Unknown"
 
+
 class EntityStatus(str, Enum):
-    """Status of a Service Bus resource
-    """
+    """Status of a Service Bus resource"""
 
     active = "Active"
     creating = "Creating"
@@ -40,17 +40,17 @@ class EntityStatus(str, Enum):
     send_disabled = "SendDisabled"
     unknown = "Unknown"
 
+
 class MessagingSku(str, Enum):
-    """The SKU for the messaging entity.
-    """
+    """The SKU for the messaging entity."""
 
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
 
+
 class NamespaceType(str, Enum):
-    """The type of entities the namespace can contain.
-    """
+    """The type of entities the namespace can contain."""
 
     messaging = "Messaging"
     notification_hub = "NotificationHub"

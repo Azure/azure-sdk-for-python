@@ -35,7 +35,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -151,7 +151,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: float = 120,
-        retry_mode: str = 'exponential',
+        retry_mode: str = "exponential",
         **kwargs: Any
     ) -> "ServiceBusClient":
         """

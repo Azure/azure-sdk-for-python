@@ -42,7 +42,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -132,7 +132,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
 
-        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
     def __enter__(self):

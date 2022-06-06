@@ -8,17 +8,24 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
 from ... import models
 
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
+
 
 class ServiceBusManagementClientOperationsMixin:
-
     async def list_subscriptions(
         self,
         topic_name: str,
@@ -44,48 +51,59 @@ class ServiceBusManagementClientOperationsMixin:
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop("cls", None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
         # Construct URL
-        url = self.list_subscriptions.metadata['url']  # type: ignore
+        url = self.list_subscriptions.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "topicName": self._serialize.url(
+                "topic_name", topic_name, "str", min_length=1
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if skip is not None:
-            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+            query_parameters["$skip"] = self._serialize.query("skip", skip, "int")
         if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int')
+            query_parameters["$top"] = self._serialize.query("top", top, "int")
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_subscriptions.metadata = {'url': '/{topicName}/subscriptions'}  # type: ignore
+
+    list_subscriptions.metadata = {"url": "/{topicName}/subscriptions"}  # type: ignore
 
     async def list_rules(
         self,
@@ -115,49 +133,62 @@ class ServiceBusManagementClientOperationsMixin:
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop("cls", None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
         # Construct URL
-        url = self.list_rules.metadata['url']  # type: ignore
+        url = self.list_rules.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "topicName": self._serialize.url(
+                "topic_name", topic_name, "str", min_length=1
+            ),
+            "subscriptionName": self._serialize.url(
+                "subscription_name", subscription_name, "str", min_length=1
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if skip is not None:
-            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+            query_parameters["$skip"] = self._serialize.query("skip", skip, "int")
         if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int')
+            query_parameters["$top"] = self._serialize.query("top", top, "int")
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_rules.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules'}  # type: ignore
+
+    list_rules.metadata = {"url": "/{topicName}/subscriptions/{subscriptionName}/rules"}  # type: ignore
 
     async def list_entities(
         self,
@@ -185,45 +216,56 @@ class ServiceBusManagementClientOperationsMixin:
         :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop("cls", None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
         # Construct URL
-        url = self.list_entities.metadata['url']  # type: ignore
+        url = self.list_entities.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'entityType': self._serialize.url("entity_type", entity_type, 'str', min_length=1),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "entityType": self._serialize.url(
+                "entity_type", entity_type, "str", min_length=1
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if skip is not None:
-            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+            query_parameters["$skip"] = self._serialize.query("skip", skip, "int")
         if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int')
+            query_parameters["$top"] = self._serialize.query("top", top, "int")
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_entities.metadata = {'url': '/$Resources/{entityType}'}  # type: ignore
+
+    list_entities.metadata = {"url": "/$Resources/{entityType}"}  # type: ignore

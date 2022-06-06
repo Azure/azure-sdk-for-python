@@ -13,7 +13,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
-        self.retry_mode = RetryMode(kwargs.get("retry_mode", 'exponential'))
+        self.retry_mode = RetryMode(kwargs.get("retry_mode", "exponential"))
         self.retry_backoff_factor = kwargs.get(
             "retry_backoff_factor", 0.8
         )  # type: float
@@ -21,7 +21,9 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.logging_enable = kwargs.get("logging_enable", False)  # type: bool
         self.http_proxy = kwargs.get("http_proxy")  # type: Optional[Dict[str, Any]]
 
-        self.custom_endpoint_address = kwargs.get("custom_endpoint_address")  # type: Optional[str]
+        self.custom_endpoint_address = kwargs.get(
+            "custom_endpoint_address"
+        )  # type: Optional[str]
         self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
         self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None

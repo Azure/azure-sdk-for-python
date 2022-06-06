@@ -8,7 +8,12 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -18,8 +23,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    T = TypeVar("T")
+    ClsType = Optional[
+        Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+    ]
+
 
 class NamespaceOperations(object):
     """NamespaceOperations operations.
@@ -60,25 +68,31 @@ class NamespaceOperations(object):
         :rtype: ~azure.servicebus.management._generated.models.NamespacePropertiesEntry
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamespacePropertiesEntry"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["models.NamespacePropertiesEntry"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
         # Construct URL
-        url = self.get.metadata['url']  # type: ignore
+        url = self.get.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if api_version is not None:
-            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["api-version"] = self._serialize.query(
+                "api_version", api_version, "str"
+            )
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters["Accept"] = "application/xml"
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -86,14 +100,17 @@ class NamespaceOperations(object):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = self._deserialize(models.ServiceBusManagementError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('NamespacePropertiesEntry', pipeline_response)
+        deserialized = self._deserialize("NamespacePropertiesEntry", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/$namespaceinfo'}  # type: ignore
+
+    get.metadata = {"url": "/$namespaceinfo"}  # type: ignore

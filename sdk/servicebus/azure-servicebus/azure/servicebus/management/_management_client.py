@@ -241,7 +241,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str, *, api_version: Union[str, ApiVersion] = DEFAULT_VERSION, **kwargs: Any
+        cls,
+        conn_str: str,
+        *,
+        api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
+        **kwargs: Any
     ) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
@@ -585,9 +589,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         topic_name: str,
         *,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
-        max_size_in_megabytes: Optional[
-            int
-        ] = None,
+        max_size_in_megabytes: Optional[int] = None,
         requires_duplicate_detection: Optional[bool] = None,
         duplicate_detection_history_time_window: Optional[
             Union[datetime.timedelta, str]
@@ -1111,7 +1113,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         *,
         filter: Union[  # pylint: disable=redefined-builtin
             CorrelationRuleFilter, SqlRuleFilter
-        ]=TrueRuleFilter(),
+        ] = TrueRuleFilter(),
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:

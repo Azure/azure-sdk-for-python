@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._service_bus_management_client_async import ServiceBusManagementClient
-__all__ = ['ServiceBusManagementClient']
+
+__all__ = ["ServiceBusManagementClient"]
