@@ -47,9 +47,9 @@ An [EventHubError][EventHubError] contains three fields which describe the error
   
 ### Commonly encountered exceptions
 
-#### `amqp:connection:forced` and `amqp:link:detach-forced`
+#### ConnectionLostError Exception
 
-When the connection to Event Hubs is idle, the service will disconnect the client after some time.  This is not a problem as the clients will re-establish a connection when a service operation is requested.  More information can be found in the [AMQP troubleshooting documentation][AmqpTroubleshooting].
+When the connection to Event Hubs is idle, the service will disconnect the client after some time and raise a `ConnectionLostError` exception. The underlying issues that cause this are `amqp:connection:forced` and `amqp:link:detach-forced`.  This is not a problem as the clients will re-establish a connection when a service operation is requested.  More information can be found in the [AMQP troubleshooting documentation][AmqpTroubleshooting].
 
 ## Permission issues
 
@@ -57,6 +57,7 @@ An `AuthenticationError` means that the provided credentials do not allow for th
 
 * [Double check you have the correct connection string][GetConnectionString]
 * [Ensure your SAS token is generated correctly][AuthorizeSAS]
+* [Verify the correct RBAC roles were granted][RBACRoles]
 
 [Troubleshoot authentication and authorization issues with Event Hubs][troubleshoot_authentication_authorization] lists other possible solutions.
 
@@ -148,7 +149,7 @@ By design, Event Hubs does not promote the Kafka message key to be the Event Hub
 
 ### 412 precondition failures when using an event processor
 
-412 precondition errors occur when the client tries to take or renew ownership of a partition, but the local version of the ownership record is outdated.  This occurs when another processor instance steals partition ownership.  See [Partition ownership changes a lot](#partition-ownership-changes-a-lot) for more information.
+Logs reflect intermittent HTTP 412 and HTTP 409 responses from storage when the client tries to take or renew ownership of a partition, but the local version of the ownership record is outdated.  This occurs when another processor instance steals partition ownership.  See [Partition ownership changes a lot](#partition-ownership-changes-a-lot) for more information.
 
 ### Partition ownership changes frequently
 
@@ -206,6 +207,7 @@ When filing GitHub issues, the following details are requested:
 [EventHubError]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions.eventhuberror
 [AmqpTroubleshooting]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-amqp-troubleshoot
 [AuthorizeSAS]: https://docs.microsoft.com/azure/event-hubs/authorize-access-shared-access-signature
+[RBACRoles]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
 [Epoch]: https://docs.microsoft.com/azure/event-hubs/event-hubs-event-processor-host#epoch
 [EventHubsIPAddresses]: https://docs.microsoft.com/azure/event-hubs/troubleshooting-guide#what-ip-addresses-do-i-need-to-allow
 [EventHubsMessagingExceptions]: https://docs.microsoft.com/azure/event-hubs/event-hubs-messaging-exceptions
