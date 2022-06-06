@@ -70,6 +70,10 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
+  - template: /eng/pipelines/templates/steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
   - task: PythonScript@0
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
@@ -79,10 +83,6 @@ steps:
         "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
-
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 
