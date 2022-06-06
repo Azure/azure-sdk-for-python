@@ -154,7 +154,7 @@ class FileTest(StorageTestCase):
         directory_client.create_directory()
 
         file_client = directory_client.get_file_client('filename')
-        file_client.create_file(expiry_options="RelativeToNow", expires_on=test_expiry_time)
+        file_client.create_file(expires_on=test_expiry_time)
 
         # Assert
         file_properties = file_client.get_file_properties()
@@ -177,7 +177,7 @@ class FileTest(StorageTestCase):
         directory_client.create_directory()
 
         file_client = directory_client.get_file_client('filename')
-        file_client.create_file(expiry_options="Absolute", expires_on=test_expiry_time)
+        file_client.create_file(expires_on=test_expiry_time)
 
         # Assert
         file_properties = file_client.get_file_properties()

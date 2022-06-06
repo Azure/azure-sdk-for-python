@@ -794,9 +794,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A list containing None for successful operations and
@@ -812,7 +809,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 4
                 :caption: Deleting multiple files or empty directories.
         """
-        response = await self._container_client.delete_blobs(*files, **kwargs)
+        response = await self._container_client.delete_blobs(raise_on_any_failure=False, *files, **kwargs)
 
         errors = []
         async for result in response:

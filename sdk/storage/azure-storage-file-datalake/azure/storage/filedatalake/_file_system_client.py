@@ -712,14 +712,13 @@ class FileSystemClient(StorageAccountHostsMixin):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change.
-        :keyword expiry_options:
-            Indicates mode of the expiry time.
-            Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
-        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
         :keyword expires_on:
             The time to set the file to expiry.
-            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
-            If the type of expires_on is datetime, it should be in UTC time.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
         :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
@@ -895,9 +894,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword bool raise_on_any_failure:
-            This is a boolean param which defaults to True. When this is set, an exception
-            is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A list containing None for successful operations and
@@ -913,7 +909,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 4
                 :caption: Deleting multiple files or empty directories.
         """
-        results = self._container_client.delete_blobs(*files, **kwargs)
+        results = self._container_client.delete_blobs(raise_on_any_failure=False, *files, **kwargs)
 
         errors = []
         for result in results:

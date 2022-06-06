@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-from typing import Any, Dict, Optional, TypeVar, TYPE_CHECKING
+from typing import Any, Dict, TypeVar, TYPE_CHECKING
 
 from azure.core import MatchConditions
 

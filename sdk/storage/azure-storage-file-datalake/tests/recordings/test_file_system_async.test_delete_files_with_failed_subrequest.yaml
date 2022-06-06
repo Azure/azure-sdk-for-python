@@ -5,11 +5,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:22 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/fs13fa31a04?restype=container
   response:
@@ -17,26 +17,26 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:23 GMT
-      etag: '"0x8DA2A4291EF0F25"'
-      last-modified: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
+      etag: '"0x8DA44F11882CBFA"'
+      last-modified: Thu, 02 Jun 2022 23:39:11 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttrancanary.blob.core.windows.net/fs13fa31a04?restype=container
+    url: https://vincenttranhns.blob.core.windows.net/fs13fa31a04?restype=container
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file1?resource=file
   response:
@@ -44,16 +44,16 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:22 GMT
-      etag: '"0x8DA2A429224559B"'
-      last-modified: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
+      etag: '"0x8DA44F118B6F12F"'
+      last-modified: Thu, 02 Jun 2022 23:39:11 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file1?resource=file
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file1?resource=file
 - request:
     body: hello world
     headers:
@@ -64,11 +64,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file1?action=append&position=0
   response:
@@ -76,27 +76,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:22 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file1?action=append&position=0
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file1?action=append&position=0
 - request:
     body: null
     headers:
       Accept:
       - application/json
       If-Match:
-      - '"0x8DA2A429224559B"'
+      - '"0x8DA44F118B6F12F"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file1?action=flush&position=11&close=true
   response:
@@ -104,27 +104,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:22 GMT
-      etag: '"0x8DA2A42923FE663"'
-      last-modified: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
+      etag: '"0x8DA44F118CDBCF9"'
+      last-modified: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file1?action=flush&position=11&close=true
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file1?action=flush&position=11&close=true
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file2?resource=file
   response:
@@ -132,16 +132,16 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:22 GMT
-      etag: '"0x8DA2A42924D7B62"'
-      last-modified: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
+      etag: '"0x8DA44F118D8339C"'
+      last-modified: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file2?resource=file
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file2?resource=file
 - request:
     body: hello world
     headers:
@@ -152,11 +152,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file2?action=append&position=0
   response:
@@ -164,27 +164,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:22 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file2?action=append&position=0
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file2?action=append&position=0
 - request:
     body: null
     headers:
       Accept:
       - application/json
       If-Match:
-      - '"0x8DA2A42924D7B62"'
+      - '"0x8DA44F118D8339C"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:12 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file2?action=flush&position=11&close=true
   response:
@@ -192,27 +192,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:22 GMT
-      etag: '"0x8DA2A4292666BE8"'
-      last-modified: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:11 GMT
+      etag: '"0x8DA44F118EE59BF"'
+      last-modified: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file2?action=flush&position=11&close=true
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file2?action=flush&position=11&close=true
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:13 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file3?resource=file
   response:
@@ -220,16 +220,16 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:23 GMT
-      etag: '"0x8DA2A429272CA9A"'
-      last-modified: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:12 GMT
+      etag: '"0x8DA44F118F93EBC"'
+      last-modified: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file3?resource=file
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file3?resource=file
 - request:
     body: hello world
     headers:
@@ -240,11 +240,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:13 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file3?action=append&position=0
   response:
@@ -252,27 +252,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:23 GMT
+      date: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file3?action=append&position=0
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file3?action=append&position=0
 - request:
     body: null
     headers:
       Accept:
       - application/json
       If-Match:
-      - '"0x8DA2A429272CA9A"'
+      - '"0x8DA44F118F93EBC"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:23 GMT
+      - Thu, 02 Jun 2022 23:39:13 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/file3?action=flush&position=11&close=true
   response:
@@ -280,27 +280,27 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:23 GMT
-      etag: '"0x8DA2A42928BA2BC"'
-      last-modified: Sat, 30 Apr 2022 00:44:24 GMT
+      date: Thu, 02 Jun 2022 23:39:12 GMT
+      etag: '"0x8DA44F1190E8474"'
+      last-modified: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 200
       message: OK
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/file3?action=flush&position=11&close=true
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/file3?action=flush&position=11&close=true
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:24 GMT
+      - Thu, 02 Jun 2022 23:39:13 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/fs13fa31a04/dir1%2Ffile4?resource=file
   response:
@@ -308,94 +308,94 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:23 GMT
-      etag: '"0x8DA2A4292BE0BD4"'
-      last-modified: Sat, 30 Apr 2022 00:44:24 GMT
+      date: Thu, 02 Jun 2022 23:39:12 GMT
+      etag: '"0x8DA44F1191E30DA"'
+      last-modified: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 201
       message: Created
-    url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/dir1%2Ffile4?resource=file
+    url: https://vincenttranhns.dfs.core.windows.net/fs13fa31a04/dir1%2Ffile4?resource=file
 - request:
-    body: "--===============0750080793628137266==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
+    body: "--===============0773684347739619427==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /fs13fa31a04/file1? HTTP/1.1\r\nx-ms-date:
-      Sat, 30 Apr 2022 00:44:24 GMT\r\nx-ms-client-request-id: ae7b2e57-c81e-11ec-bc36-4851c58829e0\r\n\r\n\r\n--===============0750080793628137266==\r\nContent-Type:
+      Thu, 02 Jun 2022 23:39:13 GMT\r\nx-ms-client-request-id: 3568ae85-e2cd-11ec-8f4e-4851c58829e0\r\r\n\r\n\r\n--===============0773684347739619427==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
-      /fs13fa31a04/file2? HTTP/1.1\r\nx-ms-date: Sat, 30 Apr 2022 00:44:24 GMT\r\nx-ms-client-request-id:
-      ae7b2e58-c81e-11ec-a7ca-4851c58829e0\r\n\r\n\r\n--===============0750080793628137266==\r\nContent-Type:
+      /fs13fa31a04/file2? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 23:39:13 GMT\r\nx-ms-client-request-id:
+      3568d54d-e2cd-11ec-810c-4851c58829e0\r\r\n\r\n\r\n--===============0773684347739619427==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
-      /fs13fa31a04/file3? HTTP/1.1\r\nx-ms-date: Sat, 30 Apr 2022 00:44:24 GMT\r\nx-ms-client-request-id:
-      ae7b2e59-c81e-11ec-8bfd-4851c58829e0\r\n\r\n\r\n--===============0750080793628137266==\r\nContent-Type:
+      /fs13fa31a04/file3? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 23:39:13 GMT\r\nx-ms-client-request-id:
+      3568d54e-e2cd-11ec-9ae6-4851c58829e0\r\r\n\r\n\r\n--===============0773684347739619427==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 3\r\n\r\nDELETE
-      /fs13fa31a04/dir1? HTTP/1.1\r\nx-ms-date: Sat, 30 Apr 2022 00:44:24 GMT\r\nx-ms-client-request-id:
-      ae7b2e5a-c81e-11ec-872f-4851c58829e0\r\n\r\n\r\n--===============0750080793628137266==\r\nContent-Type:
+      /fs13fa31a04/dir1? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 23:39:13 GMT\r\nx-ms-client-request-id:
+      3568d54f-e2cd-11ec-9eb2-4851c58829e0\r\r\n\r\n\r\n--===============0773684347739619427==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 4\r\n\r\nDELETE
-      /fs13fa31a04/dir8? HTTP/1.1\r\nx-ms-date: Sat, 30 Apr 2022 00:44:24 GMT\r\nx-ms-client-request-id:
-      ae7b2e5b-c81e-11ec-8fae-4851c58829e0\r\n\r\n\r\n--===============0750080793628137266==--\r\n"
+      /fs13fa31a04/dir8? HTTP/1.1\r\nx-ms-date: Thu, 02 Jun 2022 23:39:13 GMT\r\nx-ms-client-request-id:
+      3568d550-e2cd-11ec-9150-4851c58829e0\r\r\n\r\n\r\n--===============0773684347739619427==--\r\n"
     headers:
       Content-Length:
-      - '1830'
+      - '1815'
       Content-Type:
-      - multipart/mixed; boundary================0750080793628137266==
+      - multipart/mixed; boundary================0773684347739619427==
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:24 GMT
+      - Thu, 02 Jun 2022 23:39:13 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: POST
     uri: https://storagename.blob.core.windows.net/fs13fa31a04?restype=container&comp=batch
   response:
     body:
-      string: "--batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b\r\nContent-Type:
+      string: "--batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 85748917-b01e-001e-232b-5c361a1e6a14\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: ae7b2e57-c81e-11ec-bc36-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b\r\nContent-Type:
+        true\r\nx-ms-request-id: fafae2bf-e01e-008d-7fd9-76ad531ec8eb\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 3568ae85-e2cd-11ec-8f4e-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9\r\nContent-Type:
         application/http\r\nContent-ID: 1\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 85748917-b01e-001e-232b-5c361a1e6a17\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: ae7b2e58-c81e-11ec-a7ca-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b\r\nContent-Type:
+        true\r\nx-ms-request-id: fafae2bf-e01e-008d-7fd9-76ad531ec8ed\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 3568d54d-e2cd-11ec-810c-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9\r\nContent-Type:
         application/http\r\nContent-ID: 2\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 85748917-b01e-001e-232b-5c361a1e6a18\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: ae7b2e59-c81e-11ec-8bfd-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b\r\nContent-Type:
+        true\r\nx-ms-request-id: fafae2bf-e01e-008d-7fd9-76ad531ec8ee\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 3568d54e-e2cd-11ec-9ae6-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9\r\nContent-Type:
         application/http\r\nContent-ID: 3\r\n\r\nHTTP/1.1 409 The directory involved
         in this operation is not empty\r\nx-ms-error-code: DirectoryNotEmpty\r\nx-ms-request-id:
-        85748917-b01e-001e-232b-5c361a1e6a19\r\nx-ms-version: 2021-06-08\r\nx-ms-client-request-id:
-        ae7b2e5a-c81e-11ec-872f-4851c58829e0\r\nContent-Length: 240\r\nContent-Type:
+        fafae2bf-e01e-008d-7fd9-76ad531ec8ef\r\nx-ms-version: 2021-08-06\r\nx-ms-client-request-id:
+        3568d54f-e2cd-11ec-9eb2-4851c58829e0\r\nContent-Length: 240\r\nContent-Type:
         application/xml\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml version=\"1.0\"
         encoding=\"utf-8\"?>\n<Error><Code>DirectoryNotEmpty</Code><Message>The directory
-        involved in this operation is not empty\nRequestId:85748917-b01e-001e-232b-5c361a1e6a19\nTime:2022-04-30T00:44:24.5929162Z</Message></Error>\r\n--batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b\r\nContent-Type:
+        involved in this operation is not empty\nRequestId:fafae2bf-e01e-008d-7fd9-76ad531ec8ef\nTime:2022-06-02T23:39:12.7081861Z</Message></Error>\r\n--batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9\r\nContent-Type:
         application/http\r\nContent-ID: 4\r\n\r\nHTTP/1.1 404 The specified blob does
-        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: 85748917-b01e-001e-232b-5c361a1e6a1a\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: ae7b2e5b-c81e-11ec-8fae-4851c58829e0\r\nContent-Length:
+        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: fafae2bf-e01e-008d-7fd9-76ad531ec8f0\r\nx-ms-version:
+        2021-08-06\r\nx-ms-client-request-id: 3568d550-e2cd-11ec-9150-4851c58829e0\r\nContent-Length:
         216\r\nContent-Type: application/xml\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml
         version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>BlobNotFound</Code><Message>The
-        specified blob does not exist.\nRequestId:85748917-b01e-001e-232b-5c361a1e6a1a\nTime:2022-04-30T00:44:24.5819230Z</Message></Error>\r\n--batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b--"
+        specified blob does not exist.\nRequestId:fafae2bf-e01e-008d-7fd9-76ad531ec8f0\nTime:2022-06-02T23:39:12.6901965Z</Message></Error>\r\n--batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9--"
     headers:
-      content-type: multipart/mixed; boundary=batchresponse_a8e8fe71-0859-4cab-b61f-d4d47640298b
-      date: Sat, 30 Apr 2022 00:44:24 GMT
+      content-type: multipart/mixed; boundary=batchresponse_14968008-83d1-40ed-8b80-f33a1f9b35b9
+      date: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: https://vincenttrancanary.blob.core.windows.net/fs13fa31a04?restype=container&comp=batch
+    url: https://vincenttranhns.blob.core.windows.net/fs13fa31a04?restype=container&comp=batch
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Sat, 30 Apr 2022 00:44:24 GMT
+      - Thu, 02 Jun 2022 23:39:13 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/fs13fa31a04?restype=container
   response:
@@ -403,11 +403,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 30 Apr 2022 00:44:24 GMT
+      date: Thu, 02 Jun 2022 23:39:12 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2021-06-08'
+      x-ms-version: '2021-08-06'
     status:
       code: 202
       message: Accepted
-    url: https://vincenttrancanary.blob.core.windows.net/fs13fa31a04?restype=container
+    url: https://vincenttranhns.blob.core.windows.net/fs13fa31a04?restype=container
 version: 1
