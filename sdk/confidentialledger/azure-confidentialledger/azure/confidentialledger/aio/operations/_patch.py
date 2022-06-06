@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
-from typing import Any, List, Optional
+from typing import Any, IO, List, Optional, Union
 
 from azure.confidentialledger.aio.operations._operations import (
     ConfidentialLedgerOperations as GeneratedOperations,
@@ -164,7 +164,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         )
 
     async def post_ledger_entry(
-        self, entry: JSON, *, collection_id: Optional[str] = None, **kwargs: Any
+        self, entry: Union[JSON, IO], *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Writes a ledger entry.
 
@@ -174,7 +174,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         A collection id may optionally be specified.
 
         :param entry: Ledger entry.
-        :type entry: JSON
+        :type entry: Union[JSON, IO]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
         :keyword interval: Interval, in seconds, between retries, defaults to 0.5.
@@ -213,7 +213,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         )
 
     async def post_ledger_entry_and_wait_for_commit(
-        self, entry: JSON, *, collection_id: Optional[str] = None, **kwargs: Any
+        self, entry: Union[JSON, IO], *, collection_id: Optional[str] = None, **kwargs: Any
     ):
         """Writes a ledger entry and waits for it to be durably committed.
 
@@ -223,7 +223,7 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         A collection id may optionally be specified.
 
         :param entry: Ledger entry.
-        :type entry: JSON
+        :type entry: Union[JSON, IO]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
         :keyword interval: Interval, in seconds, between retries, defaults to 0.5.
