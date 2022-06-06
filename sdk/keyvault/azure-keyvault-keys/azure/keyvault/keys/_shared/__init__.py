@@ -64,9 +64,13 @@ def parse_key_vault_id(source_id):
     if len(path) < 2 or len(path) > 3:
         raise ValueError("'{}' is not a valid ID".format(source_id))
 
+    vault_url = "{}://{}".format(parsed_uri.scheme, parsed_uri.hostname)
+    if parsed_uri.port:
+        vault_url += f":{parsed_uri.port}"
+
     return KeyVaultResourceId(
         source_id=source_id,
-        vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
+        vault_url=vault_url,
         name=path[1],
         version=path[2] if len(path) == 3 else None,
     )
