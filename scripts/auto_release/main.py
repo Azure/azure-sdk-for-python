@@ -195,7 +195,6 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        print(f"generate_result: {generate_result}")
         self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
 
     def prepare_branch_with_readme(self):
