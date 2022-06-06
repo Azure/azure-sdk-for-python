@@ -72,6 +72,7 @@
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
+    "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -103,6 +104,7 @@
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
+    "sdk/ml/azure-ai-ml/tests/**",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -111,6 +113,10 @@
     ".gitignore"
   ],
   "words": [
+    "pyyaml",
+    "CONLL",
+    "pyjwt",
+    "conll",
     "aad",
     "aadclient",
     "AADSTS",
@@ -152,6 +158,7 @@
     "deserialization",
     "docfx",
     "dotenv",
+    "dpkg",
     "DWORD",
     "eastus",
     "eckey",
@@ -217,6 +224,7 @@
     "msrest",
     "msrestazure",
     "MSSQL",
+    "mutex",
     "myacr",
     "nazsdk",
     "noarch",
@@ -262,6 +270,7 @@
     "rwdlacu",
     "scbedd",
     "sdist",
+    "sdpath",
     "secbak",
     "SECG",
     "SECP",
@@ -376,13 +385,14 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/*.py",
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
       "words": [
         "XVCJ",
         "Njgw",
         "FNNHHJT",
         "Zwiz",
-        "nypg"
+        "nypg",
+        "PBOF"
       ]
     },
     {
@@ -494,7 +504,8 @@
         "nlocals",
         "kwonlyargcount",
         "dcid",
-        "startf"
+        "startf",
+        "dpkg"
       ]
     }
   ],

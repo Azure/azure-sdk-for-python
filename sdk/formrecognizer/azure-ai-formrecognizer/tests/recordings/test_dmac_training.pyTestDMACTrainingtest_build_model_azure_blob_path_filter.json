@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-06-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,34 +9,65 @@
         "Connection": "keep-alive",
         "Content-Length": "153",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "modelId": "a765bec0-8629-4c1d-8012-e1837cd8494a",
+        "modelId": "70fc903f-0065-4957-a571-a0a7b0c88676",
         "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url",
           "prefix": "testfolder"
         }
       },
-      "StatusCode": 400,
+      "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "df890e1d-20f8-40f5-977d-4ffc40181f7c",
-        "Content-Type": "application/json",
-        "Date": "Thu, 31 Mar 2022 23:41:51 GMT",
+        "apim-request-id": "0d6fbec7-754c-46c8-91a5-fa24f2113888",
+        "Content-Length": "0",
+        "Date": "Thu, 26 May 2022 00:57:44 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31512841337_0d6fbec7-754c-46c8-91a5-fa24f2113888?api-version=2022-06-30-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "2269"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31512841337_0d6fbec7-754c-46c8-91a5-fa24f2113888?api-version=2022-06-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "1abd3de0-f89e-4ee9-b50d-f4bb28cf736d",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 26 May 2022 00:57:50 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "215"
+        "x-envoy-upstream-service-time": "16"
       },
       "ResponseBody": {
+        "operationId": "31512841337_0d6fbec7-754c-46c8-91a5-fa24f2113888",
+        "kind": "documentModelBuild",
+        "status": "failed",
+        "createdDateTime": "2022-05-26T00:57:43Z",
+        "lastUpdatedDateTime": "2022-05-26T00:57:45Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/70fc903f-0065-4957-a571-a0a7b0c88676?api-version=2022-06-30-preview",
+        "percentCompleted": 100,
         "error": {
           "code": "InvalidRequest",
           "message": "Invalid request.",
-          "innererror": {
-            "code": "TrainingContentMissing",
-            "message": "Training data is missing: Could not find any training data at the given path."
-          }
+          "details": [
+            {
+              "code": "ModelBuildError",
+              "message": "Could not build the model: Can\u0027t find any OCR files for training."
+            }
+          ]
         }
       }
     }

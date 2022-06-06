@@ -1,0 +1,19 @@
+name: score
+version: 10
+display_name: Score
+type: command
+inputs:
+  model_input:
+    type: uri_folder
+  test_data:
+    type: uri_folder
+outputs:
+  score_output:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+code: ./score_src
+command: >-
+  python score.py 
+  --model_input ${{inputs.model_input}}
+  --test_data ${{inputs.test_data}}
+  --score_output ${{outputs.score_output}}

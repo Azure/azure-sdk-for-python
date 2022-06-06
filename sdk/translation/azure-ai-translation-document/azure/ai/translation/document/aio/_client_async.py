@@ -116,9 +116,9 @@ class DocumentTranslationClient:
         self,
         source_url: str,
         target_url: str,
-        target_language_code: str,
+        target_language: str,
         *,
-        source_language_code: Optional[str] = None,
+        source_language: Optional[str] = None,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
         storage_type: Optional[Union[str, StorageInputType]] = None,
@@ -130,7 +130,7 @@ class DocumentTranslationClient:
         in the given language. There are two ways to call this method:
 
         1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
 
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
@@ -144,10 +144,10 @@ class DocumentTranslationClient:
         :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
             should be written. See the service documentation for the supported SAS permissions for accessing
             target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
-        :param str target_language_code: This is the language you want your documents to be translated to.
+        :param str target_language: This is the language code you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-        :keyword str source_language_code: Language code for the source documents.
+        :keyword str source_language: Language code for the source documents.
             If none is specified, the source language will be auto-detected for each document.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
@@ -175,7 +175,7 @@ class DocumentTranslationClient:
         in the given language. There are two ways to call this method:
 
         1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
 
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
@@ -202,7 +202,7 @@ class DocumentTranslationClient:
         in the given language. There are two ways to call this method:
 
         1) To perform translation on documents from a single source container to a single target container, pass the
-        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+        `source_url`, `target_url`, and `target_language` parameters including any optional keyword arguments.
 
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
@@ -220,14 +220,14 @@ class DocumentTranslationClient:
             for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
             or a managed identity can be created and used to access documents in your storage account
             (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-        :param str target_language_code: This is the language you want your documents to be translated to.
+        :param str target_language: This is the language code you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
-        :keyword str source_language_code: Language code for the source documents.
+        :keyword str source_language: Language code for the source documents.
             If none is specified, the source language will be auto-detected for each document.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
@@ -339,7 +339,6 @@ class DocumentTranslationClient:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        results_per_page: Optional[int] = None,
         translation_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
@@ -352,7 +351,6 @@ class DocumentTranslationClient:
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
         :keyword int skip: the number of operations to skip (from beginning of all submitted operations).
             By default, we sort by all submitted operations in descending order by start time.
-        :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
@@ -399,7 +397,6 @@ class DocumentTranslationClient:
         return cast(AsyncItemPaged[TranslationStatus],
             self._client.document_translation.get_translations_status(
                 cls=model_conversion_function,
-                maxpagesize=results_per_page,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=translation_ids,
@@ -418,7 +415,6 @@ class DocumentTranslationClient:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        results_per_page: Optional[int] = None,
         document_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_after: Optional[Union[str, datetime.datetime]] = None,
@@ -432,7 +428,6 @@ class DocumentTranslationClient:
         :keyword int top: the total number of documents to return (across all pages).
         :keyword int skip: the number of documents to skip (from beginning).
             By default, we sort by all documents in descending order by start time.
-        :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by. Options include
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
@@ -484,7 +479,6 @@ class DocumentTranslationClient:
             self._client.document_translation.get_documents_status(
                 id=translation_id,
                 cls=model_conversion_function,
-                maxpagesize=results_per_page,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,

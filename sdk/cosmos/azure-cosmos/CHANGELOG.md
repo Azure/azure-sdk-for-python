@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+- Fixed parsing of args for overloaded `container.read()` method.
 
 #### Other Changes
 

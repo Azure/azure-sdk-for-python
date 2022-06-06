@@ -1,0 +1,54 @@
+type: pipeline
+
+name: simplePipelineJobWithInlineComps
+description: The hello world pipeline job with inline components
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+settings:
+  default_datastore: azureml:workspacefilestore
+  default_compute: azureml:cpu-cluster
+  continue_on_step_failure: true
+  force_rerun: false
+
+jobs:
+  hello_world_component_inline_1:
+    type: command
+
+    component: ../components/component_e2e.yml
+
+    compute: azureml:cpu-cluster
+
+    outputs:
+      output_path:
+        mode: mount
+
+  hello_world_component_inline_2:
+    type: command
+
+    component: ../components/component_e2e.yml
+
+    outputs:
+      output_path:
+        mode: mount
+
+  hello_world_component_inline_3:
+    type: command
+
+    component:
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+
+      command: >-
+        echo Hello World Inline 3
+
+  hello_world_component_inline_4:
+    type: command
+
+    component:
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: ../data
+      command: >-
+        echo Hello World Inline 4

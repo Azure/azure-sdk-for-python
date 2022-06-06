@@ -1,0 +1,43 @@
+name: blue
+endpoint_name: deploytest
+type: kubernetes
+model:
+  name: k8s_test
+  version: 1
+  path: ../model-1/model/sklearn_regression_model.pkl
+code_configuration:
+  code: ../model-1/onlinescoring/
+  scoring_script: score.py
+environment:
+  name: online-endpoint-k8s-test
+  version: 1
+  conda_file: ../model-1/environment/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+instance_count: 1
+instance_type: gpuinstance
+scale_settings:
+  type: default
+request_settings:
+  request_timeout_ms: 1000
+  max_concurrent_requests_per_instance: 1
+  max_queue_wait_ms: 1000
+resources:
+  requests:
+    cpu: "0.2"
+    memory: "0.1Gi"
+    nvidia.com/gpu: "1"
+  limits:
+    cpu: "300m"
+    memory: "0.2Gi"
+liveness_probe:
+  initial_delay: 10
+  period: 10
+  timeout: 10
+  success_threshold: 1
+  failure_threshold: 1
+readiness_probe:
+  initial_delay: 10
+  period: 10
+  timeout: 10
+  success_threshold: 1
+  failure_threshold: 1
