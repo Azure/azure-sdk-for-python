@@ -56,10 +56,11 @@ class EventHubProducerClient(
      or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
      then publish. Default is False.
-    :keyword Union[ThreadPoolExecutor, int] buffer_concurrency: The ThreadPoolExecutor to be used for publishing events
-     or the number of workers for the ThreadPoolExecutor.
-     Default is none and a ThreadPoolExecutor with the default number of workers will be created
-     per https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+    :keyword buffer_concurrency: The ThreadPoolExecutor to be used for publishing events
+     or the number of workers for the ThreadPoolExecutor. Default is None and a ThreadPoolExecutor
+     with the default number of workers will be created per
+     https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+    :paramtype buffer_concurrency: ThreadPoolExecutor or int or None
     :keyword on_success: The callback to be called once a batch has been successfully published.
      The callback takes two parameters:
         - `events`: The list of events that have been successfully published
@@ -154,7 +155,7 @@ class EventHubProducerClient(
         credential: "CredentialTypes",
         *,
         buffered_mode: Literal[True],
-        buffer_concurrency: Union[ThreadPoolExecutor, int] = None,
+        buffer_concurrency: Optional[Union[ThreadPoolExecutor, int]] = None,
         on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
         on_success: Callable[[SendEventTypes, Optional[str]], None],
         max_buffer_length: int = 1500,
@@ -386,6 +387,7 @@ class EventHubProducerClient(
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: Literal[True],
+        buffer_concurrency: Optional[Union[ThreadPoolExecutor, int]] = None,
         on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
         on_success: Callable[[SendEventTypes, Optional[str]], None],
         max_buffer_length: int = 1500,
@@ -415,6 +417,11 @@ class EventHubProducerClient(
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
          then publish. Default is False.
+        :keyword buffer_concurrency: The ThreadPoolExecutor to be used for publishing events
+         or the number of workers for the ThreadPoolExecutor. Default is None and a ThreadPoolExecutor
+         with the default number of workers will be created per
+         https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+        :paramtype buffer_concurrency: ThreadPoolExecutor or int or None
         :keyword on_success: The callback to be called once a batch has been successfully published.
          The callback takes two parameters:
             - `events`: The list of events that have been successfully published
