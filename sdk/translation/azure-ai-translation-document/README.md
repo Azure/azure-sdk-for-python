@@ -150,7 +150,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 
 document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCredential("<api_key>"))
-poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language_code>")
+poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language>")
 ```
 
 2) Or multiple different sources can be provided each with their own targets.
@@ -163,22 +163,22 @@ my_input = [
     DocumentTranslationInput(
         source_url="<sas_url_to_source_A>",
         targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
         ]
     ),
     DocumentTranslationInput(
         source_url="<sas_url_to_source_B>",
         targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
         ]
     ),
     DocumentTranslationInput(
         source_url="<sas_url_to_source_C>",
         targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
+            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
+            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
         ]
     )
 ]
@@ -270,14 +270,14 @@ poller = document_translation_client.begin_translation(
         DocumentTranslationInput(
             source_url=source_container_sas_url_en,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_es, language_code="es"),
-                TranslationTarget(target_url=target_container_sas_url_fr, language_code="fr"),
+                TranslationTarget(target_url=target_container_sas_url_es, language="es"),
+                TranslationTarget(target_url=target_container_sas_url_fr, language="fr"),
             ],
         ),
         DocumentTranslationInput(
             source_url=source_container_sas_url_de,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_ar, language_code="ar"),
+                TranslationTarget(target_url=target_container_sas_url_ar, language="ar"),
             ],
         )
     ]

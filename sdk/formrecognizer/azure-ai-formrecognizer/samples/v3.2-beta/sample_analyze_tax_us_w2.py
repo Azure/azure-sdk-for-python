@@ -25,6 +25,8 @@ USAGE:
 
 import os
 
+def format_address_value(address_value):
+    return f'\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}'
 
 def analyze_tax_us_w2():
     path_to_sample_documents = os.path.abspath(
@@ -105,8 +107,8 @@ def analyze_tax_us_w2():
                 )
             employee_address = employee.value.get("Address")
             if employee_address:
-                print("...Address: {} has confidence: {}".format(
-                    employee_address.value, employee_address.confidence
+                print("...Address: {}\n......has confidence: {}".format(
+                    format_address_value(employee_address.value), employee_address.confidence
                     )
                 )
             employee_zipcode = employee.value.get("ZipCode")
@@ -139,8 +141,8 @@ def analyze_tax_us_w2():
                 )
             employer_address = employer.value.get("Address")
             if employer_address:
-                print("...Address: {} has confidence: {}".format(
-                    employer_address.value, employer_address.confidence
+                print("...Address: {}\n......has confidence: {}".format(
+                    format_address_value(employer_address.value), employer_address.confidence
                     )
                 )
             employer_zipcode = employer.value.get("ZipCode")

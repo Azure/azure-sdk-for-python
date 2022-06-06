@@ -1,0 +1,35 @@
+type: sweep
+sampling_algorithm: random
+search_space:
+  lr:
+    type: uniform
+    min_value: 0.001
+    max_value: 0.1
+  conv_size:
+    type: choice
+    values: [2, 5, 7]
+  dropout_rate:
+    type: uniform
+    min_value: 0.1
+    max_value: 0.5
+objective:
+  primary_metric: accuracy
+  goal: maximize
+trial:
+  command: echo 1 && python ./sweep_script.py --lr {search_space.lr} --conv_size {search_space.conv_size} --dropout_rate {search_space.dropout_rate}
+  code: ../python
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+  environment_variables:
+    AZUREML_COMPUTE_USE_COMMON_RUNTIME: "true"
+compute: azureml:cpu-cluster
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+outputs:
+  job_out_path_1:
+    mode: mount
+limits:
+  max_concurrent_trials: 10
+  max_total_trials: 1
+  timeout: 30
+  trial_timeout: 5

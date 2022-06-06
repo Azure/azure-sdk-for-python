@@ -1,0 +1,55 @@
+type: pipeline
+
+description: The hello world pipeline job with inline parallel job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+inputs:
+  job_data_path:
+    type: mltable
+    path: ../dataset/mnist-mltable/
+    mode: eval_mount
+  score_model:
+    type: uri_folder
+    path: ../mnist_models
+    mode: download
+
+outputs:
+  job_out_file:
+    type: uri_file
+    mode: rw_mount
+
+jobs:
+  predict_digits_mnist:
+    type: parallel
+    compute: azureml:cpu-cluster
+    inputs:
+      job_data_path: ${{parent.inputs.job_data_path}}
+      score_model: ${{parent.inputs.score_model}}
+    outputs:
+      job_output_file: ${{parent.outputs.job_out_file}}
+
+    mini_batch_size: "5"
+    mini_batch_error_threshold: 5
+    logging_level: "DEBUG"
+    input_data: ${{inputs.job_data_path}}
+    max_concurrency_per_instance: 2
+    environment_variables:
+      FOO: "bar"
+    retry_settings:
+      max_retries: 2
+      timeout: 60
+
+    task:
+      type: function
+      code: "../script_parallel"
+      entry_script: digit_identification.py
+      environment:
+        name: "batch_environment"
+        version: 1
+        image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+        conda_file: ../environment/environment_parallel.yml
+      args: >-
+        --model ${{inputs.score_model}}
+      append_row_to: ${{outputs.job_output_file}}
