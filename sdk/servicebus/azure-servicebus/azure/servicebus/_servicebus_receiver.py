@@ -360,7 +360,7 @@ class ServiceBusReceiver(
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = (
+            self._handler._message_received = ( # pylint: disable=protected-access
                 self._enhanced_message_received
             )  # pylint: disable=protected-access
 

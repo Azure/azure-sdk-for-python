@@ -123,8 +123,8 @@ class ServiceBusAzureSasTokenCredentialAsync(object):
         self.token_type = TOKEN_TYPE_SASTOKEN
 
     async def get_token(
-        self, *scopes: str, **kwargs: Any
-    ) -> AccessToken:  # pylint:disable=unused-argument
+        self, *scopes: str, **kwargs: Any # pylint:disable=unused-argument
+    ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
         """

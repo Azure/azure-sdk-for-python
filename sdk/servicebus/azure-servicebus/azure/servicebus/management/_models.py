@@ -869,7 +869,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
             requires_session=internal_subscription.requires_session,
             default_message_time_to_live=internal_subscription.default_message_time_to_live,
             dead_lettering_on_message_expiration=internal_subscription.dead_lettering_on_message_expiration,
-            dead_lettering_on_filter_evaluation_exceptions=internal_subscription.dead_lettering_on_filter_evaluation_exceptions,
+            dead_lettering_on_filter_evaluation_exceptions=internal_subscription.dead_lettering_on_filter_evaluation_exceptions, # pylint:disable=line-too-long
             max_delivery_count=internal_subscription.max_delivery_count,
             enable_batched_operations=internal_subscription.enable_batched_operations,
             status=internal_subscription.status,

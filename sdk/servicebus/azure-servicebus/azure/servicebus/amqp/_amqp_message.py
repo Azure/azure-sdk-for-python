@@ -362,8 +362,8 @@ class AmqpAnnotatedMessage(object):
         :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type,
-            AmqpMessageBodyType.VALUE,  # pylint: disable=protected-access
+            self._message._body.type,   # pylint: disable=protected-access
+            AmqpMessageBodyType.VALUE,
         )
 
     @property
