@@ -20,7 +20,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot EventProducerAsyncClient/EventProducerClient issues](#troubleshoot-eventproducerasyncclienteventproducerclient-issues)
   - [Cannot set multiple partition keys for events in EventDataBatch](#cannot-set-multiple-partition-keys-for-events-in-eventdatabatch)
   - [Setting partition key on EventData is not set in Kafka consumer](#setting-partition-key-on-eventdata-is-not-set-in-kafka-consumer)
-- [Troubleshoot EventProcessorClient issues](#troubleshoot-eventprocessorclient-issues)
+- [Troubleshoot EventHubConsumerClient issues](#troubleshoot-eventprocessorclient-issues)
   - [412 precondition failures when using an event processor](#412-precondition-failures-when-using-an-event-processor)
   - [Partition ownership changes frequently](#partition-ownership-changes-frequently)
   - ["...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"](#current-receiver-receiver_name-with-epoch-0-is-getting-disconnected)
@@ -95,7 +95,7 @@ The legacy Event Hub clients allowed customers to add components to the connecti
 
 #### Adding "TransportType=AmqpWebSockets"
 
-To use web sockets, pass in a kwarg `transport_type = TransportType.AmqpOverWebsocket` during client creation .
+To use web sockets, pass in a kwarg `transport_type = TransportType.AmqpOverWebsocket` during client creation.
 
 #### Adding "Authentication=Managed Identity"
 
@@ -132,7 +132,7 @@ uamqp_connection_logger = logging.getLogger('uamqp.connection')
 uamqp_connection_logger.setLevel(logging.ERROR)
 ```
 
-## Troubleshoot EventProducerAsyncClient/EventProducerClient issues
+## Troubleshoot EventHubProducerClient (Sync/Async) issues
 
 ### Cannot set multiple partition keys for events in EventDataBatch
 
@@ -152,7 +152,7 @@ By design, Event Hubs does not promote the Kafka message key to be the Event Hub
 
 ### Partition ownership changes frequently
 
-When the number of EventProcessorClient instances changes (i.e. added or removed), the running instances try to load-balance partitions between themselves.  For a few minutes after the number of processors changes, partitions are expected to change owners.   Once balanced, partition ownership should be stable and change infrequently.  If partition ownership is changing frequently when the number of processors is constant, this likely indicates a problem.  It is recommended that a GitHub issue with logs and a repro be filed in this case.
+When the number of EventHubConsumerClient instances changes (i.e. added or removed), the running instances try to load-balance partitions between themselves.  For a few minutes after the number of processors changes, partitions are expected to change owners.   Once balanced, partition ownership should be stable and change infrequently.  If partition ownership is changing frequently when the number of processors is constant, this likely indicates a problem.  It is recommended that a GitHub issue with logs and a repro be filed in this case.
 
 ### "...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"
 
@@ -163,7 +163,7 @@ The entire error message looks something like this:
 > TrackingId:<GUID>, SystemTracker:<NAMESPACE>:eventhub:<EVENT_HUB_NAME>|<CONSUMER_GROUP>,
 > Timestamp:2022-01-01T12:00:00}"}
 
-This error is expected when load balancing occurs after EventProcessorClient instances are added or removed.  Load balancing is an ongoing process.  When using the BlobCheckpointStore with your consumer, every ~30 seconds (by default), the consumer will check to see which consumers have a claim for each partition, then run some logic to determine whether it needs to 'steal' a partition from another consumer.  The service mechanism used to assert exclusive ownership over a partition is known as the [Epoch][Epoch].
+This error is expected when load balancing occurs after EventHubConsumerClient instances are added or removed.  Load balancing is an ongoing process.  When using the BlobCheckpointStore with your consumer, every ~30 seconds (by default), the consumer will check to see which consumers have a claim for each partition, then run some logic to determine whether it needs to 'steal' a partition from another consumer.  The service mechanism used to assert exclusive ownership over a partition is known as the [Epoch][Epoch].
 
 However, if no instances are being added or removed, there is an underlying issue that should be addressed.  See [Partition ownership changes a lot](#partition-ownership-changes-a-lot) for additional information and [Filing GitHub issues](#filing-github-issues).
 
@@ -189,11 +189,11 @@ When filing GitHub issues, the following details are requested:
 
 * Event Hub environment
   * How many partitions?
-* EventProcessorClient environment
+* EventHubConsumerClient environment
   * What is the machine(s) specs processing your Event Hub?
   * How many instances are running?
 * What is the average size of each EventData?
-* What is the traffic pattern like in your Event Hub?  (i.e. # messages/minute and if the EventProcessorClient is always busy or has slow traffic periods.)
+* What is the traffic pattern like in your Event Hub?  (i.e. # messages/minute and if the EventHubConsumerClient is always busy or has slow traffic periods.)
 * Repro code and steps
   * This is important as we often cannot reproduce the issue in our environment.
 * Logs.  We need DEBUG logs, but if that is not possible, INFO at least.  Error and warning level logs do not provide enough information.  The period of at least +/- 10 minutes from when the issue occurred.
