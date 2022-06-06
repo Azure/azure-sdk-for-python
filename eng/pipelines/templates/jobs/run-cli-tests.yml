@@ -26,7 +26,7 @@ parameters:
 
 jobs:
   - job:
-    displayName: 'Run CLI Tests'
+    displayName: 'Run Azure CLI Tests'
 
     variables:
       - template: ../variables/globals.yml
@@ -51,13 +51,17 @@ jobs:
       - checkout: self
         path: 's'
 
+      - checkout: AzureCLI
+        fetchDepth: 1
+        path: 'cli'
+
       - template: /eng/pipelines/templates/steps/use-python-version.yml
         parameters:
           versionSpec: '${{ parameters.PythonVersion }}'
 
       - template: .azure-pipelines/templates/azdev_setup.yml@AzureCLI
         parameters:
-          CLIRepoPath: $(Build.SourcesDirectory)/azure-cli
+          CLIRepoPath: $(Agent.BuildDirectory)/cli
 
       - ${{ each artifact in parameters.TargetRepoPackages }}:
         - bash: |
@@ -79,5 +83,5 @@ jobs:
 
           python -m pip freeze
 
-          python $(Build.SourcesDirectory)/azure-cli/scripts/ci/automation_full_test.py "1" "1" "latest" "${{ parameters.TargetModules }}"
+          python $(Agent.BuildDirectory)/cli/scripts/ci/automation_full_test.py "1" "1" "latest" "${{ parameters.TargetModules }}"
         displayName: Run Tests
