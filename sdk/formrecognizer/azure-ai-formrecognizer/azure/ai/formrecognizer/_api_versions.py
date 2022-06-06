@@ -24,7 +24,7 @@ class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 def validate_api_version(api_version, client_kind):
     # type: (str, str) -> None
-    """Raise ValueError if api_version is invalid """
+    """Raise ValueError if api_version is invalid"""
 
     if client_kind == "form":
         try:
