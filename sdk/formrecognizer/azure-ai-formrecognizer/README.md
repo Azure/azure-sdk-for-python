@@ -1,6 +1,6 @@
 # Azure Form Recognizer client library for Python
 
-Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+Azure Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs in addition to general layout from documents.
@@ -158,7 +158,7 @@ document_analysis_client = DocumentAnalysisClient(
 
 ### DocumentAnalysisClient
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model` parameter to select the type of model for analysis.
+Use the `model` parameter to select the type of model for analysis. The following table includes some of the models supported by the service (for a full list of supported models, see [here][fr-models]):
 
 |Model| Features
 |-|-
@@ -421,6 +421,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 - Analyze U.S. W-2 tax documents using the `prebuilt-tax.us.w2` model (fields recognized by the service can be found [here][service_recognize_tax_documents]).
+- See other supported prebuilt models [here][fr-models].
 
 ### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
