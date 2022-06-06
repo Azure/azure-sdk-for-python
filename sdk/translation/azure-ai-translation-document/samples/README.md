@@ -37,7 +37,7 @@ These sample programs show common scenarios for the Document Translation client'
 1. Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-translation-document --pre
+pip install azure-ai-translation-document
 ```
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
 

@@ -24,7 +24,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-translation-document --pre
+pip install azure-ai-translation-document
 ```
 
 > Note: This version of the client library defaults to the v1.0 version of the service
