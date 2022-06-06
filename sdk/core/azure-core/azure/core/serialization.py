@@ -17,7 +17,7 @@ from .utils._utils import _FixedOffset
 
 _LOGGER = logging.getLogger(__name__)
 
-__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field"]
+__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
 
 class _Null(object):
@@ -216,7 +216,17 @@ def _get_model(module_name: str, model_name: str):
         return model_name
     return models[model_name]
 
+_UNSET = object()
+
 class Model(dict):
+
+    __mapping__ = {}
+
+    def __init_subclass__(cls, /, discriminator=_UNSET) -> None:
+        # using this to handle polymorphic models
+        if discriminator is not _UNSET:
+            cls.__mapping__[discriminator or cls.__name__] = cls
+        return super().__init_subclass__()
 
     def __init__(self, **kwargs):
         super().__init__({
@@ -251,13 +261,21 @@ class Model(dict):
             k: v._rest_name
             for k, v in attr_to_rest_field.items()
         }
+        try:
+            discriminator = next(a for a in attr_to_rest_field.values() if a._is_discriminator)
+            cls._is_discrimated = any(a for a in attr_to_rest_field.values() if a._is_discriminator)
+
+        except StopIteration:
+            pass
+
         return super().__new__(cls, *args, **kwargs)
 
 class _RestField:
-    def __init__(self, name: Optional[str] = None, type: Optional[Callable] = None):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[Callable] = None, is_discriminator: bool = False):
         self._type = type
         self._rest_name = name
         self._module: Optional[str] = None
+        self._is_discriminator = is_discriminator
 
     def __get__(self, obj: Model, type=None):
         # by this point, type and rest_name will have a value bc we default
@@ -392,3 +410,6 @@ class _RestField:
 
 def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
     return _RestField(name=name, type=type)
+
+def rest_discriminator(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
+    return _RestField(name=name, type=type, is_discriminator=True)

@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import dataclasses
 import json
 import datetime
-from typing import Any, List, Literal, Dict, Sequence, Set, Tuple, Optional
+from typing import Any, List, Literal, Dict, Sequence, Set, Tuple, Optional, Union
 import pytest
 import isodate
-from azure.core.serialization import Model, rest_field
+from azure.core.serialization import Model, rest_field, rest_discriminator
 
 def modify_args(init):
     def _wrapper(self, **kwargs):
@@ -1055,3 +1054,72 @@ def test_multiple_inheritance_complex():
     assert isinstance(kitten, Cat)
     assert isinstance(kitten, Feline)
     assert isinstance(kitten, CuteThing)
+
+class Animal(Model):
+
+    kind: str = rest_discriminator()
+    is_domesticated: str = rest_field(name="isDomesticated")
+
+    def __init__(self, *, genus: str, **kwargs):
+        super().__init__(genus=genus, **kwargs)
+
+class Fish(Animal, discriminator="fish"):
+    fish_type: str = rest_field(name="fishType")
+    siblings: List["Fish"] = rest_field()
+
+    def __init__(self, *, genus: str, fish_type: str, siblings: List["Fish"], **kwargs):
+        super().__init__(genus=genus, **kwargs)
+        self.fish_type = fish_type
+        self.siblings = siblings
+        self.kind: Literal["fish"] = "fish"
+
+
+class Salmon(Fish, discriminator="salmon"):
+    is_sashimi: bool = rest_field(name="isSashimi")
+
+    def __init__(self, *, genus: str, fish_type: str, siblings: List["Fish"], is_sashimi: bool, **kwargs):
+        super().__init__(
+            genus=genus,
+            fish_type=fish_type,
+            siblings=siblings,
+            **kwargs
+        )
+        self.is_sashimi = is_sashimi
+        self.kind: Literal["salmon"] = "salmon"
+
+class Cat(Animal, discriminator="cat"):
+    has_kitten: bool = rest_field(name="hasKitten")
+
+    def __init__(self, *, genus: str, has_kitten: bool, **kwargs):
+        super().__init__(genus=genus, **kwargs)
+        self.has_kitten = has_kitten
+        self.kind: Literal["cat"] = "cat"
+
+class Dog(Animal, discriminator="dog"):
+    has_puppy: bool = rest_field(name="hasPuppy")
+    enemies: List[Cat] = rest_field()
+
+    def __init__(self, *, genus: str, has_puppy: bool, enemies: List[Cat], **kwargs):
+        super().__init__(genus=genus, **kwargs)
+        self.has_puppy = has_puppy
+        self.enemies = enemies
+        self.kind: Literal["dog"] = "dog"
+
+def test_polymorphism():
+    animal = Animal(genus="idk", kind="cat")
+    cat = Cat(genus="idk", has_kitten=True)
+
+# def get_animal(raw_response: Dict[str, Any]) -> Union[Fish, Cat, Dog]:
+#     if raw_response["kind"] == "Cat":
+#         return Cat(**raw_response)
+#     if raw_response["kind"] == "fish":
+#         return Fish(**raw_response)
+#     if raw_response["kind"] == "Dog":
+#         return Dog(**raw_response)
+#     return Animal(**raw_response)  # type: ignore
+
+# animal = get_animal({"kind": "Cat", "hasKitten": False})
+# if animal.kind == "cat":
+#     print(animal.has_kitten)
+# elif animal.kind == "dog":
+#     print(animal.enemies)
