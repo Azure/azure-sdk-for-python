@@ -94,7 +94,7 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 
 1. Install the Azure Event Hubs client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
-pip install azure-eventhub==5.8.0a3
+pip install azure-eventhub==5.8.0a4
 ```
 
 To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
