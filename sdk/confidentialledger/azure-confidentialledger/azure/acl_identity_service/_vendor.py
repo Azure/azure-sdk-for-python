@@ -6,8 +6,6 @@
 # --------------------------------------------------------------------------
 
 
-
-
 def _format_url_section(template, **kwargs):
     components = template.split("/")
     while components:

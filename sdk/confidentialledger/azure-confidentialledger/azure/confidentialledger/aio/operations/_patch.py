@@ -29,6 +29,16 @@ def patch_sdk():
 
 
 class ConfidentialLedgerOperations(GeneratedOperations):
+    async def create_or_update_user(
+        self, user_id: str, user_details: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
+        return await super().create_or_update_user(
+            user_id,
+            user_details,
+            content_type=kwargs.pop("content_type", "application/json"),
+            **kwargs,
+        )
+
     async def get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ):
@@ -164,7 +174,11 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         )
 
     async def post_ledger_entry(
-        self, entry: Union[JSON, IO], *, collection_id: Optional[str] = None, **kwargs: Any
+        self,
+        entry: Union[JSON, IO],
+        *,
+        collection_id: Optional[str] = None,
+        **kwargs: Any,
     ) -> JSON:
         """Writes a ledger entry.
 
@@ -177,11 +191,6 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         :type entry: Union[JSON, IO]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :keyword interval: Interval, in seconds, between retries, defaults to 0.5.
-        :paramtype interval: float
-        :keyword max_tries: Maximum number of times to try the query, defaults to 3. Retries are
-            attempted if the specified transaction is not Committed yet.
-        :paramtype max_tries: int
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -213,7 +222,11 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         )
 
     async def post_ledger_entry_and_wait_for_commit(
-        self, entry: Union[JSON, IO], *, collection_id: Optional[str] = None, **kwargs: Any
+        self,
+        entry: Union[JSON, IO],
+        *,
+        collection_id: Optional[str] = None,
+        **kwargs: Any,
     ):
         """Writes a ledger entry and waits for it to be durably committed.
 

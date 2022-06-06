@@ -93,7 +93,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
         await client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
-            "Test entry 2 from Python SDK"
+            {"contents": "Test entry 2 from Python SDK"}
         )
 
         latest_entry = await client.confidential_ledger.get_current_ledger_entry()
@@ -141,7 +141,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         entry_contents = "Test sub-ledger entry from Python SDK"
         append_result = await client.confidential_ledger.post_ledger_entry(
             {"contents": entry_contents},
-            sub_ledger_id=collection_id,
+            collection_id=collection_id,
         )
         self.assertTrue(append_result["transactionId"])
         self.assertEqual(append_result["collectionId"], collection_id)
@@ -157,7 +157,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             transaction_id=append_result_transaction_id
         )
         self.assertIsNotNone(transaction_status)
-        self.assertIs(transaction_status, "Committed")
+        self.assertEqual(transaction_status["state"], "Committed")
 
         receipt = await client.confidential_ledger.get_receipt(
             transaction_id=append_result_transaction_id
@@ -166,7 +166,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertTrue(receipt["contents"])
 
         latest_entry = await client.confidential_ledger.get_ledger_entry(
-            sub_ledger_id=collection_id
+            collection_id=collection_id
         )
         # The transaction ids may not be equal in the unfortunate edge case where a governance
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
@@ -179,11 +179,11 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
         await client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
             "Test sub-ledger entry 2 from Python SDK",
-            sub_ledger_id=collection_id,
+            collection_id=collection_id,
         )
 
         latest_entry = await client.confidential_ledger.get_ledger_entry(
-            sub_ledger_id=collection_id
+            collection_id=collection_id
         )
         self.assertNotEqual(latest_entry["transactionId"], append_result_transaction_id)
         self.assertNotEqual(latest_entry["contents"], entry_contents)
@@ -191,7 +191,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
         original_entry = await client.confidential_ledger.get_ledger_entry(
             transaction_id=append_result_transaction_id,
-            sub_ledger_id=collection_id,
+            collection_id=collection_id,
         )
         self.assertEqual(original_entry["transactionId"], append_result_transaction_id)
         self.assertEqual(original_entry["contents"], entry_contents)
@@ -225,7 +225,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         for i in range(num_messages_sent):
             message = "message-{0}".format(i)
             kwargs = (
-                {} if modulus == 0 else {"sub_ledger_id": "{0}".format(i % modulus)}
+                {} if modulus == 0 else {"collection_id": "{0}".format(i % modulus)}
             )
             append_result = await client.confidential_ledger.post_ledger_entry(
                 {"contents": message}, **kwargs

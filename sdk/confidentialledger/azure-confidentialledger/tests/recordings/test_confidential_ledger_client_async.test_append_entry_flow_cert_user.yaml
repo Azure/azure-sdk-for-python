@@ -138,7 +138,7 @@ interactions:
       message: OK
     url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview
 - request:
-    body: '{"contents": "Test entry 2 from Python SDK"}'
+    body: '{"contents": {"contents": "Test entry 2 from Python SDK"}}'
     headers:
       Accept:
       - application/json
@@ -192,7 +192,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview
   response:
     body:
-      string: '{"contents":"Test entry 2 from Python SDK","collectionId":"subledger:0","transactionId":"2.45838"}'
+      string: '{"contents":{"contents": "Test entry 2 from Python SDK"},"collectionId":"subledger:0","transactionId":"2.45838"}'
     headers:
       content-length: '97'
       content-type: application/json
