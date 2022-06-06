@@ -126,7 +126,7 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
 
     def append_entry_flow_with_collection_id_actions(self, client):
         collection_id = "132"
-        entry_contents = "Test sub-ledger entry from Python SDK"
+        entry_contents = f"Test entry from Python SDK. Collection: {collection_id}"
         append_result = client.confidential_ledger.post_ledger_entry(
             {"contents": entry_contents},
             collection_id=collection_id,
@@ -151,9 +151,9 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             transaction_id=append_result_transaction_id
         )
         self.assertEqual(receipt["transactionId"], append_result_transaction_id)
-        self.assertTrue(receipt["contents"])
+        self.assertTrue(receipt["receipt"])
 
-        latest_entry = client.confidential_ledger.get_ledger_entry(
+        latest_entry = client.confidential_ledger.get_current_ledger_entry(
             collection_id=collection_id
         )
         # The transaction ids may not be equal in the unfortunate edge case where a governance
@@ -166,11 +166,11 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
         client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
-            "Test sub-ledger entry 2 from Python SDK",
+            {"contents": f"Test entry 2 from Python SDK. Collection: {collection_id}"},
             collection_id=collection_id,
         )
 
-        latest_entry = client.confidential_ledger.get_ledger_entry(
+        latest_entry = client.confidential_ledger.get_current_ledger_entry(
             collection_id=collection_id
         )
         self.assertNotEqual(latest_entry["transactionId"], append_result_transaction_id)
@@ -181,9 +181,13 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
             transaction_id=append_result_transaction_id,
             collection_id=collection_id,
         )
-        self.assertEqual(original_entry["transactionId"], append_result_transaction_id)
-        self.assertEqual(original_entry["contents"], entry_contents)
-        self.assertEqual(original_entry["collectionId"], append_result_sub_ledger_id)
+        self.assertEqual(
+            original_entry["entry"]["transactionId"], append_result_transaction_id
+        )
+        self.assertEqual(original_entry["entry"]["contents"], entry_contents)
+        self.assertEqual(
+            original_entry["entry"]["collectionId"], append_result_sub_ledger_id
+        )
 
     @ConfidentialLedgerPreparer()
     def test_range_query_aad_user(self, confidentialledger_endpoint):

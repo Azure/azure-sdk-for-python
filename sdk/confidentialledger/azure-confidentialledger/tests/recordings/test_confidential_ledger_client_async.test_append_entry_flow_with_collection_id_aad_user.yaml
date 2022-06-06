@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"contents": "Test sub-ledger entry from Python SDK"}'
+    body: '{"contents": f"Test entry from Python SDK. Collection: {collection_id}"}'
     headers:
       Accept:
       - application/json
@@ -149,7 +149,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview&subLedgerId=132
   response:
     body:
-      string: '{"contents":"Test sub-ledger entry from Python SDK","collectionId":"132","transactionId":"2.45840"}'
+      string: '{"contents":f"Test entry from Python SDK. Collection: {collection_id}","collectionId":"132","transactionId":"2.45840"}'
     headers:
       content-length: '98'
       content-type: application/json
@@ -159,7 +159,7 @@ interactions:
       message: OK
     url: https://lyshi-azure-sdk-for-python.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview&subLedgerId=132
 - request:
-    body: '{"contents": "Test sub-ledger entry 2 from Python SDK"}'
+    body: '{"contents": {"contents": f"Test entry 2 from Python SDK. Collection: {collection_id}"}}'
     headers:
       Accept:
       - application/json
@@ -213,7 +213,7 @@ interactions:
     uri: https://fake.confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview&subLedgerId=132
   response:
     body:
-      string: '{"contents":"Test sub-ledger entry 2 from Python SDK","collectionId":"132","transactionId":"2.45842"}'
+      string: '{"contents":{"contents": f"Test entry 2 from Python SDK. Collection: {collection_id}"},"collectionId":"132","transactionId":"2.45842"}'
     headers:
       content-length: '100'
       content-type: application/json
