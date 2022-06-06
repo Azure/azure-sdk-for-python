@@ -17,7 +17,7 @@ from .utils._utils import _FixedOffset
 
 _LOGGER = logging.getLogger(__name__)
 
-__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_property"]
+__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field"]
 
 
 class _Null(object):
@@ -236,7 +236,7 @@ class Model(dict):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
-        attr_to_rest_field = {
+        attr_to_rest_field: Dict[str, _RestField] = { # map attribute name to rest_field property
             k: v
             for mro_class in cls.__mro__[:-3][::-1] # ignore model, dict, and object parents, and reverse the mro order
             for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
@@ -257,10 +257,12 @@ class _RestField:
     def __init__(self, name: Optional[str] = None, type: Optional[Callable] = None):
         self._type = type
         self._rest_name = name
-        self._module = None
+        self._module: Optional[str] = None
 
     def __get__(self, obj: Model, type=None):
-        return self._type(obj.__getitem__(self._rest_name))
+        # by this point, type and rest_name will have a value bc we default
+        # them in __new__ of the Model class
+        return cast(Callable, self._type)(obj.__getitem__(self._rest_name))
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
@@ -282,7 +284,7 @@ class _RestField:
 
         # is it optional?
         try:
-            # right now, assuming we don't have unions (since we're getting rid of the only)
+            # right now, assuming we don't have unions, since we're getting rid of the only
             # union we used to have in msrest models, which was union of str and enum
             if any(a for a in annotation.__args__ if a == type(None)):
 
@@ -302,7 +304,7 @@ class _RestField:
         # is it a forward ref / in quotes?
         if isinstance(annotation, str) or type(annotation) == ForwardRef:
             try:
-                model_name = annotation.__forward_arg__
+                model_name = annotation.__forward_arg__  # type: ignore
             except AttributeError:
                 model_name = annotation
             if self._module is not None:
@@ -328,8 +330,6 @@ class _RestField:
                 )
         except (AttributeError, IndexError):
             pass
-
-            list
         try:
             if annotation._name in ["List", "Set", "Tuple", "Sequence"]:
                 if len(annotation.__args__) > 1:
