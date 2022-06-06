@@ -7,6 +7,7 @@
 from subprocess import check_call
 import argparse
 import os
+import sys
 import logging
 
 from tox_helper_tasks import find_whl, get_package_details
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-    cmds = ["apistubgen", "--pkg-path", pkg_path]
+    cmds = [sys.executable, "-m", "apistub", "--pkg-path", pkg_path]
     if args.out_path:        
         cmds.extend(["--out-path", os.path.join(args.out_path, os.path.basename(pkg_path))])
 
