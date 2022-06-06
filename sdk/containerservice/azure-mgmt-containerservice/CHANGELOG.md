@@ -1,5 +1,19 @@
 # Release History
 
+## 20.0.0 (2022-06-06)
+
+**Features**
+
+  - Model AzureKeyVaultKms has a new parameter key_vault_network_access
+  - Model AzureKeyVaultKms has a new parameter key_vault_resource_id
+  - Model ManagedCluster has a new parameter workload_auto_scaler_profile
+  - Model ManagedClusterSecurityProfile has a new parameter defender
+  - Model ManagedClusterStorageProfile has a new parameter blob_csi_driver
+
+**Breaking changes**
+
+  - Model ManagedClusterSecurityProfile no longer has parameter azure_defender
+
 ## 19.1.0 (2022-05-13)
 
 **Features**
