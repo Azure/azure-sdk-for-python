@@ -175,6 +175,7 @@ def test_optional_property():
         },
         "Lady": None,
     }
+    assert model.optional_dict
     assert model.optional_dict["Eugene"].name == model.optional_dict["Eugene"]["name"] == "Eugene"
     assert model.optional_dict["Lady"] is None
 
@@ -188,9 +189,11 @@ def test_optional_property():
         },
         "optional_myself": None
     }
+    assert model.optional_myself
     assert model.optional_myself.optional_str is None
     assert model.optional_myself.optional_time == datetime.time(11, 34, 56)
     assert model.optional_myself.optional_dict is None
+    assert model.optional_myself.optional_model
     assert model.optional_myself.optional_model.name == "Lady"
     assert model.optional_myself.optional_model.species == "Newt"
     assert model.optional_myself.optional_myself is None
@@ -538,6 +541,7 @@ def test_model_recursion_complex():
         "dictOfListOfMe": None,
         "listOfDictOfMe": None,
     })]
+    assert model.list_of_me
     assert model.list_of_me[0].name == "it's me!"
     assert model.list_of_me[0].list_of_me is None
     assert isinstance(model.list_of_me, List)
@@ -757,6 +761,7 @@ def test_inheritance_4_levels():
     assert b.prop == "3.4"
     assert b['prop'] == 3.4
     assert b.bcd_prop == [B(prop=4.3)]
+    assert b.bcd_prop
     assert b.bcd_prop[0].prop == "4.3"
     assert b.bcd_prop[0].bcd_prop is None
     assert b == {"prop": 3.4, "bcdProp": [{"prop": 4.3, "bcdProp": None}]}
@@ -766,6 +771,7 @@ def test_inheritance_4_levels():
     c = C(prop=3.4, bcd_prop=[b], cd_prop=a)
     assert c.prop == c['prop'] == 3.4
     assert c.bcd_prop == [b]
+    assert c.bcd_prop
     assert isinstance(c.bcd_prop[0], B)
     assert c['bcdProp'] == [b] == [{"prop": 3.4, "bcdProp": [{"prop": 4.3, "bcdProp": None}]}]
     assert c.cd_prop == a
@@ -791,6 +797,7 @@ def test_inheritance_4_levels():
     }
     assert d.prop == d['prop'] == 3.4
     assert d.bcd_prop == [b]
+    assert d.bcd_prop
     assert isinstance(d.bcd_prop[0], B)
     assert d.cd_prop == a
     assert isinstance(d.cd_prop, A)
@@ -1001,6 +1008,7 @@ def test_multiple_inheritance_complex():
     assert cat.meows
     assert cat.hisses
     assert cat.likes_milk
+    assert cat.siblings
     assert len(cat.siblings) == 1
     assert isinstance(cat.siblings[0], Feline)
 
@@ -1038,6 +1046,7 @@ def test_multiple_inheritance_complex():
     assert kitten.meows
     assert kitten.hisses
     assert kitten.likes_milk
+    assert kitten.siblings
     assert len(kitten.siblings) == 1
     assert isinstance(kitten.siblings[0], Feline)
     assert kitten.eats_mice_yet
