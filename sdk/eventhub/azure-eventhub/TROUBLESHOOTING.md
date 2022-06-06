@@ -39,11 +39,11 @@ The recommended way to solve the specific exception the AMQP exception represent
 
 ### Find relevant information in exception messages
 
-An [EventHubError][EventHubError] contains three fields which describe the error.
+An [EventHubError][EventHubError] contains three fields which describe the error:
 
 * **message**: The underlying AMQP error message. A description of the errors can be found in the [Exceptions module][ExceptionModule] or the [OASIS AMQP 1.0 spec][AmqpSpec].
 * **error**: The error condition if available.
-* **details**: The error details, if included in the service response
+* **details**: The error details, if included in the service response.
   
 ### Commonly encountered exceptions
 
@@ -71,7 +71,7 @@ An `AuthenticationError` means that the provided credentials do not allow for th
 * See if your network is blocking specific IP addresses.
   * [What IP addresses do I need to allow?][EventHubsIPAddresses]
 * If applicable, check the proxy configuration.  See [configure proxy][PublishEventsWithWebSocketsAndProxy] sample.
-* For more information about troubleshooting network connectivity is at [Event Hubs troubleshooting][EventHubsTroubleshooting]
+* For more information about troubleshooting network connectivity, refer to [Event Hubs troubleshooting][EventHubsTroubleshooting]
 
 ### SSL handshake failures
 
@@ -80,7 +80,6 @@ This error can occur when an intercepting proxy is used.  We recommend testing i
 ### Socket exhaustion errors
 
 Applications should prefer treating the Event Hubs clients as a singleton, creating and using a single instance through the lifetime of their application.  This is important as each client type manages its connection; creating a new Event Hub client results in a new AMQP connection, which uses a socket.  Additionally, it is essential to be aware that your client is responsible for calling `close()` when it is finished using a client or to use the `with statement` for clients so that they are automatically closed after the flow execution leaves that block.
-
 
 ### Connect using an IoT connection string
 
@@ -145,7 +144,7 @@ The partition key of the EventHubs event is available in the Kafka record header
 
 By design, Event Hubs does not promote the Kafka message key to be the Event Hubs partition key nor the reverse because with the same value, the Kafka client and the Event Hub client likely send the message to two different partitions.  It might cause some confusion if we set the value in the cross-protocol communication case.  Exposing the properties with a protocol specific key to the other protocol client should be good enough.
 
-## Troubleshoot EventProcessorClient issues
+## Troubleshoot EventHubConsumerClient issues
 
 ### 412 precondition failures when using an event processor
 
@@ -174,7 +173,7 @@ High CPU usage is usually because an instance owns too many partitions.  We reco
 
 ### Processor client stops receiving
 
-The processor client often is continually running in a host application for days on end.  Sometimes, they notice that EventProcessorClient is not processing one or more partitions.  Usually, this is not enough information to determine why the exception occurred.  The EventProcessorClient stopping is the symptom of an underlying cause (i.e. race condition) that occurred while trying to recover from a transient error.  Please see [Filing Github issues](#filing-github-issues) for the information we require.
+The processor client often is continually running in a host application for days on end.  Sometimes, they notice that EventHubConsumerClient is not processing one or more partitions.  Usually, this is not enough information to determine why the exception occurred.  The EventHubConsumerClient stopping is the symptom of an underlying cause (i.e. race condition) that occurred while trying to recover from a transient error.  Please see [Filing Github issues](#filing-github-issues) for the information we require.
 
 ### Migrate from legacy to new client library
 
@@ -193,7 +192,6 @@ When filing GitHub issues, the following details are requested:
 * EventProcessorClient environment
   * What is the machine(s) specs processing your Event Hub?
   * How many instances are running?
-  * What is the max heap set?
 * What is the average size of each EventData?
 * What is the traffic pattern like in your Event Hub?  (i.e. # messages/minute and if the EventProcessorClient is always busy or has slow traffic periods.)
 * Repro code and steps
@@ -202,15 +200,10 @@ When filing GitHub issues, the following details are requested:
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
-[MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
-[ClientCreation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_creation.py
-[PublishEventsWithAzureIdentity]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_identity_authentication.py
-[PublishEventsWithWebSocketsAndProxy]: https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/eventhubs/azure-messaging-eventhubs/src/samples/java/com/azure/messaging/eventhubs/
-[SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 
 <!-- docs.microsoft.com links -->
-[ExceptionModule]: https://docs.microsoft.com/en-us/python/api/azure-eventhub/azure.eventhub.exceptions
-[EventHubError]: https://docs.microsoft.com/en-us/python/api/azure-eventhub/azure.eventhub.exceptions.eventhuberror
+[ExceptionModule]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions
+[EventHubError]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions.eventhuberror
 [AmqpTroubleshooting]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-amqp-troubleshoot
 [AuthorizeSAS]: https://docs.microsoft.com/azure/event-hubs/authorize-access-shared-access-signature
 [Epoch]: https://docs.microsoft.com/azure/event-hubs/event-hubs-event-processor-host#epoch
