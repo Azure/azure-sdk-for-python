@@ -269,7 +269,7 @@ class CodegenTestPR:
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         print("**** path: ", Path(f'sdk/{self.sdk_folder}'))
         print("**** path now:", os.getcwd())
-        with open('MANIFEST.in', 'r', encoding='utf-8') as f:
+        with open(Path(f'azure-mgmt-{self.package_name}/MANIFEST.in'), 'r', encoding='utf-8') as f:
             print(f'**** {f.read()}')
         log('packaging_tools --build-conf successfully ')
 
