@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+# this command job does not work. 
+# It is to illustrate literal inputs and named output support required in command job for parity with command component job.
+type: command
+environment_variables:
+  AZUREML_COMPUTE_USE_COMMON_RUNTIME: "false"
+inputs:
+  training_input: 
+    path: ./data
+  max_epocs: 20
+  learning_rate: 1.8
+outputs:
+  trained_model:
+    mode: upload
+  reports:
+    mode: upload
+code: ./train_src
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+#compute: azureml:cpu-cluster
+command: >-
+  python train1.py 
+  --training_data "${{inputs.training_input}}"
+  --max_epocs ${{inputs.max_epocs}}
+  --learning_rate ${{inputs.learning_rate}}
+  --learning_rate_schedule 'time-based' 
+  --model_output ${{outputs.trained_model}}
+  --reports ${{outputs.reports}}
+

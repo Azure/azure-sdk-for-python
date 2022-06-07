@@ -132,7 +132,6 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK')
-        self.usr_token = os.getenv('USR_TOKEN')
         self.pipeline_link = os.getenv('PIPELINE_LINK')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
@@ -446,7 +445,7 @@ class CodegenTestPR:
         self.run_test_proc()
 
     def create_pr_proc(self):
-        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.usr_token)
+        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
         pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'

@@ -1,0 +1,15 @@
+name: TestEnv
+version: 1
+conda_file: environment_files/environment.yml
+os_type: Linux
+image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+inference_config:
+  scoring_route:
+    port: 5001
+    path: /predict
+  liveness_route:
+    port: 5002
+    path: /health/live
+  readiness_route:
+    port: 5003
+    path: /health/ready

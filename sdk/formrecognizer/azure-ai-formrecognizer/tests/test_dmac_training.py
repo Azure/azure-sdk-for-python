@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer._models import CustomFormModel, DocumentModel
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, _models
 from testcase import FormRecognizerTest

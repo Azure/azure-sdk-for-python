@@ -244,8 +244,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         ) 
         async with identity_client:
-            add_token = self.generate_teams_user_aad_token() 
-            token_response = await identity_client.get_token_for_teams_user(add_token)
+            aad_token = self.generate_teams_user_aad_token() 
+            token_response = await identity_client.get_token_for_teams_user(aad_token)
 
         assert token_response.token is not None
 
@@ -258,8 +258,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         async with identity_client:
-            add_token = self.generate_teams_user_aad_token() 
-            token_response = await identity_client.get_token_for_teams_user(add_token)
+            aad_token = self.generate_teams_user_aad_token() 
+            token_response = await identity_client.get_token_for_teams_user(aad_token)
 
         assert token_response.token is not None
 

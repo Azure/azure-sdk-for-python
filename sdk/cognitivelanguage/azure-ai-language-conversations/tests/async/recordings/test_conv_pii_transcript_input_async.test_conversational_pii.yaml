@@ -20,37 +20,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: POST
-    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
   response:
     body:
       string: ''
     headers:
-      apim-request-id: ca1622da-8497-4937-a30d-98f525ee2939
+      apim-request-id: 2043c8d4-5402-45d5-ab9c-39463afad491
       content-length: '0'
-      date: Mon, 23 May 2022 20:36:22 GMT
-      operation-location: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/983d5878-0674-461d-a2d5-d66449a1d398?api-version=2022-05-15-preview
-      server: istio-envoy
+      date: Thu, 26 May 2022 16:35:24 GMT
+      operation-location: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/f58961d5-ea77-42aa-b32e-c8a375c9d462?api-version=2022-05-15-preview
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '126'
-      x-http2-stream-id: '3'
+      x-envoy-upstream-service-time: '1491'
     status:
       code: 202
       message: Accepted
-    url: https://clubuildppe.ppe.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+    url: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-language-conversations/1.0.0b4 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-conversations/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/983d5878-0674-461d-a2d5-d66449a1d398?api-version=2022-05-15-preview
+    uri: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/f58961d5-ea77-42aa-b32e-c8a375c9d462?api-version=2022-05-15-preview
   response:
     body:
-      string: '{"jobId":"983d5878-0674-461d-a2d5-d66449a1d398","lastUpdatedDateTime":"2022-05-23T20:36:23Z","createdDateTime":"2022-05-23T20:36:23Z","expirationDateTime":"2022-05-24T20:36:23Z","status":"succeeded","errors":[],"displayName":"Analyze
-        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-23T20:36:23.7016216Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
+      string: '{"jobId":"f58961d5-ea77-42aa-b32e-c8a375c9d462","lastUpdatedDateTime":"2022-05-26T16:35:26Z","createdDateTime":"2022-05-26T16:35:24Z","expirationDateTime":"2022-05-27T16:35:24Z","status":"succeeded","errors":[],"displayName":"Analyze
+        PII in conversation","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalPIIResults","lastUpdateDateTime":"2022-05-26T16:35:26.0411198Z","status":"succeeded","results":{"conversations":[{"id":"1","conversationItems":[{"id":"1","redactedContent":{"itn":"It
         is **** do*","lexical":"It is **** do*","maskedItn":"It is **** do*","text":"It
         is **** ***."},"entities":[{"text":"john","category":"Name","offset":6,"length":4,"confidenceScore":0.57},{"text":"e","category":"Name","offset":13,"length":1,"confidenceScore":0.53}]},{"id":"2","redactedContent":{"itn":"yes
         ********* is my phone","lexical":"yes *********************************************
@@ -61,17 +59,15 @@ interactions:
         is my email","text":"*************** is my email"},"entities":[{"text":"j
         dot doe at yahoo dot com","category":"Email","offset":0,"length":26,"confidenceScore":0.78}]}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
     headers:
-      apim-request-id: 78958ee7-31c5-4337-8983-738f308d1738
+      apim-request-id: 48938f64-222b-498c-a3c4-2dac68f37b09
       content-length: '1528'
       content-type: application/json; charset=utf-8
-      date: Mon, 23 May 2022 20:36:54 GMT
-      server: istio-envoy
+      date: Thu, 26 May 2022 16:35:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '90'
-      x-http2-stream-id: '3'
+      x-envoy-upstream-service-time: '109'
     status:
       code: 200
       message: OK
-    url: https://clubuildppe.ppe.cognitiveservices.azure.com/language/analyze-conversations/jobs/983d5878-0674-461d-a2d5-d66449a1d398?api-version=2022-05-15-preview
+    url: https://clubuildtest.cognitiveservices.azure.com/language/analyze-conversations/jobs/f58961d5-ea77-42aa-b32e-c8a375c9d462?api-version=2022-05-15-preview
 version: 1
