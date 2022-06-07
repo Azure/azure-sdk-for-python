@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b3 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_account.account.purview.azure.com/deviceupdate/instance/management/deviceclasses?api-version=2021-06-01-preview
+    uri: https://foo.api.adu.microsoft.com/deviceUpdate/bar/updates/providers?api-version=2022-07-01-preview
   response:
     body:
-      string: "{\r\n  \"value\": []\r\n}"
+      string: '{"value":["foo"]}'
     headers:
       content-length:
-      - '19'
+      - '22'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 14 May 2022 03:45:56 GMT
+      - Tue, 07 Jun 2022 20:01:16 GMT
       traceparent:
-      - 00-bbec65238cea1343b76f9abbefb1dc51-0128b0c7f326664a-00
+      - 00-1f3cd27370fa0e40834622985b3388c4-12c540f9949c0e4e-00
     status:
       code: 200
       message: OK

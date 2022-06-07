@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+- Added RelatedFiles and DownloadHandler to Update
+- Updated various model that reference update to include not only UpdateId but also update Description and FriendlyName
+- Removed device tag concept
+- Allow to filter by deployment status in the GetDevicesAsync method
+- Added ability to update device class friendly name
+- Added ability to delete device class
+- Added device class subgroups to groups
+- Added new method to retrieve devices health information
+
+### Breaking Changes
+- Models were updated
+
 ## 1.0.0b2 (2022-01-25)
 
 ### Features Added

@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from ._configuration import DeviceUpdateClientConfiguration
 from .operations import DeviceManagementOperations, DeviceUpdateOperations
@@ -23,7 +24,12 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class DeviceUpdateClient:
-    """Device Update for IoT Hub is an Azure service that enables customers to publish update for their IoT devices to the cloud, and then deploy that update to their devices (approve updates to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and reliability of the Windows Update platform, optimized for IoT devices. It works globally and knows when and how to update devices, enabling customers to focus on their business goals and let Device Update for IoT Hub handle the updates.
+    """Device Update for IoT Hub is an Azure service that enables customers to publish update for
+    their IoT devices to the cloud, and then deploy that update to their devices (approve updates
+    to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and
+    reliability of the Windows Update platform, optimized for IoT devices. It works globally and
+    knows when and how to update devices, enabling customers to focus on their business goals and
+    let Device Update for IoT Hub handle the updates.
 
     :ivar device_update: DeviceUpdateOperations operations
     :vartype device_update: azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations
@@ -35,8 +41,8 @@ class DeviceUpdateClient:
     :type instance_id: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. The default value is "2021-06-01-preview". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -56,8 +62,12 @@ class DeviceUpdateClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.device_update = DeviceUpdateOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.device_management = DeviceManagementOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.device_update = DeviceUpdateOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.device_management = DeviceManagementOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def send_request(
