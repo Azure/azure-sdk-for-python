@@ -1,5 +1,16 @@
 # Release History
 
+## 10.1.0 (2022-06-07)
+
+**Features**
+
+  - Added operation group ApplicationGroupOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model Cluster has a new parameter supports_scaling
+  - Model EHNamespace has a new parameter minimum_tls_version
+  - Model EHNamespace has a new parameter public_network_access
+
 ## 10.0.0 (2021-11-01)
 
 **Features**
