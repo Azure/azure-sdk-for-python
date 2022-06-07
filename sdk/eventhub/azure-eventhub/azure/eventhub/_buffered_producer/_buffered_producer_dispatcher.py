@@ -21,17 +21,17 @@ _LOGGER = logging.getLogger(__name__)
 class BufferedProducerDispatcher:
     # pylint: disable=too-many-instance-attributes
     def __init__(
-            self,
-            partitions: List[str],
-            on_success: Callable[["SendEventTypes", Optional[str]], None],
-            on_error: Callable[["SendEventTypes", Optional[str], Exception], None],
-            create_producer: Callable[..., EventHubProducer],
-            eventhub_name: str,
-            max_message_size_on_link: int,
-            *,
-            max_buffer_length: int = 1500,
-            max_wait_time: float = 1,
-            executor: Optional[Union[ThreadPoolExecutor, int]] = None
+        self,
+        partitions: List[str],
+        on_success: Callable[["SendEventTypes", Optional[str]], None],
+        on_error: Callable[["SendEventTypes", Optional[str], Exception], None],
+        create_producer: Callable[..., EventHubProducer],
+        eventhub_name: str,
+        max_message_size_on_link: int,
+        *,
+        max_buffer_length: int = 1500,
+        max_wait_time: float = 1,
+        executor: Optional[Union[ThreadPoolExecutor, int]] = None
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
@@ -64,10 +64,14 @@ class BufferedProducerDispatcher:
                 )
             return partition_id
         if isinstance(partition_key, str):
-            return self._partition_resolver.get_partition_id_by_partition_key(partition_key)
+            return self._partition_resolver.get_partition_id_by_partition_key(
+                partition_key
+            )
         return self._partition_resolver.get_next_partition_id()
 
-    def enqueue_events(self, events, *, partition_id=None, partition_key=None, timeout_time=None):
+    def enqueue_events(
+        self, events, *, partition_id=None, partition_key=None, timeout_time=None
+    ):
         pid = self._get_partition_id(partition_id, partition_key)
         with self._lock:
             try:
@@ -81,7 +85,7 @@ class BufferedProducerDispatcher:
                     self._max_message_size_on_link,
                     executor=self._executor,
                     max_wait_time=self._max_wait_time,
-                    max_buffer_length=self._max_buffer_length
+                    max_buffer_length=self._max_buffer_length,
                 )
                 buffered_producer.start()
                 self._buffered_producers[pid] = buffered_producer
@@ -93,7 +97,14 @@ class BufferedProducerDispatcher:
             futures = []
             for pid, producer in self._buffered_producers.items():
                 # call each producer's flush method
-                futures.append((pid, self._executor.submit(producer.flush, timeout_time=timeout_time)))
+                futures.append(
+                    (
+                        pid,
+                        self._executor.submit(
+                            producer.flush, timeout_time=timeout_time
+                        ),
+                    )
+                )
 
             # gather results
             exc_results = {}
@@ -107,10 +118,12 @@ class BufferedProducerDispatcher:
                 _LOGGER.info("Flushing all partitions succeeded")
                 return
 
-            _LOGGER.warning('Flushing all partitions partially failed with result %r.', exc_results)
+            _LOGGER.warning(
+                "Flushing all partitions partially failed with result %r.", exc_results
+            )
             raise EventDataSendError(
                 message="Flushing all partitions partially failed, failed partitions are {!r}"
-                        " Exception details are {!r}".format(exc_results.keys(), exc_results)
+                " Exception details are {!r}".format(exc_results.keys(), exc_results)
             )
 
     def close(self, *, flush=True, timeout_time=None, raise_error=False):
@@ -120,12 +133,17 @@ class BufferedProducerDispatcher:
             futures = []
             # stop all buffered producers
             for pid, producer in self._buffered_producers.items():
-                futures.append((pid, self._executor.submit(
-                    producer.stop,
-                    flush=flush,
-                    timeout_time=timeout_time,
-                    raise_error=raise_error
-                )))
+                futures.append(
+                    (
+                        pid,
+                        self._executor.submit(
+                            producer.stop,
+                            flush=flush,
+                            timeout_time=timeout_time,
+                            raise_error=raise_error,
+                        ),
+                    )
+                )
 
             exc_results = {}
             # gather results
@@ -136,11 +154,16 @@ class BufferedProducerDispatcher:
                     exc_results[pid] = exc
 
             if exc_results:
-                _LOGGER.warning('Stopping all partitions partially failed with result %r.', exc_results)
+                _LOGGER.warning(
+                    "Stopping all partitions partially failed with result %r.",
+                    exc_results,
+                )
                 if raise_error:
                     raise EventHubError(
                         message="Stopping all partitions partially failed, failed partitions are {!r}"
-                                " Exception details are {!r}".format(exc_results.keys(), exc_results)
+                        " Exception details are {!r}".format(
+                            exc_results.keys(), exc_results
+                        )
                     )
 
             if not self._existing_executor:
@@ -154,4 +177,6 @@ class BufferedProducerDispatcher:
 
     @property
     def total_buffered_event_count(self):
-        return sum([self.get_buffered_event_count(pid) for pid in self._buffered_producers])
+        return sum(
+            [self.get_buffered_event_count(pid) for pid in self._buffered_producers]
+        )
