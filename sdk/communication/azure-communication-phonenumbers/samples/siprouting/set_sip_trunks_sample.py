@@ -18,7 +18,6 @@ USAGE:
 
 import os
 from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunk
-os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"] = "endpoint=https://jb-sdk-e2e-test.communication.azure.com/;accesskey=GlzwFdhCzI3WtrbBkqHpQPGF/1X0aQtbWkXRiuWgPAXF3Ibl4BlkH0hy8BZSVn3QOnza6kOhIpgzgw091SAa5g=="
 
 TRUNKS = [SipTrunk(fqdn="sbs1.sipsampletest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipsampletest.com", sip_signaling_port=1123)]
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
