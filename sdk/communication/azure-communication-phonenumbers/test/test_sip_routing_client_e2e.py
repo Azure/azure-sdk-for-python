@@ -13,7 +13,7 @@ from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 class TestSipRoutingClientE2E(CommunicationTestCase):
     TRUNKS = [SipTrunk(fqdn="sbs1.sipconfigtest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipconfigtest.com", sip_signaling_port=1123)]
-    ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
+    ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
 
     def __init__(self, method_name):
         super(TestSipRoutingClientE2E, self).__init__(method_name)
@@ -74,7 +74,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         self._trunks_are_equal(result_trunks,new_trunks)
 
     def test_set_routes(self):
-        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
+        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
         self._sip_routing_client.set_routes(self.ROUTES)
         self._sip_routing_client.set_routes(new_routes)
         result_routes = self._sip_routing_client.get_routes()
@@ -82,7 +82,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         self._routes_are_equal(result_routes,new_routes)
 
     def test_set_routes_from_managed_identity(self):
-        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
+        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
         client = self._get_sip_client_managed_identity()
         client.set_routes(self.ROUTES)
         client.set_routes(new_routes)

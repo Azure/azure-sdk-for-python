@@ -20,17 +20,14 @@ USAGE:
 import os
 from azure.communication.phonenumbers.siprouting import SipRoutingClient
 
-class GetSipTrunkSample(object):
-    def __init__(self):
-        connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-        self._client = SipRoutingClient.from_connection_string(connection_string)
+connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+client = SipRoutingClient.from_connection_string(connection_string)
 
-    def get_sip_trunk_sample(self):
-        trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
-        sip_trunk = self._client.get_trunk(trunk_fqdn)
-        print(sip_trunk.fqdn)
-        print(sip_trunk.sip_signaling_port)
+def get_sip_trunk_sample():
+    trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
+    sip_trunk = client.get_trunk(trunk_fqdn)
+    print(sip_trunk.fqdn)
+    print(sip_trunk.sip_signaling_port)
 
 if __name__ == "__main__":
-    sample = GetSipTrunkSample()
-    sample.get_sip_trunk_sample()
+    get_sip_trunk_sample()

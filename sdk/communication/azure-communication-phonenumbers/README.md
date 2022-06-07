@@ -190,7 +190,16 @@ Get the list of currently configured trunks or routes.
 
 ```python
 trunks = sip_routing_client.get_trunks()
+for trunk in trunks:
+    print(trunk.fqdn)
+    print(trunk.sip_signaling_port)
 routes = sip_routing_client.get_routes()
+for route in routes:
+    print(route.name)
+    print(route.description)
+    print(route.number_pattern)
+    for trunk_fqdn in route.trunks:
+        print(trunk_fqdn)
 ```
 
 #### Replace SIP trunks and routes
@@ -198,14 +207,16 @@ routes = sip_routing_client.get_routes()
 Replace the list of currently configured trunks or routes with new values.
 
 ```python
-sip_routing_client.set_trunks("<list of new trunks>")
-sip_routing_client.set_routes("<list of new routes>")
+new_trunks = [SipTrunk(fqdn="sbs1.contoso.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.contoso.com", sip_signaling_port=1123)]
+new_routes = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
+sip_routing_client.set_trunks(new_trunks)
+sip_routing_client.set_routes(new_routes)
 ```
 
 #### Retrieve single trunk
 
 ```python
-trunk = sip_routing_client.get_trunk("<trunk FQDN>")
+trunk = sip_routing_client.get_trunk("sbs1.contoso.com")
 ```
 
 #### Set single trunk
@@ -213,13 +224,14 @@ trunk = sip_routing_client.get_trunk("<trunk FQDN>")
 ```python
 # Set function will either modify existing item or add new item to the collection.
 # The trunk is matched based on it's FQDN.
-sip_routing_client.set_trunk("<new trunk>")
+new_trunk = SipTrunk(fqdn="sbs3.contoso.com", sip_signaling_port=5555)
+sip_routing_client.set_trunk(new_trunk)
 ```
 
 #### Delete single trunk
 
 ```python
-sip_routing_client.delete_trunk("<trunk FQDN>")
+sip_routing_client.delete_trunk("sbs1.contoso.com")
 ```
 
 # Troubleshooting

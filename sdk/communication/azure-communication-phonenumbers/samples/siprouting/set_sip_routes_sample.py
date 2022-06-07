@@ -14,29 +14,17 @@ USAGE:
     python set_sip_routes_sample.py
         Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
-    2) COMMUNICATION_SAMPLES_NEW_ROUTES - the list of new SIP route values
 """
 
 import os
-from azure.communication.phonenumbers.siprouting import SipRoutingClient
+from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunkRoute
 
-class SetSipRoutesSample(object):
-    def __init__(self):
-        connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-        self._client = SipRoutingClient.from_connection_string(connection_string)
+ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipsampletest.com"])]
+connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+client = SipRoutingClient.from_connection_string(connection_string)
 
-    def set_sip_routes_sample(self):
-        new_routes = os.getenv("COMMUNICATION_SAMPLES_NEW_ROUTES")
-        sip_routes = self._client.set_routes(new_routes)
-
-        for route in sip_routes:
-            print(route.name)
-            print(route.description)
-            print(route.number_pattern)
-            
-            for trunk_fqdn in route.trunks:
-                print(trunk_fqdn)
+def set_sip_routes_sample():
+    client.set_routes(ROUTES)
 
 if __name__ == "__main__":
-    sample = SetSipRoutesSample()
-    sample.set_sip_routes_sample()
+    set_sip_routes_sample()

@@ -14,25 +14,18 @@ USAGE:
     python set_sip_trunks_sample.py
         Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
-    2) COMMUNICATION_SAMPLES_NEW_TRUNKS - the list of new SIP trunk values
 """
 
 import os
-from azure.communication.phonenumbers.siprouting import SipRoutingClient
+from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunk
+os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"] = "endpoint=https://jb-sdk-e2e-test.communication.azure.com/;accesskey=GlzwFdhCzI3WtrbBkqHpQPGF/1X0aQtbWkXRiuWgPAXF3Ibl4BlkH0hy8BZSVn3QOnza6kOhIpgzgw091SAa5g=="
 
-class SetSipTrunksSample(object):
-    def __init__(self):
-        connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-        self._client = SipRoutingClient.from_connection_string(connection_string)
+TRUNKS = [SipTrunk(fqdn="sbs1.sipsampletest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipsampletest.com", sip_signaling_port=1123)]
+connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+client = SipRoutingClient.from_connection_string(connection_string)
 
-    def set_sip_trunks_sample(self):
-        new_trunks = os.getenv("COMMUNICATION_SAMPLES_NEW_TRUNKS")
-        sip_trunks = self._client.set_trunks(new_trunks)
-
-        for trunk in sip_trunks:
-            print(trunk.fqdn)
-            print(trunk.sip_signaling_port)
+def set_sip_trunks_sample():
+    client.set_trunks(TRUNKS)
 
 if __name__ == "__main__":
-    sample = SetSipTrunksSample()
-    sample.set_sip_trunks_sample()
+    set_sip_trunks_sample()

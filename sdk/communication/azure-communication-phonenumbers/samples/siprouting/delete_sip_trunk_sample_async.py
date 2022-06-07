@@ -21,17 +21,13 @@ import os
 import asyncio
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 
-class DeleteSipTrunkSampleAsync(object):
-    def __init__(self):
-        connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-        self._client = SipRoutingClient.from_connection_string(connection_string)
+connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+client = SipRoutingClient.from_connection_string(connection_string)
 
-    async def delete_sip_trunk_sample(self):
-        trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
-        await self._client.delete_trunk(trunk_fqdn)
+async def delete_sip_trunk_sample():
+    trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
+    async with client:
+        await client.delete_trunk(trunk_fqdn)
 
 if __name__ == "__main__":
-    sample = DeleteSipTrunkSampleAsync()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.delete_sip_trunk_sample())
-    loop.run_until_complete(sample._client.close())
+    asyncio.run(delete_sip_trunk_sample())

@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-__path__ = __import__('pkgutil').extend_path(__path__, __name__)
-
 from ._phone_numbers_client import PhoneNumbersClient
 
 from ._generated.models import (

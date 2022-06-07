@@ -21,19 +21,15 @@ import os
 import asyncio
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 
-class GetSipTrunkSampleAsync(object):
-    def __init__(self):
-        connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-        self._client = SipRoutingClient.from_connection_string(connection_string)
+connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+client = SipRoutingClient.from_connection_string(connection_string)
 
-    async def get_sip_trunk_sample(self):
-        trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
-        sip_trunk = await self._client.get_trunk(trunk_fqdn)
-        print(sip_trunk.fqdn)
-        print(sip_trunk.sip_signaling_port)
+async def get_sip_trunk_sample():
+    trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
+    async with client:
+        sip_trunk = await client.get_trunk(trunk_fqdn)
+    print(sip_trunk.fqdn)
+    print(sip_trunk.sip_signaling_port)
 
 if __name__ == "__main__":
-    sample = GetSipTrunkSampleAsync()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.get_sip_trunk_sample())
-    loop.run_until_complete(sample._client.close())
+    asyncio.run(get_sip_trunk_sample())

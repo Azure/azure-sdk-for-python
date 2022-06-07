@@ -14,24 +14,25 @@ USAGE:
     python set_sip_trunk_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
-    2) COMMUNICATION_SAMPLES_TRUNK - SipTrunk object to be set
+    2) COMMUNICATION_SAMPLES_FQDN - FQDN of SipTrunk object to be set
+    3) COMMUNICATION_SAMPLES_SIGNALING_PORT - SIP signaling port of SipTrunk object to be set
 """
 
 import os
 import asyncio
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
+from azure.communication.phonenumbers.siprouting import SipTrunk
 
-class SetSipTrunkSampleAsync(object):
-    def __init__(self):
-        connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-        self._client = SipRoutingClient.from_connection_string(connection_string)
+connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+fqdn = os.getenv("COMMUNICATION_SAMPLES_FQDN")
+signaling_port = os.getenv("COMMUNICATION_SAMPLES_SIGNALING_PORT")
+client = SipRoutingClient.from_connection_string(connection_string)
+new_trunk = SipTrunk(fqdn=fqdn, sip_signaling_port=signaling_port)
 
-    async def set_sip_trunk_sample(self):
-        sip_trunk = os.getenv("COMMUNICATION_SAMPLES_TRUNK")
-        await self._client.set_trunk(sip_trunk)
-        
+async def set_sip_trunk_sample():
+    async with client:
+        await client.set_trunk(new_trunk)
+
 if __name__ == "__main__":
-    sample = SetSipTrunkSampleAsync()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.set_sip_trunk_sample())
-    loop.run_until_complete(sample._client.close())
+    asyncio.run(set_sip_trunk_sample())
+

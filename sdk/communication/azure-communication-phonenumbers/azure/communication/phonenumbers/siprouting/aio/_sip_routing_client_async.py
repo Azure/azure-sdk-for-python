@@ -27,7 +27,7 @@ from ..._shared.utils import (
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import List, Any
+    from typing import Iterable, List, Any
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -48,7 +48,6 @@ class SipRoutingClient(object):
         self,
         endpoint,  # type: str
         credential,  # type: AsyncTokenCredential
-        api_version="2021-05-01-preview", # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> SipRoutingClient
 
@@ -74,7 +73,6 @@ class SipRoutingClient(object):
             self._endpoint,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
-            api_version=api_version,
             **kwargs
         )
 
@@ -114,12 +112,12 @@ class SipRoutingClient(object):
 
         config = await self._rest_service.get_sip_configuration(
             **kwargs)
-        trunk = config.trunks[trunk_fqdn]
 
-        if not trunk:
-            raise LookupError("No entry found for FQDN:" + trunk_fqdn)
+        if trunk_fqdn in config.trunks:
+            trunk = config.trunks[trunk_fqdn]
+            return SipTrunk(fqdn=trunk_fqdn,sip_signaling_port=trunk.sip_signaling_port)
 
-        return SipTrunk(fqdn=trunk_fqdn,sip_signaling_port=trunk.sip_signaling_port)
+        return None
 
     @distributed_trace_async
     async def set_trunk(
@@ -165,11 +163,11 @@ class SipRoutingClient(object):
     async def get_trunks(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> List[SipTrunk]
-        """Returns list of currently configured SIP trunks.
+    ):  # type: (...) -> Iterable[SipTrunk]
+        """Retrieves an iterable of currently configured SIP trunks.
 
         :returns: Current SIP trunks configuration.
-        :rtype: List[~azure.communication.siprouting.models.SipTrunk]
+        :rtype: Iterable[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return await self._get_trunks_(**kwargs)
@@ -178,11 +176,11 @@ class SipRoutingClient(object):
     async def get_routes(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> List[SipTrunkRoute]
-        """Returns list of currently configured SIP routes.
+    ):  # type: (...) -> Iterable[SipTrunkRoute]
+        """Retrieves an iterable of currently configured SIP routes.
 
         :returns: Current SIP routes configuration.
-        :rtype: List[~azure.communication.siprouting.models.SipTrunkRoute]
+        :rtype: Iterable[~azure.communication.siprouting.models.SipTrunkRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         config = await self._rest_service.get_sip_configuration(
