@@ -2154,7 +2154,7 @@ class BoundingRegion(object):
 class AddressValue(object):
     """An address field value.
 
-    :ivar house_number: Building number.
+    :ivar house_number: House or building number.
     :vartype house_number: str
     :ivar po_box: Post office box number.
     :vartype po_box: str

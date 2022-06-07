@@ -489,7 +489,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         try:
             return self._client.begin_compose_custom_models_async(  # type: ignore
-                {"model_ids": model_ids, "model_name": model_name}, # type: ignore
+                {"model_ids": model_ids, "model_name": model_name},  # type: ignore
                 cls=kwargs.pop("cls", _compose_callback),
                 polling=LROBasePolling(
                     timeout=polling_interval,
