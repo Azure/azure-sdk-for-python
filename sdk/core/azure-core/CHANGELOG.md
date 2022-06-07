@@ -1,6 +1,6 @@
 # Release History
 
-## 1.24.1 (Unreleased)
+## 1.24.2 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,14 @@
 
 ### Bugs Fixed
 
-- Fixed type hints for `azure.core.paging.ItemPaged` #24548
-
 ### Other Changes
+
+## 1.24.1 (2022-06-01)
+
+### Bugs Fixed
+
+- Declare method level span as INTERNAL by default  #24492
+- Fixed type hints for `azure.core.paging.ItemPaged` #24548
 
 ## 1.24.0 (2022-05-06)
 

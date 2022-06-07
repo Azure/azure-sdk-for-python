@@ -233,8 +233,8 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             credential, 
             http_logging_policy=get_http_logging_policy()
         )
-        add_token = self.generate_teams_user_aad_token() 
-        token_response = identity_client.get_token_for_teams_user(add_token)
+        aad_token = self.generate_teams_user_aad_token() 
+        token_response = identity_client.get_token_for_teams_user(aad_token)
         assert token_response.token is not None
 
     @CommunicationPreparer()
@@ -245,8 +245,8 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        add_token = self.generate_teams_user_aad_token() 
-        token_response = identity_client.get_token_for_teams_user(add_token)
+        aad_token = self.generate_teams_user_aad_token() 
+        token_response = identity_client.get_token_for_teams_user(aad_token)
         assert token_response.token is not None
 
     @CommunicationPreparer()

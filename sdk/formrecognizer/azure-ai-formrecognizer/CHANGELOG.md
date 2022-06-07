@@ -1,14 +1,21 @@
 # Release History
 
-## 3.2.0b5 (Unreleased)
+## 3.2.0b5 (2022-06-07)
 
 ### Features Added
+- Added `paragraphs` property on `AnalyzeResult`.
+- Added new `DocumentParagraph` model to represent document paragraphs.
+- Added new `AddressValue` model to represent address fields found in documents.
+- Added `caption` and `footnotes` properties on `DocumentTable`.
+- Added `DocumentCaption` and `DocumentFootnote` models to represent captions and footnotes found in the document.
+- Added `kind` property on `DocumentPage`.
 
 ### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Renamed `bounding_box` to `polygon` on `BoundingRegion`, `DocumentContentElement`, `DocumentLine`, `DocumentSelectionMark`, `DocumentWord`.
+- Renamed `language_code` to `locale` on `DocumentLanguage`.
+- Some models that previously returned string for address related fields may now return `AddressValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
+- Removed `entities` property on `AnalyzeResult`.
+- Removed `DocumentEntity` model.
 
 ## 3.2.0b4 (2022-04-05)
 
@@ -38,7 +45,7 @@
 
 ### Breaking Changes
 - Added new required parameter `build_mode` to `begin_build_model()`.
-- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` to see updated prebuilt model schemas.
+- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` on `DocumentModelAdministrationClient` to see updated prebuilt model schemas.
 
 ### Bugs Fixed
 - Default the `percent_completed` property to 0 when not returned with model operation information.

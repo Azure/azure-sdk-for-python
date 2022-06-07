@@ -41,34 +41,6 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_list_translations_with_pagination(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables", {})
-        # prepare data
-        operations_count = 5
-        docs_per_operation = 2
-        results_per_page = 2
-
-        # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables)
-
-        # list translations
-        submitted_translations_pages = client.list_translation_statuses(results_per_page=results_per_page).by_page()
-        assert submitted_translations_pages is not None
-
-        # iterate by page
-        async for page in submitted_translations_pages:
-            page_translations = []
-            async for translation in page:
-                page_translations.append(translation)
-                self._validate_translations(translation)
-
-            assert len(page_translations) <= results_per_page
-        return variables
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy_async
     async def test_list_translations_with_skip(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
@@ -245,7 +217,6 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         # create some translations
         operations_count = 4
         docs_per_operation = 1
-        results_per_page = 2
         statuses = ["Succeeded"]
         skip = 1
 
@@ -264,7 +235,6 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
             order_by=["created_on asc"],
             # paging
             skip=skip,
-            results_per_page=results_per_page
         ).by_page()
 
         # check statuses
@@ -282,5 +252,3 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
                 assert(translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
                 assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
                 assert translation.status in statuses
-
-            assert counter <=  results_per_page # assert paging

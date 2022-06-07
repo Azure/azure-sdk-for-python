@@ -1,0 +1,61 @@
+type: pipeline
+
+name: SimplePipelineJob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  job_in_number: 10
+  job_in_other_number: 15
+  job_in_path:
+    path: ../data
+
+outputs:
+  job_out_data_1:
+    mode: mount
+  job_out_data_2:
+    mode: upload
+
+jobs:
+  hello_world_component_1:
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    outputs:
+      component_out_path:
+        mode: upload
+
+    component: file:../components/helloworld_component.yml
+
+  hello_world_component_2:
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    outputs:
+      component_out_path:
+        mode: upload
+    resources:
+      instance_count: 2
+    component: file:../components/helloworld_component.yml
+
+  merge_component_outputs:
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_other_number}}
+      component_in_path_1: ${{parent.jobs.hello_world_component_1.outputs.component_out_path}}
+      component_in_path_2: ${{parent.jobs.hello_world_component_2.outputs.component_out_path}}
+    outputs:
+      component_out_path_1: ${{parent.outputs.job_out_data_1}}
+      component_out_path_2: ${{parent.outputs.job_out_data_2}}
+    component: file:../components/merge_outputs_component.yml
+

@@ -1,0 +1,16 @@
+name: blue
+endpoint_name: batch-ept
+description: description for my batch deployment
+model: azureml:lightgbm_predict:1 # required
+output_action: append_row #optional, Allowed Values: append_row, summary_only
+output_file_name: append_row.txt #optional
+mini_batch_size: 11
+retry_settings: #optional
+  max_retries: 3
+  timeout: 30
+error_threshold: 11 #optional, default is -1
+logging_level: info  #optional, default is info
+max_concurrency_per_instance: 5
+compute: "azureml:testCompute"
+resources:
+  instance_count: 2

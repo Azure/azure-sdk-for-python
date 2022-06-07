@@ -1,0 +1,22 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: sample_command_component_basic
+display_name: CommandComponentBasic
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+outputs:
+  component_out_path:
+    type: uri_folder
+
+command: >-
+  echo Hello World
+
+code: azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-2021W10/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/codes/e736692c-8542-11eb-b746-6c2b59f8af4d/versions/1
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

@@ -10,7 +10,7 @@ import unittest
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from azure.storage.filedatalake import(
     AccessPolicy,
@@ -20,6 +20,8 @@ from azure.storage.filedatalake import(
     PublicAccess,
     ResourceTypes,
     generate_account_sas)
+
+from azure.storage.blob import StorageErrorCode
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
@@ -691,104 +693,113 @@ class FileSystemTest(StorageTestCase):
         resp = restored_file_client.get_file_properties()
         self.assertIsNotNone(resp)
 
-    # TODO: Add tests back once feature is complete.
-    # @DataLakePreparer()
-    # def test_delete_files_simple_no_raise(self, datalake_storage_account_name, datalake_storage_account_key):
-    #     # Arrange
-    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-    #     filesystem = self._create_file_system("fs1")
-    #     data = b'hello world'
+    @DataLakePreparer()
+    def test_delete_files_simple_no_raise(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        filesystem = self._create_file_system("fs1")
+        data = b'hello world'
+        files = ['file1', 'file2', 'file3', 'dir1', 'dir2']
 
-    #     try:
-    #         # create file1
-    #         filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+        try:
+            # create file1
+            filesystem.get_file_client(files[0]).upload_data(data, overwrite=True)
 
-    #         # create file2
-    #         file2 = filesystem.get_file_client('file2')
-    #         file2.upload_data(data, overwrite=True)
-    #         file2_properties = file2.get_file_properties()
+            # create file2
+            file2 = filesystem.get_file_client(files[1])
+            file2.upload_data(data, overwrite=True)
 
-    #         # create file3
-    #         file3 = filesystem.get_file_client('file3')
-    #         file3.upload_data(data, overwrite=True)
-    #         file3_etag = file3.get_file_properties().etag
+            # create file3
+            file3 = filesystem.get_file_client(files[2])
+            file3.upload_data(data, overwrite=True)
 
-    #         # create dir1
-    #         # empty directory can be deleted using delete_files
-    #         filesystem.get_directory_client('dir1').create_directory(),
+            # create dir1
+            # empty directory can be deleted using delete_files
+            filesystem.get_directory_client(files[3]).create_directory(),
 
-    #         # create dir2
-    #         dir2 = filesystem.get_directory_client('dir2')
-    #         dir2.create_directory()
-    #         dir2_properties = dir2.get_directory_properties()
+            # create dir2
+            dir2 = filesystem.get_directory_client(files[4])
+            dir2.create_directory()
 
-    #     except:
-    #         pass
+        except:
+            pass
 
-    #     # Act
-    #     response = filesystem.delete_files(
-    #         'file1',
-    #         file2_properties,
-    #         {'name': 'file3', 'etag': file3_etag},
-    #         'dir1',
-    #         dir2_properties,
-    #         raise_on_any_failure=False
-    #     )
-    #     assert len(response) == 5
-    #     assert response[0].status_code == 202
-    #     assert response[1].status_code == 202
-    #     assert response[2].status_code == 202
-    #     assert response[3].status_code == 202
-    #     assert response[4].status_code == 202
+        # Act
+        response = filesystem.delete_files(
+            files[0],
+            files[1],
+            files[2],
+            files[3],
+            files[4],
+        )
 
-    # @DataLakePreparer()
-    # def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
-    #     # Arrange
-    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-    #     filesystem = self._create_file_system("fs2")
-    #     data = b'hello world'
+        # Assert
+        self.assertEqual(len(response), len(files))
+        self.assertIsNone(response[0])
+        self.assertIsNone(response[1])
+        self.assertIsNone(response[2])
+        self.assertIsNone(response[3])
+        self.assertIsNone(response[4])
 
-    #     try:
-    #         # create file1
-    #         filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+    @DataLakePreparer()
+    def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        filesystem = self._create_file_system("fs2")
+        data = b'hello world'
+        files = ['file1', 'file2', 'file3', 'dir1', 'dir8']
 
-    #         # create file2
-    #         file2 = filesystem.get_file_client('file2')
-    #         file2.upload_data(data, overwrite=True)
-    #         file2_properties = file2.get_file_properties()
+        try:
+            # create file1
+            filesystem.get_file_client(files[0]).upload_data(data, overwrite=True)
 
-    #         # create file3
-    #         file3 = filesystem.get_file_client('file3')
-    #         file3.upload_data(data, overwrite=True)
-    #         file3_etag = file3.get_file_properties().etag
+            # create file2
+            file2 = filesystem.get_file_client(files[1])
+            file2.upload_data(data, overwrite=True)
 
-    #         # create dir1
-    #         dir1 = filesystem.get_directory_client('dir1')
-    #         dir1.create_file("file4")
+            # create file3
+            file3 = filesystem.get_file_client(files[2])
+            file3.upload_data(data, overwrite=True)
 
-    #         # create dir2
-    #         dir2 = filesystem.get_directory_client('dir2')
-    #         dir2.create_directory()
-    #         dir2_properties = dir2.get_directory_properties()
+            # create dir1 with file4 inside
+            dir1 = filesystem.get_directory_client(files[3])
+            dir1.create_file("file4")
+        except:
+            pass
 
-    #     except:
-    #         pass
+        # Act
+        response = filesystem.delete_files(
+            files[0],
+            files[1],
+            files[2],
+            files[3],  # dir1 is not empty
+            files[4],  # dir8 doesn't exist
+        )
 
-    #     # Act
-    #     response = filesystem.delete_files(
-    #         'file1',
-    #         file2_properties,
-    #         {'name': 'file3', 'etag': file3_etag},
-    #         'dir1',  # dir1 is not empty
-    #         'dir8',  # dir 8 doesn't exist
-    #         raise_on_any_failure=False
-    #     )
-    #     assert len(response) == 5
-    #     assert response[0].status_code == 202
-    #     assert response[1].status_code == 202
-    #     assert response[2].status_code == 202
-    #     assert response[3].status_code == 409
-    #     assert response[4].status_code == 404
+        # Assert
+        self.assertEqual(len(response), len(files))
+        self.assertIsNone(response[0])
+        self.assertIsNone(response[1])
+        self.assertIsNone(response[2])
+        self.assertEqual(response[3].error_code, StorageErrorCode.directory_not_empty)
+        self.assertEqual(response[3].status_code, 409)
+        self.assertEqual(response[4].error_code, StorageErrorCode.path_not_found)
+        self.assertEqual(response[4].status_code, 404)
+
+    @DataLakePreparer()
+    def test_serialized_error(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        dir = file_system.create_directory("dir1")
+        dir.delete_directory()
+
+        # Assert
+        try:
+            dir.delete_directory()
+        except HttpResponseError as e:
+            self.assertEqual(e.error_code, StorageErrorCode.path_not_found)
+            self.assertEqual(e.status_code, 404)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
