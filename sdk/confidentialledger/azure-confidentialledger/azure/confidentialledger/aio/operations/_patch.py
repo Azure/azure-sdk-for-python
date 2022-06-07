@@ -29,16 +29,6 @@ def patch_sdk():
 
 
 class ConfidentialLedgerOperations(GeneratedOperations):
-    async def create_or_update_user(
-        self, user_id: str, user_details: Union[JSON, IO], **kwargs: Any
-    ) -> JSON:
-        return await super().create_or_update_user(
-            user_id,
-            user_details,
-            content_type=kwargs.pop("content_type", "application/json"),
-            **kwargs,
-        )
-
     async def get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ):
@@ -53,12 +43,12 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         :type transaction_id: str
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :keyword interval: Interval, in seconds, between retries while waiting for results,
+        :keyword retry_backoff_factor: Interval, in seconds, between retries while waiting for results,
             defaults to 0.5.
-        :paramtype interval: float
-        :keyword max_tries: Maximum number of times to try the query, defaults to 6. Retries are
+        :paramtype retry_backoff_factor: float
+        :keyword retry_total: Maximum number of times to try the query, defaults to 6. Retries are
             attempted if the result is not Ready.
-        :paramtype max_tries: int
+        :paramtype retry_total: int
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -82,12 +72,12 @@ class ConfidentialLedgerOperations(GeneratedOperations):
                 }
         """
 
-        interval = kwargs.pop("interval", 0.5)
-        max_tries = kwargs.pop("max_tries", 6)
+        retry_backoff_factor = kwargs.pop("retry_backoff_factor", 0.5)
+        retry_total = kwargs.pop("retry_total", 6)
 
         ready_const = "Ready"  # Value of 'state' field when the entry is available.
         most_recent_state = None
-        for _ in range(max_tries):
+        for _ in range(retry_total):
             result = await super().get_ledger_entry(
                 transaction_id, collection_id=collection_id, **kwargs
             )
@@ -95,11 +85,11 @@ class ConfidentialLedgerOperations(GeneratedOperations):
                 return result
 
             most_recent_state = result["state"]
-            await asyncio.sleep(interval)
+            await asyncio.sleep(retry_backoff_factor)
 
         raise TimeoutError(
             "After {0} attempts, the query still had state {1}, not {2}".format(
-                max_tries, most_recent_state, ready_const
+                retry_total, most_recent_state, ready_const
             )
         )
 
@@ -110,12 +100,12 @@ class ConfidentialLedgerOperations(GeneratedOperations):
 
         :param transaction_id: Identifies a write transaction.
         :type transaction_id: str
-        :keyword interval: Interval, in seconds, between retries while waiting for results,
+        :keyword retry_backoff_factor: Interval, in seconds, between retries while waiting for results,
             defaults to 0.5.
-        :paramtype interval: float
-        :keyword max_tries: Maximum number of times to try the query, defaults to 6. Retries are
+        :paramtype retry_backoff_factor: float
+        :keyword retry_total: Maximum number of times to try the query, defaults to 6. Retries are
             attempted if the result is not Ready.
-        :paramtype max_tries: int
+        :paramtype retry_total: int
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -154,22 +144,22 @@ class ConfidentialLedgerOperations(GeneratedOperations):
                 }
         """
 
-        interval = kwargs.pop("interval", 0.5)
-        max_tries = kwargs.pop("max_tries", 6)
+        retry_backoff_factor = kwargs.pop("retry_backoff_factor", 0.5)
+        retry_total = kwargs.pop("retry_total", 6)
 
         ready_const = "Ready"  # Value of 'state' field when the receipt is available.
         most_recent_state = None
-        for _ in range(max_tries):
+        for _ in range(retry_total):
             result = await super().get_receipt(transaction_id=transaction_id, **kwargs)
             if result["state"] == ready_const:
                 return result
 
             most_recent_state = result["state"]
-            await asyncio.sleep(interval)
+            await asyncio.sleep(retry_backoff_factor)
 
         raise TimeoutError(
             "After {0} attempts, the query still had state {1}, not {2}".format(
-                max_tries, most_recent_state, ready_const
+                retry_total, most_recent_state, ready_const
             )
         )
 
@@ -239,17 +229,17 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         :type entry: Union[JSON, IO]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :keyword interval: Interval, in seconds, between retries, defaults to 0.5.
-        :paramtype interval: float
-        :keyword max_tries: Maximum number of times to try the query, defaults to 3. Retries are
+        :keyword retry_backoff_factor: Interval, in seconds, between retries, defaults to 0.5.
+        :paramtype retry_backoff_factor: float
+        :keyword retry_total: Maximum number of times to try the query, defaults to 3. Retries are
             attempted if the specified transaction is not Committed yet.
-        :paramtype max_tries: int
+        :paramtype retry_total: int
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        interval = kwargs.get("interval", 0.5)
-        max_tries = kwargs.get("max_tries", 3)
+        retry_backoff_factor = kwargs.get("retry_backoff_factor", 0.5)
+        retry_total = kwargs.get("retry_total", 3)
 
         post_result = await self.post_ledger_entry(
             entry, collection_id=collection_id, **kwargs
@@ -257,8 +247,8 @@ class ConfidentialLedgerOperations(GeneratedOperations):
         transaction_id = post_result["transactionId"]
 
         try:
-            kwargs["interval"] = interval
-            kwargs["max_tries"] = max_tries
+            kwargs["retry_backoff_factor"] = retry_backoff_factor
+            kwargs["retry_total"] = retry_total
             await self.wait_until_durable(transaction_id, **kwargs)
         except TimeoutError as e:
             raise TimeoutError(
@@ -279,30 +269,30 @@ class ConfidentialLedgerOperations(GeneratedOperations):
 
         :param transaction_id: Identifies the transaction to wait for.
         :type transaction_id: str
-        :keyword interval: Interval, in seconds, between retries, defaults to 0.5.
-        :paramtype interval: float
-        :keyword max_tries: Maximum number of times to try the query, defaults to 3. Retries are
+        :keyword retry_backoff_factor: Interval, in seconds, between retries, defaults to 0.5.
+        :paramtype retry_backoff_factor: float
+        :keyword retry_total: Maximum number of times to try the query, defaults to 3. Retries are
             attempted if the specified transaction is not Committed yet.
-        :paramtype max_tries: int
+        :paramtype retry_total: int
         :return: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         :raises: TimeoutError
         """
 
-        interval = kwargs.pop("interval", 0.5)
-        max_tries = kwargs.pop("max_tries", 3)
+        retry_backoff_factor = kwargs.pop("retry_backoff_factor", 0.5)
+        retry_total = kwargs.pop("retry_total", 3)
 
         committed_const = "Committed"
-        for attempt_num in range(max_tries):
+        for attempt_num in range(retry_total):
             transaction_status = await self.get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
             if transaction_status["state"] == committed_const:
                 return
 
-            if attempt_num < max_tries - 1:
-                await asyncio.sleep(interval)
+            if attempt_num < retry_total - 1:
+                await asyncio.sleep(retry_backoff_factor)
 
         raise TimeoutError(
             "Transaction {0} is not {1} yet".format(transaction_id, committed_const)
