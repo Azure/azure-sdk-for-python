@@ -736,38 +736,6 @@ class TestToDict(FormRecognizerTest):
                     ],
                 ),
             ],
-            caption=_models.DocumentCaption(
-                content="my content",
-                bounding_regions=[
-                    _models.BoundingRegion(
-                        polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                        page_number=1,
-                    ),
-                ],
-                spans=[
-                    _models.DocumentSpan(
-                        offset=5,
-                        length=2,
-                    ),
-                ],
-            ),
-            footnotes=[
-                _models.DocumentFootnote(
-                    content="my content",
-                    bounding_regions=[
-                        _models.BoundingRegion(
-                            polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                            page_number=1,
-                        ),
-                    ],
-                    spans=[
-                        _models.DocumentSpan(
-                            offset=5,
-                            length=2,
-                        ),
-                    ],
-                )
-            ],
             bounding_regions=[
                 _models.BoundingRegion(
                     polygon=[_models.Point(1, 2), _models.Point(3, 4)],
@@ -814,50 +782,6 @@ class TestToDict(FormRecognizerTest):
                         },
                     ],
                 },
-            ],
-            "caption": {
-                "content": "my content",
-                "bounding_regions": [
-                    {
-                        "page_number": 1,
-                        "polygon": [
-                            {"x": 1, "y": 2},
-                            {
-                                "x": 3,
-                                "y": 4,
-                            },
-                        ],
-                    },
-                ],
-                "spans": [
-                    {
-                        "offset": 5,
-                        "length": 2,
-                    },
-                ],
-            },
-            "footnotes": [
-                {
-                    "content": "my content",
-                    "bounding_regions": [
-                        {
-                            "page_number": 1,
-                            "polygon": [
-                                {"x": 1, "y": 2},
-                                {
-                                    "x": 3,
-                                    "y": 4,
-                                },
-                            ],
-                        },
-                    ],
-                    "spans": [
-                        {
-                            "offset": 5,
-                            "length": 2,
-                        },
-                    ],
-                }
             ],
             "bounding_regions": [
                 {
@@ -1157,38 +1081,6 @@ class TestToDict(FormRecognizerTest):
                             spans=[_models.DocumentSpan(offset=5, length=2)],
                         ),
                     ],
-                    caption=_models.DocumentCaption(
-                        content="my content",
-                        bounding_regions=[
-                            _models.BoundingRegion(
-                                polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                                page_number=1,
-                            ),
-                        ],
-                        spans=[
-                            _models.DocumentSpan(
-                                offset=5,
-                                length=2,
-                            ),
-                        ],
-                    ),
-                    footnotes=[
-                        _models.DocumentFootnote(
-                            content="my content",
-                            bounding_regions=[
-                                _models.BoundingRegion(
-                                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
-                                    page_number=1,
-                                ),
-                            ],
-                            spans=[
-                                _models.DocumentSpan(
-                                    offset=5,
-                                    length=2,
-                                ),
-                            ],
-                        )
-                    ],
                     bounding_regions=[
                         _models.BoundingRegion(
                             polygon=[_models.Point(1, 2), _models.Point(3, 4)],
@@ -1448,50 +1340,6 @@ class TestToDict(FormRecognizerTest):
                                 },
                             ],
                         },
-                    ],
-                    "caption": {
-                        "content": "my content",
-                        "bounding_regions": [
-                            {
-                                "page_number": 1,
-                                "polygon": [
-                                    {"x": 1, "y": 2},
-                                    {
-                                        "x": 3,
-                                        "y": 4,
-                                    },
-                                ],
-                            },
-                        ],
-                        "spans": [
-                            {
-                                "offset": 5,
-                                "length": 2,
-                            },
-                        ],
-                    },
-                    "footnotes": [
-                        {
-                            "content": "my content",
-                            "bounding_regions": [
-                                {
-                                    "page_number": 1,
-                                    "polygon": [
-                                        {"x": 1, "y": 2},
-                                        {
-                                            "x": 3,
-                                            "y": 4,
-                                        },
-                                    ],
-                                },
-                            ],
-                            "spans": [
-                                {
-                                    "offset": 5,
-                                    "length": 2,
-                                },
-                            ],
-                        }
                     ],
                     "bounding_regions": [
                         {
