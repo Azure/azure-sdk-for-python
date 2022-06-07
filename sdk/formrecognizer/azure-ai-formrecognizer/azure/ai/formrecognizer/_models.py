@@ -3290,8 +3290,6 @@ class DocumentTable(object):
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
         self.cells = kwargs.get("cells", None)
-        self.caption = kwargs.get("caption", None)
-        self.footnotes = kwargs.get("footnotes", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
 
@@ -3303,25 +3301,17 @@ class DocumentTable(object):
             cells=[DocumentTableCell._from_generated(cell) for cell in table.cells]
             if table.cells
             else [],
-            caption=DocumentCaption._from_generated(table.caption)
-            if table.caption
-            else None,
-            footnotes=[DocumentFootnote._from_generated(note) for note in table.footnotes]
-            if table.footnotes
-            else [],
             bounding_regions=prepare_bounding_regions(table.bounding_regions),
             spans=prepare_document_spans(table.spans),
         )
 
     def __repr__(self):
         return (
-            "DocumentTable(row_count={}, column_count={}, cells={}, caption={}, footnotes={}, bounding_regions={}, "
+            "DocumentTable(row_count={}, column_count={}, cells={}, bounding_regions={}, "
             "spans={})".format(
                 self.row_count,
                 self.column_count,
                 repr(self.cells),
-                repr(self.caption),
-                repr(self.footnotes),
                 repr(self.bounding_regions),
                 repr(self.spans),
             )
@@ -3339,12 +3329,6 @@ class DocumentTable(object):
             "column_count": self.column_count,
             "cells": [f.to_dict() for f in self.cells]
             if self.cells
-            else [],
-            "caption": self.caption.to_dict()
-            if self.caption
-            else None,
-            "footnotes": [f.to_dict() for f in self.footnotes]
-            if self.footnotes
             else [],
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
             if self.bounding_regions
@@ -3369,169 +3353,6 @@ class DocumentTable(object):
             cells=[DocumentTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
             if len(data.get("cells", [])) > 0
             else [],
-            caption=DocumentCaption.from_dict(data.get("caption"))  # type: ignore
-            if data.get("caption", None)
-            else None,
-            footnotes=[DocumentFootnote.from_dict(v) for v in data.get("footnotes")]  # type: ignore
-            if len(data.get("footnotes", [])) > 0
-            else [],
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-        )
-
-
-class DocumentCaption(object):
-    """An object representing the location and content of a document caption.
-
-    :ivar content: Caption content.
-    :vartype content: str
-    :ivar bounding_regions: Bounding regions covering the caption.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.BoundingRegion]
-    :ivar spans: Location of the caption in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    """
-
-    def __init__(self, **kwargs):
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
-
-    @classmethod
-    def _from_generated(cls, data):
-        return cls(
-            content=data.content,
-            bounding_regions=[
-                BoundingRegion._from_generated(region)
-                for region in data.bounding_regions
-            ]
-            if data.bounding_regions
-            else [],
-            spans=[DocumentSpan._from_generated(span) for span in data.spans]
-            if data.spans
-            else [],
-        )
-
-    def __repr__(self):
-        return (
-            "DocumentCaption(content={}, bounding_regions={}, spans={})".format(
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-            )
-        )
-
-    def to_dict(self):
-        # type: () -> dict
-        """Returns a dict representation of DocumentCaption.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        # type: (dict) -> DocumentCaption
-        """Converts a dict in the shape of a DocumentCaption to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentCaption.
-        :return: DocumentCaption
-        :rtype: DocumentCaption
-        """
-        return cls(
-            content=data.get("content", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-        )
-
-
-class DocumentFootnote(object):
-    """An object representing the location and content of a document footnote.
-
-    :ivar content: Footnote content.
-    :vartype content: str
-    :ivar bounding_regions: Bounding regions covering the footnote.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.BoundingRegion]
-    :ivar spans: Location of the footnote in the reading order concatenated
-     content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    """
-
-    def __init__(self, **kwargs):
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
-
-    @classmethod
-    def _from_generated(cls, data):
-        return cls(
-            content=data.content,
-            bounding_regions=[
-                BoundingRegion._from_generated(region)
-                for region in data.bounding_regions
-            ]
-            if data.bounding_regions
-            else [],
-            spans=[DocumentSpan._from_generated(span) for span in data.spans]
-            if data.spans
-            else [],
-        )
-
-    def __repr__(self):
-        return (
-            "DocumentFootnote(content={}, bounding_regions={}, spans={})".format(
-                self.content,
-                repr(self.bounding_regions),
-                repr(self.spans),
-            )
-        )
-
-    def to_dict(self):
-        # type: () -> dict
-        """Returns a dict representation of DocumentFootnote.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        # type: (dict) -> DocumentFootnote
-        """Converts a dict in the shape of a DocumentFootnote to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentFootnote.
-        :return: DocumentFootnote
-        :rtype: DocumentFootnote
-        """
-        return cls(
-            content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
             else [],
