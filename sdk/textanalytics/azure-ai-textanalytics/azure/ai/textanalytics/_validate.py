@@ -22,7 +22,7 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         return
 
     actions_version_mapping = {
-        "2022-04-01-preview":
+        "2022-05-01":
         [
             "ExtractSummaryAction",
             "RecognizeCustomEntitiesAction",

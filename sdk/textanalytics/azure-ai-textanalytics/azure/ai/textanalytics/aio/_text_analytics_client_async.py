@@ -781,7 +781,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-04-01-preview": ["display_name", "fhir_version"]}
+        args_mapping={"2022-05-01": ["display_name", "fhir_version"]}
     )
     async def begin_analyze_healthcare_entities(
         self,
