@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0b1 (2022-06-07)
+
+**Features**
+
+  - Added operation group CommunicationServicesOperations
+  - Added operation group DomainsOperations
+  - Added operation group EmailServicesOperations
+  - Model CommunicationServiceResource has a new parameter linked_domains
+  - Model Resource has a new parameter system_data
+
+**Breaking changes**
+
+  - Parameter location of model CommunicationServiceResource is now required
+  - Removed operation group CommunicationServiceOperations
+  - Removed operation group OperationStatusesOperations
+
 ## 1.1.0 (Unreleased)
 
 ### Features Added
