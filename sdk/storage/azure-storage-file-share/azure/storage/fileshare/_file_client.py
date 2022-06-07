@@ -350,12 +350,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -463,12 +464,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+       :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the file as metadata.
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
@@ -608,6 +610,13 @@ class ShareFileClient(StorageAccountHostsMixin):
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_last_write_time: str or ~datetime.datetime
+        :keyword file_change_time:
+            Change time for the file. If not specified, change time will be set to the current date/time.
+
+            .. versionadded:: 12.9.0
+                This parameter was introduced in API version '2021-06-08'.
+
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword bool ignore_read_only:
             Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
 
@@ -848,12 +857,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword str content_type:
             The Content Type of the new file.
 
@@ -997,12 +1007,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -33,11 +34,11 @@ class PathOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -53,11 +54,18 @@ class PathOperations:
         properties: Optional[str] = None,
         permissions: Optional[str] = None,
         umask: Optional[str] = None,
-        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        acl: Optional[str] = None,
+        proposed_lease_id: Optional[str] = None,
+        lease_duration: Optional[int] = None,
+        expiry_options: Optional[Union[str, "_models.PathExpiryOptions"]] = None,
+        expires_on: Optional[str] = None,
+        path_http_headers: Optional[_models.PathHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """Create File | Create Directory | Rename File | Rename Directory.
@@ -123,6 +131,27 @@ class PathOperations:
          for a directory and 0666 for a file.  The default umask is 0027.  The umask must be specified
          in 4-digit octal notation (e.g. 0766). Default value is None.
         :type umask: str
+        :param owner: Optional. The owner of the blob or directory. Default value is None.
+        :type owner: str
+        :param group: Optional. The owning group of the blob or directory. Default value is None.
+        :type group: str
+        :param acl: Sets POSIX access control rights on files and directories. The value is a
+         comma-separated list of access control entries. Each access control entry (ACE) consists of a
+         scope, a type, a user or group identifier, and permissions in the format
+         "[scope:][type]:[id]:[permissions]". Default value is None.
+        :type acl: str
+        :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
+         400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
+        :type proposed_lease_id: str
+        :param lease_duration: The lease duration is required to acquire a lease, and specifies the
+         duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or -1
+         for infinite lease. Default value is None.
+        :type lease_duration: long
+        :param expiry_options: Required. Indicates mode of the expiry time. Default value is None.
+        :type expiry_options: str or ~azure.storage.filedatalake.models.PathExpiryOptions
+        :param expires_on: The time to set the blob to expiry. Default value is None.
+        :type expires_on: str
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -139,11 +168,15 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _cache_control = None
         _content_encoding = None
@@ -215,12 +248,21 @@ class PathOperations:
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=encryption_algorithm,
+            owner=owner,
+            group=group,
+            acl=acl,
+            proposed_lease_id=proposed_lease_id,
+            lease_duration=lease_duration,
+            expiry_options=expiry_options,
+            expires_on=expires_on,
             template_url=self.create.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -270,11 +312,11 @@ class PathOperations:
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         acl: Optional[str] = None,
-        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        path_http_headers: Optional[_models.PathHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
-    ) -> Optional["_models.SetAccessControlRecursiveResponse"]:
+    ) -> Optional[_models.SetAccessControlRecursiveResponse]:
         """Append Data | Flush Data | Set Properties | Set Access Control.
 
         Uploads data to be appended to a file, flushes (writes) previously uploaded data to a file,
@@ -390,13 +432,16 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SetAccessControlRecursiveResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.SetAccessControlRecursiveResponse]]
 
         _content_md5 = None
         _lease_id = None
@@ -459,11 +504,13 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -518,11 +565,10 @@ class PathOperations:
         x_ms_lease_action: Union[str, "_models.PathLeaseAction"],
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
-        x_ms_lease_duration: Optional[int] = None,
         x_ms_lease_break_period: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Lease Path.
@@ -551,10 +597,6 @@ class PathOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
-         the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
-         -1 for infinite lease. Default value is None.
-        :type x_ms_lease_duration: int
         :param x_ms_lease_break_period: The lease break period duration is optional to break a lease,
          and  specifies the break period of the lease in seconds.  The lease break  duration must be
          between 0 and 60 seconds. Default value is None.
@@ -572,11 +614,15 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_match = None
@@ -597,7 +643,7 @@ class PathOperations:
             x_ms_lease_action=x_ms_lease_action,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
-            x_ms_lease_duration=x_ms_lease_duration,
+            x_ms_lease_duration=self._config.x_ms_lease_duration,
             x_ms_lease_break_period=x_ms_lease_break_period,
             lease_id=_lease_id,
             proposed_lease_id=proposed_lease_id,
@@ -606,11 +652,13 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             template_url=self.lease.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -662,9 +710,9 @@ class PathOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         x_ms_range_get_content_md5: Optional[bool] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> IO:
         """Read File.
@@ -704,11 +752,15 @@ class PathOperations:
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
         _lease_id = None
         _if_match = None
@@ -746,11 +798,13 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=encryption_algorithm,
             template_url=self.read.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=True,
             **kwargs
@@ -829,8 +883,8 @@ class PathOperations:
         timeout: Optional[int] = None,
         action: Optional[Union[str, "_models.PathGetPropertiesAction"]] = None,
         upn: Optional[bool] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Get Properties | Get Status | Get Access Control List.
@@ -871,11 +925,15 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_match = None
@@ -903,11 +961,13 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             template_url=self.get_properties.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -958,8 +1018,8 @@ class PathOperations:
         timeout: Optional[int] = None,
         recursive: Optional[bool] = None,
         continuation: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete File | Delete Directory.
@@ -994,11 +1054,15 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_match = None
@@ -1026,11 +1090,13 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1065,8 +1131,8 @@ class PathOperations:
         permissions: Optional[str] = None,
         acl: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
@@ -1107,13 +1173,16 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        action = kwargs.pop('action', "setAccessControl")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        action = kwargs.pop('action', _params.pop('action', "setAccessControl"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _lease_id = None
         _if_match = None
@@ -1144,11 +1213,13 @@ class PathOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.set_access_control.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1186,7 +1257,7 @@ class PathOperations:
         acl: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.SetAccessControlRecursiveResponse":
+    ) -> _models.SetAccessControlRecursiveResponse:
         """Set the access control list for a path and sub-paths.
 
         :param mode: Mode "set" sets POSIX access control rights on files and directories, "modify"
@@ -1232,13 +1303,16 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SetAccessControlRecursiveResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        action = kwargs.pop('action', "setAccessControlRecursive")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        action = kwargs.pop('action', _params.pop('action', "setAccessControlRecursive"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SetAccessControlRecursiveResponse]
 
         
         request = build_set_access_control_recursive_request(
@@ -1253,11 +1327,13 @@ class PathOperations:
             acl=acl,
             request_id_parameter=request_id_parameter,
             template_url=self.set_access_control_recursive.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1295,10 +1371,10 @@ class PathOperations:
         close: Optional[bool] = None,
         content_length: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
+        path_http_headers: Optional[_models.PathHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
@@ -1358,13 +1434,16 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        action = kwargs.pop('action', "flush")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        action = kwargs.pop('action', _params.pop('action', "flush"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _content_md5 = None
         _lease_id = None
@@ -1425,11 +1504,13 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=encryption_algorithm,
             template_url=self.flush_data.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1468,9 +1549,9 @@ class PathOperations:
         content_length: Optional[int] = None,
         transactional_content_crc64: Optional[bytearray] = None,
         request_id_parameter: Optional[str] = None,
-        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
-        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        cpk_info: Optional["_models.CpkInfo"] = None,
+        path_http_headers: Optional[_models.PathHTTPHeaders] = None,
+        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """Append data to the file.
@@ -1516,14 +1597,17 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        action = kwargs.pop('action', "append")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        action = kwargs.pop('action', _params.pop('action', "append"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _transactional_content_hash = None
         _lease_id = None
@@ -1557,11 +1641,13 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=encryption_algorithm,
             template_url=self.append_data.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1623,13 +1709,16 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "expiry")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "expiry"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_set_expiry_request(
@@ -1641,11 +1730,13 @@ class PathOperations:
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             template_url=self.set_expiry.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1702,13 +1793,16 @@ class PathOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        comp = kwargs.pop('comp', "undelete")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        comp = kwargs.pop('comp', _params.pop('comp', "undelete"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_undelete_request(
@@ -1719,11 +1813,13 @@ class PathOperations:
             undelete_source=undelete_source,
             request_id_parameter=request_id_parameter,
             template_url=self.undelete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
