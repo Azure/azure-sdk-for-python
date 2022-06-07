@@ -96,6 +96,12 @@ async def analyze_read():
                 )
             )
 
+    if len(result.paragraphs) > 0:
+        print("----Detected #{} paragraphs in the document----".format(len(result.paragraphs)))
+        for paragraph in result.paragraphs:
+            print("Found paragraph with role: '{}' within {} bounding region".format(paragraph.role, format_bounding_region(paragraph.bounding_regions)))
+            print("...with content: '{}'".format(paragraph.content))
+
     print("----------------------------------------")
 
 
