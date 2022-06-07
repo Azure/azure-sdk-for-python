@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
     """
 
@@ -28,14 +27,14 @@ class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Content Type 'application/json'.
     APPLICATION_JSON = "application/json"
 
-class FieldValueSelectionMark(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FieldValueSelectionMark(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Selection mark value.
     """
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
-class FieldValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
     """
 
@@ -50,14 +49,14 @@ class FieldValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SELECTION_MARK = "selectionMark"
     COUNTRY_REGION = "countryRegion"
 
-class KeyValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the key value element.
     """
 
     STRING = "string"
     SELECTION_MARK = "selectionMark"
 
-class Language(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AF = "af"
     AST = "ast"
@@ -133,7 +132,7 @@ class Language(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ZH_HANT = "zh-Hant"
     ZU = "zu"
 
-class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and boundingBox properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
     """
@@ -141,7 +140,7 @@ class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PIXEL = "pixel"
     INCH = "inch"
 
-class Locale(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Locale(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EN_AU = "en-AU"
     EN_CA = "en-CA"
@@ -149,7 +148,7 @@ class Locale(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EN_IN = "en-IN"
     EN_US = "en-US"
 
-class ModelStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the model.
     """
 
@@ -157,7 +156,7 @@ class ModelStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READY = "ready"
     INVALID = "invalid"
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the queued operation.
     """
 
@@ -166,26 +165,26 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
-class ReadingOrder(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ReadingOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BASIC = "basic"
     NATURAL = "natural"
 
-class SelectionMarkState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the selection mark.
     """
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
-class TextStyle(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TextStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The text line style name, including handwriting and other.
     """
 
     OTHER = "other"
     HANDWRITING = "handwriting"
 
-class TrainStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the training operation.
     """
 

@@ -12,8 +12,7 @@ from ._version import VERSION
 __version__ = VERSION
 __all__ = ['ImageBuilderClient']
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()

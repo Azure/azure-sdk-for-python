@@ -40,12 +40,13 @@ jobs:
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
+        git clone ${REPO:0:8}$(USR_NAME):$(azuresdk-github-pat)@${REPO:8} $(pwd)/azure-sdk-for-python
 
         # prepare env if need to generate SDK code
         if [ "$(SPEC_README)" ]; then
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
+
 
           # install autorest
           sudo npm install -g n
@@ -77,7 +78,6 @@ jobs:
         export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
         export ISSUE_LINK=$(ISSUE_LINK)
-        export USR_TOKEN=$(USR_TOKEN)
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)

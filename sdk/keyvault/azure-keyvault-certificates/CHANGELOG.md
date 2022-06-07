@@ -1,16 +1,20 @@
 # Release History
 
-## 4.4.1 (Unreleased)
+## 4.5.0b2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
-- Port numbers are now preserved in the `vault_url` property of a `KeyVaultCertificateIdentifier`
-  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
 
 ### Other Changes
+
+## 4.5.0b1 (2022-06-07)
+
+### Bugs Fixed
+- Port numbers are now preserved in the `vault_url` property of a `KeyVaultCertificateIdentifier`
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
 
 ## 4.4.0 (2022-03-28)
 

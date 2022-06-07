@@ -92,7 +92,8 @@ class EventHubConsumer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
+            max_retries=self._client._config.max_retries,
+            on_error=_error_handler,  # pylint:disable=protected-access
         )
         self._reconnect_backoff = 1
         self._timeout = 0
@@ -106,7 +107,8 @@ class EventHubConsumer(
                 int(owner_level)
             )
         link_property_timeout_ms = (
-            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout
+            or self._timeout  # pylint:disable=protected-access
         ) * 1000
         self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(
             int(link_property_timeout_ms)
@@ -168,27 +170,33 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
+    async def receive(
+        self, batch=False, max_batch_size=300, max_wait_time=None
+    ) -> None:
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
         has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
         deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
-        while len(self._message_buffer) < max_batch_size and \
-                (time.time() < deadline or has_not_fetched_once):
+        while len(self._message_buffer) < max_batch_size and (
+            time.time() < deadline or has_not_fetched_once
+        ):
             retried_times = 0
             has_not_fetched_once = False
             while retried_times <= max_retries:
                 try:
                     await self._open()
-                    await cast(ReceiveClientAsync, self._handler).do_work_async()  # uamqp sleeps 0.05 if none received
+                    await cast(
+                        ReceiveClientAsync, self._handler
+                    ).do_work_async()  # uamqp sleeps 0.05 if none received
                     break
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
                         isinstance(exception, uamqp.errors.LinkDetach)
-                        and exception.condition == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                        and exception.condition # pylint: disable=no-member
+                        == uamqp.constants.ErrorCodes.LinkStolen
                     ):
                         raise await self._handle_exception(exception)
                     if not self.running:  # exit by close

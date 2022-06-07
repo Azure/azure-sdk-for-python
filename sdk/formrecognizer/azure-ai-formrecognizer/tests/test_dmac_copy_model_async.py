@@ -9,7 +9,7 @@ import functools
 import uuid
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer import DocumentModel
 from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
