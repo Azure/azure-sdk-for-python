@@ -161,8 +161,9 @@ def individual_workload(tox_command_tuple, workload_results):
 
         workload_results[tox_command_tuple[1]] = (return_code, stdout, stderr)
 
-        if in_ci():
-            shutil.rmtree(tox_dir)
+        # this is not sticking around, I'm just going to publish the tox folder as an artifact.
+        # if in_ci():
+        #     shutil.rmtree(tox_dir)
 
 
 def execute_tox_parallel(tox_command_tuples):

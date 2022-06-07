@@ -10,7 +10,7 @@ parameters:
     default: ''
   - name: BuildDocs
     type: boolean
-    default: true
+    default: false
   - name: Artifacts
     type: object
     default: []
@@ -85,6 +85,12 @@ steps:
         --toxenv=sphinx
 
   - ${{ parameters.BeforePublishSteps }}
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/sdk/agrifood/azure-agrifood-farming/.tox/'
+      ArtifactName: 'virtualenv'
+
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
