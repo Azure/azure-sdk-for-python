@@ -1,4 +1,4 @@
- # Release History
+# Release History
 
 ## 12.4.0b1 (Unreleased)
 
