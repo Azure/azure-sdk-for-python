@@ -7,6 +7,7 @@ import datetime
 from typing import Any, List, Literal, Dict, Sequence, Set, Tuple, Optional, Union
 import pytest
 import isodate
+from yaml import parse
 from azure.core.serialization import Model, rest_field, rest_discriminator
 
 def modify_args(init):
@@ -50,7 +51,7 @@ def test_model_and_dict_equal():
         "virtualMachines": []
     }
     model = BasicResource(platform_update_domain_count=5, platform_fault_domain_count=3, virtual_machines=[])
-    model.platform_update_domain_count
+
     assert model == dict_response
     assert (
         model.platform_update_domain_count ==
@@ -1055,59 +1056,121 @@ def test_multiple_inheritance_complex():
     assert isinstance(kitten, Feline)
     assert isinstance(kitten, CuteThing)
 
-class Animal(Model):
-
-    kind: str = rest_discriminator()
-    is_domesticated: str = rest_field(name="isDomesticated")
-
-    def __init__(self, *, genus: str, **kwargs):
-        super().__init__(genus=genus, **kwargs)
-
-class Fish(Animal, discriminator="fish"):
-    fish_type: str = rest_field(name="fishType")
-    siblings: List["Fish"] = rest_field()
-
-    def __init__(self, *, genus: str, fish_type: str, siblings: List["Fish"], **kwargs):
-        super().__init__(genus=genus, **kwargs)
-        self.fish_type = fish_type
-        self.siblings = siblings
-        self.kind: Literal["fish"] = "fish"
 
 
-class Salmon(Fish, discriminator="salmon"):
-    is_sashimi: bool = rest_field(name="isSashimi")
+class A(Model):
+    b: "B" = rest_field()
 
-    def __init__(self, *, genus: str, fish_type: str, siblings: List["Fish"], is_sashimi: bool, **kwargs):
-        super().__init__(
-            genus=genus,
-            fish_type=fish_type,
-            siblings=siblings,
-            **kwargs
-        )
-        self.is_sashimi = is_sashimi
-        self.kind: Literal["salmon"] = "salmon"
+class B(Model):
+    c: str = rest_field()
 
-class Cat(Animal, discriminator="cat"):
-    has_kitten: bool = rest_field(name="hasKitten")
+def test_nested_setting():
+    a = A(**{"b": {"c": "hello"}})
+    assert a["b"]["c"] == a.b.c == "hello"
 
-    def __init__(self, *, genus: str, has_kitten: bool, **kwargs):
-        super().__init__(genus=genus, **kwargs)
-        self.has_kitten = has_kitten
-        self.kind: Literal["cat"] = "cat"
+    # set with dict
+    a["b"]["c"] = "setwithdict"
+    assert a["b"]["c"] == a.b.c == "setwithdict"
 
-class Dog(Animal, discriminator="dog"):
-    has_puppy: bool = rest_field(name="hasPuppy")
-    enemies: List[Cat] = rest_field()
+    # set with attr
+    a.b.c = "setwithattr"
+    assert a.b.c == "setwithattr"
+    assert a["b"]["c"] == "setwithattr"
 
-    def __init__(self, *, genus: str, has_puppy: bool, enemies: List[Cat], **kwargs):
-        super().__init__(genus=genus, **kwargs)
-        self.has_puppy = has_puppy
-        self.enemies = enemies
-        self.kind: Literal["dog"] = "dog"
+class BaseModel(Model):
 
-def test_polymorphism():
-    animal = Animal(genus="idk", kind="cat")
-    cat = Cat(genus="idk", has_kitten=True)
+    inner_model: "InnerModel" = rest_field(name="innerModel")
+
+class InnerModel(Model):
+
+    datetime_field: datetime.datetime = rest_field(name="datetimeField")
+
+def test_nested_deserialization():
+
+    serialized_datetime = "9999-12-31T23:59:59.999Z"
+
+    model = BaseModel(**{"innerModel": {"datetimeField": serialized_datetime}})
+    assert model.inner_model["datetimeField"] == serialized_datetime
+    assert model.inner_model.datetime_field == isodate.parse_datetime(serialized_datetime)
+
+    new_serialized_datetime = "2022-12-31T23:59:59.999Z"
+    model.inner_model.datetime_field = isodate.parse_datetime(new_serialized_datetime)
+    assert model.inner_model["datetimeField"] == "2022-12-31T23:59:59.999Z"
+
+class X(Model):
+    y: "Y" = rest_field()
+
+class Y(Model):
+    z: "Z" = rest_field()
+
+class Z(Model):
+    zval: datetime.datetime = rest_field()
+
+def test_nested_update():
+    serialized_datetime = "9999-12-31T23:59:59.999Z"
+    parsed_datetime = isodate.parse_datetime(serialized_datetime)
+    x = X(**{"y": {"z": serialized_datetime}})
+    with pytest.raises(AttributeError):
+        x["y"].z
+    assert x.y.z == x["y"].z == parsed_datetime
+    assert x.y["z"] == x["y"]["z"] == serialized_datetime
+    x.y
+
+
+
+# class Animal(Model):
+
+#     kind: str = rest_discriminator()
+#     is_domesticated: str = rest_field(name="isDomesticated")
+
+#     def __init__(self, *, genus: str, **kwargs):
+#         super().__init__(genus=genus, **kwargs)
+
+# class Fish(Animal, discriminator="fish"):
+#     fish_type: str = rest_field(name="fishType")
+#     siblings: List["Fish"] = rest_field()
+
+#     def __init__(self, *, genus: str, fish_type: str, siblings: List["Fish"], **kwargs):
+#         super().__init__(genus=genus, **kwargs)
+#         self.fish_type = fish_type
+#         self.siblings = siblings
+#         self.kind: Literal["fish"] = "fish"
+
+
+# class Salmon(Fish, discriminator="salmon"):
+#     is_sashimi: bool = rest_field(name="isSashimi")
+
+#     def __init__(self, *, genus: str, fish_type: str, siblings: List["Fish"], is_sashimi: bool, **kwargs):
+#         super().__init__(
+#             genus=genus,
+#             fish_type=fish_type,
+#             siblings=siblings,
+#             **kwargs
+#         )
+#         self.is_sashimi = is_sashimi
+#         self.kind: Literal["salmon"] = "salmon"
+
+# class PolymorphicCat(Animal, discriminator="cat"):
+#     has_kitten: bool = rest_field(name="hasKitten")
+
+#     def __init__(self, *, genus: str, has_kitten: bool, **kwargs):
+#         super().__init__(genus=genus, **kwargs)
+#         self.has_kitten = has_kitten
+#         self.kind: Literal["cat"] = "cat"
+
+# class Dog(Animal, discriminator="dog"):
+#     has_puppy: bool = rest_field(name="hasPuppy")
+#     enemies: List[Cat] = rest_field()
+
+#     def __init__(self, *, genus: str, has_puppy: bool, enemies: List[Cat], **kwargs):
+#         super().__init__(genus=genus, **kwargs)
+#         self.has_puppy = has_puppy
+#         self.enemies = enemies
+#         self.kind: Literal["dog"] = "dog"
+
+# def test_polymorphism():
+#     animal = Animal(genus="idk", kind="cat")
+#     cat = PolymorphicCat(genus="idk", has_kitten=True)
 
 # def get_animal(raw_response: Dict[str, Any]) -> Union[Fish, Cat, Dog]:
 #     if raw_response["kind"] == "Cat":
