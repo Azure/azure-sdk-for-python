@@ -388,7 +388,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._request_options['cls'] = deserialize_blob_properties
 
         properties = self._clients.blob.get_properties(**self._request_options)
-        self._encryption_data = parse_encryption_data(properties.metadata, self._encryption_options['required'])
+        # This will return None if there is no encryption metadata or there are parsing errors.
+        # That is acceptable here, the proper error will be caught and surfaced hen attempting
+        # to decrypt the blob.
+        self._encryption_data = parse_encryption_data(properties.metadata)
 
         # Restore cls for download
         self._request_options['cls'] = download_cls

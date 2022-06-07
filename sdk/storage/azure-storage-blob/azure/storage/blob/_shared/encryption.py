@@ -352,21 +352,16 @@ def get_adjusted_download_range_and_offset(
     return (start, end), (start_offset, end_offset)
 
 
-def parse_encryption_data(metadata: Dict[str, Any], require_encryption: bool) -> Optional[_EncryptionData]:
+def parse_encryption_data(metadata: Dict[str, Any]) -> Optional[_EncryptionData]:
     """
-    Parses the encryption data out of the given blob metadata.
+    Parses the encryption data out of the given blob metadata. If metadata does
+    not exist or there are parsing errors, this function will just return None.
 
     :param Dict[str, Any] metadata: The blob metadata parsed from the response.
-    :param bool require_encryption: Whether encryption is required on the client.
     """
     try:
-        encryption_data_str = metadata['encryptiondata']
-        return _dict_to_encryption_data(loads(encryption_data_str))
+        return _dict_to_encryption_data(loads(metadata['encryptiondata']))
     except:  # pylint: disable=bare-except
-        if require_encryption:
-            raise ValueError(
-                'Encryption required, but received data does not contain appropriate metatadata.' + \
-                'Data was either not encrypted or metadata has been lost.')
         return None
 
 

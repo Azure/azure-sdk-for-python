@@ -178,8 +178,11 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
         # Assert
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_encryption_kek_rsa(self, storage_account_name, storage_account_key):
+        # We can only generate random RSA keys, so this must be run live or
+        # the playback test will fail due to a change in kek values.
         self._setup(storage_account_name, storage_account_key)
         kek = RSAKeyWrapper('key2')
         self.enable_encryption_v2(kek)
@@ -256,6 +259,27 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
             blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         data = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified).readall()
+
+        # Assert
+        self.assertEqual(content, data)
+
+    @BlobPreparer()
+    def test_decryption_on_non_encrypted_blob(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Not Encrypted!'
+
+        blob.upload_blob(content, overwrite=True)
+
+        # Act
+        blob.key_encryption_key = KeyWrapper('key1')
+        blob.require_encryption = True
+
+        with self.assertRaises(HttpResponseError):
+            blob.download_blob()
+
+        blob.require_encryption = False
+        data = blob.download_blob().readall()
 
         # Assert
         self.assertEqual(content, data)
