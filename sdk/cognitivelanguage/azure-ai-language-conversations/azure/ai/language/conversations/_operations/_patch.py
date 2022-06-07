@@ -54,7 +54,8 @@ class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperat
                     "deploymentName": deployment_name,
                     "verbose": True
                 }
-            }
+            },
+            **kwargs
         )
 
 __all__: List[str] = [
