@@ -4,8 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from cgitb import lookup
 import datetime
-from typing import Any, MutableMapping
+from typing import Any, Dict, ItemsView, Iterator, KeysView, List, MutableMapping, Optional, Sequence, Tuple, Union, ValuesView
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -93,20 +94,113 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     # So I use the one from "requests" or the one from "aiohttp" ("multidict")
     # If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
     # we can add "multidict" as a dependency or re-implement our own.
-    try:
-        from requests.structures import CaseInsensitiveDict
+    # try:
+    #     from requests.structures import CaseInsensitiveDict
 
-        return CaseInsensitiveDict(*args, **kwargs)
-    except ImportError:
-        pass
-    try:
-        # multidict is installed by aiohttp
-        from multidict import CIMultiDict
+    #     return CaseInsensitiveDict(*args, **kwargs)
+    # except ImportError:
+    #     pass
+    # try:
+    #     # multidict is installed by aiohttp
+    #     from multidict import CIMultiDict
 
-        if len(kwargs) == 0 and len(args) == 1 and (not args[0]):
-            return CIMultiDict()    # in case of case_insensitive_dict(None), we don't want to raise exception
-        return CIMultiDict(*args, **kwargs)
-    except ImportError:
-        raise ValueError(
-            "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
-        )
+    #     if len(kwargs) == 0 and len(args) == 1 and (not args[0]):
+    #         return CIMultiDict()    # in case of case_insensitive_dict(None), we don't want to raise exception
+    #     return CIMultiDict(*args, **kwargs)
+    # except ImportError:
+    #     raise ValueError(
+    #         "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
+    #     )
+    return CaseInsensitiveDict(*args, **kwargs)
+
+class CaseInsensitiveDict(MutableMapping[str, str]):
+    """
+    Case insensitive dictionary implementation
+    """
+    def __init__(
+        self,
+        headers:Optional[ Union[ "CaseInsensitiveDict", Dict[str, str], Sequence[Tuple[str, str]] ] ] = None,
+        **kwargs: Any) -> None:
+        if headers is None:
+            self._store = {}
+        
+        self.update(headers, **kwargs)
+
+
+    def copy(self) -> "CaseInsensitiveDict":
+        return CaseInsensitiveDict(self)
+
+    def __getitem__(self, key: str) -> Any:
+
+        if key.lower() not in self._store:
+            raise KeyError(key)
+        
+        items = [str(val) for _, val in self._store[key.lower()]]
+
+        if items:
+            return ', '.join(items)
+
+    def __setitem__(self, key: str, value: str) -> None:
+        """
+        Set the header `key` to `value`, removing any duplicate enteries. Retains insertion order
+        """
+        lookup_key = key.lower()
+        
+        if lookup_key not in self._store:
+            self._store[lookup_key] = [(key, value)]
+        else:
+            found_indexes = [idx for idx, (item_key, _) in enumerate(self._store[lookup_key])]
+
+            for idx in reversed(found_indexes[1:]):
+                del self._store[lookup_key][idx]
+
+            if found_indexes:
+                idx = found_indexes[0]
+                self._store[lookup_key][idx] = (key, value)
+            
+            else:
+                self._store[lookup_key].append((key, value))
+
+    def __delitem__(self, key: str) -> None:
+        lookup_key = key.lower()
+
+        if lookup_key not in self._store:
+            raise KeyError(key)
+
+        del self._store[lookup_key]
+
+    def __iter__(self) -> Iterator[Any]:
+        return iter(self.keys())
+
+    def __len__(self) -> int:
+        return len(self._store)
+
+    def __eq__(self, other: Any) -> bool:
+        try:
+            other_headers = CaseInsensitiveDict(other)
+        except ValueError:
+            return False
+
+        # return sorted(self.multi_items()) == sorted(other_headers.multi_items())
+
+    def __repr__(self) -> str:
+        return str(dict(self.items()))
+
+        
+
+
+        
+
+    
+
+
+
+
+
+
+    
+
+
+    
+
+
