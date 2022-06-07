@@ -6,6 +6,7 @@ import logging
 import uuid
 import time
 import threading
+import functools
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Union
 
@@ -15,9 +16,9 @@ except ImportError:
     from urllib import quote_plus  # type: ignore
     from urlparse import urlparse  # type: ignore
 
-import uamqp
-from uamqp import utils, compat
-from uamqp.message import MessageProperties
+from ._pyamqp import constants, error as errors, utils as pyamqp_utils
+from ._pyamqp.message import Message, Properties
+from ._pyamqp.authentication import JWTTokenAuth
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import RetryMode
@@ -42,6 +43,7 @@ from ._common.constants import (
     TRACE_COMPONENT,
     TRACE_PEER_ADDRESS_PROPERTY,
     TRACE_BUS_DESTINATION_PROPERTY,
+    JWT_TOKEN_SCOPE
 )
 
 if TYPE_CHECKING:
@@ -146,11 +148,8 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    encoded_uri = quote_plus(uri).encode("utf-8")  # pylint: disable=no-member
-    encoded_policy = quote_plus(policy).encode("utf-8")  # pylint: disable=no-member
-    encoded_key = key.encode("utf-8")
 
-    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
@@ -266,7 +265,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClient
+        self._handler = None  # type: AMQPClient
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = threading.Event()
@@ -457,7 +456,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         timeout=None,
         **kwargs
     ):
-        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> uamqp.Message
+        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> Message
         """
         Execute an amqp management operation.
 
@@ -485,9 +484,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except AttributeError:
                 pass
 
-        mgmt_msg = uamqp.Message(
+        mgmt_msg = Message(
             body=message,
-            properties=MessageProperties(
+            properties=Properties(
                 reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
             ),
             application_properties=application_properties,
@@ -512,7 +511,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation,
+            mgmt_operation=mgmt_operation.decode(),
             message=message,
             callback=callback,
             timeout=timeout,

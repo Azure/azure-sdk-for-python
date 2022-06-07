@@ -6,12 +6,16 @@ import logging
 import time
 import uuid
 import datetime
+import functools
 import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
-import uamqp
-from uamqp import SendClient, types
-from uamqp.authentication.common import AMQPAuth
+from ._pyamqp import (
+    SendClient,
+    types,
+)
+from ._pyamqp.constants import MAX_FRAME_SIZE_BYTES
+from ._pyamqp.authentication import JWTTokenAuth
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -40,6 +44,7 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
     SPAN_NAME_SCHEDULE,
+    JWT_TOKEN_SCOPE
 )
 
 if TYPE_CHECKING:
@@ -60,6 +65,7 @@ if TYPE_CHECKING:
         ServiceBusMessageBatch,
         List[Union[ServiceBusMessage, AmqpAnnotatedMessage]],
     ]
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -230,35 +236,65 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
-        # type: (AMQPAuth) -> None
+        # type: (JWTTokenAuth) -> None
+        transport_type = self._config.transport_type
         self._handler = SendClient(
+            self.fully_qualified_namespace,
             self._entity_uri,
             auth=auth,
             debug=self._config.logging_enable,
             properties=self._properties,
-            error_policy=self._error_policy,
+            # error_policy=self._error_policy,
             client_name=self._name,
-            keep_alive_interval=self._config.keep_alive,
+            # keep_alive_interval=self._config.keep_alive,
             encoding=self._config.encoding,
+            transport_type=transport_type,
+            http_proxy=self._config.http_proxy
+        )
+
+    def _create_auth(self):
+        # type: () -> JWTTokenAuth
+        """
+        Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
+        the session.
+        """
+        try:
+            # ignore mypy's warning because token_type is Optional
+            token_type = self._credential.token_type  # type: ignore
+        except AttributeError:
+            token_type = b"jwt"
+        if token_type == b"servicebus.windows.net:sastoken":
+            return JWTTokenAuth(
+                self._auth_uri,
+                self._auth_uri,
+                functools.partial(self._credential.get_token, self._auth_uri)
+            )
+        return JWTTokenAuth(
+            self._auth_uri,
+            self._auth_uri,
+            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            timeout=self._config.auth_timeout,
+            custom_endpoint_hostname=self._config.custom_endpoint_hostname,
+            port=self._config.connection_port,
+            verify=self._config.connection_verify,
         )
 
     def _open(self):
         # pylint: disable=protected-access
-        if self._running:
-            return
-        if self._handler:
-            self._handler.close()
-
-        auth = None if self._connection else create_authentication(self)
+        if not self._running:
+            if self._handler:
+                self._handler.close()
+        auth = self._create_auth()
         self._create_handler(auth)
         try:
-            self._handler.open(connection=self._connection)
+            self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
-                or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+                # self._handler.message_handler._link.peer_max_message_size
+                MAX_FRAME_SIZE_BYTES
             )
         except:
             self._close_handler()

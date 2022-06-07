@@ -153,6 +153,7 @@ class AMQPClient(object):
         self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
         self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
         self._desired_capabilities = kwargs.pop('desired_capabilities', None)
+        self._msg_timeout = kwargs.pop('msg_timeout', 30)
 
         # transport
         if kwargs.get('transport_type') is TransportType.Amqp and kwargs.get('http_proxy') is not None:

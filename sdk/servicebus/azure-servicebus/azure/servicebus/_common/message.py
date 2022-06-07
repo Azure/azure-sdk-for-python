@@ -13,8 +13,8 @@ from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Ma
 
 import six
 
-import uamqp.errors
-import uamqp.message
+from .._pyamqp.constants import MAX_FRAME_SIZE_BYTES as MAX_MESSAGE_LENGTH_BYTES
+from .._pyamqp.message import Message, BatchMessage
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -670,11 +670,11 @@ class ServiceBusMessageBatch(object):
 
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
-        self.message = uamqp.BatchMessage(
+        self.message = BatchMessage(
             data=[], multi_messages=False, properties=None
         )
         self._max_size_in_bytes = (
-            max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+            max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
         )
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
@@ -782,7 +782,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     """
 
     def __init__(self, message, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, **kwargs):
-        # type: (uamqp.message.Message, Union[ServiceBusReceiveMode, str], Any) -> None
+        # type: (Message, Union[ServiceBusReceiveMode, str], Any) -> None
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._received_timestamp_utc = utc_now()

@@ -7,7 +7,7 @@ import logging
 from weakref import WeakSet
 from typing_extensions import Literal
 
-import uamqp
+from ._pyamqp._connection import Connection
 
 from ._base_handler import (
     _parse_conn_str,
@@ -145,7 +145,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
     def _create_uamqp_connection(self):
         auth = create_authentication(self)
-        self._connection = uamqp.Connection(
+        self._connection = Connection(
             hostname=self.fully_qualified_namespace,
             sasl=auth,
             debug=self._config.logging_enable,
