@@ -24,6 +24,11 @@ USAGE:
 import os
 import asyncio
 
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
