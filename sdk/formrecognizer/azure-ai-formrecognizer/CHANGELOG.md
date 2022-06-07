@@ -6,8 +6,6 @@
 - Added `paragraphs` property on `AnalyzeResult`.
 - Added new `DocumentParagraph` model to represent document paragraphs.
 - Added new `AddressValue` model to represent address fields found in documents.
-- Added `caption` and `footnotes` properties on `DocumentTable`.
-- Added `DocumentCaption` and `DocumentFootnote` models to represent captions and footnotes found in the document.
 - Added `kind` property on `DocumentPage`.
 
 ### Breaking Changes

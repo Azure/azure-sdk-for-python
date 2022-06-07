@@ -3280,10 +3280,6 @@ class DocumentTable(object):
     :vartype column_count: int
     :ivar cells: Cells contained within the table.
     :vartype cells: list[~azure.ai.formrecognizer.DocumentTableCell]
-    :ivar caption: Caption associated with the table.
-    :vartype caption: ~azure.ai.formrecognizer.DocumentCaption
-    :ivar footnotes: Footnotes associated with the table.
-    :vartype footnotes: list[~azure.ai.formrecognizer.DocumentFootnote]
     :ivar bounding_regions: Bounding regions covering the table.
     :vartype bounding_regions: list[~azure.ai.formrecognizer.BoundingRegion]
     :ivar spans: Location of the table in the reading order concatenated content.
