@@ -376,7 +376,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             stream = BytesIO(data)
         elif hasattr(data, 'read'):
             stream = data
-        elif hasattr(data, '__iter__') and not isinstance(data, dict):
+        elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
             stream = IterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))

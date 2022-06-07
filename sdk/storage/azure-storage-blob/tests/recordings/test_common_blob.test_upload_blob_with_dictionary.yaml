@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 07 Jun 2022 18:47:01 GMT
+      - Tue, 07 Jun 2022 19:20:35 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:759e4bb7-a01e-000f-619e-7a804d000000\nTime:2022-06-07T18:47:01.2108048Z</Message></Error>"
+        specified container already exists.\nRequestId:e6910659-b01e-0003-5ca3-7a1745000000\nTime:2022-06-07T19:20:34.5823446Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Tue, 07 Jun 2022 18:47:00 GMT
+      - Tue, 07 Jun 2022 19:20:34 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -52,7 +52,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 07 Jun 2022 18:47:02 GMT
+      - Tue, 07 Jun 2022 19:20:35 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -60,14 +60,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:759e4bc0-a01e-000f-679e-7a804d000000\nTime:2022-06-07T18:47:01.3077737Z</Message></Error>"
+        specified container already exists.\nRequestId:e6910683-b01e-0003-7fa3-7a1745000000\nTime:2022-06-07T19:20:34.6763141Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Tue, 07 Jun 2022 18:47:00 GMT
+      - Tue, 07 Jun 2022 19:20:34 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
