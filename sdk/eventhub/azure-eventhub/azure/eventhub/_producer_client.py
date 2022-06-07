@@ -830,7 +830,9 @@ class EventHubProducerClient(
     def get_buffered_event_count(self, partition_id: str) -> Optional[int]:
         """
         The number of events that are buffered and waiting to be published for a given partition.
-        Returns None in non-buffered mode.
+         Returns None in non-buffered mode. **NOTE: This method should only be used for debugging
+         purposes. If an invalid `partition_id` is passed in, then a value of 0 will be returned
+         which may be misleading.**
 
         :param str partition_id: The target partition ID.
         :rtype: int or None
@@ -848,8 +850,11 @@ class EventHubProducerClient(
     @property
     def total_buffered_event_count(self) -> Optional[int]:
         """
-        The total number of events that are currently buffered and waiting to be published, across all partitions.
-        Returns None in non-buffered mode.
+        The total number of events that are currently buffered and waiting to be published,
+         across all partitions. Returns None in non-buffered mode. **NOTE: This method should
+         only be used for debugging purposes. If an invalid `partition_id` is passed in,
+         then a value of 0 will be returned which may be misleading.**
+
 
         :rtype: int or None
         """
