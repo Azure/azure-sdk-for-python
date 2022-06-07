@@ -1,14 +1,11 @@
-# Release History
+ # Release History
 
-## 12.3.1 (Unreleased)
+## 12.4.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added a new version of client-side encryption for Queue messages (version 2.0) which utilizes AES-GCM-256 encryption.
+If you are currently using client-side encryption, it is **highly recommended** to switch to version 2.0. The encryption
+version can be specified on any client constructor via the `encryption_version` keyword (`encryption_version='2.0'`).
 
 ## 12.3.0 (2022-05-09)
 
