@@ -3443,7 +3443,8 @@ class Runbook(TrackedResource):
     :param etag: Gets or sets the etag of the resource.
     :type etag: str
     :param runbook_type: Gets or sets the type of the runbook. Possible values include: "Script",
-     "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell".
+     "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell", "Python2",
+     "Python3".
     :type runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
     :param publish_content_link: Gets or sets the published runbook content link.
     :type publish_content_link: ~azure.mgmt.automation.models.ContentLink
@@ -3587,7 +3588,7 @@ class RunbookCreateOrUpdateDraftProperties(msrest.serialization.Model):
     :type log_progress: bool
     :param runbook_type: Required. Gets or sets the type of the runbook. Possible values include:
      "Script", "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow",
-     "GraphPowerShell".
+     "GraphPowerShell", "Python2", "Python3".
     :type runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
     :param draft: Required. Gets or sets the draft runbook properties.
     :type draft: ~azure.mgmt.automation.models.RunbookDraft
@@ -3641,7 +3642,7 @@ class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
     :type log_progress: bool
     :param runbook_type: Required. Gets or sets the type of the runbook. Possible values include:
      "Script", "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow",
-     "GraphPowerShell".
+     "GraphPowerShell", "Python2", "Python3".
     :type runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
     :param draft: Gets or sets the draft runbook properties.
     :type draft: ~azure.mgmt.automation.models.RunbookDraft
