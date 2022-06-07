@@ -161,9 +161,8 @@ def individual_workload(tox_command_tuple, workload_results):
 
         workload_results[tox_command_tuple[1]] = (return_code, stdout, stderr)
 
-        # this is not sticking around, I'm just going to publish the tox folder as an artifact.
-        # if in_ci():
-        #     shutil.rmtree(tox_dir)
+        if in_ci():
+            shutil.rmtree(tox_dir)
 
 
 def execute_tox_parallel(tox_command_tuples):
@@ -364,9 +363,10 @@ def execute_tox_serial(tox_command_tuples):
         if result is not None and result != 0:
             return_code = result
 
+        # this is not sticking around, I'm just going to publish the tox folder as an artifact.
         if in_ci():
             collect_log_files(cmd_tuple[1])
-            shutil.rmtree(tox_dir)
+            # shutil.rmtree(tox_dir)
 
     return return_code
 

@@ -37,7 +37,7 @@ parameters:
   default: ''
 - name: BuildDocs
   type: boolean
-  default: true
+  default: false
 - name: DevFeedName
   type: string
   default: public/azure-sdk-for-python

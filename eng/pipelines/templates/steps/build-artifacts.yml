@@ -10,7 +10,7 @@ parameters:
     default: ''
   - name: BuildDocs
     type: boolean
-    default: false
+    default: true
   - name: Artifacts
     type: object
     default: []
