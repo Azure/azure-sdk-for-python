@@ -7,24 +7,25 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 06 Jun 2022 23:29:23 GMT
+      - Tue, 07 Jun 2022 18:47:25 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer9941921?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:dc31729a-a01e-00eb-399f-7a8ed3000000\nTime:2022-06-07T18:47:24.9874609Z</Message></Error>"
     headers:
-      content-length: '0'
-      date: Mon, 06 Jun 2022 23:29:23 GMT
-      etag: '"0x8DA48146428FF7E"'
-      last-modified: Mon, 06 Jun 2022 23:29:24 GMT
+      content-length: '230'
+      content-type: application/xml
+      date: Tue, 07 Jun 2022 18:47:24 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
       x-ms-version: '2021-06-08'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
     url: https://vincenttranstock.blob.core.windows.net/utcontainer9941921?restype=container
 - request:
     body: null
@@ -34,23 +35,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Mon, 06 Jun 2022 23:29:24 GMT
+      - Tue, 07 Jun 2022 18:47:26 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainersource9941921?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:dc3172b0-a01e-00eb-489f-7a8ed3000000\nTime:2022-06-07T18:47:25.0884273Z</Message></Error>"
     headers:
-      content-length: '0'
-      date: Mon, 06 Jun 2022 23:29:23 GMT
-      etag: '"0x8DA4814643978E2"'
-      last-modified: Mon, 06 Jun 2022 23:29:24 GMT
+      content-length: '230'
+      content-type: application/xml
+      date: Tue, 07 Jun 2022 18:47:24 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
       x-ms-version: '2021-06-08'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
     url: https://vincenttranstock.blob.core.windows.net/utcontainersource9941921?restype=container
 version: 1
