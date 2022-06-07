@@ -281,6 +281,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.skip()
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
