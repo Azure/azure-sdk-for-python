@@ -69,6 +69,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword retry_mode: The delay behavior between retry attempts. Supported values are "fixed" or "exponential",
      where default is "exponential".
     :paramtype retry_mode: str
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Service Bus service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -168,6 +176,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
          where default is 'exponential'.
         :paramtype retry_mode: str
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Service Bus service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
