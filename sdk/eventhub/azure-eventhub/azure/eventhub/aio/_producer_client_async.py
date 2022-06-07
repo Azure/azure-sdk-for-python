@@ -256,9 +256,9 @@ class EventHubProducerClient(
 
         return (
             to_send_batch,
-            to_send_batch._partition_id,
+            to_send_batch._partition_id,    # pylint:disable=protected-access
             partition_key,
-        )  # pylint:disable=protected-access
+        )
 
     async def _buffered_send_batch(self, event_data_batch, **kwargs):
         batch, pid, pkey = await self._batch_preparer(event_data_batch, **kwargs)

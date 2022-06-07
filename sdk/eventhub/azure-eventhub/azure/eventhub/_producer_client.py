@@ -268,9 +268,9 @@ class EventHubProducerClient(
             to_send_batch = self.create_batch(
                 partition_id=partition_id, partition_key=partition_key
             )
-            to_send_batch._load_events(
+            to_send_batch._load_events( # pylint:disable=protected-access
                 event_data_batch
-            )  # pylint:disable=protected-access
+            )
 
         return (
             to_send_batch,

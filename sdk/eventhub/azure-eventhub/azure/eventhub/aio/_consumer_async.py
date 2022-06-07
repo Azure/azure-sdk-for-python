@@ -195,8 +195,8 @@ class EventHubConsumer(
                 except Exception as exception:  # pylint: disable=broad-except
                     if (
                         isinstance(exception, uamqp.errors.LinkDetach)
-                        and exception.condition
-                        == uamqp.constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                        and exception.condition # pylint: disable=no-member
+                        == uamqp.constants.ErrorCodes.LinkStolen
                     ):
                         raise await self._handle_exception(exception)
                     if not self.running:  # exit by close

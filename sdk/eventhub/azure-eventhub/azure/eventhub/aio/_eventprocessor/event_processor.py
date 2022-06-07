@@ -264,8 +264,8 @@ class EventProcessor(
             ) = self.get_init_event_position(partition_id, checkpoint)
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
-                partition_context._last_received_event = (
-                    None  # pylint:disable=protected-access
+                partition_context._last_received_event = (  # pylint:disable=protected-access
+                    None
                 )
             else:
                 partition_context = PartitionContext(

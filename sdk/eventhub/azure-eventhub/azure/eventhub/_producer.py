@@ -133,8 +133,8 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(
-                self._client._config.user_agent
-            ),  # pylint: disable=protected-access
+                self._client._config.user_agent # pylint: disable=protected-access
+            ),
         )
 
     def _open_with_retry(self):
