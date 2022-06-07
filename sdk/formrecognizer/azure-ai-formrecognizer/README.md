@@ -158,19 +158,7 @@ document_analysis_client = DocumentAnalysisClient(
 
 ### DocumentAnalysisClient
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
-Use the `model` parameter to select the type of model for analysis. The following table includes some of the models supported by the service (for a full list of supported models, see [here][fr-models]):
-
-|Model| Features
-|-|-
-|`prebuilt-layout`| Text extraction, selection marks, tables
-|`prebuilt-document`| Text extraction, selection marks, tables, and key-value pairs
-|`prebuilt-read`|Text extraction and detected languages
-|`prebuilt-invoices`| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
-|`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
-|`prebuilt-idDocument`| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
-|`prebuilt-receipt`| Text extraction and pre-trained fields and values pertaining to English sales receipts
-|`prebuilt-tax.us.w2`| Text extraction and pre-trained fields and values pertaining to U.S. W-2 tax documents
-|`{custom-model-id}`| Text extraction, selection marks, tables, labeled fields and values from your custom documents
+Use the `model` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
 More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
@@ -415,13 +403,7 @@ for receipt in result.documents:
             print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
-You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields:
-- Analyze receipts using the `prebuilt-receipt` model (fields recognized by the service can be found [here][service_recognize_receipt])
-- Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
-- Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
-- Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
-- Analyze U.S. W-2 tax documents using the `prebuilt-tax.us.w2` model (fields recognized by the service can be found [here][service_recognize_tax_documents]).
-- See other supported prebuilt models [here][fr-models].
+You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields. See other supported prebuilt models [here][fr-models].
 
 ### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
