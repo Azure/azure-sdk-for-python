@@ -23,6 +23,11 @@ USAGE:
 
 import os
 
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
@@ -91,6 +96,12 @@ def analyze_read():
                     selection_mark.confidence,
                 )
             )
+
+    if len(result.paragraphs) > 0:
+        print("----Detected #{} paragraphs in the document----".format(len(result.paragraphs)))
+        for paragraph in result.paragraphs:
+            print("Found paragraph with role: '{}' within {} bounding region".format(paragraph.role, format_bounding_region(paragraph.bounding_regions)))
+            print("...with content: '{}'".format(paragraph.content))
 
     print("----------------------------------------")
 
