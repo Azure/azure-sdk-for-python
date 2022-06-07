@@ -827,13 +827,11 @@ class EventHubProducerClient(
     def get_buffered_event_count(self, partition_id: str) -> Optional[int]:
         """
         The number of events that are buffered and waiting to be published for a given partition.
-         Returns None in non-buffered mode. **NOTE: This method should only be used for debugging
-         purposes. Returns the approximate number of events in the buffer for a partition ID,
-         because it is reporting the state of a background thread.  For a partition ID that has no
-         events buffered, 0 will be returned regardless of whether that partition ID actually exists
-         within the Event Hub.**
-
-
+         Returns None in non-buffered mode. **NOTE: The event buffer is processed in a background
+         coroutine, therefore the number of events in the buffer reported by this API should be
+         considered only an approximation and is only recommend for use in debugging. For a
+         partition ID that has no events buffered, 0 will be returned regardless of whether that
+         partition ID actually exists within the Event Hub.**
 
         :param str partition_id: The target partition ID.
         :rtype: int or None
@@ -852,9 +850,10 @@ class EventHubProducerClient(
     def total_buffered_event_count(self) -> Optional[int]:
         """
         The total number of events that are currently buffered and waiting to be published,
-         across all partitions. Returns None in non-buffered mode. **NOTE: This method should only
-         be used for debugging purposes. Returns the approximate total number of events in the
-         buffer across all partitions, because it is reporting the state of a background thread.**
+         across all partitions. Returns None in non-buffered mode. **NOTE: The event buffer
+         is processed in a background coroutine, therefore the number of events in the buffer
+         reported by this API should be considered only an approximation and is only recommend
+         for use in debugging.**
 
         :rtype: int or None
         """
