@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-06-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,19 +9,17 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "6306ffc7-9b4e-11ec-aee6-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "7bf81d8c-6342-41e1-b0c8-684d36318ec6",
+        "apim-request-id": "752c8da6-6a13-4812-bbcb-2e798208f02d",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Mar 2022 00:02:30 GMT",
-        "Server": "Kestrel"
+        "Date": "Wed, 25 May 2022 21:39:10 GMT"
       },
       "ResponseBody": {
         "error": {

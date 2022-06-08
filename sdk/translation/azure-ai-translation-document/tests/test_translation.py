@@ -48,7 +48,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="fr"
+                        language="fr"
                     )
                 ]
             )
@@ -75,7 +75,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -104,11 +104,11 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     ),
                     TranslationTarget(
                         target_url=additional_target_container_sas_url,
-                        language_code="fr"
+                        language="fr"
                     )
                 ]
             )
@@ -138,7 +138,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             ),
@@ -147,7 +147,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="fr"
+                        language="fr"
                     )
                 ]
             )
@@ -176,7 +176,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ],
                 prefix=prefix
@@ -206,7 +206,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ],
                 suffix=suffix
@@ -233,7 +233,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -262,7 +262,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url="https://idont.ex.ist",
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -296,7 +296,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -326,7 +326,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -358,7 +358,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -390,7 +390,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -423,7 +423,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -459,7 +459,7 @@ class TestTranslation(DocumentTranslationTest):
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
         # keyword
-        poller = client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
+        poller = client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language="es")
         result = poller.result()
         self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
         return variables
@@ -474,7 +474,7 @@ class TestTranslation(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url="container",
-                        language_code="es"
+                        language="es"
                     )
                 ]
             )
@@ -540,7 +540,7 @@ class TestTranslation(DocumentTranslationTest):
                 target_container_sas_url,
                 "es",
                 storage_type="File",
-                source_language_code="en",
+                source_language="en",
                 prefix="",
                 suffix=".txt",
                 category_id="fake",

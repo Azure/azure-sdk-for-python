@@ -293,12 +293,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :keyword str file_permission_key:
             Key of the permission to be set for the directory/file.
             Note: Only one of the file-permission or file-permission-key should be specified.
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the directory. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the directory as metadata.
         :keyword int timeout:
@@ -409,12 +410,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the directory. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword destination_lease:
@@ -725,12 +727,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
-        :keyword ~datetime.datetime file_change_time
+        :keyword file_change_time:
             Change time for the directory. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :paramtype file_change_time: str or ~datetime.datetime
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).

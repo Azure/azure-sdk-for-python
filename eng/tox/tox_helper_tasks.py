@@ -7,6 +7,7 @@
 
 # This script is intended to be a place holder for common tasks that are requried by scripts running on tox
 
+import shutil
 import sys
 import logging
 import ast
@@ -129,6 +130,10 @@ def unzip_file_to_directory(path_to_zip_file, extract_location):
 
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+
+    if os.path.exists(new_location):
+        shutil.rmtree(new_location)
+
     os.rename(source_location, new_location)
     return new_location
 

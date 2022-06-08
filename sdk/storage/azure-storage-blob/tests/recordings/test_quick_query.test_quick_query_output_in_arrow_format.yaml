@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.12.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 20 Apr 2022 23:29:58 GMT
+      - Thu, 02 Jun 2022 23:15:03 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 20 Apr 2022 23:29:58 GMT
+      - Thu, 02 Jun 2022 23:15:02 GMT
       etag:
-      - '"0x8DA2325AF8B4A1C"'
+      - '"0x8DA44EDB90FC6E3"'
       last-modified:
-      - Wed, 20 Apr 2022 23:29:59 GMT
+      - Thu, 02 Jun 2022 23:15:02 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,11 +55,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 20 Apr 2022 23:29:59 GMT
+      - Thu, 02 Jun 2022 23:15:03 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -73,11 +73,11 @@ interactions:
       content-md5:
       - /hmKXD7m7tyfn12eEsFvyQ==
       date:
-      - Wed, 20 Apr 2022 23:29:58 GMT
+      - Thu, 02 Jun 2022 23:15:02 GMT
       etag:
-      - '"0x8DA2325AFA46972"'
+      - '"0x8DA44EDB922E609"'
       last-modified:
-      - Wed, 20 Apr 2022 23:29:59 GMT
+      - Thu, 02 Jun 2022 23:15:03 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -106,9 +106,9 @@ interactions:
       Content-Type:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.12.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 20 Apr 2022 23:29:59 GMT
+      - Thu, 02 Jun 2022 23:15:03 GMT
       x-ms-version:
       - '2021-06-08'
     method: POST
@@ -150,27 +150,27 @@ interactions:
         LCBpbmRpY2F0aW5nIHRoYXQgYWxsIHJlc3VsdHMgaGF2ZSBiZWVuIHNlbnQuIiwKICAgICJmaWVs
         ZHMiOiBbCiAgICAgIHsKICAgICAgICAibmFtZSI6ICJ0b3RhbEJ5dGVzIiwKICAgICAgICAidHlw
         ZSI6ICJsb25nIiwKICAgICAgICAiZG9jIjogIlRoZSB0b3RhbCBudW1iZXIgb2YgYnl0ZXMgc2Nh
-        bm5lZCBpbiB0aGlzIHF1ZXJ5IgogICAgICB9CiAgICBdCiAgfQpdCgDf2hUk81aGQqYRdJ+YtSx3
-        AoYEAIAE/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAA
+        bm5lZCBpbiB0aGlzIHF1ZXJ5IgogICAgICB9CiAgICBdCiAgfQpdCgDh/tq6KzmaRIoE2tJAXd+D
+        AvYDAPAD/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAA
         AAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHEAAAABwAAAAEAAAAAAAAAAMAAABhYmMA
         CAAMAAQACAAIAAAABAAAAAIAAAD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMEABAAAAAA
         AAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////AAAAAN/aFSTzVoZCphF0n5i1LHcCxgIAwAL/
-        ////iAAAABQAAAAAAAAADAAWAAYABQAIAAwADAAAAAADBAAYAAAAEAAAAAAAAAAAAAoAGAAMAAQA
-        CAAKAAAAPAAAABAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA
-        AAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAACQAQAAAAAAAAAAAAAAAAAA39oVJPNWhkKmEXSf
-        mLUsdwIGBEBA39oVJPNWhkKmEXSfmLUsdwIEBkDf2hUk81aGQqYRdJ+YtSx3
+        AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAADh/tq6KzmaRIoE2tJAXd+DAsYCAMAC/////4gAAAAU
+        AAAAAAAAAAwAFgAGAAUACAAMAAwAAAAAAwQAGAAAABAAAAAAAAAAAAAKABgADAAEAAgACgAAADwA
+        AAAQAAAAAQAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA
+        AAEAAAABAAAAAAAAAAAAAAAAAAAAkAEAAAAAAAAAAAAAAAAAAOH+2rorOZpEigTa0kBd34MCBgRA
+        QOH+2rorOZpEigTa0kBd34MCBAZA4f7auis5mkSKBNrSQF3fgw==
     headers:
       accept-ranges:
       - bytes
       content-type:
       - avro/binary
       date:
-      - Wed, 20 Apr 2022 23:30:20 GMT
+      - Thu, 02 Jun 2022 23:15:03 GMT
       etag:
-      - '"0x8DA2325AFA46972"'
+      - '"0x8DA44EDB922E609"'
       last-modified:
-      - Wed, 20 Apr 2022 23:29:59 GMT
+      - Thu, 02 Jun 2022 23:15:03 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -178,9 +178,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 20 Apr 2022 23:29:59 GMT
-      x-ms-resource-type:
-      - file
+      - Thu, 02 Jun 2022 23:15:03 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
@@ -200,9 +202,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.12.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 20 Apr 2022 23:30:23 GMT
+      - Thu, 02 Jun 2022 23:15:06 GMT
       x-ms-version:
       - '2021-06-08'
     method: DELETE
@@ -214,7 +216,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 20 Apr 2022 23:30:27 GMT
+      - Thu, 02 Jun 2022 23:15:05 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
