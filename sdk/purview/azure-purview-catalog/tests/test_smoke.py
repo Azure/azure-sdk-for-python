@@ -25,13 +25,9 @@ class PurviewCatalogSmokeTest(PurviewCatalogTest):
         assert "guid=foo&guid=bar" in urlparse(request.url).query
 
     def test_glossary_import(self):
-        #client = self.create_client(endpoint=purviewcatalog_endpoint)
-        #response = client.glossary.begin_import_glossary_terms_via_csv(glossary_guid = "b73af5b2-818f-450d-b7ee-0233d3612503",files = {},include_term_hierarchy=False)
         request = build_glossary_import_glossary_terms_via_csv_request_initial(glossary_guid="111",api_version="2022-03-01-preview",files={},include_term_hierarchy=False)
         assert "/glossary/111/terms/import" in urlparse(request.url)
 
     def test_businessmetadata_import(self):
-        #client = self.create_client(endpoint=purviewcatalog_endpoint)
-        #response = client.glossary.begin_import_glossary_terms_via_csv(glossary_guid = "b73af5b2-818f-450d-b7ee-0233d3612503",files = {},include_term_hierarchy=False)
         request = build_entity_import_business_metadata_request(files={})
         assert "/atlas/v2/entity/businessmetadata/import" in urlparse(request.url)
