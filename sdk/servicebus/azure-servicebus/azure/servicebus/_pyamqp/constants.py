@@ -326,3 +326,13 @@ class TransportType(Enum):
     """
     Amqp = 1
     AmqpOverWebsocket = 2
+
+class MessageState(Enum):
+    WaitingToBeSent = 0
+    WaitingForSendAck = 1
+    SendComplete = 2
+    SendFailed = 3
+    ReceivedUnsettled = 4
+    ReceivedSettled = 5
+
+RECEIVE_STATES = (MessageState.ReceivedSettled, MessageState.ReceivedUnsettled)

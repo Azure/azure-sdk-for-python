@@ -7,8 +7,9 @@
 from collections import namedtuple
 
 from .types import AMQPTypes, FieldDefinition
-from .constants import FIELD, MessageDeliveryState
+from .constants import FIELD, MessageDeliveryState, MessageState, RECEIVE_STATES
 from .performatives import _CAN_ADD_DOCSTRING
+from .error import MessageAccepted, MessageRejected, MessageReleased, MessageModified
 
 
 Header = namedtuple(
@@ -89,7 +90,8 @@ Properties = namedtuple(
         'creation_time',
         'group_id',
         'group_sequence',
-        'reply_to_group_id'
+        'reply_to_group_id',
+        'settled'
     ])
 Properties._code = 0x00000073
 Properties.__new__.__defaults__ = (None,) * len(Properties._fields)
@@ -106,7 +108,8 @@ Properties._definition = (
     FIELD("creation_time", AMQPTypes.timestamp, False, None, False),
     FIELD("group_id", AMQPTypes.string, False, None, False),
     FIELD("group_sequence", AMQPTypes.uint, False, None, False),
-    FIELD("reply_to_group_id", AMQPTypes.string, False, None, False))
+    FIELD("reply_to_group_id", AMQPTypes.string, False, None, False),
+    FIELD("settled", AMQPTypes.boolean, False, None, False))
 if _CAN_ADD_DOCSTRING:
     Properties.__doc__ = """
     Immutable properties of the Message.
@@ -161,6 +164,7 @@ if _CAN_ADD_DOCSTRING:
         The relative position of this message within its group.
     :param str reply_to_group_id: The group the reply message belongs to.
         This is a client-specific id that is used so that client can send replies to this message to a specific group.
+    :param boolean settled Confirms whether or not the message has been settled
     """
 
 # TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
@@ -251,7 +255,99 @@ if _CAN_ADD_DOCSTRING:
         signatures and encryption details). A registry of defined footers and their meanings can be found
         here: http://www.amqp.org/specification/1.0/footer.
     """
+    def accept(self):
+        """Send a response disposition to the service to indicate that
+        a received message has been accepted. If the client is running in PeekLock
+        mode, the service will wait on this disposition. Otherwise it will
+        be ignored. Returns `True` is message was accepted, or `False` if the message
+        was already settled.
+        :rtype: bool
+        :raises: TypeError if the message is being sent rather than received.
+        """
+        if self._can_settle_message():
+            self._response = MessageAccepted()
+            self._settler(self._response)
+            self.state = MessageState.ReceivedSettled
+            return True
+        return False
 
+    def reject(self, condition=None, description=None, info=None):
+        """Send a response disposition to the service to indicate that
+        a received message has been rejected. If the client is running in PeekLock
+        mode, the service will wait on this disposition. Otherwise it will
+        be ignored. A rejected message will increment the messages delivery count.
+        Returns `True` is message was rejected, or `False` if the message
+        was already settled.
+        :param condition: The AMQP rejection code. By default this is `amqp:internal-error`.
+        :type condition: bytes or str
+        :param description: A description/reason to accompany the rejection.
+        :type description: bytes or str
+        :param info: Information about the error condition.
+        :type info: dict
+        :rtype: bool
+        :raises: TypeError if the message is being sent rather than received.
+        """
+        if self._can_settle_message():
+            self._response = MessageRejected(
+                condition=condition,
+                description=description,
+                info=info,
+                encoding=self._encoding,
+            )
+            self._settler(self._response)
+            self.state = MessageState.ReceivedSettled
+            return True
+        return False
+
+    def release(self):
+        """Send a response disposition to the service to indicate that
+        a received message has been released. If the client is running in PeekLock
+        mode, the service will wait on this disposition. Otherwise it will
+        be ignored. A released message will not incremenet the messages
+        delivery count. Returns `True` is message was released, or `False` if the message
+        was already settled.
+        :rtype: bool
+        :raises: TypeError if the message is being sent rather than received.
+        """
+        if self._can_settle_message():
+            self._response = MessageReleased()
+            self._settler(self._response)
+            self.state = MessageState.ReceivedSettled
+            return True
+        return False
+
+    def modify(self, failed, deliverable, annotations=None):
+        """Send a response disposition to the service to indicate that
+        a received message has been modified. If the client is running in PeekLock
+        mode, the service will wait on this disposition. Otherwise it will
+        be ignored. Returns `True` is message was modified, or `False` if the message
+        was already settled.
+        :param failed: Whether this delivery of this message failed. This does not
+         indicate whether subsequence deliveries of this message would also fail.
+        :type failed: bool
+        :param deliverable: Whether this message will be deliverable to this client
+         on subsequent deliveries - i.e. whether delivery is retryable.
+        :type deliverable: bool
+        :param annotations: Annotations to attach to response.
+        :type annotations: dict
+        :rtype: bool
+        :raises: TypeError if the message is being sent rather than received.
+        """
+        if self._can_settle_message():
+            self._response = MessageModified(
+                failed, deliverable, annotations=annotations, encoding=self._encoding
+            )
+            self._settler(self._response)
+            self.state = MessageState.ReceivedSettled
+            return True
+        return False
+    
+    def _can_settle_message(self):
+        if self.state not in RECEIVE_STATES:
+            raise TypeError("Only received messages can be settled.")
+        if self.settled:
+            return False
+        return True
 
 class BatchMessage(Message):
     _code = 0x80013700

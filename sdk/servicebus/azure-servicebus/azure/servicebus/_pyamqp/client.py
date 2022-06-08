@@ -14,6 +14,7 @@ import queue
 from functools import partial
 
 from ._connection import Connection
+from ._counter import TickCounter
 from .message import _MessageDelivery
 from .session import Session
 from .sender import SenderLink
@@ -153,7 +154,7 @@ class AMQPClient(object):
         self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
         self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
         self._desired_capabilities = kwargs.pop('desired_capabilities', None)
-        self._msg_timeout = kwargs.pop('msg_timeout', 30)
+        self._msg_timeout = kwargs.pop('msg_timeout', None)
 
         # transport
         if kwargs.get('transport_type') is TransportType.Amqp and kwargs.get('http_proxy') is not None:
@@ -611,6 +612,7 @@ class ReceiveClient(AMQPClient):
         self._streaming_receive = kwargs.pop("streaming_receive", False)  # TODO: whether public?
         self._received_messages = queue.Queue()
         self._message_received_callback = kwargs.pop("message_received_callback", None)  # TODO: whether public?
+        self._counter = TickCounter()
 
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
@@ -670,14 +672,17 @@ class ReceiveClient(AMQPClient):
         :param message: Received message.
         :type message: ~uamqp.message.Message
         """
+        self._was_message_received = True
         if self._message_received_callback:
             self._message_received_callback(message)
+        self._complete_message(message, self.auto_complete)
+
         if not self._streaming_receive:
             self._received_messages.put(message)
         # TODO: do we need settled property for a message?
-        #elif not message.settled:
-        #    # Message was received with callback processing and wasn't settled.
-        #    _logger.info("Message was not settled.")
+        elif not message.settled:
+           # Message was received with callback processing and wasn't settled.
+           _logger.info("Message was not settled.")
 
     def _receive_message_batch_impl(self, max_batch_size=None, on_message_received=None, timeout=0):
         self._message_received_callback = on_message_received
@@ -755,3 +760,8 @@ class ReceiveClient(AMQPClient):
             self._receive_message_batch_impl,
             **kwargs
         )
+    
+    def _complete_message(self, message, auto):  # pylint: disable=no-self-use
+        if not message or not auto:
+            return
+        message.accept()

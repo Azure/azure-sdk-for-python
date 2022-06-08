@@ -430,6 +430,7 @@ class ServiceBusReceiver(
                 if timeout_ms
                 else 0
             )
+            # print("abs timeoit", abs_timeout_ms)
             batch = []  # type: List[Message]
             while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
@@ -447,6 +448,7 @@ class ServiceBusReceiver(
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
+                    # print(f"Counter current ms: {amqp_receive_client._counter.get_current_ms()}")
                     if (
                         abs_timeout_ms
                         and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms
@@ -456,6 +458,7 @@ class ServiceBusReceiver(
                     before = received_messages_queue.qsize()
                     receiving = amqp_receive_client.do_work()
                     received = received_messages_queue.qsize() - before
+                    # print(f"Received {received}")
                     if (
                         not first_message_received
                         and received_messages_queue.qsize() > 0
@@ -472,6 +475,7 @@ class ServiceBusReceiver(
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
+                    # print(f"my current timeout {abs_timeout_ms}")
 
             return [self._build_message(message) for message in batch]
         finally:
@@ -698,6 +702,8 @@ class ServiceBusReceiver(
             operation_requires_timeout=True,
         )
         links = get_receive_links(messages)
+        # print(f"My links {links}")
+        # print(f"My messages {len(messages)}")
         with receive_trace_context_manager(self, links=links):
             if (
                 self._auto_lock_renewer

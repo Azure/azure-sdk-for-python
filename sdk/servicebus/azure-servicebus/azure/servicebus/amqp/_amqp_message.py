@@ -232,7 +232,8 @@ class AmqpAnnotatedMessage(object):
         ) if message.properties else None
         self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
-            time_to_live=message.header.time_to_live,
+            # time_to_live=message.header.time_to_live,
+            time_to_live=message.header.ttl,
             first_acquirer=message.header.first_acquirer,
             durable=message.header.durable,
             priority=message.header.priority

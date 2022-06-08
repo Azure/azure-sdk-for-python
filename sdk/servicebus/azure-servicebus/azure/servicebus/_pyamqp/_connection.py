@@ -657,7 +657,9 @@ class Connection(object):
                 )
                 return
             for _ in range(batch):
+                # print(wait)
                 new_frame = self._read_frame(wait=wait, **kwargs)
+                # print(new_frame[1])
                 if self._process_incoming_frame(*new_frame):
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
