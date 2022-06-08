@@ -104,7 +104,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return poller_cls(self._client, raw_result, get_long_running_output, polling_method)
+        return poller_cls(self._client, raw_result, get_long_running_output, polling_method)  # Handwritten
 
     begin_analyze_text_submit_job.metadata = {'url': "/analyze-text/jobs"}  # type: ignore
 
