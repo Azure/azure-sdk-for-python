@@ -29,7 +29,6 @@ from multidict import CIMultiDict, CIMultiDictProxy
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 
-from azure.storage.blob import StorageErrorCode
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
@@ -849,115 +848,6 @@ class FileSystemTest(StorageTestCase):
         restored_file_client = await file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = await restored_file_client.get_file_properties()
         self.assertIsNotNone(resp)
-
-    @DataLakePreparer()
-    async def test_delete_files_simple_no_raise(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Arrange
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        filesystem = await self._create_file_system("fs2")
-        data = b'hello world'
-        files = ['file1', 'file2', 'file3', 'dir1', 'dir2']
-
-        try:
-            # create file1
-            await filesystem.get_file_client(files[0]).upload_data(data, overwrite=True)
-
-            # create file2
-            file2 = filesystem.get_file_client(files[1])
-            await file2.upload_data(data, overwrite=True)
-
-            # create file3
-            file3 = filesystem.get_file_client(files[2])
-            await file3.upload_data(data, overwrite=True)
-
-            # create dir1
-            # empty directory can be deleted using delete_files
-            await filesystem.get_directory_client(files[3]).create_directory(),
-
-            # create dir2
-            dir2 = filesystem.get_directory_client(files[4])
-            await dir2.create_directory()
-
-        except:
-            pass
-
-        # Act
-        response = await filesystem.delete_files(
-            files[0],
-            files[1],
-            files[2],
-            files[3],
-            files[4],
-        )
-
-        # Assert
-        self.assertEqual(len(response), len(files))
-        self.assertIsNone(response[0])
-        self.assertIsNone(response[1])
-        self.assertIsNone(response[2])
-        self.assertIsNone(response[3])
-        self.assertIsNone(response[4])
-
-    @DataLakePreparer()
-    async def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Arrange
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        filesystem = await self._create_file_system("fs1")
-        data = b'hello world'
-        files = ['file1', 'file2', 'file3', 'dir1', 'dir8']
-
-        try:
-            # create file1
-            await filesystem.get_file_client(files[0]).upload_data(data, overwrite=True)
-
-            # create file2
-            file2 = filesystem.get_file_client(files[1])
-            await file2.upload_data(data, overwrite=True)
-
-            # create file3
-            file3 = filesystem.get_file_client(files[2])
-            await file3.upload_data(data, overwrite=True)
-
-            # create dir1
-            dir1 = filesystem.get_directory_client(files[3])
-            await dir1.create_file("file4")
-        except:
-            pass
-
-        # Act
-        response = await filesystem.delete_files(
-            files[0],
-            files[1],
-            files[2],
-            files[3],  # dir1 is not empty
-            files[4],  # dir8 doesn't exist
-        )
-
-        # Assert
-        self.assertEqual(len(response), len(files))
-        self.assertIsNone(response[0])
-        self.assertIsNone(response[1])
-        self.assertIsNone(response[2])
-        self.assertEqual(response[3].error_code, StorageErrorCode.directory_not_empty)
-        self.assertEqual(response[3].status_code, 409)
-        self.assertEqual(response[4].error_code, StorageErrorCode.path_not_found)
-        self.assertEqual(response[4].status_code, 404)
-
-    @DataLakePreparer()
-    async def test_serialized_error(
-            self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # Arrange
-        file_system = await self._create_file_system()
-        dir = await file_system.create_directory("dir1")
-        await dir.delete_directory()
-
-        # Assert
-        try:
-            await dir.delete_directory()
-        except HttpResponseError as e:
-            self.assertEqual(e.error_code, StorageErrorCode.path_not_found)
-            self.assertEqual(e.status_code, 404)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
