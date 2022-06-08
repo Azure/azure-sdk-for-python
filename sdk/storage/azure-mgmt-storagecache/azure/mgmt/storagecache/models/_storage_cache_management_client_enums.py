@@ -59,6 +59,9 @@ class HealthStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STOPPED = "Stopped"
     UPGRADING = "Upgrading"
     FLUSHING = "Flushing"
+    WAITING_FOR_KEY = "WaitingForKey"
+    START_FAILED = "StartFailed"
+    UPGRADE_FAILED = "UpgradeFailed"
 
 class MetricAggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -94,6 +97,15 @@ class OperationalStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BUSY = "Busy"
     SUSPENDED = "Suspended"
     FLUSHING = "Flushing"
+
+class PrimingJobState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of the priming operation.
+    """
+
+    QUEUED = "Queued"
+    RUNNING = "Running"
+    PAUSED = "Paused"
+    COMPLETE = "Complete"
 
 class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """ARM provisioning state, see
