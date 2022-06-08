@@ -30,38 +30,125 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 def patch_sdk():
     pass
 
+def build_entity_import_business_metadata_request(
+    files: Optional[Dict[str, Any]] = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = "/atlas/v2/entity/businessmetadata/import"
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        headers=_header_parameters,
+        files=files,
+        content=content,
+        **kwargs
+    )
+
+def build_glossary_import_glossary_terms_via_csv_request_initial(
+    glossary_guid: str,
+    *,
+    files: Optional[Dict[str, Any]] = None,
+    content: Any = None,
+    include_term_hierarchy: Optional[bool] = False,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = "/glossary/{glossaryGuid}/terms/import"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, 'str', max_length=4096, min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if include_term_hierarchy is not None:
+        _query_parameters['includeTermHierarchy'] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, 'bool')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        files=files,
+        content=content,
+        **kwargs
+    )
+
+
+def build_glossary_import_glossary_terms_via_csv_by_glossary_name_request_initial(
+    glossary_name: str,
+    *,
+    files: Optional[Dict[str, Any]] = None,
+    content: Any = None,
+    include_term_hierarchy: Optional[bool] = False,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = "/glossary/name/{glossaryName}/terms/import"
+    path_format_arguments = {
+        "glossaryName": _SERIALIZER.url("glossary_name", glossary_name, 'str', max_length=4096, min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if include_term_hierarchy is not None:
+        _query_parameters['includeTermHierarchy'] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, 'bool')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        files=files,
+        content=content,
+        **kwargs
+    )
+
+
 class EntityOperations(EntityOperationsGenerated):
-    @overload
-    def build_entity_import_business_metadata_request(
-        uploadedInputStream: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
-    ) -> HttpRequest:
-        content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-        accept = "application/json"
-        # Construct URL
-        _url = "/atlas/v2/entity/businessmetadata/import"
-
-        # Construct headers
-        _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-        if content_type is not None:
-            _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-        _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     
-        return HttpRequest(
-            method="POST",
-            url=_url,
-            params=_query_parameters,
-            headers=_header_parameters,
-            uploadedInputStream=uploadedInputStream,
-            content=content,
-            **kwargs
-        )
-
-    @overload
     def import_business_metadata(
         self,
         *args,
@@ -95,95 +182,7 @@ class EntityOperations(EntityOperationsGenerated):
     
 
 class GlossaryOperations(GlossaryOperationsGenerated):
-    @overload
-    def build_glossary_import_glossary_terms_via_csv_request_initial(
-        glossary_guid: str,
-        *,
-        files: Optional[Dict[str, Any]] = None,
-        content: Any = None,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
-    ) -> HttpRequest:
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-        accept = "application/json"
-        # Construct URL
-        _url = "/glossary/{glossaryGuid}/terms/import"
-        path_format_arguments = {
-            "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, 'str', max_length=4096, min_length=1),
-        }
-
-        _url = _format_url_section(_url, **path_format_arguments)
-
-        # Construct parameters
-        _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-        if include_term_hierarchy is not None:
-            _query_parameters['includeTermHierarchy'] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, 'bool')
-        _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-        # Construct headers
-        _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-        if content_type is not None:
-            _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-        _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-    
-        return HttpRequest(
-            method="POST",
-            url=_url,
-            params=_query_parameters,
-            headers=_header_parameters,
-            files=files,
-            content=content,
-            **kwargs
-        )
-
-    @overload
-    def build_glossary_import_glossary_terms_via_csv_by_glossary_name_request_initial(
-            glossary_name: str,
-        *,
-        files: Optional[Dict[str, Any]] = None,
-        content: Any = None,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
-    ) -> HttpRequest:
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-        accept = "application/json"
-        # Construct URL
-        _url = "/glossary/name/{glossaryName}/terms/import"
-        path_format_arguments = {
-            "glossaryName": _SERIALIZER.url("glossary_name", glossary_name, 'str', max_length=4096, min_length=1),
-        }
-
-        _url = _format_url_section(_url, **path_format_arguments)
-
-        # Construct parameters
-        _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-        if include_term_hierarchy is not None:
-            _query_parameters['includeTermHierarchy'] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, 'bool')
-        _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-        # Construct headers
-        _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-        if content_type is not None:
-            _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-        _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-        return HttpRequest(
-            method="POST",
-            url=_url,
-            params=_query_parameters,
-            headers=_header_parameters,
-            files=files,
-            content=content,
-            **kwargs
-        )
-
-
-
-    @overload
     def begin_import_glossary_terms_via_csv(
         self,
         glossary_guid: str,
@@ -240,7 +239,6 @@ class GlossaryOperations(GlossaryOperationsGenerated):
              )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    @overload
     def begin_import_glossary_terms_via_csv_by_glossary_name(
         self,
         glossary_name: str,
