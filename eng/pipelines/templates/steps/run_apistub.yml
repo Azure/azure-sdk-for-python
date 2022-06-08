@@ -8,17 +8,14 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
-  - task: PythonScript@0
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
-    displayName: 'Generate API stub files'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "$(TargetingString)"
-        ${{ parameters.AdditionalTestArgs }}
-        -d "$(Build.ArtifactStagingDirectory)"
-        --mark_arg="${{ parameters.TestMarkArgument }}" 
-        --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="apistub"
-        --disablecov
-        --filter-type="Omit_management"
+  - bash: |
+      python -m venv $(Agent.BuildDirectory)/venv
+      source $(Agent.BuildDirectory)/venv/bin/activate
+      mkdir -p $(Agent.BuildDirectory)/workdir
+      
+      python -m pip install -r $(Build.SourcesDirectory)/eng/apiview_reqs.txt --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+      
+      python -m pip freeze
+
+      python $(Build.SourcesDirectory)/scripts/devops_tasks/invoke_apistub.py $(TargetingString) --service=${{ parameters.ServiceDirectory }}
+    displayName: Create venv, install requirements, run apistub
