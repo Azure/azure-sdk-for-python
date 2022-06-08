@@ -486,6 +486,7 @@ class QueueClient(StorageAccountHostsMixin):
             warnings.warn(
                 "TypeError when calling message_encode_policy.configure. \
                 It is likely missing the encryption_version parameter. \
+                Consider updating your encryption information/implementation. \
                 Retrying without encryption_version."
             )
             self._config.message_encode_policy.configure(
@@ -730,8 +731,10 @@ class QueueClient(StorageAccountHostsMixin):
                     encryption_version=self.encryption_version)
             except TypeError:
                 warnings.warn(
-                    "message_encode_policy.configure does not accept encryption_version parameter.",
-                    DeprecationWarning
+                    "TypeError when calling message_encode_policy.configure. \
+                    It is likely missing the encryption_version parameter. \
+                    Consider updating your encryption information/implementation. \
+                    Retrying without encryption_version."
                 )
                 self._config.message_encode_policy.configure(
                     self.require_encryption,

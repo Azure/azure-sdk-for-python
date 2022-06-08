@@ -91,20 +91,20 @@ class _EncryptedRegionInfo:
     This is only used for Encryption V2.
     '''
 
-    def __init__(self, encrypted_region_data_length, nonce_length, tag_length):
+    def __init__(self, data_length, nonce_length, tag_length):
         '''
-        :param int encrypted_region_data_length:
+        :param int data_length:
             The length of the encryption region data (not including nonce + tag).
         :param str nonce_length:
             The length of nonce used when encrypting.
         :param int tag_length:
             The length of the encryption tag.
         '''
-        _validate_not_none('encrypted_region_data_length', encrypted_region_data_length)
+        _validate_not_none('data_length', data_length)
         _validate_not_none('nonce_length', nonce_length)
         _validate_not_none('tag_length', tag_length)
 
-        self.encrypted_region_data_length = encrypted_region_data_length
+        self.data_length = data_length
         self.nonce_length = nonce_length
         self.tag_length = tag_length
 
@@ -417,9 +417,8 @@ def _generate_encryption_data_dict(kek, cek, iv, version):
         encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
 
         encrypted_region_info = OrderedDict()
-        encrypted_region_info['EncryptedRegionDataLength'] = _GCM_REGION_DATA_LENGTH
+        encrypted_region_info['DataLength'] = _GCM_REGION_DATA_LENGTH
         encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
-        encrypted_region_info['TagLength'] = _GCM_TAG_LENGTH
 
     encryption_data_dict = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
@@ -472,9 +471,9 @@ def _dict_to_encryption_data(encryption_data_dict):
     region_info = None
     if 'EncryptedRegionInfo' in encryption_data_dict:
         encrypted_region_info = encryption_data_dict['EncryptedRegionInfo']
-        region_info = _EncryptedRegionInfo(encrypted_region_info['EncryptedRegionDataLength'],
+        region_info = _EncryptedRegionInfo(encrypted_region_info['DataLength'],
                                            encrypted_region_info['NonceLength'],
-                                           encrypted_region_info['TagLength'])
+                                           _GCM_TAG_LENGTH)
 
     encryption_data = _EncryptionData(encryption_iv,
                                       region_info,

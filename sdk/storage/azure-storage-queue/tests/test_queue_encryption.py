@@ -634,10 +634,10 @@ class StorageQueueEncryptionTest(StorageTestCase):
 
         encrypted_region_info = encryption_data['EncryptedRegionInfo']
         encrypted_region_info = _EncryptedRegionInfo(
-            encrypted_region_info['EncryptedRegionDataLength'],
+            encrypted_region_info['DataLength'],
             encrypted_region_info['NonceLength'],
-            encrypted_region_info['TagLength'])
-        self.assertEqual(_GCM_REGION_DATA_LENGTH, encrypted_region_info.encrypted_region_data_length)
+            _GCM_TAG_LENGTH)
+        self.assertEqual(_GCM_REGION_DATA_LENGTH, encrypted_region_info.data_length)
         self.assertEqual(_GCM_NONCE_LENGTH, encrypted_region_info.nonce_length)
         self.assertEqual(_GCM_TAG_LENGTH, encrypted_region_info.tag_length)
 
