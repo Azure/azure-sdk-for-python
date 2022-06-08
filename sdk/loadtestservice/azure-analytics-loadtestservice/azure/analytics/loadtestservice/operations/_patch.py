@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import IO, List
+from typing import IO, List, cast
 import sys
 from msrest import Serializer
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -102,16 +102,20 @@ class TestOperations(TestOperationsGenerated):
             **kwargs
         )
         response = pipeline_response.http_response
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        return pipeline_response
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None   
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})     
+
+        return cast(JSON, deserialized)
 
 __all__: List[str] = ["TestOperations"]  # Add all objects you want publicly available to users at this package level
 
