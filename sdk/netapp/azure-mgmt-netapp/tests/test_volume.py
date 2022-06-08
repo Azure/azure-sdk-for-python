@@ -1,7 +1,6 @@
 import time
-import pytest
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection, AuthorizeRequest, PoolChangeRequest
 from test_pool import create_pool, delete_pool
 from test_account import delete_account
@@ -12,7 +11,7 @@ GIGABYTE = 1024 * 1024 * 1024
 SUBSID = '69a75bda-882e-44d5-8431-63421204132a'
 
 
-def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
+def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET, enable_subvolumes=None):
     default_protocol_type = ["NFSv3"]
 
     volume_body = Volume(
@@ -20,6 +19,7 @@ def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
+        enable_subvolumes=enable_subvolumes,
         service_level=SERVICE_LEVEL,
         subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/"
                   + vnet + "/subnets/default"
@@ -29,7 +29,7 @@ def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
 
 
 def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1,
-                  location=LOCATION, vnet=VNET, volume_only=False, live=False):
+                  location=LOCATION, vnet=VNET, volume_only=False, live=False, enable_subvolumes=None):
     if not volume_only:
         create_pool(
             client,
@@ -41,7 +41,7 @@ def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_PO
         if live:
             time.sleep(10)
 
-    volume_body = create_volume_body(volume_name, location, rg, vnet)
+    volume_body = create_volume_body(volume_name, location, rg, vnet, enable_subvolumes)
     volume = client.volumes.begin_create_or_update(
         rg,
         account_name,
@@ -172,10 +172,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_create_delete_list_volume(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         volume = create_volume(
             self.client,
             TEST_RG,
@@ -204,10 +201,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_list_volumes(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_2, LOCATION, volume_only=True, live=self.is_live)
         volumes = [TEST_VOL_1, TEST_VOL_2]
@@ -226,10 +220,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_volume_replication(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         source_volume = create_volume(
             self.client,
             TEST_RG,
@@ -322,10 +313,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_get_volume_by_name(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
 
         volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
@@ -337,10 +325,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_update_volume(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         assert "Premium" == volume.service_level
         assert 100 * GIGABYTE == volume.usage_threshold
@@ -370,10 +355,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_patch_volume(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         assert "Premium" == volume.service_level
         assert 100 * GIGABYTE == volume.usage_threshold
@@ -389,10 +371,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_pool_change(self):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         pool2 = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, LOCATION, True)
         if self.is_live:
