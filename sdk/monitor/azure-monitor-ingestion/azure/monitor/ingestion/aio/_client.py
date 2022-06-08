@@ -23,13 +23,13 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MonitorIngestionClient(MonitorIngestionClientOperationsMixin):
+class MonitorIngestionClient(MonitorIngestionClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Monitor Data Collection Python Client.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
-     https://dce-name.eastus-2.ingest.monitor.azure.com.
+     https://dce-name.eastus-2.ingest.monitor.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.

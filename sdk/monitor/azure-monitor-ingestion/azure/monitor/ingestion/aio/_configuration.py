@@ -24,9 +24,9 @@ class MonitorIngestionClientConfiguration(Configuration):  # pylint: disable=too
     attributes.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
-     https://dce-name.eastus-2.ingest.monitor.azure.com.
+     https://dce-name.eastus-2.ingest.monitor.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
@@ -50,7 +50,7 @@ class MonitorIngestionClientConfiguration(Configuration):  # pylint: disable=too
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', [])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['user_impersonation'])
         kwargs.setdefault('sdk_moniker', 'monitoringestionclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -67,7 +67,5 @@ class MonitorIngestionClientConfiguration(Configuration):  # pylint: disable=too
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
-        if not self.credential_scopes and not self.authentication_policy:
-            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
