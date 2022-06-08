@@ -462,6 +462,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
             To specify a container, eg. "@container='containerName' and \"Name\"='C'"
         :keyword int results_per_page:
             The max result per page when paginating.
+        :keyword list[str] include:
+            Specifies one or more additional datasets to include in the response.
+            Options include: 'versions'.
+
+            .. versionadded:: 12.13.0
+                This parameter was introduced in API version '2021-08-06'.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.

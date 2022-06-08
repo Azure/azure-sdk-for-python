@@ -4,7 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+<<<<<<< HEAD
 from typing import Any, Dict, TypeVar, TYPE_CHECKING
+=======
+from typing import Any, Dict, Optional, TypeVar, TYPE_CHECKING
+>>>>>>> vincenttran/tag_indexing_for_versions
 
 from azure.core import MatchConditions
 

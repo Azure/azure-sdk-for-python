@@ -11,6 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+<<<<<<< HEAD
 
     P4 = "P4"
     P6 = "P6"
@@ -29,6 +30,8 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREMIUM = "Premium"
 
 class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+=======
+>>>>>>> vincenttran/tag_indexing_for_versions
 
     P4 = "P4"
     P6 = "P6"
@@ -45,6 +48,29 @@ class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
 
+<<<<<<< HEAD
+class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+=======
+class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+>>>>>>> vincenttran/tag_indexing_for_versions
+
+    P4 = "P4"
+    P6 = "P6"
+    P10 = "P10"
+    P15 = "P15"
+    P20 = "P20"
+    P30 = "P30"
+    P40 = "P40"
+    P50 = "P50"
+    P60 = "P60"
+    P70 = "P70"
+    P80 = "P80"
+    HOT = "Hot"
+    COOL = "Cool"
+    ARCHIVE = "Archive"
+
+<<<<<<< HEAD
+=======
 class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     P4 = "P4"
@@ -62,6 +88,7 @@ class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
 
+>>>>>>> vincenttran/tag_indexing_for_versions
 class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STORAGE = "Storage"

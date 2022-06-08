@@ -480,13 +480,20 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 This parameter was introduced in API version '2019-07-07'.
 
         :paramtype file_last_write_time: str or ~datetime.datetime
+<<<<<<< HEAD
         :keyword file_change_time:
+=======
+        :keyword ~datetime.datetime file_change_time
+>>>>>>> vincenttran/tag_indexing_for_versions
             Change time for the file. If not specified, change time will be set to the current date/time.
 
             .. versionadded:: 12.9.0
                 This parameter was introduced in API version '2021-06-08'.
 
+<<<<<<< HEAD
         :paramtype file_change_time: str or ~datetime.datetime
+=======
+>>>>>>> vincenttran/tag_indexing_for_versions
         :keyword bool ignore_read_only:
             Specifies the option to overwrite the target file if it already exists and has read-only attribute set.
 

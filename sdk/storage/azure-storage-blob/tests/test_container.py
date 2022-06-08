@@ -2054,3 +2054,37 @@ class StorageContainerTest(StorageTestCase):
             self.assertEqual(chunk_size_list[i], 512)
 
         self.assertEqual(downloaded_data, data)
+
+    @BlobPreparer()
+    def test_filter_blobs_versions(self, versioned_storage_account_name, versioned_storage_account_key):
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container_name = "container2"
+        blob_name = "blob1"
+        blob_client = bsc.get_blob_client(container_name, blob_name)
+        container_client = bsc.get_container_client(container_name)
+
+        try:
+            container_client.create_container()
+        except ResourceExistsError:
+            pass
+
+        tags1 = {"tag1": "firsttag"}
+        include_list = ['versions']
+        where = "\"tag1\"='firsttag'"
+
+        # Act
+        blob_client.create_append_blob(tags=tags1)
+        if self.is_live:
+            sleep(5)
+        blob_client.create_append_blob(tags=tags1)
+        if self.is_live:
+            sleep(5)
+
+        blob_list = list(container_client.find_blobs_by_tags(filter_expression=where, include=include_list))
+
+        # Assert
+        self.assertEqual(2, len(blob_list))
+        self.assertIsNone(blob_list[0].is_current_version)
+        self.assertIsNotNone(blob_list[0].version_id)
+        self.assertTrue(blob_list[1].is_current_version)
+        self.assertIsNotNone(blob_list[1].version_id)
