@@ -1009,10 +1009,7 @@ class ServiceOperations(object):
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
-<<<<<<< HEAD
             url=self._config.url,
-=======
->>>>>>> vincenttran/tag_indexing_for_versions
             comp=comp,
             version=self._config.version,
             content=_content,

@@ -16,11 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-<<<<<<< HEAD
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-08-06/blob.json
-=======
-input-file: https://github.com/seanmcc-msft/azure-rest-api-specs/blob/211765a5a0126610efde8e57b88a2cfa53c35275/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-08-06/blob.json
->>>>>>> vincenttran/tag_indexing_for_versions
 output-folder: ../azure/storage/blob/_generated
 namespace: azure.storage.blob
 no-namespace-folders: true
