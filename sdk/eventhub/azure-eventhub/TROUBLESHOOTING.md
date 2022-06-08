@@ -44,6 +44,13 @@ An [EventHubError][EventHubError] contains three fields which describe the error
 * **message**: The underlying AMQP error message. A description of the errors can be found in the [Exceptions module][ExceptionModule] or the [OASIS AMQP 1.0 spec][AmqpSpec].
 * **error**: The error condition if available.
 * **details**: The error details, if included in the service response.
+
+By default the producer and consumer clients will retry for error conditions. We recommend that users of the clients use the following keyword arguments during creation of the client to change the retry behavior rather than retrying on their own:
+* **retry_total**: The total number of attempts to redo a failed operation when an error occurs. Default
+     value is 3
+* **retry_backoff_factor**: A backoff factor to apply between attempts after the second try
+* **retry_backoff_max**: The maximum back off time. Default value is 120 seconds
+* **retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential', where default is 'exponential'
   
 ### Commonly encountered exceptions
 
@@ -59,7 +66,7 @@ An `AuthenticationError` means that the provided credentials do not allow for th
 * [Ensure your SAS token is generated correctly][AuthorizeSAS]
 * [Verify the correct RBAC roles were granted][RBACRoles]
 
-[Troubleshoot authentication and authorization issues with Event Hubs][troubleshoot_authentication_authorization] lists other possible solutions.
+[Troubleshoot authentication and authorization issues with Event Hubs][TroubleshootAuthenticationAuthorization] lists other possible solutions.
 
 ## Connectivity issues
 
@@ -215,7 +222,7 @@ When filing GitHub issues, the following details are requested:
 [GetConnectionString]: https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string
 [IoTEventHubEndpoint]: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
 [IoTHubSAS]: https://docs.microsoft.com/azure/iot-hub/iot-hub-dev-guide-sas#security-tokens
-[troubleshoot_authentication_authorization]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
+[TroubleshootAuthenticationAuthorization]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
 
 <!-- external links -->
 [AuthenticationAndTheAzureSDK]: https://devblogs.microsoft.com/azure-sdk/authentication-and-the-azure-sdk
