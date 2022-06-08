@@ -35,10 +35,9 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    inputs:
-      versionSpec: $(PythonVersion)
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
+      versionSpec: '3.9.13'
 
   - script: |
       pip install -r eng/ci_tools.txt
