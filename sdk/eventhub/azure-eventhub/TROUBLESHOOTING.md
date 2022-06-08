@@ -97,10 +97,6 @@ Further reading:
 * [Control access to IoT Hub using Shared Access Signatures][IoTHubSAS]
 * [Read device-to-cloud messages from the built-in endpoint][IoTEventHubEndpoint]
 
-### Cannot add components to the connection string
-
-The legacy Event Hub clients allowed customers to add components to the connection string retrieved from the portal.  The legacy clients are in packages [com.microsoft.azure:azure-eventhubs][MavenAzureEventHubs] and [com.microsoft.azure:azure-eventhubs-eph][MavenAzureEventHubsEPH].  The current generation supports connection strings only in the form published by the Azure portal.
-
 #### Adding "TransportType=AmqpWebSockets"
 
 To use web sockets, pass in a kwarg `transport_type = TransportType.AmqpOverWebsocket` during client creation.
@@ -208,6 +204,7 @@ When filing GitHub issues, the following details are requested:
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
+[MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
 
 <!-- docs.microsoft.com links -->
 [ExceptionModule]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions
