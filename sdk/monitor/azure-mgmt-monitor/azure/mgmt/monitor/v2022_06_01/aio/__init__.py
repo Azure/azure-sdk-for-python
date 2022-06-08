@@ -6,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._metric_baseline_operations import MetricBaselineOperations
+from ._monitor_management_client import MonitorManagementClient
+__all__ = ['MonitorManagementClient']
 
-__all__ = [
-    'MetricBaselineOperations',
-]
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()

@@ -6,8 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._metric_baseline_operations import MetricBaselineOperations
+from enum import Enum
+from six import with_metaclass
+from azure.core import CaseInsensitiveEnumMeta
 
-__all__ = [
-    'MetricBaselineOperations',
-]
+
+class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
+    communications.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

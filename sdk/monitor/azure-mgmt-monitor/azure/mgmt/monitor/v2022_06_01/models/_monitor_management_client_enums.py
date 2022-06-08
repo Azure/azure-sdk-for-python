@@ -6,4 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "3.1.0"
+from enum import Enum
+from six import with_metaclass
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
+    communications.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

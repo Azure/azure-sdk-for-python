@@ -7,15 +7,16 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import MonitorManagementClientConfiguration
-from .operations import MetricBaselineOperations
+from .operations import ActionGroupsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,34 +25,41 @@ if TYPE_CHECKING:
 class MonitorManagementClient:
     """Monitor Management Client.
 
-    :ivar metric_baseline: MetricBaselineOperations operations
-    :vartype metric_baseline:
-     $(python-base-namespace).v2017_11_01_preview.operations.MetricBaselineOperations
+    :ivar action_groups: ActionGroupsOperations operations
+    :vartype action_groups: $(python-base-namespace).v2022_04_01.operations.ActionGroupsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param subscription_id: The ID of the target subscription.
+    :type subscription_id: str
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-04-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "TokenCredential",
+        subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MonitorManagementClientConfiguration(credential=credential, **kwargs)
+        self._config = MonitorManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.metric_baseline = MetricBaselineOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.action_groups = ActionGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.

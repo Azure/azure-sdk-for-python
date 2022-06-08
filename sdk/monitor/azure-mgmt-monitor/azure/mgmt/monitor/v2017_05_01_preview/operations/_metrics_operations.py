@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -16,7 +17,6 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
@@ -39,45 +39,46 @@ def build_list_request(
     result_type: Optional[Union[str, "_models.ResultType"]] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2017-05-01-preview"
+    api_version = kwargs.pop('api_version', "2017-05-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/{resourceUri}/providers/microsoft.insights/metrics')
+    _url = kwargs.pop("template_url", "/{resourceUri}/providers/microsoft.insights/metrics")
     path_format_arguments = {
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, 'str', skip_quote=True),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if timespan is not None:
-        query_parameters['timespan'] = _SERIALIZER.query("timespan", timespan, 'str')
+        _query_parameters['timespan'] = _SERIALIZER.query("timespan", timespan, 'str')
     if interval is not None:
-        query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
+        _query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
     if metric is not None:
-        query_parameters['metric'] = _SERIALIZER.query("metric", metric, 'str')
+        _query_parameters['metric'] = _SERIALIZER.query("metric", metric, 'str')
     if aggregation is not None:
-        query_parameters['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
+        _query_parameters['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
     if top is not None:
-        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
+        _query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
     if orderby is not None:
-        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+        _query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
     if filter is not None:
-        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
     if result_type is not None:
-        query_parameters['resultType'] = _SERIALIZER.query("result_type", result_type, 'str')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _query_parameters['resultType'] = _SERIALIZER.query("result_type", result_type, 'str')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -122,21 +123,22 @@ class MetricsOperations(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param timespan: The timespan of the query. It is a string with the following format
-         'startDateTime_ISO/endDateTime_ISO'.
+         'startDateTime_ISO/endDateTime_ISO'. Default value is None.
         :type timespan: str
-        :param interval: The interval (i.e. timegrain) of the query.
+        :param interval: The interval (i.e. timegrain) of the query. Default value is None.
         :type interval: ~datetime.timedelta
-        :param metric: The name of the metric to retrieve.
+        :param metric: The name of the metric to retrieve. Default value is None.
         :type metric: str
-        :param aggregation: The list of aggregation types (comma separated) to retrieve.
+        :param aggregation: The list of aggregation types (comma separated) to retrieve. Default value
+         is None.
         :type aggregation: str
         :param top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
-         Defaults to 10.
+         Defaults to 10. Default value is None.
         :type top: int
         :param orderby: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
-         Examples: sum asc.
+         Examples: sum asc. Default value is None.
         :type orderby: str
         :param filter: The **$filter** is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
@@ -146,10 +148,10 @@ class MetricsOperations(object):
          logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘\ *’ and C eq ‘*\ ’**.
+         B eq ‘\ *’ and C eq ‘*\ ’**. Default value is None.
         :type filter: str
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details.
+         operation. See the operation's description for details. Default value is None.
         :type result_type: str or ~$(python-base-namespace).v2017_05_01_preview.models.ResultType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Response, or the result of cls(response)
@@ -162,9 +164,12 @@ class MetricsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2017-05-01-preview")  # type: str
+
         
         request = build_list_request(
             resource_uri=resource_uri,
+            api_version=api_version,
             timespan=timespan,
             interval=interval,
             metric=metric,
@@ -178,7 +183,11 @@ class MetricsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -193,5 +202,5 @@ class MetricsOperations(object):
 
         return deserialized
 
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}  # type: ignore
+    list.metadata = {'url': "/{resourceUri}/providers/microsoft.insights/metrics"}  # type: ignore
 
