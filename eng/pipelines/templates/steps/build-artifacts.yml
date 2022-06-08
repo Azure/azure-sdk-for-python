@@ -36,9 +36,9 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.10'
+    displayName: 'Use Python $(PythonVersion)'
     inputs:
-      versionSpec: 3.10
+      versionSpec: $(PythonVersion)
 
   - script: |
       pip install -r eng/ci_tools.txt
@@ -70,9 +70,18 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  # - template: /eng/pipelines/templates/steps/run_apistub.yml
+  #   parameters:
+  #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+
+  - bash: |
+      python -m venv $(Agent.BuildDirectory)/venv
+      source $(Agent.BuildDirectory)/venv/bin/activate
+
+      which python
+      python -m pip install -r $(Build.SourcesDirectory)/eng/apiview_reqs.txt --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+      apistubgen --pkg-path $(Build.SourcesDirectory)/sdk/agrifood/azure-agrifood-farming/
+    displayName: Create venv, install requirements, run apistub
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
