@@ -24,6 +24,7 @@ DEPENDENCIES = [
     "azure-mgmt-storage",
     "azure-mgmt-keyvault",
     "python-dotenv",
+    "PyYAML==6.0"
 ]
 
 setup(
