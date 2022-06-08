@@ -69,8 +69,8 @@ jobs:
     - template: ../variables/globals.yml
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      name: azsdk-pool-mms-ubuntu-1804-general
+      vmImage: MMSUbuntu18.04
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml

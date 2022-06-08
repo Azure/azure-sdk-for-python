@@ -70,10 +70,6 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
-  # - template: /eng/pipelines/templates/steps/run_apistub.yml
-  #   parameters:
-  #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
   - bash: |
       python -m venv $(Agent.BuildDirectory)/venv
       source $(Agent.BuildDirectory)/venv/bin/activate
@@ -82,6 +78,10 @@ steps:
       python -m pip install -r $(Build.SourcesDirectory)/eng/apiview_reqs.txt --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
       apistubgen --pkg-path $(Build.SourcesDirectory)/sdk/agrifood/azure-agrifood-farming/
     displayName: Create venv, install requirements, run apistub
+
+  - template: /eng/pipelines/templates/steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
