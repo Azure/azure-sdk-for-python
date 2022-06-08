@@ -30,6 +30,16 @@ if __name__ == "__main__":
       ),
   )
 
+
+  parser.add_argument(
+      "--workdir",
+      dest="work_dir",
+      help=(
+          "Location of working directory."
+      ),
+  )
+  
+
   args = parser.parse_args()
 
   # We need to support both CI builds of everything and individual service

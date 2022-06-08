@@ -14,8 +14,12 @@ steps:
       mkdir -p $(Agent.BuildDirectory)/workdir
       
       python -m pip install -r $(Build.SourcesDirectory)/eng/apiview_reqs.txt --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+    displayName: Install API Stub Generator
+
+  - bash: |
+      source $(Agent.BuildDirectory)/venv/bin/activate
       
       python -m pip freeze
 
-      python $(Build.SourcesDirectory)/scripts/devops_tasks/invoke_apistub.py $(TargetingString) --service=${{ parameters.ServiceDirectory }}
-    displayName: Create venv, install requirements, run apistub
+      python $(Build.SourcesDirectory)/scripts/devops_tasks/invoke_apistub.py $(TargetingString) --service=${{ parameters.ServiceDirectory }} --workdir=$(Agent.BuildDirectory)/workdir
+    displayName: Install API Stub Generator
