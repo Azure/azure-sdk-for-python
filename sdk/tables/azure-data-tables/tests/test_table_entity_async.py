@@ -18,6 +18,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
+    ClientAuthenticationError,
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
@@ -35,6 +36,7 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._common_conversion import TZ_UTC
+from azure.identity import DefaultAzureCredential
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
@@ -2230,3 +2232,21 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 await self.table.upsert_entity(entity2)
         finally:
             await self._tear_down()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_tables_with_invalid_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        credential = DefaultAzureCredential(
+            exclude_environment_credential=True,
+            exclude_managed_identity_credential=False,
+            exclude_shared_token_cache_credential=True,
+            exclude_visual_studio_code_credential=True,
+            exclude_cli_credential=True,
+            exclude_interactive_browser_credential=True,
+            exclude_powershell_credential=True,
+        )
+        client = TableServiceClient(credential=credential, endpoint=account_url, api_version="2020-12-06")
+        with pytest.raises(ClientAuthenticationError):
+            async for _ in client.list_tables():
+                pass
