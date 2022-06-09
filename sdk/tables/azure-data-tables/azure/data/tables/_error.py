@@ -204,6 +204,8 @@ def _reraise_error(decoded_error):
 
 
 def _process_table_error(storage_error, table_name=None):
+    if not storage_error.response:
+        _reraise_error(storage_error)
     decoded_error = _decode_error(storage_error.response, storage_error.message)
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
