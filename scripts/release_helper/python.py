@@ -22,6 +22,7 @@ class IssueProcessPython(IssueProcess):
         contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
         pattern_package = re.compile(r'package-name: [\w+-.]+')
         package_name = pattern_package.search(contents).group().split(':')[-1].strip()
+        print(f'*** package_name: {package_name}')
         return package_name
 
     def edit_issue_body(self) -> None:
