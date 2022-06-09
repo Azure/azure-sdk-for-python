@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- `SingleCategoryClassifyResult` and `MultiCategoryClassifyResult` models have been merged into one model: `ClassifyDocumentResult`.
+
 ### Bugs Fixed
 
 ### Other Changes

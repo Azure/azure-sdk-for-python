@@ -35,8 +35,7 @@ from ._models import (
     ExtractSummaryResult,
     _AnalyzeActionsType,
     RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyResult,
+    ClassifyDocumentResult,
     ActionPointerKind,
 )
 
@@ -282,18 +281,10 @@ def custom_entities_result(
 
 
 @prepare_result
-def single_category_classify_result(
-    custom_category, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return SingleCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
-        custom_category
-    )
-
-@prepare_result
-def multi_category_classify_result(
+def classify_document_result(
     custom_categories, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return MultiCategoryClassifyResult._from_generated(  # pylint: disable=protected-access
+    return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
         custom_categories
     )
 
@@ -328,9 +319,9 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
     if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
         return custom_entities_result
     if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
-        return single_category_classify_result
+        return classify_document_result
     if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
-        return multi_category_classify_result
+        return classify_document_result
     if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
         return healthcare_result
     return key_phrases_result
