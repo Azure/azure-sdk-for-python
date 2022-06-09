@@ -20,3 +20,13 @@ def _convert_str_to_datetime(
     #  type: (...) -> datetime
     dt = parse(datetime_as_str, tzinfos = [TZ_UTC])
     return dt
+
+
+def _get_value(
+        from_options,  # type: Any
+        from_entity,  # type: Any
+):
+    #  type: (...) -> Any
+    if from_options is None:
+        return from_entity
+    return from_options

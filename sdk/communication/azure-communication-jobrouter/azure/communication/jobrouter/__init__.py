@@ -46,6 +46,11 @@ from ._generated.models import (
     AcceptJobOfferResponse,
     JobPositionDetails,
     JobStateSelector,
+    WorkerAssignment,
+    JobOffer,
+    ScoringRuleOptions,
+    ScoringRuleParameterSelector,
+    JobRouterError
 )
 
 from ._models import (
@@ -57,11 +62,11 @@ from ._models import (
     PagedWorker,
     RouterJob,
     PagedJob,
-    DeclineJobOfferResponse,
-    ReclassifyJobResponse,
-    CancelJobResponse,
-    CompleteJobResponse,
-    CloseJobResponse,
+    DeclineJobOfferResult,
+    ReclassifyJobResult,
+    CancelJobResult,
+    CompleteJobResult,
+    CloseJobResult,
 )
 
 from ._shared.user_credential import CommunicationTokenCredential
@@ -117,6 +122,11 @@ __all__ = [
     'AcceptJobOfferResponse',
     'JobPositionDetails',
     'JobStateSelector',
+    'WorkerAssignment',
+    'JobOffer',
+    'ScoringRuleOptions',
+    'ScoringRuleParameterSelector',
+    'JobRouterError',
 
     # Created models
     'LabelCollection',
@@ -127,11 +137,11 @@ __all__ = [
     'PagedWorker',
     'RouterJob',
     'PagedJob',
-    'DeclineJobOfferResponse',
-    'ReclassifyJobResponse',
-    'CancelJobResponse',
-    'CompleteJobResponse',
-    'CloseJobResponse',
+    'DeclineJobOfferResult',
+    'ReclassifyJobResult',
+    'CancelJobResult',
+    'CompleteJobResult',
+    'CloseJobResult',
 
     # Credentials
     'CommunicationTokenCredential'

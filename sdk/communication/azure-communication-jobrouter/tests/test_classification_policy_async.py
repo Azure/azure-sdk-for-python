@@ -199,7 +199,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.upsert_distribution_policy(
+            distribution_policy = await client.create_distribution_policy(
                 identifier = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
@@ -222,7 +222,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.upsert_queue(
+            job_queue = await client.create_queue(
                 identifier = job_queue_id,
                 name = job_queue_id,
                 labels = queue_labels,
@@ -248,7 +248,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.upsert_classification_policy(
+                        classification_policy = await router_client.create_classification_policy(
                             identifier = cp_identifier,
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
@@ -283,7 +283,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.upsert_classification_policy(
+                        classification_policy = await router_client.create_classification_policy(
                             identifier = cp_identifier,
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
@@ -309,13 +309,13 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                         updated_prioritization_rule = ExpressionRule(expression = "2")
                         classification_policy.prioritization_rule = updated_prioritization_rule
 
-                        updated_classification_policy = await router_client.upsert_classification_policy(
+                        updated_classification_policy = await router_client.update_classification_policy(
                             identifier = cp_identifier,
                             classification_policy = classification_policy
                         )
 
                         ClassificationPolicyValidator.validate_classification_policy(
-                            classification_policy,
+                            updated_classification_policy,
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
                             queue_selectors = [qs],
@@ -335,7 +335,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.upsert_classification_policy(
+                        classification_policy = await router_client.create_classification_policy(
                             identifier = cp_identifier,
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),
@@ -387,7 +387,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
                         for _identifier in cp_identifiers:
-                            classification_policy = await router_client.upsert_classification_policy(
+                            classification_policy = await router_client.create_classification_policy(
                                 identifier = _identifier,
                                 name = _identifier,
                                 fallback_queue_id = self.get_job_queue_id(),
@@ -450,7 +450,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             for qs in queue_selectors:
                 for rule in prioritization_rules:
                     for ws in worker_selectors:
-                        classification_policy = await router_client.upsert_classification_policy(
+                        classification_policy = await router_client.create_classification_policy(
                             identifier = cp_identifier,
                             name = cp_identifier,
                             fallback_queue_id = self.get_job_queue_id(),

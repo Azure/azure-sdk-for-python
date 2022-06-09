@@ -94,7 +94,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.upsert_distribution_policy(
+            distribution_policy = await client.create_distribution_policy(
                 identifier = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
@@ -117,7 +117,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.upsert_queue(
+            job_queue = await client.create_queue(
                 identifier = job_queue_id,
                 name = job_queue_id,
                 labels = queue_labels,
@@ -139,7 +139,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
 
         async with client:
             cp_id = self.get_classification_policy_id()
-            classification_policy = await client.upsert_classification_policy(
+            classification_policy = await client.create_classification_policy(
                 identifier = cp_id,
                 name = cp_id,
                 fallback_queue_id = self.get_job_queue_id(),
@@ -197,7 +197,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.upsert_exception_policy(
+                    exception_policy = await router_client.create_exception_policy(
                         identifier = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
@@ -249,7 +249,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.upsert_exception_policy(
+                    exception_policy = await router_client.create_exception_policy(
                         identifier = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
@@ -276,7 +276,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.upsert_exception_policy(
+                    exception_policy = await router_client.update_exception_policy(
                         identifier = ep_identifier,
                         name = ep_identifier,
                         exception_rules = updated_exception_rules
@@ -325,7 +325,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.upsert_exception_policy(
+                    exception_policy = await router_client.create_exception_policy(
                         identifier = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
@@ -389,7 +389,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
-                    exception_policy = await router_client.upsert_exception_policy(
+                    exception_policy = await router_client.create_exception_policy(
                         identifier = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
@@ -451,7 +451,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                             )
                         }
 
-                        exception_policy = await router_client.upsert_exception_policy(
+                        exception_policy = await router_client.create_exception_policy(
                             identifier = identifier,
                             name = identifier,
                             exception_rules = exception_rules

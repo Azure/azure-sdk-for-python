@@ -72,7 +72,7 @@ class TestJobQueue(RouterTestCase):
         client: RouterClient = self.create_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.upsert_distribution_policy(
+        distribution_policy = client.create_distribution_policy(
             identifier = distribution_policy_id,
             name = distribution_policy_id,
             offer_ttl_seconds = 10.0,
@@ -92,7 +92,7 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_create_q"
         router_client: RouterClient = self.create_client()
 
-        job_queue = router_client.upsert_queue(
+        job_queue = router_client.create_queue(
             identifier = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
@@ -117,7 +117,7 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_update_q"
         router_client: RouterClient = self.create_client()
 
-        job_queue = router_client.upsert_queue(
+        job_queue = router_client.create_queue(
             identifier = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
@@ -143,7 +143,7 @@ class TestJobQueue(RouterTestCase):
 
         job_queue.labels = updated_queue_labels
 
-        update_job_queue = router_client.upsert_queue(
+        update_job_queue = router_client.update_queue(
             identifier = dp_identifier,
             queue = job_queue
         )
@@ -162,7 +162,7 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_get_q"
         router_client: RouterClient = self.create_client()
 
-        job_queue = router_client.upsert_queue(
+        job_queue = router_client.create_queue(
             identifier = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
@@ -198,7 +198,7 @@ class TestJobQueue(RouterTestCase):
         dp_identifier = "tst_delete_q"
         router_client: RouterClient = self.create_client()
 
-        job_queue = router_client.upsert_queue(
+        job_queue = router_client.create_queue(
             identifier = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
@@ -229,7 +229,7 @@ class TestJobQueue(RouterTestCase):
         self.queue_ids[self._testMethodName] = []
 
         for identifier in dp_identifiers:
-            job_queue = router_client.upsert_queue(
+            job_queue = router_client.create_queue(
                 identifier = identifier,
                 name = identifier,
                 labels = queue_labels,

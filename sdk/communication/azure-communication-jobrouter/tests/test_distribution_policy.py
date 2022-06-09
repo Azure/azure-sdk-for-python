@@ -61,7 +61,7 @@ class TestDistributionPolicy(RouterTestCase):
         router_client: RouterClient = self.create_client()
 
         for mode in distribution_modes:
-            distribution_policy_response = router_client.upsert_distribution_policy(
+            distribution_policy_response = router_client.create_distribution_policy(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
@@ -89,7 +89,7 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             # Arrange
-            distribution_policy_response = router_client.upsert_distribution_policy(
+            distribution_policy_response = router_client.create_distribution_policy(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
@@ -113,7 +113,7 @@ class TestDistributionPolicy(RouterTestCase):
             mode.max_concurrent_offers = 2
             distribution_policy_response.mode = mode
 
-            updated_distribution_policy = router_client.upsert_distribution_policy(
+            updated_distribution_policy = router_client.update_distribution_policy(
                 identifier = dp_identifier,
                 distribution_policy = distribution_policy_response
             )
@@ -134,7 +134,7 @@ class TestDistributionPolicy(RouterTestCase):
         router_client: RouterClient = self.create_client()
 
         for mode in distribution_modes:
-            distribution_policy_response = router_client.upsert_distribution_policy(
+            distribution_policy_response = router_client.create_distribution_policy(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
@@ -170,7 +170,7 @@ class TestDistributionPolicy(RouterTestCase):
         router_client: RouterClient = self.create_client()
 
         for mode in distribution_modes:
-            distribution_policy_response = router_client.upsert_distribution_policy(
+            distribution_policy_response = router_client.create_distribution_policy(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
@@ -200,7 +200,7 @@ class TestDistributionPolicy(RouterTestCase):
         self.distribution_policy_ids[self._testMethodName] = []
 
         for identifier in dp_identifiers:
-            distribution_policy_response = router_client.upsert_distribution_policy(
+            distribution_policy_response = router_client.create_distribution_policy(
                 identifier = identifier,
                 name = identifier,
                 offer_ttl_seconds = 10.0,

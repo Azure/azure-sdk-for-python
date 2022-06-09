@@ -93,7 +93,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.upsert_distribution_policy(
+            distribution_policy = await client.create_distribution_policy(
                 identifier = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
@@ -116,7 +116,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.upsert_queue(
+            job_queue = await client.create_queue(
                 identifier = job_queue_id,
                 name = job_queue_id,
                 labels = worker_labels,
@@ -140,7 +140,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         async with router_client:
-            router_worker = await router_client.upsert_worker(
+            router_worker = await router_client.create_worker(
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
@@ -176,7 +176,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         async with router_client:
-            router_worker = await router_client.upsert_worker(
+            router_worker = await router_client.create_worker(
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
@@ -205,7 +205,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
             router_worker.labels['FakeKey'] = "FakeWorkerValue"
             updated_worker_labels = router_worker.labels
 
-            update_router_worker = await router_client.upsert_worker(
+            update_router_worker = await router_client.update_worker(
                 identifier = w_identifier,
                 router_worker = router_worker
             )
@@ -232,7 +232,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         async with router_client:
-            router_worker = await router_client.upsert_worker(
+            router_worker = await router_client.create_worker(
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
@@ -282,7 +282,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         async with router_client:
-            router_worker = await router_client.upsert_worker(
+            router_worker = await router_client.create_worker(
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
@@ -324,7 +324,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with router_client:
             for identifier in w_identifiers:
-                worker = await router_client.upsert_worker(
+                worker = await router_client.create_worker(
                     identifier = identifier,
                     total_capacity = worker_total_capacity,
                     labels = worker_labels,

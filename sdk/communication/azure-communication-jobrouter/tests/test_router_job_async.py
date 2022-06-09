@@ -175,7 +175,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.upsert_distribution_policy(
+            distribution_policy = await client.create_distribution_policy(
                 identifier = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
@@ -198,7 +198,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_job_queue_id()
-            job_queue = await client.upsert_queue(
+            job_queue = await client.create_queue(
                 identifier = job_queue_id,
                 name = job_queue_id,
                 labels = job_labels,
@@ -219,7 +219,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with client:
             job_queue_id = self.get_fallback_queue_id()
-            job_queue = await client.upsert_queue(
+            job_queue = await client.create_queue(
                 identifier = job_queue_id,
                 name = job_queue_id,
                 labels = job_labels,
@@ -248,7 +248,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             ]
 
             cp_id = self.get_classification_policy_id()
-            cp = await client.upsert_classification_policy(
+            cp = await client.create_classification_policy(
                 identifier = cp_id,
                 name = cp_id,
                 fallback_queue_id = self.get_fallback_queue_id(),
@@ -283,7 +283,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -328,7 +328,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -368,7 +368,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             router_job.labels['FakeKey'] = "FakeWorkerValue"
             updated_job_labels = router_job.labels
 
-            update_router_job = await router_client.upsert_job(
+            update_router_job = await router_client.update_job(
                 identifier = job_identifier,
                 router_job = router_job
             )
@@ -399,7 +399,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -463,7 +463,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -508,7 +508,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -546,7 +546,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             router_job.labels['FakeKey'] = "FakeWorkerValue"
             updated_job_labels = router_job.labels
 
-            update_router_job = await router_client.upsert_job(
+            update_router_job = await router_client.update_job(
                 identifier = job_identifier,
                 router_job = router_job
             )
@@ -583,7 +583,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -646,7 +646,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.upsert_job(
+            router_job = await router_client.create_job(
                 identifier = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
@@ -702,7 +702,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             for identifier in job_identifiers:
-                router_job = await router_client.upsert_job(
+                router_job = await router_client.create_job(
                     identifier = identifier,
                     channel_reference = job_channel_references[0],
                     channel_id = job_channel_ids[0],
