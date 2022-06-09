@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 09 Jun 2022 19:12:51 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer7f9f1a99?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 09 Jun 2022 19:12:51 GMT
+      etag: '"0x8DA4A4C0CA3DA70"'
+      last-modified: Thu, 09 Jun 2022 19:12:51 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzontest.blob.core.windows.net/utcontainer7f9f1a99?restype=container
+version: 1

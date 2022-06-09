@@ -2731,6 +2731,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return ContainerClient(
             "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
-            _pipeline=_pipeline, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
