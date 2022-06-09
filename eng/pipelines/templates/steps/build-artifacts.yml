@@ -83,6 +83,7 @@ steps:
   - template: /eng/pipelines/templates/steps/run_apistub.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      Artifacts: ${{ parameters.Artifacts }}
 
   - ${{ parameters.BeforePublishSteps }}
 
