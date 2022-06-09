@@ -26,10 +26,10 @@ class ExceptionPolicySamples(object):
 
     _ep_policy_id = "sample_ep_policy"
 
-    def create_and_update_exception_policy(self):
+    def create_exception_policy(self):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
-        # [START create_and_update_exception_policy]
+        # [START create_exception_policy]
         from azure.communication.jobrouter import (
             RouterClient,
             WaitTimeExceptionTrigger,
@@ -67,16 +67,42 @@ class ExceptionPolicySamples(object):
 
         # create the exception policy
         # set a unique value to `policy_id`
-        exception_policy = router_client.upsert_exception_policy(
+        exception_policy = router_client.create_exception_policy(
             identifier = policy_id,
             name = "TriggerJobCancellationWhenQueueLenIs10",
             exception_rules = exception_rule
         )
 
         print(f"Exception policy has been successfully created with id: {exception_policy.id}")
+        # [END create_exception_policy]
+
+    def update_exception_policy(self):
+        connection_string = self.endpoint
+        policy_id = self._ep_policy_id
+        # [START update_exception_policy]
+        from azure.communication.jobrouter import (
+            RouterClient,
+            WaitTimeExceptionTrigger,
+            CancelExceptionAction,
+            ExceptionRule
+        )
+
+        # set `connection_string` to an existing ACS endpoint
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        print("RouterClient created successfully!")
+
+        # get the exception policy
+        # set `policy_id` to an existing exception policy id
+        exception_policy = router_client.get_exception_policy(
+            identifier = policy_id,
+        )
 
         # add additional exception rule to policy
         new_exception_trigger = WaitTimeExceptionTrigger(threshold = "PT1H")
+        # define an exception action
+        # this sets up what action to take when an exception trigger condition is fulfilled
+        # for this scenario, we simply cancel job
+        exception_action = CancelExceptionAction()
         new_exception_rule = ExceptionRule(
             trigger = new_exception_trigger,
             actions = {
@@ -85,7 +111,7 @@ class ExceptionPolicySamples(object):
         )
         exception_policy.exception_rules["CancelJobWhenInQueueFor1Hr"] = new_exception_rule
 
-        updated_exception_policy = router_client.upsert_exception_policy(
+        updated_exception_policy = router_client.update_exception_policy(
             identifier = policy_id,
             exception_policy = exception_policy
         )
@@ -93,7 +119,7 @@ class ExceptionPolicySamples(object):
         print(f"Exception policy updated with rules: {[k for k,v in updated_exception_policy.exception_rules.items()]}")
         print("Exception policy has been successfully updated")
 
-        # [END create_and_update_exception_policy]
+        # [END update_exception_policy]
 
     def get_exception_policy(self):
         connection_string = self.endpoint
@@ -143,5 +169,8 @@ class ExceptionPolicySamples(object):
 
 if __name__ == '__main__':
     sample = ExceptionPolicySamples()
-    sample.create_and_update_exception_policy()
+    sample.create_exception_policy()
+    sample.update_exception_policy()
+    sample.get_exception_policy()
+    sample.list_exception_policies()
     sample.clean_up()
