@@ -4,7 +4,7 @@
 
 **Features**
 
-  - Model DeploymentScaleType has a new Enum type STANDARD
+  - `scale_type` of Model DeploymentScaleType has a new Enum type STANDARD
 
 ## 13.1.0 (2022-03-25)
 
