@@ -315,6 +315,7 @@ def test_datetime_deserialization():
 
     model = BaseModel({"myProp": {"datetimeValue": val_str}})
     assert isinstance(model.my_prop, DatetimeModel)
+    model.my_prop['datetimeValue']
     assert model.my_prop['datetimeValue'] == model['myProp']['datetimeValue'] == val_str
     assert model.my_prop.datetime_value == val
 
@@ -1357,7 +1358,7 @@ def test_multiple_inheritance_complex():
         likes_milk=False,  # likes_milk will change to True on the attribute
         siblings=[Feline(meows=True, hisses=False)]
     )
-    assert cat == {
+    assert dict(cat) == {
         "name": "Stephanie",
         "owner": {
             "firstName": "cecil",

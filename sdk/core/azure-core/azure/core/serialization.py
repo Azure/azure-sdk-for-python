@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from fileinput import close
 import functools
 import sys
 import logging
@@ -11,9 +12,10 @@ import base64
 import re
 import isodate
 from json import JSONEncoder
-from typing import Any, Callable, Dict, List, Union, cast, Literal, Optional, ForwardRef
+import typing
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
+from collections.abc import MutableMapping
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -88,11 +90,11 @@ def _timedelta_as_isostr(td):
 
 
 def _datetime_as_isostr(dt):
-    # type: (Union[datetime, date, time, timedelta]) -> str
+    # type: (typing.Union[datetime, date, time, timedelta]) -> str
     """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
-        dt = cast(datetime, dt)
+        dt = typing.cast(datetime, dt)
         # astimezone() fails for naive times in Python 2.7, so make make sure dt is aware (tzinfo is set)
         if not dt.tzinfo:
             iso_formatted = dt.replace(tzinfo=TZ_UTC).isoformat()
@@ -102,11 +104,11 @@ def _datetime_as_isostr(dt):
         return iso_formatted.replace("+00:00", "Z")
     # Next try datetime.date or datetime.time
     try:
-        dt = cast(Union[date, time], dt)
+        dt = typing.cast(typing.Union[date, time], dt)
         return dt.isoformat()
     # Last, try datetime.timedelta
     except AttributeError:
-        dt = cast(timedelta, dt)
+        dt = typing.cast(timedelta, dt)
         return _timedelta_as_isostr(dt)
 
 
@@ -218,7 +220,91 @@ def _get_model(module_name: str, model_name: str):
 
 _UNSET = object()
 
-class Model(dict):
+class _MyMutableMapping(MutableMapping):
+
+    def __init__(self, data: typing.Dict[str, typing.Any]) -> None:
+        self._data = data
+
+    def __contains__(self, key: str) -> bool:
+        return key in self._data
+
+    def __getitem__(self, key: str) -> typing.Any:
+        return self._data.__getitem__(key)
+
+    def __setitem__(self, key: str, value: typing.Any) -> None:
+        self._data.__setitem__(key, value)
+
+    def __delitem__(self, key: str) -> None:
+        self._data.__delitem__(key)
+
+    def __iter__(self) -> typing.Iterator[typing.Any]:
+        return self._data.__iter__()
+
+    def __len__(self) -> int:
+        return self._data.__len__()
+
+    def __eq__(self, other: typing.Any) -> bool:
+        try:
+            other_model = _MyMutableMapping(other)
+        except ValueError:
+            return False
+        return self._data == other_model._data
+
+    def __ne__(self, other: typing.Any) -> bool:
+        return not self.__eq__(other)
+
+    def keys(self) -> typing.KeysView:
+        return self._data.keys()
+
+    def values(self) -> typing.ValuesView:
+        return self._data.values()
+
+    def items(self) -> typing.ItemsView:
+        return self._data.items()
+
+    def get(self, key: str, default: typing.Any = None) -> typing.Any:
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+    @typing.overload
+    def pop(self, key: str) -> typing.Any:
+        ...
+
+    @typing.overload
+    def pop(self, key: str, default: typing.Any) -> typing.Any:
+        ...
+
+    def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+        if default is _UNSET:
+            return self._data.pop(key)
+        return self._data.pop(key, default)
+
+    def popitem(self) -> typing.Tuple[str, typing.Any]:
+        return self._data.popitem()
+
+    def clear(self) -> None:
+        self._data.clear()
+
+    def update(self, **kwargs: typing.Any) -> None:
+        self._data.update(**kwargs)
+
+    @typing.overload
+    def setdefault(self, key: str) -> None:
+        ...
+
+    @typing.overload
+    def setdefault(self, key: str, default: typing.Any) -> None:
+        ...
+
+    def setdefault(self, key: str, default: typing.Any = _UNSET) -> None:
+        if default is _UNSET:
+            self._data.setdefault(key)
+        self._data.setdefault(key, default)
+
+
+class Model(_MyMutableMapping):
     def __init__(self, *args, **kwargs):
         class_name = self.__class__.__name__
         if len(args) > 1:
@@ -243,18 +329,15 @@ class Model(dict):
                 self._attr_to_rest_name[k]: v for k, v in kwargs.items()
             })
 
-    def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return super().__eq__(other)
+    def __dict__(self) -> typing.Dict[str, typing.Any]:
+        a = "b"
 
     def copy(self):
         return Model(self.__dict__)
 
-    def __new__(cls, *args: Any, **kwargs: Any):
+    def __new__(cls, *args: typing.Any, **kwargs: typing.Any):
         # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
-        attr_to_rest_field: Dict[str, _RestField] = { # map attribute name to rest_field property
+        attr_to_rest_field: typing.Dict[str, _RestField] = { # map attribute name to rest_field property
             k: v
             for mro_class in cls.__mro__[:-3][::-1] # ignore model, dict, and object parents, and reverse the mro order
             for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
@@ -270,27 +353,27 @@ class Model(dict):
             for k, v in attr_to_rest_field.items()
         }
 
-        return super().__new__(cls, *args, **kwargs)
+        return super().__new__(cls)
 
 class _RestField:
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        type: Optional[Callable] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[typing.Callable] = None,
         is_discriminator: bool = False,
         readonly: bool = False
     ):
         self._type = type
         self._rest_name = name
-        self._module: Optional[str] = None
+        self._module: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
         self._readonly = readonly
 
     def __get__(self, obj: Model, type=None):
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
-        return cast(Callable, self._type)(obj.__getitem__(self._rest_name))
+        return typing.cast(typing.Callable, self._type)(obj.__getitem__(self._rest_name))
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
@@ -298,14 +381,14 @@ class _RestField:
     def __delete__(self, obj) -> None:
         obj.__delitem__(self._rest_name)
 
-    def _get_deserialize_callable_from_annotation(self, annotation: Any) -> Callable[[Any], Any]:
-        default: Callable = lambda x: x
+    def _get_deserialize_callable_from_annotation(self, annotation: typing.Any) -> typing.Callable[[typing.Any], typing.Any]:
+        default: typing.Callable = lambda x: x
         if not annotation:
             return default
 
         # is it a literal?
         try:
-            if annotation.__origin__ == Literal:
+            if annotation.__origin__ == typing.Literal:
                 return default
         except AttributeError:
             pass
@@ -319,7 +402,7 @@ class _RestField:
                 if_obj_deserializer = self._get_deserialize_callable_from_annotation(
                     next(a for  a in annotation.__args__ if a != type(None)),
                 )
-                def _deserialize_with_optional(if_obj_deserializer: Callable, obj):
+                def _deserialize_with_optional(if_obj_deserializer: typing.Callable, obj):
                     if obj is None:
                         return obj
                     return if_obj_deserializer(obj)
@@ -330,7 +413,7 @@ class _RestField:
 
 
         # is it a forward ref / in quotes?
-        if isinstance(annotation, str) or type(annotation) == ForwardRef:
+        if isinstance(annotation, str) or type(annotation) == typing.ForwardRef:
             try:
                 model_name = annotation.__forward_arg__  # type: ignore
             except AttributeError:
@@ -343,9 +426,9 @@ class _RestField:
                 key_deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[0])
                 value_deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[1])
                 def _deserialize_dict(
-                    key_deserializer: Callable,
-                    value_deserializer: Callable,
-                    obj: Dict[Any, Any]
+                    key_deserializer: typing.Callable,
+                    value_deserializer: typing.Callable,
+                    obj: typing.Dict[typing.Any, typing.Any]
                 ):
                     return {
                         key_deserializer(k): value_deserializer(v)
@@ -362,7 +445,7 @@ class _RestField:
             if annotation._name in ["List", "Set", "Tuple", "Sequence"]:
                 if len(annotation.__args__) > 1:
                     def _deserialize_multiple_sequence(
-                        entry_deserializers: List[Callable],
+                        entry_deserializers: typing.List[typing.Callable],
                         obj
                     ):
                         return type(obj)(
@@ -379,7 +462,7 @@ class _RestField:
                     )
                 deserializer = self._get_deserialize_callable_from_annotation(annotation.__args__[0])
                 def _deserialize_sequence(
-                    deserializer: Callable,
+                    deserializer: typing.Callable,
                     obj,
                 ):
                     return type(obj)(
@@ -401,12 +484,6 @@ class _RestField:
                 return annotation(**obj)
             except Exception:
                 pass
-
-            try:
-                return annotation(*obj)
-            except Exception:
-                pass
-
             try:
                 return annotation(obj)
             except Exception:
@@ -418,8 +495,8 @@ class _RestField:
             _DESERIALIZE_MAPPING.get(annotation, lambda x: x)
         )
 
-def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None, readonly: bool = False) -> Any:
+def rest_field(*, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None, readonly: bool = False) -> typing.Any:
     return _RestField(name=name, type=type, readonly=readonly)
 
-def rest_discriminator(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
+def rest_discriminator(*, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)
