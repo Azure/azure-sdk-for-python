@@ -6,48 +6,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CommunicationDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Direction of communication.
     """
 
     INBOUND = "inbound"
     OUTBOUND = "outbound"
 
-class CommunicationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Communication type.
     """
 
     WEB = "web"
     PHONE = "phone"
 
-class PreferredContactMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PreferredContactMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Preferred contact method.
     """
 
     EMAIL = "email"
     PHONE = "phone"
 
-class SeverityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SeverityLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A value that indicates the urgency of the case, which in turn determines the response time
     according to the service level agreement of the technical support plan you have with Azure.
     Note: 'Highest critical impact', also known as the 'Emergency - Severe impact' level in the
@@ -59,14 +44,14 @@ class SeverityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CRITICAL = "critical"
     HIGHESTCRITICALIMPACT = "highestcriticalimpact"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status to be updated on the ticket.
     """
 
     OPEN = "open"
     CLOSED = "closed"
 
-class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of resource.
     """
 

@@ -20,11 +20,11 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The resource name to validate.
-    :type name: str
-    :param type: Required. The type of resource. Possible values include:
+    :ivar name: Required. The resource name to validate.
+    :vartype name: str
+    :ivar type: Required. The type of resource. Possible values include:
      "Microsoft.Support/supportTickets", "Microsoft.Support/communications".
-    :type type: str or ~azure.mgmt.support.models.Type
+    :vartype type: str or ~azure.mgmt.support.models.Type
     """
 
     _validation = {
@@ -44,6 +44,13 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
         type: Union[str, "Type"],
         **kwargs
     ):
+        """
+        :keyword name: Required. The resource name to validate.
+        :paramtype name: str
+        :keyword type: Required. The type of resource. Possible values include:
+         "Microsoft.Support/supportTickets", "Microsoft.Support/communications".
+        :paramtype type: str or ~azure.mgmt.support.models.Type
+        """
         super(CheckNameAvailabilityInput, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -78,6 +85,8 @@ class CheckNameAvailabilityOutput(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CheckNameAvailabilityOutput, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
@@ -100,13 +109,13 @@ class CommunicationDetails(msrest.serialization.Model):
     :ivar communication_direction: Direction of communication. Possible values include: "inbound",
      "outbound".
     :vartype communication_direction: str or ~azure.mgmt.support.models.CommunicationDirection
-    :param sender: Email address of the sender. This property is required if called by a service
+    :ivar sender: Email address of the sender. This property is required if called by a service
      principal.
-    :type sender: str
-    :param subject: Subject of the communication.
-    :type subject: str
-    :param body: Body of the communication.
-    :type body: str
+    :vartype sender: str
+    :ivar subject: Subject of the communication.
+    :vartype subject: str
+    :ivar body: Body of the communication.
+    :vartype body: str
     :ivar created_date: Time in UTC (ISO 8601 format) when the communication was created.
     :vartype created_date: ~datetime.datetime
     """
@@ -140,6 +149,15 @@ class CommunicationDetails(msrest.serialization.Model):
         body: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword sender: Email address of the sender. This property is required if called by a service
+         principal.
+        :paramtype sender: str
+        :keyword subject: Subject of the communication.
+        :paramtype subject: str
+        :keyword body: Body of the communication.
+        :paramtype body: str
+        """
         super(CommunicationDetails, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -155,10 +173,10 @@ class CommunicationDetails(msrest.serialization.Model):
 class CommunicationsListResult(msrest.serialization.Model):
     """Collection of Communication resources.
 
-    :param value: List of Communication resources.
-    :type value: list[~azure.mgmt.support.models.CommunicationDetails]
-    :param next_link: The URI to fetch the next page of Communication resources.
-    :type next_link: str
+    :ivar value: List of Communication resources.
+    :vartype value: list[~azure.mgmt.support.models.CommunicationDetails]
+    :ivar next_link: The URI to fetch the next page of Communication resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -173,6 +191,12 @@ class CommunicationsListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Communication resources.
+        :paramtype value: list[~azure.mgmt.support.models.CommunicationDetails]
+        :keyword next_link: The URI to fetch the next page of Communication resources.
+        :paramtype next_link: str
+        """
         super(CommunicationsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -183,34 +207,34 @@ class ContactProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param first_name: Required. First name.
-    :type first_name: str
-    :param last_name: Required. Last name.
-    :type last_name: str
-    :param preferred_contact_method: Required. Preferred contact method. Possible values include:
+    :ivar first_name: Required. First name.
+    :vartype first_name: str
+    :ivar last_name: Required. Last name.
+    :vartype last_name: str
+    :ivar preferred_contact_method: Required. Preferred contact method. Possible values include:
      "email", "phone".
-    :type preferred_contact_method: str or ~azure.mgmt.support.models.PreferredContactMethod
-    :param primary_email_address: Required. Primary email address.
-    :type primary_email_address: str
-    :param additional_email_addresses: Additional email addresses listed will be copied on any
+    :vartype preferred_contact_method: str or ~azure.mgmt.support.models.PreferredContactMethod
+    :ivar primary_email_address: Required. Primary email address.
+    :vartype primary_email_address: str
+    :ivar additional_email_addresses: Additional email addresses listed will be copied on any
      correspondence about the support ticket.
-    :type additional_email_addresses: list[str]
-    :param phone_number: Phone number. This is required if preferred contact method is phone.
-    :type phone_number: str
-    :param preferred_time_zone: Required. Time zone of the user. This is the name of the time zone
-     from `Microsoft Time Zone Index Values <https://support.microsoft.com/help/973627/microsoft-
-     time-zone-index-values>`_.
-    :type preferred_time_zone: str
-    :param country: Required. Country of the user. This is the ISO 3166-1 alpha-3 code.
-    :type country: str
-    :param preferred_support_language: Required. Preferred language of support from Azure. Support
+    :vartype additional_email_addresses: list[str]
+    :ivar phone_number: Phone number. This is required if preferred contact method is phone.
+    :vartype phone_number: str
+    :ivar preferred_time_zone: Required. Time zone of the user. This is the name of the time zone
+     from `Microsoft Time Zone Index Values
+     <https://support.microsoft.com/help/973627/microsoft-time-zone-index-values>`_.
+    :vartype preferred_time_zone: str
+    :ivar country: Required. Country of the user. This is the ISO 3166-1 alpha-3 code.
+    :vartype country: str
+    :ivar preferred_support_language: Required. Preferred language of support from Azure. Support
      languages vary based on the severity you choose for your support ticket. Learn more at `Azure
      Severity and responsiveness <https://azure.microsoft.com/support/plans/response>`_. Use the
      standard language-country code. Valid values are 'en-us' for English, 'zh-hans' for Chinese,
      'es-es' for Spanish, 'fr-fr' for French, 'ja-jp' for Japanese, 'ko-kr' for Korean, 'ru-ru' for
      Russian, 'pt-br' for Portuguese, 'it-it' for Italian, 'zh-tw' for Chinese and 'de-de' for
      German.
-    :type preferred_support_language: str
+    :vartype preferred_support_language: str
     """
 
     _validation = {
@@ -249,6 +273,36 @@ class ContactProfile(msrest.serialization.Model):
         phone_number: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword first_name: Required. First name.
+        :paramtype first_name: str
+        :keyword last_name: Required. Last name.
+        :paramtype last_name: str
+        :keyword preferred_contact_method: Required. Preferred contact method. Possible values include:
+         "email", "phone".
+        :paramtype preferred_contact_method: str or ~azure.mgmt.support.models.PreferredContactMethod
+        :keyword primary_email_address: Required. Primary email address.
+        :paramtype primary_email_address: str
+        :keyword additional_email_addresses: Additional email addresses listed will be copied on any
+         correspondence about the support ticket.
+        :paramtype additional_email_addresses: list[str]
+        :keyword phone_number: Phone number. This is required if preferred contact method is phone.
+        :paramtype phone_number: str
+        :keyword preferred_time_zone: Required. Time zone of the user. This is the name of the time
+         zone from `Microsoft Time Zone Index Values
+         <https://support.microsoft.com/help/973627/microsoft-time-zone-index-values>`_.
+        :paramtype preferred_time_zone: str
+        :keyword country: Required. Country of the user. This is the ISO 3166-1 alpha-3 code.
+        :paramtype country: str
+        :keyword preferred_support_language: Required. Preferred language of support from Azure.
+         Support languages vary based on the severity you choose for your support ticket. Learn more at
+         `Azure Severity and responsiveness <https://azure.microsoft.com/support/plans/response>`_. Use
+         the standard language-country code. Valid values are 'en-us' for English, 'zh-hans' for
+         Chinese, 'es-es' for Spanish, 'fr-fr' for French, 'ja-jp' for Japanese, 'ko-kr' for Korean,
+         'ru-ru' for Russian, 'pt-br' for Portuguese, 'it-it' for Italian, 'zh-tw' for Chinese and
+         'de-de' for German.
+        :paramtype preferred_support_language: str
+        """
         super(ContactProfile, self).__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
@@ -264,8 +318,8 @@ class ContactProfile(msrest.serialization.Model):
 class ExceptionResponse(msrest.serialization.Model):
     """The API error.
 
-    :param error: The API error details.
-    :type error: ~azure.mgmt.support.models.ServiceError
+    :ivar error: The API error details.
+    :vartype error: ~azure.mgmt.support.models.ServiceError
     """
 
     _attribute_map = {
@@ -278,6 +332,10 @@ class ExceptionResponse(msrest.serialization.Model):
         error: Optional["ServiceError"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The API error details.
+        :paramtype error: ~azure.mgmt.support.models.ServiceError
+        """
         super(ExceptionResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -289,8 +347,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that describes the operation.
-    :type display: ~azure.mgmt.support.models.OperationDisplay
+    :ivar display: The object that describes the operation.
+    :vartype display: ~azure.mgmt.support.models.OperationDisplay
     """
 
     _validation = {
@@ -308,6 +366,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: The object that describes the operation.
+        :paramtype display: ~azure.mgmt.support.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
@@ -346,6 +408,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.description = None
         self.operation = None
@@ -356,8 +420,8 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationsListResult(msrest.serialization.Model):
     """The list of operations supported by Microsoft Support resource provider.
 
-    :param value: The list of operations supported by Microsoft Support resource provider.
-    :type value: list[~azure.mgmt.support.models.Operation]
+    :ivar value: The list of operations supported by Microsoft Support resource provider.
+    :vartype value: list[~azure.mgmt.support.models.Operation]
     """
 
     _attribute_map = {
@@ -370,6 +434,10 @@ class OperationsListResult(msrest.serialization.Model):
         value: Optional[List["Operation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of operations supported by Microsoft Support resource provider.
+        :paramtype value: list[~azure.mgmt.support.models.Operation]
+        """
         super(OperationsListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -385,8 +453,8 @@ class ProblemClassification(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of the resource 'Microsoft.Support/problemClassification'.
     :vartype type: str
-    :param display_name: Localized name of problem classification.
-    :type display_name: str
+    :ivar display_name: Localized name of problem classification.
+    :vartype display_name: str
     """
 
     _validation = {
@@ -408,6 +476,10 @@ class ProblemClassification(msrest.serialization.Model):
         display_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: Localized name of problem classification.
+        :paramtype display_name: str
+        """
         super(ProblemClassification, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -418,8 +490,8 @@ class ProblemClassification(msrest.serialization.Model):
 class ProblemClassificationsListResult(msrest.serialization.Model):
     """Collection of ProblemClassification resources.
 
-    :param value: List of ProblemClassification resources.
-    :type value: list[~azure.mgmt.support.models.ProblemClassification]
+    :ivar value: List of ProblemClassification resources.
+    :vartype value: list[~azure.mgmt.support.models.ProblemClassification]
     """
 
     _attribute_map = {
@@ -432,6 +504,10 @@ class ProblemClassificationsListResult(msrest.serialization.Model):
         value: Optional[List["ProblemClassification"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of ProblemClassification resources.
+        :paramtype value: list[~azure.mgmt.support.models.ProblemClassification]
+        """
         super(ProblemClassificationsListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -439,10 +515,10 @@ class ProblemClassificationsListResult(msrest.serialization.Model):
 class QuotaChangeRequest(msrest.serialization.Model):
     """This property is required for providing the region and new quota limits.
 
-    :param region: Region for which the quota increase request is being made.
-    :type region: str
-    :param payload: Payload of the quota increase request.
-    :type payload: str
+    :ivar region: Region for which the quota increase request is being made.
+    :vartype region: str
+    :ivar payload: Payload of the quota increase request.
+    :vartype payload: str
     """
 
     _attribute_map = {
@@ -457,6 +533,12 @@ class QuotaChangeRequest(msrest.serialization.Model):
         payload: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword region: Region for which the quota increase request is being made.
+        :paramtype region: str
+        :keyword payload: Payload of the quota increase request.
+        :paramtype payload: str
+        """
         super(QuotaChangeRequest, self).__init__(**kwargs)
         self.region = region
         self.payload = payload
@@ -465,14 +547,14 @@ class QuotaChangeRequest(msrest.serialization.Model):
 class QuotaTicketDetails(msrest.serialization.Model):
     """Additional set of information required for quota increase support ticket for certain quota types, e.g.: Virtual machine cores. Get complete details about Quota payload support request along with examples at `Support quota request <https://aka.ms/supportrpquotarequestpayload>`_.
 
-    :param quota_change_request_sub_type: Required for certain quota types when there is a sub
-     type, such as Batch, for which you are requesting a quota increase.
-    :type quota_change_request_sub_type: str
-    :param quota_change_request_version: Quota change request version.
-    :type quota_change_request_version: str
-    :param quota_change_requests: This property is required for providing the region and new quota
+    :ivar quota_change_request_sub_type: Required for certain quota types when there is a sub type,
+     such as Batch, for which you are requesting a quota increase.
+    :vartype quota_change_request_sub_type: str
+    :ivar quota_change_request_version: Quota change request version.
+    :vartype quota_change_request_version: str
+    :ivar quota_change_requests: This property is required for providing the region and new quota
      limits.
-    :type quota_change_requests: list[~azure.mgmt.support.models.QuotaChangeRequest]
+    :vartype quota_change_requests: list[~azure.mgmt.support.models.QuotaChangeRequest]
     """
 
     _attribute_map = {
@@ -489,6 +571,16 @@ class QuotaTicketDetails(msrest.serialization.Model):
         quota_change_requests: Optional[List["QuotaChangeRequest"]] = None,
         **kwargs
     ):
+        """
+        :keyword quota_change_request_sub_type: Required for certain quota types when there is a sub
+         type, such as Batch, for which you are requesting a quota increase.
+        :paramtype quota_change_request_sub_type: str
+        :keyword quota_change_request_version: Quota change request version.
+        :paramtype quota_change_request_version: str
+        :keyword quota_change_requests: This property is required for providing the region and new
+         quota limits.
+        :paramtype quota_change_requests: list[~azure.mgmt.support.models.QuotaChangeRequest]
+        """
         super(QuotaTicketDetails, self).__init__(**kwargs)
         self.quota_change_request_sub_type = quota_change_request_sub_type
         self.quota_change_request_version = quota_change_request_version
@@ -506,10 +598,10 @@ class Service(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of the resource 'Microsoft.Support/services'.
     :vartype type: str
-    :param display_name: Localized name of the Azure service.
-    :type display_name: str
-    :param resource_types: ARM Resource types.
-    :type resource_types: list[str]
+    :ivar display_name: Localized name of the Azure service.
+    :vartype display_name: str
+    :ivar resource_types: ARM Resource types.
+    :vartype resource_types: list[str]
     """
 
     _validation = {
@@ -533,6 +625,12 @@ class Service(msrest.serialization.Model):
         resource_types: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: Localized name of the Azure service.
+        :paramtype display_name: str
+        :keyword resource_types: ARM Resource types.
+        :paramtype resource_types: list[str]
+        """
         super(Service, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -546,12 +644,12 @@ class ServiceError(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
-    :param target: The target of the error.
-    :type target: str
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
     :ivar details: The list of error details.
     :vartype details: list[~azure.mgmt.support.models.ServiceErrorDetail]
     """
@@ -575,6 +673,14 @@ class ServiceError(msrest.serialization.Model):
         target: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        :keyword target: The target of the error.
+        :paramtype target: str
+        """
         super(ServiceError, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -591,8 +697,8 @@ class ServiceErrorDetail(msrest.serialization.Model):
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
-    :param target: The target of the error.
-    :type target: str
+    :ivar target: The target of the error.
+    :vartype target: str
     """
 
     _validation = {
@@ -612,6 +718,10 @@ class ServiceErrorDetail(msrest.serialization.Model):
         target: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target: The target of the error.
+        :paramtype target: str
+        """
         super(ServiceErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -647,6 +757,8 @@ class ServiceLevelAgreement(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServiceLevelAgreement, self).__init__(**kwargs)
         self.start_time = None
         self.expiration_time = None
@@ -656,8 +768,8 @@ class ServiceLevelAgreement(msrest.serialization.Model):
 class ServicesListResult(msrest.serialization.Model):
     """Collection of Service resources.
 
-    :param value: List of Service resources.
-    :type value: list[~azure.mgmt.support.models.Service]
+    :ivar value: List of Service resources.
+    :vartype value: list[~azure.mgmt.support.models.Service]
     """
 
     _attribute_map = {
@@ -670,6 +782,10 @@ class ServicesListResult(msrest.serialization.Model):
         value: Optional[List["Service"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Service resources.
+        :paramtype value: list[~azure.mgmt.support.models.Service]
+        """
         super(ServicesListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -696,6 +812,8 @@ class SupportEngineer(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SupportEngineer, self).__init__(**kwargs)
         self.email_address = None
 
@@ -711,41 +829,41 @@ class SupportTicketDetails(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of the resource 'Microsoft.Support/supportTickets'.
     :vartype type: str
-    :param support_ticket_id: System generated support ticket Id that is unique.
-    :type support_ticket_id: str
-    :param description: Detailed description of the question or issue.
-    :type description: str
-    :param problem_classification_id: Each Azure service has its own set of issue categories, also
+    :ivar support_ticket_id: System generated support ticket Id that is unique.
+    :vartype support_ticket_id: str
+    :ivar description: Detailed description of the question or issue.
+    :vartype description: str
+    :ivar problem_classification_id: Each Azure service has its own set of issue categories, also
      known as problem classification. This parameter is the unique Id for the type of problem you
      are experiencing.
-    :type problem_classification_id: str
+    :vartype problem_classification_id: str
     :ivar problem_classification_display_name: Localized name of problem classification.
     :vartype problem_classification_display_name: str
-    :param severity: A value that indicates the urgency of the case, which in turn determines the
+    :ivar severity: A value that indicates the urgency of the case, which in turn determines the
      response time according to the service level agreement of the technical support plan you have
      with Azure. Note: 'Highest critical impact', also known as the 'Emergency - Severe impact'
      level in the Azure portal is reserved only for our Premium customers. Possible values include:
      "minimal", "moderate", "critical", "highestcriticalimpact".
-    :type severity: str or ~azure.mgmt.support.models.SeverityLevel
+    :vartype severity: str or ~azure.mgmt.support.models.SeverityLevel
     :ivar enrollment_id: Enrollment Id associated with the support ticket.
     :vartype enrollment_id: str
-    :param require24_x7_response: Indicates if this requires a 24x7 response from Azure.
-    :type require24_x7_response: bool
-    :param contact_details: Contact information of the user requesting to create a support ticket.
-    :type contact_details: ~azure.mgmt.support.models.ContactProfile
-    :param service_level_agreement: Service Level Agreement information for this support ticket.
-    :type service_level_agreement: ~azure.mgmt.support.models.ServiceLevelAgreement
-    :param support_engineer: Information about the support engineer working on this support ticket.
-    :type support_engineer: ~azure.mgmt.support.models.SupportEngineer
+    :ivar require24_x7_response: Indicates if this requires a 24x7 response from Azure.
+    :vartype require24_x7_response: bool
+    :ivar contact_details: Contact information of the user requesting to create a support ticket.
+    :vartype contact_details: ~azure.mgmt.support.models.ContactProfile
+    :ivar service_level_agreement: Service Level Agreement information for this support ticket.
+    :vartype service_level_agreement: ~azure.mgmt.support.models.ServiceLevelAgreement
+    :ivar support_engineer: Information about the support engineer working on this support ticket.
+    :vartype support_engineer: ~azure.mgmt.support.models.SupportEngineer
     :ivar support_plan_type: Support plan type associated with the support ticket.
     :vartype support_plan_type: str
-    :param title: Title of the support ticket.
-    :type title: str
-    :param problem_start_time: Time in UTC (ISO 8601 format) when the problem started.
-    :type problem_start_time: ~datetime.datetime
-    :param service_id: This is the resource Id of the Azure service resource associated with the
+    :ivar title: Title of the support ticket.
+    :vartype title: str
+    :ivar problem_start_time: Time in UTC (ISO 8601 format) when the problem started.
+    :vartype problem_start_time: ~datetime.datetime
+    :ivar service_id: This is the resource Id of the Azure service resource associated with the
      support ticket.
-    :type service_id: str
+    :vartype service_id: str
     :ivar service_display_name: Localized name of the Azure service.
     :vartype service_display_name: str
     :ivar status: Status of the support ticket.
@@ -754,12 +872,12 @@ class SupportTicketDetails(msrest.serialization.Model):
     :vartype created_date: ~datetime.datetime
     :ivar modified_date: Time in UTC (ISO 8601 format) when the support ticket was last modified.
     :vartype modified_date: ~datetime.datetime
-    :param technical_ticket_details: Additional ticket details associated with a technical support
+    :ivar technical_ticket_details: Additional ticket details associated with a technical support
      ticket request.
-    :type technical_ticket_details: ~azure.mgmt.support.models.TechnicalTicketDetails
-    :param quota_ticket_details: Additional ticket details associated with a quota support ticket
+    :vartype technical_ticket_details: ~azure.mgmt.support.models.TechnicalTicketDetails
+    :ivar quota_ticket_details: Additional ticket details associated with a quota support ticket
      request.
-    :type quota_ticket_details: ~azure.mgmt.support.models.QuotaTicketDetails
+    :vartype quota_ticket_details: ~azure.mgmt.support.models.QuotaTicketDetails
     """
 
     _validation = {
@@ -819,6 +937,45 @@ class SupportTicketDetails(msrest.serialization.Model):
         quota_ticket_details: Optional["QuotaTicketDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword support_ticket_id: System generated support ticket Id that is unique.
+        :paramtype support_ticket_id: str
+        :keyword description: Detailed description of the question or issue.
+        :paramtype description: str
+        :keyword problem_classification_id: Each Azure service has its own set of issue categories,
+         also known as problem classification. This parameter is the unique Id for the type of problem
+         you are experiencing.
+        :paramtype problem_classification_id: str
+        :keyword severity: A value that indicates the urgency of the case, which in turn determines the
+         response time according to the service level agreement of the technical support plan you have
+         with Azure. Note: 'Highest critical impact', also known as the 'Emergency - Severe impact'
+         level in the Azure portal is reserved only for our Premium customers. Possible values include:
+         "minimal", "moderate", "critical", "highestcriticalimpact".
+        :paramtype severity: str or ~azure.mgmt.support.models.SeverityLevel
+        :keyword require24_x7_response: Indicates if this requires a 24x7 response from Azure.
+        :paramtype require24_x7_response: bool
+        :keyword contact_details: Contact information of the user requesting to create a support
+         ticket.
+        :paramtype contact_details: ~azure.mgmt.support.models.ContactProfile
+        :keyword service_level_agreement: Service Level Agreement information for this support ticket.
+        :paramtype service_level_agreement: ~azure.mgmt.support.models.ServiceLevelAgreement
+        :keyword support_engineer: Information about the support engineer working on this support
+         ticket.
+        :paramtype support_engineer: ~azure.mgmt.support.models.SupportEngineer
+        :keyword title: Title of the support ticket.
+        :paramtype title: str
+        :keyword problem_start_time: Time in UTC (ISO 8601 format) when the problem started.
+        :paramtype problem_start_time: ~datetime.datetime
+        :keyword service_id: This is the resource Id of the Azure service resource associated with the
+         support ticket.
+        :paramtype service_id: str
+        :keyword technical_ticket_details: Additional ticket details associated with a technical
+         support ticket request.
+        :paramtype technical_ticket_details: ~azure.mgmt.support.models.TechnicalTicketDetails
+        :keyword quota_ticket_details: Additional ticket details associated with a quota support ticket
+         request.
+        :paramtype quota_ticket_details: ~azure.mgmt.support.models.QuotaTicketDetails
+        """
         super(SupportTicketDetails, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -848,10 +1005,10 @@ class SupportTicketDetails(msrest.serialization.Model):
 class SupportTicketsListResult(msrest.serialization.Model):
     """Object that represents a collection of SupportTicket resources.
 
-    :param value: List of SupportTicket resources.
-    :type value: list[~azure.mgmt.support.models.SupportTicketDetails]
-    :param next_link: The URI to fetch the next page of SupportTicket resources.
-    :type next_link: str
+    :ivar value: List of SupportTicket resources.
+    :vartype value: list[~azure.mgmt.support.models.SupportTicketDetails]
+    :ivar next_link: The URI to fetch the next page of SupportTicket resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -866,6 +1023,12 @@ class SupportTicketsListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of SupportTicket resources.
+        :paramtype value: list[~azure.mgmt.support.models.SupportTicketDetails]
+        :keyword next_link: The URI to fetch the next page of SupportTicket resources.
+        :paramtype next_link: str
+        """
         super(SupportTicketsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -874,9 +1037,9 @@ class SupportTicketsListResult(msrest.serialization.Model):
 class TechnicalTicketDetails(msrest.serialization.Model):
     """Additional information for technical support ticket.
 
-    :param resource_id: This is the resource Id of the Azure service resource (For example: A
+    :ivar resource_id: This is the resource Id of the Azure service resource (For example: A
      virtual machine resource or an HDInsight resource) for which the support ticket is created.
-    :type resource_id: str
+    :vartype resource_id: str
     """
 
     _attribute_map = {
@@ -889,6 +1052,11 @@ class TechnicalTicketDetails(msrest.serialization.Model):
         resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: This is the resource Id of the Azure service resource (For example: A
+         virtual machine resource or an HDInsight resource) for which the support ticket is created.
+        :paramtype resource_id: str
+        """
         super(TechnicalTicketDetails, self).__init__(**kwargs)
         self.resource_id = resource_id
 
@@ -896,33 +1064,33 @@ class TechnicalTicketDetails(msrest.serialization.Model):
 class UpdateContactProfile(msrest.serialization.Model):
     """Contact information associated with the support ticket.
 
-    :param first_name: First name.
-    :type first_name: str
-    :param last_name: Last name.
-    :type last_name: str
-    :param preferred_contact_method: Preferred contact method. Possible values include: "email",
+    :ivar first_name: First name.
+    :vartype first_name: str
+    :ivar last_name: Last name.
+    :vartype last_name: str
+    :ivar preferred_contact_method: Preferred contact method. Possible values include: "email",
      "phone".
-    :type preferred_contact_method: str or ~azure.mgmt.support.models.PreferredContactMethod
-    :param primary_email_address: Primary email address.
-    :type primary_email_address: str
-    :param additional_email_addresses: Email addresses listed will be copied on any correspondence
+    :vartype preferred_contact_method: str or ~azure.mgmt.support.models.PreferredContactMethod
+    :ivar primary_email_address: Primary email address.
+    :vartype primary_email_address: str
+    :ivar additional_email_addresses: Email addresses listed will be copied on any correspondence
      about the support ticket.
-    :type additional_email_addresses: list[str]
-    :param phone_number: Phone number. This is required if preferred contact method is phone.
-    :type phone_number: str
-    :param preferred_time_zone: Time zone of the user. This is the name of the time zone from
-     `Microsoft Time Zone Index Values <https://support.microsoft.com/help/973627/microsoft-time-
-     zone-index-values>`_.
-    :type preferred_time_zone: str
-    :param country: Country of the user. This is the ISO 3166-1 alpha-3 code.
-    :type country: str
-    :param preferred_support_language: Preferred language of support from Azure. Support languages
+    :vartype additional_email_addresses: list[str]
+    :ivar phone_number: Phone number. This is required if preferred contact method is phone.
+    :vartype phone_number: str
+    :ivar preferred_time_zone: Time zone of the user. This is the name of the time zone from
+     `Microsoft Time Zone Index Values
+     <https://support.microsoft.com/help/973627/microsoft-time-zone-index-values>`_.
+    :vartype preferred_time_zone: str
+    :ivar country: Country of the user. This is the ISO 3166-1 alpha-3 code.
+    :vartype country: str
+    :ivar preferred_support_language: Preferred language of support from Azure. Support languages
      vary based on the severity you choose for your support ticket. Learn more at `Azure Severity
      and responsiveness <https://azure.microsoft.com/support/plans/response/>`_. Use the standard
      language-country code. Valid values are 'en-us' for English, 'zh-hans' for Chinese, 'es-es' for
      Spanish, 'fr-fr' for French, 'ja-jp' for Japanese, 'ko-kr' for Korean, 'ru-ru' for Russian,
      'pt-br' for Portuguese, 'it-it' for Italian, 'zh-tw' for Chinese and 'de-de' for German.
-    :type preferred_support_language: str
+    :vartype preferred_support_language: str
     """
 
     _attribute_map = {
@@ -951,6 +1119,36 @@ class UpdateContactProfile(msrest.serialization.Model):
         preferred_support_language: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword first_name: First name.
+        :paramtype first_name: str
+        :keyword last_name: Last name.
+        :paramtype last_name: str
+        :keyword preferred_contact_method: Preferred contact method. Possible values include: "email",
+         "phone".
+        :paramtype preferred_contact_method: str or ~azure.mgmt.support.models.PreferredContactMethod
+        :keyword primary_email_address: Primary email address.
+        :paramtype primary_email_address: str
+        :keyword additional_email_addresses: Email addresses listed will be copied on any
+         correspondence about the support ticket.
+        :paramtype additional_email_addresses: list[str]
+        :keyword phone_number: Phone number. This is required if preferred contact method is phone.
+        :paramtype phone_number: str
+        :keyword preferred_time_zone: Time zone of the user. This is the name of the time zone from
+         `Microsoft Time Zone Index Values
+         <https://support.microsoft.com/help/973627/microsoft-time-zone-index-values>`_.
+        :paramtype preferred_time_zone: str
+        :keyword country: Country of the user. This is the ISO 3166-1 alpha-3 code.
+        :paramtype country: str
+        :keyword preferred_support_language: Preferred language of support from Azure. Support
+         languages vary based on the severity you choose for your support ticket. Learn more at `Azure
+         Severity and responsiveness <https://azure.microsoft.com/support/plans/response/>`_. Use the
+         standard language-country code. Valid values are 'en-us' for English, 'zh-hans' for Chinese,
+         'es-es' for Spanish, 'fr-fr' for French, 'ja-jp' for Japanese, 'ko-kr' for Korean, 'ru-ru' for
+         Russian, 'pt-br' for Portuguese, 'it-it' for Italian, 'zh-tw' for Chinese and 'de-de' for
+         German.
+        :paramtype preferred_support_language: str
+        """
         super(UpdateContactProfile, self).__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
@@ -966,13 +1164,13 @@ class UpdateContactProfile(msrest.serialization.Model):
 class UpdateSupportTicket(msrest.serialization.Model):
     """Updates severity, ticket status, and contact details in the support ticket.
 
-    :param severity: Severity level. Possible values include: "minimal", "moderate", "critical",
+    :ivar severity: Severity level. Possible values include: "minimal", "moderate", "critical",
      "highestcriticalimpact".
-    :type severity: str or ~azure.mgmt.support.models.SeverityLevel
-    :param status: Status to be updated on the ticket. Possible values include: "open", "closed".
-    :type status: str or ~azure.mgmt.support.models.Status
-    :param contact_details: Contact details to be updated on the support ticket.
-    :type contact_details: ~azure.mgmt.support.models.UpdateContactProfile
+    :vartype severity: str or ~azure.mgmt.support.models.SeverityLevel
+    :ivar status: Status to be updated on the ticket. Possible values include: "open", "closed".
+    :vartype status: str or ~azure.mgmt.support.models.Status
+    :ivar contact_details: Contact details to be updated on the support ticket.
+    :vartype contact_details: ~azure.mgmt.support.models.UpdateContactProfile
     """
 
     _attribute_map = {
@@ -989,6 +1187,15 @@ class UpdateSupportTicket(msrest.serialization.Model):
         contact_details: Optional["UpdateContactProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword severity: Severity level. Possible values include: "minimal", "moderate", "critical",
+         "highestcriticalimpact".
+        :paramtype severity: str or ~azure.mgmt.support.models.SeverityLevel
+        :keyword status: Status to be updated on the ticket. Possible values include: "open", "closed".
+        :paramtype status: str or ~azure.mgmt.support.models.Status
+        :keyword contact_details: Contact details to be updated on the support ticket.
+        :paramtype contact_details: ~azure.mgmt.support.models.UpdateContactProfile
+        """
         super(UpdateSupportTicket, self).__init__(**kwargs)
         self.severity = severity
         self.status = status

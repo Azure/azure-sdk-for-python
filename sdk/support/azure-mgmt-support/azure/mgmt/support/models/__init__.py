@@ -6,56 +6,31 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CheckNameAvailabilityInput
-    from ._models_py3 import CheckNameAvailabilityOutput
-    from ._models_py3 import CommunicationDetails
-    from ._models_py3 import CommunicationsListResult
-    from ._models_py3 import ContactProfile
-    from ._models_py3 import ExceptionResponse
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationsListResult
-    from ._models_py3 import ProblemClassification
-    from ._models_py3 import ProblemClassificationsListResult
-    from ._models_py3 import QuotaChangeRequest
-    from ._models_py3 import QuotaTicketDetails
-    from ._models_py3 import Service
-    from ._models_py3 import ServiceError
-    from ._models_py3 import ServiceErrorDetail
-    from ._models_py3 import ServiceLevelAgreement
-    from ._models_py3 import ServicesListResult
-    from ._models_py3 import SupportEngineer
-    from ._models_py3 import SupportTicketDetails
-    from ._models_py3 import SupportTicketsListResult
-    from ._models_py3 import TechnicalTicketDetails
-    from ._models_py3 import UpdateContactProfile
-    from ._models_py3 import UpdateSupportTicket
-except (SyntaxError, ImportError):
-    from ._models import CheckNameAvailabilityInput  # type: ignore
-    from ._models import CheckNameAvailabilityOutput  # type: ignore
-    from ._models import CommunicationDetails  # type: ignore
-    from ._models import CommunicationsListResult  # type: ignore
-    from ._models import ContactProfile  # type: ignore
-    from ._models import ExceptionResponse  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationsListResult  # type: ignore
-    from ._models import ProblemClassification  # type: ignore
-    from ._models import ProblemClassificationsListResult  # type: ignore
-    from ._models import QuotaChangeRequest  # type: ignore
-    from ._models import QuotaTicketDetails  # type: ignore
-    from ._models import Service  # type: ignore
-    from ._models import ServiceError  # type: ignore
-    from ._models import ServiceErrorDetail  # type: ignore
-    from ._models import ServiceLevelAgreement  # type: ignore
-    from ._models import ServicesListResult  # type: ignore
-    from ._models import SupportEngineer  # type: ignore
-    from ._models import SupportTicketDetails  # type: ignore
-    from ._models import SupportTicketsListResult  # type: ignore
-    from ._models import TechnicalTicketDetails  # type: ignore
-    from ._models import UpdateContactProfile  # type: ignore
-    from ._models import UpdateSupportTicket  # type: ignore
+from ._models_py3 import CheckNameAvailabilityInput
+from ._models_py3 import CheckNameAvailabilityOutput
+from ._models_py3 import CommunicationDetails
+from ._models_py3 import CommunicationsListResult
+from ._models_py3 import ContactProfile
+from ._models_py3 import ExceptionResponse
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationsListResult
+from ._models_py3 import ProblemClassification
+from ._models_py3 import ProblemClassificationsListResult
+from ._models_py3 import QuotaChangeRequest
+from ._models_py3 import QuotaTicketDetails
+from ._models_py3 import Service
+from ._models_py3 import ServiceError
+from ._models_py3 import ServiceErrorDetail
+from ._models_py3 import ServiceLevelAgreement
+from ._models_py3 import ServicesListResult
+from ._models_py3 import SupportEngineer
+from ._models_py3 import SupportTicketDetails
+from ._models_py3 import SupportTicketsListResult
+from ._models_py3 import TechnicalTicketDetails
+from ._models_py3 import UpdateContactProfile
+from ._models_py3 import UpdateSupportTicket
+
 
 from ._microsoft_support_enums import (
     CommunicationDirection,
