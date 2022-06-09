@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import abc
 import sys
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast
+from msrest import Serializer
 from typing import overload
 from ._operations import EntityOperations as EntityOperationsGenerated
 from ._operations import GlossaryOperations as GlossaryOperationsGenerated
