@@ -186,12 +186,14 @@ async def upload_page_blob(
         if length % 512 != 0:
             raise ValueError("Invalid page blob size: {0}. "
                              "The size must be aligned to a 512-byte boundary.".format(length))
+        tier = None
         if kwargs.get('premium_page_blob_tier'):
             premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
             try:
-                headers['x-ms-access-tier'] = premium_page_blob_tier.value
+                tier = premium_page_blob_tier.value
             except AttributeError:
-                headers['x-ms-access-tier'] = premium_page_blob_tier
+                tier = premium_page_blob_tier
+
         if encryption_options and encryption_options.get('data'):
             headers['x-ms-meta-encryptiondata'] = encryption_options['data']
         blob_tags_string = kwargs.pop('blob_tags_string', None)
@@ -203,6 +205,7 @@ async def upload_page_blob(
             blob_sequence_number=None,
             blob_http_headers=kwargs.pop('blob_headers', None),
             blob_tags_string=blob_tags_string,
+            tier=tier,
             cls=return_response_headers,
             headers=headers,
             **kwargs)
