@@ -67,25 +67,25 @@ from ._lro_async import (
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-    AsyncAnalyzeActionsResponse = AsyncAnalyzeActionsLROPoller[
-        AsyncItemPaged[
-            List[
-                Union[
-                    RecognizeEntitiesResult,
-                    RecognizeLinkedEntitiesResult,
-                    RecognizePiiEntitiesResult,
-                    ExtractKeyPhrasesResult,
-                    AnalyzeSentimentResult,
-                    ExtractSummaryResult,
-                    RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
-                    AnalyzeHealthcareEntitiesResult,
-                    DocumentError,
-                ]
+AsyncAnalyzeActionsResponse = AsyncAnalyzeActionsLROPoller[
+    AsyncItemPaged[
+        List[
+            Union[
+                RecognizeEntitiesResult,
+                RecognizeLinkedEntitiesResult,
+                RecognizePiiEntitiesResult,
+                ExtractKeyPhrasesResult,
+                AnalyzeSentimentResult,
+                ExtractSummaryResult,
+                RecognizeCustomEntitiesResult,
+                SingleCategoryClassifyResult,
+                MultiCategoryClassifyResult,
+                AnalyzeHealthcareEntitiesResult,
+                DocumentError,
             ]
         ]
     ]
+]
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):

@@ -74,25 +74,25 @@ from ._check import is_language_api, string_index_type_compatibility
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-    AnalyzeActionsResponse = AnalyzeActionsLROPoller[
-        ItemPaged[
-            List[
-                Union[
-                    RecognizeEntitiesResult,
-                    RecognizeLinkedEntitiesResult,
-                    RecognizePiiEntitiesResult,
-                    ExtractKeyPhrasesResult,
-                    AnalyzeSentimentResult,
-                    ExtractSummaryResult,
-                    RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
-                    AnalyzeHealthcareEntitiesResult,
-                    DocumentError,
-                ]
+AnalyzeActionsResponse = AnalyzeActionsLROPoller[
+    ItemPaged[
+        List[
+            Union[
+                RecognizeEntitiesResult,
+                RecognizeLinkedEntitiesResult,
+                RecognizePiiEntitiesResult,
+                ExtractKeyPhrasesResult,
+                AnalyzeSentimentResult,
+                ExtractSummaryResult,
+                RecognizeCustomEntitiesResult,
+                SingleCategoryClassifyResult,
+                MultiCategoryClassifyResult,
+                AnalyzeHealthcareEntitiesResult,
+                DocumentError,
             ]
         ]
     ]
+]
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
