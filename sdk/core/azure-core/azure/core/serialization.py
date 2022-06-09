@@ -219,21 +219,29 @@ def _get_model(module_name: str, model_name: str):
 _UNSET = object()
 
 class Model(dict):
-
-    __mapping__ = {}
-
-    def __init_subclass__(cls, /, discriminator=_UNSET) -> None:
-        # using this to handle polymorphic models
-        if discriminator is not _UNSET:
-            cls.__mapping__[discriminator or cls.__name__] = cls
-        return super().__init_subclass__()
-
-    def __init__(self, **kwargs):
-        super().__init__({
-            self._attr_to_rest_name.get(k, k): v
-            for k, v in kwargs.items()
-        })
-
+    def __init__(self, *args, **kwargs):
+        class_name = self.__class__.__name__
+        if len(args) > 1:
+            raise TypeError(f"{class_name}.__init__() takes 2 positional arguments but {len(args) + 1} were given")
+        if "_data" in kwargs:
+            raise TypeError(f"{class_name}.__init__() got some positional-only arguments passed as keyword arguments: '_data'")
+        if args:
+            non_rest_entries = [a for a in args[0] if a not in self._attr_to_rest_name.values() and a in self._attr_to_rest_name]
+            if non_rest_entries:
+                raise TypeError(
+                    f"{class_name}.__init__() got the following unexpected entries: '{', '.join(non_rest_entries)}'"
+                )
+            super().__init__(args[0])
+        else:
+            non_attr_kwargs = [k for k in kwargs if k not in self._attr_to_rest_name]
+            if non_attr_kwargs:
+                # actual type errors only throw the first wrong keyword arg they see, so following that.
+                raise TypeError(
+                    f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'"
+                )
+            super().__init__({
+                self._attr_to_rest_name[k]: v for k, v in kwargs.items()
+            })
 
     def __eq__(self, other):
         """Compare objects by comparing all attributes."""
@@ -261,21 +269,23 @@ class Model(dict):
             k: v._rest_name
             for k, v in attr_to_rest_field.items()
         }
-        try:
-            discriminator = next(a for a in attr_to_rest_field.values() if a._is_discriminator)
-            cls._is_discrimated = any(a for a in attr_to_rest_field.values() if a._is_discriminator)
-
-        except StopIteration:
-            pass
 
         return super().__new__(cls, *args, **kwargs)
 
 class _RestField:
-    def __init__(self, *, name: Optional[str] = None, type: Optional[Callable] = None, is_discriminator: bool = False):
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[Callable] = None,
+        is_discriminator: bool = False,
+        readonly: bool = False
+    ):
         self._type = type
         self._rest_name = name
         self._module: Optional[str] = None
         self._is_discriminator = is_discriminator
+        self._readonly = readonly
 
     def __get__(self, obj: Model, type=None):
         # by this point, type and rest_name will have a value bc we default
@@ -408,8 +418,8 @@ class _RestField:
             _DESERIALIZE_MAPPING.get(annotation, lambda x: x)
         )
 
-def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
-    return _RestField(name=name, type=type)
+def rest_field(*, name: Optional[str] = None, type: Optional[Callable] = None, readonly: bool = False) -> Any:
+    return _RestField(name=name, type=type, readonly=readonly)
 
 def rest_discriminator(*, name: Optional[str] = None, type: Optional[Callable] = None) -> Any:
     return _RestField(name=name, type=type, is_discriminator=True)
