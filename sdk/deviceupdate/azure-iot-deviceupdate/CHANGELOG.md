@@ -12,9 +12,6 @@
 - Added device class subgroups to groups
 - Added new method to retrieve devices health information
 
-### Breaking Changes
-- Models were updated
-
 ## 1.0.0b2 (2022-01-25)
 
 ### Features Added
@@ -33,7 +30,7 @@
   - Parameter `account_endpoint` of DeviceUpdateClient is renamed to `endpoint`
   - Renamed `client.updates` to `client.device_update`
   - Removed `client.devices`
-  - Removed `client.deployments`  
+  - Removed `client.deployments`
   - Renamed UpdatesOperations.get_update to DeviceUpdateOperations.get_update
   - Renamed UpdatesOperations.delete_update to DeviceUpdateOperations.begin_delete_update
   - Renamed UpdatesOperations.get_providers to DeviceUpdateOperations.list_providers
