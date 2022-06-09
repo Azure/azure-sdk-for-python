@@ -1,0 +1,102 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 08 Jun 2022 21:45:19 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/encryptionqueue99331b42
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 08 Jun 2022 21:45:19 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.queue.core.windows.net/encryptionqueue99331b42
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "hKYLs8Xeur7VwEXDpwyXPMk7hl0DGEbh6dmpT8QJnKybGptljHxRj31TuoeT8E5PTCY=",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "bolP5f9LyxA0ISg+uzt6fmuPyWyykbRJs41OXgNf9fy1bYLo/nzb0g==",
+      "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
+      "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+      12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.4.0b1"}}}</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '564'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 08 Jun 2022 21:45:20 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/encryptionqueue99331b42/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>91500197-480e-4cf8-b017-ac64ca059a94</MessageId><InsertionTime>Wed,
+        08 Jun 2022 21:45:20 GMT</InsertionTime><ExpirationTime>Wed, 15 Jun 2022 21:45:20
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAwou5DIF72AE=</PopReceipt><TimeNextVisible>Wed,
+        08 Jun 2022 21:45:20 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Wed, 08 Jun 2022 21:45:19 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.queue.core.windows.net/encryptionqueue99331b42/messages
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.4.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 08 Jun 2022 21:45:20 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/encryptionqueue99331b42/messages?numofmessages=1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>91500197-480e-4cf8-b017-ac64ca059a94</MessageId><InsertionTime>Wed,
+        08 Jun 2022 21:45:20 GMT</InsertionTime><ExpirationTime>Wed, 15 Jun 2022 21:45:20
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA+JGjHoF72AE=</PopReceipt><TimeNextVisible>Wed,
+        08 Jun 2022 21:45:50 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>{\"EncryptedMessageContents\":
+        \"hKYLs8Xeur7VwEXDpwyXPMk7hl0DGEbh6dmpT8QJnKybGptljHxRj31TuoeT8E5PTCY=\",
+        \"EncryptionData\": {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\":
+        \"bolP5f9LyxA0ISg+uzt6fmuPyWyykbRJs41OXgNf9fy1bYLo/nzb0g==\", \"Algorithm\":
+        \"A256KW\"}, \"EncryptionAgent\": {\"Protocol\": \"2.0\", \"EncryptionAlgorithm\":
+        \"AES_GCM_256\"}, \"EncryptedRegionInfo\": {\"DataLength\": 4194304, \"NonceLength\":
+        12}, \"KeyWrappingMetadata\": {\"EncryptionLibrary\": \"Python 12.4.0b1\"}}}</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Wed, 08 Jun 2022 21:45:19 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.queue.core.windows.net/encryptionqueue99331b42/messages?numofmessages=1
+version: 1
