@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from fileinput import close
+
 import functools
 import sys
 import logging
@@ -16,6 +16,7 @@ import typing
 from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 from collections.abc import MutableMapping
+import copy
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -119,6 +120,20 @@ try:
 except ImportError:
     TZ_UTC = _FixedOffset(0)  # type: ignore
 
+def _serialize_bytes(o) -> str:
+    return base64.b64encode(o).decode()
+
+def _serialize_datetime(o):
+    if hasattr(o, "year") and hasattr(o, "hour"):
+        # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
+        if not o.tzinfo:
+            iso_formatted = o.replace(tzinfo=TZ_UTC).isoformat()
+        else:
+            iso_formatted = o.astimezone(TZ_UTC).isoformat()
+        # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
+        return iso_formatted.replace("+00:00", "Z")
+    # Next try datetime.date or datetime.time
+    return o.isoformat()
 
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
@@ -130,19 +145,10 @@ class AzureJSONEncoder(JSONEncoder):
             return super(AzureJSONEncoder, self).default(o)
         except TypeError:
             if isinstance(o, (bytes, bytearray)):
-                return base64.b64encode(o).decode()
+                return _serialize_bytes(o)
             try:
                 # First try datetime.datetime
-                if hasattr(o, "year") and hasattr(o, "hour"):
-                    # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
-                    if not o.tzinfo:
-                        iso_formatted = o.replace(tzinfo=TZ_UTC).isoformat()
-                    else:
-                        iso_formatted = o.astimezone(TZ_UTC).isoformat()
-                    # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
-                    return iso_formatted.replace("+00:00", "Z")
-                # Next try datetime.date or datetime.time
-                return o.isoformat()
+                return _serialize_datetime(o)
             except AttributeError:
                 pass
             # Last, try datetime.timedelta
@@ -158,12 +164,15 @@ _VALID_DATE = re.compile(
     r'\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}'
     r'\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?')
 
-def _deserialize_datetime(attr: str) -> datetime:
+def _deserialize_datetime(attr: typing.Union[str, datetime]) -> datetime:
     """Deserialize ISO-8601 formatted string into Datetime object.
 
     :param str attr: response string to be deserialized.
     :rtype: ~datetime.datetime
     """
+    if isinstance(attr, datetime):
+        # i'm already deserialized
+        return attr
     attr = attr.upper()
     match = _VALID_DATE.match(attr)
     if not match:
@@ -186,20 +195,24 @@ def _deserialize_datetime(attr: str) -> datetime:
         raise OverflowError("Hit max or min date")
     return date_obj
 
-def _deserialize_date(attr: str) -> date:
+def _deserialize_date(attr: typing.Union[str, date]) -> date:
     """Deserialize ISO-8601 formatted string into Date object.
     :param str attr: response string to be deserialized.
     :rtype: Date
     """
     # This must NOT use defaultmonth/defaultday. Using None ensure this raises an exception.
+    if isinstance(attr, date):
+        return attr
     return isodate.parse_date(attr, defaultmonth=None, defaultday=None)
 
-def _deserialize_time(attr: str) -> time:
+def _deserialize_time(attr: typing.Union[str, time]) -> time:
     """Deserialize ISO-8601 formatted string into time object.
 
     :param str attr: response string to be deserialized.
     :rtype: datetime.time
     """
+    if isinstance(attr, time):
+        return attr
     return isodate.parse_time(attr)
 
 
@@ -223,7 +236,9 @@ _UNSET = object()
 class _MyMutableMapping(MutableMapping):
 
     def __init__(self, data: typing.Dict[str, typing.Any]) -> None:
-        self._data = data
+        self._data = copy.deepcopy(data)
+        self._serialized_data = {}
+        self._deserialized_data = {}
 
     def __contains__(self, key: str) -> bool:
         return key in self._data
@@ -233,6 +248,8 @@ class _MyMutableMapping(MutableMapping):
 
     def __setitem__(self, key: str, value: typing.Any) -> None:
         self._data.__setitem__(key, value)
+        self._serialized_data[key] = _UNSET
+        self._deserialized_data[key] = _UNSET
 
     def __delitem__(self, key: str) -> None:
         self._data.__delitem__(key)
@@ -303,8 +320,39 @@ class _MyMutableMapping(MutableMapping):
             self._data.setdefault(key)
         self._data.setdefault(key, default)
 
+def _is_model(obj: typing.Any) -> bool:
+    return getattr(obj, "_is_model", False)
+
+def _serialize_call(o):
+    if isinstance(o, (bytes, bytearray)):
+        return _serialize_bytes(o)
+    try:
+        # First try datetime.datetime
+        return _serialize_datetime(o)
+    except AttributeError:
+        pass
+    # Last, try datetime.timedelta
+    try:
+        return _timedelta_as_isostr(o)
+    except AttributeError:
+        # This will be raised when it hits value.total_seconds in the method above
+        pass
+    return o
+
+def _get_rest_field(attr_to_rest_field: typing.Dict[str, "_RestField"], rest_name: str) -> typing.Optional["_RestField"]:
+    try:
+        return next(rf for rf in attr_to_rest_field.values() if rf._rest_name == rest_name)
+    except StopIteration:
+        return None
+
+
+def _create_value(rest_field: typing.Optional["_RestField"], value: typing.Any) -> typing.Any:
+    if not (rest_field and rest_field._is_model):
+        return value
+    return rest_field._type(value)
 
 class Model(_MyMutableMapping):
+    _is_model = True
     def __init__(self, *args, **kwargs):
         class_name = self.__class__.__name__
         if len(args) > 1:
@@ -312,25 +360,37 @@ class Model(_MyMutableMapping):
         if "_data" in kwargs:
             raise TypeError(f"{class_name}.__init__() got some positional-only arguments passed as keyword arguments: '_data'")
         if args:
-            non_rest_entries = [a for a in args[0] if a not in self._attr_to_rest_name.values() and a in self._attr_to_rest_name]
-            if non_rest_entries:
-                raise TypeError(
-                    f"{class_name}.__init__() got the following unexpected entries: '{', '.join(non_rest_entries)}'"
-                )
-            super().__init__(args[0])
+            # rest_names = [rf._rest_name for rf in self._attr_to_rest_field.values()]
+            # non_rest_entries = [a for a in args[0] if a not in rest_names and a in self._attr_to_rest_field]
+            # if non_rest_entries:
+            #     raise TypeError(
+            #         f"{class_name}.__init__() got the following unexpected entries: '{', '.join(non_rest_entries)}'"
+            #     )
+            super().__init__(
+                {
+                    k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v)
+                    for k, v in args[0].items()
+                }
+            )
         else:
-            non_attr_kwargs = [k for k in kwargs if k not in self._attr_to_rest_name]
+            non_attr_kwargs = [k for k in kwargs if k not in self._attr_to_rest_field]
             if non_attr_kwargs:
                 # actual type errors only throw the first wrong keyword arg they see, so following that.
                 raise TypeError(
                     f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'"
                 )
             super().__init__({
-                self._attr_to_rest_name[k]: v for k, v in kwargs.items()
+                self._attr_to_rest_field[k]._rest_name: v for k, v in kwargs.items()
             })
 
-    def __dict__(self) -> typing.Dict[str, typing.Any]:
-        a = "b"
+    def __getitem__(self, key: str) -> typing.Any:
+        serialized_item = self._serialized_data.get(key, _UNSET)
+        if serialized_item is _UNSET:
+            self._serialized_data[key] = _serialize_call(self._data.__getitem__(key))
+        if serialized_item is not self._serialized_data[key]:
+            # we want self._data to always have the last accessed version of the value
+            self._data.__setitem__(key, self._serialized_data[key])
+        return self._serialized_data[key]
 
     def copy(self):
         return Model(self.__dict__)
@@ -340,16 +400,16 @@ class Model(_MyMutableMapping):
         attr_to_rest_field: typing.Dict[str, _RestField] = { # map attribute name to rest_field property
             k: v
             for mro_class in cls.__mro__[:-3][::-1] # ignore model, dict, and object parents, and reverse the mro order
-            for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+            for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type_input")
         }
         for attr, rest_field in attr_to_rest_field.items():
             rest_field._module = cls.__module__
-            if not rest_field._type:
-                rest_field._type = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
-            if not rest_field._rest_name:
-                rest_field._rest_name = attr
-        cls._attr_to_rest_name = {
-            k: v._rest_name
+            if not rest_field._type_input:
+                rest_field._type_input = rest_field._get_deserialize_callable_from_annotation(cls.__annotations__.get(attr, None))
+            if not rest_field._rest_name_input:
+                rest_field._rest_name_input = attr
+        cls._attr_to_rest_field: typing.Dict[str, _RestField] = {
+            k: v
             for k, v in attr_to_rest_field.items()
         }
 
@@ -364,16 +424,35 @@ class _RestField:
         is_discriminator: bool = False,
         readonly: bool = False
     ):
-        self._type = type
-        self._rest_name = name
+        self._type_input = type
+        self._rest_name_input = name
         self._module: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
         self._readonly = readonly
+        self._is_model = False
+
+    @property
+    def _rest_name(self) -> str:
+        if self._rest_name_input is None:
+            raise ValueError("Rest name was never set")
+        return self._rest_name_input
+
+    @property
+    def _type(self) -> typing.Callable[[typing.Any], typing.Any]:
+        if self._type_input is None:
+            raise ValueError("type was never set")
+        return self._type_input
 
     def __get__(self, obj: Model, type=None):
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
-        return typing.cast(typing.Callable, self._type)(obj.__getitem__(self._rest_name))
+        deserialized_item = obj._deserialized_data.get(self._rest_name, _UNSET)
+        if deserialized_item is _UNSET:
+            obj._deserialized_data[self._rest_name] = typing.cast(typing.Callable, self._type)(obj._data.get(self._rest_name))
+        if obj._data.get(self._rest_name) is not obj._deserialized_data[self._rest_name]:
+            # we want self._data to always have the last accessed version of the value
+            obj._data.__setitem__(self._rest_name, obj._deserialized_data[self._rest_name])
+        return obj._deserialized_data[self._rest_name]
 
     def __set__(self, obj: Model, value) -> None:
         obj.__setitem__(self._rest_name, value)
@@ -383,8 +462,14 @@ class _RestField:
 
     def _get_deserialize_callable_from_annotation(self, annotation: typing.Any) -> typing.Callable[[typing.Any], typing.Any]:
         default: typing.Callable = lambda x: x
-        if not annotation:
+        if not annotation or annotation in [int, float]:
             return default
+
+        try:
+            if _is_model(_get_model(self._module, annotation)):
+                self._is_model = True
+        except Exception:
+            pass
 
         # is it a literal?
         try:
@@ -480,10 +565,6 @@ class _RestField:
             deserializer_from_mapping,
             obj,
         ):
-            try:
-                return annotation(**obj)
-            except Exception:
-                pass
             try:
                 return annotation(obj)
             except Exception:

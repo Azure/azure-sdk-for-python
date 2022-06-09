@@ -25,7 +25,7 @@ class BasicResource(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -41,7 +41,7 @@ class Pet(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -81,8 +81,10 @@ def test_json_roundtrip():
         "virtualMachines": []
     }
     model = BasicResource(platform_update_domain_count=5, platform_fault_domain_count=3, virtual_machines=[])
-    assert json.dumps(model) == '{"platformUpdateDomainCount": 5, "platformFaultDomainCount": 3, "virtualMachines": []}'
-    assert json.loads(json.dumps(model)) == model == dict_response
+    with pytest.raises(TypeError):
+        json.dumps(model)
+    assert json.dumps(dict(model)) == '{"platformUpdateDomainCount": 5, "platformFaultDomainCount": 3, "virtualMachines": []}'
+    assert json.loads(json.dumps(dict(model))) == model == dict_response
 
 def test_has_no_property():
     dict_response = {
@@ -133,7 +135,7 @@ def test_original_and_attr_name_same():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -162,7 +164,7 @@ class OptionalModel(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -264,7 +266,7 @@ def test_property_is_a_type():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -278,7 +280,7 @@ def test_property_is_a_type():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -298,7 +300,7 @@ def test_datetime_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -328,7 +330,7 @@ def test_date_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -357,7 +359,7 @@ def test_time_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -386,7 +388,7 @@ class SimpleRecursiveModel(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -426,7 +428,7 @@ def test_dictionary_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -453,15 +455,12 @@ def test_attr_and_rest_case():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
-    with pytest.raises(TypeError):
-        # should raise bc ourAttr is not a param of init
-        test_model = ModelTest({"ourAttr": "camel", "our_attr": "rest"})
     test_model = ModelTest({"ourAttr": "camel"})
     assert test_model.our_attr == test_model["ourAttr"] == "camel"
 
@@ -481,7 +480,7 @@ def test_dictionary_deserialization_model():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -529,7 +528,7 @@ def test_list_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -553,7 +552,7 @@ def test_list_deserialization_model():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -589,7 +588,7 @@ def test_set_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -613,7 +612,7 @@ def test_tuple_deserialization():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -639,7 +638,7 @@ def test_list_of_tuple_deserialization_model():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -653,7 +652,7 @@ def test_list_of_tuple_deserialization_model():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -702,7 +701,7 @@ class RecursiveModel(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -846,7 +845,7 @@ def test_model_recursion_complex():
     assert isinstance(model.list_of_dict_of_me[0], Dict)
     assert isinstance(model.list_of_dict_of_me[0]["me"], RecursiveModel)
 
-    assert json.loads(json.dumps(model)) == model == dict_response
+    assert json.loads(json.dumps(dict(model))) == model == dict_response
 
 def test_literals():
 
@@ -859,7 +858,7 @@ def test_literals():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -898,25 +897,25 @@ def test_deserialization_callback_override():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
     model_without_callback = MyModel(prop=[1.3, 2.4, 3.5])
-    assert model_without_callback.prop == [1, 2, 3]
+    assert model_without_callback.prop == [1.3, 2.4, 3.5]
     assert model_without_callback['prop'] == [1.3, 2.4, 3.5]
 
     class MyModel(Model):
-        prop: Any = rest_field(type=_callback)
+        prop: Sequence[int] = rest_field(type=_callback)
 
         @overload
         def __init__(self, *, prop: Any):
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -924,7 +923,9 @@ def test_deserialization_callback_override():
 
     model_with_callback = MyModel(prop=[1.3, 2.4, 3.5])
     assert model_with_callback.prop == ["1.3", "2.4", "3.5"]
-    assert model_with_callback['prop'] == model_without_callback['prop']
+    # since the deserialize function is not roundtrippable, once we deserialize
+    # the serialized version is the same
+    assert model_with_callback['prop'] == ["1.3", "2.4", "3.5"]
 
 def test_deserialization_callback_override_parent():
 
@@ -936,7 +937,7 @@ def test_deserialization_callback_override_parent():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -953,7 +954,7 @@ def test_deserialization_callback_override_parent():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -964,7 +965,7 @@ def test_deserialization_callback_override_parent():
 
     child_model = ChildWithCallback(prop=[1, 1, 2, 3])
     assert child_model.prop == set(["1", "1", "2", "3"])
-    assert child_model['prop'] == [1, 1, 2, 3]
+    assert child_model['prop'] == set(["1", "1", "2", "3"])
 
 def test_inheritance_basic():
     def _callback(obj):
@@ -979,7 +980,7 @@ def test_inheritance_basic():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -1002,7 +1003,7 @@ class ParentA(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1017,7 +1018,7 @@ class ParentB(ParentA):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1039,7 +1040,7 @@ class ParentC(ParentB):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1060,7 +1061,7 @@ class ChildD(ParentC):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1068,14 +1069,14 @@ class ChildD(ParentC):
 
 def test_inheritance_4_levels():
     a = ParentA(prop=3.4)
-    assert a.prop == 3
+    assert a.prop == 3.4
     assert a['prop'] == 3.4
     assert a == {"prop": 3.4}
     assert isinstance(a, Model)
 
     b = ParentB(prop=3.4, bcd_prop=[ParentB(prop=4.3)])
     assert b.prop == "3.4"
-    assert b['prop'] == 3.4
+    assert b['prop'] == "3.4"  # deserialization callback is not roundtrippable, once deserialized it stays that way
     assert b.bcd_prop == [ParentB(prop=4.3)]
     assert b.bcd_prop
     assert b.bcd_prop[0].prop == "4.3"
@@ -1143,7 +1144,7 @@ def test_multiple_inheritance_basic():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -1161,7 +1162,7 @@ def test_multiple_inheritance_basic():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -1179,7 +1180,7 @@ def test_multiple_inheritance_basic():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -1202,7 +1203,7 @@ def test_multiple_inheritance_mro():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -1216,7 +1217,7 @@ def test_multiple_inheritance_mro():
             ...
 
         @overload
-        def __init__(self, _data: Mapping[str, Any], /):
+        def __init__(self, mapping: Mapping[str, Any], /):
             ...
 
         def __init__(self, *args, **kwargs):
@@ -1245,7 +1246,7 @@ class Feline(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1265,7 +1266,7 @@ class Owner(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1280,7 +1281,7 @@ class PetModel(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1303,7 +1304,7 @@ class Cat(PetModel, Feline):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1317,7 +1318,7 @@ class CuteThing(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1342,7 +1343,7 @@ class Kitten(Cat, CuteThing):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1358,7 +1359,7 @@ def test_multiple_inheritance_complex():
         likes_milk=False,  # likes_milk will change to True on the attribute
         siblings=[Feline(meows=True, hisses=False)]
     )
-    assert dict(cat) == {
+    assert cat == {
         "name": "Stephanie",
         "owner": {
             "firstName": "cecil",
@@ -1428,8 +1429,6 @@ def test_multiple_inheritance_complex():
     assert isinstance(kitten, Feline)
     assert isinstance(kitten, CuteThing)
 
-
-
 class A(Model):
     b: "B" = rest_field()
 
@@ -1438,7 +1437,7 @@ class A(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1452,7 +1451,7 @@ class B(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1466,7 +1465,7 @@ class C(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1534,7 +1533,7 @@ class BaseModel(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1549,7 +1548,7 @@ class InnerModel(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1565,7 +1564,7 @@ def test_nested_deserialization():
 
     new_serialized_datetime = "2022-12-31T23:59:59.999Z"
     model.inner_model.datetime_field = isodate.parse_datetime(new_serialized_datetime)
-    assert model.inner_model["datetimeField"] == "2022-12-31T23:59:59.999Z"
+    assert model.inner_model["datetimeField"] == '2022-12-31T23:59:59.999000Z'
 
 class X(Model):
     y: "Y" = rest_field()
@@ -1575,7 +1574,7 @@ class X(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1589,7 +1588,7 @@ class Y(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1603,7 +1602,7 @@ class Z(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1643,7 +1642,7 @@ class ModelWithReadonly(Model):
         ...
 
     @overload
-    def __init__(self, _data: Mapping[str, Any], /):
+    def __init__(self, mapping: Mapping[str, Any], /):
         ...
 
     def __init__(self, *args, **kwargs):
@@ -1663,7 +1662,7 @@ def test_readonly_roundtrip():
     assert received_model.readonly_property == received_model["readonlyProperty"] == "bar"
 
 def test_serialization_initialization_and_setting():
-    serialized_datetime = "9999-12-31T23:59:59.999Z"
+    serialized_datetime = "9999-12-31T23:59:59.999000Z"
     parsed_datetime = isodate.parse_datetime(serialized_datetime)
 
     # pass in parsed
@@ -1677,7 +1676,30 @@ def test_serialization_initialization_and_setting():
     assert z["zval"] == serialized_datetime
 
     # assert setting
-    serialized_datetime = "2022-12-31T23:59:59.999Z"
+    serialized_datetime = "2022-12-31T23:59:59.999000Z"
     parsed_datetime = isodate.parse_datetime(serialized_datetime)
     z.zval = isodate.parse_datetime(serialized_datetime)
     assert z["zval"] == serialized_datetime
+
+def test_copy_of_input():
+    class TestModel(Model):
+        data: List[int] = rest_field()
+
+        @overload
+        def __init__(self, *, data: List[int]):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    raw = [1, 2, 3]
+    m = TestModel(data=raw)
+    assert not m.data is raw
+    assert m.data == raw
+    raw.append(4)
+    assert m.data == [1, 2, 3]
+
