@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1025-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,13 +17,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:19:04 GMT",
+        "Date": "Thu, 09 Jun 2022 09:39:09 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12529.17 - NCUS ProdSlices",
-        "x-ms-request-id": "8b2ed0bc-3059-4e40-b331-bc8d90adf900"
+        "x-ms-ests-server": "2.1.12821.11 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1025-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,13 +111,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:19:04 GMT",
+        "Date": "Thu, 09 Jun 2022 09:39:09 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12529.18 - SEASLR2 ProdSlices",
-        "x-ms-request-id": "ccc63065-d16d-4298-bfe1-d7b085380200"
+        "x-ms-ests-server": "2.1.12821.11 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "800125d0-8de5-404d-be7e-44fc284ba676",
+        "client-request-id": "de1e21b8-0589-49e4-8348-2b983b338753",
         "Connection": "keep-alive",
-        "Content-Length": "291",
+        "Content-Length": "286",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
+        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1025-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "win32",
+        "x-client-os": "linux",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.17.0",
+        "x-client-ver": "1.18.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=0vj7Q%7EIsFayrD0V_8oyOfygU-GE3ELOabq95a\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "RequestBody": "client_id=8c41a920-007a-4844-a189-2d0efe39f51e\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=o0XWF_siD-FhI.5AE83-u0GaQHW_GP7cjy\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "800125d0-8de5-404d-be7e-44fc284ba676",
+        "client-request-id": "de1e21b8-0589-49e4-8348-2b983b338753",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:19:04 GMT",
+        "Date": "Thu, 09 Jun 2022 09:39:09 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,8 +201,8 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12559.4 - WUS2 ProdSlices",
-        "x-ms-request-id": "aec21db2-8a3f-4647-922b-ccf635fd1f00"
+        "x-ms-ests-server": "2.1.12821.11 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
@@ -217,12 +217,10 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "268",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-logic/9.0.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "74734e6e-a018-11ec-a13c-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-mgmt-logic/10.0.0 Python/3.8.12 (Linux-5.13.0-1025-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "West US",
@@ -240,26 +238,25 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1571",
+        "Content-Length": "2148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:19:13 GMT",
+        "Date": "Thu, 09 Jun 2022 09:39:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6085ad12-627e-4a77-99f2-dbb0cb94474c",
-        "x-ms-ratelimit-remaining-subscription-writes": "1198",
-        "x-ms-request-id": "westus:02976fcf-280c-4f14-bd03-16c70bfc052e",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T021913Z:6085ad12-627e-4a77-99f2-dbb0cb94474c"
+        "x-ms-correlation-request-id": "7dc0cda6-677d-4ca1-be3a-6c9727c0abe1",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "EASTUS:20220609T093913Z:7dc0cda6-677d-4ca1-be3a-6c9727c0abe1"
       },
       "ResponseBody": {
         "properties": {
           "provisioningState": "Succeeded",
-          "createdTime": "2022-03-10T02:19:11.6499256Z",
-          "changedTime": "2022-03-10T02:19:11.6382189Z",
+          "createdTime": "2022-06-09T09:39:11.9925552Z",
+          "changedTime": "2022-06-09T09:39:11.9774878Z",
           "state": "Enabled",
-          "version": "08585547281338543506",
-          "accessEndpoint": "https://prod-13.westus.logic.azure.com:443/workflows/97339488948b40a68ccfd55eb8c626a5",
+          "version": "08585468393335086451",
+          "accessEndpoint": "https://prod-10.westus.logic.azure.com:443/workflows/bf2876ff7e114bceafdd6aededd1e21e",
           "definition": {
             "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
             "contentVersion": "1.0.0.0",
@@ -313,6 +310,48 @@
                 },
                 {
                   "address": "13.86.223.5"
+                },
+                {
+                  "address": "104.40.34.169"
+                },
+                {
+                  "address": "104.40.32.148"
+                },
+                {
+                  "address": "52.160.70.221"
+                },
+                {
+                  "address": "52.160.70.105"
+                },
+                {
+                  "address": "13.91.81.221"
+                },
+                {
+                  "address": "13.64.231.196"
+                },
+                {
+                  "address": "13.87.204.182"
+                },
+                {
+                  "address": "40.78.65.193"
+                },
+                {
+                  "address": "13.87.207.39"
+                },
+                {
+                  "address": "104.42.44.28"
+                },
+                {
+                  "address": "40.83.134.97"
+                },
+                {
+                  "address": "40.78.65.112"
+                },
+                {
+                  "address": "168.62.9.74"
+                },
+                {
+                  "address": "168.62.28.191"
                 }
               ],
               "accessEndpointIpAddresses": [
@@ -327,6 +366,27 @@
                 },
                 {
                   "address": "157.56.160.212"
+                },
+                {
+                  "address": "104.40.34.112"
+                },
+                {
+                  "address": "52.160.68.27"
+                },
+                {
+                  "address": "13.88.168.158"
+                },
+                {
+                  "address": "104.42.40.164"
+                },
+                {
+                  "address": "13.87.207.79"
+                },
+                {
+                  "address": "13.87.204.210"
+                },
+                {
+                  "address": "168.62.9.100"
                 }
               ]
             },
@@ -369,10 +429,8 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-logic/9.0.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "7ac067b6-a018-11ec-81d3-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-mgmt-logic/10.0.0 Python/3.8.12 (Linux-5.13.0-1025-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -380,7 +438,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 10 Mar 2022 02:19:13 GMT",
+        "Date": "Thu, 09 Jun 2022 09:39:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -390,19 +448,18 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7b295cad-b868-459c-84ab-23aa9e75acb3",
+        "x-ms-correlation-request-id": "db69f401-0b29-4f50-bad5-ee98903c39cd",
         "x-ms-ratelimit-remaining-subscription-resource-requests": "19999",
-        "x-ms-request-id": "westus:40582feb-a0fc-4b74-8afb-c879ab547f02",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T021914Z:7b295cad-b868-459c-84ab-23aa9e75acb3"
+        "x-ms-routing-request-id": "EASTUS:20220609T093913Z:db69f401-0b29-4f50-bad5-ee98903c39cd"
       },
       "ResponseBody": {
         "properties": {
           "provisioningState": "Succeeded",
-          "createdTime": "2022-03-10T02:19:11.6499256Z",
-          "changedTime": "2022-03-10T02:19:11.6382189Z",
+          "createdTime": "2022-06-09T09:39:11.9925552Z",
+          "changedTime": "2022-06-09T09:39:11.9774878Z",
           "state": "Enabled",
-          "version": "08585547281338543506",
-          "accessEndpoint": "https://prod-13.westus.logic.azure.com:443/workflows/97339488948b40a68ccfd55eb8c626a5",
+          "version": "08585468393335086451",
+          "accessEndpoint": "https://prod-10.westus.logic.azure.com:443/workflows/bf2876ff7e114bceafdd6aededd1e21e",
           "definition": {
             "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
             "contentVersion": "1.0.0.0",
@@ -456,6 +513,48 @@
                 },
                 {
                   "address": "13.86.223.5"
+                },
+                {
+                  "address": "104.40.34.169"
+                },
+                {
+                  "address": "104.40.32.148"
+                },
+                {
+                  "address": "52.160.70.221"
+                },
+                {
+                  "address": "52.160.70.105"
+                },
+                {
+                  "address": "13.91.81.221"
+                },
+                {
+                  "address": "13.64.231.196"
+                },
+                {
+                  "address": "13.87.204.182"
+                },
+                {
+                  "address": "40.78.65.193"
+                },
+                {
+                  "address": "13.87.207.39"
+                },
+                {
+                  "address": "104.42.44.28"
+                },
+                {
+                  "address": "40.83.134.97"
+                },
+                {
+                  "address": "40.78.65.112"
+                },
+                {
+                  "address": "168.62.9.74"
+                },
+                {
+                  "address": "168.62.28.191"
                 }
               ],
               "accessEndpointIpAddresses": [
@@ -470,6 +569,27 @@
                 },
                 {
                   "address": "157.56.160.212"
+                },
+                {
+                  "address": "104.40.34.112"
+                },
+                {
+                  "address": "52.160.68.27"
+                },
+                {
+                  "address": "13.88.168.158"
+                },
+                {
+                  "address": "104.42.40.164"
+                },
+                {
+                  "address": "13.87.207.79"
+                },
+                {
+                  "address": "13.87.204.210"
+                },
+                {
+                  "address": "168.62.9.100"
                 }
               ]
             },
@@ -512,26 +632,23 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-logic/9.0.0 Python/3.6.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "7aed3224-a018-11ec-aa3d-c0b6f9946f2d"
+        "User-Agent": "azsdk-python-mgmt-logic/10.0.0 Python/3.8.12 (Linux-5.13.0-1025-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 10 Mar 2022 02:19:19 GMT",
+        "Date": "Thu, 09 Jun 2022 09:39:16 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d8a442d9-2d12-4c98-b900-7f896386200f",
+        "x-ms-correlation-request-id": "dfae980c-63e0-4029-8349-881b8bf6a608",
         "x-ms-ratelimit-remaining-subscription-deletes": "14999",
-        "x-ms-request-id": "westus:c4592545-0d60-4f81-a6a6-8d544da98d02",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220310T021919Z:d8a442d9-2d12-4c98-b900-7f896386200f"
+        "x-ms-routing-request-id": "EASTUS:20220609T093916Z:dfae980c-63e0-4029-8349-881b8bf6a608"
       },
       "ResponseBody": null
     }
