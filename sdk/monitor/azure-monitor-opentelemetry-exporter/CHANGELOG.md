@@ -1,6 +1,8 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b7 (Unreleased)
+
+## 1.0.0b6 (2022-06-09)
 
 ### Features Added
 - Implement log exporter using experimental OT logging sdk
