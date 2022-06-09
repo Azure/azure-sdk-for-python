@@ -27,7 +27,7 @@ from .._shared.utils import (
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import Iterable, List, Any
+    from typing import Optional, Iterable, List, Any
     from azure.core.credentials import TokenCredential
 
 
@@ -94,13 +94,13 @@ class SipRoutingClient(object):
         self,
         trunk_fqdn,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> SipTrunk
-        """Getter for single SIP trunk.
+    ):  # type: (...) -> Optional[SipTrunk]
+        """Retrieve a single SIP trunk.
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
-        :returns: SIP trunk with specified trunk_fqdn.
-        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, returns None.
+        :rtype: ~azure.communication.siprouting.models.SipTrunk or None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, LookupError
         """
         if trunk_fqdn is None:
@@ -201,14 +201,18 @@ class SipRoutingClient(object):
         if trunks is None:
             raise ValueError("Parameter 'trunks' must not be None.")
 
+        trunks_dictionary = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
+        config = SipConfiguration(trunks=trunks_dictionary)
+
         old_trunks = self._get_trunks_(**kwargs)
 
-        if len(old_trunks) > 0:
-            self._rest_service.patch_sip_configuration(
-                body=SipConfiguration(trunks={x.fqdn: None for x in old_trunks}), **kwargs
-            )
-        if len(trunks) > 0:
-            self._patch_trunks_(trunks, **kwargs)
+        for x in old_trunks:
+            if x.fqdn not in [o.fqdn for o in trunks]:
+                config.trunks[x.fqdn] = None
+
+        self._rest_service.patch_sip_configuration(
+            body=config, **kwargs
+        )
 
     @distributed_trace
     def set_routes(
