@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-purview-catalog/1.0.0b4 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://metamodeldemo02.purview.azure.com/catalog/api/atlas/v2/types/typedefs?includeTermTemplate=false
+    uri: https://fake_account.purview.azure.com/catalog/api/atlas/v2/types/typedefs?includeTermTemplate=false
   response:
     body:
       string: "{\"enumDefs\":[{\"category\":\"ENUM\",\"guid\":\"6e30d01e-f5d0-9799-08e7-09b4f276c09c\",\"createdBy\":\"admin\",\"updatedBy\":\"admin\",\"createTime\":1615787943686,\"updateTime\":1615787943686,\"version\":1,\"name\":\"glossary_term_status_value\",\"description\":\"glossary_term_status_value\",\"typeVersion\":\"1.0\",\"lastModifiedTS\":\"1\",\"elementDefs\":[{\"value\":\"Approved\",\"ordinal\":0},{\"value\":\"Alert\",\"ordinal\":1},{\"value\":\"Expired\",\"ordinal\":2},{\"value\":\"Draft\",\"ordinal\":3}]},{\"category\":\"ENUM\",\"guid\":\"42185ddb-29be-e911-ea52-890154eb07c0\",\"createdBy\":\"admin\",\"updatedBy\":\"admin\",\"createTime\":1615787943608,\"updateTime\":1615787943973,\"version\":2,\"name\":\"AtlasGlossaryTermRelationshipStatus\",\"description\":\"TermRelationshipStatus
