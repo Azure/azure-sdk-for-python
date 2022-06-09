@@ -18,6 +18,7 @@ from azure.ai.ml._artifacts._constants import (
 from azure.ai.ml._operations.datastore_operations import DatastoreOperations
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelVersionData, ListViewType
+from azure.ai.ml._utils._registry_utils import get_sas_uri_for_registry_asset, get_asset_body_for_registry_storage
 
 from azure.ai.ml._utils._asset_utils import _create_or_update_autoincrement
 from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
@@ -27,6 +28,9 @@ from os import path, PathLike, getcwd
 from azure.ai.ml._utils._storage_utils import get_storage_client, get_ds_name_and_path_prefix
 from azure.ai.ml._utils._asset_utils import _get_latest, _resolve_label_to_asset, _archive_or_restore
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
+)
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._ml_exceptions import ErrorCategory, AssetPathException, ErrorTarget, ValidationException
@@ -40,7 +44,7 @@ class ModelOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient052022,
+        service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -49,6 +53,7 @@ class ModelOperations(_ScopeDependentOperations):
             logger.addHandler(kwargs.pop("app_insights_handler"))
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
+        self._service_client = service_client
         self._datastore_operation = datastore_operations
 
         # Maps a label to a function which given an asset name,
@@ -60,7 +65,23 @@ class ModelOperations(_ScopeDependentOperations):
         name = model.name
         version = model.version
 
-        model, indicator_file = _check_and_upload_path(artifact=model, asset_operations=self)
+        sas_uri = None
+
+        if self._registry_name:
+            sas_uri = get_sas_uri_for_registry_asset(
+                service_client=self._service_client,
+                name=model.name,
+                version=model.version,
+                resource_group=self._resource_group_name,
+                registry=self._registry_name,
+                body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
+            )
+            if not sas_uri:
+                module_logger.debug(f"Getting the existing asset name: {model.name}, version: {model.version}")
+                return self.get(name=model.name, version=model.version)
+
+        model, indicator_file = _check_and_upload_path(artifact=model, asset_operations=self, sas_uri=sas_uri)
+
         model.path = resolve_short_datastore_url(model.path, self._operation_scope)
         validate_ml_flow_folder(model.path, model.type)
         model_version_resource = model._to_rest_object()
@@ -76,13 +97,26 @@ class ModelOperations(_ScopeDependentOperations):
                     **self._scope_kwargs,
                 )
             else:
-                result = self._model_versions_operation.create_or_update(
-                    name=name,
-                    version=version,
-                    body=model_version_resource,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
+                result = (
+                    self._model_versions_operation.begin_create_or_update(
+                        name=name,
+                        version=version,
+                        body=model_version_resource,
+                        registry_name=self._registry_name,
+                        **self._scope_kwargs,
+                    ).result()
+                    if self._registry_name
+                    else self._model_versions_operation.create_or_update(
+                        name=name,
+                        version=version,
+                        body=model_version_resource,
+                        workspace_name=self._workspace_name,
+                        **self._scope_kwargs,
+                    )
                 )
+
+            if not result and self._registry_name:
+                result = self._get(name=model.name, version=model.version)
 
         except Exception as e:
             # service side raises an exception if we attempt to update an existing asset's path
@@ -105,12 +139,22 @@ class ModelOperations(_ScopeDependentOperations):
 
     def _get(self, name: str, version: str = None) -> ModelVersionData:  # name:latest
         if version:
-            return self._model_versions_operation.get(
-                name=name, version=version, workspace_name=self._workspace_name, **self._scope_kwargs
+            return (
+                self._model_versions_operation.get(
+                    name=name, version=version, registry_name=self._registry_name, **self._scope_kwargs
+                )
+                if self._registry_name
+                else self._model_versions_operation.get(
+                    name=name, version=version, workspace_name=self._workspace_name, **self._scope_kwargs
+                )
             )
         else:
-            return self._model_container_operation.get(
-                name=name, workspace_name=self._workspace_name, **self._scope_kwargs
+            return (
+                self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+                if self._registry_name
+                else self._model_container_operation.get(
+                    name=name, workspace_name=self._workspace_name, **self._scope_kwargs
+                )
             )
 
     @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
@@ -242,19 +286,37 @@ class ModelOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[Model]
         """
         if name:
-            return self._model_versions_operation.list(
-                name=name,
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
+            return (
+                self._model_versions_operation.list(
+                    name=name,
+                    registry_name=self._registry_name,
+                    cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                    **self._scope_kwargs,
+                )
+                if self._registry_name
+                else self._model_versions_operation.list(
+                    name=name,
+                    workspace_name=self._workspace_name,
+                    cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
             )
         else:
-            return self._model_container_operation.list(
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-                list_view_type=list_view_type,
-                **self._scope_kwargs,
+            return (
+                self._model_container_operation.list(
+                    registry_name=self._registry_name,
+                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
+                if self._registry_name
+                else self._model_container_operation.list(
+                    workspace_name=self._workspace_name,
+                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
             )
 
     def _get_latest_version(self, name: str) -> Model:

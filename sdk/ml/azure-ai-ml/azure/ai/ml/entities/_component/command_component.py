@@ -27,9 +27,9 @@ from azure.ai.ml.entities._component.input_output import ComponentInput, Compone
 from .component import Component
 from .._util import validate_attribute_type
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from .._validation import ValidationResult
+from .._validation import ValidationResult, _ValidationResultBuilder
 from ..._schema import PathAwareSchema
-from ..._utils.utils import get_all_data_binding_expressions
+from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 
 
 class CommandComponent(Component, ParameterizedCommand):
@@ -170,13 +170,10 @@ class CommandComponent(Component, ParameterizedCommand):
             return self.environment
 
     @classmethod
-    def _get_schema(cls) -> Union[Schema, PathAwareSchema]:
-        return CommandComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+    def _create_schema(cls, context) -> Union[Schema, PathAwareSchema]:
+        return CommandComponentSchema(context=context)
 
-    def _validate(self, raise_error=False) -> ValidationResult:
-        """Validate the command component."""
-        validation_result = super()._validate(raise_error=raise_error)
-
+    def _validate_command(self) -> ValidationResult:
         # command
         if self.command:
             invalid_expressions = []
@@ -186,17 +183,15 @@ class CommandComponent(Component, ParameterizedCommand):
 
             if invalid_expressions:
                 error_msg = "Invalid data binding expression: {}".format(", ".join(invalid_expressions))
-                if raise_error:
-                    raise ValidationException(
-                        message=error_msg,
-                        target=ErrorTarget.COMPONENT,
-                        no_personal_data_message="Invalid data binding expression",
-                        error_category=ErrorCategory.USER_ERROR,
-                    )
-                else:
-                    validation_result._append_diagnostic("command", message=error_msg)
+                return _ValidationResultBuilder.from_single_message(error_msg, "command")
+        return _ValidationResultBuilder.success()
 
-        return validation_result
+    def _validate(self, raise_error=False) -> ValidationResult:
+        """Validate the command component."""
+        validation_result = super()._validate()
+        validation_result.merge_with(self._validate_command())
+
+        return validation_result.try_raise(ErrorTarget.COMPONENT, raise_error=raise_error)
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
         current_obj = self
@@ -266,6 +261,10 @@ class CommandComponent(Component, ParameterizedCommand):
             _source=ComponentSource.REST,
         )
         return command_component
+
+    @classmethod
+    def _parse_args_description_from_docstring(cls, docstring):
+        return parse_args_description_from_docstring(docstring)
 
     def __str__(self):
         try:

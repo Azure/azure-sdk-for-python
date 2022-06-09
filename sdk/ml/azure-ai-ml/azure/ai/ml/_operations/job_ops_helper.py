@@ -190,7 +190,7 @@ def stream_logs_until_completion(
     studio_endpoint = studio_endpoint.endpoint if studio_endpoint else None
     file_handle = sys.stdout
     ds_properties = None
-    blob_prefix = None
+    prefix = None
     if (
         hasattr(job_resource.properties, "outputs")
         and job_resource.properties.job_type != RestJobType.AUTO_ML
@@ -206,7 +206,7 @@ def stream_logs_until_completion(
             output_uri = default_output.uri
             # Parse the uri format
             output_uri = output_uri.split("datastores/")[1]
-            datastore_name, blob_prefix = output_uri.split("/", 1)
+            datastore_name, prefix = output_uri.split("/", 1)
             ds_properties = get_datastore_info(datastore_operations, datastore_name)
 
     try:
@@ -231,9 +231,7 @@ def stream_logs_until_completion(
             else:
                 legacy_folder_name = "/azureml-logs/"
             _current_logs_dict = (
-                list_logs_in_datastore(
-                    ds_properties, blob_prefix=blob_prefix, legacy_log_folder_name=legacy_folder_name
-                )
+                list_logs_in_datastore(ds_properties, prefix=prefix, legacy_log_folder_name=legacy_folder_name)
                 if ds_properties is not None
                 else _current_details.log_files
             )
@@ -332,7 +330,7 @@ def get_git_properties() -> Dict[str, str]:
         except BaseException:
             return None
 
-    # Check for enivronment variable overrides.
+    # Check for environment variable overrides.
     repository_uri = os.environ.get(GitProperties.ENV_REPOSITORY_URI, None)
     branch = os.environ.get(GitProperties.ENV_BRANCH, None)
     commit = os.environ.get(GitProperties.ENV_COMMIT, None)

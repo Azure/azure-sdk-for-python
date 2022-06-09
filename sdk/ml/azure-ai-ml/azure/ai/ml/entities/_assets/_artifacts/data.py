@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 import re
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import Dict, Optional, Type, Union
 from pathlib import Path
 from os import PathLike
 
@@ -26,14 +26,14 @@ from azure.ai.ml._schema import DataSchema
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
-DataAssetTypeModelMap: Dict[str, Tuple[Type[DataVersionBaseDetails], DataType]] = {
-    AssetTypes.URI_FILE: (UriFileDataVersion, DataType.URI_FILE),
-    AssetTypes.URI_FOLDER: (UriFolderDataVersion, DataType.URI_FOLDER),
-    AssetTypes.MLTABLE: (MLTableData, DataType.MLTABLE),
+DataAssetTypeModelMap: Dict[str, Type[DataVersionBaseDetails]] = {
+    AssetTypes.URI_FILE: UriFileDataVersion,
+    AssetTypes.URI_FOLDER: UriFolderDataVersion,
+    AssetTypes.MLTABLE: MLTableData,
 }
 
 
-def getModelForDataAssetType(data_asset_type: str) -> Tuple[Type[DataVersionBaseDetails], str]:
+def getModelForDataAssetType(data_asset_type: str) -> Type[DataVersionBaseDetails]:
     model = DataAssetTypeModelMap.get(data_asset_type)
     if model is None:
         msg = "Unknown DataType {}".format(data_asset_type)
@@ -72,7 +72,7 @@ class Data(Artifact):
     :type properties: dict[str, str]
     :param path: The path to the asset on the datastore. This can be local or remote
     :type path: str
-    :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable
+    :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
     :type type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
@@ -88,9 +88,11 @@ class Data(Artifact):
         properties: Optional[Dict] = None,
         path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
         type: str = AssetTypes.URI_FOLDER,  # type: ignore
-        referenced_uris: Optional[List[str]] = None,
         **kwargs,
     ):
+        self._skip_validation = kwargs.pop("skip_validation", False)
+        self._mltable_schema_url = kwargs.pop("mltable_schema_url", None)
+        self._referenced_uris = kwargs.pop("referenced_uris", None)
         self.type = type
         super().__init__(
             name=name,
@@ -101,7 +103,6 @@ class Data(Artifact):
             properties=properties,
             **kwargs,
         )
-        self.referenced_uris = referenced_uris
         self.path = path
 
     @property
@@ -163,15 +164,15 @@ class Data(Artifact):
         return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_container_rest_object(self) -> DataContainerData:
-        _, data_type = getModelForDataAssetType(self.type)
+        VersionDetailsClass = getModelForDataAssetType(self.type)
         return DataContainerData(
             properties=DataContainerDetails(
-                properties=self.properties, tags=self.tags, is_archived=False, data_type=data_type
+                properties=self.properties, tags=self.tags, is_archived=False, data_type=VersionDetailsClass.data_type
             )
         )
 
     def _to_rest_object(self) -> DataVersionBaseData:
-        VersionDetailsClass, _ = getModelForDataAssetType(self.type)
+        VersionDetailsClass = getModelForDataAssetType(self.type)
         data_version_details = VersionDetailsClass(
             description=self.description,
             is_anonymous=self._is_anonymous,
@@ -181,7 +182,7 @@ class Data(Artifact):
             data_uri=self.path,
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
-            data_version_details.referenced_uris = self.referenced_uris
+            data_version_details.referenced_uris = self._referenced_uris
         return DataVersionBaseData(properties=data_version_details)
 
     @classmethod
@@ -194,7 +195,7 @@ class Data(Artifact):
             properties=data_rest_object_details.properties,
             type=getDataAssetType(data_rest_object_details.data_type),
         )
-        data.latest_version = data_container_rest_object.properties.latest_version
+        data.latest_version = data_rest_object_details.latest_version
         return data
 
     @classmethod

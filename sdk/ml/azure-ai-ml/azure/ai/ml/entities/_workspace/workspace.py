@@ -76,7 +76,7 @@ class Workspace(Resource):
         :type public_network_access: str
         :param softdelete_enable: Create a workspace with soft delete capability
         :type softdelete_enable: bool
-        :param allow_recover_softdeleted_workspace: Allow an exising soft-deleted workspace to be recovered
+        :param allow_recover_softdeleted_workspace: Allow an existing soft-deleted workspace to be recovered
         :type allow_recover_softdeleted_workspace: bool
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict

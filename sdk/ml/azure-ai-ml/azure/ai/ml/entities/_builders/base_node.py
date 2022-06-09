@@ -131,6 +131,7 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
 
     @classmethod
     def _get_schema(cls):
+        """Return the schema for the class. Will be used for dump & validation."""
         raise NotImplementedError()
 
     def _validate_inputs(self):
@@ -214,10 +215,17 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
     def _picked_fields_in_to_rest(cls) -> List[str]:
         """
         Override this method to add custom fields to be picked from self._to_dict() in self._to_rest_object().
+        Pick nothing by default.
         """
-        raise NotImplementedError()
+        return []
 
     def _to_rest_object(self, **kwargs) -> dict:
+        """
+        Convert self to a rest object for remote call.
+        It's not recommended to override this method.
+        Instead, override self._picked_fields_in_to_rest to pick serialized fields from self._to_dict();
+        and override self._node_specified_pre_to_rest_operations to add custom operations on rest_obj before return it.
+        """
         base_dict = pydash.pick(self._to_dict(), *self._picked_fields_in_to_rest())
         base_dict.update(
             dict(
@@ -227,6 +235,8 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
                 computeId=self.compute,
                 inputs=self._to_rest_inputs(),
                 outputs=self._to_rest_outputs(),
+                # add all arbitrary attributes to support setting unknown attributes
+                **self._get_attrs(),
             )
         )
         self._node_specified_pre_to_rest_operations(base_dict)
@@ -247,7 +257,7 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
     @property
     def _source(self) -> ComponentSource:
         # if self._component is component id, node should be rest type.
-        return ComponentSource.REST if isinstance(self._component, str) else self._component._source
+        return self._component._source if isinstance(self._component, Component) else ComponentSource.REST
 
     def __str__(self):
         try:
@@ -273,7 +283,7 @@ class BaseNode(RestTranslatableMixin, NodeIOMixin, TelemetryMixin, YamlTranslata
         return outputs
 
     def _get_telemetry_values(self):
-        telemetry_values = {"type": self.type, "source": self._source.value}
+        telemetry_values = {"type": self.type, "source": self._source}
         return telemetry_values
 
     def _register_in_current_pipeline_component_builder(self):

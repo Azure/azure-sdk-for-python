@@ -200,7 +200,10 @@ class MLClient(object):
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
         self._models = ModelOperations(
-            self._operation_scope, self._service_client_05_2022, self._datastores, **app_insights_handler_kwargs
+            self._operation_scope,
+            self._service_client_10_2021_dataplanepreview if self._registry_name else self._service_client_05_2022,
+            self._datastores,
+            **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
         self._code = CodeOperations(

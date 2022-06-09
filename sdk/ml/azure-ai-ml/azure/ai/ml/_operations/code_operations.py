@@ -21,7 +21,6 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._registry_utils import get_sas_uri_for_registry_asset, get_asset_body_for_registry_storage
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget, AssetPathException
-from azure.ai.ml.entities._validation import ValidationResult
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -63,10 +62,9 @@ class CodeOperations(_ScopeDependentOperations):
         name = code.name
         version = code.version
         sas_uri = None
-        blob_uri = None
 
         if self._registry_name:
-            sas_uri, blob_uri = get_sas_uri_for_registry_asset(
+            sas_uri = get_sas_uri_for_registry_asset(
                 service_client=self._service_client,
                 name=name,
                 version=version,
@@ -157,18 +155,3 @@ class CodeOperations(_ScopeDependentOperations):
                 )
             )
             return Code._from_rest_object(code_version_resource)
-
-    def _validate(self, code: Code, raise_on_failure: bool = False) -> ValidationResult:
-        """Validates the specified code asset."""
-
-        try:
-            # if the code asset is a local file, we need to validate the file path
-            # if not, just do nothing for now
-            _check_and_upload_path(artifact=code, asset_operations=self, sas_uri=None, check_only=True)
-        except ValueError as e:
-            if raise_on_failure:
-                raise e
-            else:
-                return ValidationResult._create_instance(str(e))
-
-        return ValidationResult._create_instance()

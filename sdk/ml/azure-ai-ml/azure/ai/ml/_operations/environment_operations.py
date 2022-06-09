@@ -36,7 +36,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope)
         if "app_insights_handler" in kwargs:
@@ -62,10 +62,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """
 
         sas_uri = None
-        blob_uri = None
 
         if self._registry_name:
-            sas_uri, blob_uri = get_sas_uri_for_registry_asset(
+            sas_uri = get_sas_uri_for_registry_asset(
                 service_client=self._service_client,
                 name=environment.name,
                 version=environment.version,
@@ -75,6 +74,11 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     self._registry_name, "environments", environment.name, environment.version
                 ),
             )
+            if not sas_uri:
+                module_logger.debug(
+                    f"Getting the existing asset name: {environment.name}, version: {environment.version}"
+                )
+                return self.get(name=environment.name, version=environment.version)
 
         environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
 

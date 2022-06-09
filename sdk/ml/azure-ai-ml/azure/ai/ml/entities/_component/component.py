@@ -23,7 +23,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, YamlTranslatable
 from azure.ai.ml._utils.utils import load_yaml, dump_yaml_to_file
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import ValidationResult, _ValidationResultBuilder
 
 
 class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin):
@@ -103,7 +103,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         self._is_deterministic = is_deterministic
         self._inputs = build_validate_input(inputs)
         self._outputs = build_validate_output(outputs)
-        self._source = kwargs.pop("_source", ComponentSource.OTHER)
+        self._source = kwargs.pop("_source", ComponentSource.SDK)
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
@@ -190,10 +190,13 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
 
     @classmethod
-    def _get_schema(cls) -> Union[Schema, PathAwareSchema]:
+    def _create_schema(cls, context) -> Union[Schema, PathAwareSchema]:
         from azure.ai.ml._schema.component import BaseComponentSchema
 
-        return BaseComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return BaseComponentSchema(context=context)
+
+    def _get_schema(self) -> Union[Schema, PathAwareSchema]:
+        return self._create_schema(context={BASE_PATH_CONTEXT_KEY: self._base_path or "./"})
 
     def _validate(self, raise_error=False) -> ValidationResult:
         """Validate the component.
@@ -205,16 +208,9 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             # The name of an anonymous component is an uuid generated based on its hash.
             # Can't change naming logic to avoid breaking previous component reuse, so hack here.
             self.name = "dummy_" + self.name.replace("-", "_")
-        result = ValidationResult._from_validation_messages(self._get_schema().validate(self._to_dict()))
+        result = _ValidationResultBuilder.from_validation_messages(self._get_schema().validate(self._to_dict()))
         self.name = origin_name
-        if raise_error and not result.passed:
-            raise ValidationException(
-                message=result._single_message,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message="Component is not valid.",
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return result
+        return result.try_raise(ErrorTarget.COMPONENT, raise_error=raise_error)
 
     @classmethod
     def load(
@@ -320,7 +316,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         pass
 
     def _get_telemetry_values(self):
-        return {"type": self.type, "source": self._source.value, "is_anonymous": self._is_anonymous}
+        return {"type": self.type, "source": self._source, "is_anonymous": self._is_anonymous}
 
     def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
         """Call ComponentVersion as a function and get a Component object."""

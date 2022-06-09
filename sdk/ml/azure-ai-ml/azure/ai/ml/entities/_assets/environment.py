@@ -373,7 +373,7 @@ def _deserialize(
     :type base_path: Union[str, os.PathLike]
     :param input: Input to be deserialized. Will be either dictionary of file contents or path to file.
     :type input: Union[str, os.PathLike, Dict[str, str]]
-    :param is_conda: If file is condafile, it will be returned as dictionary
+    :param is_conda: If file is conda file, it will be returned as dictionary
     :type is_conda: bool
     :return: Union[str, Dict]
     """

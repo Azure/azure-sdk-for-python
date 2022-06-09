@@ -293,7 +293,7 @@ class Job(Resource, RestTranslatableMixin, ComponentTranslatableMixin, Telemetry
             )
             raise JobParsingError(
                 message=str(ex),
-                no_personal_data_message=f"Unable to parse a job resourse of type:{type(job_rest_object).__name__}",
+                no_personal_data_message=f"Unable to parse a job resource of type:{type(job_rest_object).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
         else:

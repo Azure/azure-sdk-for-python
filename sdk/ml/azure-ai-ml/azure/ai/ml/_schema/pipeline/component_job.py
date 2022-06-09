@@ -7,7 +7,14 @@ from marshmallow import fields, post_load, INCLUDE, Schema, pre_dump, pre_load
 
 from azure.ai.ml.constants import AzureMLResourceType
 from azure.ai.ml.constants import NodeType
-from azure.ai.ml._schema import ArmVersionedStr, NestedField, UnionField, AnonymousEnvironmentSchema, RegistryStr
+from azure.ai.ml._schema import (
+    ArmVersionedStr,
+    NestedField,
+    UnionField,
+    AnonymousEnvironmentSchema,
+    RegistryStr,
+    PathAwareSchema,
+)
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -21,16 +28,18 @@ from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
-from .._utils.data_binding import support_data_binding_for_fields
+from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 
 from ..core.fields import ComputeField, StringTransformedEnum
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
 from ..job.job_limits import CommandJobLimitsSchema
 
 module_logger = logging.getLogger(__name__)
 
 
-class BaseNodeSchema(Schema):
+# do inherit PathAwareSchema to support relative path & default partial load (allow None value if not specified)
+class BaseNodeSchema(PathAwareSchema):
     unknown = INCLUDE
 
     compute = ComputeField()
@@ -42,7 +51,7 @@ class BaseNodeSchema(Schema):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        support_data_binding_for_fields(self, ["type"])
+        support_data_binding_expression_for_fields(self, ["type"])
 
 
 def _delete_type_for_binding(io):
@@ -73,7 +82,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefex
+            # inline component or component file reference starting with FILE prefix
             NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
             # component file reference
             ComponentFileRefField(),
@@ -118,7 +127,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
         [
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefex
+            # inline component or component file reference starting with FILE prefix
             NestedField(AnonymousCommandComponentSchema, unknown=INCLUDE),
             # component file reference
             ComponentFileRefField(),
@@ -149,7 +158,7 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
             RegistryStr(),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            # inline component or component file reference starting with FILE prefex
+            # inline component or component file reference starting with FILE prefix
             NestedField(AnonymousParallelComponentSchema, unknown=INCLUDE),
             # component file reference
             ParallelComponentFileRefField(),

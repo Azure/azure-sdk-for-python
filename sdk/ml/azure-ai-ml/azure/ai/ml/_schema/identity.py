@@ -2,11 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._schema import PatchedSchemaMeta, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema import PatchedSchemaMeta, StringTransformedEnum
 from marshmallow import fields, post_load, validates, ValidationError, pre_dump
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    ResourceIdentity,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity
 from azure.ai.ml._vendor.azure_resources.models._resource_management_client_enums import (
     ResourceIdentityType,
 )
@@ -35,7 +33,7 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        return ResourceIdentity(**data)
+        return ManagedServiceIdentity(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):

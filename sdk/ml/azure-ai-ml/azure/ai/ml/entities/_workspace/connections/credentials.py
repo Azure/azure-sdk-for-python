@@ -116,7 +116,7 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     Managed Identity Credentials
     :param client_id: client id, should be guid
     :type client_id: str
-    :param resource_id: recource id
+    :param resource_id: resource id
     :type resource_id: str
     """
 

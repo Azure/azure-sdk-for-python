@@ -667,7 +667,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         if self.scale_settings:
             if not isinstance(self.scale_settings, DefaultScaleSettings):
                 msg = "ManagedOnlineEndpoint supports DefaultScaleSettings only."
-                raise ValidationtException(
+                raise ValidationException(
                     message=msg,
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=msg,

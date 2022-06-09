@@ -7,7 +7,6 @@ import logging
 import time
 from typing import Dict, Iterable, Union, Any
 
-from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.identity import ChainedTokenCredential
 
@@ -26,10 +25,6 @@ from .operation_orchestrator import OperationOrchestrator
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
-from azure.ai.ml._utils.utils import (
-    _get_mfe_base_url_from_discovery_service,
-    modified_operation_client,
-)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.constants import (

@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     UserIdentity,
 )
 import pydash
+from marshmallow.utils import EXCLUDE
 from azure.ai.ml.constants import ComponentJobConstants, BASE_PATH_CONTEXT_KEY, NodeType
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
@@ -38,6 +39,7 @@ from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from .base_node import BaseNode
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from ..._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 
 module_logger = logging.getLogger(__name__)
 
@@ -192,12 +194,12 @@ class Sweep(ParameterizedSweep, BaseNode):
     def _from_rest_object(cls, obj: dict) -> "Sweep":
         # TODO: use cls._get_schema() to load from rest object
         from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
-        from ..._schema._utils.data_binding import support_data_binding_for_fields
+        from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        support_data_binding_for_fields(schema, ["type"])
+        support_data_binding_expression_for_fields(schema, ["type"])
 
-        base_sweep = schema.load(obj, unknown="EXCLUDE")
+        base_sweep = schema.load(obj, unknown=EXCLUDE)
         for key, value in base_sweep.items():
             obj[key] = value
         inputs = obj.get("inputs", {})
@@ -218,7 +220,7 @@ class Sweep(ParameterizedSweep, BaseNode):
 
         # Change computeId -> compute
         compute_id = obj.pop("computeId", None)
-        obj["compute"] = compute_id
+        obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
 
         # trial
         trial_component_id = pydash.get(obj, "trial.componentId", None)

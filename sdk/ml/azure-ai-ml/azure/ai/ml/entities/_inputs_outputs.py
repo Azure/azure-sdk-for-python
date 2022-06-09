@@ -61,7 +61,7 @@ from typing import Union, Sequence, Iterable
 from enum import EnumMeta, Enum as PyEnum
 from inspect import Parameter, signature
 
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException, DSLComponentDefiningError
+from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException, MldesignerComponentDefiningError
 from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
 from azure.ai.ml.constants import InputOutputModes, AssetTypes
 from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory, ComponentException
@@ -315,7 +315,7 @@ class Input(DictMixin):
                             default_value,
                             type(default_value),
                         )
-                    raise DSLComponentDefiningError(cause=msg) from e
+                    raise MldesignerComponentDefiningError(cause=msg) from e
             self.default = default_value
 
     def _validate_or_throw(self, value):
@@ -387,6 +387,10 @@ class Input(DictMixin):
     @classmethod
     def _get_default_string_input(cls):
         return cls(type="string")
+
+    @classmethod
+    def _get_param_with_standard_annotation(cls, func):
+        return _get_param_with_standard_annotation(func, is_func=True)
 
 
 class Output(DictMixin):
@@ -687,7 +691,7 @@ def _get_param_with_standard_annotation(
     annotations = _filter_pipeline_parameters(getattr(cls_or_func, "__annotations__", {}))
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
-    # Update fields use class field with defaults from class dict or signuration(func).paramters
+    # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}

@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+from collections import Counter
 from typing import Dict, Union, Optional
 
 from azure.ai.ml._schema.pipeline import PipelineJobSchema
+from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._job.pipeline._io import (
@@ -112,7 +114,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
             self._outputs = self._build_outputs_dict_without_meta(outputs)
         if component is None:
             component = _PipelineComponent(
-                components={}, description=description, display_name=display_name, _source=ComponentSource.YAML
+                components={}, description=description, display_name=display_name, _source=ComponentSource.SDK
             )
 
         self.component = component
@@ -164,6 +166,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
         # TODO: remove default code & environment?
         self._default_code = None
         self._default_environment = None
+        # for telemetry
+        self._job_types, self._job_sources = self._get_job_type_and_source()
 
     @property
     def inputs(self) -> InputsAttrDict:
@@ -208,6 +212,22 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
     @settings.setter
     def settings(self, value):
         self._settings = value
+
+    def _get_job_type_and_source(self):
+        """Get job type and source for telemetry."""
+        job_types, job_sources = [], []
+        for job in self.jobs.values():
+            job_types.append(job.type)
+            if isinstance(job, BaseNode):
+                job_sources.append(job._source)
+            elif isinstance(job, AutoMLJob):
+                # Consider all automl_job has builder type for now,
+                # as it's not easy to distinguish their source(yaml/builder).
+                job_sources.append(ComponentSource.BUILDER)
+            else:
+                # Fall back to SDK
+                job_sources.append(ComponentSource.SDK)
+        return dict(Counter(job_types)), dict(Counter(job_sources))
 
     def _validate(self, raise_error: bool = False) -> None:
         """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
@@ -311,10 +331,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
                 rest_node_dict = job._to_rest_object()
             elif isinstance(job, AutoMLJob):
                 rest_node_dict = json.loads(json.dumps(job._to_dict(inside_pipeline=True)))
-                # TODO(1757200): remove this
-                rest_node_dict.update(
-                    {"properties": {"_automl_internal_label": "latest", "_automl_internal_save_mlflow": "true"}}
-                )
             else:
                 msg = f"Non supported job type in Pipeline jobs: {type(job)}"
                 raise ValidationException(
@@ -384,6 +400,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
         settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()
+
         job = PipelineJob(
             component=_PipelineComponent._load_from_rest_pipeline_job(
                 dict(
@@ -404,7 +421,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
             status=properties.status,
             creation_context=obj.system_data,
             services=properties.services,
-            compute=properties.compute_id,
+            compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             jobs=sub_nodes,
             settings=settings_sdk,
             identity=properties.identity,
@@ -458,8 +475,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin):
         telemetry_values = super()._get_telemetry_values()
         telemetry_values.update(
             {
-                "source": self.component._source.value,
+                "source": self.component._source,
                 "node_count": len(self.jobs),
+                "node_type": json.dumps(self._job_types),
+                "node_source": json.dumps(self._job_sources),
             }
         )
         return telemetry_values

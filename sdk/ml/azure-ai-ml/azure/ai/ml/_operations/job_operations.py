@@ -19,7 +19,7 @@ from typing import (
 from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details, resource_to_scopes
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
-from ..entities._validation import ValidationResult
+from ..entities._validation import ValidationResult, _ValidationResultBuilder
 
 try:
     from typing import Protocol  # For python >= 3.8
@@ -30,6 +30,7 @@ from azure.ai.ml.constants import (
     BATCH_JOB_CHILD_RUN_NAME,
     BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
     DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
+    PipelineConstants,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
 )
 
@@ -105,7 +106,7 @@ from .job_ops_helper import (
     get_job_output_uris_from_dataplane,
 )
 from .local_job_invoker import is_local_run, start_run_if_local
-from .operation_orchestrator import OperationOrchestrator, is_ARM_id_for_resource
+from .operation_orchestrator import OperationOrchestrator, is_ARM_id_for_resource, is_registry_id_for_resource
 from .run_operations import RunOperations
 from .dataset_dataplane_operations import DatasetDataplaneOperations
 from .model_dataplane_operations import ModelDataplaneOperations
@@ -312,19 +313,19 @@ class JobOperations(_ScopeDependentOperations):
         """
         # validation is open for PipelineJob only for now
         if not isinstance(job, PipelineJob):
-            return ValidationResult._create_instance()
+            return _ValidationResultBuilder.success()
 
         try:
             job.compute = self.try_get_compute_arm_id(job.compute)
             for node in job.jobs.values():
                 node.compute = self.try_get_compute_arm_id(node.compute)
-            return ValidationResult._create_instance()
+            return _ValidationResultBuilder.success()
         except Exception as e:
             if raise_on_failure:
                 raise
             else:
                 logger.warning(f"Validation failed: {e}")
-                return ValidationResult._create_instance(singular_error_message=str(e), yaml_path="compute")
+                return _ValidationResultBuilder.from_single_message(singular_error_message=str(e), yaml_path="compute")
 
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
@@ -365,14 +366,6 @@ class JobOperations(_ScopeDependentOperations):
             job.tags = tags
         if experiment_name is not None:
             job.experiment_name = experiment_name
-
-        # Check compute for warning array
-        # TODO: Remove after 05/31/2022 (Task 1776012)
-        if job.compute and job.compute.lower() != LOCAL_COMPUTE_TARGET:
-            try:
-                self._compute_operations.get(job.compute)
-            except ResourceNotFoundError as e:
-                raise (e)
 
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(job)
@@ -444,7 +437,7 @@ class JobOperations(_ScopeDependentOperations):
             body=job_object,
         )
 
-    @monitor_with_activity(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -455,7 +448,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self._archive_or_restore(name=name, is_archived=True)
 
-    @monitor_with_activity(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -504,6 +497,12 @@ class JobOperations(_ScopeDependentOperations):
         :param bool all: Whether to download logs and all named outputs, defaults to False.
         """
         job_details = self.get(name)
+        # job is reused, get reused job to download
+        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE:
+            reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
+            reused_job_detail = self.get(reused_job_name)
+            module_logger.info(f"job {name} reuses previous job {reused_job_name}, download from the reused job.")
+            name, job_details = reused_job_name, reused_job_detail
         job_status = job_details.status
         if job_status not in RunHistoryConstants.TERMINAL_STATUSES:
             msg = "This job is in state {}. Download is allowed only in states {}".format(
@@ -815,7 +814,7 @@ class JobOperations(_ScopeDependentOperations):
             if os.path.isabs(entry.path):  # absolute local path, upload, transform to remote url
                 if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):
                     raise JobException(
-                        messge="There is no dir on target path: {}".format(entry.path),
+                        message="There is no dir on target path: {}".format(entry.path),
                         target=ErrorTarget.JOB,
                         no_personal_data_message="There is no dir on target path",
                     )
@@ -901,6 +900,15 @@ class JobOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_command_job(self, job: Job, resolver: Callable) -> Job:
         """Resolve arm_id for CommandJob"""
+        if job.code is not None and is_registry_id_for_resource(job.code):
+            msg = f"Format not supported for code asset: {job.code}"
+            raise JobException(
+                message=msg,
+                target=ErrorTarget.JOB,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
             job.code = resolver(
                 Code(base_path=job._base_path, path=job.code),

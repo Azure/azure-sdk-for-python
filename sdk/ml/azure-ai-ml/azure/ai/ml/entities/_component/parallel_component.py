@@ -291,10 +291,10 @@ class ParallelComponent(Component, ParameterizedParallel):
         return parallel_component
 
     @classmethod
-    def _get_schema(cls) -> Union[Schema, PathAwareSchema]:
+    def _create_schema(cls, context) -> Union[Schema, PathAwareSchema]:
         from azure.ai.ml._schema.component import ParallelComponentSchema
 
-        return ParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        return ParallelComponentSchema(context=context)
 
     def __str__(self):
         try:

@@ -5,8 +5,9 @@
 import copy
 import typing
 
+import pydash
 from marshmallow import ValidationError
-from azure.ai.ml._ml_exceptions import ValidationException
+from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget, ErrorCategory
 from typing import List
 
 from azure.ai.ml.constants import OperationStatus
@@ -101,12 +102,7 @@ class ValidationResult(object):
     def __init__(
         self,
         diagnostics: typing.List[Diagnostic] = None,
-        data: typing.Optional[
-            typing.Union[
-                typing.Mapping[str, typing.Any],
-                typing.Iterable[typing.Mapping[str, typing.Any]],
-            ]
-        ] = None,
+        data: typing.Dict[str, typing.Any] = None,
         valid_data: typing.Optional[
             typing.Union[
                 typing.List[typing.Dict[str, typing.Any]],
@@ -114,16 +110,30 @@ class ValidationResult(object):
             ]
         ] = None,
     ):
-        self.diagnostics: typing.List[Diagnostic] = diagnostics or []
-        self.data = data
-        self.valid_data = valid_data
+        self._diagnostics: typing.List[Diagnostic] = diagnostics or []
+        self._warnings: typing.List[Diagnostic] = []
+        self._target_obj = data
+        self._valid_data = valid_data
 
     @property
     def messages(self):
         messages = {}
-        for diagnostic in self.diagnostics:
+        for diagnostic in self._diagnostics:
             messages[diagnostic.location.yaml_path] = diagnostic.descriptor.message
         return messages
+
+    @property
+    def invalid_fields(self):
+        invalid_fields = []
+        for diagnostic in self._diagnostics:
+            invalid_fields.append(diagnostic.location.yaml_path)
+        return invalid_fields
+
+    @property
+    def invalid_data(self):
+        if not self._target_obj:
+            return {}
+        return pydash.objects.pick(self._target_obj, *self.invalid_fields)
 
     @property
     def _single_message(self) -> str:
@@ -140,57 +150,43 @@ class ValidationResult(object):
 
     @property
     def passed(self):
-        return not self.diagnostics
+        return not self._diagnostics
 
-    @classmethod
-    def _create_instance(cls, singular_error_message: str = None, yaml_path: str = "*"):
-        obj = cls()
-        if singular_error_message:
-            obj._append_diagnostic(message=singular_error_message, yaml_path=yaml_path)
-        return obj
-
-    @classmethod
-    def _from_validation_error(cls, error: ValidationError):
-        obj = cls._from_validation_messages(error.messages)
-        obj.data = error.data
-        obj.valid_data = error.valid_data
-        return obj
-
-    @classmethod
-    def _from_validation_messages(cls, errors: typing.Dict):
-        instance = cls()
-        diagnostics = []
-        unknown_msg = "Unknown field."
-        errors = copy.deepcopy(errors)
-        for field, msgs in errors.items():
-            if unknown_msg in msgs:
-                # TODO: should we log them instead of just ignore?
-                msgs.remove(unknown_msg)
-            if len(msgs) != 0:
-                diagnostics.append(Diagnostic.create_instance(yaml_path=field, message=" ".join(msgs)))
-        instance._extend_diagnostics(diagnostics)
-        return instance
-
-    def _extend_diagnostics(self, diagnostics: typing.List[Diagnostic]):
-        self.diagnostics.extend(diagnostics)
-        return self
-
-    def _append_validation_exception(self, validation_exception: ValidationException, yaml_path: str = "*"):
-        self._append_diagnostic(yaml_path=yaml_path, message=validation_exception.message)
-        return self
-
-    def _merge_with(self, other: "ValidationResult", field_name: str = None):
-        for diagnostic in other.diagnostics:
+    def merge_with(self, other: "ValidationResult", field_name: str = None):
+        """
+        Merge two validation results. Will update current validation result.
+        """
+        for diagnostic in other._diagnostics:
             new_diagnostic = copy.deepcopy(diagnostic)
             if field_name:
                 if new_diagnostic.location.yaml_path == "*":
                     new_diagnostic.location.yaml_path = field_name
                 else:
                     new_diagnostic.location.yaml_path = field_name + "." + new_diagnostic.location.yaml_path
-            self.diagnostics.append(new_diagnostic)
+            self._diagnostics.append(new_diagnostic)
         return self
 
-    def _append_diagnostic(
+    def try_raise(
+        self,
+        error_target: ErrorTarget,
+        error_category: ErrorCategory = ErrorCategory.USER_ERROR,
+        raise_error: bool = True,
+    ) -> "ValidationResult":
+        """
+        Try to raise an error from the validation result.
+        If the validation is passed or raise_error is False, this method will return the validation result.
+        """
+        if self.passed or raise_error is False:
+            return self
+
+        raise ValidationException(
+            message=self._single_message,
+            no_personal_data_message="validation failed on the following fields: " + ", ".join(self.invalid_fields),
+            target=error_target,
+            error_category=error_category,
+        )
+
+    def append_diagnostic(
         self,
         yaml_path: str = "*",
         asset_ids: typing.List[str] = None,
@@ -198,18 +194,87 @@ class ValidationResult(object):
         message: str = None,
         error_code: str = None,
     ):
-        self.diagnostics.append(
+        self._diagnostics.append(
             Diagnostic.create_instance(
                 yaml_path=yaml_path, asset_ids=asset_ids, local_path=local_path, message=message, error_code=error_code
             )
         )
         return self
 
-    def _to_dict(self):
+    def _to_dict(self) -> typing.Dict[str, typing.Any]:
         messages = []
         for field, message in self.messages.items():
-            messages.append({"location": field, "message": message})
-        return {
+            messages.append(
+                {
+                    "location": field,
+                    "value": pydash.get(self._target_obj, field, "NOT_FOUND"),
+                    "message": message,
+                }
+            )
+        result = {
             "result": OperationStatus.SUCCEEDED if self.passed else OperationStatus.FAILED,
-            "messages": self.messages,
+            "messages": messages,
         }
+        if self._warnings:
+            result["warnings"] = self._warnings
+        return result
+
+
+class _ValidationResultBuilder:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def success(cls):
+        """
+        Create a validation result with success status.
+        """
+        return cls.from_single_message()
+
+    @classmethod
+    def from_single_message(cls, singular_error_message: str = None, yaml_path: str = "*", data: dict = None):
+        """
+        Create a validation result with only 1 diagnostic.
+
+        param singular_error_message: diagnostic.descriptor.message.
+        param yaml_path: diagnostic.location.yaml_path.
+        param data: serialized validation target.
+        """
+        obj = ValidationResult(data=data)
+        if singular_error_message:
+            obj.append_diagnostic(message=singular_error_message, yaml_path=yaml_path)
+        return obj
+
+    @classmethod
+    def from_validation_error(cls, error: ValidationError):
+        """
+        Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load.
+        """
+        obj = cls.from_validation_messages(error.messages, data=error.data)
+        obj._valid_data = error.valid_data
+        return obj
+
+    @classmethod
+    def from_validation_messages(cls, errors: typing.Dict, data: typing.Dict = None):
+        """
+        Create a validation result from error messages, which will be returned by marshmallow.Schema.validate.
+        """
+        instance = ValidationResult(data=data)
+        unknown_msg = "Unknown field."
+        errors = copy.deepcopy(errors)
+        for field, msgs in errors.items():
+            if unknown_msg in msgs:
+                # TODO: should we log them instead of just ignore?
+                msgs.remove(unknown_msg)
+            if len(msgs) != 0:
+
+                def msg2str(msg):
+                    if isinstance(msg, str):
+                        return msg
+                    elif isinstance(msg, dict) and len(msg) == 1 and "_schema" in msg and len(msg["_schema"]) == 1:
+                        return msg["_schema"][0]
+                    else:
+                        return str(msg)
+
+                instance.append_diagnostic(message="; ".join(map(lambda x: msg2str(x), msgs)), yaml_path=field)
+        return instance

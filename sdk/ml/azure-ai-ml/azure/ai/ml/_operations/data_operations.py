@@ -2,11 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import os
 import logging
-from typing import Dict, Optional
+import requests
+from pathlib import Path
+from typing import Dict, List, Optional, Union
+from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.core.paging import ItemPaged
 
-from azure.ai.ml.constants import OrderString
+from azure.ai.ml.constants import AssetTypes, MLTABLE_SCHEMA_URL_FALLBACK
 from azure.ai.ml._operations import DatastoreOperations
 from azure.ai.ml._restclient.v2022_05_01 import (
     AzureMachineLearningWorkspaces as ServiceClient052022,
@@ -26,10 +30,21 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
     _archive_or_restore,
 )
-from azure.ai.ml._utils.utils import get_list_view_type
-
+from azure.ai.ml._utils._data_utils import (
+    download_mltable_schema,
+    read_local_mltable_metadata_contents,
+    read_remote_mltable_metadata_contents,
+    validate_mltable_metadata,
+)
+from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException, AssetPathException
+from azure.ai.ml._ml_exceptions import (
+    DataException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+    AssetPathException,
+)
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -132,7 +147,7 @@ class DataOperations(_ScopeDependentOperations):
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
-        If not already in storage, asset will be uploaded to datastore name specified in data.datastore or the workspace's default datastore.
+        If not already in storage, asset will be uploaded to the workspace's blob storage.
 
         :param data: Data asset object.
         :type data: Data
@@ -141,6 +156,9 @@ class DataOperations(_ScopeDependentOperations):
         name = data.name
         version = data.version
 
+        referenced_uris = self._validate(data)
+        if referenced_uris:
+            data._referenced_uris = referenced_uris
         data, _ = _check_and_upload_path(artifact=data, asset_operations=self)
         data_version_resource = data._to_rest_object()
         auto_increment_version = data._auto_increment_version
@@ -176,6 +194,83 @@ class DataOperations(_ScopeDependentOperations):
                 raise e
 
         return Data._from_rest_object(result)
+
+    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    def _validate(self, data: Data) -> Union[List[str], None]:
+        if not data.path:
+            msg = "Missing data path. Path is required for data."
+            raise DataException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+        asset_path = str(data.path)
+        asset_type = data.type
+        base_path = data.base_path
+
+        if asset_type == AssetTypes.MLTABLE:
+            if is_url(asset_path):
+                try:
+                    metadata_contents = read_remote_mltable_metadata_contents(
+                        path=asset_path, datastore_operations=self._datastore_operation
+                    )
+                    metadata_yaml_path = None
+                except Exception:
+                    # skip validation for remote MLTable when the contents cannot be read
+                    logger.info("Unable to access MLTable metadata at path %s", asset_path, exc_info=1)
+                    return
+            else:
+                metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
+                metadata_yaml_path = Path(asset_path, "MLTable")
+            metadata = MLTableMetadata._load(metadata_contents, metadata_yaml_path)
+            mltable_metadata_schema = self._try_get_mltable_metadata_jsonschema(data._mltable_schema_url)
+            if mltable_metadata_schema and not data._skip_validation:
+                validate_mltable_metadata(
+                    mltable_metadata_dict=metadata_contents, mltable_schema=mltable_metadata_schema
+                )
+            return metadata.referenced_uris()
+        else:
+            if is_url(asset_path):
+                # skip validation for remote URI_FILE or URI_FOLDER
+                return
+
+            if os.path.isabs(asset_path):
+                self._assert_local_path_matches_asset_type(asset_path, asset_type)
+            else:
+                abs_path = Path(base_path, asset_path).resolve()
+                self._assert_local_path_matches_asset_type(abs_path, asset_type)
+
+    def _try_get_mltable_metadata_jsonschema(
+        self, mltable_schema_url: str = MLTABLE_SCHEMA_URL_FALLBACK
+    ) -> Union[Dict, None]:
+        try:
+            return download_mltable_schema(mltable_schema_url)
+        except Exception:
+            logger.info(
+                'Failed to download MLTable jsonschema from "%s", skipping validation', mltable_schema_url, exc_info=1
+            )
+            return None
+
+    def _assert_local_path_matches_asset_type(
+        self, local_path: str, asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER]
+    ) -> None:
+        # assert file system type matches asset type
+        if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
+            raise DataException(
+                message="There is no dir on target path: {}".format(local_path),
+                no_personal_data_message="There is no dir on target path",
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        elif asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
+            raise DataException(
+                message="There is no file on target path: {}".format(local_path),
+                no_personal_data_message="There is no file on target path",
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:

@@ -66,12 +66,12 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "azure-core<2.0.0,>=1.19.1,!=1.22.0",
-        "msrest>=0.6.21",
-        "azure-common~=1.1",
+        "msrest>=0.6.18",
+        "azure-common<2.0.0,>=1.1",
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
         "azure-identity",
-        "azure-mgmt-core<2.0.0,>=1.3.0",
+        "azure-mgmt-core<2.0.0,>=1.2.0",
         "marshmallow<4.0.0,>=3.5",
         "jsonschema<5.0.0,>=4.0.0",
         "tqdm<=4.63.0",
@@ -80,15 +80,14 @@ setup(
         "pyjwt<=2.3.0",
         "azure-storage-blob<=12.9.0,>=12.5.0",
         "azure-storage-file-share<13.0.0",
+		"azure-storage-file-datalake<=12.6.0",
         "pydash<=4.9.0",
         "pathspec==0.9.*",
-        "isodate>=0.6.0",
+        "isodate",
         # Used for local endpoint story.
-        "docker>=2.0.0",
+        "docker",
         "typing-extensions>=4.0.1",
         "applicationinsights<=0.11.10",
-        # temp fix for mltable validation
-        "knack"
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

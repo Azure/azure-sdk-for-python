@@ -15,7 +15,7 @@ from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, Error
 def _generate_component_function(
     component_entity: Component, override_definitions: Mapping[str, OverrideDefinition] = None
 ) -> Callable[..., Union[Command, Parallel]]:
-    # Generate a function which returns a DSL.Component.
+    # Generate a function which returns a component node.
     def create_component_func(**kwargs):
         if isinstance(component_entity, CommandComponent):
             return Command(component=component_entity, inputs=kwargs, _from_component_func=True)
@@ -32,7 +32,7 @@ def load_component(
     yaml_file: str = None,
     **kwargs,
 ) -> Union[CommandComponent, ParallelComponent]:
-    """Load dsl.Component from local or remote to a component function.
+    """Load component from local or remote to a component function.
 
     For example:
 
@@ -51,7 +51,7 @@ def load_component(
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
-    :return: A function that can be called with parameters to get a `azure.ai.ml.dsl.Component`
+    :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
     :rtype: Union[CommandComponent]
     """
     client = kwargs.get("client", None)
