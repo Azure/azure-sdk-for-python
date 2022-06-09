@@ -557,7 +557,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("code changes needed before we can unskip")
+    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -986,7 +986,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert action_results[1][1].is_error
         assert action_results[1][2].is_error
 
-    @pytest.mark.skip("code changes needed before we can unskip")
+    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1123,7 +1123,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
-    @pytest.mark.skip("code changes needed before we can unskip")
+    @pytest.mark.skip("code changes needed before we can run test")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1762,7 +1762,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                                f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
                                f"only available for API version {version_supported} and up.\n"
 
-    @pytest.mark.skip("code changes needed before we can unskip")
+    @pytest.mark.skip("code changes needed before we can run test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
