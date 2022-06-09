@@ -189,7 +189,6 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
             await poller2.wait()
             assert poller2._polling_method._timeout ==  7  # goes back to client default
 
-    @pytest.mark.skip()
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):

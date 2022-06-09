@@ -30,7 +30,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     def teardown(self):
         self.sleep(4)
 
-    @pytest.mark.skip()
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
