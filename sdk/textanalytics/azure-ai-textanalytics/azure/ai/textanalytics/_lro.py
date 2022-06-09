@@ -7,7 +7,7 @@ import base64
 import functools
 import json
 import datetime
-from typing import Generic, Any, Optional
+from typing import Any, Optional
 from urllib.parse import urlencode
 from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
@@ -168,7 +168,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
+class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeHealthcareEntitiesLROPollingMethod:
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
@@ -361,7 +361,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
+class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeActionsLROPollingMethod:
         """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore

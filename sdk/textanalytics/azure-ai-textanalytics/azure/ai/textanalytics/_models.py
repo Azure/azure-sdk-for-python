@@ -2213,9 +2213,9 @@ class ExtractSummaryAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.ExtractiveSummarizationLROTask(
+        return _v2022_05_01_models.ExtractiveSummarizationLROTask(  # pylint: disable=no-member
             task_name=task_id,
-            parameters=_v2022_05_01_models.ExtractiveSummarizationTaskParameters(
+            parameters=_v2022_05_01_models.ExtractiveSummarizationTaskParameters(  # pylint: disable=no-member
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,

@@ -4,7 +4,12 @@
 # ------------------------------------
 
 import functools
+import typing
+from typing_extensions import ParamSpec
 from ._version import VERSIONS_SUPPORTED
+
+P = ParamSpec("P")
+T = typing.TypeVar("T")
 
 
 def check_for_unsupported_actions_types(*args, **kwargs):
@@ -49,14 +54,14 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         raise ValueError("".join(error_strings))
 
 
-def validate_multiapi_args(**kwargs):
+def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Callable[P, T]], typing.Callable[P, T]]:
     args_mapping = kwargs.pop("args_mapping", None)
     version_method_added = kwargs.pop("version_method_added", None)
     custom_wrapper = kwargs.pop("custom_wrapper", None)
 
-    def decorator(func):
+    def decorator(func: typing.Callable[P, T]) -> typing.Callable[P, T]:
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> T:
             try:
                 # this assumes the client has an _api_version attribute
                 client = args[0]
