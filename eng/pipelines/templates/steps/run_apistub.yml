@@ -23,7 +23,7 @@ steps:
     displayName: Install API Stub Generator
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
-  - ${{ each artifact in parameters.Artifacts }}
+  - ${{ each artifact in parameters.Artifacts }}:
     - bash: |
         source $(Agent.BuildDirectory)/venv/bin/activate
         apistubgen --pkg-path $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory}}/${{ artifact.name }}/
