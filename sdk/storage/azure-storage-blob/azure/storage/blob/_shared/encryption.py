@@ -326,7 +326,7 @@ def get_adjusted_download_range_and_offset(
         start_offset, end_offset = 0, end
 
         nonce_length = encryption_data.encrypted_region_info.nonce_length
-        data_length = encryption_data.encrypted_region_info.encrypted_region_data_length
+        data_length = encryption_data.encrypted_region_info.data_length
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
         requested_length = end - start
@@ -375,7 +375,7 @@ def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_Encryp
     """
     if is_encryption_v2(encryption_data):
         nonce_length = encryption_data.encrypted_region_info.nonce_length
-        data_length = encryption_data.encrypted_region_info.encrypted_region_data_length
+        data_length = encryption_data.encrypted_region_info.data_length
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
 
@@ -798,7 +798,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         offset = 0
 
         nonce_length = encryption_data.encrypted_region_info.nonce_length
-        data_length = encryption_data.encrypted_region_info.encrypted_region_data_length
+        data_length = encryption_data.encrypted_region_info.data_length
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
 

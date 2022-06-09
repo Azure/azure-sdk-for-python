@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 23:03:16 GMT
+      - Thu, 09 Jun 2022 19:07:44 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainere24a181c?restype=container
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 23:03:16 GMT
+      - Thu, 09 Jun 2022 19:07:44 GMT
       etag:
-      - '"0x8DA4422EA047180"'
+      - '"0x8DA4A4B55D9843C"'
       last-modified:
-      - Wed, 01 Jun 2022 23:03:17 GMT
+      - Thu, 09 Jun 2022 19:07:44 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created

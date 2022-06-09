@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819?restype=container
   response:
@@ -25,38 +25,38 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       etag:
-      - '"0x8DA441DA01D370C"'
+      - '"0x8DA4A4BCE256011"'
       last-modified:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - application/xml
@@ -69,17 +69,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D
   response:
@@ -89,38 +89,38 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - hAaVCuU6aUw=
+      - PlNPZoB2/dA=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - application/xml
@@ -133,17 +133,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURFd01qUSUzRA%3D%3D
   response:
@@ -153,38 +153,38 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - DCdy5yhXOrA=
+      - IbmqYEL32tk=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - application/xml
@@ -197,17 +197,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURJd05EZyUzRA%3D%3D
   response:
@@ -217,38 +217,38 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - gHYWhx0/gq0=
+      - vq8FIb4Lsis=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      LogM1OU8PFKCah5pDqHSnrK8TRp8csi5ZU5aDCvfNTTfdw9HCdyrwCkDK40AWmvzY2XdEsuh6TwK
-      +GLDah9uwR7Bu9agEw3e+GVGTDJS1gX2YWXDoecpzfHZHmcCxyX9AuU5hzN5CTvGr4KVIrob8k8i
-      qsdzOHk+9khqSXvLBDAb2S7UwZCl8WBPe3boMEjkVmSvqUd2pkABrQhLmOTdXZ0QEaHz41DovdWV
-      XwgKpR3MFoMsDy1NdCJaWxlEkcs6YizzoOwSAmU0Dl3akCWSJ0oN2QOQPsPdGkuDOAMxMlzIhxr2
-      2qxENoxCefzZDwFpjMPMOJQvf5N/+8qsfvEMkI1DwTMJ42tORkpDoDMYr7ecGDnsHB/iXB4oCHDz
-      CDm6CvkAhgXJG/c29Th0qt3d2MAkGYwx4cXI8rkx3banph2wU0nlYEe4KQasOa5d+33APTpuei1E
-      A8V19lHcGPEr6aE1UBpEqy0WItgEqeBTC5OJwJAyGfrOVVyjw8KdqeR07EGg9IirXl3yoJYOdQtO
-      M0knKaYJTAZCiVc7eAnOsSpCpWutwc0/urTn8CC2WWLpe241NfB8nTQ5pGNmW7b8HzKaeVZmbSFx
-      RJBTjt1KJC38t/ivDK5ZrQsuepu9068OQ2HMylPIXGq/tGww7Ra7JajEfa7W7PCDssvAYprbdxgR
-      RBq8OM14g7RbSEEXpcypXRLn92eaoWa2AM0rAXoQoJZe1PYD43ItXyQ7mF/yrFc2FPPNVA6EvQVx
-      XPREdZAQIY2N4cjkQmC9bdi7mV79SKwwhnqMLCGbUBTaKblo3hPylbZnWGhgPe36cEvOuYwKD4x4
-      F1P8lAGZ4Yd0dVa91uoIuB4rmQQ8h5fiOMoIVEXqD1UZP/Fa1/dKY+Bd7rMcAqJ1Yhvj5IVs/DFL
-      wcJGGDoTXISu9uw+/7FxirjeliQKMzIbcxN4YnXIXi30v0hLFGO92NMCtkyEI05a2csXBq78JuxC
-      ZadDZYJDs0w6kaKopAUcmoH4TrHFeDftcpn1dN6uL7Td92WvxsauXOkFIjz0VmXpR40XqKQ00LU8
-      im/wQ/xu5ok5nHcftqYxFIzwKMj1MJaWOI7zafeqvVa+jzApRdw4zrmyT7/104WvJSUzNa5dEUdr
-      /P8S0LPiw8iwklTgJiiDIA6cGzgGqVTP3qjDDAQv58ttlBRZHEoTVbcYrNRzHxtSpbA/xWYAre5L
-      wFqLVrkRjQx63zw1ti0S7Txsd6Nerza689F6r6q1HU2+0g77hAyI6HRZtv4EZxH2wq/xafC4qlNU
-      LTf/v9eCr5Y7l+Ao/pp3aDqD1c2/qhaLOLmhC+YymMupTu6uaQ3jGEDB2PAYZlifQilyk5kw0g==
+      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
     headers:
       Accept:
       - application/xml
@@ -261,17 +261,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURNd056SSUzRA%3D%3D
   response:
@@ -281,38 +281,38 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - /0cJ310Evqs=
+      - LVGEZ38K7pg=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - application/xml
@@ -325,17 +325,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA%3D%3D
   response:
@@ -345,21 +345,21 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - IcU4FI7idGI=
+      - PUyhygmB0pQ=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      ESviGKw36vNEzgnaCoEdwyqVHqQVdh6a9rFFpA==
+      BKfNdEB3ObfWZVeOBZ6OViG4FNKXpPddxsvPtw==
     headers:
       Accept:
       - application/xml
@@ -372,17 +372,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=block&blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURVeE1qQSUzRA%3D%3D
   response:
@@ -392,15 +392,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - TTM0yRj5QZA=
+      - tmWE+eRsD0E=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
@@ -420,17 +420,17 @@ interactions:
       Content-Type:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819?comp=blocklist
   response:
@@ -440,11 +440,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       etag:
-      - '"0x8DA441DA08CA09A"'
+      - '"0x8DA4A4BCE5132C7"'
       last-modified:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -452,7 +452,7 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 201
       message: Created
@@ -466,11 +466,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819
   response:
@@ -484,15 +484,13 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       etag:
-      - '"0x8DA441DA08CA09A"'
+      - '"0x8DA4A4BCE5132C7"'
       last-modified:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      vary:
-      - Origin
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-inferred:
@@ -500,21 +498,21 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 200
       message: OK
@@ -528,109 +526,109 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       x-ms-range:
       - bytes=0-33554655
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainerd41f1819/encryptionv2_blobd41f1819
   response:
     body:
       string: !!binary |
-        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
-        CdoKgR3DKpUepBV2Hpr2sUWk
+        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
+        V44Fno5WIbgU0pek913Gy8+3
     headers:
       accept-ranges:
       - bytes
@@ -641,33 +639,31 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 01 Jun 2022 22:25:25 GMT
+      - Thu, 09 Jun 2022 19:11:06 GMT
       etag:
-      - '"0x8DA441DA08CA09A"'
+      - '"0x8DA4A4BCE5132C7"'
       last-modified:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      vary:
-      - Origin
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 01 Jun 2022 22:25:26 GMT
+      - Thu, 09 Jun 2022 19:11:07 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "TpzhXaQiPCV5bYBhoC+nDm2618a+SQwVNtfPeJ+5sIopAo6jP1OC4w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "yYUcIcChxy7EKOtfA9Oc7JGeIypCqB0Z0nd+smsHmRcE1WujTuPJnQ==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "2.0", "EncryptionAlgorithm":
-        "AES_GCM_256"}, "EncryptedRegionInfo": {"EncryptedRegionDataLength": 4194304,
-        "NonceLength": 12, "TagLength": 16}, "KeyWrappingMetadata": {"EncryptionLibrary":
-        "Python 12.12.1"}, "EncryptionMode": "FullBlob"}'
+        "AES_GCM_256"}, "EncryptedRegionInfo": {"DataLength": 4194304, "NonceLength":
+        12}, "KeyWrappingMetadata": {"EncryptionLibrary": "Python 12.13.0b1"}, "EncryptionMode":
+        "FullBlob"}'
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-06-08'
+      - '2021-08-06'
     status:
       code: 206
       message: Partial Content
