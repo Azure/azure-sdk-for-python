@@ -188,7 +188,7 @@ class SearchClient(object):
         country_filter = kwargs.get("country_filter", None)
         
         if not coordinates or not country_filter:
-                raise TypeError('at least "country_filter" or "country_filter" is required')
+                raise TypeError('at least "coordinates" or "country_filter" is required')
             
         coordinates = LatLon() if not coordinates else coordinates
         
@@ -557,12 +557,47 @@ class SearchClient(object):
         )
         return SearchAddressResult(result.summary, result.results)
 
+    @overload
+    def search_point_of_interest_category(
+        self,
+        query,  # type: str
+        *,
+        coordinates, # type: Optional[Union[str, LatLon]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """
+        :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
+         as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
+         -122.125679"). Must be properly URL encoded.
+        :type query: str
+        :param coordinates: coordinates
+        :type coordinates: ~azure.maps.search._models.LatLon
+        """
+
+    @overload
+    def search_point_of_interest_category(
+        self,
+        query,  # type: str
+        *,
+        country_filter, # type Optional[list[str]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "SearchAddressResult"
+        """
+        :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
+         as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
+         -122.125679"). Must be properly URL encoded.
+        :type query: str
+         :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
+         search to the specified countries.
+        :type country_filter: list[str]
+        """
+
     @distributed_trace
     def search_point_of_interest_category(
         self,
         query,  # type: str
-        coordinates=None, #type: "LatLon"
-        country_filter=None, # type list[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "SearchAddressResult"
@@ -615,6 +650,12 @@ class SearchClient(object):
         :return: SearchAddressResult, or the result of cls(response)
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        coordinates = kwargs.get("coordinates", None)
+        country_filter = kwargs.get("country_filter", None)
+
+        if not coordinates or not country_filter:
+                raise TypeError('at least "coordinates" or "country_filter" is required')
+
         coordinates = LatLon() if not coordinates else coordinates
 
         result = self._search_client.search_point_of_interest_category(

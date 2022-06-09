@@ -1,48 +1,47 @@
-# Azure Search
+# Azure Maps Search for Python
 
 > see https://aka.ms/autorest
 
-This is the AutoRest configuration file for Search Client
+## Setup
 
----
+```ps
 
-## Getting Started
-
-To build the SDK for Search, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
-
-> `autorest`
-
-To see additional help and options, run:
-
-> `autorest --help`
-
----
-
-## Configuration
-
-### Basic Information
-
-These are the global settings for Search Client.
-
-``` yaml
-title: SearchClient
-openapi-type: data-plane
-tag: 1.0-preview
-license-header: MICROSOFT_MIT_NO_VERSION
-add-credential: true
-namespace: azure.maps.search
-package-name: azure-maps-search
-package-version: 1.0-preview
-credential-default-policy-type: BearerTokenCredentialPolicy
-credential-scopes: https://atlas.microsoft.com/.default
-clear-output-folder: true
-no-namespace-folders: true
-python: true
-multiapi: true
+npm install -g autorest
 ```
 
-``` yaml $(tag) == '1.0-preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Search/preview/1.0/search.json
-no-namespace-folders: true
+## Generation
+
+```ps
+
+cd <swagger-folder>
+autorest SWAGGER.md
+```
+
+To generate this file, simply type
+
+```ps
+
+autorest swagger/README.md --python-sdks-folder=<location-of-your-sdk-dir>
+```
+
+We automatically hardcode in that this is `python`.
+
+## Basic Information
+
+```yaml
+tag: 1.0-preview
+require: https://raw.githubusercontent.com/alextts627/azure-rest-api-specs/main/specification/maps/data-plane/Search/readme.md
 output-folder: ../azure/maps/search/_generated
+namespace: azure.maps.search
+package-name: azure-maps-search
+no-namespace-folders: true
+license-header: MICROSOFT_MIT_NO_VERSION
+credential-scopes: https://cognitiveservices.azure.com/.default
+clear-output-folder: true
+python: true
+no-async: false
+add-credential: false
+title: SearchClient
+disable-async-iterators: true
+python-sdks-folder: $(python-sdks-folder)
 ```

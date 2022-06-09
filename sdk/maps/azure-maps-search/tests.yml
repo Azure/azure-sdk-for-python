@@ -8,6 +8,7 @@ stages:
       ServiceDirectory: maps
       MatrixReplace:
         - TestSamples=.*/true
+      Clouds: Public,Int
       CloudConfig:
         Public:
           SubscriptionConfigurations:
@@ -18,4 +19,14 @@ stages:
             SubscriptionConfigurations:
               - $(sub-config-maps-int-test-resources-common)
               - $(sub-config-maps-int-test-resources-python)
-      Clouds: Public,Int
+            MatrixFilters:
+              - PythonVersion=^(?!pypy3).*
+              - PythonVersion=^(?!3.6).*
+              - PythonVersion=^(?!3.7).*
+              - PythonVersion=^(?!3.8).*
+              - PythonVersion=^(?!3.9).*
+      EnvVars:
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_TEST_RUN_LIVE: 'true'
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
