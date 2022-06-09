@@ -201,7 +201,6 @@ from ._models_py3 import VirtualMachineScaleSetExtensionUpdate
 from ._models_py3 import VirtualMachineScaleSetHardwareProfile
 from ._models_py3 import VirtualMachineScaleSetIPConfiguration
 from ._models_py3 import VirtualMachineScaleSetIdentity
-from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
 from ._models_py3 import VirtualMachineScaleSetInstanceView
 from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
 from ._models_py3 import VirtualMachineScaleSetIpTag
@@ -248,6 +247,7 @@ from ._models_py3 import VirtualMachineSizeListResult
 from ._models_py3 import VirtualMachineSoftwarePatchProperties
 from ._models_py3 import VirtualMachineStatusCodeCount
 from ._models_py3 import VirtualMachineUpdate
+from ._models_py3 import VmImagesInEdgeZoneListResult
 from ._models_py3 import WinRMConfiguration
 from ._models_py3 import WinRMListener
 from ._models_py3 import WindowsConfiguration
@@ -525,7 +525,6 @@ __all__ = [
     'VirtualMachineScaleSetHardwareProfile',
     'VirtualMachineScaleSetIPConfiguration',
     'VirtualMachineScaleSetIdentity',
-    'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetInstanceViewStatusesSummary',
     'VirtualMachineScaleSetIpTag',
@@ -572,6 +571,7 @@ __all__ = [
     'VirtualMachineSoftwarePatchProperties',
     'VirtualMachineStatusCodeCount',
     'VirtualMachineUpdate',
+    'VmImagesInEdgeZoneListResult',
     'WinRMConfiguration',
     'WinRMListener',
     'WindowsConfiguration',
