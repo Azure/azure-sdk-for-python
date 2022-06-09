@@ -90,7 +90,7 @@ class TestRouterWorker(RouterTestCase):
         client: RouterClient = self.create_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.upsert_distribution_policy(
+        distribution_policy = client.create_distribution_policy(
             identifier = distribution_policy_id,
             name = distribution_policy_id,
             offer_ttl_seconds = 10.0,
@@ -111,7 +111,7 @@ class TestRouterWorker(RouterTestCase):
     def setup_job_queue(self):
         client: RouterClient = self.create_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.upsert_queue(
+        job_queue = client.create_queue(
             identifier = job_queue_id,
             name = job_queue_id,
             labels = worker_labels,
@@ -132,7 +132,7 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.upsert_worker(
+        router_worker = router_client.create_worker(
             identifier = w_identifier,
             total_capacity = worker_total_capacity,
             labels = worker_labels,
@@ -165,7 +165,7 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.upsert_worker(
+        router_worker = router_client.create_worker(
             identifier = w_identifier,
             total_capacity = worker_total_capacity,
             labels = worker_labels,
@@ -194,7 +194,7 @@ class TestRouterWorker(RouterTestCase):
         router_worker.labels['FakeKey'] = "FakeWorkerValue"
         updated_worker_labels = router_worker.labels
 
-        update_router_worker = router_client.upsert_worker(
+        update_router_worker = router_client.update_worker(
             identifier = w_identifier,
             router_worker = router_worker
         )
@@ -218,7 +218,7 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.upsert_worker(
+        router_worker = router_client.create_worker(
             identifier = w_identifier,
             total_capacity = worker_total_capacity,
             labels = worker_labels,
@@ -265,7 +265,7 @@ class TestRouterWorker(RouterTestCase):
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
-        router_worker = router_client.upsert_worker(
+        router_worker = router_client.create_worker(
             identifier = w_identifier,
             total_capacity = worker_total_capacity,
             labels = worker_labels,
@@ -304,7 +304,7 @@ class TestRouterWorker(RouterTestCase):
         self.worker_ids[self._testMethodName] = []
 
         for identifier in w_identifiers:
-            worker = router_client.upsert_worker(
+            worker = router_client.create_worker(
                 identifier = identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,

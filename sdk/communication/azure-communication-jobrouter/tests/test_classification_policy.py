@@ -196,7 +196,7 @@ class TestClassificationPolicy(RouterTestCase):
     def setup_distribution_policy(self):
         client: RouterClient = self.create_client()
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.upsert_distribution_policy(
+        distribution_policy = client.create_distribution_policy(
             identifier = distribution_policy_id,
             name = distribution_policy_id,
             offer_ttl_seconds = 10.0,
@@ -217,7 +217,7 @@ class TestClassificationPolicy(RouterTestCase):
     def setup_job_queue(self):
         client: RouterClient = self.create_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.upsert_queue(
+        job_queue = client.create_queue(
             identifier = job_queue_id,
             name = job_queue_id,
             labels = queue_labels,
@@ -240,7 +240,7 @@ class TestClassificationPolicy(RouterTestCase):
         for qs in queue_selectors:
             for rule in prioritization_rules:
                 for ws in worker_selectors:
-                    classification_policy = router_client.upsert_classification_policy(
+                    classification_policy = router_client.create_classification_policy(
                         identifier = cp_identifier,
                         name = cp_identifier,
                         fallback_queue_id = self.get_job_queue_id(),
@@ -273,7 +273,7 @@ class TestClassificationPolicy(RouterTestCase):
         for qs in queue_selectors:
             for rule in prioritization_rules:
                 for ws in worker_selectors:
-                    classification_policy = router_client.upsert_classification_policy(
+                    classification_policy = router_client.create_classification_policy(
                         identifier = cp_identifier,
                         name = cp_identifier,
                         fallback_queue_id = self.get_job_queue_id(),
@@ -299,13 +299,13 @@ class TestClassificationPolicy(RouterTestCase):
                     updated_prioritization_rule = ExpressionRule(expression = "2")
                     classification_policy.prioritization_rule = updated_prioritization_rule
 
-                    updated_classification_policy = router_client.upsert_classification_policy(
+                    updated_classification_policy = router_client.update_classification_policy(
                         identifier = cp_identifier,
                         classification_policy = classification_policy
                     )
 
                     ClassificationPolicyValidator.validate_classification_policy(
-                        classification_policy,
+                        updated_classification_policy,
                         name = cp_identifier,
                         fallback_queue_id = self.get_job_queue_id(),
                         queue_selectors = [qs],
@@ -324,7 +324,7 @@ class TestClassificationPolicy(RouterTestCase):
         for qs in queue_selectors:
             for rule in prioritization_rules:
                 for ws in worker_selectors:
-                    classification_policy = router_client.upsert_classification_policy(
+                    classification_policy = router_client.create_classification_policy(
                         identifier = cp_identifier,
                         name = cp_identifier,
                         fallback_queue_id = self.get_job_queue_id(),
@@ -375,7 +375,7 @@ class TestClassificationPolicy(RouterTestCase):
             for rule in prioritization_rules:
                 for ws in worker_selectors:
                     for _identifier in cp_identifiers:
-                        classification_policy = router_client.upsert_classification_policy(
+                        classification_policy = router_client.create_classification_policy(
                             identifier = _identifier,
                             name = _identifier,
                             fallback_queue_id = self.get_job_queue_id(),
@@ -437,7 +437,7 @@ class TestClassificationPolicy(RouterTestCase):
         for qs in queue_selectors:
             for rule in prioritization_rules:
                 for ws in worker_selectors:
-                    classification_policy = router_client.upsert_classification_policy(
+                    classification_policy = router_client.create_classification_policy(
                         identifier = cp_identifier,
                         name = cp_identifier,
                         fallback_queue_id = self.get_job_queue_id(),

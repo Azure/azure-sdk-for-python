@@ -171,7 +171,7 @@ class TestRouterJob(RouterTestCase):
         client: RouterClient = self.create_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.upsert_distribution_policy(
+        distribution_policy = client.create_distribution_policy(
             identifier = distribution_policy_id,
             name = distribution_policy_id,
             offer_ttl_seconds = 10.0,
@@ -192,7 +192,7 @@ class TestRouterJob(RouterTestCase):
     def setup_job_queue(self):
         client: RouterClient = self.create_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.upsert_queue(
+        job_queue = client.create_queue(
             identifier = job_queue_id,
             name = job_queue_id,
             labels = job_labels,
@@ -211,7 +211,7 @@ class TestRouterJob(RouterTestCase):
     def setup_fallback_queue(self):
         client: RouterClient = self.create_client()
         job_queue_id = self.get_fallback_queue_id()
-        job_queue = client.upsert_queue(
+        job_queue = client.create_queue(
             identifier = job_queue_id,
             name = job_queue_id,
             labels = job_labels,
@@ -239,7 +239,7 @@ class TestRouterJob(RouterTestCase):
         ]
 
         cp_id = self.get_classification_policy_id()
-        job_queue = client.upsert_classification_policy(
+        job_queue = client.create_classification_policy(
             identifier = cp_id,
             name = cp_id,
             fallback_queue_id = self.get_fallback_queue_id(),
@@ -269,7 +269,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_create_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -311,7 +311,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_update_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -351,7 +351,7 @@ class TestRouterJob(RouterTestCase):
         router_job.labels['FakeKey'] = "FakeWorkerValue"
         updated_job_labels = router_job.labels
 
-        update_router_job = router_client.upsert_job(
+        update_router_job = router_client.update_job(
             identifier = job_identifier,
             router_job = router_job
         )
@@ -379,7 +379,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_get_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -440,7 +440,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_create_job_cp"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -482,7 +482,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_update_job_cp"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -520,7 +520,7 @@ class TestRouterJob(RouterTestCase):
         router_job.labels['FakeKey'] = "FakeWorkerValue"
         updated_job_labels = router_job.labels
 
-        update_router_job = router_client.upsert_job(
+        update_router_job = router_client.update_job(
             identifier = job_identifier,
             router_job = router_job
         )
@@ -554,7 +554,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_get_job_cp"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -614,7 +614,7 @@ class TestRouterJob(RouterTestCase):
         job_identifier = "tst_del_job_man"
         router_client: RouterClient = self.create_client()
 
-        router_job = router_client.upsert_job(
+        router_job = router_client.create_job(
             identifier = job_identifier,
             channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
@@ -667,7 +667,7 @@ class TestRouterJob(RouterTestCase):
         self.job_ids[self._testMethodName] = []
 
         for identifier in job_identifiers:
-            router_job = router_client.upsert_job(
+            router_job = router_client.create_job(
                 identifier = identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],

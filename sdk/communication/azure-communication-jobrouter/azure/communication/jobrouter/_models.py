@@ -15,9 +15,11 @@ from ._generated.models import (
     PagedRouterWorkerInternal,
     PagedJobQueueInternal,
     RouterJobInternal,
-    PagedRouterJobInternal
+    PagedRouterJobInternal,
+    RouterWorkerState
 )
 from ._utils import _convert_str_to_datetime
+
 
 class EmptyPlaceHolderObject(ABC):
     @classmethod
@@ -116,7 +118,40 @@ class LabelCollection(MutableMapping):
 
 
 class JobQueue(object):
+    """A queue that can contain jobs to be routed.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The Id of this queue.
+    :vartype id: str
+    :ivar name: The name of this queue.
+    :vartype name: str
+    :ivar distribution_policy_id: The ID of the distribution policy that will determine
+     how a job is distributed to workers.
+    :vartype distribution_policy_id: str
+    :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
+     engines to make decisions.
+    :vartype labels: ~azure.communication.jobrouter.LabelCollection
+    :ivar exception_policy_id: (Optional) The ID of the exception policy that determines various
+     job escalation rules.
+    :vartype exception_policy_id: str
+    """
     def __init__(self, **kwargs):
+        """
+        :keyword name: The name of this queue.
+        :paramtype name: str
+        :keyword distribution_policy_id: Required. The ID of the distribution policy that will
+         determine how a job is distributed to workers.
+        :paramtype distribution_policy_id: str
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: ~azure.communication.jobrouter.LabelCollection
+        :keyword exception_policy_id: (Optional) The ID of the exception policy that determines various
+         job escalation rules.
+        :paramtype exception_policy_id: str
+        """
         self.id = kwargs.pop('identifier', None)
         self.name = kwargs.pop('name', None)
         self.distribution_policy_id = kwargs.pop('distribution_policy_id', None)
@@ -153,7 +188,40 @@ class QueueAssignment(EmptyPlaceHolderObject):
 
 
 class PagedQueue(PagedEntityMixin, JobQueue):
+    """A queue returned from a pageable list.
+
+    :ivar id: The Id of this queue.
+    :vartype id: str
+    :ivar name: The name of this queue.
+    :vartype name: str
+    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
+     is distributed to workers.
+    :vartype distribution_policy_id: str
+    :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
+     engines to make decisions.
+    :vartype labels: ~azure.communication.jobrouter.LabelCollection
+    :ivar exception_policy_id: (Optional) The ID of the exception policy that determines various
+     job escalation rules.
+    :vartype exception_policy_id: str
+    :ivar etag: Etag of the resource
+    :vartype etag: str
+    """
     def __init__(self, **kwargs):
+        """
+        :keyword name: The name of this queue.
+        :paramtype name: str
+        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
+         job is distributed to workers.
+        :paramtype distribution_policy_id: str
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: ~azure.communication.jobrouter.LabelCollection
+        :keyword exception_policy_id: (Optional) The ID of the exception policy that determines various
+         job escalation rules.
+        :paramtype exception_policy_id: str
+        :keyword etag: Etag of the resource
+        :paramtype etag: str
+        """
         # pylint:disable=useless-super-delegation
         super(PagedQueue, self).__init__(**kwargs)
 
@@ -191,7 +259,7 @@ class PagedQueue(PagedEntityMixin, JobQueue):
 class RouterWorker(object):
     """An entity for jobs to be routed to.
 
-    :ivar id:
+    :ivar id: Id of the worker
     :vartype id: str
     :ivar state: The current state of the worker. Known values are: "active", "draining",
      "inactive".
@@ -208,11 +276,11 @@ class RouterWorker(object):
     :vartype tags: ~azure.communication.jobrouter.LabelCollection
     :ivar channel_configurations: The channel(s) this worker can handle and their impact on the
      workers capacity.
-    :vartype channel_configurations: dict[str, ~azure.communication.jobrouter.ChannelConfiguration]
+    :vartype channel_configurations: Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]
     :ivar offers: A list of active offers issued to this worker.
-    :vartype offers: list[~azure.communication.jobrouter.JobOffer]
+    :vartype offers: List[~azure.communication.jobrouter.JobOffer]
     :ivar assigned_jobs: A list of assigned jobs attached to this worker.
-    :vartype assigned_jobs: list[~azure.communication.jobrouter.WorkerAssignment]
+    :vartype assigned_jobs: List[~azure.communication.jobrouter.WorkerAssignment]
     :ivar load_ratio: A value indicating the workers capacity. A value of '1' means all capacity is
      consumed. A value of '0' means no capacity is currently consumed.
     :vartype load_ratio: float
@@ -288,7 +356,58 @@ class RouterWorker(object):
 
 
 class PagedWorker(PagedEntityMixin, RouterWorker):
+    """A worker returned from a pageable list.
+
+    :ivar id: Id of the worker
+    :vartype id: str
+    :ivar state: The current state of the worker. Known values are: "active", "draining",
+     "inactive".
+    :vartype state: str or ~azure.communication.jobrouter.RouterWorkerState
+    :ivar queue_assignments: The queue(s) that this worker can receive work from.
+    :vartype queue_assignments: dict[str, ~azure.communication.jobrouter.QueueAssignment]
+    :ivar total_capacity: The total capacity score this worker has to manage multiple concurrent
+     jobs.
+    :vartype total_capacity: int
+    :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
+     engines to make decisions.
+    :vartype labels: ~azure.communication.jobrouter.LabelCollection
+    :ivar tags: A set of tags. A set of non-identifying attributes attached to this worker.
+    :vartype tags: ~azure.communication.jobrouter.LabelCollection
+    :ivar channel_configurations: The channel(s) this worker can handle and their impact on the
+     workers capacity.
+    :vartype channel_configurations: Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]
+    :ivar offers: A list of active offers issued to this worker.
+    :vartype offers: List[~azure.communication.jobrouter.JobOffer]
+    :ivar assigned_jobs: A list of assigned jobs attached to this worker.
+    :vartype assigned_jobs: List[~azure.communication.jobrouter.WorkerAssignment]
+    :ivar load_ratio: A value indicating the workers capacity. A value of '1' means all capacity is
+     consumed. A value of '0' means no capacity is currently consumed.
+    :vartype load_ratio: float
+    :ivar available_for_offers: A flag indicating this worker is open to receive offers or not.
+    :vartype available_for_offers: bool
+    :ivar etag: Etag of the resource
+    :vartype etag: str
+    """
     def __init__(self, **kwargs):
+        """
+        :keyword queue_assignments: The queue(s) that this worker can receive work from.
+        :paramtype queue_assignments: dict[str, ~azure.communication.jobrouter.QueueAssignment]
+        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
+        :paramtype total_capacity: int
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: ~azure.communication.jobrouter.LabelCollection
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :paramtype tags: ~azure.communication.jobrouter.LabelCollection
+        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
+         workers capacity.
+        :paramtype channel_configurations: dict[str, ~azure.communication.jobrouter.ChannelConfiguration]
+        :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
+        :paramtype available_for_offers: bool
+        :keyword etag: Etag of the resource
+        :paramtype etag: str
+        """
         # pylint:disable=useless-super-delegation
         super(PagedWorker, self).__init__(**kwargs)
 
@@ -300,7 +419,7 @@ class PagedWorker(PagedEntityMixin, RouterWorker):
     ):
         return cls(
             id = entity_generated.id,
-            state = entity_generated.state,
+            state = RouterWorkerState.__getattr__(entity_generated.state),  # pylint:disable=protected-access
             # pylint:disable=protected-access
             queue_assignments = {k: QueueAssignment._from_generated(v) for k, v in
                                  entity_generated.queue_assignments.items()},
@@ -478,7 +597,74 @@ class RouterJob(object):
 
 
 class PagedJob(PagedEntityMixin, RouterJob):
+    """A job returned from a pageable list.
+
+    :ivar id: The id of the job.
+    :vartype id: str
+    :ivar channel_reference: Reference to an external parent context, eg. call ID.
+    :vartype channel_reference: str
+    :ivar job_status: The state of the Job. Known values are: "pendingClassification", "queued",
+     "assigned", "completed", "closed", "cancelled", "classificationFailed", "created".
+    :vartype job_status: Union[str, ~azure.communication.jobrouter.JobStatus]
+    :ivar enqueue_time_utc: The time a job was queued.
+    :vartype enqueue_time_utc: ~datetime.datetime
+    :ivar channel_id: The channel identifier. eg. voice, chat, etc.
+    :vartype channel_id: str
+    :ivar classification_policy_id: The Id of the Classification policy used for classifying a job.
+    :vartype classification_policy_id: str
+    :ivar queue_id: The Id of the Queue that this job is queued to.
+    :vartype queue_id: str
+    :ivar priority: The priority of this job.
+    :vartype priority: int
+    :ivar disposition_code: Reason code for cancelled or closed jobs.
+    :vartype disposition_code: str
+    :ivar requested_worker_selectors: A collection of manually specified label selectors, which a
+     worker must satisfy in order to process this job.
+    :vartype requested_worker_selectors: List[~azure.communication.jobrouter.WorkerSelector]
+    :ivar attached_worker_selectors: A collection of label selectors attached by a classification
+     policy, which a worker must satisfy in order to process this job.
+    :vartype attached_worker_selectors: List[~azure.communication.jobrouter.WorkerSelector]
+    :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
+     engines to make decisions.
+    :vartype labels: ~azure.communication.jobrouter.LabelCollection
+    :ivar assignments: A collection of the assignments of the job.
+     Key is AssignmentId.
+    :vartype assignments: Dict[str, ~azure.communication.jobrouter.JobAssignment]
+    :ivar tags: A set of tags. A set of non-identifying attributes attached to this job.
+    :vartype tags: ~azure.communication.jobrouter.LabelCollection
+    :ivar notes: Notes attached to a job, sorted by timestamp.
+    :vartype notes: Dict[~datetime.datetime, str]
+    :ivar etag: Etag of the resource
+    :vartype etag: str
+    """
     def __init__(self, **kwargs):
+        """
+        :keyword channel_reference: Reference to an external parent context, eg. call ID.
+        :paramtype channel_reference: str
+        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
+        :paramtype channel_id: str
+        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
+         job.
+        :paramtype classification_policy_id: str
+        :keyword queue_id: The Id of the Queue that this job is queued to.
+        :paramtype queue_id: str
+        :keyword priority: The priority of this job.
+        :paramtype priority: int
+        :keyword disposition_code: Reason code for cancelled or closed jobs.
+        :paramtype disposition_code: str
+        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
+         a worker must satisfy in order to process this job.
+        :paramtype requested_worker_selectors: List[~azure.communication.jobrouter.WorkerSelector]
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: ~azure.communication.jobrouter.LabelCollection
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :paramtype tags: ~azure.communication.jobrouter.LabelCollection
+        :keyword notes: Notes attached to a job, sorted by timestamp.
+        :paramtype notes: Dict[~datetime.datetime, str]
+        :keyword etag: Etag of the resource
+        :paramtype etag: str
+        """
         # pylint:disable=useless-super-delegation
         super(PagedJob, self).__init__(**kwargs)
 
@@ -544,7 +730,7 @@ class PagedJob(PagedEntityMixin, RouterJob):
         )
 
 
-class DeclineJobOfferResponse(EmptyPlaceHolderObject):
+class DeclineJobOfferResult(EmptyPlaceHolderObject):
     @classmethod
     def _from_generated(
             cls,
@@ -554,7 +740,7 @@ class DeclineJobOfferResponse(EmptyPlaceHolderObject):
         return cls()
 
 
-class ReclassifyJobResponse(EmptyPlaceHolderObject):
+class ReclassifyJobResult(EmptyPlaceHolderObject):
     @classmethod
     def _from_generated(
             cls,
@@ -564,7 +750,7 @@ class ReclassifyJobResponse(EmptyPlaceHolderObject):
         return cls()
 
 
-class CancelJobResponse(EmptyPlaceHolderObject):
+class CancelJobResult(EmptyPlaceHolderObject):
     @classmethod
     def _from_generated(
             cls,
@@ -574,7 +760,7 @@ class CancelJobResponse(EmptyPlaceHolderObject):
         return cls()
 
 
-class CompleteJobResponse(EmptyPlaceHolderObject):
+class CompleteJobResult(EmptyPlaceHolderObject):
     @classmethod
     def _from_generated(
             cls,
@@ -584,7 +770,7 @@ class CompleteJobResponse(EmptyPlaceHolderObject):
         return cls()
 
 
-class CloseJobResponse(EmptyPlaceHolderObject):
+class CloseJobResult(EmptyPlaceHolderObject):
     @classmethod
     def _from_generated(
             cls,

@@ -90,7 +90,7 @@ class TestExceptionPolicy(RouterTestCase):
     def setup_distribution_policy(self):
         client: RouterClient = self.create_client()
         distribution_policy_id = self.get_distribution_policy_id()
-        distribution_policy = client.upsert_distribution_policy(
+        distribution_policy = client.create_distribution_policy(
             identifier = distribution_policy_id,
             name = distribution_policy_id,
             offer_ttl_seconds = 10.0,
@@ -111,7 +111,7 @@ class TestExceptionPolicy(RouterTestCase):
     def setup_job_queue(self):
         client: RouterClient = self.create_client()
         job_queue_id = self.get_job_queue_id()
-        job_queue = client.upsert_queue(
+        job_queue = client.create_queue(
             identifier = job_queue_id,
             name = job_queue_id,
             labels = queue_labels,
@@ -131,7 +131,7 @@ class TestExceptionPolicy(RouterTestCase):
     def setup_classification_policy(self):
         client: RouterClient = self.create_client()
         cp_id = self.get_classification_policy_id()
-        classification_policy = client.upsert_classification_policy(
+        classification_policy = client.create_classification_policy(
             identifier = cp_id,
             name = cp_id,
             fallback_queue_id = self.get_job_queue_id(),
@@ -186,7 +186,7 @@ class TestExceptionPolicy(RouterTestCase):
                     )
                 }
 
-                exception_policy = router_client.upsert_exception_policy(
+                exception_policy = router_client.create_exception_policy(
                     identifier = ep_identifier,
                     name = ep_identifier,
                     exception_rules = exception_rules
@@ -235,7 +235,7 @@ class TestExceptionPolicy(RouterTestCase):
                     )
                 }
 
-                exception_policy = router_client.upsert_exception_policy(
+                exception_policy = router_client.create_exception_policy(
                     identifier = ep_identifier,
                     name = ep_identifier,
                     exception_rules = exception_rules
@@ -262,7 +262,7 @@ class TestExceptionPolicy(RouterTestCase):
                     )
                 }
 
-                exception_policy = router_client.upsert_exception_policy(
+                exception_policy = router_client.update_exception_policy(
                     identifier = ep_identifier,
                     name = ep_identifier,
                     exception_rules = updated_exception_rules
@@ -308,7 +308,7 @@ class TestExceptionPolicy(RouterTestCase):
                     )
                 }
 
-                exception_policy = router_client.upsert_exception_policy(
+                exception_policy = router_client.create_exception_policy(
                     identifier = ep_identifier,
                     name = ep_identifier,
                     exception_rules = exception_rules
@@ -369,7 +369,7 @@ class TestExceptionPolicy(RouterTestCase):
                     )
                 }
 
-                exception_policy = router_client.upsert_exception_policy(
+                exception_policy = router_client.create_exception_policy(
                     identifier = ep_identifier,
                     name = ep_identifier,
                     exception_rules = exception_rules
@@ -428,7 +428,7 @@ class TestExceptionPolicy(RouterTestCase):
                         )
                     }
 
-                    exception_policy = router_client.upsert_exception_policy(
+                    exception_policy = router_client.create_exception_policy(
                         identifier = identifier,
                         name = identifier,
                         exception_rules = exception_rules

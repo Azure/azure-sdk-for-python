@@ -76,7 +76,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
-            distribution_policy = await client.upsert_distribution_policy(
+            distribution_policy = await client.create_distribution_policy(
                 identifier = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
@@ -99,7 +99,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            job_queue = await router_client.upsert_queue(
+            job_queue = await router_client.create_queue(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 labels = queue_labels,
@@ -127,7 +127,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            job_queue = await router_client.upsert_queue(
+            job_queue = await router_client.create_queue(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 labels = queue_labels,
@@ -153,7 +153,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
             job_queue.labels = updated_queue_labels
 
-            update_job_queue = await router_client.upsert_queue(
+            update_job_queue = await router_client.update_queue(
                 identifier = dp_identifier,
                 queue = job_queue
             )
@@ -175,7 +175,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            job_queue = await router_client.upsert_queue(
+            job_queue = await router_client.create_queue(
                 identifier = dp_identifier,
                 name = dp_identifier,
                 labels = queue_labels,
@@ -213,7 +213,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         dp_identifier = "test_delete_q_async"
         router_client: RouterClient = self.create_client()
 
-        job_queue = await router_client.upsert_queue(
+        job_queue = await router_client.create_queue(
             identifier = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
@@ -251,7 +251,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 await router_client.delete_queue(identifier = identifier)
 
             for identifier in dp_identifiers:
-                job_queue = await router_client.upsert_queue(
+                job_queue = await router_client.create_queue(
                     identifier = identifier,
                     name = identifier,
                     labels = queue_labels,
