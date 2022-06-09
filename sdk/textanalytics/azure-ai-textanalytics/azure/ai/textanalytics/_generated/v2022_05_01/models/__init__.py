@@ -19,22 +19,21 @@ from ._models_py3 import AnalyzeTextPiiEntitiesRecognitionInput
 from ._models_py3 import AnalyzeTextSentimentAnalysisInput
 from ._models_py3 import AnalyzeTextTask
 from ._models_py3 import AnalyzeTextTaskResult
+from ._models_py3 import ClassificationDocumentResult
 from ._models_py3 import ClassificationResult
 from ._models_py3 import CustomEntitiesLROTask
 from ._models_py3 import CustomEntitiesResult
 from ._models_py3 import CustomEntitiesResultDocumentsItem
 from ._models_py3 import CustomEntitiesTaskParameters
 from ._models_py3 import CustomEntityRecognitionLROResult
+from ._models_py3 import CustomLabelClassificationResult
+from ._models_py3 import CustomLabelClassificationResultDocumentsItem
 from ._models_py3 import CustomMultiLabelClassificationLROResult
 from ._models_py3 import CustomMultiLabelClassificationLROTask
-from ._models_py3 import CustomMultiLabelClassificationResult
-from ._models_py3 import CustomMultiLabelClassificationResultDocumentsItem
 from ._models_py3 import CustomMultiLabelClassificationTaskParameters
 from ._models_py3 import CustomResult
 from ._models_py3 import CustomSingleLabelClassificationLROResult
 from ._models_py3 import CustomSingleLabelClassificationLROTask
-from ._models_py3 import CustomSingleLabelClassificationResult
-from ._models_py3 import CustomSingleLabelClassificationResultDocumentsItem
 from ._models_py3 import CustomSingleLabelClassificationTaskParameters
 from ._models_py3 import CustomTaskParameters
 from ._models_py3 import DetectedLanguage
@@ -58,13 +57,6 @@ from ._models_py3 import EntityLinkingTaskResult
 from ._models_py3 import EntityRecognitionLROResult
 from ._models_py3 import Error
 from ._models_py3 import ErrorResponse
-from ._models_py3 import ExtractedSummaryDocumentResult
-from ._models_py3 import ExtractedSummarySentence
-from ._models_py3 import ExtractiveSummarizationLROResult
-from ._models_py3 import ExtractiveSummarizationLROTask
-from ._models_py3 import ExtractiveSummarizationResult
-from ._models_py3 import ExtractiveSummarizationResultDocumentsItem
-from ._models_py3 import ExtractiveSummarizationTaskParameters
 from ._models_py3 import HealthcareAssertion
 from ._models_py3 import HealthcareEntitiesDocumentResult
 from ._models_py3 import HealthcareEntity
@@ -78,7 +70,6 @@ from ._models_py3 import HealthcareResultDocumentsItem
 from ._models_py3 import HealthcareTaskParameters
 from ._models_py3 import InnerErrorModel
 from ._models_py3 import JobErrors
-from ._models_py3 import JobMetadata
 from ._models_py3 import JobState
 from ._models_py3 import KeyPhraseExtractionLROResult
 from ._models_py3 import KeyPhraseLROTask
@@ -96,7 +87,6 @@ from ._models_py3 import LanguageInput
 from ._models_py3 import LinkedEntitiesDocumentResult
 from ._models_py3 import LinkedEntity
 from ._models_py3 import Match
-from ._models_py3 import MultiClassificationDocumentResult
 from ._models_py3 import MultiLanguageAnalysisInput
 from ._models_py3 import MultiLanguageInput
 from ._models_py3 import Pagination
@@ -121,7 +111,6 @@ from ._models_py3 import SentimentLROResult
 from ._models_py3 import SentimentResponse
 from ._models_py3 import SentimentResponseDocumentsItem
 from ._models_py3 import SentimentTaskResult
-from ._models_py3 import SingleClassificationDocumentResult
 from ._models_py3 import TargetConfidenceScoreLabel
 from ._models_py3 import TargetRelation
 from ._models_py3 import TaskIdentifier
@@ -141,8 +130,6 @@ from ._text_analytics_client_enums import (
     Conditionality,
     DocumentSentimentValue,
     ErrorCode,
-    ExtractiveSummarizationSortingCriteria,
-    FhirVersion,
     HealthcareEntityCategory,
     InnerErrorCode,
     PiiCategory,
@@ -155,7 +142,9 @@ from ._text_analytics_client_enums import (
     TokenSentimentValue,
     WarningCodeValue,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AnalyzeTextEntityLinkingInput',
     'AnalyzeTextEntityRecognitionInput',
@@ -170,22 +159,21 @@ __all__ = [
     'AnalyzeTextSentimentAnalysisInput',
     'AnalyzeTextTask',
     'AnalyzeTextTaskResult',
+    'ClassificationDocumentResult',
     'ClassificationResult',
     'CustomEntitiesLROTask',
     'CustomEntitiesResult',
     'CustomEntitiesResultDocumentsItem',
     'CustomEntitiesTaskParameters',
     'CustomEntityRecognitionLROResult',
+    'CustomLabelClassificationResult',
+    'CustomLabelClassificationResultDocumentsItem',
     'CustomMultiLabelClassificationLROResult',
     'CustomMultiLabelClassificationLROTask',
-    'CustomMultiLabelClassificationResult',
-    'CustomMultiLabelClassificationResultDocumentsItem',
     'CustomMultiLabelClassificationTaskParameters',
     'CustomResult',
     'CustomSingleLabelClassificationLROResult',
     'CustomSingleLabelClassificationLROTask',
-    'CustomSingleLabelClassificationResult',
-    'CustomSingleLabelClassificationResultDocumentsItem',
     'CustomSingleLabelClassificationTaskParameters',
     'CustomTaskParameters',
     'DetectedLanguage',
@@ -209,13 +197,6 @@ __all__ = [
     'EntityRecognitionLROResult',
     'Error',
     'ErrorResponse',
-    'ExtractedSummaryDocumentResult',
-    'ExtractedSummarySentence',
-    'ExtractiveSummarizationLROResult',
-    'ExtractiveSummarizationLROTask',
-    'ExtractiveSummarizationResult',
-    'ExtractiveSummarizationResultDocumentsItem',
-    'ExtractiveSummarizationTaskParameters',
     'HealthcareAssertion',
     'HealthcareEntitiesDocumentResult',
     'HealthcareEntity',
@@ -229,7 +210,6 @@ __all__ = [
     'HealthcareTaskParameters',
     'InnerErrorModel',
     'JobErrors',
-    'JobMetadata',
     'JobState',
     'KeyPhraseExtractionLROResult',
     'KeyPhraseLROTask',
@@ -247,7 +227,6 @@ __all__ = [
     'LinkedEntitiesDocumentResult',
     'LinkedEntity',
     'Match',
-    'MultiClassificationDocumentResult',
     'MultiLanguageAnalysisInput',
     'MultiLanguageInput',
     'Pagination',
@@ -272,7 +251,6 @@ __all__ = [
     'SentimentResponse',
     'SentimentResponseDocumentsItem',
     'SentimentTaskResult',
-    'SingleClassificationDocumentResult',
     'TargetConfidenceScoreLabel',
     'TargetRelation',
     'TaskIdentifier',
@@ -289,8 +267,6 @@ __all__ = [
     'Conditionality',
     'DocumentSentimentValue',
     'ErrorCode',
-    'ExtractiveSummarizationSortingCriteria',
-    'FhirVersion',
     'HealthcareEntityCategory',
     'InnerErrorCode',
     'PiiCategory',
@@ -303,3 +279,5 @@ __all__ = [
     'TokenSentimentValue',
     'WarningCodeValue',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
