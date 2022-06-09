@@ -428,6 +428,12 @@
       ]
     },
     {
+      "filename": "sdk/loadtestservice/azure-analytics-loadtestservice/azure/analytics/loadtestservice/operations/*py",
+      "words":[
+        "vusers"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
