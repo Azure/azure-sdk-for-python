@@ -4,3 +4,4 @@ include *.md
 include LICENSE
 include azure/__init__.py
 include azure/ai/__init__.py
+include azure/ai/anomalydetector/py.typed

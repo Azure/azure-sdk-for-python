@@ -1,0 +1,78 @@
+{
+  "id": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/jobs/66a17733-bff1-11eb-81fe-dc4a3e6f89be",
+  "name": "66a17733-bff1-11eb-81fe-dc4a3e6f89be",
+  "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+  "properties": {
+    "description": null,
+    "tags": {
+      "_aml_system_max_concurrent_jobs": "10",
+      "final_best_metric_update_retry_count": "1"
+    },
+    "properties": {
+      "primary_metric_config": "{\"name\": \"test-multi_logloss\", \"goal\": \"minimize\"}",
+      "resume_from": "null",
+      "runTemplate": "HyperDrive",
+      "azureml.runsource": "hyperdrive",
+      "platform": "AML",
+      "ContentSnapshotId": "e82a8ac5-587d-4161-b679-6f75d8069e86",
+      "azureml.datastoreId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/datastores/paulshwestus48237393424_azureml"
+    },
+    "provisioningState": "Succeeded",
+    "services": {
+      "Studio": {
+        "type": "Studio",
+        "port": null,
+        "endpoint": "https://ml.azure.com/runs/66a17733-bff1-11eb-81fe-dc4a3e6f89be?wsid=/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/paulshwestus4/workspaces/paulshwestus4",
+        "properties": null
+      }
+    },
+    "experimentName": "Default",
+    "output": {
+      "datastoreId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/datastores/paulshwestus48237393424_azureml",
+      "path": "ExperimentRun/dcid.66a17733-bff1-11eb-81fe-dc4a3e6f89be"
+    },
+    "compute": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/computes/goazurego",
+    "resources": {
+      "instanceCount": null,
+      "properties": null
+    },
+    "priority": null,
+    "jobType": "Sweep",
+    "status": "Failed",
+    "searchSpace": {
+      "learning_rate": "[\"uniform\", [0.01, 0.9]]",
+      "boosting": "[\"choice\", [[\"gbdt\", \"dart\"]]"
+    },
+    "sampling_algorithm": "Random",
+    "maxTotalTrials": 20,
+    "maxConcurrentTrials": 10,
+    "timeout": "PT2H",
+    "earlyTermination": null,
+    "objective": {
+      "primaryMetric": "test-multi_logloss",
+      "goal": "Minimize"
+    },
+    "trial": {
+      "timeout": null,
+      "codeId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/codes/652f0987-bff1-11eb-bb01-dc4a3e6f89be/versions/1",
+      "command": "python iris.py --iris-csv $AZURE_ML_INPUT_iris --learning-rate $AZUREML_SWEEP_learning_rate --boosting $AZUREML_SWEEP_boosting",
+      "environmentId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/environments/AzureML-Dask-CPU/versions/28",
+      "inputDataBindings": {
+        "iris": {
+          "dataId": "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/paulshwestus4/providers/Microsoft.MachineLearningServices/workspaces/paulshwestus4/data/660cad0c-bff1-11eb-b124-dc4a3e6f89be/versions/1",
+          "pathOnCompute": null,
+          "mode": "Mount"
+        }
+      },
+      "outputDataBindings": null,
+      "environmentVariables": {},
+      "distribution": null
+    },
+    "identity": null
+  },
+  "systemData": {
+    "createdAt": "2021-05-28T20:15:10.2894919Z",
+    "createdBy": "Paul Shealy",
+    "createdByType": "User"
+  }
+}

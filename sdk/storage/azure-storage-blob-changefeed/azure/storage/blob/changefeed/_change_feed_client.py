@@ -31,6 +31,14 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword int max_single_get_size:
+        The maximum size for a changefeed blob to be downloaded in a single call,
+        the exceeded part will be downloaded in chunks.
+    :keyword int max_chunk_get_size:
+        The maximum chunk size used for downloading a changefeed blob.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -84,7 +92,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
         return cls(account_url, credential=credential, **kwargs)
 
     def list_changes(self, **kwargs):
-        # type: (Optional[datetime], Optional[datetime], **Any) -> ItemPaged[Dict]
+        # type: (**Any) -> ItemPaged[Dict]
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.

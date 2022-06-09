@@ -509,18 +509,17 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :vartype cache_control: str
     :ivar blob_sequence_number:
     :vartype blob_sequence_number: long
-    :ivar blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+    :ivar blob_type: Known values are: "BlockBlob", "PageBlob", "AppendBlob".
     :vartype blob_type: str or ~azure.storage.blob.models.BlobType
-    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :ivar lease_status: Known values are: "locked", "unlocked".
     :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
-     "broken".
+    :ivar lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
     :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :ivar lease_duration: Known values are: "infinite", "fixed".
     :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
     :ivar copy_id:
     :vartype copy_id: str
-    :ivar copy_status: Possible values include: "pending", "success", "aborted", "failed".
+    :ivar copy_status: Known values are: "pending", "success", "aborted", "failed".
     :vartype copy_status: str or ~azure.storage.blob.models.CopyStatusType
     :ivar copy_source:
     :vartype copy_source: str
@@ -540,12 +539,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :vartype deleted_time: ~datetime.datetime
     :ivar remaining_retention_days:
     :vartype remaining_retention_days: int
-    :ivar access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
-     "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+    :ivar access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
+     "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium".
     :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred:
     :vartype access_tier_inferred: bool
-    :ivar archive_status: Possible values include: "rehydrate-pending-to-hot",
+    :ivar archive_status: Known values are: "rehydrate-pending-to-hot",
      "rehydrate-pending-to-cool".
     :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :ivar customer_provided_key_sha256:
@@ -561,14 +560,14 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :ivar is_sealed:
     :vartype is_sealed: bool
     :ivar rehydrate_priority: If an object is in rehydrate pending state then this header is
-     returned with priority of rehydrate. Valid values are High and Standard. Possible values
-     include: "High", "Standard".
+     returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+     "High", "Standard".
     :vartype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :ivar last_accessed_on:
     :vartype last_accessed_on: ~datetime.datetime
     :ivar immutability_policy_expires_on:
     :vartype immutability_policy_expires_on: ~datetime.datetime
-    :ivar immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+    :ivar immutability_policy_mode: Known values are: "Mutable", "Unlocked", "Locked".
     :vartype immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
     :ivar legal_hold:
     :vartype legal_hold: bool
@@ -652,18 +651,17 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :paramtype cache_control: str
         :keyword blob_sequence_number:
         :paramtype blob_sequence_number: long
-        :keyword blob_type: Possible values include: "BlockBlob", "PageBlob", "AppendBlob".
+        :keyword blob_type: Known values are: "BlockBlob", "PageBlob", "AppendBlob".
         :paramtype blob_type: str or ~azure.storage.blob.models.BlobType
-        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :keyword lease_status: Known values are: "locked", "unlocked".
         :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
-         "broken".
+        :keyword lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
         :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :keyword lease_duration: Known values are: "infinite", "fixed".
         :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
         :keyword copy_id:
         :paramtype copy_id: str
-        :keyword copy_status: Possible values include: "pending", "success", "aborted", "failed".
+        :keyword copy_status: Known values are: "pending", "success", "aborted", "failed".
         :paramtype copy_status: str or ~azure.storage.blob.models.CopyStatusType
         :keyword copy_source:
         :paramtype copy_source: str
@@ -683,12 +681,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :paramtype deleted_time: ~datetime.datetime
         :keyword remaining_retention_days:
         :paramtype remaining_retention_days: int
-        :keyword access_tier: Possible values include: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
-         "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive".
+        :keyword access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
+         "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium".
         :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword access_tier_inferred:
         :paramtype access_tier_inferred: bool
-        :keyword archive_status: Possible values include: "rehydrate-pending-to-hot",
+        :keyword archive_status: Known values are: "rehydrate-pending-to-hot",
          "rehydrate-pending-to-cool".
         :paramtype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
         :keyword customer_provided_key_sha256:
@@ -704,14 +702,14 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         :keyword is_sealed:
         :paramtype is_sealed: bool
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
-         returned with priority of rehydrate. Valid values are High and Standard. Possible values
-         include: "High", "Standard".
+         returned with priority of rehydrate. Valid values are High and Standard. Known values are:
+         "High", "Standard".
         :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :keyword last_accessed_on:
         :paramtype last_accessed_on: ~datetime.datetime
         :keyword immutability_policy_expires_on:
         :paramtype immutability_policy_expires_on: ~datetime.datetime
-        :keyword immutability_policy_mode: Possible values include: "Mutable", "Unlocked", "Locked".
+        :keyword immutability_policy_mode: Known values are: "Mutable", "Unlocked", "Locked".
         :paramtype immutability_policy_mode: str or
          ~azure.storage.blob.models.BlobImmutabilityPolicyMode
         :keyword legal_hold:
@@ -1074,14 +1072,13 @@ class ContainerProperties(msrest.serialization.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar etag: Required.
     :vartype etag: str
-    :ivar lease_status: Possible values include: "locked", "unlocked".
+    :ivar lease_status: Known values are: "locked", "unlocked".
     :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-    :ivar lease_state: Possible values include: "available", "leased", "expired", "breaking",
-     "broken".
+    :ivar lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
     :vartype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-    :ivar lease_duration: Possible values include: "infinite", "fixed".
+    :ivar lease_duration: Known values are: "infinite", "fixed".
     :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-    :ivar public_access: Possible values include: "container", "blob".
+    :ivar public_access: Known values are: "container", "blob".
     :vartype public_access: str or ~azure.storage.blob.models.PublicAccessType
     :ivar has_immutability_policy:
     :vartype has_immutability_policy: bool
@@ -1130,14 +1127,13 @@ class ContainerProperties(msrest.serialization.Model):
         :paramtype last_modified: ~datetime.datetime
         :keyword etag: Required.
         :paramtype etag: str
-        :keyword lease_status: Possible values include: "locked", "unlocked".
+        :keyword lease_status: Known values are: "locked", "unlocked".
         :paramtype lease_status: str or ~azure.storage.blob.models.LeaseStatusType
-        :keyword lease_state: Possible values include: "available", "leased", "expired", "breaking",
-         "broken".
+        :keyword lease_state: Known values are: "available", "leased", "expired", "breaking", "broken".
         :paramtype lease_state: str or ~azure.storage.blob.models.LeaseStateType
-        :keyword lease_duration: Possible values include: "infinite", "fixed".
+        :keyword lease_duration: Known values are: "infinite", "fixed".
         :paramtype lease_duration: str or ~azure.storage.blob.models.LeaseDurationType
-        :keyword public_access: Possible values include: "container", "blob".
+        :keyword public_access: Known values are: "container", "blob".
         :paramtype public_access: str or ~azure.storage.blob.models.PublicAccessType
         :keyword has_immutability_policy:
         :paramtype has_immutability_policy: bool
@@ -1256,7 +1252,7 @@ class CpkInfo(msrest.serialization.Model):
     :vartype encryption_key_sha256: str
     :ivar encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
      the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-     provided. Possible values include: "None", "AES256".
+     provided. Known values are: "None", "AES256".
     :vartype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
@@ -1280,7 +1276,7 @@ class CpkInfo(msrest.serialization.Model):
         :paramtype encryption_key_sha256: str
         :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
-         header is provided. Possible values include: "None", "AES256".
+         header is provided. Known values are: "None", "AES256".
         :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         """
         super(CpkInfo, self).__init__(**kwargs)
@@ -1379,6 +1375,10 @@ class FilterBlobItem(msrest.serialization.Model):
     :vartype container_name: str
     :ivar tags: A set of tags. Blob tags.
     :vartype tags: ~azure.storage.blob.models.BlobTags
+    :ivar version_id:
+    :vartype version_id: str
+    :ivar is_current_version:
+    :vartype is_current_version: bool
     """
 
     _validation = {
@@ -1390,6 +1390,8 @@ class FilterBlobItem(msrest.serialization.Model):
         'name': {'key': 'Name', 'type': 'str'},
         'container_name': {'key': 'ContainerName', 'type': 'str'},
         'tags': {'key': 'Tags', 'type': 'BlobTags'},
+        'version_id': {'key': 'VersionId', 'type': 'str'},
+        'is_current_version': {'key': 'IsCurrentVersion', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Blob'
@@ -1406,11 +1408,17 @@ class FilterBlobItem(msrest.serialization.Model):
         :paramtype container_name: str
         :keyword tags: A set of tags. Blob tags.
         :paramtype tags: ~azure.storage.blob.models.BlobTags
+        :keyword version_id:
+        :paramtype version_id: str
+        :keyword is_current_version:
+        :paramtype is_current_version: bool
         """
         super(FilterBlobItem, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.container_name = kwargs['container_name']
         self.tags = kwargs.get('tags', None)
+        self.version_id = kwargs.get('version_id', None)
+        self.is_current_version = kwargs.get('is_current_version', None)
 
 
 class FilterBlobSegment(msrest.serialization.Model):
@@ -1470,7 +1478,7 @@ class GeoReplication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. The status of the secondary location. Possible values include: "live",
+    :ivar status: Required. The status of the secondary location. Known values are: "live",
      "bootstrap", "unavailable".
     :vartype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
     :ivar last_sync_time: Required. A GMT date/time value, to the second. All primary writes
@@ -1494,8 +1502,8 @@ class GeoReplication(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword status: Required. The status of the secondary location. Possible values include:
-         "live", "bootstrap", "unavailable".
+        :keyword status: Required. The status of the secondary location. Known values are: "live",
+         "bootstrap", "unavailable".
         :paramtype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
         :keyword last_sync_time: Required. A GMT date/time value, to the second. All primary writes
          preceding this value are guaranteed to be available for read operations at the secondary.
@@ -1974,11 +1982,14 @@ class PageList(msrest.serialization.Model):
     :vartype page_range: list[~azure.storage.blob.models.PageRange]
     :ivar clear_range:
     :vartype clear_range: list[~azure.storage.blob.models.ClearRange]
+    :ivar next_marker:
+    :vartype next_marker: str
     """
 
     _attribute_map = {
         'page_range': {'key': 'PageRange', 'type': '[PageRange]'},
         'clear_range': {'key': 'ClearRange', 'type': '[ClearRange]'},
+        'next_marker': {'key': 'NextMarker', 'type': 'str'},
     }
 
     def __init__(
@@ -1990,10 +2001,13 @@ class PageList(msrest.serialization.Model):
         :paramtype page_range: list[~azure.storage.blob.models.PageRange]
         :keyword clear_range:
         :paramtype clear_range: list[~azure.storage.blob.models.ClearRange]
+        :keyword next_marker:
+        :paramtype next_marker: str
         """
         super(PageList, self).__init__(**kwargs)
         self.page_range = kwargs.get('page_range', None)
         self.clear_range = kwargs.get('clear_range', None)
+        self.next_marker = kwargs.get('next_marker', None)
 
 
 class PageRange(msrest.serialization.Model):
@@ -2040,8 +2054,8 @@ class QueryFormat(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The quick query format type. Possible values include: "delimited",
-     "json", "arrow", "parquet".
+    :ivar type: Required. The quick query format type. Known values are: "delimited", "json",
+     "arrow", "parquet".
     :vartype type: str or ~azure.storage.blob.models.QueryFormatType
     :ivar delimited_text_configuration: Groups the settings used for interpreting the blob data if
      the blob is delimited text formatted.
@@ -2072,8 +2086,8 @@ class QueryFormat(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. The quick query format type. Possible values include: "delimited",
-         "json", "arrow", "parquet".
+        :keyword type: Required. The quick query format type. Known values are: "delimited", "json",
+         "arrow", "parquet".
         :paramtype type: str or ~azure.storage.blob.models.QueryFormatType
         :keyword delimited_text_configuration: Groups the settings used for interpreting the blob data
          if the blob is delimited text formatted.

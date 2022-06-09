@@ -1,67 +1,83 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json, text/json",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "99",
+        "Content-Length": "202",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "d30321ae-5d10-11ec-b60f-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022I like nature. I do not like being inside\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "I like nature. I do not like being inside",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9a126709-fec9-4e00-9e9a-15cce6b303d6",
+        "apim-request-id": "50e20d3c-dc1b-44ad-8ed9-96bfc21d2fb2",
+        "Content-Length": "522",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:05:37 GMT",
+        "Date": "Tue, 03 May 2022 00:15:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "78"
+        "x-envoy-upstream-service-time": "19"
       },
       "ResponseBody": {
-        "documents": [
-          {
-            "id": "0",
-            "sentiment": "mixed",
-            "confidenceScores": {
-              "positive": 0.44,
-              "neutral": 0.27,
-              "negative": 0.29
-            },
-            "sentences": [
-              {
-                "sentiment": "positive",
-                "confidenceScores": {
-                  "positive": 0.88,
-                  "neutral": 0.11,
-                  "negative": 0.01
-                },
-                "offset": 0,
-                "length": 14,
-                "text": "I like nature."
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "0",
+              "sentiment": "mixed",
+              "confidenceScores": {
+                "positive": 0.38,
+                "neutral": 0.14,
+                "negative": 0.48
               },
-              {
-                "sentiment": "negative",
-                "confidenceScores": {
-                  "positive": 0.01,
-                  "neutral": 0.43,
-                  "negative": 0.56
+              "sentences": [
+                {
+                  "sentiment": "positive",
+                  "confidenceScores": {
+                    "positive": 0.74,
+                    "neutral": 0.23,
+                    "negative": 0.02
+                  },
+                  "offset": 0,
+                  "length": 15,
+                  "text": "I like nature. "
                 },
-                "offset": 15,
-                "length": 26,
-                "text": "I do not like being inside"
-              }
-            ],
-            "warnings": []
-          }
-        ],
-        "errors": [],
-        "modelVersion": "2020-04-01"
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.04,
+                    "negative": 0.94
+                  },
+                  "offset": 15,
+                  "length": 26,
+                  "text": "I do not like being inside"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
       }
     }
   ],

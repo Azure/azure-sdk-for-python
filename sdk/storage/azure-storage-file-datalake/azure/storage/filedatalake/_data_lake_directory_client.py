@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, TypeVar
+from typing import ( # pylint: disable=unused-import
+    Any, Dict, Optional, Type, TypeVar, Union,
+    TYPE_CHECKING)
 
 try:
     from urllib.parse import quote, unquote
@@ -15,6 +17,9 @@ from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 ClassType = TypeVar("ClassType")
 
@@ -46,6 +51,9 @@ class DataLakeDirectoryClient(PathClient):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -94,8 +102,8 @@ class DataLakeDirectoryClient(PathClient):
             an instance of a AzureSasCredential from azure.core.credentials, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :return a DataLakeDirectoryClient
-        :rtype ~azure.storage.filedatalake.DataLakeDirectoryClient
+        :return: a DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
@@ -125,6 +133,23 @@ class DataLakeDirectoryClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -149,9 +174,13 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: response dict (Etag and last modified).
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -165,7 +194,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._create('directory', metadata=metadata, **kwargs)
 
     def delete_directory(self, **kwargs):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Marks the specified directory for deletion.
 
@@ -192,7 +221,8 @@ class DataLakeDirectoryClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: None
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -231,6 +261,10 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the directory was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties
@@ -251,7 +285,7 @@ class DataLakeDirectoryClient(PathClient):
         """
         Returns True if a directory exists and returns False otherwise.
 
-        :kwarg int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -375,6 +409,23 @@ class DataLakeDirectoryClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -399,6 +450,9 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient for the subdirectory.
@@ -473,6 +527,31 @@ class DataLakeDirectoryClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -497,6 +576,9 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient

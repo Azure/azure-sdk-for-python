@@ -625,12 +625,15 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :vartype mode: str or ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting
+    :ivar error: The deployment error.
+    :vartype error: ~azure.mgmt.resource.resources.v2016_09_01.models.ErrorResponse
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'correlation_id': {'readonly': True},
         'timestamp': {'readonly': True},
+        'error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -646,6 +649,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
     def __init__(
@@ -698,6 +702,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         self.parameters_link = parameters_link
         self.mode = mode
         self.debug_setting = debug_setting
+        self.error = None
 
 
 class DeploymentValidateResult(msrest.serialization.Model):

@@ -107,6 +107,12 @@ class CosmosDbServicePrincipalCredentialType(with_metaclass(CaseInsensitiveEnumM
     SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
     SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
+class CredentialReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Credential reference type.
+    """
+
+    CREDENTIAL_REFERENCE = "CredentialReference"
+
 class DataFlowComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Compute type of the cluster which will execute data flow job.
     """
@@ -122,6 +128,12 @@ class DataFlowDebugCommandType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     EXECUTE_PREVIEW_QUERY = "executePreviewQuery"
     EXECUTE_STATISTICS_QUERY = "executeStatisticsQuery"
     EXECUTE_EXPRESSION_QUERY = "executeExpressionQuery"
+
+class DataFlowReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Data flow reference type.
+    """
+
+    DATA_FLOW_REFERENCE = "DataFlowReference"
 
 class DatasetCompressionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """All available compression levels.
@@ -411,6 +423,12 @@ class ManagedIntegrationRuntimeNodeStatus(with_metaclass(CaseInsensitiveEnumMeta
     AVAILABLE = "Available"
     RECYCLING = "Recycling"
     UNAVAILABLE = "Unavailable"
+
+class ManagedVirtualNetworkReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Managed Virtual Network reference type.
+    """
+
+    MANAGED_VIRTUAL_NETWORK_REFERENCE = "ManagedVirtualNetworkReference"
 
 class MongoDbAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the MongoDB database.
@@ -815,6 +833,12 @@ class TeradataPartitionOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     NONE = "None"
     HASH = "Hash"
     DYNAMIC_RANGE = "DynamicRange"
+
+class TriggerReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Trigger reference type.
+    """
+
+    TRIGGER_REFERENCE = "TriggerReference"
 
 class TriggerRunStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Trigger run status.

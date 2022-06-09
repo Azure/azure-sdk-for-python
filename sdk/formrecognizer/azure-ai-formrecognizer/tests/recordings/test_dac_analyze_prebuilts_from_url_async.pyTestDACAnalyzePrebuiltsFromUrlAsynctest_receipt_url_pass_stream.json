@@ -1,29 +1,27 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-06-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "28",
+        "Content-Length": "25",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "51b3cb2d-9b4c-11ec-8e03-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "urlSource": "b\u0027\\x89PNG\u0027"
+        "urlSource": "iVBORw=="
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "497954be-b52c-482d-81ef-32745ad91bf4",
+        "apim-request-id": "791be534-1620-47d5-82ae-9e963e95a581",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Mar 2022 23:47:42 GMT",
-        "Server": "istio-envoy",
+        "Date": "Wed, 25 May 2022 21:43:15 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "5"
       },
       "ResponseBody": {
         "error": {

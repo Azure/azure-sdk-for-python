@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from azure.keyvault.keys import ApiVersion, KeyClient
 import pytest
+from azure.keyvault.keys import ApiVersion, KeyClient
 
 
 @pytest.mark.parametrize("version", ApiVersion)

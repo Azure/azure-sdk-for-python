@@ -5,30 +5,26 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import pytest
 from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
-import pytest
-from devtools_testutils import StorageAccountPreparer
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote
-
-from settings.testcase import BlobPreparer
-from azure.core.exceptions import (
-    ResourceExistsError, ResourceModifiedError, HttpResponseError)
+from azure.core.exceptions import (ResourceExistsError, ResourceModifiedError, HttpResponseError)
 from azure.storage.blob import (
+    AccountSasPermissions,
+    BlobBlock,
+    BlobClient,
+    BlobSasPermissions,
     BlobServiceClient,
-    BlobBlock, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_container_sas,
-    ContainerSasPermissions, BlobClient, generate_blob_sas, BlobSasPermissions)
+    ResourceTypes,
+    generate_account_sas,
+    generate_blob_sas)
 
 from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion
+from settings.testcase import BlobPreparer
 
 #------------------------------------------------------------------------------
-
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 #------------------------------------------------------------------------------
@@ -277,6 +273,76 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertEqual(len(resp), len(tags))
 
     @BlobPreparer()
+    def test_start_copy_from_url_with_tags_copy_tags(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
+
+        source_sas = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            source_blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True, tag=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        source_url = source_blob.url + '?' + source_sas
+        dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+
+        # Act
+        with self.assertRaises(ValueError):
+            dest_blob.start_copy_from_url(source_url, tags="COPY")
+
+        copy = dest_blob.start_copy_from_url(source_url, tags="COPY", requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_tags = dest_blob.get_blob_tags()
+
+        # Assert
+        self.assertIsNotNone(copy_tags)
+        self.assertEqual(tags, copy_tags)
+
+    @BlobPreparer()
+    def test_start_copy_from_url_with_tags_replace_tags(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags2 = {"hello": "world"}
+        source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
+
+        source_sas = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            source_blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        source_url = source_blob.url + '?' + source_sas
+        dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+
+        # Act
+        copy = dest_blob.start_copy_from_url(source_url, tags=tags2, requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_tags = dest_blob.get_blob_tags()
+
+        # Assert
+        self.assertIsNotNone(copy_tags)
+        self.assertEqual(tags2, copy_tags)
+
+    @BlobPreparer()
     def test_list_blobs_returns_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -350,7 +416,6 @@ class StorageBlobTagsTest(StorageTestCase):
         items_on_page1 = list(first_page)
         self.assertEqual(1, len(items_on_page1))
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_set_blob_tags_using_blob_sas(self, storage_account_name, storage_account_key):

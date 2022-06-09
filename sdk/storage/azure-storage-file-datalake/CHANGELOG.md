@@ -1,12 +1,33 @@
 # Release History
 
-## 12.7.0b1 (Unreleased)
+## 12.8.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-08-06
+- Added support for `owner`, `group`, `acl`, `lease_id`, `lease_duration` to both file and directory `create` APIs
+- Added support for `expiry_options`, `expires_on` to file `create` APIs
+- Added `delete_files()` API
+
+## 12.7.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.7.0b1.
+
+### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.7.0b1 (2022-04-14)
+
+### Features Added
+- Added support for service version 2021-06-08 as well as previous versions.
+- Added support for Customer-Provided Keys (cpk) to all required APIs.
+- The `get_paths()` API now returns `creation_time` and `expiry_time` for each path.
 
 ### Bugs Fixed
 - Updated `create_file_system()` docstring to have the correct return-type of `None`
 - Fixed parsing of extra `/` symbols not being stripped properly in `async` clients
+- Fixed a bug where `get_paths()` would fail if a path did not contain `last_modified` from the service.
 
 ## 12.6.0 (2022-03-08)
 

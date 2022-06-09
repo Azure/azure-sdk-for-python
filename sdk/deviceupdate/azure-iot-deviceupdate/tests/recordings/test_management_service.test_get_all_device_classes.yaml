@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b2 Python/3.8.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://https://fake_account.account.purview.azure.com/deviceupdate/instance/management/deviceclasses?api-version=2021-06-01-preview
+    uri: https://fake_account.account.purview.azure.com/deviceupdate/instance/management/deviceclasses?api-version=2021-06-01-preview
   response:
     body:
       string: "{\r\n  \"value\": []\r\n}"
@@ -21,9 +21,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 14 Jan 2022 03:28:59 GMT
+      - Sat, 14 May 2022 03:45:56 GMT
       traceparent:
-      - 00-814bdd3e5f0d7d4ba63f140e33528e5e-04d6be5b18ac8a47-00
+      - 00-bbec65238cea1343b76f9abbefb1dc51-0128b0c7f326664a-00
     status:
       code: 200
       message: OK

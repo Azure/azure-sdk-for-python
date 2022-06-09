@@ -34,8 +34,10 @@ from ._models_py3 import AmazonS3Dataset
 from ._models_py3 import AmazonS3LinkedService
 from ._models_py3 import AmazonS3Location
 from ._models_py3 import AmazonS3ReadSettings
+from ._models_py3 import AppFiguresLinkedService
 from ._models_py3 import AppendVariableActivity
 from ._models_py3 import ArmIdWrapper
+from ._models_py3 import AsanaLinkedService
 from ._models_py3 import AvroDataset
 from ._models_py3 import AvroFormat
 from ._models_py3 import AvroSink
@@ -205,6 +207,7 @@ from ._models_py3 import DatasetReference
 from ._models_py3 import DatasetResource
 from ._models_py3 import DatasetSchemaDataElement
 from ._models_py3 import DatasetStorageFormat
+from ._models_py3 import DataworldLinkedService
 from ._models_py3 import Db2LinkedService
 from ._models_py3 import Db2Source
 from ._models_py3 import Db2TableDataset
@@ -246,6 +249,7 @@ from ._models_py3 import ExecuteDataFlowActivity
 from ._models_py3 import ExecuteDataFlowActivityTypeProperties
 from ._models_py3 import ExecuteDataFlowActivityTypePropertiesCompute
 from ._models_py3 import ExecutePipelineActivity
+from ._models_py3 import ExecutePipelineActivityPolicy
 from ._models_py3 import ExecutePowerQueryActivityTypeProperties
 from ._models_py3 import ExecuteSSISPackageActivity
 from ._models_py3 import ExecuteWranglingDataflowActivity
@@ -286,6 +290,8 @@ from ._models_py3 import GetSsisObjectMetadataRequest
 from ._models_py3 import GitHubAccessTokenRequest
 from ._models_py3 import GitHubAccessTokenResponse
 from ._models_py3 import GitHubClientSecret
+from ._models_py3 import GlobalParameterListResponse
+from ._models_py3 import GlobalParameterResource
 from ._models_py3 import GlobalParameterSpecification
 from ._models_py3 import GoogleAdWordsLinkedService
 from ._models_py3 import GoogleAdWordsObjectDataset
@@ -496,6 +502,7 @@ from ._models_py3 import PowerQuerySource
 from ._models_py3 import PrestoLinkedService
 from ._models_py3 import PrestoObjectDataset
 from ._models_py3 import PrestoSource
+from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnectionListResponse
 from ._models_py3 import PrivateEndpointConnectionResource
 from ._models_py3 import PrivateLinkConnectionApprovalRequest
@@ -504,6 +511,7 @@ from ._models_py3 import PrivateLinkConnectionState
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceProperties
 from ._models_py3 import PrivateLinkResourcesWrapper
+from ._models_py3 import PurviewConfiguration
 from ._models_py3 import QueryDataFlowDebugSessionsResponse
 from ._models_py3 import QuickBooksLinkedService
 from ._models_py3 import QuickBooksObjectDataset
@@ -670,6 +678,7 @@ from ._models_py3 import TriggerRunsQueryResponse
 from ._models_py3 import TriggerSubscriptionOperationStatus
 from ._models_py3 import TumblingWindowTrigger
 from ._models_py3 import TumblingWindowTriggerDependencyReference
+from ._models_py3 import TwilioLinkedService
 from ._models_py3 import TypeConversionSettings
 from ._models_py3 import UntilActivity
 from ._models_py3 import UpdateIntegrationRuntimeNodeRequest
@@ -717,8 +726,10 @@ from ._data_factory_management_client_enums import (
     CopyBehaviorType,
     CosmosDbConnectionMode,
     CosmosDbServicePrincipalCredentialType,
+    CredentialReferenceType,
     DataFlowComputeType,
     DataFlowDebugCommandType,
+    DataFlowReferenceType,
     DatasetCompressionLevel,
     DayOfWeek,
     DaysOfWeek,
@@ -754,6 +765,7 @@ from ._data_factory_management_client_enums import (
     JsonFormatFilePattern,
     JsonWriteFilePattern,
     ManagedIntegrationRuntimeNodeStatus,
+    ManagedVirtualNetworkReferenceType,
     MongoDbAuthenticationType,
     NetezzaPartitionOption,
     ODataAadServicePrincipalCredentialType,
@@ -800,6 +812,7 @@ from ._data_factory_management_client_enums import (
     TeamDeskAuthenticationType,
     TeradataAuthenticationType,
     TeradataPartitionOption,
+    TriggerReferenceType,
     TriggerRunStatus,
     TriggerRuntimeState,
     TumblingWindowFrequency,
@@ -839,8 +852,10 @@ __all__ = [
     'AmazonS3LinkedService',
     'AmazonS3Location',
     'AmazonS3ReadSettings',
+    'AppFiguresLinkedService',
     'AppendVariableActivity',
     'ArmIdWrapper',
+    'AsanaLinkedService',
     'AvroDataset',
     'AvroFormat',
     'AvroSink',
@@ -1010,6 +1025,7 @@ __all__ = [
     'DatasetResource',
     'DatasetSchemaDataElement',
     'DatasetStorageFormat',
+    'DataworldLinkedService',
     'Db2LinkedService',
     'Db2Source',
     'Db2TableDataset',
@@ -1051,6 +1067,7 @@ __all__ = [
     'ExecuteDataFlowActivityTypeProperties',
     'ExecuteDataFlowActivityTypePropertiesCompute',
     'ExecutePipelineActivity',
+    'ExecutePipelineActivityPolicy',
     'ExecutePowerQueryActivityTypeProperties',
     'ExecuteSSISPackageActivity',
     'ExecuteWranglingDataflowActivity',
@@ -1091,6 +1108,8 @@ __all__ = [
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
     'GitHubClientSecret',
+    'GlobalParameterListResponse',
+    'GlobalParameterResource',
     'GlobalParameterSpecification',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
@@ -1301,6 +1320,7 @@ __all__ = [
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
+    'PrivateEndpoint',
     'PrivateEndpointConnectionListResponse',
     'PrivateEndpointConnectionResource',
     'PrivateLinkConnectionApprovalRequest',
@@ -1309,6 +1329,7 @@ __all__ = [
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
     'PrivateLinkResourcesWrapper',
+    'PurviewConfiguration',
     'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
@@ -1475,6 +1496,7 @@ __all__ = [
     'TriggerSubscriptionOperationStatus',
     'TumblingWindowTrigger',
     'TumblingWindowTriggerDependencyReference',
+    'TwilioLinkedService',
     'TypeConversionSettings',
     'UntilActivity',
     'UpdateIntegrationRuntimeNodeRequest',
@@ -1519,8 +1541,10 @@ __all__ = [
     'CopyBehaviorType',
     'CosmosDbConnectionMode',
     'CosmosDbServicePrincipalCredentialType',
+    'CredentialReferenceType',
     'DataFlowComputeType',
     'DataFlowDebugCommandType',
+    'DataFlowReferenceType',
     'DatasetCompressionLevel',
     'DayOfWeek',
     'DaysOfWeek',
@@ -1556,6 +1580,7 @@ __all__ = [
     'JsonFormatFilePattern',
     'JsonWriteFilePattern',
     'ManagedIntegrationRuntimeNodeStatus',
+    'ManagedVirtualNetworkReferenceType',
     'MongoDbAuthenticationType',
     'NetezzaPartitionOption',
     'ODataAadServicePrincipalCredentialType',
@@ -1602,6 +1627,7 @@ __all__ = [
     'TeamDeskAuthenticationType',
     'TeradataAuthenticationType',
     'TeradataPartitionOption',
+    'TriggerReferenceType',
     'TriggerRunStatus',
     'TriggerRuntimeState',
     'TumblingWindowFrequency',

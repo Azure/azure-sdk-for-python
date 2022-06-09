@@ -7,22 +7,24 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import DataFactoryManagementClientConfiguration
-from .operations import ActivityRunsOperations, DataFlowDebugSessionOperations, DataFlowsOperations, DatasetsOperations, ExposureControlOperations, FactoriesOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimesOperations, LinkedServicesOperations, ManagedPrivateEndpointsOperations, ManagedVirtualNetworksOperations, Operations, PipelineRunsOperations, PipelinesOperations, PrivateEndPointConnectionsOperations, PrivateEndpointConnectionOperations, PrivateLinkResourcesOperations, TriggerRunsOperations, TriggersOperations
+from .operations import ActivityRunsOperations, DataFlowDebugSessionOperations, DataFlowsOperations, DatasetsOperations, ExposureControlOperations, FactoriesOperations, GlobalParametersOperations, IntegrationRuntimeNodesOperations, IntegrationRuntimeObjectMetadataOperations, IntegrationRuntimesOperations, LinkedServicesOperations, ManagedPrivateEndpointsOperations, ManagedVirtualNetworksOperations, Operations, PipelineRunsOperations, PipelinesOperations, PrivateEndPointConnectionsOperations, PrivateEndpointConnectionOperations, PrivateLinkResourcesOperations, TriggerRunsOperations, TriggersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class DataFactoryManagementClient:
-    """The Azure Data Factory V2 management API provides a RESTful set of web services that interact with Azure Data Factory V2 services.
+class DataFactoryManagementClient:    # pylint: disable=too-many-instance-attributes
+    """The Azure Data Factory V2 management API provides a RESTful set of web services that interact
+    with Azure Data Factory V2 services.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datafactory.aio.operations.Operations
@@ -74,12 +76,17 @@ class DataFactoryManagementClient:
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.datafactory.aio.operations.PrivateLinkResourcesOperations
+    :ivar global_parameters: GlobalParametersOperations operations
+    :vartype global_parameters: azure.mgmt.datafactory.aio.operations.GlobalParametersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2018-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -118,6 +125,7 @@ class DataFactoryManagementClient:
         self.private_end_point_connections = PrivateEndPointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connection = PrivateEndpointConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.global_parameters = GlobalParametersOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(

@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 18 May 2022 00:19:58 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer65bc166b?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 18 May 2022 00:19:57 GMT
+      etag: '"0x8DA3864243BAB6E"'
+      last-modified: Wed, 18 May 2022 00:19:58 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranstock.blob.core.windows.net/utcontainer65bc166b?restype=container
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Wed, 18 May 2022 00:19:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer65bc166b/blob65bc166b
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      date: Wed, 18 May 2022 00:19:57 GMT
+      etag: '"0x8DA38642449ED0B"'
+      last-modified: Wed, 18 May 2022 00:19:58 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: ov8U1LLnyKc=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranstock.blob.core.windows.net/utcontainer65bc166b/blob65bc166b
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 18 May 2022 00:19:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer65bc166b/blob65bc166b
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      content-type: application/octet-stream
+      date: Wed, 18 May 2022 00:19:57 GMT
+      etag: '"0x8DA38642449ED0B"'
+      last-modified: Wed, 18 May 2022 00:19:58 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Wed, 18 May 2022 00:19:58 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttranstock.blob.core.windows.net/utcontainer65bc166b/blob65bc166b
+version: 1

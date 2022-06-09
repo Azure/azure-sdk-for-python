@@ -55,7 +55,9 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AsyncDocumentTranslationLROPoller":
-
+        """
+        :meta private:
+        """
         (
             client,
             initial_response,

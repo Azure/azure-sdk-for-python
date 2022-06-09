@@ -53,6 +53,7 @@ async def upload_data_chunks(
         max_concurrency=None,
         stream=None,
         encryption_options=None,
+        progress_hook=None,
         **kwargs):
 
     if encryption_options:
@@ -74,6 +75,7 @@ async def upload_data_chunks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
+        progress_hook=progress_hook,
         **kwargs)
 
     if parallel:
@@ -100,6 +102,7 @@ async def upload_substream_blocks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
+        progress_hook=None,
         **kwargs):
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
@@ -111,6 +114,7 @@ async def upload_substream_blocks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
+        progress_hook=progress_hook,
         **kwargs)
 
     if parallel:
@@ -131,7 +135,16 @@ async def upload_substream_blocks(
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, service, total_size, chunk_size, stream, parallel, encryptor=None, padder=None, **kwargs):
+    def __init__(
+            self, service,
+            total_size,
+            chunk_size,
+            stream,
+            parallel,
+            encryptor=None,
+            padder=None,
+            progress_hook=None,
+            **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
@@ -145,6 +158,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         # Progress feedback
         self.progress_total = 0
         self.progress_lock = Lock() if parallel else None
+        self.progress_hook = progress_hook
 
         # Encryption
         self.encryptor = encryptor
@@ -201,6 +215,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 self.progress_total += length
         else:
             self.progress_total += length
+
+        if self.progress_hook:
+            await self.progress_hook(self.progress_total, self.total_size)
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         raise NotImplementedError("Must be implemented by child class.")

@@ -9,8 +9,12 @@
     ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
 - Implement exporting span events as message/exception telemetry
     ([#23708](https://github.com/Azure/azure-sdk-for-python/pull/23708))
+- Implement metrics exporter using experimental OT metrics sdk
+    ([#23960](https://github.com/Azure/azure-sdk-for-python/pull/23960))
 
 ### Breaking Changes
+- Update to OpenTelemetry api/sdk 1.12.0rc1
+    ([#24619](https://github.com/Azure/azure-sdk-for-python/pull/24619))
 
 ### Bugs Fixed
 

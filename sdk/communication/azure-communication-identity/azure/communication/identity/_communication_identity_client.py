@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from ._generated.models import CommunicationTokenScope
 
 
-class CommunicationIdentityClient(object):
+class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Services Identity client.
 
     :param str endpoint:
@@ -188,20 +188,20 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def get_token_for_teams_user(
             self,
-            add_token, # type: str
+            aad_token, # type: str
             **kwargs
         ):
         # type: (...) -> AccessToken
         """Exchanges an AAD access token of a Teams User for a new Communication Identity access token.
 
-        :param add_token: an AAD access token of a Teams User
-        :type add_token: str
+        :param aad_token: an AAD access token of a Teams User
+        :type aad_token: str
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         api_version = kwargs.pop("api_version", self._api_version)
         return self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            token=add_token,
+            token=aad_token,
             api_version=api_version,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)

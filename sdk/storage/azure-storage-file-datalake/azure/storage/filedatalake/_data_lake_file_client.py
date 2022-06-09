@@ -4,7 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
-from typing import Any, TypeVar
+from typing import ( # pylint: disable=unused-import
+    Any, AnyStr, Dict, IO, Iterable, Optional, Type, TypeVar, Union,
+    TYPE_CHECKING)
 
 try:
     from urllib.parse import quote, unquote
@@ -23,9 +25,13 @@ from ._upload_helper import upload_datalake_file
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
-    convert_datetime_to_rfc1123
+    convert_datetime_to_rfc1123, get_cpk_info
 from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from ._models import ContentSettings
 
 ClassType = TypeVar("ClassType")
 
@@ -55,6 +61,9 @@ class DataLakeFileClient(PathClient):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -135,6 +144,31 @@ class DataLakeFileClient(PathClient):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -159,6 +193,9 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
@@ -241,6 +278,10 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: FileProperties
@@ -281,7 +322,7 @@ class DataLakeFileClient(PathClient):
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             **kwargs
         ):
@@ -312,6 +353,7 @@ class DataLakeFileClient(PathClient):
         kwargs['properties'] = add_metadata_headers(metadata)
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
         kwargs['modified_access_conditions'] = get_mod_conditions(kwargs)
+        kwargs['cpk_info'] = get_cpk_info(self.scheme, kwargs)
 
         if content_settings:
             kwargs['path_http_headers'] = get_path_http_headers(content_settings)
@@ -383,6 +425,9 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword int chunk_size:
@@ -398,8 +443,14 @@ class DataLakeFileClient(PathClient):
         return upload_datalake_file(**options)
 
     @staticmethod
-    def _append_data_options(data, offset, length=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _append_data_options(
+            data, # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+            offset, # type: int
+            scheme, # type: str
+            length=None, # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
 
         if isinstance(data, six.text_type):
             data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
@@ -411,6 +462,7 @@ class DataLakeFileClient(PathClient):
             data = data[:length]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        cpk_info = get_cpk_info(scheme, kwargs)
 
         options = {
             'body': data,
@@ -418,6 +470,7 @@ class DataLakeFileClient(PathClient):
             'content_length': length,
             'lease_access_conditions': access_conditions,
             'validate_content': kwargs.pop('validate_content', False),
+            'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_response_headers}
         options.update(kwargs)
@@ -444,6 +497,9 @@ class DataLakeFileClient(PathClient):
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :return: dict of the response header
 
         .. admonition:: Example:
@@ -456,8 +512,9 @@ class DataLakeFileClient(PathClient):
                 :caption: Append data to the file.
         """
         options = self._append_data_options(
-            data,
-            offset,
+            data=data,
+            offset=offset,
+            scheme=self.scheme,
             length=length,
             **kwargs)
         try:
@@ -466,8 +523,14 @@ class DataLakeFileClient(PathClient):
             process_storage_error(error)
 
     @staticmethod
-    def _flush_data_options(offset, content_settings=None, retain_uncommitted_data=False, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _flush_data_options(
+            offset, # type: int
+            scheme, # type: str
+            content_settings=None, # type: Optional[ContentSettings]
+            retain_uncommitted_data=False, # type: Optional[bool]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
@@ -475,6 +538,8 @@ class DataLakeFileClient(PathClient):
         path_http_headers = None
         if content_settings:
             path_http_headers = get_path_http_headers(content_settings)
+
+        cpk_info = get_cpk_info(scheme, kwargs)
 
         options = {
             'position': offset,
@@ -484,6 +549,7 @@ class DataLakeFileClient(PathClient):
             'close': kwargs.pop('close', False),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_response_headers}
         options.update(kwargs)
@@ -537,6 +603,9 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :return: response header in dict
 
         .. admonition:: Example:
@@ -550,6 +619,7 @@ class DataLakeFileClient(PathClient):
         """
         options = self._flush_data_options(
             offset,
+            self.scheme,
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return self._client.path.flush_data(**options)
@@ -589,6 +659,10 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a Customer-Provided Key.
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :keyword int timeout:
@@ -615,7 +689,7 @@ class DataLakeFileClient(PathClient):
         """
         Returns True if a file exists and returns False otherwise.
 
-        :kwarg int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -762,6 +836,10 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a Customer-Provided Key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A streaming object (DataLakeFileQueryReader)
