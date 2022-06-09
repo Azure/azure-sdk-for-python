@@ -1,5 +1,10 @@
 parameters:
-  ServiceDirectory: ''
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -14,12 +19,13 @@ steps:
       mkdir -p $(Agent.BuildDirectory)/workdir
       
       python -m pip install -r $(Build.SourcesDirectory)/eng/apiview_reqs.txt --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-    displayName: Install API Stub Generator
-
-  - bash: |
-      source $(Agent.BuildDirectory)/venv/bin/activate
-      
       python -m pip freeze
-
-      python $(Build.SourcesDirectory)/scripts/devops_tasks/invoke_apistub.py $(TargetingString) --service=${{ parameters.ServiceDirectory }} --workdir=$(Agent.BuildDirectory)/workdir
     displayName: Install API Stub Generator
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+
+  - ${{ each artifact in parameters.Artifacts }}
+    - bash: |
+        source $(Agent.BuildDirectory)/venv/bin/activate
+        apistubgen --pkg-path $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory}}/${{ artifact.name }}/
+      displayName: Run API Stub Generator
+      condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
