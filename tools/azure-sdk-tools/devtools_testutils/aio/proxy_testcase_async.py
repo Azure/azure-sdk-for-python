@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import logging
 import urllib.parse as url_parse
 
@@ -27,6 +28,7 @@ def recorded_by_proxy_async(test_func):
     https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
     """
 
+    @functools.wraps(test_func)
     async def record_wrap(*args, **kwargs):
 
         def transform_args(*args, **kwargs):

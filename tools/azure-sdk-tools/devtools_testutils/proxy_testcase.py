@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import logging
 import requests
 import six
@@ -133,6 +134,7 @@ def recorded_by_proxy(test_func):
     https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
     """
 
+    @functools.wraps(test_func)
     def record_wrap(*args, **kwargs):
         if sys.version_info.major == 2 and not is_live():
             pytest.skip("Playback testing is incompatible with the azure-sdk-tools test proxy on Python 2")
