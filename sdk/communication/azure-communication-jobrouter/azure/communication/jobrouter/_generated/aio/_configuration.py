@@ -19,7 +19,7 @@ class AzureCommunicationJobRouterServiceConfiguration(Configuration):  # pylint:
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-10-20-preview2". Note that overriding
      this default value may result in unsupported behavior.

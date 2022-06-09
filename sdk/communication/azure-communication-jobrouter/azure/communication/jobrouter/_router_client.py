@@ -17,7 +17,7 @@ from ._generated.models import (
     QueueStatistics,
     WorkerStateSelector,
     JobStateSelector,
-    AcceptJobOfferResponse,
+    AcceptJobOfferResult,
     JobPositionDetails,
     PagedClassificationPolicy,
     PagedDistributionPolicy,
@@ -1753,7 +1753,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             offer_id,  # type: str
             **kwargs,  # type: Any
     ):
-        #  type: (...) -> AcceptJobOfferResponse
+        #  type: (...) -> AcceptJobOfferResult
         """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 

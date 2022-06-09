@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import sys
+from typing import Any, IO, Optional, TYPE_CHECKING, Union, overload
 
 from msrest import Serializer
 
@@ -25,6 +26,11 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union
+    if sys.version_info >= (3, 9):
+        from collections.abc import MutableMapping
+    else:
+        from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -145,7 +151,7 @@ def build_list_classification_policies_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: int
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -281,7 +287,7 @@ def build_list_distribution_policies_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: int
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -417,7 +423,7 @@ def build_list_exception_policies_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: int
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -701,10 +707,10 @@ def build_list_jobs_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-    status = kwargs.pop('status', _params.pop('status', "all"))  # type: Optional[Union[str, "_models.JobStateSelector"]]
+    status = kwargs.pop('status', _params.pop('status', "all"))  # type: Union[str, "_models.JobStateSelector"]
     queue_id = kwargs.pop('queue_id', _params.pop('queueId', None))  # type: Optional[str]
     channel_id = kwargs.pop('channel_id', _params.pop('channelId', None))  # type: Optional[str]
-    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: int
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -952,7 +958,7 @@ def build_list_queues_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: int
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -1122,11 +1128,11 @@ def build_list_workers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-    status = kwargs.pop('status', _params.pop('status', "all"))  # type: Optional[Union[str, "_models.WorkerStateSelector"]]
+    status = kwargs.pop('status', _params.pop('status', "all"))  # type: Union[str, "_models.WorkerStateSelector"]
     channel_id = kwargs.pop('channel_id', _params.pop('channelId', None))  # type: Optional[str]
     queue_id = kwargs.pop('queue_id', _params.pop('queueId', None))  # type: Optional[str]
     has_capacity = kwargs.pop('has_capacity', _params.pop('hasCapacity', None))  # type: Optional[bool]
-    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: Optional[int]
+    maxpagesize = kwargs.pop('maxpagesize', _params.pop('maxpagesize', 20))  # type: int
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -1177,7 +1183,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
-    @distributed_trace
+    @overload
     def upsert_classification_policy(
         self,
         id,  # type: str
@@ -1189,15 +1195,71 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Upsert a classification policy.
 
-        :param id: Id of the classification policy.
+        :param id: Id of the classification policy. Required.
         :type id: str
         :param patch: Model of classification policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386.
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
         :type patch: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClassificationPolicy, or the result of cls(response)
+        :return: ClassificationPolicy or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upsert_classification_policy(
+        self,
+        id,  # type: str
+        patch,  # type: IO
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.ClassificationPolicy
+        """Upsert a classification policy.
+
+        Upsert a classification policy.
+
+        :param id: Id of the classification policy. Required.
+        :type id: str
+        :param patch: Model of classification policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
+        :type patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ClassificationPolicy or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def upsert_classification_policy(
+        self,
+        id,  # type: str
+        patch,  # type: Union[_models.ClassificationPolicy, IO]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.ClassificationPolicy
+        """Upsert a classification policy.
+
+        Upsert a classification policy.
+
+        :param id: Id of the classification policy. Required.
+        :type id: str
+        :param patch: Model of classification policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
+        :type patch: ~azure.communication.jobrouter.models.ClassificationPolicy or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ClassificationPolicy or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1207,17 +1269,24 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicy]
 
-        _json = self._serialize.body(patch, 'ClassificationPolicy')
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(patch, (IO, bytes)):
+            _content = patch
+        else:
+            _json = self._serialize.body(patch, 'ClassificationPolicy')
 
         request = build_upsert_classification_policy_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             template_url=self.upsert_classification_policy.metadata['url'],
             headers=_headers,
             params=_params,
@@ -1233,6 +1302,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1261,12 +1331,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves an existing classification policy by Id.
 
-        :param id: Id of the classification policy.
+        :param id: Id of the classification policy. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClassificationPolicy, or the result of cls(response)
+        :return: ClassificationPolicy or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1276,7 +1346,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicy]
 
         
@@ -1298,6 +1368,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1326,12 +1397,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Delete a classification policy by Id.
 
-        :param id: Id of the classification policy.
+        :param id: Id of the classification policy. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1341,7 +1412,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1363,6 +1434,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1379,10 +1451,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_classification_policies(
         self,
-        maxpagesize=20,  # type: Optional[int]
+        maxpagesize=20,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.ClassificationPolicyCollection]
+        # type: (...) -> Iterable["_models.PagedClassificationPolicy"]
         """Retrieves existing classification policies.
 
         Retrieves existing classification policies.
@@ -1390,16 +1462,16 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param maxpagesize: Maximum page size. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClassificationPolicyCollection or the result of
+        :return: An iterator like instance of either PagedClassificationPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.ClassificationPolicyCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.PagedClassificationPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicyCollection]
 
         error_map = {
@@ -1410,8 +1482,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             if not next_link:
                 
                 request = build_list_classification_policies_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=self.list_classification_policies.metadata['url'],
                     headers=_headers,
                     params=_params,
@@ -1425,8 +1497,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             else:
                 
                 request = build_list_classification_policies_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
                     params=_params,
@@ -1453,7 +1525,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -1473,7 +1545,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         )
     list_classification_policies.metadata = {'url': "/routing/classificationPolicies"}  # type: ignore
 
-    @distributed_trace
+    @overload
     def upsert_distribution_policy(
         self,
         id,  # type: str
@@ -1485,15 +1557,71 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Upsert a distribution policy.
 
-        :param id: Id of the distribution policy.
+        :param id: Id of the distribution policy. Required.
         :type id: str
         :param patch: Model of distribution policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386.
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
         :type patch: ~azure.communication.jobrouter.models.DistributionPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DistributionPolicy, or the result of cls(response)
+        :return: DistributionPolicy or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upsert_distribution_policy(
+        self,
+        id,  # type: str
+        patch,  # type: IO
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.DistributionPolicy
+        """Upsert a distribution policy.
+
+        Upsert a distribution policy.
+
+        :param id: Id of the distribution policy. Required.
+        :type id: str
+        :param patch: Model of distribution policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
+        :type patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DistributionPolicy or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def upsert_distribution_policy(
+        self,
+        id,  # type: str
+        patch,  # type: Union[_models.DistributionPolicy, IO]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.DistributionPolicy
+        """Upsert a distribution policy.
+
+        Upsert a distribution policy.
+
+        :param id: Id of the distribution policy. Required.
+        :type id: str
+        :param patch: Model of distribution policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
+        :type patch: ~azure.communication.jobrouter.models.DistributionPolicy or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DistributionPolicy or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1503,17 +1631,24 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicy]
 
-        _json = self._serialize.body(patch, 'DistributionPolicy')
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(patch, (IO, bytes)):
+            _content = patch
+        else:
+            _json = self._serialize.body(patch, 'DistributionPolicy')
 
         request = build_upsert_distribution_policy_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             template_url=self.upsert_distribution_policy.metadata['url'],
             headers=_headers,
             params=_params,
@@ -1529,6 +1664,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1557,12 +1693,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves an existing distribution policy by Id.
 
-        :param id: Id of the distribution policy.
+        :param id: Id of the distribution policy. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DistributionPolicy, or the result of cls(response)
+        :return: DistributionPolicy or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1572,7 +1708,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicy]
 
         
@@ -1594,6 +1730,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1622,12 +1759,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Delete a distribution policy by Id.
 
-        :param id: Id of the distribution policy.
+        :param id: Id of the distribution policy. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1637,7 +1774,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1659,6 +1796,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1675,10 +1813,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_distribution_policies(
         self,
-        maxpagesize=20,  # type: Optional[int]
+        maxpagesize=20,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.DistributionPolicyCollection]
+        # type: (...) -> Iterable["_models.PagedDistributionPolicy"]
         """Retrieves existing distribution policies.
 
         Retrieves existing distribution policies.
@@ -1686,16 +1824,16 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param maxpagesize: Maximum page size. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DistributionPolicyCollection or the result of
+        :return: An iterator like instance of either PagedDistributionPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.DistributionPolicyCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.PagedDistributionPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicyCollection]
 
         error_map = {
@@ -1706,8 +1844,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             if not next_link:
                 
                 request = build_list_distribution_policies_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=self.list_distribution_policies.metadata['url'],
                     headers=_headers,
                     params=_params,
@@ -1721,8 +1859,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             else:
                 
                 request = build_list_distribution_policies_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
                     params=_params,
@@ -1749,7 +1887,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -1769,7 +1907,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         )
     list_distribution_policies.metadata = {'url': "/routing/distributionPolicies"}  # type: ignore
 
-    @distributed_trace
+    @overload
     def upsert_exception_policy(
         self,
         id,  # type: str
@@ -1781,15 +1919,71 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Upsert a exception policy.
 
-        :param id: Id of the exception policy.
+        :param id: Id of the exception policy. Required.
         :type id: str
         :param patch: Model of exception policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386.
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
         :type patch: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExceptionPolicy, or the result of cls(response)
+        :return: ExceptionPolicy or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upsert_exception_policy(
+        self,
+        id,  # type: str
+        patch,  # type: IO
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.ExceptionPolicy
+        """Upsert a exception policy.
+
+        Upsert a exception policy.
+
+        :param id: Id of the exception policy. Required.
+        :type id: str
+        :param patch: Model of exception policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
+        :type patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ExceptionPolicy or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def upsert_exception_policy(
+        self,
+        id,  # type: str
+        patch,  # type: Union[_models.ExceptionPolicy, IO]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.ExceptionPolicy
+        """Upsert a exception policy.
+
+        Upsert a exception policy.
+
+        :param id: Id of the exception policy. Required.
+        :type id: str
+        :param patch: Model of exception policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
+        :type patch: ~azure.communication.jobrouter.models.ExceptionPolicy or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ExceptionPolicy or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1799,17 +1993,24 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicy]
 
-        _json = self._serialize.body(patch, 'ExceptionPolicy')
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(patch, (IO, bytes)):
+            _content = patch
+        else:
+            _json = self._serialize.body(patch, 'ExceptionPolicy')
 
         request = build_upsert_exception_policy_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             template_url=self.upsert_exception_policy.metadata['url'],
             headers=_headers,
             params=_params,
@@ -1825,6 +2026,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1853,12 +2055,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves an existing exception policy by Id.
 
-        :param id: Id of the exception policy to retrieve.
+        :param id: Id of the exception policy to retrieve. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExceptionPolicy, or the result of cls(response)
+        :return: ExceptionPolicy or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1868,7 +2070,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicy]
 
         
@@ -1890,6 +2092,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1918,12 +2121,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Deletes a exception policy by Id.
 
-        :param id: Id of the exception policy to delete.
+        :param id: Id of the exception policy to delete. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1933,7 +2136,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -1955,6 +2158,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1971,10 +2175,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_exception_policies(
         self,
-        maxpagesize=20,  # type: Optional[int]
+        maxpagesize=20,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.ExceptionPolicyCollection]
+        # type: (...) -> Iterable["_models.PagedExceptionPolicy"]
         """Retrieves existing exception policies.
 
         Retrieves existing exception policies.
@@ -1982,16 +2186,16 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param maxpagesize: Number of objects to return per page. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ExceptionPolicyCollection or the result of
+        :return: An iterator like instance of either PagedExceptionPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.ExceptionPolicyCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.PagedExceptionPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicyCollection]
 
         error_map = {
@@ -2002,8 +2206,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             if not next_link:
                 
                 request = build_list_exception_policies_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=self.list_exception_policies.metadata['url'],
                     headers=_headers,
                     params=_params,
@@ -2017,8 +2221,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             else:
                 
                 request = build_list_exception_policies_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
                     params=_params,
@@ -2045,7 +2249,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -2065,7 +2269,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         )
     list_exception_policies.metadata = {'url': "/routing/exceptionPolicies"}  # type: ignore
 
-    @distributed_trace
+    @overload
     def upsert_job(
         self,
         id,  # type: str
@@ -2077,15 +2281,71 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Upsert a job.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
         :param patch: Model of job properties to be created or patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386.
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
         :type patch: ~azure.communication.jobrouter.models.RouterJobInternal
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJobInternal, or the result of cls(response)
+        :return: RouterJobInternal or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upsert_job(
+        self,
+        id,  # type: str
+        patch,  # type: IO
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.RouterJobInternal
+        """Upsert a job.
+
+        Upsert a job.
+
+        :param id: Id of the job. Required.
+        :type id: str
+        :param patch: Model of job properties to be created or patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
+        :type patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RouterJobInternal or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def upsert_job(
+        self,
+        id,  # type: str
+        patch,  # type: Union[_models.RouterJobInternal, IO]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.RouterJobInternal
+        """Upsert a job.
+
+        Upsert a job.
+
+        :param id: Id of the job. Required.
+        :type id: str
+        :param patch: Model of job properties to be created or patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
+        :type patch: ~azure.communication.jobrouter.models.RouterJobInternal or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RouterJobInternal or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2095,17 +2355,24 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJobInternal]
 
-        _json = self._serialize.body(patch, 'RouterJobInternal')
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(patch, (IO, bytes)):
+            _content = patch
+        else:
+            _json = self._serialize.body(patch, 'RouterJobInternal')
 
         request = build_upsert_job_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             template_url=self.upsert_job.metadata['url'],
             headers=_headers,
             params=_params,
@@ -2121,6 +2388,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2149,12 +2417,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves an existing job by Id.
 
-        :param id: Id of the job to retrieve.
+        :param id: Id of the job to retrieve. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJobInternal, or the result of cls(response)
+        :return: RouterJobInternal or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2164,7 +2432,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJobInternal]
 
         
@@ -2186,6 +2454,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2214,12 +2483,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Deletes a job and all of its traces.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2229,7 +2498,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -2251,6 +2520,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2268,25 +2538,22 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     def reclassify_job_action(
         self,
         id,  # type: str
-        reclassify_job_request=None,  # type: Any
+        reclassify_job_request=None,  # type: Optional[JSON]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> JSON
         """Reclassify a job.
 
         Reclassify a job.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
         :param reclassify_job_request: Request object for reclassifying a job. Default value is None.
-        :type reclassify_job_request: any
-        :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/json", "text/json", and "application/*+json". Default value is "application/json".
-        :paramtype content_type: str
+        :type reclassify_job_request: JSON
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON or the result of cls(response)
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2296,9 +2563,9 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         if reclassify_job_request is not None:
             _json = self._serialize.body(reclassify_job_request, 'object')
@@ -2325,6 +2592,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2350,12 +2618,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         disposition_code=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> JSON
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
         :param note: (Optional) A note that will be appended to the jobs' Notes collection with th
          current timestamp. Default value is None.
@@ -2365,9 +2633,9 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
          If not provided, default value of "Cancelled" is set. Default value is None.
         :type disposition_code: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON or the result of cls(response)
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2377,11 +2645,11 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _cancel_job_request = _models.CancelJobRequest(note=note, disposition_code=disposition_code)
+        _cancel_job_request = _models.CancelJobRequest(disposition_code=disposition_code, note=note)
         if _cancel_job_request is not None:
             _json = self._serialize.body(_cancel_job_request, 'CancelJobRequest')
         else:
@@ -2407,6 +2675,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2432,22 +2701,22 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         note=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> JSON
         """Completes an assigned job.
 
         Completes an assigned job.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
-        :param assignment_id: The assignment within the job to complete.
+        :param assignment_id: The assignment within the job to complete. Required.
         :type assignment_id: str
         :param note: (Optional) A note that will be appended to the jobs' Notes collection with th
          current timestamp. Default value is None.
         :type note: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON or the result of cls(response)
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2457,9 +2726,9 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         _complete_job_request = _models.CompleteJobRequest(assignment_id=assignment_id, note=note)
         _json = self._serialize.body(_complete_job_request, 'CompleteJobRequest')
@@ -2484,6 +2753,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2511,14 +2781,14 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         note=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> JSON
         """Closes a completed job.
 
         Closes a completed job.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
-        :param assignment_id: The assignment within which the job is to be closed.
+        :param assignment_id: The assignment within which the job is to be closed. Required.
         :type assignment_id: str
         :param disposition_code: Indicates the outcome of the job, populate this field with your own
          custom values. Default value is None.
@@ -2532,9 +2802,9 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
          current timestamp. Default value is None.
         :type note: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON or the result of cls(response)
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2544,11 +2814,11 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
-        _close_job_request = _models.CloseJobRequest(assignment_id=assignment_id, disposition_code=disposition_code, close_time=close_time, note=note)
+        _close_job_request = _models.CloseJobRequest(assignment_id=assignment_id, close_time=close_time, disposition_code=disposition_code, note=note)
         _json = self._serialize.body(_close_job_request, 'CloseJobRequest')
 
         request = build_close_job_action_request(
@@ -2571,6 +2841,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -2595,18 +2866,20 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_jobs(
         self,
-        status="all",  # type: Optional[Union[str, "_models.JobStateSelector"]]
+        status="all",  # type: Union[str, "_models.JobStateSelector"]
         queue_id=None,  # type: Optional[str]
         channel_id=None,  # type: Optional[str]
-        maxpagesize=20,  # type: Optional[int]
+        maxpagesize=20,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.JobCollection]
+        # type: (...) -> Iterable["_models.PagedRouterJobInternal"]
         """Retrieves list of jobs based on filter parameters.
 
         Retrieves list of jobs based on filter parameters.
 
-        :param status: (Optional) If specified, filter jobs by status. Default value is "all".
+        :param status: (Optional) If specified, filter jobs by status. Known values are: "all",
+         "pendingClassification", "queued", "assigned", "completed", "closed", "cancelled",
+         "classificationFailed", and "active". Default value is "all".
         :type status: str or ~azure.communication.jobrouter.models.JobStateSelector
         :param queue_id: (Optional) If specified, filter jobs by queue. Default value is None.
         :type queue_id: str
@@ -2615,14 +2888,16 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param maxpagesize: Number of objects to return per page. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.JobCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either PagedRouterJobInternal or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.PagedRouterJobInternal]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobCollection]
 
         error_map = {
@@ -2633,11 +2908,11 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             if not next_link:
                 
                 request = build_list_jobs_request(
-                    api_version=api_version,
                     status=status,
                     queue_id=queue_id,
                     channel_id=channel_id,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=self.list_jobs.metadata['url'],
                     headers=_headers,
                     params=_params,
@@ -2651,11 +2926,11 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             else:
                 
                 request = build_list_jobs_request(
-                    api_version=api_version,
                     status=status,
                     queue_id=queue_id,
                     channel_id=channel_id,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
                     params=_params,
@@ -2682,7 +2957,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -2713,12 +2988,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Gets a job's position details.
 
-        :param id: Id of the job.
+        :param id: Id of the job. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobPositionDetails, or the result of cls(response)
+        :return: JobPositionDetails or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.JobPositionDetails
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2728,7 +3003,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobPositionDetails]
 
         
@@ -2750,6 +3025,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2774,21 +3050,21 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         offer_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.AcceptJobOfferResponse
+        # type: (...) -> _models.AcceptJobOfferResult
         """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
         Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
-        :param worker_id: Id of the worker.
+        :param worker_id: Id of the worker. Required.
         :type worker_id: str
-        :param offer_id: Id of the offer.
+        :param offer_id: Id of the offer. Required.
         :type offer_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AcceptJobOfferResponse, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.AcceptJobOfferResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: AcceptJobOfferResult or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.AcceptJobOfferResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2798,8 +3074,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AcceptJobOfferResponse]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AcceptJobOfferResult]
 
         
         request = build_accept_job_action_request(
@@ -2821,6 +3097,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2828,7 +3105,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AcceptJobOfferResponse', pipeline_response)
+        deserialized = self._deserialize('AcceptJobOfferResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2845,19 +3122,19 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         offer_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Any
+        # type: (...) -> JSON
         """Declines an offer to work on a job.
 
         Declines an offer to work on a job.
 
-        :param worker_id: Id of the worker.
+        :param worker_id: Id of the worker. Required.
         :type worker_id: str
-        :param offer_id: Id of the offer.
+        :param offer_id: Id of the offer. Required.
         :type offer_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: JSON or the result of cls(response)
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2867,8 +3144,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
 
         
         request = build_decline_job_action_request(
@@ -2890,6 +3167,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2907,7 +3185,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     decline_job_action.metadata = {'url': "/routing/workers/{workerId}/offers/{offerId}:decline"}  # type: ignore
 
 
-    @distributed_trace
+    @overload
     def upsert_queue(
         self,
         id,  # type: str
@@ -2919,15 +3197,71 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Upsert a queue.
 
-        :param id: Id of the queue.
+        :param id: Id of the queue. Required.
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386.
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
         :type patch: ~azure.communication.jobrouter.models.JobQueueInternal
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobQueueInternal, or the result of cls(response)
+        :return: JobQueueInternal or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upsert_queue(
+        self,
+        id,  # type: str
+        patch,  # type: IO
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.JobQueueInternal
+        """Upsert a queue.
+
+        Upsert a queue.
+
+        :param id: Id of the queue. Required.
+        :type id: str
+        :param patch: Model of queue properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
+        :type patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: JobQueueInternal or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def upsert_queue(
+        self,
+        id,  # type: str
+        patch,  # type: Union[_models.JobQueueInternal, IO]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.JobQueueInternal
+        """Upsert a queue.
+
+        Upsert a queue.
+
+        :param id: Id of the queue. Required.
+        :type id: str
+        :param patch: Model of queue properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
+        :type patch: ~azure.communication.jobrouter.models.JobQueueInternal or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: JobQueueInternal or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -2937,17 +3271,24 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueueInternal]
 
-        _json = self._serialize.body(patch, 'JobQueueInternal')
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(patch, (IO, bytes)):
+            _content = patch
+        else:
+            _json = self._serialize.body(patch, 'JobQueueInternal')
 
         request = build_upsert_queue_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             template_url=self.upsert_queue.metadata['url'],
             headers=_headers,
             params=_params,
@@ -2963,6 +3304,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2991,12 +3333,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves an existing queue by Id.
 
-        :param id: Id of the queue to retrieve.
+        :param id: Id of the queue to retrieve. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobQueueInternal, or the result of cls(response)
+        :return: JobQueueInternal or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3006,7 +3348,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueueInternal]
 
         
@@ -3028,6 +3370,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3056,12 +3399,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Deletes a queue by Id.
 
-        :param id: Id of the queue to delete.
+        :param id: Id of the queue to delete. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3071,7 +3414,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -3093,6 +3436,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -3109,10 +3453,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_queues(
         self,
-        maxpagesize=20,  # type: Optional[int]
+        maxpagesize=20,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.QueueCollection]
+        # type: (...) -> Iterable["_models.PagedJobQueueInternal"]
         """Retrieves existing queues.
 
         Retrieves existing queues.
@@ -3120,14 +3464,16 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param maxpagesize: Number of objects to return per page. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either QueueCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.QueueCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either PagedJobQueueInternal or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.PagedJobQueueInternal]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.QueueCollection]
 
         error_map = {
@@ -3138,8 +3484,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             if not next_link:
                 
                 request = build_list_queues_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=self.list_queues.metadata['url'],
                     headers=_headers,
                     params=_params,
@@ -3153,8 +3499,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             else:
                 
                 request = build_list_queues_request(
-                    api_version=api_version,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
                     params=_params,
@@ -3181,7 +3527,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs
@@ -3212,12 +3558,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves a queue's statistics.
 
-        :param id: Id of the queue to retrieve statistics.
+        :param id: Id of the queue to retrieve statistics. Required.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: QueueStatistics, or the result of cls(response)
+        :return: QueueStatistics or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.QueueStatistics
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3227,7 +3573,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.QueueStatistics]
 
         
@@ -3249,6 +3595,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3266,7 +3613,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     get_queue_statistics.metadata = {'url': "/routing/queues/{id}/statistics"}  # type: ignore
 
 
-    @distributed_trace
+    @overload
     def upsert_worker(
         self,
         worker_id,  # type: str
@@ -3278,15 +3625,71 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Upsert a worker.
 
-        :param worker_id: Id of the worker.
+        :param worker_id: Id of the worker. Required.
         :type worker_id: str
         :param patch: Model of worker properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386.
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
         :type patch: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterWorkerInternal, or the result of cls(response)
+        :return: RouterWorkerInternal or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upsert_worker(
+        self,
+        worker_id,  # type: str
+        patch,  # type: IO
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.RouterWorkerInternal
+        """Upsert a worker.
+
+        Upsert a worker.
+
+        :param worker_id: Id of the worker. Required.
+        :type worker_id: str
+        :param patch: Model of worker properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Required.
+        :type patch: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RouterWorkerInternal or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def upsert_worker(
+        self,
+        worker_id,  # type: str
+        patch,  # type: Union[_models.RouterWorkerInternal, IO]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.RouterWorkerInternal
+        """Upsert a worker.
+
+        Upsert a worker.
+
+        :param worker_id: Id of the worker. Required.
+        :type worker_id: str
+        :param patch: Model of worker properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
+        :type patch: ~azure.communication.jobrouter.models.RouterWorkerInternal or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RouterWorkerInternal or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3296,17 +3699,24 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterWorkerInternal]
 
-        _json = self._serialize.body(patch, 'RouterWorkerInternal')
+        content_type = content_type or "application/merge-patch+json"
+        _json = None
+        _content = None
+        if isinstance(patch, (IO, bytes)):
+            _content = patch
+        else:
+            _json = self._serialize.body(patch, 'RouterWorkerInternal')
 
         request = build_upsert_worker_request(
             worker_id=worker_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             template_url=self.upsert_worker.metadata['url'],
             headers=_headers,
             params=_params,
@@ -3322,6 +3732,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3350,12 +3761,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Retrieves an existing worker by Id.
 
-        :param worker_id: Id of the worker to retrieve.
+        :param worker_id: Id of the worker to retrieve. Required.
         :type worker_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterWorkerInternal, or the result of cls(response)
+        :return: RouterWorkerInternal or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3365,7 +3776,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterWorkerInternal]
 
         
@@ -3387,6 +3798,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3415,12 +3827,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         Deletes a worker and all of its traces.
 
-        :param worker_id: Id of the worker to delete.
+        :param worker_id: Id of the worker to delete. Required.
         :type worker_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -3430,7 +3842,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -3452,6 +3864,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             stream=False,
             **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -3468,20 +3881,20 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_workers(
         self,
-        status="all",  # type: Optional[Union[str, "_models.WorkerStateSelector"]]
+        status="all",  # type: Union[str, "_models.WorkerStateSelector"]
         channel_id=None,  # type: Optional[str]
         queue_id=None,  # type: Optional[str]
         has_capacity=None,  # type: Optional[bool]
-        maxpagesize=20,  # type: Optional[int]
+        maxpagesize=20,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[_models.WorkerCollection]
+        # type: (...) -> Iterable["_models.PagedRouterWorkerInternal"]
         """Retrieves existing workers.
 
         Retrieves existing workers.
 
-        :param status: (Optional) If specified, select workers by worker status. Default value is
-         "all".
+        :param status: (Optional) If specified, select workers by worker status. Known values are:
+         "active", "draining", "inactive", and "all". Default value is "all".
         :type status: str or ~azure.communication.jobrouter.models.WorkerStateSelector
         :param channel_id: (Optional) If specified, select workers who have a channel configuration
          with this channel. Default value is None.
@@ -3497,14 +3910,16 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param maxpagesize: Number of objects to return per page. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either WorkerCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.WorkerCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either PagedRouterWorkerInternal or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.PagedRouterWorkerInternal]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', self._config.api_version))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.WorkerCollection]
 
         error_map = {
@@ -3515,12 +3930,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             if not next_link:
                 
                 request = build_list_workers_request(
-                    api_version=api_version,
                     status=status,
                     channel_id=channel_id,
                     queue_id=queue_id,
                     has_capacity=has_capacity,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=self.list_workers.metadata['url'],
                     headers=_headers,
                     params=_params,
@@ -3534,12 +3949,12 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             else:
                 
                 request = build_list_workers_request(
-                    api_version=api_version,
                     status=status,
                     channel_id=channel_id,
                     queue_id=queue_id,
                     has_capacity=has_capacity,
                     maxpagesize=maxpagesize,
+                    api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
                     params=_params,
@@ -3566,7 +3981,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request,
                 stream=False,
                 **kwargs

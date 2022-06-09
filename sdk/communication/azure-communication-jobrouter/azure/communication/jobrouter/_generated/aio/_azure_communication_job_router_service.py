@@ -18,12 +18,12 @@ from .. import models
 from ._configuration import AzureCommunicationJobRouterServiceConfiguration
 from .operations import JobRouterOperations
 
-class AzureCommunicationJobRouterService:
+class AzureCommunicationJobRouterService:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Routing Service.
 
     :ivar job_router: JobRouterOperations operations
     :vartype job_router: azure.communication.jobrouter.aio.operations.JobRouterOperations
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-10-20-preview2". Note that overriding
      this default value may result in unsupported behavior.
@@ -35,9 +35,9 @@ class AzureCommunicationJobRouterService:
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        _base_url = '{endpoint}'
+        _endpoint = '{endpoint}'
         self._config = AzureCommunicationJobRouterServiceConfiguration(endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
