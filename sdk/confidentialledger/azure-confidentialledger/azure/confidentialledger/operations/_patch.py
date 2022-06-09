@@ -98,8 +98,8 @@ class ConfidentialLedgerOperations(GeneratedOperations):
 
         :param transaction_id: Identifies a write transaction.
         :type transaction_id: str
-        :keyword retry_backoff_factor: Interval, in seconds, between retries while waiting for
-            results, defaults to 0.5.
+        :keyword retry_backoff_factor: Interval, in seconds, between retries while waiting for results,
+            defaults to 0.5.
         :paramtype retry_backoff_factor: float
         :keyword retry_total: Maximum number of times to try the query, defaults to 6. Retries are
             attempted if the result is not Ready.
@@ -206,6 +206,54 @@ class ConfidentialLedgerOperations(GeneratedOperations):
             },
         )
         return super().post_ledger_entry(entry, collection_id=collection_id, **kwargs)
+
+    def post_ledger_entry_and_wait_for_commit(
+        self,
+        entry: Union[JSON, IO],
+        *,
+        collection_id: Optional[str] = None,
+        **kwargs: Any,
+    ):
+        """Writes a ledger entry and waits for it to be durably committed.
+
+        The result is the expected JSON response with an additional field
+        'transactionId' which represents the transaction identifier for this write operation.
+
+        A collection id may optionally be specified.
+
+        :param entry: Ledger entry.
+        :type entry: Union[JSON, IO]
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :keyword retry_backoff_factor: Interval, in seconds, between retries, defaults to 0.5.
+        :paramtype retry_backoff_factor: float
+        :keyword retry_total: Maximum number of times to try the query, defaults to 3. Retries are
+            attempted if the specified transaction is not Committed yet.
+        :paramtype retry_total: int
+        :return: JSON object
+        :rtype: JSON
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        # Pop arguments that are unexpected in the pipeline.
+        retry_backoff_factor = kwargs.pop("retry_backoff_factor", 0.5)
+        retry_total = kwargs.pop("retry_total", 3)
+
+        post_result = self.post_ledger_entry(
+            entry, collection_id=collection_id, **kwargs
+        )
+        transaction_id = post_result["transactionId"]
+
+        try:
+            kwargs["retry_backoff_factor"] = retry_backoff_factor
+            kwargs["retry_total"] = retry_total
+            self.wait_until_durable(transaction_id, **kwargs)
+        except TimeoutError as e:
+            raise TimeoutError(
+                f"Timed out while waiting for commit; however, the entry may be successfully committed eventually."
+            ) from e
+
+        return post_result
 
     def wait_until_durable(
         self,

@@ -86,11 +86,8 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
-        client.confidential_ledger.post_ledger_entry_wait_for_commit(
+        client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
             {"contents": "Test entry 2 from Python SDK"}
-        )
-        client.confidential_ledger.wait_until_durable(
-            transaction_id=append_result_transaction_id
         )
 
         latest_entry = client.confidential_ledger.get_current_ledger_entry()
@@ -168,12 +165,9 @@ class ConfidentialLedgerClientTest(ConfidentialLedgerTestCase):
         self.assertEqual(latest_entry["contents"], entry_contents)
         self.assertEqual(latest_entry["collectionId"], append_result_sub_ledger_id)
 
-        client.confidential_ledger.post_ledger_entry_wait_for_commit(
+        client.confidential_ledger.post_ledger_entry_and_wait_for_commit(
             {"contents": f"Test entry 2 from Python SDK. Collection: {collection_id}"},
             collection_id=collection_id,
-        )
-        client.confidential_ledger.wait_until_durable(
-            transaction_id=append_result_transaction_id
         )
 
         latest_entry = client.confidential_ledger.get_current_ledger_entry(
