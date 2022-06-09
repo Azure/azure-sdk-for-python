@@ -26,7 +26,7 @@ _CONVERT = {
 }
 _LANGUAGES = {
     'Test': common_process,
-    # 'Python': python_process,
+    'Python': python_process,
     'Java': java_process,
     'Go': go_process,
     'JS': js_process
