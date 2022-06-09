@@ -16,18 +16,18 @@ _ASSIGNEE_TOKEN_PYTHON = {
 
 class IssueProcessPython(IssueProcess):
 
-    def get_package_name(self) -> None:
+    def get_package_name(self) -> str:
         pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         readme_python_path = pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
         pattern_package = re.compile(r'package-name: [\w+-.]+')
-        self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
+        package_name = pattern_package.search(contents).group().split(':')[-1].strip()
+        return package_name
 
     def edit_issue_body(self) -> None:
-        self.get_package_name()
         issue_body_list = [i for i in self.issue_package.issue.body.split("\n") if i]
         issue_body_list.insert(0, f'\n{self.readme_link.replace("/readme.md", "")}')
-        issue_body_list.insert(1, self.package_name)
+        issue_body_list.insert(1, self.get_package_name())
         issue_body_up = ''
         # solve format problems
         for raw in issue_body_list:
